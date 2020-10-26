@@ -1,0 +1,25 @@
+{
+	"include": ["src/**/*"],
+	"exclude": ["node_modules/*", "__sapper__/*", "public/*"],
+	"compilerOptions": {
+		"moduleResolution": "node",
+		"target": "es2017",
+		"importsNotUsedAsValues": "remove",
+		"isolatedModules": true,
+		"esModuleInterop": true,
+		"sourceMap": true,
+		"baseUrl": ".",
+		"paths": {
+			"src": ["src"]
+		},
+		"typeRoots": ["types"],
+		"types": [
+			"svelte",
+			"svelte/store",
+			"svelte/motion",
+			"svelte/transition",
+			"svelte/animate",
+			"svelte/easing"
+		]
+	}
+}
