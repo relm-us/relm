@@ -68,6 +68,11 @@ const chair = world.entities
   .add(CompositeTransform, {
     position: new Vector3(0, 0, 2),
     scale: new Vector3(1, 1, 1),
+    offsets: {
+      static: {
+        position: new Vector3(0, -0.5, 0),
+      },
+    },
   })
   .add(Model, {
     asset: new Asset("/chair.glb"),
@@ -121,8 +126,8 @@ const camera = world.entities
   .add(Camera)
   .activate();
 
-// (window as any).world = world;
-// (window as any).chair = chair;
+(window as any).world = world;
+(window as any).chair = chair;
 
 import("@dimforge/rapier3d").then((RAPIER) => {
   const gravity = new RAPIER.Vector3(0.0, -9.81, 0.0);

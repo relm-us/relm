@@ -8,6 +8,7 @@ const DuplicatePackageCheckerPlugin = require("duplicate-package-checker-webpack
 const mode = process.env.NODE_ENV || "development";
 const prod = mode === "production";
 const path = require("path");
+const BrotliWebpackPlugin = require("brotli-webpack-plugin");
 const sveltePath = path.resolve("node_modules", "svelte");
 
 /**
@@ -21,7 +22,7 @@ const sourceMapsInProduction = true;
  * work on your target browsers (see the `browserslist` property in your
  * package.json), but will impact bundle size and build speed.
  */
-const useBabel = false;
+const useBabel = true;
 
 /**
  * Should we run Babel on development builds? If set to `false`, only production
@@ -128,14 +129,6 @@ module.exports = {
         use: "ts-loader",
         exclude: /node_modules/,
       },
-      // {
-      //   test: /\.wasm$/,
-      //   // Required 'type' field to prevent defaultRules getting a chance to
-      //   // process wasm files first. See
-      //   //   https://webpack.js.org/configuration/module/#ruletype
-      //   type: "javascript/auto",
-      //   use: "wasm-loader",
-      // },
       {
         test: /\.js$/,
         enforce: "pre",
@@ -195,6 +188,15 @@ if (prod) {
   // Clean the build directory for production builds
   module.exports.plugins.push(new CleanWebpackPlugin());
 
+  // Compress assets
+  module.exports.plugins.push(
+    new BrotliWebpackPlugin({
+      test: /\.(js|css|html|svg|png|jpg|wasm)$/,
+      threshold: 10240,
+      minRatio: 0.8,
+    })
+  );
+
   // Minify CSS
   module.exports.optimization.minimizer.push(
     new OptimizeCSSAssetsPlugin({
@@ -220,12 +222,12 @@ if (prod) {
   );
 
   // Minify and treeshake JS
-  module.exports.optimization.minimizer.push(
-    new TerserPlugin({
-      sourceMap: sourceMapsInProduction,
-      extractComments: false,
-    })
-  );
+  // module.exports.optimization.minimizer.push(
+  //   new TerserPlugin({
+  //     sourceMap: sourceMapsInProduction,
+  //     extractComments: false,
+  //   })
+  // );
 }
 
 // Add babel if enabled

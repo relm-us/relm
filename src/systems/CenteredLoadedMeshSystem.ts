@@ -10,13 +10,15 @@ export class CenteredLoadedMeshSystem extends System {
     new: [ModelMesh, Not(CenteredLoadedMesh)],
   };
 
-  update(delta) {
+  update() {
     this.queries.new.forEach((entity) => {
       const mesh = entity.get(ModelMesh).value;
       if (mesh.children.length === 1) {
         mesh.children[0].position.set(0, 0, 0);
+        mesh.children[0].castShadow = true;
+      } else {
+        // TODO: average the positions, or find center of bbox
       }
-      console.log("Mesh loaded", mesh);
       entity.add(CenteredLoadedMesh);
     });
   }
