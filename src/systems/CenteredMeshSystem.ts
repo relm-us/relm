@@ -1,13 +1,13 @@
 import { System, Groups, Not } from "hecs";
 import { Transform } from "hecs-plugin-core";
 import { ModelMesh } from "hecs-plugin-three";
-import { CenteredLoadedMesh } from "../components/CenteredLoadedMesh";
+import { CenteredMesh } from "../components/CenteredMesh";
 
-export class CenteredLoadedMeshSystem extends System {
+export class CenteredMeshSystem extends System {
   order = Groups.Simulation;
 
   static queries = {
-    new: [ModelMesh, Not(CenteredLoadedMesh)],
+    new: [ModelMesh, Not(CenteredMesh)],
   };
 
   update() {
@@ -19,7 +19,7 @@ export class CenteredLoadedMeshSystem extends System {
       } else {
         // TODO: average the positions, or find center of bbox
       }
-      entity.add(CenteredLoadedMesh);
+      entity.add(CenteredMesh);
     });
   }
 }

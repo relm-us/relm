@@ -2,7 +2,7 @@ import { Component, NumberType } from "hecs";
 import { Vector3 } from "hecs-plugin-core";
 import { Vector3Type } from "hecs-plugin-core";
 
-export class Shake extends Component {
+export class Noise extends Component {
   static props = {
     speed: {
       type: NumberType,

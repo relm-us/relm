@@ -1,17 +1,25 @@
 import { System, Groups } from "hecs";
-import { Transform, Vector3 } from "hecs-plugin-core";
+import { Vector3, Quaternion } from "hecs-plugin-core";
 
 import { CompositeTransform } from "../components/CompositeTransform";
-import { Oscillate } from "../components/Oscillate";
+import {
+  OscillatePosition,
+  OscillateRotation,
+  OscillateScale,
+  OscillateBehavior,
+} from "../components/Oscillate";
 
-const bounce = true;
 const position = new Vector3();
+const rotation = new Quaternion();
+const scale = new Vector3();
 
 export class OscillateSystem extends System {
   order = Groups.Initialization;
 
   static queries = {
-    all: [CompositeTransform, Oscillate],
+    position: [CompositeTransform, OscillatePosition],
+    rotation: [CompositeTransform, OscillateRotation],
+    scale: [CompositeTransform, OscillateScale],
   };
 
   init() {
@@ -19,42 +27,59 @@ export class OscillateSystem extends System {
   }
 
   update(timeDelta) {
-    this.queries.all.forEach((entity) => {
-      const spec = entity.get(Oscillate);
-      this.oscillate(
-        entity,
-        spec.behavior,
-        spec.phase,
-        spec.speed,
-        spec.direction
-      );
+    this.queries.position.forEach((entity) => {
+      const spec = entity.get(OscillatePosition);
+      const alpha = this.getAlpha(spec.behavior, spec.phase, spec.frequency);
+      this.oscillatePosition(entity, alpha, spec.min, spec.max);
     });
 
+    this.queries.rotation.forEach((entity) => {
+      const spec = entity.get(OscillateRotation);
+      const alpha = this.getAlpha(spec.behavior, spec.phase, spec.frequency);
+      this.oscillateRotation(entity, alpha, spec.min, spec.max);
+    });
+
+    this.queries.scale.forEach((entity) => {
+      const spec = entity.get(OscillateScale);
+      const alpha = this.getAlpha(spec.behavior, spec.phase, spec.frequency);
+      this.oscillateScale(entity, alpha, spec.min, spec.max);
+    });
+
+    // keep the whole system oscillating
     this.oscillateAngle += (Math.PI * 2) / (1000 / timeDelta);
   }
 
-  oscillate(entity, behavior, phase, speed, direction) {
-    let angle = (phase + this.oscillateAngle) * speed;
-    let delta = Math.cos(angle);
+  getAlpha(behavior: OscillateBehavior, phase: number, frequency: number) {
+    let alpha,
+      angle = (phase + this.oscillateAngle) * frequency;
 
     // Various behaviors
     switch (behavior) {
       case "OSCILLATE":
-        break;
+        return (Math.cos(angle - Math.PI) + 1) / 2;
       case "BOUNCE":
-        if (delta < 0) delta /= 4;
-        break;
-      case "HARD_BOUNCE":
-        delta = Math.abs(delta);
-        break;
+        return Math.abs(Math.cos((angle - Math.PI) / 2));
+      case "BOUNCE_PAUSE":
+        alpha = Math.cos(angle - Math.PI);
+        return alpha < 0 ? 0 : alpha;
       default:
         throw new Error(`Unknown oscillate behavior: ${behavior}`);
     }
+  }
 
-    position.x = delta * direction.x;
-    position.y = delta * direction.y;
-    position.z = delta * direction.z;
+  oscillatePosition(entity, alpha, min, max) {
+    position.copy(min).lerp(max, alpha);
+    entity.get(CompositeTransform).set("oscillate", "position", position);
+  }
 
-    entity.get(CompositeTransform).setCompositePosition("oscillate", position);
+  oscillateRotation(entity, alpha, min, max) {
+    rotation.copy(min).slerp(max, alpha);
+    entity.get(CompositeTransform).set("oscillate", "rotation", rotation);
+  }
+
+  oscillateScale(entity, alpha, min, max) {
+    scale.copy(min).lerp(max, alpha);
+    console.log("scale", min, alpha);
+    entity.get(CompositeTransform).set("oscillate", "scale", scale);
   }
 }

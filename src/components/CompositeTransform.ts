@@ -1,5 +1,12 @@
 import { Component, JSONType } from "hecs";
-import { Vector3, Vector3Type, QuaternionType } from "hecs-plugin-core";
+import {
+  Vector3,
+  Vector3Type,
+  Quaternion,
+  QuaternionType,
+} from "hecs-plugin-core";
+
+type TransformProperty = "position" | "scale" | "rotation";
 
 /**
  * Provides the "CompositeTransform" transform of an object. For example, while
@@ -36,29 +43,25 @@ export class CompositeTransform extends Component {
     },
   };
 
-  setCompositePosition(id, position) {
+  set(id, property: TransformProperty, value: any) {
     // If needed, initialize an offset for this system on this entity
     if (!(id in this.offsets)) {
       this.offsets[id] = {};
     }
 
-    if (!("position" in this.offsets[id])) {
-      this.offsets[id].position = new Vector3();
+    if (!(property in this.offsets[id])) {
+      let init;
+      switch (property) {
+        case "position":
+        case "scale":
+          init = new Vector3();
+          break;
+        case "rotation":
+          init = new Quaternion();
+      }
+      this.offsets[id][property] = init;
     }
 
-    this.offsets[id].position.copy(position);
-  }
-
-  setCompositeScale(id, scale) {
-    // If needed, initialize an offset for this system on this entity
-    if (!(id in this.offsets)) {
-      this.offsets[id] = {};
-    }
-
-    if (!("scale" in this.offsets[id])) {
-      this.offsets[id].scale = new Vector3();
-    }
-
-    this.offsets[id].scale.copy(scale);
+    this.offsets[id][property].copy(value);
   }
 }
