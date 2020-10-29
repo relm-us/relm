@@ -3,7 +3,7 @@ import { World } from "hecs";
 import { Asset, Vector3, Quaternion } from "hecs-plugin-core";
 import ThreePlugin, { Shape, Model, Camera, LookAt } from "hecs-plugin-three";
 
-import { Noise } from "./components/Noise";
+import { Noisy } from "./components/Noisy";
 import { CompositeTransform } from "./components/CompositeTransform";
 import {
   OscillatePosition,
@@ -12,7 +12,7 @@ import {
 } from "./components/Oscillate";
 import { CenteredMesh } from "./components/CenteredMesh";
 
-import { NoiseSystem } from "./systems/NoiseSystem";
+import { NoisySystem } from "./systems/NoisySystem";
 import { OscillateSystem } from "./systems/OscillateSystem";
 import { CompositeTransformSystem } from "./systems/CompositeTransformSystem";
 import { CenteredMeshSystem } from "./systems/CenteredMeshSystem";
@@ -21,7 +21,7 @@ import { Euler } from "three";
 const world = new World({
   plugins: [ThreePlugin],
   components: [
-    Noise,
+    Noisy,
     OscillatePosition,
     OscillateRotation,
     OscillateScale,
@@ -29,7 +29,7 @@ const world = new World({
     CenteredMesh,
   ],
   systems: [
-    NoiseSystem,
+    NoisySystem,
     OscillateSystem,
     CompositeTransformSystem,
     CenteredMeshSystem,
@@ -82,19 +82,19 @@ const chair = world.entities
     frequency: 2,
     max: new Vector3(0, 0.5, 0),
   })
-  .add(Noise, { speed: 2, magnitude: new Vector3(0, 0, 10) })
+  .add(Noisy, { speed: 2, magnitude: new Vector3(0, 0, 10) })
   .activate();
 
 const orangeBox = makeBox({ x: 0, y: 0, z: -2, color: "orange" })
-  .add(Noise, { speed: 4, magnitude: new Vector3(0, 2, 4) })
+  .add(Noisy, { speed: 4, magnitude: new Vector3(0, 2, 4) })
   .activate();
 
 const blueBox = makeBox({ x: -2, y: 0, z: 0, color: "blue" })
-  .add(Noise, { speed: 4, magnitude: new Vector3(0, 2, 4) })
+  .add(Noisy, { speed: 4, magnitude: new Vector3(0, 2, 4) })
   .activate();
 
 const brownBox = makeBox({ x: 2, y: 0, z: 0, color: "brown" })
-  .add(Noise, { speed: 4, magnitude: new Vector3(0, 2, 4) })
+  .add(Noisy, { speed: 4, magnitude: new Vector3(0, 2, 4) })
   .activate();
 
 // Create the singleton camera

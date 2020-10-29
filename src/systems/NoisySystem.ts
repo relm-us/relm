@@ -1,15 +1,15 @@
 import { System, Groups } from "hecs";
-import { Transform, Vector3 } from "hecs-plugin-core";
 import SimplexNoise from "simplex-noise";
 
-import { Noise } from "../components/Noise";
+import { Noisy, NoisyProperty } from "../components/Noisy";
 import { CompositeTransform } from "../components/CompositeTransform";
+import { Vector3 } from "three";
 
 const simplex = new SimplexNoise();
 
 const position = new Vector3();
 
-function randomVector3(min, max) {
+function randomVector3(min: number, max: number): Vector3 {
   const range = max - min;
   return new Vector3(
     Math.random() * range + min,
@@ -18,27 +18,39 @@ function randomVector3(min, max) {
   );
 }
 
-export class NoiseSystem extends System {
+export class NoisySystem extends System {
   order = Groups.Initialization;
 
   static queries = {
-    shaking: [CompositeTransform, Noise],
+    all: [CompositeTransform, Noisy],
   };
 
-  update(delta) {
-    this.queries.shaking.forEach((entity) => {
-      const spec = entity.get(Noise);
+  update(timeDelta) {
+    this.queries.all.forEach((entity) => {
+      const spec = entity.get(Noisy);
       if (!spec.noisePos) {
         spec.noisePos = randomVector3(0, 100);
         spec.noiseDir = randomVector3(0, 100)
           .normalize()
           .multiplyScalar(spec.speed / 100);
       }
-      this.shake(entity, spec.magnitude, spec.noisePos, spec.noiseDir);
+      this.addNoise(
+        entity,
+        spec.property,
+        spec.magnitude,
+        spec.noisePos,
+        spec.noiseDir
+      );
     });
   }
 
-  shake(entity, magnitude, noisePos, noiseDir) {
+  addNoise(
+    entity,
+    property: NoisyProperty,
+    magnitude: Vector3,
+    noisePos: Vector3,
+    noiseDir: Vector3
+  ) {
     noisePos.add(noiseDir);
 
     const noiseX = simplex.noise3D(
@@ -61,6 +73,6 @@ export class NoiseSystem extends System {
     position.y = (noiseY / 10) * magnitude.y;
     position.z = (noiseZ / 10) * magnitude.z;
 
-    entity.get(CompositeTransform).set("noise", "position", position);
+    entity.get(CompositeTransform).set("noisy", property, position);
   }
 }
