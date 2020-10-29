@@ -4,6 +4,7 @@
 	"compilerOptions": {
 		"moduleResolution": "node",
 		"target": "es2017",
+		"module": "es2020",
 		"importsNotUsedAsValues": "remove",
 		"isolatedModules": true,
 		"esModuleInterop": true,

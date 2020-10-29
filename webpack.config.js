@@ -55,7 +55,7 @@ module.exports = {
       // "hecs-plugin-core": path.resolve("node_modules", "hecs-plugin-core"),
       // "hecs-plugin-three": path.resolve("node_modules", "hecs-plugin-three"),
     },
-    symlinks: false,
+    // symlinks: false,
     extensions: [".mjs", ".js", ".ts", ".svelte"],
     mainFields: ["svelte", "browser", "module", "main"],
   },
@@ -127,6 +127,19 @@ module.exports = {
         test: /\.ts$/,
         use: "ts-loader",
         exclude: /node_modules/,
+      },
+      // {
+      //   test: /\.wasm$/,
+      //   // Required 'type' field to prevent defaultRules getting a chance to
+      //   // process wasm files first. See
+      //   //   https://webpack.js.org/configuration/module/#ruletype
+      //   type: "javascript/auto",
+      //   use: "wasm-loader",
+      // },
+      {
+        test: /\.js$/,
+        enforce: "pre",
+        use: ["source-map-loader"],
       },
     ],
   },
