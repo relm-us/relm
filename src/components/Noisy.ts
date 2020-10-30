@@ -1,35 +1,44 @@
-import { Component, NumberType, StringType } from "hecs";
-import { Vector3, Vector3Type } from "hecs-plugin-core";
+import { Component, NumberType, BooleanType } from "hecs";
+import { Vector3Type } from "hecs-plugin-core";
+import { Vector3 } from "three";
 
-export type NoisyProperty = "position" | "rotation" | "scale";
+const SpeedMagnitudeProps = {
+  speed: {
+    type: NumberType,
+    default: 1.0,
+    editor: {
+      label: "Speed",
+    },
+  },
+  magnitude: {
+    type: Vector3Type,
+    default: new Vector3(1, 1, 1),
+    editor: {
+      label: "Magnitude",
+    },
+  },
+};
 
-export class Noisy extends Component {
+export class NoisyPosition extends Component {
   static props = {
-    property: {
-      type: StringType,
-      default: "position",
+    ...SpeedMagnitudeProps,
+  };
+}
+
+export class NoisyRotation extends Component {
+  static props = {
+    ...SpeedMagnitudeProps,
+  };
+}
+
+export class NoisyScale extends Component {
+  static props = {
+    ...SpeedMagnitudeProps,
+    dependent: {
+      type: BooleanType,
+      default: true,
       editor: {
-        label: "Property to Add Noise To",
-        input: "Select",
-        options: [
-          { label: "Position", value: "position" },
-          { label: "Rotation", value: "rotation" },
-          { label: "Scale", value: "scale" },
-        ],
-      },
-    },
-    speed: {
-      type: NumberType,
-      default: 1.0,
-      editor: {
-        label: "Speed",
-      },
-    },
-    magnitude: {
-      type: Vector3Type,
-      default: new Vector3(1, 1, 1),
-      editor: {
-        label: "Magnitude",
+        label: "Dependent Variables",
       },
     },
   };

@@ -3,7 +3,7 @@ import { World } from "hecs";
 import { Asset, Vector3, Quaternion } from "hecs-plugin-core";
 import ThreePlugin, { Shape, Model, Camera, LookAt } from "hecs-plugin-three";
 
-import { Noisy } from "./components/Noisy";
+import { NoisyPosition, NoisyRotation, NoisyScale } from "./components/Noisy";
 import { CompositeTransform } from "./components/CompositeTransform";
 import {
   OscillatePosition,
@@ -21,7 +21,9 @@ import { Euler } from "three";
 const world = new World({
   plugins: [ThreePlugin],
   components: [
-    Noisy,
+    NoisyPosition,
+    NoisyRotation,
+    NoisyScale,
     OscillatePosition,
     OscillateRotation,
     OscillateScale,
@@ -82,19 +84,23 @@ const chair = world.entities
     frequency: 2,
     max: new Vector3(0, 0.5, 0),
   })
-  .add(Noisy, { speed: 2, magnitude: new Vector3(0, 0, 10) })
+  .add(NoisyPosition, { speed: 2, magnitude: new Vector3(0, 0, 10) })
   .activate();
 
 const orangeBox = makeBox({ x: 0, y: 0, z: -2, color: "orange" })
-  .add(Noisy, { speed: 4, magnitude: new Vector3(0, 2, 4) })
+  .add(NoisyPosition, { speed: 4, magnitude: new Vector3(0, 2, 4) })
   .activate();
 
 const blueBox = makeBox({ x: -2, y: 0, z: 0, color: "blue" })
-  .add(Noisy, { speed: 4, magnitude: new Vector3(0, 2, 4) })
+  .add(NoisyScale, {
+    property: "scale",
+    speed: 4,
+    magnitude: new Vector3(1, 1, 1),
+  })
   .activate();
 
 const brownBox = makeBox({ x: 2, y: 0, z: 0, color: "brown" })
-  .add(Noisy, { speed: 4, magnitude: new Vector3(0, 2, 4) })
+  .add(NoisyPosition, { speed: 4, magnitude: new Vector3(0, 2, 4) })
   .activate();
 
 // Create the singleton camera

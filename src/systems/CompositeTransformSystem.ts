@@ -1,5 +1,6 @@
 import { System, Groups, Not } from "hecs";
 import { Transform } from "hecs-plugin-core";
+import { Quaternion, Vector3 } from "three";
 
 import { CompositeTransform } from "../components/CompositeTransform";
 
@@ -21,25 +22,24 @@ export class CompositeTransformSystem extends System {
   }
 
   updateCompositeTransform(entity) {
-    const tf = entity.get(Transform);
+    const transform = entity.get(Transform);
     const composite = entity.get(CompositeTransform);
-    tf.position.copy(composite.position);
-    tf.rotation.copy(composite.rotation);
-    tf.scale.copy(composite.scale);
+
+    transform.position.copy(composite.position);
+    transform.rotation.copy(composite.rotation);
+    transform.scale.copy(composite.scale);
 
     // Loop through each offset to create a composite offset
-    let offset: any;
+    let offset: { position?: Vector3; rotation?: Quaternion; scale?: Vector3 };
     for (offset of Object.values(composite.offsets)) {
       if (offset.position) {
-        tf.position.add(offset.position);
+        transform.position.add(offset.position);
       }
       if (offset.rotation) {
-        // TODO: learn enough to combine rotations
-        //  e.g. https://marctenbosch.com/quaternions/
-        tf.rotation.multiply(offset.rotation);
+        transform.rotation.multiply(offset.rotation);
       }
       if (offset.scale) {
-        tf.scale.multiply(offset.scale);
+        transform.scale.multiply(offset.scale);
       }
     }
   }

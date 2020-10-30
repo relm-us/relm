@@ -69,17 +69,16 @@ export class OscillateSystem extends System {
 
   oscillatePosition(entity, alpha, min, max) {
     position.copy(min).lerp(max, alpha);
-    entity.get(CompositeTransform).set("oscillate", "position", position);
+    entity.get(CompositeTransform).offset("oscillate", "position", position);
   }
 
   oscillateRotation(entity, alpha, min, max) {
     rotation.copy(min).slerp(max, alpha);
-    entity.get(CompositeTransform).set("oscillate", "rotation", rotation);
+    entity.get(CompositeTransform).offset("oscillate", "rotation", rotation);
   }
 
   oscillateScale(entity, alpha, min, max) {
     scale.copy(min).lerp(max, alpha);
-    console.log("scale", min, alpha);
-    entity.get(CompositeTransform).set("oscillate", "scale", scale);
+    entity.get(CompositeTransform).offset("oscillate", "scale", scale);
   }
 }

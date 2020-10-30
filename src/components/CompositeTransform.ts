@@ -1,10 +1,6 @@
 import { Component, JSONType } from "hecs";
-import {
-  Vector3,
-  Vector3Type,
-  Quaternion,
-  QuaternionType,
-} from "hecs-plugin-core";
+import { Vector3Type, QuaternionType } from "hecs-plugin-core";
+import { Vector3, Quaternion } from "three";
 
 type TransformProperty = "position" | "scale" | "rotation";
 
@@ -43,7 +39,7 @@ export class CompositeTransform extends Component {
     },
   };
 
-  set(id, property: TransformProperty, value: any) {
+  offset(id: string, property: TransformProperty, value: Vector3 | Quaternion) {
     // If needed, initialize an offset for this system on this entity
     if (!(id in this.offsets)) {
       this.offsets[id] = {};
