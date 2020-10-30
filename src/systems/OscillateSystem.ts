@@ -1,7 +1,6 @@
 import { System, Groups } from "hecs";
-import { Vector3, Quaternion } from "hecs-plugin-core";
+import { Vector3, Quaternion, Transform } from "hecs-plugin-core";
 
-import { CompositeTransform } from "../components/CompositeTransform";
 import {
   OscillatePosition,
   OscillateRotation,
@@ -17,9 +16,9 @@ export class OscillateSystem extends System {
   order = Groups.Initialization;
 
   static queries = {
-    position: [CompositeTransform, OscillatePosition],
-    rotation: [CompositeTransform, OscillateRotation],
-    scale: [CompositeTransform, OscillateScale],
+    position: [Transform, OscillatePosition],
+    rotation: [Transform, OscillateRotation],
+    scale: [Transform, OscillateScale],
   };
 
   init() {
@@ -68,18 +67,17 @@ export class OscillateSystem extends System {
   }
 
   oscillatePosition(entity, alpha, min, max) {
+    const position = entity.get(Transform).position;
     position.copy(min).lerp(max, alpha);
-    entity.get(CompositeTransform).set("oscillate", "position", position);
   }
 
   oscillateRotation(entity, alpha, min, max) {
+    const rotation = entity.get(Transform).rotation;
     rotation.copy(min).slerp(max, alpha);
-    entity.get(CompositeTransform).set("oscillate", "rotation", rotation);
   }
 
   oscillateScale(entity, alpha, min, max) {
+    const scale = entity.get(Transform).scale;
     scale.copy(min).lerp(max, alpha);
-    console.log("scale", min, alpha);
-    entity.get(CompositeTransform).set("oscillate", "scale", scale);
   }
 }

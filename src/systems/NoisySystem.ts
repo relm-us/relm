@@ -1,13 +1,11 @@
 import { System, Groups } from "hecs";
 import SimplexNoise from "simplex-noise";
+import { Transform } from "hecs-plugin-core";
 
 import { Noisy, NoisyProperty } from "../components/Noisy";
-import { CompositeTransform } from "../components/CompositeTransform";
 import { Vector3 } from "three";
 
 const simplex = new SimplexNoise();
-
-const position = new Vector3();
 
 function randomVector3(min: number, max: number): Vector3 {
   const range = max - min;
@@ -22,7 +20,7 @@ export class NoisySystem extends System {
   order = Groups.Initialization;
 
   static queries = {
-    all: [CompositeTransform, Noisy],
+    all: [Transform, Noisy],
   };
 
   update(timeDelta) {
@@ -69,10 +67,10 @@ export class NoisySystem extends System {
       noisePos.z + 11
     );
 
+    const position = entity.get(Transform).position;
+
     position.x = (noiseX / 10) * magnitude.x;
     position.y = (noiseY / 10) * magnitude.y;
     position.z = (noiseZ / 10) * magnitude.z;
-
-    entity.get(CompositeTransform).set("noisy", property, position);
   }
 }

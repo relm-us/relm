@@ -1,10 +1,9 @@
 import { World } from "hecs";
 
-import { Asset, Vector3, Quaternion } from "hecs-plugin-core";
+import { Transform, Asset, Vector3, Quaternion } from "hecs-plugin-core";
 import ThreePlugin, { Shape, Model, Camera, LookAt } from "hecs-plugin-three";
 
 import { Noisy } from "./components/Noisy";
-import { CompositeTransform } from "./components/CompositeTransform";
 import {
   OscillatePosition,
   OscillateRotation,
@@ -26,15 +25,9 @@ const world = new World({
     OscillatePosition,
     OscillateRotation,
     OscillateScale,
-    CompositeTransform,
     CenteredMesh,
   ],
-  systems: [
-    NoisySystem,
-    OscillateSystem,
-    CompositeTransformSystem,
-    CenteredMeshSystem,
-  ],
+  systems: [NoisySystem, /* OscillateSystem, */ CenteredMeshSystem],
 });
 
 world.presentation.setViewport(document.body);
@@ -42,7 +35,7 @@ world.presentation.setViewport(document.body);
 function makeBox({ x = 0, y = 0, z = 0, w = 1, h = 1, d = 1, color = "red" }) {
   return world.entities
     .create("Box")
-    .add(CompositeTransform, {
+    .add(Transform, {
       position: new Vector3(x, y, z),
     })
     .add(Shape, {
@@ -52,32 +45,65 @@ function makeBox({ x = 0, y = 0, z = 0, w = 1, h = 1, d = 1, color = "red" }) {
 }
 
 function makeChair({ x = 0, y = 0, z = 0 }) {
-  return world.entities
+  const p1 = world.entities
     .create("Chair")
-    .add(CenteredMeshSystem)
-    .add(CompositeTransform, {
-      position: new Vector3(x, y, z),
+    .add(Transform, {
+      position: new Vector3(x, y - 0.15, z),
       scale: new Vector3(0.1, 0.1, 0.1),
-      offsets: {
-        static: {
-          position: new Vector3(0, -0.15, 0),
-        },
-      },
     })
-    .add(Model, {
-      asset: new Asset("/chair.glb"),
+    .activate();
+
+  const p2 = world.entities
+    .create("ChairOscillatePosition")
+    .add(Transform)
+    .add(OscillatePosition, {
+      frequency: 2,
+      max: new Vector3(0, 0.5, 0),
     })
     .add(OscillateRotation, {
       phase: Math.random() * 100,
       min: new Quaternion().setFromEuler(new Euler(0, 0, -Math.PI / 4)),
       max: new Quaternion().setFromEuler(new Euler(0, 0, Math.PI / 4)),
     })
-    .add(OscillatePosition, {
-      frequency: 2,
-      max: new Vector3(0, 0.5, 0),
-    })
-    .add(Noisy, { speed: 2, magnitude: new Vector3(0, 0, 10) })
     .activate();
+
+  p2.setParent(p1);
+
+  // const p3 = world.entities
+  //   .create("ChairOscillateRotation")
+  //   .add(Transform)
+  //   .add(OscillateRotation, {
+  //     phase: Math.random() * 100,
+  //     min: new Quaternion().setFromEuler(new Euler(0, 0, -Math.PI / 4)),
+  //     max: new Quaternion().setFromEuler(new Euler(0, 0, Math.PI / 4)),
+  //   })
+  //   .activate();
+
+  // p3.setParent(p2);
+
+  const p4 = world.entities
+    .create("ChairNoisy")
+    .add(Transform)
+    .add(Noisy, { speed: 2, magnitude: new Vector3(0, 0, 10) })
+    .add(Model, {
+      asset: new Asset("/chair.glb"),
+    })
+    .activate();
+
+  p4.setParent(p2);
+
+  // const p5 = world.entities
+  //   .create("ChairModel")
+  //   .add(Transform)
+  //   // .add(CenteredMesh)
+  //   .add(Model, {
+  //     asset: new Asset("/chair.glb"),
+  //   })
+  //   .activate();
+
+  // p5.setParent(p4);
+
+  return p1;
 }
 
 // Create the floor
@@ -102,11 +128,11 @@ for (let dep = -8; dep < 8; dep++) {
 const cameraBoom = new Vector3(0, 8, 6);
 const camera = world.entities
   .create("Camera")
-  .add(CompositeTransform, {
+  .add(Transform, {
     position: new Vector3().copy(cameraBoom),
-    offsets: {
-      static: cameraBoom,
-    },
+    // offsets: {
+    //   static: cameraBoom,
+    // },
   })
   // .add(Oscillate, { phase: Math.PI / 2, behavior: "HARD_BOUNCE" })
   .add(LookAt, {
