@@ -41,10 +41,11 @@
 		"hecs": "0.16.0",
 		"hecs-plugin-core": "0.16.0",
 		"hecs-plugin-three": "0.16.0",
+		"hecs-plugin-composable": "0.16.0",
 		"serve": "^11.3.2",
 		"simplex-noise": "^2.4.0",
 		"stats.js": "^0.17.0",
-		"three": "0.121.1"
+		"three": "^0.119.1"
 	},
 	"browserslist": [
 		"defaults"
