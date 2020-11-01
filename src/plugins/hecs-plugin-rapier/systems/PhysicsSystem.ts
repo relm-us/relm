@@ -63,10 +63,8 @@ export class PhysicsSystem extends System {
 
       if (spec.kind === "DYNAMIC") {
         if (!parent) {
-          const position = body.translation();
-          // console.log("new pos", position);
-          local.position.copy(position);
-          // local.rotation.copy(body.rotation());
+          local.position.copy(body.translation());
+          local.rotation.copy(body.rotation());
         } else {
           console.log("has parent");
           // Example:

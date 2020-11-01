@@ -178,6 +178,7 @@ function start(RAPIER) {
       Object.values(playerForces).forEach((force) => {
         playerForce.add(force);
       });
+      console.log("applyForce", playerForce);
       ref.value.applyForce(playerForce);
     }
   };
@@ -190,42 +191,54 @@ import("@dimforge/rapier3d").then((RAPIER) => {
   start(RAPIER);
 });
 
-const playerForceMagnitude = 15;
-window.addEventListener("keydown", (event) => {
+const playerForceMagnitude = 25;
+document.addEventListener("keydown", (event) => {
+  if (event.repeat) return;
   let handled = false;
   switch (event.key) {
     case "ArrowUp":
-      playerForces.up.z = -playerForceMagnitude;
+      playerForces.up.set(0, 0, -playerForceMagnitude);
       handled = true;
+      // console.log("ArrowUp", playerForceMagnitude, playerForces.up);
       break;
     case "ArrowDown":
-      playerForces.down.z = playerForceMagnitude;
+      playerForces.down.set(0, 0, playerForceMagnitude);
       handled = true;
+      // console.log("ArrowDown", playerForceMagnitude, playerForces.down);
       break;
     case "ArrowLeft":
-      playerForces.left.x = -playerForceMagnitude;
+      playerForces.left.set(-playerForceMagnitude, 0, 0);
       handled = true;
+      // console.log("ArrowLeft", playerForceMagnitude, playerForces.left);
       break;
     case "ArrowRight":
-      playerForces.right.x = playerForceMagnitude;
+      playerForces.right.set(playerForceMagnitude, 0, 0);
       handled = true;
+      // console.log("ArrowRight", playerForceMagnitude, playerForces.right);
       break;
   }
+  // console.log("right", playerForces.right, playerForces);
+  // console.log("keydown", event.key, handled, playerForces);
   if (handled) event.preventDefault();
 });
-window.addEventListener("keyup", (event) => {
+document.addEventListener("keyup", (event) => {
+  console.log("keyup", event.key, playerForces);
   switch (event.key) {
     case "ArrowUp":
       playerForces.up.z = 0;
+      // console.log("ArrowUp kd");
       break;
     case "ArrowDown":
       playerForces.down.z = 0;
+      // console.log("ArrowDown kd");
       break;
     case "ArrowLeft":
       playerForces.left.x = 0;
+      // console.log("ArrowLeft kd");
       break;
     case "ArrowRight":
       playerForces.right.x = 0;
+      // console.log("ArrowRight kd");
       break;
   }
 });
