@@ -21,8 +21,3 @@
     }
   }
 </style>
-
-<main>
-  <h1>Hello {name}!</h1>
-  <p>Pieces of Relm are coming together.</p>
-</main>
