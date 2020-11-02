@@ -1,6 +1,5 @@
 import { System, Groups, Not, Modified } from "hecs";
-import { ComposableTransform } from "hecs-plugin-composable";
-import { RigidBody, RigidBodyRef, ColliderRef } from "../components";
+import { RigidBody, RigidBodyRef } from "../components";
 
 function getBodyStatus(kind) {
   switch (kind) {
@@ -43,11 +42,10 @@ export class RigidBodySystem extends System {
   }
 
   build(entity) {
-    const { world } = this.world.physics;
+    const { world, Transform } = this.world.physics;
     const spec = entity.get(RigidBody);
-    const transform = entity.get(ComposableTransform);
+    const transform = entity.get(Transform);
 
-    console.log("build rigid body", transform.position, transform.rotation);
     let rigidBodyDesc = new RAPIER.RigidBodyDesc(getBodyStatus(spec.kind))
       .setTranslation(transform.position)
       .setRotation(transform.rotation);

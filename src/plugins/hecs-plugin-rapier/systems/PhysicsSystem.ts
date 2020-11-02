@@ -1,34 +1,37 @@
 import { System, Groups } from "hecs";
-import {
-  Transform,
-  WorldTransform,
-  Matrix4,
-  Vector3,
-  Quaternion,
-} from "hecs-plugin-core";
+import { WorldTransform } from "hecs-plugin-core";
 import { RigidBody, RigidBodyRef } from "../components";
-import { ComposableTransform } from "hecs-plugin-composable";
 
 export class PhysicsSystem extends System {
   order = Groups.Simulation;
 
-  static queries = {
-    default: [RigidBodyRef, ComposableTransform, WorldTransform],
-  };
-
+  // Dynamically create the `default` query, since we don't necessarily know
+  // which Transform component to use at static compile time.
   init() {
-    // this.update = createFixedTimestep(TIMESTEP, this.fixedUpdate.bind(this));
+    const { Transform } = this.world.physics;
+
+    this.createQueries({
+      default: [RigidBodyRef, Transform, WorldTransform],
+    });
+  }
+
+  // TODO: remove this if https://github.com/gohyperr/hecs/pull/22 accepted
+  createQueries(queries) {
+    for (const queryName in queries) {
+      const Components = queries[queryName];
+      this.queries[queryName] = this.world.queries.create(Components);
+    }
   }
 
   update() {
-    const { world } = this.world.physics;
+    const { world, Transform } = this.world.physics;
 
     // console.log("fixedUpdate");
     this.queries.default.forEach((entity) => {
       // const world = entity.get(WorldTransform);
       const spec = entity.get(RigidBody);
       const body = entity.get(RigidBodyRef).value;
-      const transform = entity.get(ComposableTransform);
+      const transform = entity.get(Transform);
 
       // @todo Should we teleport if the distance is huge?
 
@@ -56,7 +59,7 @@ export class PhysicsSystem extends System {
 
     this.queries.default.forEach((entity) => {
       const parent = entity.getParent();
-      const local = entity.get(ComposableTransform);
+      const local = entity.get(Transform);
       const world = entity.get(WorldTransform);
       const spec = entity.get(RigidBody);
       const body = entity.get(RigidBodyRef).value;

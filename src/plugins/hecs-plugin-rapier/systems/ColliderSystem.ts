@@ -1,5 +1,4 @@
 import { System, Groups, Not, Modified } from "hecs";
-import { ComposableTransform } from "hecs-plugin-composable";
 import { RigidBodyRef, Collider, ColliderRef } from "../components";
 
 export class ColliderSystem extends System {

@@ -8,6 +8,8 @@ import RapierPlugin, {
   Collider,
 } from "./plugins/hecs-plugin-rapier";
 
+import Css3DPlugin, { HtmlNode } from "./plugins/hecs-plugin-css3d";
+
 import ComposablePlugin, {
   ComposableTransform,
   NoisyPosition,
@@ -32,12 +34,14 @@ const playerForces = {
 
 function start(RAPIER) {
   const world = new World({
-    plugins: [ThreePlugin, RapierPlugin, ComposablePlugin],
+    plugins: [ThreePlugin, RapierPlugin, ComposablePlugin, Css3DPlugin],
     components: [CenteredMesh],
     systems: [CenteredMeshSystem],
   });
 
+  world.physics.Transform = ComposableTransform;
   world.presentation.setViewport(document.body);
+  world.cssPresentation.setViewport(document.body);
 
   function makeBox({
     x = 0,
@@ -66,6 +70,32 @@ function start(RAPIER) {
         boxSize: new Vector3(w, h, d),
       });
   }
+
+  const el = document.createElement("img");
+  el.src = "/favicon.png";
+
+  world.entities
+    .create("Image")
+    .add(ComposableTransform, {
+      position: {
+        x: 0,
+        y: 0,
+        z: 0,
+      },
+      scale: {
+        x: 0.01,
+        y: 0.01,
+        z: 0.01,
+      },
+    })
+    .add(HtmlNode, {
+      node: el,
+    })
+    .add(OscillateRotation, {
+      min: new Quaternion().setFromEuler(new Euler(0, 0, -Math.PI / 4)),
+      max: new Quaternion().setFromEuler(new Euler(0, 0, Math.PI / 4)),
+    })
+    .activate();
 
   // Create the floor
   const origin = makeBox({
@@ -118,34 +148,34 @@ function start(RAPIER) {
     .add(Model, {
       asset: new Asset("/chair.glb"),
     })
-    .add(OscillateRotation, {
-      min: new Quaternion().setFromEuler(new Euler(0, 0, -Math.PI / 4)),
-      max: new Quaternion().setFromEuler(new Euler(0, 0, Math.PI / 4)),
-    })
-    .add(OscillatePosition, {
-      frequency: 2,
-      max: new Vector3(0, 0.5, 0),
-    })
-    .add(NoisyPosition, { speed: 2, magnitude: new Vector3(0, 0, 10) })
+    // .add(OscillateRotation, {
+    //   min: new Quaternion().setFromEuler(new Euler(0, 0, -Math.PI / 4)),
+    //   max: new Quaternion().setFromEuler(new Euler(0, 0, Math.PI / 4)),
+    // })
+    // .add(OscillatePosition, {
+    //   frequency: 2,
+    //   max: new Vector3(0, 0.5, 0),
+    // })
+    // .add(NoisyPosition, { speed: 2, magnitude: new Vector3(0, 0, 10) })
     .activate();
 
   const orangeBox = makeBox({ x: 0, y: 0, z: -2, color: "orange" })
-    .add(NoisyPosition, { speed: 4, magnitude: new Vector3(0, 2, 4) })
+    // .add(NoisyPosition, { speed: 4, magnitude: new Vector3(0, 2, 4) })
     .activate();
 
   const blueBox = makeBox({ x: -2, y: 0, z: 0, color: "blue" })
-    .add(NoisyScale, {
-      speed: 4,
-      magnitude: new Vector3(1, 1, 1),
-    })
+    // .add(NoisyScale, {
+    //   speed: 4,
+    //   magnitude: new Vector3(1, 1, 1),
+    // })
     .add(Transform)
     .activate();
 
   const brownBox = makeBox({ x: 2, y: 0, z: 0, color: "brown" })
-    .add(OscillateScale, {
-      min: new Vector3(1, 1, 1),
-      max: new Vector3(1, 2, 1),
-    })
+    // .add(OscillateScale, {
+    //   min: new Vector3(1, 1, 1),
+    //   max: new Vector3(1, 2, 1),
+    // })
     // .add(NoisyRotation, { speed: 4, magnitude: new Vector3(0, 1, 0) })
     .activate();
 
@@ -178,11 +208,12 @@ function start(RAPIER) {
       Object.values(playerForces).forEach((force) => {
         playerForce.add(force);
       });
-      console.log("applyForce", playerForce);
+      // console.log("applyForce", playerForce);
       ref.value.applyForce(playerForce);
     }
   };
 
+  // return;
   world.presentation.setLoop(gameLoop);
 }
 
@@ -222,7 +253,7 @@ document.addEventListener("keydown", (event) => {
   if (handled) event.preventDefault();
 });
 document.addEventListener("keyup", (event) => {
-  console.log("keyup", event.key, playerForces);
+  // console.log("keyup", event.key, playerForces);
   switch (event.key) {
     case "ArrowUp":
       playerForces.up.z = 0;
