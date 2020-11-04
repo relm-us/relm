@@ -223,7 +223,7 @@ function start(RAPIER) {
         playerForce.add(force);
       });
       // console.log("applyForce", playerForce);
-      ref.value.applyForce(playerForce);
+      ref.value.applyForce(playerForce, true);
     }
   };
 
