@@ -12,7 +12,8 @@ import { HtmlInScene } from "../components/HtmlInScene";
 
 export class HtmlNodeSystem extends System {
   active = IS_BROWSER;
-  order = Groups.Simulation + 100;
+  // order = Groups.Simulation + 100;
+  order = Groups.Initialization + 10;
 
   static queries = {
     added: [HtmlNode, Not(HtmlInScene)],
@@ -34,6 +35,7 @@ export class HtmlNodeSystem extends System {
     this.queries.added.forEach((entity) => {
       const spec = entity.get(HtmlNode);
       const transform = entity.get(Transform);
+      if (!transform) return;
       console.log("added HtmlNode; transform:", transform);
       const object = spec.billboard
         ? new CSS3DSprite(spec.node)
@@ -53,6 +55,7 @@ export class HtmlNodeSystem extends System {
     this.queries.active.forEach((entity) => {
       const spec = entity.get(HtmlNode);
       const transform = entity.get(Transform);
+      if (!transform) return;
       // console.log("active HtmlNode; transform:", transform);
       spec.object.position.copy(transform.position);
       spec.object.quaternion.copy(transform.rotation);
