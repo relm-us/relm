@@ -6,9 +6,9 @@ import RapierPlugin, {
   RigidBody,
   RigidBodyRef,
   Collider,
-} from "./hecs-plugins/rapier";
+} from "./ecs/plugins/rapier";
 
-import Css3DPlugin, { HtmlNode, CssPlane } from "./hecs-plugins/css3d";
+import Css3DPlugin, { HtmlNode, CssPlane } from "./ecs/plugins/css3d";
 
 import ComposablePlugin, {
   ComposableTransform,
@@ -18,10 +18,10 @@ import ComposablePlugin, {
   OscillatePosition,
   OscillateRotation,
   OscillateScale,
-} from "./hecs-plugins/composable";
+} from "./ecs/plugins/composable";
 
-import { CenteredMesh } from "./components/CenteredMesh";
-import { CenteredMeshSystem } from "./systems/CenteredMeshSystem";
+import { CenteredMesh } from "./ecs/components/CenteredMesh";
+import { CenteredMeshSystem } from "./ecs/systems/CenteredMeshSystem";
 import { Euler } from "three";
 
 const playerForce = new Vector3();
