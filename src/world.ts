@@ -42,6 +42,9 @@ function start(RAPIER) {
   world.physics.Transform = ComposableTransform;
   world.cssPresentation.setViewport(document.body);
   world.presentation.setViewport(document.body);
+  world.presentation.renderer.domElement.style.zIndex = 1;
+  world.presentation.renderer.domElement.style.position = "absolute";
+  world.presentation.renderer.domElement.style.pointerEvents = "none";
 
   function makeBox({
     x = 0,
@@ -71,28 +74,29 @@ function start(RAPIER) {
       });
   }
 
-  const el = document.createElement("img");
-  el.src = "/square.png";
+  // const el = document.createElement("img");
+  // el.src = "/square.png";
+  const el = document.createElement("iframe");
+  el.width = "560";
+  el.height = "315";
+  el.src = "https://www.youtube.com/embed/nn8YGPZdCvA";
+  el.allow = "autoplay; encrypted-media";
+  el.allowFullscreen = true;
 
   world.entities
     .create("Image")
     .add(ComposableTransform, {
-      position: new Vector3(0, 1, 0),
-      // scale: {
-      //   x: 0.01,
-      //   y: 0.01,
-      //   z: 0.01,
-      // },
+      position: new Vector3(0, 1, -2),
     })
     .add(HtmlNode, {
       node: el,
-      scale: 0.01,
+      scale: 0.007,
     })
     .add(CssPlane, {
       kind: "RECTANGLE",
       rectangleSize: {
-        x: 1,
-        y: 1,
+        x: 2 * 2,
+        y: 1.125 * 2,
       },
     })
     // .add(OscillatePosition, {
@@ -161,10 +165,11 @@ function start(RAPIER) {
     //   min: new Quaternion().setFromEuler(new Euler(0, 0, -Math.PI / 4)),
     //   max: new Quaternion().setFromEuler(new Euler(0, 0, Math.PI / 4)),
     // })
-    // .add(OscillatePosition, {
-    //   frequency: 2,
-    //   max: new Vector3(0, 0.5, 0),
-    // })
+    .add(OscillatePosition, {
+      frequency: 0.6,
+      min: new Vector3(-0.5, 0, 0),
+      max: new Vector3(0.5, 0, 0),
+    })
     // .add(NoisyPosition, { speed: 2, magnitude: new Vector3(0, 0, 10) })
     .activate();
 
