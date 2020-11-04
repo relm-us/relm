@@ -6,9 +6,9 @@ import RapierPlugin, {
   RigidBody,
   RigidBodyRef,
   Collider,
-} from "./plugins/hecs-plugin-rapier";
+} from "./hecs-plugins/rapier";
 
-import Css3DPlugin, { HtmlNode } from "./plugins/hecs-plugin-css3d";
+import Css3DPlugin, { HtmlNode, CssPlane } from "./hecs-plugins/css3d";
 
 import ComposablePlugin, {
   ComposableTransform,
@@ -18,7 +18,7 @@ import ComposablePlugin, {
   OscillatePosition,
   OscillateRotation,
   OscillateScale,
-} from "hecs-plugin-composable";
+} from "./hecs-plugins/composable";
 
 import { CenteredMesh } from "./components/CenteredMesh";
 import { CenteredMeshSystem } from "./systems/CenteredMeshSystem";
@@ -40,8 +40,8 @@ function start(RAPIER) {
   });
 
   world.physics.Transform = ComposableTransform;
-  world.presentation.setViewport(document.body);
   world.cssPresentation.setViewport(document.body);
+  world.presentation.setViewport(document.body);
 
   function makeBox({
     x = 0,
@@ -72,28 +72,37 @@ function start(RAPIER) {
   }
 
   const el = document.createElement("img");
-  el.src = "/favicon.png";
+  el.src = "/square.png";
 
   world.entities
     .create("Image")
     .add(ComposableTransform, {
-      position: {
-        x: 0,
-        y: 0,
-        z: 0,
-      },
-      scale: {
-        x: 0.01,
-        y: 0.01,
-        z: 0.01,
-      },
+      position: new Vector3(0, 1, 0),
+      // scale: {
+      //   x: 0.01,
+      //   y: 0.01,
+      //   z: 0.01,
+      // },
     })
     .add(HtmlNode, {
       node: el,
+      scale: 0.01,
     })
+    .add(CssPlane, {
+      kind: "RECTANGLE",
+      rectangleSize: {
+        x: 1,
+        y: 1,
+      },
+    })
+    // .add(OscillatePosition, {
+    //   frequency: 0.2,
+    //   min: new Vector3(0, 0, -2),
+    //   max: new Vector3(0, 0, 2),
+    // })
     .add(OscillateRotation, {
-      min: new Quaternion().setFromEuler(new Euler(0, 0, -Math.PI / 4)),
-      max: new Quaternion().setFromEuler(new Euler(0, 0, Math.PI / 4)),
+      min: new Quaternion().setFromEuler(new Euler(0, -Math.PI / 4, 0)),
+      max: new Quaternion().setFromEuler(new Euler(0, Math.PI / 4, 0)),
     })
     .activate();
 

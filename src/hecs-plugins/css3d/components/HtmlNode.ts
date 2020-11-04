@@ -1,4 +1,4 @@
-import { Component, RefType, BooleanType } from "hecs";
+import { Component, RefType, BooleanType, NumberType } from "hecs";
 
 export class HtmlNode extends Component {
   static props = {
@@ -7,6 +7,10 @@ export class HtmlNode extends Component {
       editor: {
         label: "HTML Element",
       },
+    },
+
+    scale: {
+      type: NumberType,
     },
 
     billboard: {

@@ -12,7 +12,7 @@ import { HtmlInScene } from "../components/HtmlInScene";
 
 export class HtmlNodeSystem extends System {
   active = IS_BROWSER;
-  order = Groups.Presentation + 100;
+  order = Groups.Simulation + 100;
 
   static queries = {
     added: [HtmlNode, Not(HtmlInScene)],
@@ -34,6 +34,7 @@ export class HtmlNodeSystem extends System {
     this.queries.added.forEach((entity) => {
       const spec = entity.get(HtmlNode);
       const transform = entity.get(Transform);
+      console.log("added HtmlNode; transform:", transform);
       const object = spec.billboard
         ? new CSS3DSprite(spec.node)
         : new CSS3DObject(spec.node);
@@ -41,6 +42,7 @@ export class HtmlNodeSystem extends System {
       object.position.copy(transform.position);
       object.quaternion.copy(transform.rotation);
       object.scale.copy(transform.scale);
+      object.scale.multiplyScalar(spec.scale);
 
       this.presentation.scene.add(object);
       spec.object = object;
@@ -51,9 +53,11 @@ export class HtmlNodeSystem extends System {
     this.queries.active.forEach((entity) => {
       const spec = entity.get(HtmlNode);
       const transform = entity.get(Transform);
+      // console.log("active HtmlNode; transform:", transform);
       spec.object.position.copy(transform.position);
       spec.object.quaternion.copy(transform.rotation);
       spec.object.scale.copy(transform.scale);
+      spec.object.scale.multiplyScalar(spec.scale);
     });
   }
 }

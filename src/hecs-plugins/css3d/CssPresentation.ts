@@ -47,6 +47,7 @@ export class CssPresentation {
     renderer.setSize(this.size.width, this.size.height);
     renderer.domElement.style.position = "absolute";
     renderer.domElement.style.top = "0px";
+    renderer.domElement.style.zIndex = "-1";
     return renderer;
   }
 }
