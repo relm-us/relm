@@ -50,16 +50,24 @@ export function start(world) {
       });
   };
 
-  // const el = document.createElement("img");
-  // el.src = "/square.png";
+  const iframeSize = new Vector3(560, 315, 0);
+
   const el = document.createElement("iframe");
-  el.width = "560";
-  el.height = "315";
+  el.width = iframeSize.x;
+  el.height = iframeSize.y;
   el.src = "https://www.youtube.com/embed/nn8YGPZdCvA";
   el.allow = "autoplay; encrypted-media";
   el.allowFullscreen = true;
   el.style.zIndex = "0";
 
+  const iframeWorldWidth = 3;
+  const iframeRatio = iframeSize.x / iframeSize.y;
+  const rectangleSize = new Vector3(
+    iframeWorldWidth,
+    iframeWorldWidth / iframeRatio,
+    0.1
+  );
+  const scale = rectangleSize.x / parseFloat(el.width);
   world.entities
     .create("Image")
     .add(ComposableTransform, {
@@ -67,29 +75,33 @@ export function start(world) {
     })
     .add(HtmlNode, {
       node: el,
-      scale: 0.007,
+      scale,
     })
     .add(CssPlane, {
       kind: "RECTANGLE",
-      rectangleSize: {
-        x: 2 * 2,
-        y: 1.125 * 2,
-      },
+      rectangleSize,
     })
-    // .add(OscillatePosition, {
-    //   frequency: 0.2,
-    //   min: new Vector3(0, 0, -2),
-    //   max: new Vector3(0, 0, 2),
-    // })
-    .add(OscillateRotation, {
-      min: new Quaternion().setFromEuler(new Euler(0, -Math.PI / 4, 0)),
-      max: new Quaternion().setFromEuler(new Euler(0, Math.PI / 4, 0)),
+    .add(RigidBody, {
+      kind: "DYNAMIC",
+    })
+    .add(Collider, {
+      kind: "BOX",
+      boxSize: rectangleSize,
     })
     .activate();
+  // .add(OscillatePosition, {
+  //   frequency: 0.2,
+  //   min: new Vector3(0, 0, -2),
+  //   max: new Vector3(0, 0, 2),
+  // })
+  // .add(OscillateRotation, {
+  //   min: new Quaternion().setFromEuler(new Euler(0, -Math.PI / 4, 0)),
+  //   max: new Quaternion().setFromEuler(new Euler(0, Math.PI / 4, 0)),
+  // })
 
   // Create the floor
   const origin = makeBox({
-    y: -0.505,
+    y: -0.5,
     w: 8,
     h: 0.1,
     d: 6,
@@ -160,7 +172,7 @@ export function start(world) {
     // .add(NoisyPosition, { speed: 2, magnitude: new Vector3(0, 0, 10) })
     .activate();
 
-  const orangeBox = makeBox({ x: 0, y: 0, z: -2, color: "orange" })
+  const orangeBox = makeBox({ x: 0, y: 0, z: 2, color: "orange" })
     // .add(NoisyPosition, { speed: 4, magnitude: new Vector3(0, 2, 4) })
     .activate();
 
