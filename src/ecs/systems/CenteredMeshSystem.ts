@@ -1,13 +1,14 @@
 import { System, Groups, Not } from "hecs";
 import { Transform } from "hecs-plugin-core";
 import { ModelMesh } from "hecs-plugin-three";
+import { CenterMesh } from "../components/CenterMesh";
 import { CenteredMesh } from "../components/CenteredMesh";
 
 export class CenteredMeshSystem extends System {
   order = Groups.Simulation;
 
   static queries = {
-    new: [ModelMesh, Not(CenteredMesh)],
+    new: [ModelMesh, CenterMesh, Not(CenteredMesh)],
   };
 
   update() {

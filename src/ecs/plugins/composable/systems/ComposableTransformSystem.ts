@@ -13,6 +13,16 @@ export class ComposableTransformSystem extends System {
 
   update() {
     this.queries.new.forEach((entity) => {
+      const composable = entity.get(ComposableTransform);
+      if (Object.values(composable.positionOffsets).length > 0) {
+        composable.hasPositionOffsets = true;
+      }
+      if (Object.values(composable.rotationOffsets).length > 0) {
+        composable.hasRotationOffsets = true;
+      }
+      if (Object.values(composable.scaleOffsets).length > 0) {
+        composable.hasScaleOffsets = true;
+      }
       entity.add(Transform);
     });
     this.queries.active.forEach((entity) => {

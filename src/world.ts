@@ -16,8 +16,7 @@ import {
   OscillateScale,
 } from "./ecs/plugins/composable";
 
-import { CenteredMesh } from "./ecs/components/CenteredMesh";
-import { CenteredMeshSystem } from "./ecs/systems/CenteredMeshSystem";
+import { CenterMesh } from "./ecs/components/CenterMesh";
 import { Euler } from "three";
 
 import { playerForce, playerForces } from "./playerForces";
@@ -98,78 +97,88 @@ export function start(world) {
     dynamic: false,
   }).activate();
 
-  // const wall1 = makeBox({
-  //   x: -4,
-  //   y: -0.25,
-  //   w: 0.1,
-  //   h: 0.5,
-  //   d: 6,
-  //   color: "white",
-  //   dynamic: false,
-  // }).activate();
+  const wall1 = makeBox({
+    x: -4,
+    y: -0.25,
+    w: 0.1,
+    h: 0.5,
+    d: 6,
+    color: "white",
+    dynamic: false,
+  }).activate();
 
-  // const wall2 = makeBox({
-  //   x: 4,
-  //   y: -0.25,
-  //   w: 0.1,
-  //   h: 0.5,
-  //   d: 6,
-  //   color: "white",
-  //   dynamic: false,
-  // }).activate();
+  const wall2 = makeBox({
+    x: 4,
+    y: -0.25,
+    w: 0.1,
+    h: 0.5,
+    d: 6,
+    color: "white",
+    dynamic: false,
+  }).activate();
 
-  // const wall3 = makeBox({
-  //   x: 0,
-  //   y: -0.25,
-  //   z: -3,
-  //   w: 8,
-  //   h: 0.5,
-  //   d: 0.1,
-  //   color: "white",
-  //   dynamic: false,
-  // }).activate();
+  const wall3 = makeBox({
+    x: 0,
+    y: -0.25,
+    z: -3,
+    w: 8,
+    h: 0.5,
+    d: 0.1,
+    color: "white",
+    dynamic: false,
+  }).activate();
 
-  // const chair = world.entities
-  //   .create("Chair")
-  //   .add(CenteredMeshSystem)
-  //   .add(ComposableTransform, {
-  //     position: new Vector3(0, 0, 0),
-  //     scale: new Vector3(1, 1, 1),
-  //   })
-  //   .add(Model, {
-  //     asset: new Asset("/chair.glb"),
-  //   })
-  //   // .add(OscillateRotation, {
-  //   //   min: new Quaternion().setFromEuler(new Euler(0, 0, -Math.PI / 4)),
-  //   //   max: new Quaternion().setFromEuler(new Euler(0, 0, Math.PI / 4)),
-  //   // })
-  //   .add(OscillatePosition, {
-  //     frequency: 0.6,
-  //     min: new Vector3(-0.5, 0, 0),
-  //     max: new Vector3(0.5, 0, 0),
-  //   })
-  //   // .add(NoisyPosition, { speed: 2, magnitude: new Vector3(0, 0, 10) })
-  //   .activate();
+  const chair = world.entities
+    .create("Chair")
+    .add(CenterMesh)
+    .add(ComposableTransform, {
+      position: new Vector3(0, 0, 0),
+      scale: new Vector3(1, 1, 1),
+      positionOffsets: {
+        static: new Vector3(0, -0.5, 0),
+      },
+    })
+    .add(Model, {
+      asset: new Asset("/chair.glb"),
+    })
+    .add(RigidBody, {
+      kind: "DYNAMIC",
+    })
+    .add(Collider, {
+      kind: "BOX",
+      boxSize: new Vector3(1, 1, 1),
+    })
+    // .add(OscillateRotation, {
+    //   min: new Quaternion().setFromEuler(new Euler(0, 0, -Math.PI / 4)),
+    //   max: new Quaternion().setFromEuler(new Euler(0, 0, Math.PI / 4)),
+    // })
+    // .add(OscillatePosition, {
+    //   frequency: 0.6,
+    //   min: new Vector3(-0.5, 0, 0),
+    //   max: new Vector3(0.5, 0, 0),
+    // })
+    // .add(NoisyPosition, { speed: 2, magnitude: new Vector3(0, 0, 10) })
+    .activate();
 
-  // const orangeBox = makeBox({ x: 0, y: 0, z: -2, color: "orange" })
-  //   // .add(NoisyPosition, { speed: 4, magnitude: new Vector3(0, 2, 4) })
-  //   .activate();
+  const orangeBox = makeBox({ x: 0, y: 0, z: -2, color: "orange" })
+    // .add(NoisyPosition, { speed: 4, magnitude: new Vector3(0, 2, 4) })
+    .activate();
 
-  // const blueBox = makeBox({ x: -2, y: 0, z: 0, color: "blue" })
-  //   // .add(NoisyScale, {
-  //   //   speed: 4,
-  //   //   magnitude: new Vector3(1, 1, 1),
-  //   // })
-  //   .add(Transform)
-  //   .activate();
+  const blueBox = makeBox({ x: -2, y: 0, z: 0, color: "blue" })
+    // .add(NoisyScale, {
+    //   speed: 4,
+    //   magnitude: new Vector3(1, 1, 1),
+    // })
+    .add(Transform)
+    .activate();
 
-  // const brownBox = makeBox({ x: 2, y: 0, z: 0, color: "brown" })
-  //   // .add(OscillateScale, {
-  //   //   min: new Vector3(1, 1, 1),
-  //   //   max: new Vector3(1, 2, 1),
-  //   // })
-  //   // .add(NoisyRotation, { speed: 4, magnitude: new Vector3(0, 1, 0) })
-  //   .activate();
+  const brownBox = makeBox({ x: 2, y: 0, z: 0, color: "brown" })
+    // .add(OscillateScale, {
+    //   min: new Vector3(1, 1, 1),
+    //   max: new Vector3(1, 2, 1),
+    // })
+    // .add(NoisyRotation, { speed: 4, magnitude: new Vector3(0, 1, 0) })
+    .activate();
 
   // Create the singleton camera
   const cameraBoom = new Vector3(0, 5, 5);
@@ -194,14 +203,14 @@ export function start(world) {
     world.update(delta);
     previousTime = time;
 
-    // const ref = blueBox.get(RigidBodyRef);
-    // if (ref) {
-    //   playerForce.set(0, 0, 0);
-    //   Object.values(playerForces).forEach((force) => {
-    //     playerForce.add(force);
-    //   });
-    //   ref.value.applyForce(playerForce, true);
-    // }
+    const ref = blueBox.get(RigidBodyRef);
+    if (ref) {
+      playerForce.set(0, 0, 0);
+      Object.values(playerForces).forEach((force) => {
+        playerForce.add(force);
+      });
+      ref.value.applyForce(playerForce, true);
+    }
   };
 
   world.presentation.setLoop(gameLoop);
