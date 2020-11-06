@@ -1,5 +1,5 @@
 import App from "./App.svelte";
-import "./world";
+// import "./world";
 
 const app = new App({
   target: document.body,

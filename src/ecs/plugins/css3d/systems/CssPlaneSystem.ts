@@ -46,16 +46,16 @@ export class CssPlaneSystem extends System {
   }
 
   build(entity) {
-    console.log("build", entity);
+    // console.log("build", entity);
     const plane = entity.get(CssPlane);
     const object3d = entity.get(Object3D).value;
-    console.log("css plane object3d", object3d);
+    // console.log("css plane object3d", object3d);
 
     let geometry;
     switch (plane.kind) {
       case "RECTANGLE":
         const size = plane.rectangleSize;
-        console.log("rectangle size", size);
+        // console.log("rectangle size", size);
         // geometry = new THREE.BoxGeometry(2, 2, 2);
         geometry = new THREE.PlaneGeometry(size.x, size.y);
         break;

@@ -36,7 +36,7 @@ export class HtmlNodeSystem extends System {
       const spec = entity.get(HtmlNode);
       const transform = entity.get(Transform);
       if (!transform) return;
-      console.log("added HtmlNode; transform:", transform);
+      // console.log("added HtmlNode; transform:", transform);
       const object = spec.billboard
         ? new CSS3DSprite(spec.node)
         : new CSS3DObject(spec.node);
@@ -45,6 +45,12 @@ export class HtmlNodeSystem extends System {
       object.quaternion.copy(transform.rotation);
       object.scale.copy(transform.scale);
       object.scale.multiplyScalar(spec.scale);
+
+      // console.log(
+      //   `[HtmlNodeSystem] update added (${entity.name})`,
+      //   object.position,
+      //   object.quaternion
+      // );
 
       this.presentation.scene.add(object);
       spec.object = object;
@@ -61,6 +67,12 @@ export class HtmlNodeSystem extends System {
       spec.object.quaternion.copy(transform.rotation);
       spec.object.scale.copy(transform.scale);
       spec.object.scale.multiplyScalar(spec.scale);
+
+      // console.log(
+      //   `[HtmlNodeSystem] update active (${entity.name})`,
+      //   spec.object.position,
+      //   spec.object.quaternion
+      // );
     });
   }
 }
