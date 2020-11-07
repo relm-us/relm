@@ -1,0 +1,21 @@
+[js]
+{
+  Initialization: 1000,
+  Simulation: 2000,
+  Presentation: 3000,
+
+  LookAtSystem: Initialization (1000),
+  Object3DSystem: Initialization (1000),
+    - Object3D copies WorldTransform
+  HtmlNodeSystem: Initialization + 10,
+  
+  WorldTransformSystem: Simulation - 10 (1990),
+    - Sets Transform matrix from position, rotation, scale
+    - Copies or calculates WorldTransform from Transform
+  ComposableTransformSystem: Simulation (2000)
+    - Transform copies ComposableTransform (with composition)
+  CssPlaneSystem: Simulation + 99 (2099),
+  RenderSystem: Presentation + 10 (3010),
+  CssRenderSystem: Presentation + 100 (3100)
+}
+[js]
