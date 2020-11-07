@@ -10,6 +10,8 @@ import { IS_BROWSER } from "../utils";
 import { HtmlNode } from "../components/HtmlNode";
 import { HtmlInScene } from "../components/HtmlInScene";
 
+import { getRenderableComponentByType } from "../renderables";
+
 export class HtmlNodeSystem extends System {
   active = IS_BROWSER;
   // order = Groups.Simulation + 100;
@@ -33,27 +35,45 @@ export class HtmlNodeSystem extends System {
 
   update() {
     this.queries.added.forEach((entity) => {
-      const spec = entity.get(HtmlNode);
+      const html = entity.get(HtmlNode);
       const transform = entity.get(Transform);
+
       if (!transform) return;
-      // console.log("added HtmlNode; transform:", transform);
-      const object = spec.billboard
-        ? new CSS3DSprite(spec.node)
-        : new CSS3DObject(spec.node);
+
+      const createObject = (node) => {
+        return html.billboard
+          ? new CSS3DSprite(html.node)
+          : new CSS3DObject(html.node);
+      };
+
+      let object;
+      if (html.node) {
+        // If it's just a regular HTMLElement, create a corresponding CSS3DObject for it
+        object = createObject(html.node);
+      } else if (html.specification) {
+        const spec = html.specification;
+
+        // Prepare a container for Svelte
+        const containerElement = document.createElement("div");
+        containerElement.style.width = spec.props.width + "px";
+        containerElement.style.height = spec.props.height + "px";
+        object = createObject(containerElement);
+
+        // Create whatever Svelte component is specified by the type
+        const RenderableComponent = getRenderableComponentByType(spec.type);
+        object.userData.renderable = new RenderableComponent({
+          target: containerElement,
+          props: spec.props,
+        });
+      }
 
       object.position.copy(transform.position);
       object.quaternion.copy(transform.rotation);
       object.scale.copy(transform.scale);
-      object.scale.multiplyScalar(spec.scale);
-
-      // console.log(
-      //   `[HtmlNodeSystem] update added (${entity.name})`,
-      //   object.position,
-      //   object.quaternion
-      // );
+      object.scale.multiplyScalar(html.scale);
 
       this.presentation.scene.add(object);
-      spec.object = object;
+      html.object = object;
 
       entity.add(HtmlInScene);
     });
@@ -62,17 +82,11 @@ export class HtmlNodeSystem extends System {
       const spec = entity.get(HtmlNode);
       const transform = entity.get(Transform);
       if (!transform) return;
-      // console.log("active HtmlNode; transform:", transform);
+
       spec.object.position.copy(transform.position);
       spec.object.quaternion.copy(transform.rotation);
       spec.object.scale.copy(transform.scale);
       spec.object.scale.multiplyScalar(spec.scale);
-
-      // console.log(
-      //   `[HtmlNodeSystem] update active (${entity.name})`,
-      //   spec.object.position,
-      //   spec.object.quaternion
-      // );
     });
   }
 }

@@ -74,7 +74,14 @@ export function start(world) {
       position: new Vector3(0, 1, -2),
     })
     .add(HtmlNode, {
-      node: el,
+      specification: {
+        type: "YOUTUBE",
+        props: {
+          width: 560,
+          height: 315,
+          src: "https://www.youtube.com/embed/nn8YGPZdCvA",
+        },
+      },
       scale,
     })
     .add(CssPlane, {
