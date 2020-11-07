@@ -101,7 +101,7 @@ export function start(world) {
 
   // Create the floor
   const origin = makeBox({
-    y: -0.5,
+    y: -0.45,
     w: 8,
     h: 0.1,
     d: 6,
