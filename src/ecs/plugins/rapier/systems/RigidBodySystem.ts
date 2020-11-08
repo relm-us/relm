@@ -1,14 +1,14 @@
 import { System, Groups, Not, Modified } from "hecs";
 import { RigidBody, RigidBodyRef } from "../components";
 
-function getBodyStatus(kind) {
+function getBodyStatus(rapier, kind) {
   switch (kind) {
     case "STATIC":
-      return RAPIER.BodyStatus.Static;
+      return rapier.BodyStatus.Static;
     case "DYNAMIC":
-      return RAPIER.BodyStatus.Dynamic;
+      return rapier.BodyStatus.Dynamic;
     case "KINEMATIC":
-      return RAPIER.BodyStatus.Kinematic;
+      return rapier.BodyStatus.Kinematic;
     default:
       throw new Error(`Kind of body status unknown: '${kind}'`);
   }
@@ -42,11 +42,13 @@ export class RigidBodySystem extends System {
   }
 
   build(entity) {
-    const { world, Transform } = this.world.physics;
+    const { world, rapier, Transform } = this.world.physics;
     const spec = entity.get(RigidBody);
     const transform = entity.get(Transform);
 
-    let rigidBodyDesc = new RAPIER.RigidBodyDesc(getBodyStatus(spec.kind))
+    let rigidBodyDesc = new rapier.RigidBodyDesc(
+      getBodyStatus(rapier, spec.kind)
+    )
       .setTranslation(transform.position)
       .setRotation(transform.rotation);
     let rigidBody = world.createRigidBody(rigidBodyDesc);

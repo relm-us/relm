@@ -1,5 +1,5 @@
 import { createPlugin } from "hecs";
-import CorePlugin from "hecs-plugin-core";
+import CorePlugin, { Transform } from "hecs-plugin-core";
 
 import { Physics } from "./Physics";
 import * as Components from "./components";
@@ -14,12 +14,11 @@ export default createPlugin({
   plugins: [CorePlugin],
   systems: Object.values(Systems),
   components: Object.values(Components),
-  decorate(world) {
-    if (!RAPIER) {
-      throw new Error(
-        'hecs-plugin-rapier: Rapier3d should be loaded and available globally under "RAPIER"'
-      );
+  decorate(world, options) {
+    const rapier = options.rapier || RAPIER;
+    if (!rapier) {
+      throw new Error("hecs-plugin-rapier: Rapier engine not found");
     }
-    world.physics = new Physics(world);
+    world.physics = new Physics(world, rapier, options.transform || Transform);
   },
 });

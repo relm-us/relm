@@ -19,21 +19,21 @@ export class ColliderSystem extends System {
   build(entity) {
     const spec = entity.get(Collider);
     const rigidBodyRef = entity.get(RigidBodyRef);
-    const { world } = this.world.physics;
+    const { world, rapier } = this.world.physics;
 
     // Create a cuboid collider attached to rigidBody.
     let colliderDesc;
     switch (spec.shape) {
       case "BOX":
         const size = spec.boxSize;
-        colliderDesc = RAPIER.ColliderDesc.cuboid(
+        colliderDesc = rapier.ColliderDesc.cuboid(
           size.x / 2,
           size.y / 2,
           size.z / 2
         );
         break;
       case "SPHERE":
-        colliderDesc = RAPIER.ColliderDesc.ball(spec.sphereRadius);
+        colliderDesc = rapier.ColliderDesc.ball(spec.sphereRadius);
         break;
       default:
         throw new Error(`Unknown collider shape: ${spec.shape}`);

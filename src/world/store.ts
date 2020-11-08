@@ -11,10 +11,7 @@ export type World = {
 
 export const store: Readable<World | null> = readable(null, (set) => {
   import("@dimforge/rapier3d")
-    .then((RAPIER) => {
-      (window as any).RAPIER = RAPIER;
-      set(createWorld(RAPIER));
-    })
+    .then((rapier) => set(createWorld(rapier)))
     .catch((error) => {
       console.error("Can't load physics engine rapier3d", error.message);
     });

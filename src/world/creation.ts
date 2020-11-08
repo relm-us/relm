@@ -67,8 +67,7 @@ export function createScene() {
   return scene;
 }
 
-export function createWorld(RAPIER) {
-  // TODO: use RAPIER instead of window.RAPIER
+export function createWorld(rapier) {
   const world = new World({
     plugins: [
       [
@@ -78,16 +77,22 @@ export function createWorld(RAPIER) {
           scene: createScene(),
         },
       ],
-      RapierPlugin,
+      [
+        RapierPlugin,
+        {
+          // Let the Rapier3d physics plugin know to use ComposableTransform
+          // instead of default Transform
+          transform: ComposableTransform,
+          // Pass the physics engine in to the plugin
+          rapier,
+        },
+      ],
       ComposablePlugin,
       Css3DPlugin,
     ],
     components: [CenteredMesh],
     systems: [CenteredMeshSystem],
   });
-  // TODO: make this a RapierPlugin setting
-  // Let the Rapier3d physics plugin know to use ComposableTransform instead of default Transform
-  world.physics.Transform = ComposableTransform;
   return world;
 }
 
