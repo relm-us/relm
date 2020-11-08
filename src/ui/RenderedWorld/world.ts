@@ -22,13 +22,10 @@ import { Euler } from "three";
 import { playerForce, playerForces } from "~/playerForces";
 
 export function start(world) {
+  /* prettier-ignore */
   const makeBox = ({
-    x = 0,
-    y = 0,
-    z = 0,
-    w = 1,
-    h = 1,
-    d = 1,
+    x = 0, y = 0, z = 0,
+    w = 1, h = 1, d = 1,
     color = "red",
     dynamic = true,
   }) => {
@@ -52,14 +49,6 @@ export function start(world) {
 
   const iframeSize = new Vector3(560, 315, 0);
 
-  const el = document.createElement("iframe");
-  el.width = iframeSize.x;
-  el.height = iframeSize.y;
-  el.src = "https://www.youtube.com/embed/nn8YGPZdCvA";
-  el.allow = "autoplay; encrypted-media";
-  el.allowFullscreen = true;
-  el.style.zIndex = "0";
-
   const iframeWorldWidth = 3;
   const iframeRatio = iframeSize.x / iframeSize.y;
   const rectangleSize = new Vector3(
@@ -67,14 +56,13 @@ export function start(world) {
     iframeWorldWidth / iframeRatio,
     0.1
   );
-  const scale = rectangleSize.x / parseFloat(el.width);
+  const scale = rectangleSize.x / parseFloat(iframeSize.x);
   world.entities
     .create("Image")
     .add(ComposableTransform, {
       position: new Vector3(0, 0, 0.5),
     })
     .add(HtmlNode, {
-      // node: el,
       specification: {
         type: "YOUTUBE",
         props: {
