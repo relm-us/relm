@@ -102,13 +102,3 @@ export function createWorld(rapier) {
   });
   return world;
 }
-
-export function mountWorld(world, container) {
-  // CSS3D elements go "behind" the WebGL canvas
-  world.cssPresentation.setViewport(container);
-  world.cssPresentation.renderer.domElement.style.zIndex = 0;
-
-  // WebGL canvas goes "on top" of CSS3D HTML elements
-  world.presentation.setViewport(container);
-  world.presentation.renderer.domElement.style.zIndex = 1;
-}

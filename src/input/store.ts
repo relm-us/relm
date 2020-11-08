@@ -4,3 +4,5 @@ export const keyUp = writable(false);
 export const keyDown = writable(false);
 export const keyLeft = writable(false);
 export const keyRight = writable(false);
+
+export const keySpace = writable(false);

@@ -1,2 +1,2 @@
 export { default } from "./Input.svelte";
-export { keyUp, keyDown, keyLeft, keyRight } from "./store";
+export { keyUp, keyDown, keyLeft, keyRight, keySpace } from "./store";

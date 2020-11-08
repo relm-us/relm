@@ -1,31 +1,22 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  import {
-    addDemonstrationEntities,
-    removeDemonstrationEntities,
-  } from "~/world/demo";
+  import { worldManager } from "~/world";
 
-  import { mountWorld } from "~/world/creation";
-
+  // HECS world
   export let world: any;
 
-  let container;
-
-  let previousTime = 0;
-  const gameLoop = (time) => {
-    const delta = time - previousTime;
-    world.update(delta);
-    previousTime = time;
-  };
+  let viewport;
 
   onMount(() => {
-    mountWorld(world, container);
-    addDemonstrationEntities(world);
-    world.presentation.setLoop(gameLoop);
+    worldManager.setWorld(world);
+    worldManager.setViewport(viewport);
+    worldManager.populate();
+    worldManager.start();
     return () => {
-      world.presentation.setLoop(null);
-      removeDemonstrationEntities();
+      worldManager.stop();
+      worldManager.depopulate();
+      worldManager.setViewport(null);
     };
   });
 </script>
@@ -39,7 +30,7 @@
   }
 </style>
 
-<container bind:this={container}>
+<container bind:this={viewport}>
   <!-- The CSS3DRenderer container goes here -->
   <!-- The WebGLRenderer canvas goes here -->
 </container>

@@ -38,6 +38,7 @@
 	},
 	"dependencies": {
 		"@dimforge/rapier3d": "^0.2.4",
+		"eventemitter3": "^4.0.7",
 		"hecs": "^0.16.0",
 		"hecs-plugin-core": "^0.16.0",
 		"hecs-plugin-three": "^0.16.0",

@@ -29,16 +29,6 @@
   function onKeyup(event) {
     setKeyStore(event.key, false);
   }
-
-  /*
-
-export let gameLoop;
-if (event.key === " ") {
-  time += 1000 / 60;
-  requestAnimationFrame(() => gameLoop(time));
-  return;
-}
-  */
 </script>
 
 <svelte:window on:keydown={onKeydown} on:keyup={onKeyup} />

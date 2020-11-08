@@ -1,13 +1,8 @@
 import { readable, Readable } from "svelte/store";
 
-import { createWorld } from "./creation";
+import { World } from "~/types/hecs/world";
 
-export type World = {
-  id: number;
-  version: number;
-  plugins: Map<Function, boolean>;
-  providers: Object;
-};
+import { createWorld } from "./creation";
 
 export const store: Readable<World | null> = readable(null, (set) => {
   import("@dimforge/rapier3d")
