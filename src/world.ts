@@ -80,7 +80,7 @@ export function start(world) {
         props: {
           width: 560,
           height: 315,
-          src: "https://www.youtube.com/embed/nn8YGPZdCvA",
+          embedId: "nn8YGPZdCvA",
         },
       },
       scale,

@@ -44,7 +44,7 @@
 		"serve": "^11.3.2",
 		"simplex-noise": "^2.4.0",
 		"stats.js": "^0.17.0",
-		"three": "^0.122.0"
+		"three": "^0.119.1"
 	},
 	"browserslist": [
 		"defaults"
