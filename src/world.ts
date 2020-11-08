@@ -74,6 +74,7 @@ export function start(world) {
       position: new Vector3(0, 1, -2),
     })
     .add(HtmlNode, {
+      // node: el,
       specification: {
         type: "YOUTUBE",
         props: {

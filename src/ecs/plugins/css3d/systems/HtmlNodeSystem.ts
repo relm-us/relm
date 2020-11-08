@@ -41,9 +41,7 @@ export class HtmlNodeSystem extends System {
       if (!transform) return;
 
       const createObject = (node) => {
-        return html.billboard
-          ? new CSS3DSprite(html.node)
-          : new CSS3DObject(html.node);
+        return html.billboard ? new CSS3DSprite(node) : new CSS3DObject(node);
       };
 
       let object;
