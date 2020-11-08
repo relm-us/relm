@@ -85,7 +85,6 @@
   {height}
   {src}
   frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
   allowfullscreen />
 
 {#if state !== 'LOADED'}
