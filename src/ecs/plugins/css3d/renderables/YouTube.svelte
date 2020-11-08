@@ -70,8 +70,7 @@
 </style>
 
 <svelte:window on:message={onMessage} />
-<svelte:options accessors />
-<!-- TODO: get youtube ready status https://stackoverflow.com/a/45477458/159344 -->
+
 <iframe
   class:invisible={state !== 'LOADED'}
   bind:this={iframe}

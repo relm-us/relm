@@ -71,7 +71,7 @@ export function start(world) {
   world.entities
     .create("Image")
     .add(ComposableTransform, {
-      position: new Vector3(0, 1, -2),
+      position: new Vector3(0, 0, 0.5),
     })
     .add(HtmlNode, {
       // node: el,
@@ -184,7 +184,7 @@ export function start(world) {
     // .add(NoisyPosition, { speed: 4, magnitude: new Vector3(0, 2, 4) })
     .activate();
 
-  const blueBox = makeBox({ x: -2, y: 0, z: 0, color: "blue" })
+  const blueBox = makeBox({ x: -2.5, y: 0, z: 0, color: "blue" })
     // .add(NoisyScale, {
     //   speed: 4,
     //   magnitude: new Vector3(1, 1, 1),
@@ -192,7 +192,7 @@ export function start(world) {
     .add(Transform)
     .activate();
 
-  const brownBox = makeBox({ x: 2, y: 0, z: 0, color: "brown" })
+  const brownBox = makeBox({ x: 2.5, y: 0, z: 0, color: "brown" })
     // .add(OscillateScale, {
     //   min: new Vector3(1, 1, 1),
     //   max: new Vector3(1, 2, 1),
