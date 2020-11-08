@@ -54,6 +54,6 @@ export class ThrustControllerSystem extends System {
       default:
         throw new Error(`Unknown controller plane: ${controller.plane}`);
     }
-    bodyRef.value.applyForce(thrust);
+    bodyRef.value.applyForce(thrust, true);
   }
 }
