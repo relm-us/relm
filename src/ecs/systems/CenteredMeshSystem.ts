@@ -19,6 +19,7 @@ export class CenteredMeshSystem extends System {
         mesh.children[0].castShadow = true;
       } else {
         // TODO: average the positions, or find center of bbox
+        console.warn("Mesh not centered, unimplemented for multi-mesh objects");
       }
       entity.add(CenteredMesh);
     });

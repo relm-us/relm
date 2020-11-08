@@ -58,11 +58,8 @@ export class RigidBodySystem extends System {
 
   remove(entity) {
     const { world } = this.world.physics;
-    const spec = entity.get(RigidBodyRef);
-    world.removeRigidBody(spec.value);
+    const bodyRef = entity.get(RigidBodyRef);
 
-    // @note We cant delete the reference because ColliderSystem
-    // needs to detach its shape from this.
-    // body.delete()
+    world.removeRigidBody(bodyRef.value.handle);
   }
 }

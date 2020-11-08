@@ -7,17 +7,22 @@ import {
   sRGBEncoding,
   VSMShadowMap,
 } from "three";
+
 import { World } from "hecs";
 import ThreePlugin from "hecs-plugin-three";
 
-import RapierPlugin from "~/ecs/plugins/rapier";
-import Css3DPlugin from "~/ecs/plugins/css3d";
 import ComposablePlugin, {
   ComposableTransform,
 } from "~/ecs/plugins/composable";
+import Css3DPlugin from "~/ecs/plugins/css3d";
+import EffectsPlugin from "~/ecs/plugins/effects";
+import RapierPlugin from "~/ecs/plugins/rapier";
 
 import { CenteredMesh } from "~/ecs/components/CenteredMesh";
 import { CenteredMeshSystem } from "~/ecs/systems/CenteredMeshSystem";
+
+import { ThrustController } from "~/ecs/components/ThrustController";
+import { ThrustControllerSystem } from "~/ecs/systems/ThrustControllerSystem";
 
 export function createRenderer() {
   const renderer = new WebGLRenderer({
@@ -70,6 +75,7 @@ export function createScene() {
 export function createWorld(rapier) {
   const world = new World({
     plugins: [
+      ComposablePlugin,
       [
         ThreePlugin,
         {
@@ -87,11 +93,12 @@ export function createWorld(rapier) {
           rapier,
         },
       ],
-      ComposablePlugin,
+      // [EffectsPlugin, {}],
+
       Css3DPlugin,
     ],
-    components: [CenteredMesh],
-    systems: [CenteredMeshSystem],
+    components: [CenteredMesh, ThrustController],
+    systems: [CenteredMeshSystem, ThrustControllerSystem],
   });
   return world;
 }

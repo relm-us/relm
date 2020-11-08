@@ -14,6 +14,9 @@ export class ColliderSystem extends System {
     this.queries.added.forEach((entity) => {
       this.build(entity);
     });
+    this.queries.removed.forEach((entity) => {
+      this.remove(entity);
+    });
   }
 
   build(entity) {
@@ -47,5 +50,12 @@ export class ColliderSystem extends System {
     );
 
     entity.add(ColliderRef, { value: collider });
+  }
+
+  remove(entity) {
+    const { world } = this.world.physics;
+    const colliderRef = entity.get(ColliderRef);
+
+    world.removeCollider(colliderRef.value.handle);
   }
 }
