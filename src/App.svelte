@@ -1,13 +1,14 @@
 <script lang="ts">
-  import RequiresRapier from "~/ui/RequiresRapier";
   import RenderedWorld from "~/ui/RenderedWorld";
   import FrameRateStats from "~/ui/FrameRateStats";
   import Editor from "~/ui/Editor.svelte";
+
+  import { store as world } from "./world/store";
 </script>
 
-<RequiresRapier>
-  <RenderedWorld />
-</RequiresRapier>
+{#if $world}
+  <RenderedWorld world={$world} />
+{/if}
 
 <Editor />
 

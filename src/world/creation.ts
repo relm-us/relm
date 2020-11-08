@@ -19,16 +19,22 @@ import ComposablePlugin, {
 import { CenteredMesh } from "~/ecs/components/CenteredMesh";
 import { CenteredMeshSystem } from "~/ecs/systems/CenteredMeshSystem";
 
-export function createRenderer(glCanvas) {
+export function createRenderer() {
   const renderer = new WebGLRenderer({
     antialias: true,
     alpha: true,
-    canvas: glCanvas,
   });
+
   renderer.physicallyCorrectLights = true;
   renderer.outputEncoding = sRGBEncoding;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = VSMShadowMap;
+
+  const style = renderer.domElement.style;
+  style.outline = "0";
+  style.position = "absolute";
+  style.pointerEvents = "none";
+  style.zIndex = "1";
 
   return renderer;
 }
@@ -61,13 +67,14 @@ export function createScene() {
   return scene;
 }
 
-export function initWorld(container, canvas) {
+export function createWorld(RAPIER) {
+  // TODO: use RAPIER instead of window.RAPIER
   const world = new World({
     plugins: [
       [
         ThreePlugin,
         {
-          renderer: createRenderer(canvas),
+          renderer: createRenderer(),
           scene: createScene(),
         },
       ],
@@ -78,14 +85,18 @@ export function initWorld(container, canvas) {
     components: [CenteredMesh],
     systems: [CenteredMeshSystem],
   });
-
+  // TODO: make this a RapierPlugin setting
   // Let the Rapier3d physics plugin know to use ComposableTransform instead of default Transform
   world.physics.Transform = ComposableTransform;
-
-  world.cssPresentation.setViewport(container);
-  world.cssPresentation.renderer.domElement.style.zIndex = 1;
-
-  world.presentation.setViewport(container);
-
   return world;
+}
+
+export function mountWorld(world, container) {
+  // CSS3D elements go "behind" the WebGL canvas
+  world.cssPresentation.setViewport(container);
+  world.cssPresentation.renderer.domElement.style.zIndex = 0;
+
+  // WebGL canvas goes "on top" of CSS3D HTML elements
+  world.presentation.setViewport(container);
+  world.presentation.renderer.domElement.style.zIndex = 1;
 }

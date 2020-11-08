@@ -4,14 +4,15 @@
   import KeyListener from "~/KeyListener.svelte";
   import { start } from "./world";
 
-  import { initWorld } from "./creation";
+  import { mountWorld } from "../../world/creation";
+
+  export let world: any;
 
   let container;
   let gameLoop;
-  let glCanvas;
 
   onMount(() => {
-    const world = initWorld(container, glCanvas);
+    mountWorld(world, container);
     gameLoop = start(world);
   });
 </script>
@@ -23,17 +24,11 @@
     width: 100%;
     height: 100%;
   }
-  canvas {
-    outline: 0;
-    position: absolute;
-    pointer-events: none;
-    z-index: 1;
-  }
 </style>
 
 <container bind:this={container}>
-  <!-- Create the WebGLRenderer canvas element -->
-  <canvas bind:this={glCanvas} />
+  <!-- The CSS3DRenderer container goes here -->
+  <!-- The WebGLRenderer canvas goes here -->
 </container>
 
 <KeyListener {gameLoop} />
