@@ -1,5 +1,5 @@
 <script>
-  export let world;
+  // export let world;
 </script>
 
 <style>
