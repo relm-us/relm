@@ -34,7 +34,7 @@
       func: "addEventListener",
       args: ["onReady"],
       id: 1,
-      channel: "test",
+      channel: "default",
     };
     iframe.contentWindow.postMessage(JSON.stringify(listenEvent), "*");
   }
@@ -47,22 +47,27 @@
 
 <style>
   iframe {
-    pointer-events: auto;
-    z-index: 1;
     position: absolute;
+    z-index: 0;
+
+    pointer-events: auto;
   }
   overlay {
-    z-index: 2;
     position: absolute;
+    z-index: 2;
+
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: white;
-    color: black;
+
     display: flex;
     justify-content: center;
     align-items: center;
+
+    color: black;
+    background-color: #eeeeee;
+    box-shadow: inset 0px 0px 0px 6px #000000;
   }
   .invisible {
     visibility: hidden;
