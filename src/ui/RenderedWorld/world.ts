@@ -2,9 +2,9 @@ import { World } from "hecs";
 
 import { Asset, Transform, Vector3, Quaternion } from "hecs-plugin-core";
 import { Model, Shape, Camera, LookAt } from "hecs-plugin-three";
-import { RigidBody, RigidBodyRef, Collider } from "./ecs/plugins/rapier";
+import { RigidBody, RigidBodyRef, Collider } from "~/ecs/plugins/rapier";
 
-import { HtmlNode, CssPlane } from "./ecs/plugins/css3d";
+import { HtmlNode, CssPlane } from "~/ecs/plugins/css3d";
 
 import {
   ComposableTransform,
@@ -14,12 +14,12 @@ import {
   OscillatePosition,
   OscillateRotation,
   OscillateScale,
-} from "./ecs/plugins/composable";
+} from "~/ecs/plugins/composable";
 
-import { CenterMesh } from "./ecs/components/CenterMesh";
+import { CenterMesh } from "~/ecs/components/CenterMesh";
 import { Euler } from "three";
 
-import { playerForce, playerForces } from "./playerForces";
+import { playerForce, playerForces } from "~/playerForces";
 
 export function start(world) {
   const makeBox = ({
@@ -96,6 +96,7 @@ export function start(world) {
       kind: "BOX",
       boxSize: rectangleSize,
     })
+    // .add(NoisyPosition, { speed: 2, magnitude: new Vector3(1, 1, 0) })
     .activate();
   // .add(OscillatePosition, {
   //   frequency: 0.2,

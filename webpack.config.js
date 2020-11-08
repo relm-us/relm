@@ -49,12 +49,15 @@ module.exports = {
     ],
   },
   resolve: {
+    //
+    // modules: [path.resolve(__dirname, "src")],
     alias: {
       // Note: Additional aliases will be loaded automatically from
       // `tsconfig.compilerOptions.paths`
       svelte: path.resolve("node_modules", "svelte"),
-      // "hecs-plugin-core": path.resolve("node_modules", "hecs-plugin-core"),
-      // "hecs-plugin-three": path.resolve("node_modules", "hecs-plugin-three"),
+      // Resolve tilde ("~") to project root, so we can use absolute-path style modules
+      // See https://medium.com/@davidmieloch/tilde-paths-with-eslint-typescript-and-webpack-971f694c9b15
+      "~": path.resolve(__dirname, "src"),
     },
     // symlinks: false,
     extensions: [".mjs", ".js", ".ts", ".svelte"],

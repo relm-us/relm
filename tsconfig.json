@@ -11,7 +11,9 @@
 		"sourceMap": true,
 		"baseUrl": ".",
 		"paths": {
-			"src": ["src"]
+			"src": ["src"],
+			// See https://medium.com/@davidmieloch/tilde-paths-with-eslint-typescript-and-webpack-971f694c9b15
+			"~*": ["./src/*"]
 		},
 		"typeRoots": ["types"],
 		"types": [

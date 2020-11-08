@@ -1,4 +1,8 @@
 <script lang="ts">
+  /**
+   * Loads RAPIER into global scope
+   */
+
   const promise = import("@dimforge/rapier3d");
 
   type LoadingState = "LOADING" | "LOADED" | "ERROR";
