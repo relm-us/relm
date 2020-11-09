@@ -22,7 +22,9 @@ import { CenteredMesh } from "~/ecs/components/CenteredMesh";
 import { CenteredMeshSystem } from "~/ecs/systems/CenteredMeshSystem";
 
 import { ThrustController } from "~/ecs/components/ThrustController";
+import { PotentiallyControllable } from "~/ecs/components/PotentiallyControllable";
 import { ThrustControllerSystem } from "~/ecs/systems/ThrustControllerSystem";
+import { TransferControlSystem } from "~/ecs/systems/TransferControlSystem";
 
 export function createRenderer() {
   const renderer = new WebGLRenderer({
@@ -97,8 +99,12 @@ export function createWorld(rapier) {
 
       Css3DPlugin,
     ],
-    components: [CenteredMesh, ThrustController],
-    systems: [CenteredMeshSystem, ThrustControllerSystem],
+    components: [CenteredMesh, ThrustController, PotentiallyControllable],
+    systems: [
+      CenteredMeshSystem,
+      ThrustControllerSystem,
+      TransferControlSystem,
+    ],
   });
   return world;
 }

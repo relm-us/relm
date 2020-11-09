@@ -17,6 +17,7 @@ import { RigidBody, RigidBodyRef, Collider } from "~/ecs/plugins/rapier";
 import { CenterMesh } from "~/ecs/components/CenterMesh";
 import { Euler } from "three";
 import { ThrustController } from "~/ecs/components/ThrustController";
+import { PotentiallyControllable } from "~/ecs/components/PotentiallyControllable";
 
 const demoEntities = [];
 
@@ -133,11 +134,12 @@ export function addDemonstrationEntities(world) {
   /********* BOXES **********/
 
   // Box (Yellow-ish)
-  makeBox(world, { x: 0, y: 0, z: 2, color: "orange" }).activate();
+  makeBox(world, { x: 0, y: 0, z: 2, color: "orange" }).add(PotentiallyControllable).activate();
 
   // Box (Blue)
   makeBox(world, { x: -2.5, y: 0, z: 0, color: "blue" })
     .add(ThrustController)
+    .add(PotentiallyControllable)
     .add(OscillatePosition, {
       frequency: 1,
       phase: Math.PI * 0,
@@ -155,11 +157,10 @@ export function addDemonstrationEntities(world) {
     .activate();
 
   // Box (Orange-ish)
-  makeBox(world, { x: 2.5, y: 0, z: 0, color: "brown" }).activate();
+  makeBox(world, { x: 2.5, y: 0, z: 0, color: "brown" }).add(PotentiallyControllable).activate();
 
   // Chair
   makeEntity(world, "Chair")
-    .add(ThrustController)
     .add(CenterMesh)
     .add(ComposableTransform, {
       position: new Vector3(0, 0, 0),

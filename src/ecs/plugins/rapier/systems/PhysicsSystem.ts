@@ -24,7 +24,7 @@ export class PhysicsSystem extends System {
   }
 
   update() {
-    const { world, Transform } = this.world.physics;
+    const { world, eventQueue, Transform } = this.world.physics;
 
     // console.log("fixedUpdate");
     this.queries.default.forEach((entity) => {
@@ -53,9 +53,7 @@ export class PhysicsSystem extends System {
       }
     });
 
-    world.step();
-    // scene.simulate(TIMESTEP, true);
-    // scene.fetchResults(true);
+    world.step(eventQueue);
 
     this.queries.default.forEach((entity) => {
       const parent = entity.getParent();
