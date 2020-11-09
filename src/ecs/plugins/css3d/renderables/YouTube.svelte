@@ -1,7 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { init } from "svelte/internal";
-
   export let width: number;
   export let height: number;
   export let embedId: string;
@@ -38,11 +35,6 @@
     };
     iframe.contentWindow.postMessage(JSON.stringify(listenEvent), "*");
   }
-
-  onMount(() => {
-    console.log("src", src);
-    console.log("iframe.contentWindow", iframe.contentWindow);
-  });
 </script>
 
 <style>
