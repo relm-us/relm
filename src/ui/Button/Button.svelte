@@ -12,18 +12,20 @@
     border: 0;
     background-color: rgba(20, 20, 20, 0.4);
     color: #dddddd;
-    padding: 12px 18px;
+    padding: 8px 12px;
     border-radius: 8px;
-    font-size: 24px;
+    font-size: 14pt;
     font-weight: bold;
     cursor: pointer;
+    margin-left: 4px;
+    margin-right: 4px;
   }
   button.disabled {
     pointer-events: none;
     opacity: 0.3;
   }
   button:hover {
-    background-color: #ffb840;
+    background-color: rgba(0, 0, 0, 0.5);
   }
   button:active {
     transform: translateY(1px);

@@ -134,10 +134,12 @@ export function addDemonstrationEntities(world) {
   /********* BOXES **********/
 
   // Box (Yellow-ish)
-  makeBox(world, { x: 0, y: 0, z: 2, color: "orange" }).add(PotentiallyControllable).activate();
+  makeBox(world, { x: 0, y: 0, z: 2, color: "orange", name: "YellowBox" })
+    .add(PotentiallyControllable)
+    .activate();
 
   // Box (Blue)
-  makeBox(world, { x: -2.5, y: 0, z: 0, color: "blue" })
+  makeBox(world, { x: -2.5, y: 0, z: 0, color: "blue", name: "BlueBox" })
     .add(ThrustController)
     .add(PotentiallyControllable)
     .add(OscillatePosition, {
@@ -156,8 +158,10 @@ export function addDemonstrationEntities(world) {
     .add(Transform)
     .activate();
 
-  // Box (Orange-ish)
-  makeBox(world, { x: 2.5, y: 0, z: 0, color: "brown" }).add(PotentiallyControllable).activate();
+  // Box (Red-ish)
+  makeBox(world, { x: 2.5, y: 0, z: 0, color: "brown", name: "RedBox" })
+    .add(PotentiallyControllable)
+    .activate();
 
   // Chair
   makeEntity(world, "Chair")

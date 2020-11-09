@@ -1,10 +1,10 @@
-import { Component, JSONType } from 'hecs'
+import { Component, JSONType } from "hecs";
 import {
   Vector3,
   Vector3Type,
   Quaternion,
   QuaternionType,
-} from 'hecs-plugin-core'
+} from "hecs-plugin-core";
 
 /**
  * Provides the "ComposableTransform" of an object. Composes multiple positions,
@@ -16,69 +16,84 @@ export class ComposableTransform extends Component {
     position: {
       type: Vector3Type,
       editor: {
-        label: 'Position',
+        label: "Position",
       },
     },
     rotation: {
       type: QuaternionType,
       editor: {
-        label: 'Rotation',
+        label: "Rotation",
       },
     },
     scale: {
       type: Vector3Type,
       default: new Vector3(1, 1, 1),
       editor: {
-        label: 'Scale',
+        label: "Scale",
       },
     },
     positionOffsets: {
       type: JSONType,
       default: {},
       editor: {
-        label: 'Position Offsets',
+        label: "Position Offsets",
       },
     },
     rotationOffsets: {
       type: JSONType,
       default: {},
       editor: {
-        label: 'Rotation Offsets',
+        label: "Rotation Offsets",
       },
     },
     scaleOffsets: {
       type: JSONType,
       default: {},
       editor: {
-        label: 'Scale Offsets',
+        label: "Scale Offsets",
       },
     },
-  }
+  };
 
   offsetPosition(id, position) {
-    if (!this.positionOffsets[id]) {
-      this.positionOffsets[id] = new Vector3()
-      this.hasPositionOffsets = true
+    if (!position) {
+      delete this.positionOffsets[id];
+      return;
     }
 
-    this.positionOffsets[id].copy(position)
+    if (!this.positionOffsets[id]) {
+      this.positionOffsets[id] = new Vector3();
+      this.hasPositionOffsets = true;
+    }
+
+    this.positionOffsets[id].copy(position);
   }
 
   offsetRotation(id, rotation) {
-    if (!this.rotationOffsets[id]) {
-      this.rotationOffsets[id] = new Quaternion()
-      this.hasRotationOffsets = true
+    if (!rotation) {
+      delete this.rotationOffsets[id];
+      return;
     }
 
-    this.rotationOffsets[id].copy(rotation)
+    if (!this.rotationOffsets[id]) {
+      this.rotationOffsets[id] = new Quaternion();
+      this.hasRotationOffsets = true;
+    }
+
+    this.rotationOffsets[id].copy(rotation);
   }
 
   offsetScale(id, scale) {
-    if (!this.scaleOffsets[id]) {
-      this.scaleOffsets[id] = new Vector3()
-      this.hasScaleOffsets = true
+    if (!scale) {
+      delete this.scaleOffsets[id];
+      return;
     }
 
-    this.scaleOffsets[id].copy(scale)
+    if (!this.scaleOffsets[id]) {
+      this.scaleOffsets[id] = new Vector3();
+      this.hasScaleOffsets = true;
+    }
+
+    this.scaleOffsets[id].copy(scale);
   }
 }

@@ -4,6 +4,7 @@
   import Editor from "~/ui/Editor.svelte";
   import Input, { keyUp } from "~/input";
   import PausePlayButton from "~/ui/PausePlayButton";
+  import ActionButton from "~/ui/ActionButton";
 
   import { store as world } from "./world/store";
 </script>
@@ -27,6 +28,7 @@
 {/if}
 
 <button-panel>
+  <ActionButton />
   <PausePlayButton />
 </button-panel>
 

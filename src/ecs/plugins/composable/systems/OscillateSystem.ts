@@ -1,88 +1,131 @@
-import { System, Groups } from 'hecs'
-import { Vector3, Quaternion } from 'hecs-plugin-core'
+import { System, Groups } from "hecs";
+import { Vector3, Quaternion } from "hecs-plugin-core";
 
-import { ComposableTransform } from '../components/ComposableTransform'
+import { ComposableTransform } from "../components/ComposableTransform";
 import {
   OscillatePosition,
   OscillateRotation,
   OscillateScale,
-} from '../components/Oscillate'
+} from "../components/Oscillate";
 
-const position = new Vector3()
-const rotation = new Quaternion()
-const scale = new Vector3()
+const position = new Vector3();
+const rotation = new Quaternion();
+const scale = new Vector3();
 
 export class OscillateSystem extends System {
-  order = Groups.Initialization
+  order = Groups.Initialization;
 
   static queries = {
     position: [ComposableTransform, OscillatePosition],
     rotation: [ComposableTransform, OscillateRotation],
     scale: [ComposableTransform, OscillateScale],
-  }
+  };
 
   init() {
-    this.oscillateAngle = 0
+    this.cycleAngle = 0;
+    this.cycleTick = 0;
   }
 
   update(timeDelta) {
-    this.queries.position.forEach(entity => {
-      const spec = entity.get(OscillatePosition)
-      const alpha = this.getAlpha(spec.behavior, spec.phase, spec.frequency)
-      this.oscillatePosition(entity, alpha, spec.min, spec.max)
-    })
+    // Increment the cycle angle
+    const angleIncrease = (Math.PI * 2) / (1000 / timeDelta);
 
-    this.queries.rotation.forEach(entity => {
-      const spec = entity.get(OscillateRotation)
-      const alpha = this.getAlpha(spec.behavior, spec.phase, spec.frequency)
-      this.oscillateRotation(entity, alpha, spec.min, spec.max)
-    })
+    this.queries.position.forEach((entity) => {
+      const spec = entity.get(OscillatePosition);
+      if (spec.angle === undefined) {
+        spec.angle = spec.phase / spec.frequency;
+      }
+      const alpha = this.getAlpha(spec.behavior, spec.angle, spec.frequency);
+      if (this.isCycleCountComplete(spec, angleIncrease)) {
+        entity.get(ComposableTransform).offsetPosition("oscillate", null);
+        entity.remove(OscillatePosition);
+      } else {
+        this.oscillatePosition(entity, alpha, spec.min, spec.max);
+        spec.angle += angleIncrease;
+      }
+    });
 
-    this.queries.scale.forEach(entity => {
-      const spec = entity.get(OscillateScale)
-      const alpha = this.getAlpha(spec.behavior, spec.phase, spec.frequency)
-      this.oscillateScale(entity, alpha, spec.min, spec.max)
-    })
+    this.queries.rotation.forEach((entity) => {
+      const spec = entity.get(OscillateRotation);
+      if (spec.angle === undefined) {
+        spec.angle = spec.phase / spec.frequency;
+      }
+      const alpha = this.getAlpha(spec.behavior, spec.angle, spec.frequency);
+      if (this.isCycleCountComplete(spec, angleIncrease)) {
+        entity.get(ComposableTransform).offsetRotation("oscillate", null);
+        entity.remove(OscillateRotation);
+      } else {
+        this.oscillateRotation(entity, alpha, spec.min, spec.max);
+        spec.angle += angleIncrease;
+      }
+    });
 
-    // keep the whole system oscillating
-    this.oscillateAngle += (Math.PI * 2) / (1000 / timeDelta)
+    this.queries.scale.forEach((entity) => {
+      const spec = entity.get(OscillateScale);
+      if (spec.angle === undefined) {
+        spec.angle = spec.phase / spec.frequency;
+      }
+      const alpha = this.getAlpha(spec.behavior, spec.angle, spec.frequency);
+      if (this.isCycleCountComplete(spec, angleIncrease)) {
+        entity.get(ComposableTransform).offsetScale("oscillate", null);
+        entity.remove(OscillateScale);
+      } else {
+        this.oscillateScale(entity, alpha, spec.min, spec.max);
+        spec.angle += angleIncrease;
+      }
+    });
   }
 
   // Return a value from 0 to 1 that can be used to lerp
   getAlpha(
-    behavior /* OscillateBehavior */,
-    phase /* number */,
-    frequency /* number */
+    behavior: "OSCILLATE" | "BOUNCE" | "BOUNCE_PAUSE",
+    angle: number,
+    frequency: number
   ) {
-    let alpha,
-      angle = (phase + this.oscillateAngle) * frequency
+    const theta = angle * frequency - Math.PI;
 
     // Various behaviors
     switch (behavior) {
-      case 'OSCILLATE':
-        return (Math.cos(angle - Math.PI) + 1) / 2
-      case 'BOUNCE':
-        return Math.abs(Math.cos((angle - Math.PI) / 2))
-      case 'BOUNCE_PAUSE':
-        alpha = Math.cos(angle - Math.PI)
-        return alpha < 0 ? 0 : alpha
+      case "OSCILLATE":
+        return (Math.cos(theta) + 1) / 2;
+      case "BOUNCE":
+        return Math.abs(Math.cos(theta / 2));
+      case "BOUNCE_PAUSE":
+        const alpha = Math.cos(theta);
+        return alpha < 0 ? 0 : alpha;
       default:
-        throw new Error(`Unknown oscillate behavior: ${behavior}`)
+        throw new Error(`Unknown oscillate behavior: ${behavior}`);
     }
   }
 
   oscillatePosition(entity, alpha, min, max) {
-    position.copy(min).lerp(max, alpha)
-    entity.get(ComposableTransform).offsetPosition('oscillate', position)
+    position.copy(min).lerp(max, alpha);
+    entity.get(ComposableTransform).offsetPosition("oscillate", position);
   }
 
   oscillateRotation(entity, alpha, min, max) {
-    rotation.copy(min).slerp(max, alpha)
-    entity.get(ComposableTransform).offsetRotation('oscillate', rotation)
+    rotation.copy(min).slerp(max, alpha);
+    entity.get(ComposableTransform).offsetRotation("oscillate", rotation);
   }
 
   oscillateScale(entity, alpha, min, max) {
-    scale.copy(min).lerp(max, alpha)
-    entity.get(ComposableTransform).offsetScale('oscillate', scale)
+    scale.copy(min).lerp(max, alpha);
+    entity.get(ComposableTransform).offsetScale("oscillate", scale);
+  }
+
+  isCycleCountComplete(component, angle: number) {
+    if (component.cycles >= 0) {
+      if (!component.cycleAngle) {
+        component.cycleAngle = 0;
+      }
+      component.cycleAngle += angle;
+
+      return (
+        component.cycleAngle * component.frequency >=
+        component.cycles * Math.PI * 2
+      );
+    } else {
+      return false;
+    }
   }
 }
