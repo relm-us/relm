@@ -1,3 +1,4 @@
+import { get, writable, Writable } from "svelte/store";
 import {
   addDemonstrationEntities,
   removeDemonstrationEntities,
@@ -10,8 +11,24 @@ export default class WorldManager {
   world: World | null = null;
   viewport: HTMLElement;
 
-  running: boolean = false;
+  running: Writable<boolean>;
   previousLoopTime: number = 0;
+
+  constructor() {
+    this.running = writable(false);
+    this.running.subscribe(($running) => {
+      if ($running) {
+        if (!this.world) {
+          throw new Error(`Can't start when world is null`);
+        }
+        this.world.presentation.setLoop(this.loop.bind(this));
+      } else {
+        if (this.world) {
+          this.world.presentation.setLoop(null);
+        }
+      }
+    });
+  }
 
   setWorld(world) {
     this.world = world;
@@ -24,14 +41,19 @@ export default class WorldManager {
   }
 
   maybeMount() {
-    if (this.world && this.viewport) {
-      // CSS3D elements go "behind" the WebGL canvas
-      this.world.cssPresentation.setViewport(this.viewport);
-      this.world.cssPresentation.renderer.domElement.style.zIndex = 0;
+    if (this.world) {
+      if (this.viewport) {
+        // CSS3D elements go "behind" the WebGL canvas
+        this.world.cssPresentation.setViewport(this.viewport);
+        this.world.cssPresentation.renderer.domElement.style.zIndex = 0;
 
-      // WebGL canvas goes "on top" of CSS3D HTML elements
-      this.world.presentation.setViewport(this.viewport);
-      this.world.presentation.renderer.domElement.style.zIndex = 1;
+        // WebGL canvas goes "on top" of CSS3D HTML elements
+        this.world.presentation.setViewport(this.viewport);
+        this.world.presentation.renderer.domElement.style.zIndex = 1;
+      } else {
+        this.world.cssPresentation.setViewport(null);
+        this.world.presentation.setViewport(null);
+      }
     }
   }
 
@@ -40,6 +62,7 @@ export default class WorldManager {
       throw new Error(`Can't populate when world is null`);
     }
 
+    // For now, we'll show a demo scene
     addDemonstrationEntities(this.world);
   }
 
@@ -48,23 +71,15 @@ export default class WorldManager {
   }
 
   start() {
-    if (!this.world) {
-      throw new Error(`Can't start when world is null`);
-    }
-
-    this.world.presentation.setLoop(this.loop.bind(this));
-    this.running = true;
+    this.running.set(true);
   }
 
   stop() {
-    if (this.world) {
-      this.world.presentation.setLoop(null);
-    }
-    this.running = false;
+    this.running.set(false);
   }
 
   step() {
-    if (this.running) {
+    if (get(this.running)) {
       this.stop();
     }
     requestAnimationFrame(this.loop.bind(this));
@@ -73,7 +88,7 @@ export default class WorldManager {
   loop(time) {
     const delta = time - this.previousLoopTime;
     if (this.world) {
-      this.world.update(delta);
+      this.world.update(get(this.running) ? delta : 1000 / 60);
     }
     this.previousLoopTime = time;
   }
