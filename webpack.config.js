@@ -38,7 +38,7 @@ const useBabelInDevelopment = false;
  * important, as the order of outputted styles will match. Svelte component
  * styles will always appear last in the bundle.
  */
-const stylesheets = ["./src/styles/index.scss"];
+const stylesheets = ["./src/ui/styles/index.scss"];
 
 module.exports = {
   entry: {
