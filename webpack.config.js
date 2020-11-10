@@ -55,6 +55,8 @@ module.exports = {
       // Note: Additional aliases will be loaded automatically from
       // `tsconfig.compilerOptions.paths`
       svelte: path.resolve("node_modules", "svelte"),
+      // Resolve only one version of threejs
+      three: path.resolve("node_modules", "three"),
       // Resolve tilde ("~") to project root, so we can use absolute-path style modules
       // See https://medium.com/@davidmieloch/tilde-paths-with-eslint-typescript-and-webpack-971f694c9b15
       "~": path.resolve(__dirname, "src"),
