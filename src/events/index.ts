@@ -6,5 +6,5 @@ const globalEvents = new EventEmitter();
 export default globalEvents;
 
 globalEvents.on("action", () => {
-  worldManager.step();
+  // worldManager.step();
 });

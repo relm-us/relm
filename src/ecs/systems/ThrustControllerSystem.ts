@@ -2,7 +2,7 @@ import { System, Groups } from "hecs";
 import { Vector3 } from "hecs-plugin-core";
 import { get } from "svelte/store";
 
-import { keyUp, keyDown, keyLeft, keyRight } from "~/input";
+import { keyUp, keyDown, keyLeft, keyRight, keySpace } from "~/input";
 import { ThrustController } from "../components/ThrustController";
 import { RigidBodyRef } from "~/ecs/plugins/rapier/components/RigidBodyRef";
 
@@ -21,6 +21,7 @@ export class ThrustControllerSystem extends System {
       down: get(keyDown),
       left: get(keyLeft),
       right: get(keyRight),
+      jump: get(keySpace),
     };
     this.queries.default.forEach((entity) => {
       this.applyThrust(directions, entity);
@@ -37,7 +38,8 @@ export class ThrustControllerSystem extends System {
         thrust.set(
           ((directions.left ? -1 : 0) + (directions.right ? 1 : 0)) *
             controller.thrust,
-          0,
+          (directions.jump ? 1 : 0) * controller.thrust,
+          // 0,
           ((directions.up ? -1 : 0) + (directions.down ? 1 : 0)) *
             controller.thrust
         );
