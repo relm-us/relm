@@ -1,7 +1,7 @@
 <script lang="ts">
   import WorldContainer from "~/ui/WorldContainer";
-  import FrameRateStats from "~/ui/FrameRateStats";
   import Editor from "~/ui/Editor.svelte";
+  import StatsPanel from "~/ui/StatsPanel";
   import Input, { keyUp } from "~/input";
   import PausePlayButton from "~/ui/PausePlayButton";
   import ActionButton from "~/ui/ActionButton";
@@ -19,12 +19,10 @@
   }
 </style>
 
-<!-- Show stats.js frame rate in corner -->
-<FrameRateStats />
-
 <!-- The virtual world! -->
 {#if $world}
   <WorldContainer world={$world} />
+  <StatsPanel renderer={$world.presentation.renderer} />
 {/if}
 
 <button-panel>

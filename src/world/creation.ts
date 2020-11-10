@@ -27,6 +27,8 @@ import { PotentiallyControllable } from "~/ecs/components/PotentiallyControllabl
 import { ThrustControllerSystem } from "~/ecs/systems/ThrustControllerSystem";
 import { TransferControlSystem } from "~/ecs/systems/TransferControlSystem";
 
+import { GatherStatsSystem } from "~/ecs/systems/GatherStatsSystem";
+
 export function createRenderer() {
   const renderer = new WebGLRenderer({
     antialias: true,
@@ -107,6 +109,7 @@ export function createWorld(rapier) {
       CenteredMeshSystem,
       ThrustControllerSystem,
       TransferControlSystem,
+      GatherStatsSystem,
     ],
   });
   return world;

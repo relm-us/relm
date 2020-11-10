@@ -3,9 +3,8 @@ import {
   addDemonstrationEntities,
   removeDemonstrationEntities,
 } from "~/world/demo";
-
-// TODO: Create HECS World type
-type World = any;
+import { deltaTime, fpsTime } from "./stats";
+import { World } from "~/types/hecs/world";
 
 export default class WorldManager {
   world: World | null = null;
@@ -91,9 +90,13 @@ export default class WorldManager {
 
   loop(time) {
     const delta = time - this.previousLoopTime;
+    deltaTime.addData(delta);
+    fpsTime.addData(1000 / delta);
+
     if (this.world) {
       this.world.update(get(this.running) ? delta : 1000 / 60);
     }
+
     this.previousLoopTime = time;
   }
 }
