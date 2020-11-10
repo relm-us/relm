@@ -6,6 +6,7 @@ import {
   DirectionalLight,
   sRGBEncoding,
   VSMShadowMap,
+  BasicShadowMap,
 } from "three";
 
 import { World } from "hecs";
@@ -35,6 +36,7 @@ export function createRenderer() {
   renderer.physicallyCorrectLights = true;
   renderer.outputEncoding = sRGBEncoding;
   renderer.shadowMap.enabled = true;
+  // renderer.shadowMap.type = BasicShadowMap;
   // renderer.shadowMap.type = VSMShadowMap;
 
   const style = renderer.domElement.style;
@@ -55,19 +57,20 @@ export function createScene() {
   hemiLight.position.set(0, 20, 0);
   scene.add(hemiLight);
 
+  const size = 10;
   const dirLight = new DirectionalLight(0x888888, 6);
   dirLight.position.set(-4, 20, 10);
-  // dirLight.castShadow = true;
-  // dirLight.shadow.mapSize.height = 1024;
-  // dirLight.shadow.mapSize.width = 1024;
-  // dirLight.shadow.camera.top = 5;
-  // dirLight.shadow.camera.bottom = -5;
-  // dirLight.shadow.camera.left = -15;
-  // dirLight.shadow.camera.right = 15;
-  // dirLight.shadow.camera.near = 20;
-  // dirLight.shadow.camera.far = 40;
-  // dirLight.shadow.radius = 1;
-  // dirLight.shadow.bias = -0.001;
+  dirLight.castShadow = true;
+  dirLight.shadow.mapSize.height = 1024;
+  dirLight.shadow.mapSize.width = 1024;
+  dirLight.shadow.camera.top = size;
+  dirLight.shadow.camera.bottom = -size;
+  dirLight.shadow.camera.left = -size;
+  dirLight.shadow.camera.right = size;
+  dirLight.shadow.camera.near = 2;
+  dirLight.shadow.camera.far = 40;
+  dirLight.shadow.radius = 2;
+  // dirLight.shadow.bias = 0.001;
   scene.add(dirLight);
 
   return scene;
