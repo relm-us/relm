@@ -3,19 +3,10 @@
   import { store as world } from "~/world/store";
   import { Quaternion, Euler } from "three";
   import { OscillateRotation } from "~/ecs/plugins/composable";
-
-  function findEntity(filter) {
-    if (!$world) return null;
-
-    for (const [id, entity] of $world.entities.entities) {
-      if (filter(entity)) return entity;
-    }
-
-    return null;
-  }
+  import { findEntity } from "~/ecs/utils";
 
   const action = () => {
-    const entity = findEntity((entity) => entity.name === "BlueBox");
+    const entity = findEntity($world, (entity) => entity.name === "BlueBox");
     entity.add(OscillateRotation, {
       cycles: 1.5,
       phase: Math.PI / 2,

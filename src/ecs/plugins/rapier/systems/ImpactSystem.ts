@@ -67,6 +67,7 @@ export class ImpactSystem extends System {
 
     const contacts: Map<Entity, Record<string, number>> = new Map();
 
+    // See https://rapier.rs/docs/user_guides/javascript/physics_event_handling/
     eventQueue.drainContactEvents(
       (handle1: number, handle2: number, contactStarted: boolean) => {
         if (!contactStarted) return;
