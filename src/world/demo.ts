@@ -97,10 +97,14 @@ export function addDemonstrationEntities(world) {
     })
     .activate();
 
+    const floorSize = {
+      w: 12,
+      d: 8
+    }
   // Create the floor
   makeBox(world, {
     y: -0.45,
-    w: 8, h: 0.1, d: 6,
+    w: floorSize.w, h: 0.1, d: floorSize.d,
     color: "white",
     dynamic: false,
   }).activate();
@@ -109,29 +113,45 @@ export function addDemonstrationEntities(world) {
 
   // Left Wall
   makeBox(world, {
-    x: -4, y: -0.25,
-    w: 0.1, h: 0.5, d: 6,
+    x: -floorSize.w/2, y: -0.25,
+    w: 0.1, h: 0.5, d: floorSize.d,
     color: "white",
     dynamic: false,
   }).activate();
 
   // Right Wall
   makeBox(world, {
-    x: 4, y: -0.25,
-    w: 0.1, h: 0.5, d: 6,
+    x: floorSize.w/2, y: -0.25,
+    w: 0.1, h: 0.5, d: floorSize.d,
     color: "white",
     dynamic: false,
   }).activate();
 
   // Back Wall
   makeBox(world, {
-    x: 0, y: -0.25, z: -3,
-    w: 8, h: 0.5, d: 0.1,
+    x: 0, y: -0.25, z: -floorSize.d/2,
+    w: floorSize.w, h: 0.5, d: 0.1,
+    color: "white",
+    dynamic: false,
+  }).activate();
+
+  // Front Wall
+  makeBox(world, {
+    x: 0, y: -0.25, z: floorSize.d/2,
+    w: floorSize.w, h: 0.5, d: 0.1,
     color: "white",
     dynamic: false,
   }).activate();
 
   /********* BOXES **********/
+  
+  for (let i = 0; i < 20; i++) {
+    makeBox(world, {
+      x: Math.random()*2-1, y: 5+Math.random()*5, z: -2,
+      w: 0.5, h: 0.5, d: 0.5,
+      color: "gray", name: "GrayBox"}
+    ).activate()
+  }
 
   // Box (Yellow-ish)
   makeBox(world, { x: 0, y: 0, z: 2, color: "orange", name: "YellowBox" })
@@ -139,7 +159,7 @@ export function addDemonstrationEntities(world) {
     .activate();
 
   // Box (Blue)
-  makeBox(world, { x: -2.5, y: 0, z: 0, color: "blue", name: "BlueBox" })
+  const blueBox = makeBox(world, { x: -2.5, y: 0, z: 0, color: "blue", name: "BlueBox" })
     .add(ThrustController)
     .add(PotentiallyControllable)
     .add(OscillatePosition, {
@@ -155,7 +175,6 @@ export function addDemonstrationEntities(world) {
       max: new Vector3(1.05, 1, 1.05),
     })
     .add(Outline)
-    .add(Transform)
     .activate();
 
   // Box (Red-ish)
@@ -164,7 +183,7 @@ export function addDemonstrationEntities(world) {
     .activate();
 
   // Chair
-  makeEntity(world, "Chair")
+  const chair = makeEntity(world, "Chair")
     .add(CenterMesh)
     .add(ComposableTransform, {
       position: new Vector3(0, 0, 0),
@@ -213,7 +232,7 @@ export function addDemonstrationEntities(world) {
       position: new Vector3(0, 5, 5),
     })
     .add(LookAt, {
-      entity: origin.id,
+      entity: chair.id,
     })
     .add(Camera)
     .activate();

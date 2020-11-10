@@ -43,15 +43,19 @@ export default class WorldManager {
   maybeMount() {
     if (this.world) {
       if (this.viewport) {
-        // CSS3D elements go "behind" the WebGL canvas
-        this.world.cssPresentation.setViewport(this.viewport);
-        this.world.cssPresentation.renderer.domElement.style.zIndex = 0;
+        if (this.world.cssPresentation) {
+          // CSS3D elements go "behind" the WebGL canvas
+          this.world.cssPresentation.setViewport(this.viewport);
+          this.world.cssPresentation.renderer.domElement.style.zIndex = 0;
+        }
 
         // WebGL canvas goes "on top" of CSS3D HTML elements
         this.world.presentation.setViewport(this.viewport);
         this.world.presentation.renderer.domElement.style.zIndex = 1;
       } else {
-        this.world.cssPresentation.setViewport(null);
+        if (this.world.cssPresentation) {
+          this.world.cssPresentation.setViewport(null);
+        }
         this.world.presentation.setViewport(null);
       }
     }
