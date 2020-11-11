@@ -14,10 +14,6 @@ export class OutlineSystem extends System {
     removed: [Not(Outline), OutlineApplied],
   };
 
-  init({ effects }) {
-    this.effects = effects;
-  }
-
   update() {
     this.queries.added.forEach((entity) => {
       this.addOutline(entity);
@@ -71,14 +67,14 @@ export class OutlineSystem extends System {
         1
       );
 
-      const subtractMesh = this.createSubtractionMesh(mesh);
+      // const subtractMesh = this.createSubtractionMesh(mesh);
 
       // Group becomes parent of the original mesh
       group.add(mesh);
       // Add outline meshes
       group.add(coloredOutline);
       group.add(blackOutline);
-      group.add(subtractMesh);
+      // group.add(subtractMesh);
 
       // Put original mesh in front of both of the new outline meshes
       mesh.renderOrder = 4;
