@@ -4,7 +4,7 @@ export class Outline extends Component {
   static props = {
     color: {
       type: NumberType,
-      default: 0xff0000,
+      default: "white",
       editor: {
         label: "Color",
       },

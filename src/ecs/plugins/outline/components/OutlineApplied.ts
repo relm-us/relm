@@ -1,3 +1,9 @@
-import { Component } from "hecs";
+import { Component, RefType } from "hecs";
 
-export class OutlineApplied extends Component {}
+export class OutlineApplied extends Component {
+  static props = {
+    originalMesh: {
+      type: RefType,
+    },
+  };
+}
