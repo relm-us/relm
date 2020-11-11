@@ -15,7 +15,7 @@ import { Outline } from "~/ecs/plugins/effects";
 import { RigidBody, RigidBodyRef, Collider } from "~/ecs/plugins/rapier";
 
 import { CenterMesh } from "~/ecs/components/CenterMesh";
-import { Euler } from "three";
+import { Euler, Color } from "three";
 import { ThrustController } from "~/ecs/components/ThrustController";
 import { PotentiallyControllable } from "~/ecs/components/PotentiallyControllable";
 
@@ -34,12 +34,14 @@ function makeBox(world, {
   dynamic = true,
   name = 'Box'
 }) {
+  const linearColor = new Color(color)
+  linearColor.convertSRGBToLinear()
   return makeEntity(world, name)
     .add(ComposableTransform, {
       position: new Vector3(x, y, z),
     })
     .add(Shape, {
-      color,
+      color: linearColor,
       boxSize: new Vector3(w, h, d),
     })
     .add(RigidBody, {
@@ -145,7 +147,7 @@ export function addDemonstrationEntities(world) {
 
   /********* BOXES **********/
   
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 100; i++) {
     makeBox(world, {
       x: Math.random()*2-1, y: 5+Math.random()*5, z: -2,
       w: 0.5, h: 0.5, d: 0.5,
@@ -153,12 +155,12 @@ export function addDemonstrationEntities(world) {
     ).activate()
   }
 
-  // Box (Yellow-ish)
-  makeBox(world, { x: 0, y: 0, z: 2, color: "orange", name: "YellowBox" })
+  // Orange Box
+  makeBox(world, { x: 0, y: 0, z: 2, color: "orange", name: "OrangeBox" })
     .add(PotentiallyControllable)
     .activate();
 
-  // Box (Blue)
+  // Blue Box
   const blueBox = makeBox(world, { x: -2.5, y: 0, z: 0, color: "blue", name: "BlueBox" })
     .add(ThrustController)
     .add(PotentiallyControllable)
@@ -177,8 +179,8 @@ export function addDemonstrationEntities(world) {
     .add(Outline)
     .activate();
 
-  // Box (Red-ish)
-  makeBox(world, { x: 2.5, y: 0, z: 0, color: "brown", name: "RedBox" })
+  // Brown Box
+  makeBox(world, { x: 2.5, y: 0, z: 0, color: "brown", name: "BrownBox" })
     .add(PotentiallyControllable)
     .activate();
 
