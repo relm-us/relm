@@ -6,6 +6,7 @@ import {
   DirectionalLight,
   sRGBEncoding,
   VSMShadowMap,
+  PCFShadowMap,
   BasicShadowMap,
 } from "three";
 
@@ -29,17 +30,30 @@ import { TransferControlSystem } from "~/ecs/systems/TransferControlSystem";
 
 import { GatherStatsSystem } from "~/ecs/systems/GatherStatsSystem";
 
+type ShadowMapConfig = "BASIC" | "PCF" | "VSM";
+const shadowMapConfig: ShadowMapConfig = "VSM";
+
 export function createRenderer() {
   const renderer = new WebGLRenderer({
     antialias: true,
     alpha: true,
+    stencil: false,
+    powerPreference: "high-performance",
   });
 
   renderer.physicallyCorrectLights = true;
-  renderer.outputEncoding = sRGBEncoding;
   renderer.shadowMap.enabled = true;
-  // renderer.shadowMap.type = BasicShadowMap;
-  // renderer.shadowMap.type = VSMShadowMap;
+  switch (shadowMapConfig) {
+    case "BASIC":
+      renderer.shadowMap.type = BasicShadowMap;
+      break;
+    case "PCF":
+      renderer.shadowMap.type = PCFShadowMap;
+      break;
+    case "VSM":
+      renderer.shadowMap.type = VSMShadowMap;
+      break;
+  }
 
   const style = renderer.domElement.style;
   style.outline = "0";
@@ -60,7 +74,7 @@ export function createScene() {
   scene.add(hemiLight);
 
   const size = 10;
-  const dirLight = new DirectionalLight(0x888888, 6);
+  const dirLight = new DirectionalLight(0xffffff, 4);
   dirLight.position.set(-4, 20, 10);
   dirLight.castShadow = true;
   dirLight.shadow.mapSize.height = 1024;
@@ -72,7 +86,14 @@ export function createScene() {
   dirLight.shadow.camera.near = 2;
   dirLight.shadow.camera.far = 40;
   dirLight.shadow.radius = 2;
-  // dirLight.shadow.bias = 0.001;
+  switch (shadowMapConfig) {
+    case "BASIC":
+    case "PCF":
+      break;
+    case "VSM":
+      dirLight.shadow.bias = -0.001;
+      break;
+  }
   scene.add(dirLight);
 
   return scene;
@@ -87,7 +108,7 @@ export function createWorld(rapier) {
         {
           renderer: createRenderer(),
           scene: createScene(),
-          postprocess: true,
+          // postprocess: true,
         },
       ],
       [
@@ -100,7 +121,7 @@ export function createWorld(rapier) {
           rapier,
         },
       ],
-      [EffectsPlugin, {}],
+      // [EffectsPlugin, {}],
 
       Css3DPlugin,
     ],
