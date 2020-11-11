@@ -4,7 +4,6 @@ import {
   Color,
   HemisphereLight,
   DirectionalLight,
-  sRGBEncoding,
   VSMShadowMap,
   PCFShadowMap,
   BasicShadowMap,
