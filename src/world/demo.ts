@@ -20,48 +20,8 @@ import {
   PotentiallyControllable,
   ThrustController,
 } from "~/ecs/components";
-import { Euler, Color } from "three";
 
-const demoEntities = [];
-
-function makeEntity(world, name) {
-  const entity = world.entities.create(name);
-  demoEntities.push(entity);
-  return entity;
-}
-
-function makeBox(
-  world,
-  {
-    x = 0,
-    y = 0,
-    z = 0,
-    w = 1,
-    h = 1,
-    d = 1,
-    color = "red",
-    dynamic = true,
-    name = "Box",
-  }
-) {
-  const linearColor = new Color(color);
-  linearColor.convertSRGBToLinear();
-  return makeEntity(world, name)
-    .add(ComposableTransform, {
-      position: new Vector3(x, y, z),
-    })
-    .add(Shape, {
-      color: linearColor,
-      boxSize: new Vector3(w, h, d),
-    })
-    .add(RigidBody, {
-      kind: dynamic ? "DYNAMIC" : "STATIC",
-    })
-    .add(Collider, {
-      kind: "BOX",
-      boxSize: new Vector3(w, h, d),
-    });
-}
+import { makeEntity, makeBox, makeBall, makePileOfBoxes } from "./prefab";
 
 export function addDemonstrationEntities(world) {
   const iframeSize = new Vector3(560, 315, 0);
@@ -165,20 +125,11 @@ export function addDemonstrationEntities(world) {
 
   /********* BOXES **********/
 
-  for (let i = 0; i < 10; i++) {
-    makeBox(world, {
-      ...{ x: Math.random() * 2 - 1, y: 5 + Math.random() * 5, z: -2 },
-      ...{ w: 0.5, h: 0.5, d: 0.5 },
-      color: "gray",
-      name: "GrayBox",
-    })
-      .add(Selectable)
-      .activate();
-  }
+  // Pile of boxes
+  makePileOfBoxes(world, { count: 10 });
 
   // Orange Box
   makeBox(world, { x: 0, y: 0, z: 2, color: "orange", name: "OrangeBox" })
-    .add(PotentiallyControllable)
     .add(Selectable)
     .activate();
 
@@ -205,9 +156,17 @@ export function addDemonstrationEntities(world) {
     })
     .activate();
 
+  const ball = makeBall(world, {
+    ...{ x: 0, y: 0.5, z: -2 },
+    r: 0.5,
+    color: "#ddff11",
+    name: "Ball",
+  })
+    .add(Selectable)
+    .activate();
+
   // Brown Box
   makeBox(world, { x: 2.5, y: 0, z: 0, color: "brown", name: "BrownBox" })
-    .add(PotentiallyControllable)
     .add(Selectable)
     .activate();
 
@@ -268,11 +227,6 @@ export function addDemonstrationEntities(world) {
     .activate();
 }
 
-export function removeDemonstrationEntities() {
-  demoEntities.forEach((entity) => {
-    entity.destroy();
-  });
-}
 /**
  * Sample Components
  */

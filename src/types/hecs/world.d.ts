@@ -7,4 +7,5 @@ export type World = {
   cssPresentation: any;
   providers: Object;
   update: (number) => void;
+  reset: Function;
 };

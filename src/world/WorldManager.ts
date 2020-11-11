@@ -1,8 +1,5 @@
 import { get, writable, Writable } from "svelte/store";
-import {
-  addDemonstrationEntities,
-  removeDemonstrationEntities,
-} from "~/world/demo";
+import { addDemonstrationEntities } from "~/world/demo";
 import { deltaTime, fpsTime } from "./stats";
 import { World } from "~/types/hecs/world";
 
@@ -73,7 +70,7 @@ export default class WorldManager {
   }
 
   depopulate() {
-    removeDemonstrationEntities();
+    this.world.reset();
   }
 
   start() {
