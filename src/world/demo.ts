@@ -66,6 +66,7 @@ function makeBox(
 export function addDemonstrationEntities(world) {
   const iframeSize = new Vector3(560, 315, 0);
 
+  // YouTube Video
   const iframeWorldWidth = 3;
   const iframeRatio = iframeSize.x / iframeSize.y;
   const rectangleSize = new Vector3(
@@ -74,7 +75,8 @@ export function addDemonstrationEntities(world) {
     0.1
   );
   const scale = rectangleSize.x / parseFloat(iframeSize.x);
-  makeEntity(world, "Image")
+  makeEntity(world, "Video")
+    .add(Selectable)
     .add(ComposableTransform, {
       position: new Vector3(0, 0, 0.5),
     })
@@ -84,7 +86,8 @@ export function addDemonstrationEntities(world) {
         props: {
           width: 560,
           height: 315,
-          embedId: "nn8YGPZdCvA",
+          embedId: "U_u91SjrEOE", // Prometheus
+          // embedId: "nn8YGPZdCvA", // Midas
         },
       },
       scale,
