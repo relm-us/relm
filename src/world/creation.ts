@@ -40,6 +40,7 @@ export function createRenderer() {
     powerPreference: "high-performance",
   });
 
+  renderer.setClearColor(0x000000, 1.0);
   renderer.physicallyCorrectLights = true;
   renderer.shadowMap.enabled = true;
   switch (shadowMapConfig) {

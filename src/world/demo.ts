@@ -147,7 +147,7 @@ export function addDemonstrationEntities(world) {
 
   /********* BOXES **********/
   
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 10; i++) {
     makeBox(world, {
       x: Math.random()*2-1, y: 5+Math.random()*5, z: -2,
       w: 0.5, h: 0.5, d: 0.5,
