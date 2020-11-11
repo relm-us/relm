@@ -10,6 +10,16 @@
 
   let maxInUse = 50;
   $: maxInUse = maximum === undefined ? maxSoFar : maximum;
+
+  function makePath(data, maxInUse, height) {
+    return data
+      .map(
+        (datum, i) =>
+          (i === 0 ? "M" : "L") +
+          `${i * 2},${height - (datum / maxInUse) * height}`
+      )
+      .join("");
+  }
 </script>
 
 <style>
@@ -26,11 +36,6 @@
 
     border-bottom: 2px solid black;
     background-color: rgba(0, 0, 0, 0.25);
-  }
-  stick {
-    width: 2px;
-    height: var(--height);
-    border-top: 1px solid red;
   }
   scale {
     position: absolute;
@@ -50,7 +55,15 @@
 <chart style="--height: {height}px">
   <scale class="top">{maxInUse}</scale>
   <scale class="bottom">0</scale>
-  {#each data as datum}
-    <stick style="--height: {(datum / maxInUse) * height}px" />
-  {/each}
+  <svg
+    width={200}
+    height={50}
+    viewBox="0 0 200 50"
+    xmlns="http://www.w3.org/2000/svg">
+    <path
+      d={makePath(data, maxInUse, height)}
+      fill="none"
+      stroke="red"
+      stroke-width="2" />
+  </svg>
 </chart>

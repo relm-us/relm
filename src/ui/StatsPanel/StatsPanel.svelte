@@ -1,16 +1,23 @@
 <script>
   import Header from "./Header.svelte";
   import Pane from "./Pane.svelte";
-  import Chart from "./Chart.svelte";
+  import PaneStats from "./PaneStats.svelte";
+  import Button from "~/ui/Button";
 
   import {
     fpsTime,
+    deltaTime,
     renderCalls,
     renderTriangles,
     memoryGeometries,
     memoryTextures,
     programs,
+    systems,
   } from "~/world/stats";
+
+  let renderStatsVisible = false;
+  let systemsVisible = false;
+  let shadersVisible = false;
 </script>
 
 <style>
@@ -32,20 +39,7 @@
     overflow-y: auto;
   }
 
-  lbl {
-    background-color: rgba(255, 255, 255, 0.25);
-    color: #333;
-    display: block;
-    padding: 4px 16px;
-
-    font-weight: bold;
-  }
-
-  lbl info {
-    font-weight: normal;
-  }
-
-  info table {
+  table {
     width: 100%;
     padding-left: 8px;
     padding-right: 8px;
@@ -53,51 +47,61 @@
 </style>
 
 <panel>
-  <Header>Render Stats</Header>
+  <Header>Performance</Header>
 
-  <Pane>
-    <lbl>
-      FPS
-      <info>{($fpsTime[0] || 0).toFixed(1)}</info>
-    </lbl>
-    <Chart data={$fpsTime} maximum={60} />
-  </Pane>
+  <PaneStats
+    dataStore={fpsTime}
+    value={($fpsTime[0] || 0).toFixed(1)}
+    maximum={60}>
+    FPS
+  </PaneStats>
 
-  <Pane>
-    <lbl>
-      Render Calls
-      <info>{$renderCalls[0]}</info>
-    </lbl>
-    <Chart data={$renderCalls} />
-  </Pane>
+  <PaneStats dataStore={deltaTime} value={($deltaTime[0] || 0).toFixed(1)}>
+    Millis
+  </PaneStats>
 
-  <Pane>
-    <lbl>
-      Triangles
-      <info>{$renderTriangles[0]}</info>
-    </lbl>
-    <Chart data={$renderTriangles} />
-  </Pane>
+  <Button
+    style="margin-top:8px"
+    on:click={() => {
+      renderStatsVisible = !renderStatsVisible;
+    }}>
+    {renderStatsVisible ? 'Hide' : 'Show'}
+    Render Stats
+  </Button>
 
-  <Pane>
-    <lbl>
-      Geometries (mem. used)
-      <info>{$memoryGeometries[0]}</info>
-    </lbl>
-    <Chart data={$memoryGeometries} />
-  </Pane>
+  {#if renderStatsVisible}
+    <PaneStats dataStore={renderCalls}>Render Calls</PaneStats>
+    <PaneStats dataStore={renderTriangles}>Triangles</PaneStats>
+    <PaneStats dataStore={memoryGeometries}>Geometries</PaneStats>
+    <PaneStats dataStore={memoryTextures}>Textures</PaneStats>
+  {/if}
 
-  <Pane>
-    <lbl>
-      Textures (mem. used)
-      <info>{$memoryTextures[0]}</info>
-    </lbl>
-    <Chart data={$memoryTextures} />
-  </Pane>
+  <Button
+    style="margin-top:8px"
+    on:click={() => {
+      systemsVisible = !systemsVisible;
+    }}>
+    {systemsVisible ? 'Hide' : 'Show'}
+    Systems
+  </Button>
 
-  <Pane>
-    <lbl>Programs</lbl>
-    <info>
+  {#if systemsVisible}
+    {#each Object.entries($systems) as [systemName, systemStatsStore]}
+      <PaneStats dataStore={systemStatsStore}>{systemName}</PaneStats>
+    {/each}
+  {/if}
+
+  <Button
+    style="margin-top:8px"
+    on:click={() => {
+      shadersVisible = !shadersVisible;
+    }}>
+    {shadersVisible ? 'Hide' : 'Show'}
+    Shaders
+  </Button>
+
+  {#if shadersVisible}
+    <Pane title="Shaders">
       <table>
         <tr>
           <th>ID</th>
@@ -114,6 +118,6 @@
           {/each}
         {/if}
       </table>
-    </info>
-  </Pane>
+    </Pane>
+  {/if}
 </panel>

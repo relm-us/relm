@@ -1,15 +1,13 @@
 import { writable, Writable, derived } from "svelte/store";
 
-import { store as worldStore } from "./store";
-
-const DATA_WINDOW_SIZE = 100;
+export const DATA_WINDOW_SIZE = 100;
 
 type StatsStore = {
   subscribe: Function;
   addData: (data: number) => void;
 };
 
-function createStatsStore(dataWindowSize): StatsStore {
+export function createStatsStore(dataWindowSize): StatsStore {
   const store: Writable<Array<number>> = writable([]);
 
   const addDataPoint = (datapoint) => {
@@ -43,3 +41,6 @@ export const renderLines = createStatsStore(DATA_WINDOW_SIZE);
 export const renderFrames = createStatsStore(DATA_WINDOW_SIZE);
 
 export const programs = writable([]);
+
+// Gathered from profiling the HECS system loop
+export const systems: Writable<Record<string, StatsStore>> = writable({});

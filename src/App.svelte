@@ -4,9 +4,12 @@
   import StatsPanel from "~/ui/StatsPanel";
   import Input, { keyUp } from "~/input";
   import PausePlayButton from "~/ui/PausePlayButton";
+  import Button from "~/ui/Button";
   import ActionButton from "~/ui/ActionButton";
 
   import { store as world } from "./world/store";
+
+  let performanceVisible = false;
 </script>
 
 <style>
@@ -22,10 +25,18 @@
 <!-- The virtual world! -->
 {#if $world}
   <WorldContainer world={$world} />
-  <StatsPanel renderer={$world.presentation.renderer} />
+  {#if performanceVisible}
+    <StatsPanel />
+  {/if}
 {/if}
 
 <button-panel>
+  <Button
+    on:click={() => {
+      performanceVisible = !performanceVisible;
+    }}>
+    Perf
+  </Button>
   <ActionButton />
   <PausePlayButton />
 </button-panel>

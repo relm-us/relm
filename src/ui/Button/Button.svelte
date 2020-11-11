@@ -2,6 +2,7 @@
   import { createEventDispatcher } from "svelte";
 
   export let enabled = true;
+  export let style;
 
   let dispatch = createEventDispatcher();
 </script>
@@ -34,6 +35,7 @@
 
 <button
   class:disabled={!enabled}
+  {style}
   on:click={() => {
     dispatch('click');
   }}>

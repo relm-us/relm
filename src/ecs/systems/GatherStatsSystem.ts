@@ -1,6 +1,8 @@
 import { System, Groups, Not } from "hecs";
-
+import { get } from "svelte/store";
 import {
+  DATA_WINDOW_SIZE,
+  createStatsStore,
   memoryGeometries,
   memoryTextures,
   renderCalls,
@@ -9,6 +11,7 @@ import {
   renderLines,
   renderFrames,
   programs,
+  systems,
 } from "~/world/stats";
 
 export class GatherStatsSystem extends System {
@@ -22,6 +25,7 @@ export class GatherStatsSystem extends System {
 
   update() {
     const info = this.world.presentation?.renderer?.info;
+    // Rendering performance
     if (info) {
       memoryGeometries.addData(info.memory.geometries);
       memoryTextures.addData(info.memory.textures);
@@ -47,6 +51,22 @@ export class GatherStatsSystem extends System {
           this.programHash = programHash;
         }
       }
+    }
+
+    // ECS system performance
+    const $systems = get(systems);
+    let newSystem = false;
+    for (const [name, system] of Object.entries(
+      this.world.systems.systemsByName
+    )) {
+      if (!$systems[name]) {
+        $systems[name] = createStatsStore(DATA_WINDOW_SIZE);
+        newSystem = true;
+      }
+      $systems[name].addData((system as any).performance);
+    }
+    if (newSystem) {
+      systems.set($systems);
     }
   }
 }
