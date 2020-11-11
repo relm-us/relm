@@ -1,12 +1,9 @@
 import { System, Groups, Not, Modified } from "hecs";
-import {
-  Mesh,
-  Group,
-  CustomBlending,
-  MeshBasicMaterial,
-  DoubleSide,
-} from "three";
+import { Mesh, Group, DoubleSide, MeshLambertMaterial } from "three";
 import { Outline, OutlineApplied } from "../components";
+import { WireframeGeometry2 } from "three/examples/jsm/lines/WireframeGeometry2";
+import { Wireframe } from "three/examples/jsm/lines/Wireframe";
+import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
 import { Object3D } from "hecs-plugin-three";
 
 export class OutlineSystem extends System {
@@ -34,61 +31,107 @@ export class OutlineSystem extends System {
     const outline = entity.get(Outline);
     const object3d = entity.get(Object3D);
     if (object3d && object3d.value.children.length > 0) {
-      const originalParent = object3d.value;
-      const originalMesh = originalParent.children[0];
-
-      // Group to contain both the object & its outline
-      const group = new Group();
-
-      // Remove the geometry, then add the geometry back, but now as a child of the Group
-      originalParent.remove(originalMesh);
-      originalMesh.renderOrder = 3; // in front of both "outline" meshes
-      group.add(originalMesh);
-
-      // Create the outline
-      const whiteOutline = this.createOutlineMesh(
-        originalMesh,
-        outline.color,
-        1.0 + outline.thickness * 0.03,
-        2
-      );
-      group.add(whiteOutline);
-
-      const blackOutline = this.createOutlineMesh(
-        originalMesh,
-        "black",
-        1.0 + outline.thickness * 0.03 + outline.thickness * 0.03,
-        1
-      );
-      group.add(blackOutline);
-
-      originalParent.add(group);
-
-      entity.add(OutlineApplied, { originalMesh });
+      for (const child of object3d.value.children) {
+        this.outlinify(child, outline.color, outline.thickness);
+      }
+      entity.add(OutlineApplied);
     }
   }
 
   removeOutline(entity) {
-    const applied = entity.get(OutlineApplied);
-    if (applied) {
-      const originalMesh = applied.originalMesh;
-      const originalParent = originalMesh.parent.parent;
-      const group = originalMesh.parent;
-      originalParent.add(originalMesh);
-      originalParent.remove(group);
+    const object3d = entity.get(Object3D);
+    if (object3d) {
+      this.deoutlinify(object3d.value);
       entity.remove(OutlineApplied);
     }
   }
 
-  createOutlineMesh(mesh, color, scalingFactor, renderOrder) {
-    const material = new MeshBasicMaterial({ color, side: DoubleSide });
-    material.blending = CustomBlending;
+  outlinify(object, color, thickness) {
+    if (object.isMesh) {
+      const mesh = object;
+
+      // Keep track so we can add Group in object's place
+      const originalParent = mesh.parent;
+
+      // Group to contain both the mesh & its outline
+      const group = new Group();
+      group.userData.outline = "group";
+
+      const coloredOutline = this.createOutlineMesh(
+        mesh,
+        color,
+        1.0 + thickness * 2,
+        2
+      );
+
+      const blackOutline = this.createOutlineMesh(
+        mesh,
+        "black",
+        1.0 + thickness * 4,
+        1
+      );
+
+      const subtractMesh = this.createSubtractionMesh(mesh);
+
+      // Group becomes parent of the original mesh
+      group.add(mesh);
+      // Add outline meshes
+      group.add(coloredOutline);
+      group.add(blackOutline);
+      group.add(subtractMesh);
+
+      // Put original mesh in front of both of the new outline meshes
+      mesh.renderOrder = 4;
+
+      originalParent.add(group);
+    }
+
+    for (const child of object.children) {
+      this.outlinify(child, color, thickness);
+    }
+  }
+
+  deoutlinify(object) {
+    if (object.userData?.outline === "group") {
+      const original = object.children[0];
+      object.parent.add(original);
+      object.parent.remove(object);
+
+      this.deoutlinify(original);
+    } else {
+      for (const child of object.children) {
+        this.deoutlinify(child);
+      }
+    }
+  }
+
+  createOutlineMesh(mesh, color, linewidth, renderOrder) {
+    const geometry = new WireframeGeometry2(mesh.geometry);
+    const material = new LineMaterial({
+      color,
+      linewidth,
+    });
+    material.resolution.set(window.innerWidth, window.innerHeight);
     material.depthTest = false;
 
-    const outlineMesh = new Mesh(mesh.geometry, material);
+    const outlineMesh = new Wireframe(geometry, material);
+    outlineMesh.computeLineDistances();
+    outlineMesh.scale.set(1, 1, 1);
     outlineMesh.renderOrder = renderOrder;
-    outlineMesh.scale.set(scalingFactor, scalingFactor, scalingFactor);
+    outlineMesh.userData.outline = "outline";
 
     return outlineMesh;
+  }
+
+  createSubtractionMesh(mesh) {
+    const material = new MeshLambertMaterial({
+      color: 0x888888,
+      side: DoubleSide,
+    });
+    material.depthTest = false;
+
+    const subtractMesh = new Mesh(mesh.geometry, material);
+    subtractMesh.renderOrder = 3;
+    return subtractMesh;
   }
 }

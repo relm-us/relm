@@ -7,7 +7,7 @@
   import { findEntity } from "~/ecs/utils";
 
   const action = () => {
-    const entity = findEntity($world, (entity) => entity.name === "BlueBox");
+    const entity = findEntity($world, (entity) => entity.name === "Chair");
     entity.add(OscillateRotation, {
       cycles: 1.5,
       phase: Math.PI / 2,

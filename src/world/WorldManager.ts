@@ -30,6 +30,9 @@ export default class WorldManager {
   }
 
   setWorld(world) {
+    // Make debugging easier
+    (window as any).world = world;
+
     this.world = world;
     this.maybeMount();
   }

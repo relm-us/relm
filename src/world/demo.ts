@@ -176,7 +176,6 @@ export function addDemonstrationEntities(world) {
       min: new Vector3(1, 1, 1),
       max: new Vector3(1.05, 1, 1.05),
     })
-    .add(Outline)
     .activate();
 
   // Brown Box
