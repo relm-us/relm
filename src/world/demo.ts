@@ -14,10 +14,13 @@ import { HtmlNode, CssPlane } from "~/ecs/plugins/css3d";
 import { Outline } from "~/ecs/plugins/outline";
 import { RigidBody, RigidBodyRef, Collider } from "~/ecs/plugins/rapier";
 
-import { CenterMesh } from "~/ecs/components/CenterMesh";
+import {
+  CenterMesh,
+  Selectable,
+  PotentiallyControllable,
+  ThrustController,
+} from "~/ecs/components";
 import { Euler, Color } from "three";
-import { ThrustController } from "~/ecs/components/ThrustController";
-import { PotentiallyControllable } from "~/ecs/components/PotentiallyControllable";
 
 const demoEntities = [];
 
@@ -27,15 +30,22 @@ function makeEntity(world, name) {
   return entity;
 }
 
-function makeBox(world, {
-  x = 0, y = 0, z = 0,
-  w = 1, h = 1, d = 1,
-  color = "red",
-  dynamic = true,
-  name = 'Box'
-}) {
-  const linearColor = new Color(color)
-  linearColor.convertSRGBToLinear()
+function makeBox(
+  world,
+  {
+    x = 0,
+    y = 0,
+    z = 0,
+    w = 1,
+    h = 1,
+    d = 1,
+    color = "red",
+    dynamic = true,
+    name = "Box",
+  }
+) {
+  const linearColor = new Color(color);
+  linearColor.convertSRGBToLinear();
   return makeEntity(world, name)
     .add(ComposableTransform, {
       position: new Vector3(x, y, z),
@@ -99,14 +109,16 @@ export function addDemonstrationEntities(world) {
     })
     .activate();
 
-    const floorSize = {
-      w: 12,
-      d: 8
-    }
+  const floorSize = {
+    w: 12,
+    d: 8,
+  };
   // Create the floor
   makeBox(world, {
     y: -0.45,
-    w: floorSize.w, h: 0.1, d: floorSize.d,
+    w: floorSize.w,
+    h: 0.1,
+    d: floorSize.d,
     color: "white",
     dynamic: false,
   }).activate();
@@ -115,55 +127,67 @@ export function addDemonstrationEntities(world) {
 
   // Left Wall
   makeBox(world, {
-    x: -floorSize.w/2, y: -0.25,
-    w: 0.1, h: 0.5, d: floorSize.d,
+    x: -floorSize.w / 2,
+    y: -0.25,
+    w: 0.1,
+    h: 0.5,
+    d: floorSize.d,
     color: "white",
     dynamic: false,
   }).activate();
 
   // Right Wall
   makeBox(world, {
-    x: floorSize.w/2, y: -0.25,
-    w: 0.1, h: 0.5, d: floorSize.d,
+    ...{ x: floorSize.w / 2, y: -0.25 },
+    ...{ w: 0.1, h: 0.5, d: floorSize.d },
     color: "white",
     dynamic: false,
   }).activate();
 
   // Back Wall
   makeBox(world, {
-    x: 0, y: -0.25, z: -floorSize.d/2,
-    w: floorSize.w, h: 0.5, d: 0.1,
+    ...{ x: 0, y: -0.25, z: -floorSize.d / 2 },
+    ...{ w: floorSize.w, h: 0.5, d: 0.1 },
     color: "white",
     dynamic: false,
   }).activate();
 
   // Front Wall
   makeBox(world, {
-    x: 0, y: -0.25, z: floorSize.d/2,
-    w: floorSize.w, h: 0.5, d: 0.1,
+    ...{ x: 0, y: -0.25, z: floorSize.d / 2 },
+    ...{ w: floorSize.w, h: 0.5, d: 0.1 },
     color: "white",
     dynamic: false,
   }).activate();
 
   /********* BOXES **********/
-  
+
   for (let i = 0; i < 10; i++) {
     makeBox(world, {
-      x: Math.random()*2-1, y: 5+Math.random()*5, z: -2,
-      w: 0.5, h: 0.5, d: 0.5,
-      color: "gray", name: "GrayBox"}
-    ).activate()
+      ...{ x: Math.random() * 2 - 1, y: 5 + Math.random() * 5, z: -2 },
+      ...{ w: 0.5, h: 0.5, d: 0.5 },
+      color: "gray",
+      name: "GrayBox",
+    })
+      .add(Selectable)
+      .activate();
   }
 
   // Orange Box
   makeBox(world, { x: 0, y: 0, z: 2, color: "orange", name: "OrangeBox" })
     .add(PotentiallyControllable)
+    .add(Selectable)
     .activate();
 
   // Blue Box
-  const blueBox = makeBox(world, { x: -2.5, y: 0, z: 0, color: "blue", name: "BlueBox" })
+  const blueBox = makeBox(world, {
+    ...{ x: -2.5, y: 0, z: 0 },
+    color: "blue",
+    name: "BlueBox",
+  })
     .add(ThrustController)
     .add(PotentiallyControllable)
+    .add(Selectable)
     .add(OscillatePosition, {
       frequency: 1,
       phase: Math.PI * 0,
@@ -181,10 +205,12 @@ export function addDemonstrationEntities(world) {
   // Brown Box
   makeBox(world, { x: 2.5, y: 0, z: 0, color: "brown", name: "BrownBox" })
     .add(PotentiallyControllable)
+    .add(Selectable)
     .activate();
 
   // Chair
   const chair = makeEntity(world, "Chair")
+    .add(Selectable)
     .add(CenterMesh)
     .add(ComposableTransform, {
       position: new Vector3(0, 0, 0),
@@ -240,9 +266,9 @@ export function addDemonstrationEntities(world) {
 }
 
 export function removeDemonstrationEntities() {
-  demoEntities.forEach(entity => {
-    entity.destroy()
-  })
+  demoEntities.forEach((entity) => {
+    entity.destroy();
+  });
 }
 /**
  * Sample Components

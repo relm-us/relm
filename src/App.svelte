@@ -28,6 +28,12 @@
   {#if performanceVisible}
     <StatsPanel />
   {/if}
+
+  <!-- Editor (TODO) -->
+  <!-- <Editor world={$world} /> -->
+
+  <!-- Keyboard, Mouse input -->
+  <Input world={$world} />
 {/if}
 
 <button-panel>
@@ -40,9 +46,3 @@
   <ActionButton />
   <PausePlayButton />
 </button-panel>
-
-<!-- Editor (TODO) -->
-<Editor />
-
-<!-- Keyboard, Mouse input -->
-<Input />

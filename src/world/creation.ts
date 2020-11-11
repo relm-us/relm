@@ -19,11 +19,10 @@ import Css3DPlugin from "~/ecs/plugins/css3d";
 import RapierPlugin from "~/ecs/plugins/rapier";
 import OutlinePlugin from "~/ecs/plugins/outline";
 
-import { CenteredMesh } from "~/ecs/components/CenteredMesh";
+import { CenteredMesh } from "~/ecs/components";
 import { CenteredMeshSystem } from "~/ecs/systems/CenteredMeshSystem";
 
-import { ThrustController } from "~/ecs/components/ThrustController";
-import { PotentiallyControllable } from "~/ecs/components/PotentiallyControllable";
+import { ThrustController, PotentiallyControllable } from "~/ecs/components";
 import { ThrustControllerSystem } from "~/ecs/systems/ThrustControllerSystem";
 import { TransferControlSystem } from "~/ecs/systems/TransferControlSystem";
 

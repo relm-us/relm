@@ -77,6 +77,7 @@ export class OutlineSystem extends System {
       group.add(subtractMesh);
 
       // Put original mesh in front of both of the new outline meshes
+      mesh.userData.outlineOriginalRenderOrder = mesh.renderOrder;
       mesh.renderOrder = 4;
 
       originalParent.add(group);
@@ -92,6 +93,10 @@ export class OutlineSystem extends System {
       const original = object.children[0];
       object.parent.add(original);
       object.parent.remove(object);
+
+      if (original.userData.outlineOriginalRenderOrder !== undefined) {
+        original.renderOrder = original.userData.outlineOriginalRenderOrder;
+      }
 
       this.deoutlinify(original);
     } else {
