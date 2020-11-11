@@ -10,7 +10,7 @@
 <style>
   lbl {
     background-color: rgba(255, 255, 255, 0.25);
-    color: #333;
+    color: black;
     display: block;
     padding: 4px 16px;
 
@@ -25,7 +25,7 @@
 <Pane>
   <lbl>
     <slot />
-    <info>{value || $dataStore[0]}</info>
+    <info>{value || $dataStore[0].toFixed(1)}</info>
   </lbl>
   <Chart data={$dataStore} {maximum} />
 </Pane>

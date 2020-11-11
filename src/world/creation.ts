@@ -17,8 +17,8 @@ import ComposablePlugin, {
   ComposableTransform,
 } from "~/ecs/plugins/composable";
 import Css3DPlugin from "~/ecs/plugins/css3d";
-import EffectsPlugin from "~/ecs/plugins/effects";
 import RapierPlugin from "~/ecs/plugins/rapier";
+import OutlinePlugin from "~/ecs/plugins/outline";
 
 import { CenteredMesh } from "~/ecs/components/CenteredMesh";
 import { CenteredMeshSystem } from "~/ecs/systems/CenteredMeshSystem";
@@ -108,7 +108,6 @@ export function createWorld(rapier) {
         {
           renderer: createRenderer(),
           scene: createScene(),
-          // postprocess: true,
         },
       ],
       [
@@ -121,7 +120,7 @@ export function createWorld(rapier) {
           rapier,
         },
       ],
-      // [EffectsPlugin, {}],
+      OutlinePlugin,
 
       Css3DPlugin,
     ],

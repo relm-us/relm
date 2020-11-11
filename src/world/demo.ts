@@ -11,7 +11,7 @@ import {
   OscillateScale,
 } from "~/ecs/plugins/composable";
 import { HtmlNode, CssPlane } from "~/ecs/plugins/css3d";
-import { Outline } from "~/ecs/plugins/effects";
+import { Outline } from "~/ecs/plugins/outline";
 import { RigidBody, RigidBodyRef, Collider } from "~/ecs/plugins/rapier";
 
 import { CenterMesh } from "~/ecs/components/CenterMesh";
