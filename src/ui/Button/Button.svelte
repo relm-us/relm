@@ -36,7 +36,7 @@
 <button
   class:disabled={!enabled}
   {style}
-  on:click={() => {
+  on:mousedown|stopPropagation={() => {
     dispatch('click');
   }}>
   <slot />

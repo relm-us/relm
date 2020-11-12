@@ -7,6 +7,7 @@
 
   import Button from "~/ui/Button";
   import PausePlayButton from "~/ui/PausePlayButton";
+  import GroupUngroupButton from "~/ui/GroupUngroupButton";
   import ActionButton from "~/ui/ActionButton";
 
   import { store as world } from "./world/store";
@@ -55,6 +56,7 @@
 <button-panel>
   <Button on:click={() => togglePanel('editor')}>Editor</Button>
   <Button on:click={() => togglePanel('perf')}>Performance</Button>
+  <GroupUngroupButton />
   <ActionButton />
   <PausePlayButton />
 </button-panel>

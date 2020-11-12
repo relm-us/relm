@@ -1,6 +1,6 @@
-<script>
+<script lang="ts">
   import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
-  import { hovered, selected } from "~/world/selection";
+  import { hovered, selectedEntities, selectedGroups } from "~/world/selection";
 
   export let world;
 </script>
@@ -11,8 +11,11 @@
 <LeftPanel>
   <Header>Editor</Header>
   <Pane title="Selected">
-    {#each [...$selected] as entityId}
+    {#each [...$selectedEntities] as entityId}
       <div>{entityId}</div>
+    {/each}
+    {#each [...$selectedGroups] as groupId}
+      <div>{groupId}</div>
     {/each}
   </Pane>
   <Pane title="Hovered">

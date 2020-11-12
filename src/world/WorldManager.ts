@@ -2,7 +2,7 @@ import { get, writable, Writable } from "svelte/store";
 import { addDemonstrationEntities } from "~/world/demo";
 import { deltaTime, fpsTime } from "./stats";
 import { World } from "~/types/hecs/world";
-import { selected } from "./selection";
+import { selectedEntities } from "./selection";
 import { Outline } from "~/ecs/plugins/outline";
 import { difference } from "~/utils/setOps";
 
@@ -66,7 +66,7 @@ export default class WorldManager {
 
   activateSelection() {
     const previouslySelected = new Set();
-    selected.subscribe(($selected) => {
+    selectedEntities.subscribe(($selected) => {
       const added = difference($selected, previouslySelected);
       const removed = difference(previouslySelected, $selected);
 

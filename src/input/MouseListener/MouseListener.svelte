@@ -1,9 +1,14 @@
 <script lang="ts">
-  import { IntersectionFinder } from "./IntersectionFinder";
-  import { hovered, selected } from "~/world/selection";
+  import {
+    hovered,
+    selectedEntities,
+    selectedGroups,
+    groupTree,
+    EntityId,
+  } from "~/world/selection";
   import { difference, intersection } from "~/utils/setOps";
 
-  type EntityId = string;
+  import { IntersectionFinder } from "./IntersectionFinder";
 
   export let world;
 
@@ -20,26 +25,33 @@
     return [...finder.find(coords)].map((object) => object.userData.entityId);
   }
 
+  function maybeSelectGroupContainingEntity(entityId) {
+    const rootGroupId = groupTree.getRoot(entityId);
+    if (rootGroupId) {
+      selectedGroups.add(rootGroupId);
+
+      const others = groupTree.getEntitiesInGroup(rootGroupId);
+      selectedEntities.update(($selected) => {
+        for (const otherId of others) {
+          $selected.add(otherId);
+        }
+        return $selected;
+      });
+    }
+  }
+
+  function maybeUnselectGroupContainingEntity(entityId) {}
+
   function onMousemove(event) {
     const found = findFromMouseEvent(event);
     const foundSet: Set<string> = new Set(found);
 
     const added = difference(foundSet, $hovered);
-    const removed = difference($hovered, foundSet);
+    const deleted = difference($hovered, foundSet);
 
-    for (const entityId of added) {
-      hovered.update(($hovered) => {
-        $hovered.add(entityId);
-        return $hovered;
-      });
-    }
-
-    for (const entityId of removed) {
-      hovered.update(($hovered) => {
-        $hovered.delete(entityId);
-        return $hovered;
-      });
-    }
+    // Keep svelte `hovered` store up to date based on mouse movements
+    for (const entityId of added) hovered.add(entityId);
+    for (const entityId of deleted) hovered.delete(entityId);
   }
 
   function onMousedown(event) {
@@ -47,39 +59,37 @@
     const foundSet: Set<string> = new Set(found);
 
     if (found.length === 0) {
-      selected.update(($selected) => {
-        $selected.clear();
-        return $selected;
-      });
+      selectedEntities.clear();
+      selectedGroups.clear();
     } else if (found.length === 1) {
       // User is clicking on only one possible entity
 
       const entityId: string = found[0];
-      selected.update(($selected) => {
-        if ($selected.has(entityId)) {
-          if (event.shiftKey) {
-            // Shift-click on just one already-selected entity
-            // removes that entity ONLY from the selection
-            $selected.delete(entityId);
-          } else {
-            // Regular-click on just one already-selected entity
-            // removes it and everything else
-            $selected.clear();
-          }
+      if (selectedEntities.has(entityId)) {
+        if (event.shiftKey) {
+          // Shift-click on just one already-selected entity
+          // removes ONLY that entity from the selection
+          selectedEntities.delete(entityId);
         } else {
-          if (event.shiftKey) {
-            // Shift-click on just one unselected entity adds it
-            // to the selection
-            $selected.add(entityId);
-          } else {
-            // Regular-click on just one unselected entity adds
-            // that entity ONLY to the selection
-            $selected.clear();
-            $selected.add(entityId);
-          }
+          // Regular-click on just one already-selected entity
+          // removes it and everything else
+          selectedEntities.clear();
+          selectedGroups.clear();
         }
-        return $selected;
-      });
+      } else {
+        if (event.shiftKey) {
+          // Shift-click on just one unselected entity adds it
+          // to the selection
+          selectedEntities.add(entityId);
+          maybeSelectGroupContainingEntity(entityId);
+        } else {
+          // Regular-click on just one unselected entity replaces
+          // the current selection with ONLY that entity
+          selectedEntities.clear();
+          selectedEntities.add(entityId);
+          maybeSelectGroupContainingEntity(entityId);
+        }
+      }
     } else if (found.length > 1) {
       // User is clicking on a spot that contains several entities
 
@@ -94,20 +104,13 @@
       }
 
       // Start wherever we were last time
-      while (previousClickIndex < found.length) {
-        const entityId = found[previousClickIndex++];
-        if (!$selected.has(entityId)) {
-          selected.update(($selected) => {
-            if (!event.shiftKey) {
-              $selected.clear();
-            }
-            $selected.add(entityId);
-            return $selected;
-          });
-          // Add only one at a time to selection
-          break;
-        }
+      const entityId = found[previousClickIndex++];
+      if (!event.shiftKey) {
+        selectedEntities.clear();
+        selectedGroups.clear();
       }
+      selectedEntities.add(entityId);
+      maybeSelectGroupContainingEntity(entityId);
     }
 
     previousClickSet = foundSet;
