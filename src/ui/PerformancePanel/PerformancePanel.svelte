@@ -15,9 +15,19 @@
     systems,
   } from "~/world/stats";
 
-  let renderStatsVisible = false;
+  let extendedStatsVisible = false;
   let systemsVisible = false;
   let shadersVisible = false;
+
+  const primarySystemsRE = /(Render|Physics)System/;
+  let secondarySystems = [];
+
+  $: primarySystems = Object.entries($systems).filter(([name, _]) =>
+    name.match(primarySystemsRE)
+  );
+  $: secondarySystems = Object.entries($systems).filter(
+    ([name, _]) => !name.match(primarySystemsRE)
+  );
 </script>
 
 <style>
@@ -31,6 +41,7 @@
 <LeftPanel>
   <Header>Performance</Header>
 
+  <!-- Frames per second -->
   <PaneStats
     dataStore={fpsTime}
     value={($fpsTime[0] || 0).toFixed(1)}
@@ -38,22 +49,28 @@
     FPS
   </PaneStats>
 
-  <PaneStats dataStore={deltaTime} value={($deltaTime[0] || 0).toFixed(1)}>
-    Millis
-  </PaneStats>
+  <!-- Show most relevant render stats here -->
+  <PaneStats dataStore={renderCalls}>Render Calls</PaneStats>
+  <PaneStats dataStore={renderTriangles}>Triangles</PaneStats>
+
+  <!-- Show most important ECS Systems' performance stats here -->
+  {#each primarySystems as [systemName, systemStatsStore]}
+    <PaneStats dataStore={systemStatsStore}>{systemName}</PaneStats>
+  {/each}
 
   <Button
     style="margin-top:8px"
     on:click={() => {
-      renderStatsVisible = !renderStatsVisible;
+      extendedStatsVisible = !extendedStatsVisible;
     }}>
-    {renderStatsVisible ? 'Hide' : 'Show'}
-    Render Stats
+    {extendedStatsVisible ? 'Hide' : 'Show'}
+    Extended Stats
   </Button>
 
-  {#if renderStatsVisible}
-    <PaneStats dataStore={renderCalls}>Render Calls</PaneStats>
-    <PaneStats dataStore={renderTriangles}>Triangles</PaneStats>
+  {#if extendedStatsVisible}
+    <PaneStats dataStore={deltaTime} value={($deltaTime[0] || 0).toFixed(1)}>
+      Millis
+    </PaneStats>
     <PaneStats dataStore={memoryGeometries}>Geometries</PaneStats>
     <PaneStats dataStore={memoryTextures}>Textures</PaneStats>
   {/if}
@@ -68,7 +85,7 @@
   </Button>
 
   {#if systemsVisible}
-    {#each Object.entries($systems) as [systemName, systemStatsStore]}
+    {#each secondarySystems as [systemName, systemStatsStore]}
       <PaneStats dataStore={systemStatsStore}>{systemName}</PaneStats>
     {/each}
   {/if}
