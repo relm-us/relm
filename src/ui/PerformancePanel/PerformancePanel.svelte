@@ -1,8 +1,8 @@
 <script>
-  import Header from "./Header.svelte";
-  import Pane from "./Pane.svelte";
   import PaneStats from "./PaneStats.svelte";
+
   import Button from "~/ui/Button";
+  import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
 
   import {
     fpsTime,
@@ -21,24 +21,6 @@
 </script>
 
 <style>
-  panel {
-    position: fixed;
-    z-index: 2;
-
-    display: flex;
-    flex-direction: column;
-
-    width: 300px;
-    height: 100%;
-    left: 0;
-    top: 0;
-
-    background-color: rgba(0, 0, 0, 0.45);
-    color: #ddd;
-
-    overflow-y: auto;
-  }
-
   table {
     width: 100%;
     padding-left: 8px;
@@ -46,7 +28,7 @@
   }
 </style>
 
-<panel>
+<LeftPanel>
   <Header>Performance</Header>
 
   <PaneStats
@@ -120,4 +102,4 @@
       </table>
     </Pane>
   {/if}
-</panel>
+</LeftPanel>

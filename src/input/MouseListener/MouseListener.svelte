@@ -1,50 +1,117 @@
 <script lang="ts">
   import { IntersectionFinder } from "./IntersectionFinder";
-  import { difference } from "~/utils/setOps";
-  import { Outline } from "~/ecs/plugins/outline";
-  import { Selectable } from "~/ecs/components";
-  import { OscillateRotation } from "~/ecs/plugins/composable";
-  import { Quaternion, Euler } from "three";
+  import { hovered, selected } from "~/world/selection";
+  import { difference, intersection } from "~/utils/setOps";
+
+  type EntityId = string;
 
   export let world;
+
+  let previousClickSet: Set<EntityId> = new Set();
+  let previousClickIndex: number = 0;
 
   const finder = new IntersectionFinder(
     world.presentation.camera,
     world.presentation.scene
   );
 
-  const selected: Set<string> = new Set();
+  function findFromMouseEvent(event) {
+    const coords = { x: event.offsetX, y: event.offsetY };
+    return [...finder.find(coords)].map((object) => object.userData.entityId);
+  }
 
   function onMousemove(event) {
-    const coords = { x: event.offsetX, y: event.offsetY };
-    const found: Set<string> = new Set(
-      finder.find(coords, true).map((object) => object.userData.entityId)
-    );
+    const found = findFromMouseEvent(event);
+    const foundSet: Set<string> = new Set(found);
 
-    const added = difference(found, selected);
-    const removed = difference(selected, found);
+    const added = difference(foundSet, $hovered);
+    const removed = difference($hovered, foundSet);
 
     for (const entityId of added) {
-      const entity = world.entities.getById(entityId);
-      if (entity.has(Selectable)) {
-        entity.add(Outline);
-        entity.add(OscillateRotation, {
-          cycles: 0.5,
-          phase: (Math.PI / 2) * (Math.random() < 0.5 ? -1 : 1),
-          frequency: 2,
-          min: new Quaternion().setFromEuler(new Euler(0, 0, -Math.PI / 10)),
-          max: new Quaternion().setFromEuler(new Euler(0, 0, Math.PI / 10)),
-        });
-        selected.add(entityId);
-      }
+      hovered.update(($hovered) => {
+        $hovered.add(entityId);
+        return $hovered;
+      });
     }
 
     for (const entityId of removed) {
-      const entity = world.entities.getById(entityId);
-      entity.remove(Outline);
-      selected.delete(entityId);
+      hovered.update(($hovered) => {
+        $hovered.delete(entityId);
+        return $hovered;
+      });
     }
+  }
+
+  function onMousedown(event) {
+    const found = findFromMouseEvent(event);
+    const foundSet: Set<string> = new Set(found);
+
+    if (found.length === 0) {
+      selected.update(($selected) => {
+        $selected.clear();
+        return $selected;
+      });
+    } else if (found.length === 1) {
+      // User is clicking on only one possible entity
+
+      const entityId: string = found[0];
+      selected.update(($selected) => {
+        if ($selected.has(entityId)) {
+          if (event.shiftKey) {
+            // Shift-click on just one already-selected entity
+            // removes that entity ONLY from the selection
+            $selected.delete(entityId);
+          } else {
+            // Regular-click on just one already-selected entity
+            // removes it and everything else
+            $selected.clear();
+          }
+        } else {
+          if (event.shiftKey) {
+            // Shift-click on just one unselected entity adds it
+            // to the selection
+            $selected.add(entityId);
+          } else {
+            // Regular-click on just one unselected entity adds
+            // that entity ONLY to the selection
+            $selected.clear();
+            $selected.add(entityId);
+          }
+        }
+        return $selected;
+      });
+    } else if (found.length > 1) {
+      // User is clicking on a spot that contains several entities
+
+      if (intersection(previousClickSet, foundSet).size !== foundSet.size) {
+        // User is NOT clicking on the same set of entities as they did previously
+        previousClickIndex = 0;
+      }
+
+      // If we've reached the end of the cycle, start over
+      if (previousClickIndex >= found.length) {
+        previousClickIndex = 0;
+      }
+
+      // Start wherever we were last time
+      while (previousClickIndex < found.length) {
+        const entityId = found[previousClickIndex++];
+        if (!$selected.has(entityId)) {
+          selected.update(($selected) => {
+            if (!event.shiftKey) {
+              $selected.clear();
+            }
+            $selected.add(entityId);
+            return $selected;
+          });
+          // Add only one at a time to selection
+          break;
+        }
+      }
+    }
+
+    previousClickSet = foundSet;
   }
 </script>
 
-<svelte:window on:mousemove={onMousemove} />
+<svelte:window on:mousemove={onMousemove} on:mousedown={onMousedown} />

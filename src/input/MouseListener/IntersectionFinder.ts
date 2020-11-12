@@ -1,4 +1,4 @@
-import { Camera, Intersection, Raycaster, Scene } from "three";
+import { Camera, Intersection, Object3D, Raycaster, Scene } from "three";
 import { filterMap } from "~/utils/filterMap";
 
 export class IntersectionFinder {
@@ -23,7 +23,7 @@ export class IntersectionFinder {
     };
   }
 
-  find(screenCoords, firstOnly = false) {
+  find(screenCoords, firstOnly = false): Set<Object3D> {
     this.raycaster.setFromCamera(
       this.getNormalizedCoords(screenCoords),
       this.camera
@@ -37,13 +37,15 @@ export class IntersectionFinder {
       const object = findObjectActingAsEntityRoot(
         this._intersections[0].object
       );
-      return [object];
+      return new Set([object]);
     } else {
       return this._intersections.reduce((acc, intersection, i) => {
         const object = findObjectActingAsEntityRoot(intersection.object);
-        if (object === null) return acc;
-        return [...acc, object];
-      }, []);
+        if (object !== null) {
+          acc.add(object);
+        }
+        return acc;
+      }, new Set<Object3D>());
     }
   }
 }
@@ -54,7 +56,7 @@ export class IntersectionFinder {
  *
  * @param {Object3D} object
  */
-function findObjectActingAsEntityRoot(object): string | null {
+function findObjectActingAsEntityRoot(object): Object3D | null {
   if (object.userData.entityId) {
     return object;
   } else if (object.parent) {

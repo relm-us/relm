@@ -1,5 +1,5 @@
 <script>
-  import Pane from "./Pane.svelte";
+  import { Pane } from "../LeftPanel";
   import Chart from "./Chart.svelte";
 
   export let dataStore;

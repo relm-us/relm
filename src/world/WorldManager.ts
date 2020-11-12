@@ -2,6 +2,9 @@ import { get, writable, Writable } from "svelte/store";
 import { addDemonstrationEntities } from "~/world/demo";
 import { deltaTime, fpsTime } from "./stats";
 import { World } from "~/types/hecs/world";
+import { selected } from "./selection";
+import { Outline } from "~/ecs/plugins/outline";
+import { difference } from "~/utils/setOps";
 
 export default class WorldManager {
   world: World | null = null;
@@ -32,6 +35,7 @@ export default class WorldManager {
 
     this.world = world;
     this.maybeMount();
+    this.activateSelection();
   }
 
   setViewport(viewport) {
@@ -58,6 +62,26 @@ export default class WorldManager {
         this.world.presentation.setViewport(null);
       }
     }
+  }
+
+  activateSelection() {
+    const previouslySelected = new Set();
+    selected.subscribe(($selected) => {
+      const added = difference($selected, previouslySelected);
+      const removed = difference(previouslySelected, $selected);
+
+      for (const entityId of removed) {
+        const entity = this.world.entities.getById(entityId);
+        previouslySelected.delete(entityId);
+        entity.remove(Outline);
+      }
+
+      for (const entityId of added) {
+        const entity = this.world.entities.getById(entityId);
+        previouslySelected.add(entityId);
+        entity.add(Outline);
+      }
+    });
   }
 
   populate() {

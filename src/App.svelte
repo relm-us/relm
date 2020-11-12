@@ -1,15 +1,29 @@
 <script lang="ts">
   import WorldContainer from "~/ui/WorldContainer";
-  import Editor from "~/ui/Editor.svelte";
-  import StatsPanel from "~/ui/StatsPanel";
-  import Input, { keyUp } from "~/input";
-  import PausePlayButton from "~/ui/PausePlayButton";
+
+  import EditorPanel from "~/ui/EditorPanel";
+  import PerformancePanel from "~/ui/PerformancePanel";
+  import Input from "~/input";
+
   import Button from "~/ui/Button";
+  import PausePlayButton from "~/ui/PausePlayButton";
   import ActionButton from "~/ui/ActionButton";
 
   import { store as world } from "./world/store";
 
-  let performanceVisible = false;
+  let visible = {
+    perf: false,
+    editor: false,
+  };
+
+  function togglePanel(panelName) {
+    const currentState = visible[panelName];
+
+    // Can't have more than one panel open at a time
+    for (const key in visible) visible[key] = false;
+
+    visible[panelName] = !currentState;
+  }
 </script>
 
 <style>
@@ -25,24 +39,22 @@
 <!-- The virtual world! -->
 {#if $world}
   <WorldContainer world={$world} />
-  {#if performanceVisible}
-    <StatsPanel />
+
+  {#if visible.perf}
+    <PerformancePanel />
   {/if}
 
-  <!-- Editor (TODO) -->
-  <!-- <Editor world={$world} /> -->
+  {#if visible.editor}
+    <EditorPanel world={$world} />
+  {/if}
 
   <!-- Keyboard, Mouse input -->
   <Input world={$world} />
 {/if}
 
 <button-panel>
-  <Button
-    on:click={() => {
-      performanceVisible = !performanceVisible;
-    }}>
-    Perf
-  </Button>
+  <Button on:click={() => togglePanel('editor')}>Editor</Button>
+  <Button on:click={() => togglePanel('perf')}>Performance</Button>
   <ActionButton />
   <PausePlayButton />
 </button-panel>
