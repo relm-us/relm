@@ -16,6 +16,8 @@
 		},
 		"typeRoots": ["types"],
 		"types": [
+			"jest",
+			"@types/jest",
 			"svelte",
 			"svelte/store",
 			"svelte/motion",

@@ -3,14 +3,22 @@
 	"scripts": {
 		"build": "cross-env NODE_ENV=production webpack",
 		"dev": "webpack-dev-server --content-base public --hot",
+		"test": "jest",
+		"test:watch": "yarn run test -- --watch",
 		"start": "serve public -l 8080",
 		"validate": "svelte-check"
+	},
+	"scripts.comments": {
+		"notes": [
+			"Good docs on getting jest working: https://daveceddia.com/svelte-typescript-jest/"
+		]
 	},
 	"devDependencies": {
 		"@babel/core": "^7.11.5",
 		"@babel/plugin-transform-runtime": "^7.11.5",
 		"@babel/preset-env": "^7.11.5",
 		"@babel/runtime": "^7.12.1",
+		"@types/jest": "^26.0.15",
 		"@types/three": "^0.103.2",
 		"autoprefixer": "^9.8.6",
 		"babel-loader": "^8.1.0",
@@ -19,6 +27,7 @@
 		"cross-env": "^7.0.2",
 		"css-loader": "^4.2.0",
 		"duplicate-package-checker-webpack-plugin": "^3.0.0",
+		"jest": "^26.6.3",
 		"mini-css-extract-plugin": "^0.9.0",
 		"optimize-css-assets-webpack-plugin": "^5.0.3",
 		"postcss-loader": "^3.0.0",
@@ -27,9 +36,11 @@
 		"source-map-loader": "^1.1.2",
 		"svelte": "^3.24.1",
 		"svelte-check": "^1.0.32",
+		"svelte-jester": "^1.1.5",
 		"svelte-loader-hot": "^0.3.1",
 		"svelte-preprocess": "^4.2.0",
 		"terser-webpack-plugin": "^4.0.0",
+		"ts-jest": "^26.4.4",
 		"ts-loader": "^8.0.2",
 		"typescript": "^4.0.2",
 		"webpack": "^4.44.1",
@@ -49,5 +60,25 @@
 	},
 	"browserslist": [
 		"defaults"
-	]
+	],
+	"jest": {
+		"transform": {
+			"^.+\\.svelte$": [
+				"svelte-jester",
+				{
+					"preprocess": true
+				}
+			],
+			"^.+\\.ts$": "ts-jest",
+			"^.+\\.js$": "babel-jest"
+		},
+		"moduleFileExtensions": [
+			"js",
+			"ts",
+			"svelte"
+		],
+		"moduleNameMapper": {
+			"^~/(.*)": "<rootDir>/src/$1"
+		}
+	}
 }
