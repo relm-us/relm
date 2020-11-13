@@ -4,13 +4,14 @@
     selectedEntities,
     selectedGroups,
     groupTree,
-    EntityId,
   } from "~/world/selection";
   import { difference, intersection } from "~/utils/setOps";
 
   import { IntersectionFinder } from "./IntersectionFinder";
 
   export let world;
+
+  type EntityId = string;
 
   let previousClickSet: Set<EntityId> = new Set();
   let previousClickIndex: number = 0;

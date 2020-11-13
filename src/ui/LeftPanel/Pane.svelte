@@ -12,11 +12,14 @@
 
   lbl {
     background-color: rgba(255, 255, 255, 0.25);
-    color: #333;
     display: block;
     padding: 4px 16px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 
     font-weight: bold;
+    color: #eb4;
+    letter-spacing: 0.5px;
   }
 </style>
 

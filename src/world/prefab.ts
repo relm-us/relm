@@ -32,7 +32,7 @@ export function makeBox(
       position: new Vector3(x, y, z),
     })
     .add(Shape, {
-      color: linearColor,
+      color: "#" + linearColor.getHexString(),
       boxSize: new Vector3(w, h, d),
     })
     .add(RigidBody, {
