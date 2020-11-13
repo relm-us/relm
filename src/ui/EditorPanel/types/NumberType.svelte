@@ -1,8 +1,10 @@
 <script lang="ts">
   import Tag from "../Tag.svelte";
+  import { NumberDragger } from "../NumberDragger";
 
   export let key: string;
   export let value: number;
+  export let component;
   export let prop;
 
   function fmt(n) {
@@ -13,10 +15,21 @@
     } else if (n === undefined) {
       return "[undefined]";
     } else {
-      console.log("unknown type of NumberType", n);
+      console.warn("unknown type of NumberType", n);
       return "[unknown]";
     }
   }
+
+  const dragger = new NumberDragger({
+    getValue: () => value,
+    onChange: (newValue) => {
+      value = newValue;
+      component.modified();
+    },
+    onClick: () => {
+      console.log("click");
+    },
+  });
 </script>
 
 <style>
@@ -28,5 +41,7 @@
 <div>
   {(prop.editor && prop.editor.label) || key}:
 
-  <Tag>{fmt(value)}</Tag>
+  <Tag on:mousedown={dragger.mousedown}>{fmt(value)}</Tag>
 </div>
+
+<svelte:window on:mousemove={dragger.mousemove} on:mouseup={dragger.mouseup} />

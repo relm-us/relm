@@ -34,7 +34,7 @@
 
 <capsule>
   <lbl>{label}</lbl>
-  <value>
+  <value on:mousedown>
     <slot />
   </value>
 </capsule>

@@ -9,6 +9,7 @@
 
   export let key;
   export let value;
+  export let component;
   export let prop;
 
   const Type = getTypeComponent(prop.type.name);
@@ -44,6 +45,6 @@
   {Type}
 {:else}
   <div>
-    <svelte:component this={Type} {key} {value} {prop} />
+    <svelte:component this={Type} {key} bind:value {component} {prop} />
   </div>
 {/if}

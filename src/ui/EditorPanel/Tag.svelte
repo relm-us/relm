@@ -13,6 +13,6 @@
   }
 </style>
 
-<value>
+<value on:mousedown>
   <slot />
 </value>

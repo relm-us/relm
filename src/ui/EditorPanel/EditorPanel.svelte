@@ -16,11 +16,14 @@
   }
 
   let entity;
+
+  // This assignment tells Svelte to update everything whenever the selection changes
   $: entity = getEntity($selectedEntities);
 
   // Regularly update our panel data
   onMount(() => {
     const interval = setInterval(() => {
+      // This assignment tells Svelte to re-evalute the current selection
       entity = getEntity($selectedEntities);
     }, UPDATE_FREQUENCY_MS);
 
