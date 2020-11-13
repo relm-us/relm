@@ -5,6 +5,7 @@
   import StringType from "./types/StringType.svelte";
   import NumberType from "./types/NumberType.svelte";
   import JSONType from "./types/JSONType.svelte";
+  import ColorType from "./types/ColorType.svelte";
   import MiscType from "./types/MiscType.svelte";
 
   export let key;
@@ -12,7 +13,7 @@
   export let component;
   export let prop;
 
-  const Type = getTypeComponent(prop.type.name);
+  const Type = getTypeComponent(prop.editor?.input || prop.type.name);
 
   function getTypeComponent(propType) {
     switch (propType) {
@@ -28,6 +29,8 @@
         return NumberType;
       case "JSON":
         return JSONType;
+      case "Color":
+        return ColorType;
       default:
         return MiscType;
     }
