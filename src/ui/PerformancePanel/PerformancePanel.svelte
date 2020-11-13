@@ -1,5 +1,5 @@
 <script>
-  import PaneStats from "./PaneStats.svelte";
+  import StatsPane from "./StatsPane.svelte";
 
   import Button from "~/ui/Button";
   import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
@@ -42,20 +42,20 @@
   <Header>Performance</Header>
 
   <!-- Frames per second -->
-  <PaneStats
+  <StatsPane
+    title="FPS"
+    minimized={false}
     dataStore={fpsTime}
     value={($fpsTime[0] || 0).toFixed(1)}
-    maximum={60}>
-    FPS
-  </PaneStats>
+    maximum={60} />
 
   <!-- Show most relevant render stats here -->
-  <PaneStats dataStore={renderCalls}>Render Calls</PaneStats>
-  <PaneStats dataStore={renderTriangles}>Triangles</PaneStats>
+  <StatsPane title="Render Calls" dataStore={renderCalls} />
+  <StatsPane title="Triangles" dataStore={renderTriangles} />
 
   <!-- Show most important ECS Systems' performance stats here -->
   {#each primarySystems as [systemName, systemStatsStore]}
-    <PaneStats dataStore={systemStatsStore}>{systemName}</PaneStats>
+    <StatsPane title={systemName} dataStore={systemStatsStore} />
   {/each}
 
   <Button
@@ -68,11 +68,12 @@
   </Button>
 
   {#if extendedStatsVisible}
-    <PaneStats dataStore={deltaTime} value={($deltaTime[0] || 0).toFixed(1)}>
-      Millis
-    </PaneStats>
-    <PaneStats dataStore={memoryGeometries}>Geometries</PaneStats>
-    <PaneStats dataStore={memoryTextures}>Textures</PaneStats>
+    <StatsPane
+      title="Millis"
+      dataStore={deltaTime}
+      value={($deltaTime[0] || 0).toFixed(1)} />
+    <StatsPane title="Geometries" dataStore={memoryGeometries} />
+    <StatsPane title="Textures" dataStore={memoryTextures} />
   {/if}
 
   <Button
@@ -86,7 +87,7 @@
 
   {#if systemsVisible}
     {#each secondarySystems as [systemName, systemStatsStore]}
-      <PaneStats dataStore={systemStatsStore}>{systemName}</PaneStats>
+      <StatsPane title={systemName} dataStore={systemStatsStore} />
     {/each}
   {/if}
 

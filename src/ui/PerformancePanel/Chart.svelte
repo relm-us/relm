@@ -16,7 +16,7 @@
       .map(
         (datum, i) =>
           (i === 0 ? "M" : "L") +
-          `${i * 2},${height - (datum / maxInUse) * height}`
+          `${i * 2},${height - (datum / maxInUse) * height + 1}`
       )
       .join("");
   }
