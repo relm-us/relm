@@ -6,6 +6,7 @@
     groupTree,
   } from "~/world/selection";
   import { difference, intersection } from "~/utils/setOps";
+  import { hasAncestor } from "~/utils/hasAncestor";
 
   import { IntersectionFinder } from "./IntersectionFinder";
 
@@ -26,6 +27,10 @@
     return [...finder.find(coords)].map((object) => object.userData.entityId);
   }
 
+  function eventTargetsWorld(event) {
+    return hasAncestor(event.target, world.presentation.viewport);
+  }
+
   function maybeSelectGroupContainingEntity(entityId) {
     const rootGroupId = groupTree.getRoot(entityId);
     if (rootGroupId) {
@@ -41,9 +46,9 @@
     }
   }
 
-  function maybeUnselectGroupContainingEntity(entityId) {}
-
   function onMousemove(event) {
+    if (!eventTargetsWorld(event)) return;
+
     const found = findFromMouseEvent(event);
     const foundSet: Set<string> = new Set(found);
 
@@ -56,6 +61,8 @@
   }
 
   function onMousedown(event) {
+    if (!eventTargetsWorld(event)) return;
+
     const found = findFromMouseEvent(event);
     const foundSet: Set<string> = new Set(found);
 
