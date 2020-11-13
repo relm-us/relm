@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+
   import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
   import ComponentPane from "./ComponentPane.svelte";
   import { hovered, selectedEntities, selectedGroups } from "~/world/selection";
@@ -7,10 +9,22 @@
 
   $: console.log("selectedEntities");
 
+  function getEntity(selected) {
+    return (
+      selected.size && world.entities.getById(selected.values().next().value)
+    );
+  }
+
   let entity;
-  $: entity =
-    $selectedEntities.size &&
-    world.entities.getById($selectedEntities.values().next().value);
+  $: entity = getEntity($selectedEntities);
+
+  onMount(() => {
+    const interval = setInterval(() => {
+      entity = getEntity($selectedEntities);
+    }, 100);
+
+    return () => clearInterval(interval);
+  });
 </script>
 
 <style>
