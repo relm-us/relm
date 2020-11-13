@@ -5,9 +5,9 @@
   import ComponentPane from "./ComponentPane.svelte";
   import { hovered, selectedEntities, selectedGroups } from "~/world/selection";
 
-  export let world;
+  const UPDATE_FREQUENCY_MS = 100;
 
-  $: console.log("selectedEntities");
+  export let world;
 
   function getEntity(selected) {
     return (
@@ -18,10 +18,11 @@
   let entity;
   $: entity = getEntity($selectedEntities);
 
+  // Regularly update our panel data
   onMount(() => {
     const interval = setInterval(() => {
       entity = getEntity($selectedEntities);
-    }, 100);
+    }, UPDATE_FREQUENCY_MS);
 
     return () => clearInterval(interval);
   });

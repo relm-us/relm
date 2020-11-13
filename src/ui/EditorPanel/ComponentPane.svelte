@@ -5,13 +5,20 @@
   export let Component;
   export let component;
 
-  const title = Component.name.split("_")[0];
+  const getTitle = () => {
+    const parts = Component.name.split("_");
+    if (parts.length > 1) {
+      return parts[1];
+    } else {
+      return parts[0];
+    }
+  };
 </script>
 
 <style>
 </style>
 
-<Pane {title}>
+<Pane title={getTitle()}>
   {#each Object.entries(Component.props) as [key, prop]}
     <Property {key} bind:value={component[key]} {prop} />
   {/each}
