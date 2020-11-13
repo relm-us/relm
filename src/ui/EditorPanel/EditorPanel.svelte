@@ -20,12 +20,20 @@
   // This assignment tells Svelte to update everything whenever the selection changes
   $: entity = getEntity($selectedEntities);
 
+  const refresh = () => {
+    // This assignment tells Svelte to re-evalute the current selection
+    entity = getEntity($selectedEntities);
+  };
+
+  const destroyComponent = (entity, Component) => {
+    console.log("destroyComponent", entity.id, Component);
+    entity.remove(Component);
+    refresh();
+  };
+
   // Regularly update our panel data
   onMount(() => {
-    const interval = setInterval(() => {
-      // This assignment tells Svelte to re-evalute the current selection
-      entity = getEntity($selectedEntities);
-    }, UPDATE_FREQUENCY_MS);
+    const interval = setInterval(() => refresh(), UPDATE_FREQUENCY_MS);
 
     return () => clearInterval(interval);
   });
@@ -43,8 +51,11 @@
   {#if $selectedEntities.size === 0}
     <info>Nothing selected</info>
   {:else if $selectedEntities.size === 1}
-    {#each entity.Components as Component}
-      <ComponentPane {Component} component={entity.components.get(Component)} />
+    {#each entity.Components as Component (Component)}
+      <ComponentPane
+        {Component}
+        component={entity.components.get(Component)}
+        on:destroy={() => destroyComponent(entity, Component)} />
     {/each}
   {:else}
     <Pane title="Selected">
