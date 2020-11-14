@@ -12,18 +12,16 @@ import {
 } from "three";
 
 import { World } from "hecs";
-import ThreePlugin from "hecs-plugin-three";
 
 import ComposablePlugin, {
   ComposableTransform,
 } from "~/ecs/plugins/composable";
 import Css3DPlugin from "~/ecs/plugins/css3d";
 import FollowPlugin from "~/ecs/plugins/follow";
-import RapierPlugin from "~/ecs/plugins/rapier";
+import NormalizePlugin from "~/ecs/plugins/normalize";
 import OutlinePlugin from "~/ecs/plugins/outline";
-
-import { CenteredMesh } from "~/ecs/components";
-import { CenteredMeshSystem } from "~/ecs/systems/CenteredMeshSystem";
+import RapierPlugin from "~/ecs/plugins/rapier";
+import ThreePlugin from "hecs-plugin-three";
 
 import { ThrustController, PotentiallyControllable } from "~/ecs/components";
 import { ThrustControllerSystem } from "~/ecs/systems/ThrustControllerSystem";
@@ -131,18 +129,13 @@ export function createWorld(rapier) {
           rapier,
         },
       ],
-      OutlinePlugin,
-
       Css3DPlugin,
       FollowPlugin,
+      NormalizePlugin,
+      OutlinePlugin,
     ],
-    components: [CenteredMesh, ThrustController, PotentiallyControllable],
-    systems: [
-      CenteredMeshSystem,
-      ThrustControllerSystem,
-      TransferControlSystem,
-      GatherStatsSystem,
-    ],
+    components: [ThrustController, PotentiallyControllable],
+    systems: [ThrustControllerSystem, TransferControlSystem, GatherStatsSystem],
   });
   return world;
 }

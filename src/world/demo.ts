@@ -3,20 +3,15 @@ import { Model, Shape, Camera, LookAt } from "hecs-plugin-three";
 
 import {
   ComposableTransform,
-  NoisyPosition,
-  NoisyRotation,
-  NoisyScale,
   OscillatePosition,
-  OscillateRotation,
   OscillateScale,
 } from "~/ecs/plugins/composable";
 import { HtmlNode, CssPlane } from "~/ecs/plugins/css3d";
-import { Outline } from "~/ecs/plugins/outline";
 import { Follow } from "~/ecs/plugins/follow";
-import { RigidBody, RigidBodyRef, Collider } from "~/ecs/plugins/rapier";
+import { CenterMesh } from "~/ecs/plugins/normalize";
+import { RigidBody, Collider } from "~/ecs/plugins/rapier";
 
 import {
-  CenterMesh,
   Selectable,
   PotentiallyControllable,
   ThrustController,
