@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+  import { getUnduplicatedName } from "~/utils/getUnduplicatedName";
   import Tag from "./Tag.svelte";
 
   import { Pane } from "~/ui/LeftPanel";
@@ -9,15 +10,6 @@
   export let component;
 
   const dispatch = createEventDispatcher();
-
-  const getTitle = () => {
-    const parts = Component.name.split("_");
-    if (parts.length > 1) {
-      return parts[1];
-    } else {
-      return parts[0];
-    }
-  };
 
   const propVisible = (prop) => {
     if (prop.editor && prop.editor.requires) {
@@ -47,7 +39,7 @@
 </style>
 
 <Pane
-  title={getTitle()}
+  title={getUnduplicatedName(Component.name)}
   showClose={true}
   showMinimize={true}
   on:close={() => dispatch('destroy')}>
