@@ -1,4 +1,5 @@
 <script lang="ts">
+  import AssetType from "./types/AssetType.svelte";
   import ColorType from "./types/ColorType.svelte";
   import JSONType from "./types/JSONType.svelte";
   import MiscType from "./types/MiscType.svelte";
@@ -17,6 +18,8 @@
 
   function getTypeComponent(propType) {
     switch (propType) {
+      case "Asset":
+        return AssetType;
       case "Color":
         return ColorType;
       case "JSON":
