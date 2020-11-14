@@ -2,8 +2,11 @@
   import Capsule from "../Capsule.svelte";
 
   export let key: string;
-  export let value: { x: number; y: number; z: number; w: number };
+  export let component;
   export let prop;
+
+  let value: { x: number; y: number; z: number; w: number };
+  $: value = component[key];
 
   function fmt(n) {
     return n === undefined ? "un" : n.toFixed(1);

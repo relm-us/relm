@@ -1,13 +1,19 @@
 <script lang="ts">
   export let key;
-  export let value;
+  export let component;
   export let prop;
+
+  let value;
+  $: value = component[key];
 </script>
 
 <style>
   div {
     margin-left: 16px;
     overflow-wrap: anywhere;
+  }
+  pre {
+    margin: 0;
   }
   .fixed-width {
     font-family: monospace;

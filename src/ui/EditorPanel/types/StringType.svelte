@@ -2,8 +2,11 @@
   import Tag from "../Tag.svelte";
 
   export let key: string;
-  export let value: string;
+  export let component;
   export let prop;
+
+  let value: string;
+  $: value = component[key];
 </script>
 
 <style>

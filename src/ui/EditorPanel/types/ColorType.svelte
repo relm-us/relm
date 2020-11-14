@@ -3,8 +3,11 @@
   import { Color } from "three";
 
   export let key: string;
-  export let value: string;
+  export let component;
   export let prop;
+
+  let value;
+  $: value = component[key];
 
   // ignore warning about missing props
   $$props;
@@ -39,7 +42,10 @@
     on:change={({ detail }) => {
       const cssColor = detail.indexOf('#') === 0 ? detail.slice(0, 7) : detail;
       const color = new Color(cssColor);
-      value = '#' + color.getHexString();
+      const newValue = '#' + color.getHexString();
+      component[key] = newValue;
+      component.modified();
+      console.log('color change', key, component[key], component);
     }} />
 
   <color>{value}</color>

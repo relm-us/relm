@@ -9,7 +9,6 @@
   import MiscType from "./types/MiscType.svelte";
 
   export let key;
-  export let value;
   export let component;
   export let prop;
 
@@ -48,6 +47,6 @@
   {Type}
 {:else}
   <div>
-    <svelte:component this={Type} {key} bind:value {component} {prop} />
+    <svelte:component this={Type} {key} {component} {prop} />
   </div>
 {/if}

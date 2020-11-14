@@ -3,9 +3,11 @@
   import { NumberDragger } from "../NumberDragger";
 
   export let key: string;
-  export let value: { x: number; y: number; z: number };
   export let component;
   export let prop;
+
+  let value: { x: number; y: number; z: number };
+  $: value = component[key];
 
   function fmt(n) {
     return n === undefined ? "un" : n.toFixed(1);
@@ -15,7 +17,7 @@
     return new NumberDragger({
       getValue: () => value[dimension],
       onChange: (newValue) => {
-        value[dimension] = newValue;
+        component[key][dimension] = newValue;
         component.modified();
       },
       onClick: () => {

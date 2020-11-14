@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+  import Tag from "./Tag.svelte";
 
   import { Pane } from "~/ui/LeftPanel";
   import Property from "./Property.svelte";
@@ -29,12 +30,29 @@
       return true;
     }
   };
+
+  const debugComponent = () => {
+    console.log(component);
+    (window as any).component = component;
+  };
 </script>
+
+<style>
+  toolbar {
+    display: flex;
+    margin: 8px 16px 8px 16px;
+    padding-top: 8px;
+    border-top: 1px solid #555;
+  }
+</style>
 
 <Pane title={getTitle()} showClose={true} on:close={() => dispatch('destroy')}>
   {#each Object.entries(Component.props) as [key, prop]}
     {#if propVisible(prop)}
-      <Property {key} bind:value={component[key]} {component} {prop} />
+      <Property {key} {component} {prop} />
     {/if}
   {/each}
+  <toolbar>
+    <Tag on:mousedown={debugComponent} cursor="pointer">Debug</Tag>
+  </toolbar>
 </Pane>
