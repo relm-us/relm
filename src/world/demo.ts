@@ -12,6 +12,7 @@ import {
 } from "~/ecs/plugins/composable";
 import { HtmlNode, CssPlane } from "~/ecs/plugins/css3d";
 import { Outline } from "~/ecs/plugins/outline";
+import { Follow } from "~/ecs/plugins/follow";
 import { RigidBody, RigidBodyRef, Collider } from "~/ecs/plugins/rapier";
 
 import {
@@ -218,10 +219,15 @@ export function addDemonstrationEntities(world) {
   // Create the singleton camera
   makeEntity(world, "Camera")
     .add(ComposableTransform, {
-      position: new Vector3(0, 5, 5),
+      position: new Vector3(0, 12, 20),
     })
     .add(LookAt, {
-      entity: chair.id,
+      entity: blueBox.id,
+      limit: "X_AXIS",
+    })
+    .add(Follow, {
+      entity: blueBox.id,
+      limit: "X_AXIS",
     })
     .add(Camera)
     .activate();

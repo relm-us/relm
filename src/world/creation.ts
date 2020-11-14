@@ -1,5 +1,6 @@
 import {
   WebGLRenderer,
+  OrthographicCamera,
   Scene,
   Color,
   HemisphereLight,
@@ -7,6 +8,7 @@ import {
   VSMShadowMap,
   PCFShadowMap,
   BasicShadowMap,
+  PerspectiveCamera,
 } from "three";
 
 import { World } from "hecs";
@@ -16,6 +18,7 @@ import ComposablePlugin, {
   ComposableTransform,
 } from "~/ecs/plugins/composable";
 import Css3DPlugin from "~/ecs/plugins/css3d";
+import FollowPlugin from "~/ecs/plugins/follow";
 import RapierPlugin from "~/ecs/plugins/rapier";
 import OutlinePlugin from "~/ecs/plugins/outline";
 
@@ -98,6 +101,14 @@ export function createScene() {
   return scene;
 }
 
+export function createCamera(ortho = true) {
+  if (ortho) {
+    return new OrthographicCamera(-15, 15, 15, -15, 0.1, 1000);
+  } else {
+    return new PerspectiveCamera(35, 1, 0.1, 1000);
+  }
+}
+
 export function createWorld(rapier) {
   const world = new World({
     plugins: [
@@ -107,6 +118,7 @@ export function createWorld(rapier) {
         {
           renderer: createRenderer(),
           scene: createScene(),
+          camera: createCamera(false),
         },
       ],
       [
@@ -122,6 +134,7 @@ export function createWorld(rapier) {
       OutlinePlugin,
 
       Css3DPlugin,
+      FollowPlugin,
     ],
     components: [CenteredMesh, ThrustController, PotentiallyControllable],
     systems: [
