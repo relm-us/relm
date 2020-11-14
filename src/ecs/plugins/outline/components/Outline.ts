@@ -18,8 +18,4 @@ export class Outline extends Component {
       },
     },
   };
-
-  static editor = {
-    label: "Outline",
-  };
 }

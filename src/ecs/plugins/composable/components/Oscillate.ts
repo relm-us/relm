@@ -65,6 +65,9 @@ export class OscillatePosition extends Component {
       },
     },
   };
+  static editor = {
+    label: "OscillatePosition",
+  };
 }
 
 export class OscillateRotation extends Component {
@@ -86,6 +89,9 @@ export class OscillateRotation extends Component {
       },
     },
   };
+  static editor = {
+    label: "OscillateRotation",
+  };
 }
 
 export class OscillateScale extends Component {
@@ -106,5 +112,8 @@ export class OscillateScale extends Component {
         label: "Scale (max)",
       },
     },
+  };
+  static editor = {
+    label: "OscillateScale",
   };
 }

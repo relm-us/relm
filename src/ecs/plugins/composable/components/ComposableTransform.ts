@@ -96,4 +96,8 @@ export class ComposableTransform extends Component {
 
     this.scaleOffsets[id].copy(scale);
   }
+
+  static editor = {
+    label: "ComposableTransform",
+  };
 }

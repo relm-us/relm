@@ -1,33 +1,39 @@
-import { Component, NumberType, BooleanType } from 'hecs'
-import { Vector3, Vector3Type } from 'hecs-plugin-core'
+import { Component, NumberType, BooleanType } from "hecs";
+import { Vector3, Vector3Type } from "hecs-plugin-core";
 
 const SpeedMagnitudeProps = {
   speed: {
     type: NumberType,
     default: 1.0,
     editor: {
-      label: 'Speed',
+      label: "Speed",
     },
   },
   magnitude: {
     type: Vector3Type,
     default: new Vector3(1, 1, 1),
     editor: {
-      label: 'Magnitude',
+      label: "Magnitude",
     },
   },
-}
+};
 
 export class NoisyPosition extends Component {
   static props = {
     ...SpeedMagnitudeProps,
-  }
+  };
+  static editor = {
+    label: "NoisyPosition",
+  };
 }
 
 export class NoisyRotation extends Component {
   static props = {
     ...SpeedMagnitudeProps,
-  }
+  };
+  static editor = {
+    label: "NoisyRotation",
+  };
 }
 
 export class NoisyScale extends Component {
@@ -37,8 +43,11 @@ export class NoisyScale extends Component {
       type: BooleanType,
       default: true,
       editor: {
-        label: 'Dependent Variables',
+        label: "Dependent Variables",
       },
     },
-  }
+  };
+  static editor = {
+    label: "NoisyScale",
+  };
 }
