@@ -31,6 +31,7 @@
 <div>
   <lbl>{(prop.editor && prop.editor.label) || key}:</lbl>
 
+  <!-- https://github.com/rob-balfre/svelte-select -->
   <Select
     isClearable={false}
     items={prop.editor.options}

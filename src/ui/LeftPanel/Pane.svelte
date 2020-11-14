@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
 
+  // https://svelte-icons.vercel.app/
   import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
   import IoIosArrowDown from "svelte-icons/io/IoIosArrowDown.svelte";
   import IoIosArrowUp from "svelte-icons/io/IoIosArrowUp.svelte";
