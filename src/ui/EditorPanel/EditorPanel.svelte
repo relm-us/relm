@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
 
   import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
+  import Button from "~/ui/Button";
   import ComponentPane from "./ComponentPane.svelte";
   import { hovered, selectedEntities, selectedGroups } from "~/world/selection";
 
@@ -16,12 +17,16 @@
   }
 
   let entity;
-
-  // This assignment tells Svelte to update everything whenever the selection changes
+  // update everything whenever the selection changes
   $: entity = getEntity($selectedEntities);
 
+  let primaryComponents, secondaryComponents;
+  $: primaryComponents = entity && entity.Components.filter((c) => c.editor);
+  $: secondaryComponents = entity && entity.Components.filter((c) => !c.editor);
+
+  let secondaryComponentsVisible = false;
+
   const refresh = () => {
-    // This assignment tells Svelte to re-evalute the current selection
     entity = getEntity($selectedEntities);
   };
 
@@ -51,12 +56,33 @@
   {#if $selectedEntities.size === 0}
     <info>Nothing selected</info>
   {:else if $selectedEntities.size === 1}
-    {#each entity.Components as Component (Component)}
+    <!-- Components meant to be edited -->
+    {#each primaryComponents as Component (Component)}
       <ComponentPane
         {Component}
         component={entity.components.get(Component)}
         on:destroy={() => destroyComponent(entity, Component)} />
     {/each}
+
+    <!-- Internal Components -->
+    {#if secondaryComponents.length}
+      <Button
+        style="margin-top:8px"
+        on:click={() => {
+          secondaryComponentsVisible = !secondaryComponentsVisible;
+        }}>
+        {secondaryComponentsVisible ? 'Hide' : 'Show'}
+        ({secondaryComponents.length}) Internal Components
+      </Button>
+      {#if secondaryComponentsVisible}
+        {#each secondaryComponents as Component (Component)}
+          <ComponentPane
+            {Component}
+            component={entity.components.get(Component)}
+            on:destroy={() => destroyComponent(entity, Component)} />
+        {/each}
+      {/if}
+    {/if}
   {:else}
     <Pane title="Selected">
       {#each [...$selectedEntities] as entityId}
