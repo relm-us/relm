@@ -46,7 +46,11 @@
   }
 </style>
 
-<Pane title={getTitle()} showClose={true} on:close={() => dispatch('destroy')}>
+<Pane
+  title={getTitle()}
+  showClose={true}
+  showMinimize={true}
+  on:close={() => dispatch('destroy')}>
   {#each Object.entries(Component.props) as [key, prop]}
     {#if propVisible(prop)}
       <Property {key} {component} {prop} />
