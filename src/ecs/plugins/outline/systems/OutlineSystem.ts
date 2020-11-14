@@ -1,5 +1,11 @@
 import { System, Groups, Not, Modified } from "hecs";
-import { Mesh, Group, DoubleSide, MeshLambertMaterial } from "three";
+import {
+  Mesh,
+  Group,
+  DoubleSide,
+  MeshLambertMaterial,
+  AlwaysDepth,
+} from "three";
 import { Outline, OutlineApplied } from "../components";
 import { WireframeGeometry2 } from "three/examples/jsm/lines/WireframeGeometry2";
 import { Wireframe } from "three/examples/jsm/lines/Wireframe";
@@ -58,25 +64,6 @@ export class OutlineSystem extends System {
     }
   }
 
-  sendToForeground(object3d) {
-    object3d.traverse((obj) => {
-      // Save state so it can be restored later
-      const outline: {
-        renderOrder?: number;
-        depthTest?: boolean;
-      } = {};
-      obj.userData.outline = outline;
-
-      outline.renderOrder = obj.renderOrder;
-      obj.renderOrder = 4;
-
-      if (obj.material) {
-        outline.depthTest = obj.material.depthTest;
-        obj.material.depthTest = false;
-      }
-    });
-  }
-
   removeOutline(entity) {
     const object3d = entity.get(Object3D);
     const applied = entity.get(OutlineApplied);
@@ -87,10 +74,10 @@ export class OutlineSystem extends System {
     }
   }
 
-  outlinify(object, color, thickness, depth = 0) {
+  outlinify(object, color, thickness) {
     for (const child of object.children) {
       object.remove(child);
-      object.add(this.outlinify(child, color, thickness, depth + 1));
+      object.add(this.outlinify(child, color, thickness));
     }
 
     if (object.isMesh) {
@@ -114,6 +101,7 @@ export class OutlineSystem extends System {
       // Add outline meshes
       group.add(coloredOutline);
       group.add(blackOutline);
+      group.add(this.createSubtractionMesh(object));
 
       return group;
     } else {
@@ -121,17 +109,26 @@ export class OutlineSystem extends System {
     }
   }
 
-  restoreState(object, depth = 0) {
+  sendToForeground(object3d) {
+    object3d.traverse((obj) => {
+      // Save state so it can be restored later
+      const outline: {
+        renderOrder?: number;
+      } = {};
+      obj.userData.outline = outline;
+
+      outline.renderOrder = obj.renderOrder;
+      obj.renderOrder = 4;
+    });
+  }
+
+  restoreState(object) {
     object.traverse((obj) => {
       const savedState = obj.userData.outline;
       if (!savedState) return;
 
       if (savedState.renderOrder !== undefined) {
         obj.renderOrder = savedState.renderOrder;
-      }
-
-      if (obj.material) {
-        obj.material.depthTest = savedState.depthTest;
       }
 
       delete obj.userData.outline;
@@ -153,5 +150,17 @@ export class OutlineSystem extends System {
     outlineMesh.renderOrder = renderOrder;
 
     return outlineMesh;
+  }
+
+  createSubtractionMesh(mesh) {
+    const material = new MeshLambertMaterial({
+      color: 0x888888,
+      side: DoubleSide,
+    });
+    material.depthTest = false;
+
+    const subtractMesh = new Mesh(mesh.geometry, material);
+    subtractMesh.renderOrder = 3;
+    return subtractMesh;
   }
 }
