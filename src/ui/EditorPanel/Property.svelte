@@ -1,12 +1,13 @@
 <script lang="ts">
-  import Vector3Type from "./types/Vector3Type.svelte";
+  import ColorType from "./types/ColorType.svelte";
+  import JSONType from "./types/JSONType.svelte";
+  import MiscType from "./types/MiscType.svelte";
+  import NumberType from "./types/NumberType.svelte";
   import QuaternionType from "./types/QuaternionType.svelte";
   import RefType from "./types/RefType.svelte";
+  import SelectType from "./types/SelectType.svelte";
   import StringType from "./types/StringType.svelte";
-  import NumberType from "./types/NumberType.svelte";
-  import JSONType from "./types/JSONType.svelte";
-  import ColorType from "./types/ColorType.svelte";
-  import MiscType from "./types/MiscType.svelte";
+  import Vector3Type from "./types/Vector3Type.svelte";
 
   export let key;
   export let component;
@@ -16,20 +17,22 @@
 
   function getTypeComponent(propType) {
     switch (propType) {
-      case "Vector3":
-        return Vector3Type;
+      case "Color":
+        return ColorType;
+      case "JSON":
+        return JSONType;
+      case "Number":
+        return NumberType;
       case "Quaternion":
         return QuaternionType;
       case "Ref":
         return RefType;
+      case "Select":
+        return SelectType;
       case "String":
         return StringType;
-      case "Number":
-        return NumberType;
-      case "JSON":
-        return JSONType;
-      case "Color":
-        return ColorType;
+      case "Vector3":
+        return Vector3Type;
       default:
         return MiscType;
     }
