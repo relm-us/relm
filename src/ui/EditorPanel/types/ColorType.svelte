@@ -7,7 +7,10 @@
   export let prop;
 
   let value;
-  $: value = component[key];
+  $: {
+    const color = new Color(component[key]);
+    value = "#" + color.getHexString();
+  }
 
   // ignore warning about missing props
   $$props;
