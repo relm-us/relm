@@ -7,6 +7,7 @@
 
   import Button from "~/ui/Button";
   import PausePlayButton from "~/ui/PausePlayButton";
+  import StepFrameButton from "~/ui/StepFrameButton";
   import GroupUngroupButton from "~/ui/GroupUngroupButton";
   import ActionButton from "~/ui/ActionButton";
 
@@ -59,4 +60,5 @@
   <GroupUngroupButton />
   <ActionButton />
   <PausePlayButton />
+  <StepFrameButton />
 </button-panel>
