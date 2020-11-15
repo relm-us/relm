@@ -1,3 +1,6 @@
+import * as THREE from "three";
+(window as any).THREE = THREE;
+
 import { Asset, Transform, Vector3, Quaternion } from "hecs-plugin-core";
 import { Model, Shape, Camera, LookAt } from "hecs-plugin-three";
 
@@ -8,14 +11,10 @@ import {
 } from "~/ecs/plugins/composable";
 import { HtmlNode, CssPlane } from "~/ecs/plugins/css3d";
 import { Follow } from "~/ecs/plugins/follow";
-import { CenterMesh } from "~/ecs/plugins/normalize";
+import { NormalizeMesh } from "~/ecs/plugins/normalize";
 import { RigidBody, Collider } from "~/ecs/plugins/rapier";
 
-import {
-  Selectable,
-  PotentiallyControllable,
-  ThrustController,
-} from "~/ecs/components";
+import { ThrustController } from "~/ecs/components";
 
 import { makeEntity, makeBox, makeBall, makePileOfBoxes } from "./prefab";
 
@@ -32,7 +31,6 @@ export function addDemonstrationEntities(world) {
   );
   const scale = rectangleSize.x / parseFloat(iframeSize.x);
   makeEntity(world, "Video")
-    .add(Selectable)
     .add(ComposableTransform, {
       position: new Vector3(0, 0, 0.5),
     })
@@ -58,8 +56,8 @@ export function addDemonstrationEntities(world) {
     .add(Collider, {
       kind: "BOX",
       boxSize: rectangleSize,
-    })
-    .activate();
+    });
+  // .activate();
 
   // Create origin entity (target for the camera)
   const origin = makeEntity(world, "Origin")
@@ -125,19 +123,54 @@ export function addDemonstrationEntities(world) {
   makePileOfBoxes(world, { count: 10 });
 
   // Orange Box
-  makeBox(world, { x: 0, y: 0, z: 2, color: "orange", name: "OrangeBox" })
-    .add(Selectable)
-    .activate();
+  makeBox(world, {
+    x: 0,
+    y: 0,
+    z: 2,
+    color: "orange",
+    name: "OrangeBox",
+  }).activate();
 
   // Blue Box
   const blueBox = makeBox(world, {
     ...{ x: -2.5, y: 0, z: 0 },
     color: "blue",
     name: "BlueBox",
-  })
+  }).activate();
+
+  // Brown Box
+  makeBox(world, {
+    x: 2.5,
+    y: 0,
+    z: 0,
+    color: "brown",
+    name: "BrownBox",
+  }).activate();
+
+  /********* GAME OBJECTS *********/
+
+  const ball = makeBall(world, {
+    ...{ x: 0, y: 0.5, z: -2 },
+    r: 0.5,
+    color: "#ddff11",
+    name: "Ball",
+  }).activate();
+  (window as any).ball = ball;
+
+  const avatar = makeEntity(world, "Avatar")
     .add(ThrustController)
-    .add(PotentiallyControllable)
-    .add(Selectable)
+    .add(ComposableTransform)
+    .add(Model, {
+      asset: new Asset("/avatar.glb"),
+    })
+    .add(NormalizeMesh)
+    .add(RigidBody, {
+      kind: "DYNAMIC",
+    })
+    .add(Collider, {
+      kind: "BOX",
+      boxSize: new Vector3(1, 1, 1),
+    })
     .add(OscillatePosition, {
       frequency: 1,
       phase: Math.PI * 0,
@@ -151,30 +184,15 @@ export function addDemonstrationEntities(world) {
       max: new Vector3(1.05, 1, 1.05),
     })
     .activate();
-
-  const ball = makeBall(world, {
-    ...{ x: 0, y: 0.5, z: -2 },
-    r: 0.5,
-    color: "#ddff11",
-    name: "Ball",
-  })
-    .add(Selectable)
-    .activate();
-
-  // Brown Box
-  makeBox(world, { x: 2.5, y: 0, z: 0, color: "brown", name: "BrownBox" })
-    .add(Selectable)
-    .activate();
+  (window as any).avatar = avatar;
 
   // Chair
   const chair = makeEntity(world, "Chair")
-    .add(Selectable)
-    .add(CenterMesh)
+    .add(NormalizeMesh)
     .add(ComposableTransform, {
-      position: new Vector3(0, 0, 0),
-      scale: new Vector3(1, 1, 1),
+      position: new Vector3(1, 0, 1),
       positionOffsets: {
-        static: new Vector3(0, -0.5, 0),
+        static: new Vector3(0, 0.45, 0),
       },
     })
     .add(Model, {
@@ -188,28 +206,7 @@ export function addDemonstrationEntities(world) {
       boxSize: new Vector3(1, 1, 1),
     })
     .activate();
-
-  // Plant
-  // makeEntity(world, "Plant")
-  //   .add(CenterMesh)
-  //   .add(ComposableTransform, {
-  //     position: new Vector3(3, 0, -3),
-  //     scale: new Vector3(1, 1, 1),
-  //     positionOffsets: {
-  //       static: new Vector3(0, -0.5, 0),
-  //     },
-  //   })
-  //   .add(Model, {
-  //     asset: new Asset("/plant.glb"),
-  //   })
-  //   .add(RigidBody, {
-  //     kind: "DYNAMIC",
-  //   })
-  //   .add(Collider, {
-  //     kind: "BOX",
-  //     boxSize: new Vector3(1, 1, 1),
-  //   })
-  //   .activate();
+  (window as any).chair = chair;
 
   // Create the singleton camera
   makeEntity(world, "Camera")
@@ -217,11 +214,11 @@ export function addDemonstrationEntities(world) {
       position: new Vector3(0, 12, 20),
     })
     .add(LookAt, {
-      entity: blueBox.id,
+      entity: avatar.id,
       limit: "X_AXIS",
     })
     .add(Follow, {
-      entity: blueBox.id,
+      entity: avatar.id,
       limit: "X_AXIS",
     })
     .add(Camera)

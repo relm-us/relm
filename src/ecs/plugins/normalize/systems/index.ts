@@ -1,1 +1,1 @@
-export { CenteredMeshSystem } from "./CenteredMeshSystem";
+export { NormalizeMeshSystem } from "./NormalizeMeshSystem";

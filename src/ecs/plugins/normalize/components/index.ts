@@ -1,2 +1,2 @@
-export { CenterMesh } from "./CenterMesh";
-export { CenteredMesh } from "./CenteredMesh";
+export { NormalizeMesh } from "./NormalizeMesh";
+export { NormalizedMesh } from "./NormalizedMesh";
