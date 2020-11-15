@@ -8,9 +8,6 @@ import { DirectionalLight, DirectionalLightRef } from "../components";
 
 import { shadowMapConfig } from "~/world/config";
 
-// const targetPosition = new THREE.Vector3();
-// const position = new THREE.Vector3();
-
 export class DirectionalLightSystem extends System {
   order = Groups.Initialization;
 
