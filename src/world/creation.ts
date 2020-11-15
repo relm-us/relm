@@ -4,7 +4,6 @@ import {
   Scene,
   Color,
   HemisphereLight,
-  DirectionalLight,
   VSMShadowMap,
   PCFShadowMap,
   BasicShadowMap,
@@ -72,45 +71,6 @@ export function createScene() {
   const hemiLight = new HemisphereLight(0x333333, 0xffffff);
   hemiLight.position.set(0, 20, 0);
   scene.add(hemiLight);
-
-  // const size = 10;
-  // const dirLight = new DirectionalLight(0xffffff, 4);
-  // (window as any).dirLight = dirLight;
-  // dirLight.position.set(-4, 20, 10);
-  // dirLight.castShadow = true;
-  // dirLight.shadow.mapSize.height = 1024;
-  // dirLight.shadow.mapSize.width = 1024;
-  // dirLight.shadow.camera.top = size;
-  // dirLight.shadow.camera.bottom = -size;
-  // dirLight.shadow.camera.left = -size;
-  // dirLight.shadow.camera.right = size;
-  // dirLight.shadow.camera.near = 2;
-  // dirLight.shadow.camera.far = 40;
-  // dirLight.shadow.radius = 2;
-  // switch (shadowMapConfig) {
-  //   case "BASIC":
-  //   case "PCF":
-  //     break;
-  //   case "VSM":
-  //     dirLight.shadow.bias = -0.001;
-  //     break;
-  // }
-  // scene.add(dirLight);
-  // scene.add(dirLight.target);
-
-  // // temp hack: move light with camera
-  // setInterval(() => {
-  //   // const camera = (window as any).camera;
-  //   // if (!camera) return;
-  //   // const object
-  //   // dirLight.position.x = camera.position.x - 4;
-  //   // dirLight.position.y = camera.position.y + 20;
-  //   // dirLight.position.z = camera.position.z + 10;
-  //   console.log("happening");
-  //   dirLight.position.x += 0.01;
-  //   dirLight.target.position.x += 0.01;
-  //   // dirLight.matrixWorldNeedsUpdate = true;
-  // }, 34);
 
   return scene;
 }
