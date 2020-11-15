@@ -60,26 +60,6 @@ export function addDemonstrationEntities(world) {
     });
   // .activate();
 
-  const head = makeEntity(world, "Head")
-    .add(ComposableTransform, {
-      position: new Vector3(0, 1, 0),
-    })
-    .add(HtmlNode, {
-      specification: {
-        type: "AVATAR_HEAD",
-        props: {
-          width: 60,
-          height: 60,
-        },
-      },
-      scale: 1.0 / 90,
-    })
-    .add(CssPlane, {
-      kind: "CIRCLE",
-      circleRadius: 0.35,
-    })
-    .activate();
-
   // Create origin entity (target for the camera)
   const origin = makeEntity(world, "Origin")
     .add(ComposableTransform, {
@@ -194,7 +174,7 @@ export function addDemonstrationEntities(world) {
 
   const avatar = makeEntity(world, "Avatar")
     .add(ThrustController)
-    .add(ComposableTransform)
+    .add(ComposableTransform, {})
     .add(Model, {
       asset: new Asset("/avatar.glb"),
     })
@@ -209,8 +189,8 @@ export function addDemonstrationEntities(world) {
     .add(OscillatePosition, {
       frequency: 1,
       phase: Math.PI * 0,
-      min: new Vector3(0, -0.1, 0),
-      max: new Vector3(0, 0, 0),
+      min: new Vector3(0, 0.1, 0),
+      max: new Vector3(0, 0.2, 0),
     })
     .add(OscillateScale, {
       frequency: 1,
@@ -220,7 +200,43 @@ export function addDemonstrationEntities(world) {
     })
     .activate();
   (window as any).avatar = avatar;
+
+  const head = makeEntity(world, "Head")
+    .add(ComposableTransform, {
+      position: new Vector3(0, 1, 0),
+    })
+    .add(HtmlNode, {
+      specification: {
+        type: "AVATAR_HEAD",
+        props: {
+          width: 60,
+          height: 60,
+        },
+      },
+      scale: 1.0 / 90,
+    })
+    .add(CssPlane, {
+      kind: "CIRCLE",
+      circleRadius: 0.35,
+    })
+    .activate();
   head.setParent(avatar);
+
+  const leftHand = makeBall(world, {
+    ...{ x: -0.55, y: 0.0, z: 0.05 },
+    r: 0.12,
+    color: "#bbbbff",
+    name: "LeftHand",
+  }).activate();
+  leftHand.setParent(avatar);
+
+  const rightHand = makeBall(world, {
+    ...{ x: 0.55, y: 0.0, z: 0.05 },
+    r: 0.12,
+    color: "#bbbbff",
+    name: "RightHand",
+  }).activate();
+  rightHand.setParent(avatar);
 
   // Chair
   const chair = makeEntity(world, "Chair")
