@@ -40,28 +40,28 @@ export class DirectionalLight extends Component {
     },
     shadowTop: {
       type: NumberType,
-      default: 10,
+      default: 20,
       editor: {
         label: "Shadow Top",
       },
     },
     shadowBottom: {
       type: NumberType,
-      default: -10,
+      default: -20,
       editor: {
         label: "Shadow Bottom",
       },
     },
     shadowLeft: {
       type: NumberType,
-      default: -10,
+      default: -20,
       editor: {
         label: "Shadow Left",
       },
     },
     shadowRight: {
       type: NumberType,
-      default: 10,
+      default: 20,
       editor: {
         label: "Shadow Right",
       },

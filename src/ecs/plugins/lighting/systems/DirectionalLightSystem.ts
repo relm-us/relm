@@ -85,6 +85,9 @@ export class DirectionalLightSystem extends System {
     } else {
       // If no target entity is provided, DirectionalLight will "float",
       // always pointing in same direction
+      dirLight.target.position.x = -object3d.value.position.x;
+      dirLight.target.position.y = -object3d.value.position.y;
+      dirLight.target.position.z = -object3d.value.position.z;
       object3d.value.add(dirLight.target);
     }
 

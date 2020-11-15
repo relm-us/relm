@@ -226,7 +226,7 @@ export function addDemonstrationEntities(world) {
   // Create the singleton camera
   const camera = makeEntity(world, "Camera")
     .add(ComposableTransform, {
-      position: new Vector3(0, 12, 20),
+      position: new Vector3(0, 9, 15),
     })
     .add(LookAt, {
       entity: avatar.id,
@@ -243,6 +243,9 @@ export function addDemonstrationEntities(world) {
   const light = makeEntity(world, "DirectionalLight")
     .add(ComposableTransform, {
       position: new Vector3(-4, 20, 10),
+    })
+    .add(Follow, {
+      entity: avatar.id,
     })
     .add(DirectionalLight)
     .activate();
