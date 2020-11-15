@@ -42,7 +42,11 @@ export class IntersectionFinder {
       return this._intersections.reduce((acc, intersection, i) => {
         const object = findObjectActingAsEntityRoot(intersection.object);
         if (object !== null) {
-          acc.add(object);
+          // outlines and other "things" should be invisible to
+          // IntersectionFinder
+          if (!object.userData.invisibleToMouse) {
+            acc.add(object);
+          }
         }
         return acc;
       }, new Set<Object3D>());

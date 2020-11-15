@@ -80,6 +80,20 @@ export function addDemonstrationEntities(world) {
     dynamic: false,
   }).activate();
 
+  const floorBelowSize = {
+    w: 150,
+    d: 150,
+  };
+  // Create the floor
+  makeBox(world, {
+    y: -10,
+    w: floorBelowSize.w,
+    h: 0.1,
+    d: floorBelowSize.d,
+    color: "#44ba63",
+    dynamic: false,
+  }).activate();
+
   /********* WALLS **********/
 
   // Left Wall

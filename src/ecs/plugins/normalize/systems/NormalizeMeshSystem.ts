@@ -27,6 +27,8 @@ export class NormalizeMeshSystem extends System {
       object3d.parent.remove(object3d);
     }
 
+    this.enableShadow(first);
+
     first.position.x = 0;
     first.position.y = 0;
     first.position.z = 0;
@@ -49,6 +51,15 @@ export class NormalizeMeshSystem extends System {
       if (this.countMeshChildren(obj) > 1) first = obj;
     });
     return first || object3d;
+  }
+
+  enableShadow(object3d) {
+    object3d.traverse((obj) => {
+      if (obj.type === "Mesh") {
+        obj.castShadow = true;
+        obj.receiveShadow = true;
+      }
+    });
   }
 
   countMeshChildren(object3d) {
