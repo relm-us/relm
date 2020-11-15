@@ -1,6 +1,19 @@
 import { System, Groups } from "hecs";
-import { WorldTransform } from "hecs-plugin-core";
 import { RigidBody, RigidBodyRef } from "../components";
+import {
+  Transform,
+  WorldTransform,
+  Matrix4,
+  Vector3,
+  Quaternion,
+} from "hecs-plugin-core";
+
+const v3_1 = new Vector3();
+const q_1 = new Quaternion();
+const m4_1 = new Matrix4();
+const m4_2 = new Matrix4();
+const m4_3 = new Matrix4();
+const scale = new Vector3(1, 1, 1);
 
 export class PhysicsSystem extends System {
   order = Groups.Simulation;
@@ -67,28 +80,26 @@ export class PhysicsSystem extends System {
           local.position.copy(body.translation());
           local.rotation.copy(body.rotation());
         } else {
-          console.log("has parent");
-          // Example:
-          // worldY = 3 localY = 1 (this means parentWorldY = 2)
-          // simulate()
-          // simWorldY = 2.9
-          // newWorldY = 2.9 newLocalY = 0.9
-          // newLocalY = localY + (simWorldY - worldY)
-          // copy sim values into three.js constructs
-          // v3_1.copy(pose.translation);
-          // q_1.copy(pose.rotation);
-          // // make a sim world matrix
-          // m4_1.compose(v3_1, q_1, scale);
-          // // make an inverse world matrix
-          // m4_2.getInverse(world.matrix);
-          // // -world * sim (diff to apply to local)
-          // m4_3.multiplyMatrices(m4_2, m4_1);
-          // // add diff matrix to local
-          // local.matrix.multiply(m4_3);
-          // // decompose and update world
-          // local.matrix.decompose(local.position, local.rotation, local.scale);
-          // world.matrix.copy(m4_1);
-          // world.matrix.decompose(world.position, world.rotation, world.scale);
+          // local.position.copy(body.translation());
+          // local.rotation.copy(body.rotation());
+          v3_1.copy(body.translation());
+          q_1.copy(body.rotation());
+          // make a sim world matrix
+          m4_1.compose(v3_1, q_1, scale);
+          // make an inverse world matrix
+          m4_2.getInverse(world.matrix);
+          // -world * sim (diff to apply to local)
+          m4_3.multiplyMatrices(m4_2, m4_1);
+          // add diff matrix to local
+          if (!local.matrix) {
+            console.log("no local matrix");
+            return;
+          }
+          local.matrix.multiply(m4_3);
+          // decompose and update world
+          local.matrix.decompose(local.position, local.rotation, local.scale);
+          world.matrix.copy(m4_1);
+          world.matrix.decompose(world.position, world.rotation, world.scale);
         }
 
         // spec.angularVelocity.copy(body.angvel());

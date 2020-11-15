@@ -1,6 +1,7 @@
 <script lang="ts">
-  export let width: number;
-  export let height: number;
+  // export let width: number;
+  // export let height: number;
+  $$props;
 </script>
 
 <style>
