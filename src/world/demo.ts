@@ -2,7 +2,7 @@ import * as THREE from "three";
 (window as any).THREE = THREE;
 
 import { Asset, Transform, Vector3, Quaternion } from "hecs-plugin-core";
-import { Model, Shape, Camera, LookAt } from "hecs-plugin-three";
+import { Model, Shape, Camera, LookAt, Object3D } from "hecs-plugin-three";
 
 import {
   ComposableTransform,
@@ -11,6 +11,7 @@ import {
 } from "~/ecs/plugins/composable";
 import { HtmlNode, CssPlane } from "~/ecs/plugins/css3d";
 import { Follow } from "~/ecs/plugins/follow";
+import { DirectionalLight } from "~/ecs/plugins/lighting";
 import { NormalizeMesh } from "~/ecs/plugins/normalize";
 import { RigidBody, Collider } from "~/ecs/plugins/rapier";
 
@@ -108,12 +109,12 @@ export function addDemonstrationEntities(world) {
   }).activate();
 
   // Right Wall
-  makeBox(world, {
-    ...{ x: floorSize.w / 2, y: -0.25 },
-    ...{ w: 0.1, h: 0.5, d: floorSize.d },
-    color: "white",
-    dynamic: false,
-  }).activate();
+  // makeBox(world, {
+  //   ...{ x: floorSize.w / 2, y: -0.25 },
+  //   ...{ w: 0.1, h: 0.5, d: floorSize.d },
+  //   color: "white",
+  //   dynamic: false,
+  // }).activate();
 
   // Back Wall
   makeBox(world, {
@@ -223,7 +224,7 @@ export function addDemonstrationEntities(world) {
   (window as any).chair = chair;
 
   // Create the singleton camera
-  makeEntity(world, "Camera")
+  const camera = makeEntity(world, "Camera")
     .add(ComposableTransform, {
       position: new Vector3(0, 12, 20),
     })
@@ -236,6 +237,14 @@ export function addDemonstrationEntities(world) {
       limit: "X_AXIS",
     })
     .add(Camera)
+    .activate();
+  (window as any).camera = camera;
+
+  const light = makeEntity(world, "DirectionalLight")
+    .add(ComposableTransform, {
+      position: new Vector3(-4, 20, 10),
+    })
+    .add(DirectionalLight)
     .activate();
 }
 
