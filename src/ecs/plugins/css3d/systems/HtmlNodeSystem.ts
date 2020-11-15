@@ -1,5 +1,5 @@
 import { System, Groups, Not } from "hecs";
-import { Transform } from "hecs-plugin-core";
+import { WorldTransform } from "hecs-plugin-core";
 import {
   CSS3DObject,
   CSS3DSprite,
@@ -15,7 +15,7 @@ import { getRenderableComponentByType } from "../renderables";
 export class HtmlNodeSystem extends System {
   active = IS_BROWSER;
   // order = Groups.Simulation + 100;
-  order = Groups.Initialization + 10;
+  order = Groups.Simulation - 5;
 
   static queries = {
     added: [HtmlNode, Not(HtmlInScene)],
@@ -36,7 +36,7 @@ export class HtmlNodeSystem extends System {
   update() {
     this.queries.added.forEach((entity) => {
       const html = entity.get(HtmlNode);
-      const transform = entity.get(Transform);
+      const transform = entity.get(WorldTransform);
 
       if (!transform) return;
 
@@ -78,7 +78,7 @@ export class HtmlNodeSystem extends System {
 
     this.queries.active.forEach((entity) => {
       const spec = entity.get(HtmlNode);
-      const transform = entity.get(Transform);
+      const transform = entity.get(WorldTransform);
       if (!transform) return;
 
       spec.object.position.copy(transform.position);

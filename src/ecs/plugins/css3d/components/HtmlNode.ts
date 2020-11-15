@@ -18,6 +18,7 @@ export class HtmlNode extends Component {
 
     scale: {
       type: NumberType,
+      default: 0.005,
     },
 
     billboard: {

@@ -33,7 +33,7 @@ export function addDemonstrationEntities(world) {
   const scale = rectangleSize.x / parseFloat(iframeSize.x);
   makeEntity(world, "Video")
     .add(ComposableTransform, {
-      position: new Vector3(0, 0, 0.5),
+      position: new Vector3(0, 0.5, 0.5),
     })
     .add(HtmlNode, {
       specification: {
@@ -59,6 +59,26 @@ export function addDemonstrationEntities(world) {
       boxSize: rectangleSize,
     });
   // .activate();
+
+  const head = makeEntity(world, "Head")
+    .add(ComposableTransform, {
+      position: new Vector3(0, 1, 0),
+    })
+    .add(HtmlNode, {
+      specification: {
+        type: "AVATAR_HEAD",
+        props: {
+          width: 60,
+          height: 60,
+        },
+      },
+      scale: 1.0 / 90,
+    })
+    .add(CssPlane, {
+      kind: "CIRCLE",
+      circleRadius: 0.35,
+    })
+    .activate();
 
   // Create origin entity (target for the camera)
   const origin = makeEntity(world, "Origin")
@@ -139,7 +159,7 @@ export function addDemonstrationEntities(world) {
 
   // Orange Box
   makeBox(world, {
-    x: 0,
+    x: 4,
     y: 0,
     z: 2,
     color: "orange",
@@ -200,12 +220,17 @@ export function addDemonstrationEntities(world) {
     })
     .activate();
   (window as any).avatar = avatar;
+  head.setParent(avatar);
 
   // Chair
   const chair = makeEntity(world, "Chair")
     .add(NormalizeMesh)
     .add(ComposableTransform, {
-      position: new Vector3(1, 0, 1),
+      // Put it in the corner
+      position: new Vector3(5, 0, -3),
+      rotation: new Quaternion().setFromEuler(
+        new THREE.Euler(0, -Math.PI / 4, 0)
+      ),
       positionOffsets: {
         static: new Vector3(0, 0.45, 0),
       },
