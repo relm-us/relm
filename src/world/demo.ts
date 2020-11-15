@@ -225,7 +225,7 @@ export function addDemonstrationEntities(world) {
   const leftHand = makeBall(world, {
     ...{ x: -0.55, y: 0.0, z: 0.05 },
     r: 0.12,
-    color: "#bbbbff",
+    color: "#8daeff",
     name: "LeftHand",
   }).activate();
   leftHand.setParent(avatar);
@@ -233,7 +233,7 @@ export function addDemonstrationEntities(world) {
   const rightHand = makeBall(world, {
     ...{ x: 0.55, y: 0.0, z: 0.05 },
     r: 0.12,
-    color: "#bbbbff",
+    color: "#8daeff",
     name: "RightHand",
   }).activate();
   rightHand.setParent(avatar);
