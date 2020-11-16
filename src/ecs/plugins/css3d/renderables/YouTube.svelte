@@ -7,10 +7,26 @@
   let src;
   let iframe;
   let state: "INIT" | "LOADING" | "LOADED" = "INIT";
+  let frameMouseOver = false;
 
   const HOST = "https://www.youtube.com";
 
   $: src = `${HOST}/embed/${embedId}?enablejsapi=1&rel=0`;
+
+  // Return keyboard focus to Relm when user clicks on a youtube iframe
+  function onWindowBlur() {
+    if (frameMouseOver) {
+      setTimeout(() => iframe.blur(), 100);
+    }
+  }
+
+  function onFrameMouseover() {
+    frameMouseOver = true;
+  }
+
+  function onFrameMouseout() {
+    frameMouseOver = false;
+  }
 
   function onMessage(message) {
     if (message.origin === HOST) {
@@ -66,12 +82,14 @@
   }
 </style>
 
-<svelte:window on:message={onMessage} />
+<svelte:window on:message={onMessage} on:blur={onWindowBlur} />
 
 <iframe
   class:invisible={state !== 'LOADED'}
   bind:this={iframe}
   on:load={onFrameLoaded}
+  on:mouseover={onFrameMouseover}
+  on:mouseout={onFrameMouseout}
   {title}
   {width}
   {height}
