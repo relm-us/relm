@@ -119,12 +119,5 @@ export function makeYouTube(
     .add(CssPlane, {
       kind: "RECTANGLE",
       rectangleSize,
-    })
-    .add(RigidBody, {
-      kind: "DYNAMIC",
-    })
-    .add(Collider, {
-      kind: "BOX",
-      boxSize: rectangleSize,
     });
 }
