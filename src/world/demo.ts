@@ -114,7 +114,7 @@ export function addDemonstrationEntities(world) {
 
   // TV Box
   const tvBox = makeBox(world, {
-    ...{ x: -2.5, y: 0, z: 0, w: 3, h: 1.688, d: 0.6 },
+    ...{ x: -2.5, y: 0, z: 0, w: 3.2, h: 1.888, d: 0.6 },
     color: "gray",
     name: "BlueBox",
   }).activate();
@@ -123,8 +123,8 @@ export function addDemonstrationEntities(world) {
   );
 
   const video = makeYouTube(world, {
-    x: 0,
-    y: 0,
+    x: 0.0,
+    y: 0.0,
     z: 0.301,
     embedId: "U_u91SjrEOE",
     frameWidth: 560,
