@@ -1,6 +1,12 @@
 <script lang="ts">
   export let width: number;
   export let height: number;
+
+  let profileVisible = false;
+
+  const toggleProfile = () => {
+    profileVisible = !profileVisible;
+  };
 </script>
 
 <style>
@@ -17,6 +23,10 @@
   }
 </style>
 
-<div style="--width: {width}px; --height: {height}px">
-  <img {width} {height} src="/default-profile.jpg" alt="Head" />
+<div
+  style="--width: {width}px; --height: {height}px"
+  on:mousedown|stopPropagation={toggleProfile}>
+  {#if profileVisible}
+    <img {width} {height} src="/default-profile.jpg" alt="Head" />
+  {/if}
 </div>
