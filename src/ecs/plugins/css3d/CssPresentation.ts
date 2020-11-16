@@ -1,10 +1,15 @@
+import { PerspectiveCamera } from "three";
 import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer";
 
 const ResizeObserver = (window as any).ResizeObserver;
 
 export class CssPresentation {
+  FACTOR = 1000;
+
   world: any;
   renderer: any;
+  scene: any;
+  camera: any;
   size: { width: number; height: number };
   resizeObserver: any;
   viewport: HTMLElement;
@@ -12,7 +17,11 @@ export class CssPresentation {
   constructor(world) {
     this.world = world;
     this.size = { width: 1, height: 1 };
+
     this.renderer = this.createRenderer();
+    this.camera = this.createCamera();
+    this.scene = world.presentation.scene;
+
     this.resizeObserver = new ResizeObserver(this.resize.bind(this));
   }
 
@@ -39,7 +48,30 @@ export class CssPresentation {
 
   resize() {
     this.updateSize();
+
+    this.camera.aspect = this.size.width / this.size.height;
+    console.log("cssCamera aspect", this.camera.aspect, this.size);
+    this.camera.updateProjectionMatrix();
+
     this.renderer.setSize(this.size.width, this.size.height);
+  }
+
+  updateCamera() {
+    // The way hecs-plugin-three works, it's the camera's *parent* that
+    // holds positional information:
+    const camera = this.world.presentation.camera.parent;
+    if (!camera) return;
+
+    this.camera.quaternion.copy(camera.quaternion);
+    this.camera.position.copy(camera.position).multiplyScalar(this.FACTOR);
+
+    // console.log("updateCamera", this.camera.position);
+    // this.camera.updateProjectionMatrix();
+    // this.camera.updateWorldMatrix();
+  }
+
+  render() {
+    this.renderer.render(this.scene, this.camera);
   }
 
   createRenderer() {
@@ -48,5 +80,15 @@ export class CssPresentation {
     renderer.domElement.style.position = "absolute";
     renderer.domElement.style.top = "0px";
     return renderer;
+  }
+
+  createCamera() {
+    const { fov, aspect, near, far } = this.world.presentation.camera;
+    return new PerspectiveCamera(
+      fov,
+      aspect,
+      near * this.FACTOR,
+      far * this.FACTOR
+    );
   }
 }

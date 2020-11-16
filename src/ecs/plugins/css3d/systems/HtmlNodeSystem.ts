@@ -22,14 +22,10 @@ export class HtmlNodeSystem extends System {
     active: [HtmlNode, HtmlInScene],
   };
 
-  init({ presentation, cssPresentation }) {
+  init({ cssPresentation }) {
     if (!cssPresentation) {
       throw new Error("HtmlNodeSystem requires CssPresentation");
     }
-    if (!presentation) {
-      throw new Error("HtmlNodeSystem requires hecs-plugin-three");
-    }
-    this.presentation = presentation;
     this.cssPresentation = cssPresentation;
   }
 
@@ -65,12 +61,9 @@ export class HtmlNodeSystem extends System {
         });
       }
 
-      object.position.copy(transform.position);
-      object.quaternion.copy(transform.rotation);
-      object.scale.copy(transform.scale);
-      object.scale.multiplyScalar(spec.scale);
+      this.copyTransform(object, transform, spec.scale);
 
-      this.presentation.scene.add(object);
+      this.cssPresentation.scene.add(object);
       spec.object = object;
 
       entity.add(HtmlInScene);
@@ -81,10 +74,17 @@ export class HtmlNodeSystem extends System {
       const transform = entity.get(WorldTransform);
       if (!transform) return;
 
-      spec.object.position.copy(transform.position);
-      spec.object.quaternion.copy(transform.rotation);
-      spec.object.scale.copy(transform.scale);
-      spec.object.scale.multiplyScalar(spec.scale);
+      this.copyTransform(spec.object, transform, spec.scale);
     });
+  }
+
+  copyTransform(object, transform, scale) {
+    object.position
+      .copy(transform.position)
+      .multiplyScalar(this.cssPresentation.FACTOR);
+    object.quaternion.copy(transform.rotation);
+    object.scale
+      .copy(transform.scale)
+      .multiplyScalar(this.cssPresentation.FACTOR * scale);
   }
 }
