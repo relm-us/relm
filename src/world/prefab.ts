@@ -1,11 +1,10 @@
-import { Vector3 } from "hecs-plugin-core";
 import { Shape } from "hecs-plugin-three";
 
-import { Color } from "three";
+import { Color, Vector3 } from "three";
 
 import { ComposableTransform } from "~/ecs/plugins/composable";
 import { RigidBody, Collider } from "~/ecs/plugins/rapier";
-import { Selectable } from "~/ecs/components";
+import { HtmlNode, CssPlane } from "~/ecs/plugins/css3d";
 
 export function makeEntity(world, name) {
   return world.entities.create(name);
@@ -67,9 +66,7 @@ export function makePileOfBoxes(
       ...{ w, h, d },
       color,
       name: "GrayBox",
-    })
-      .add(Selectable)
-      .activate();
+    }).activate();
   }
 }
 
@@ -94,5 +91,40 @@ export function makeBall(
     .add(Collider, {
       shape: "SPHERE",
       sphereRadius: r,
+    });
+}
+export function makeYouTube(
+  world,
+  { x = 0, y = 0, z = 0, embedId, frameWidth, frameHeight, worldWidth }
+) {
+  // YouTube Video
+  const iframeRatio = frameWidth / frameHeight;
+  const rectangleSize = new Vector3(worldWidth, worldWidth / iframeRatio, 0.2);
+  const scale = rectangleSize.x / frameWidth;
+  return makeEntity(world, "Video")
+    .add(ComposableTransform, {
+      position: new Vector3(x, y, z),
+    })
+    .add(HtmlNode, {
+      renderable: {
+        type: "YOUTUBE",
+        props: {
+          width: frameWidth,
+          height: frameHeight,
+          embedId: embedId,
+        },
+      },
+      scale,
+    })
+    .add(CssPlane, {
+      kind: "RECTANGLE",
+      rectangleSize,
+    })
+    .add(RigidBody, {
+      kind: "DYNAMIC",
+    })
+    .add(Collider, {
+      kind: "BOX",
+      boxSize: rectangleSize,
     });
 }

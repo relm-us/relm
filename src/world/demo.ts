@@ -17,49 +17,15 @@ import { RigidBody, Collider } from "~/ecs/plugins/rapier";
 
 import { ThrustController } from "~/ecs/components";
 
-import { makeEntity, makeBox, makeBall, makePileOfBoxes } from "./prefab";
+import {
+  makeEntity,
+  makeBox,
+  makeBall,
+  makePileOfBoxes,
+  makeYouTube,
+} from "./prefab";
 
 export function addDemonstrationEntities(world) {
-  const iframeSize = new Vector3(560, 315, 0);
-
-  // YouTube Video
-  const iframeWorldWidth = 3;
-  const iframeRatio = iframeSize.x / iframeSize.y;
-  const rectangleSize = new Vector3(
-    iframeWorldWidth,
-    iframeWorldWidth / iframeRatio,
-    0.1
-  );
-  const scale = rectangleSize.x / parseFloat(iframeSize.x);
-  makeEntity(world, "Video")
-    .add(ComposableTransform, {
-      position: new Vector3(0, 0.5, 0.5),
-    })
-    .add(HtmlNode, {
-      renderable: {
-        type: "YOUTUBE",
-        props: {
-          width: 560,
-          height: 315,
-          embedId: "U_u91SjrEOE", // Prometheus
-          // embedId: "nn8YGPZdCvA", // Midas
-        },
-      },
-      scale,
-    })
-    .add(CssPlane, {
-      kind: "RECTANGLE",
-      rectangleSize,
-    })
-    .add(RigidBody, {
-      kind: "DYNAMIC",
-    })
-    .add(Collider, {
-      kind: "BOX",
-      boxSize: rectangleSize,
-    });
-  // .activate();
-
   // Create origin entity (target for the camera)
   const origin = makeEntity(world, "Origin")
     .add(ComposableTransform, {
@@ -146,12 +112,27 @@ export function addDemonstrationEntities(world) {
     name: "OrangeBox",
   }).activate();
 
-  // Blue Box
-  const blueBox = makeBox(world, {
-    ...{ x: -2.5, y: 0, z: 0 },
-    color: "blue",
+  // TV Box
+  const tvBox = makeBox(world, {
+    ...{ x: -2.5, y: 0, z: 0, w: 3, h: 1.688, d: 0.6 },
+    color: "gray",
     name: "BlueBox",
   }).activate();
+  tvBox.get(ComposableTransform).rotation = new Quaternion().setFromEuler(
+    new THREE.Euler(0, Math.PI / 4, 0)
+  );
+
+  const video = makeYouTube(world, {
+    x: 0,
+    y: 0,
+    z: 0.301,
+    embedId: "U_u91SjrEOE",
+    frameWidth: 560,
+    frameHeight: 315,
+    worldWidth: 3,
+  }).activate();
+
+  video.setParent(tvBox);
 
   // Brown Box
   makeBox(world, {
