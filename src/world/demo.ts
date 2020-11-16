@@ -9,6 +9,7 @@ import { Follow } from "~/ecs/plugins/follow";
 import { DirectionalLight } from "~/ecs/plugins/lighting";
 import { NormalizeMesh } from "~/ecs/plugins/normalize";
 import { RigidBody, Collider } from "~/ecs/plugins/rapier";
+import { TransformEffects } from "~/ecs/plugins/transform-effects";
 
 import { ThrustController } from "~/ecs/components";
 
@@ -162,6 +163,26 @@ export function addDemonstrationEntities(world) {
       kind: "BOX",
       boxSize: new Vector3(1, 1, 1),
     })
+    .add(TransformEffects, {
+      effects: [
+        {
+          function: "oscillate-scale",
+          params: {
+            phase: 0,
+            min: new Vector3(0.97, 1, 0.97),
+            max: new Vector3(1.03, 1, 1.03),
+          },
+        },
+        {
+          function: "oscillate-scale",
+          params: {
+            phase: Math.PI,
+            min: new Vector3(1, 0.95, 1),
+            max: new Vector3(1, 1.05, 1),
+          },
+        },
+      ],
+    })
     .activate();
   (window as any).avatar = avatar;
 
@@ -192,7 +213,7 @@ export function addDemonstrationEntities(world) {
     color: "#8daeff",
     name: "LeftHand",
   }).activate();
-  leftHand.setParent(avatar);
+  // leftHand.setParent(avatar);
 
   const rightHand = makeBall(world, {
     ...{ x: 0.55, y: 0.0, z: 0.05 },
@@ -200,7 +221,7 @@ export function addDemonstrationEntities(world) {
     color: "#8daeff",
     name: "RightHand",
   }).activate();
-  rightHand.setParent(avatar);
+  // rightHand.setParent(avatar);
 
   // Chair
   const chair = makeEntity(world, "Chair")
@@ -211,9 +232,11 @@ export function addDemonstrationEntities(world) {
       rotation: new Quaternion().setFromEuler(
         new THREE.Euler(0, -Math.PI / 4, 0)
       ),
-      // positionOffsets: {
-      //   static: new Vector3(0, 0.45, 0),
-      // },
+    })
+    .add(TransformEffects, {
+      effects: [
+        { function: "position", params: { position: new Vector3(0, 0.45, 0) } },
+      ],
     })
     .add(Model, {
       asset: new Asset("/chair.glb"),
@@ -223,7 +246,7 @@ export function addDemonstrationEntities(world) {
     })
     .add(Collider, {
       kind: "BOX",
-      boxSize: new Vector3(1, 1, 1),
+      boxSize: new Vector3(0.8, 0.8, 0.8),
     })
     .activate();
   (window as any).chair = chair;
@@ -255,18 +278,3 @@ export function addDemonstrationEntities(world) {
     .add(DirectionalLight)
     .activate();
 }
-
-/**
- * Sample Components
- */
-
-// .add(OscillateRotation, {
-//   min: new Quaternion().setFromEuler(new Euler(0, 0, -Math.PI / 4)),
-//   max: new Quaternion().setFromEuler(new Euler(0, 0, Math.PI / 4)),
-// })
-// .add(OscillatePosition, {
-//   frequency: 0.6,
-//   min: new Vector3(-0.5, 0, 0),
-//   max: new Vector3(0.5, 0, 0),
-// })
-// .add(NoisyPosition, { speed: 2, magnitude: new Vector3(0, 0, 10) })

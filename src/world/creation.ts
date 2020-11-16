@@ -18,6 +18,7 @@ import LightingPlugin from "~/ecs/plugins/lighting";
 import NormalizePlugin from "~/ecs/plugins/normalize";
 import OutlinePlugin from "~/ecs/plugins/outline";
 import RapierPlugin from "~/ecs/plugins/rapier";
+import TransformEffectsPlugin from "~/ecs/plugins/transform-effects";
 import ThreePlugin from "hecs-plugin-three";
 
 import { ThrustController, PotentiallyControllable } from "~/ecs/components";
@@ -102,6 +103,7 @@ export function createWorld(rapier) {
       FollowPlugin,
       LightingPlugin,
       NormalizePlugin,
+      TransformEffectsPlugin,
       OutlinePlugin,
     ],
     components: [ThrustController, PotentiallyControllable],

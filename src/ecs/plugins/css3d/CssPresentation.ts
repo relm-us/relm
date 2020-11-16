@@ -50,7 +50,6 @@ export class CssPresentation {
     this.updateSize();
 
     this.camera.aspect = this.size.width / this.size.height;
-    console.log("cssCamera aspect", this.camera.aspect, this.size);
     this.camera.updateProjectionMatrix();
 
     this.renderer.setSize(this.size.width, this.size.height);
