@@ -36,7 +36,7 @@ export function addDemonstrationEntities(world) {
       position: new Vector3(0, 0.5, 0.5),
     })
     .add(HtmlNode, {
-      specification: {
+      renderable: {
         type: "YOUTUBE",
         props: {
           width: 560,
@@ -206,7 +206,7 @@ export function addDemonstrationEntities(world) {
       position: new Vector3(0, 1, 0),
     })
     .add(HtmlNode, {
-      specification: {
+      renderable: {
         type: "AVATAR_HEAD",
         props: {
           width: 60,

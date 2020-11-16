@@ -35,43 +35,43 @@ export class HtmlNodeSystem extends System {
 
   update() {
     this.queries.added.forEach((entity) => {
-      const html = entity.get(HtmlNode);
+      const spec = entity.get(HtmlNode);
       const transform = entity.get(WorldTransform);
 
       if (!transform) return;
 
       const createObject = (node) => {
-        return html.billboard ? new CSS3DSprite(node) : new CSS3DObject(node);
+        return spec.billboard ? new CSS3DSprite(node) : new CSS3DObject(node);
       };
 
       let object;
-      if (html.node) {
+      if (spec.node) {
         // If it's just a regular HTMLElement, create a corresponding CSS3DObject for it
-        object = createObject(html.node);
-      } else if (html.specification) {
-        const spec = html.specification;
-
+        object = createObject(spec.node);
+      } else if (spec.renderable) {
         // Prepare a container for Svelte
         const containerElement = document.createElement("div");
-        containerElement.style.width = spec.props.width + "px";
-        containerElement.style.height = spec.props.height + "px";
+        containerElement.style.width = spec.renderable.props.width + "px";
+        containerElement.style.height = spec.renderable.props.height + "px";
         object = createObject(containerElement);
 
         // Create whatever Svelte component is specified by the type
-        const RenderableComponent = getRenderableComponentByType(spec.type);
+        const RenderableComponent = getRenderableComponentByType(
+          spec.renderable.type
+        );
         object.userData.renderable = new RenderableComponent({
           target: containerElement,
-          props: spec.props,
+          props: spec.renderable.props,
         });
       }
 
       object.position.copy(transform.position);
       object.quaternion.copy(transform.rotation);
       object.scale.copy(transform.scale);
-      object.scale.multiplyScalar(html.scale);
+      object.scale.multiplyScalar(spec.scale);
 
       this.presentation.scene.add(object);
-      html.object = object;
+      spec.object = object;
 
       entity.add(HtmlInScene);
     });

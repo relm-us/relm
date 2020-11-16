@@ -9,10 +9,10 @@ export class HtmlNode extends Component {
       },
     },
 
-    specification: {
+    renderable: {
       type: JSONType,
       editor: {
-        label: "Specification",
+        label: "Renderable Specification",
       },
     },
 
