@@ -101,7 +101,7 @@ export function addDemonstrationEntities(world) {
   makeBox(world, {
     x: -floorSize.w / 2,
     y: -0.25,
-    w: 0.1,
+    w: 0.2,
     h: 0.5,
     d: floorSize.d,
     color: "white",
@@ -111,23 +111,23 @@ export function addDemonstrationEntities(world) {
   // Right Wall
   // makeBox(world, {
   //   ...{ x: floorSize.w / 2, y: -0.25 },
-  //   ...{ w: 0.1, h: 0.5, d: floorSize.d },
+  //   ...{ w: 0.2, h: 0.5, d: floorSize.d },
   //   color: "white",
   //   dynamic: false,
   // }).activate();
 
   // Back Wall
   makeBox(world, {
-    ...{ x: 0, y: -0.25, z: -floorSize.d / 2 },
-    ...{ w: floorSize.w, h: 0.5, d: 0.1 },
+    ...{ x: -0.05, y: -0.25, z: -floorSize.d / 2 },
+    ...{ w: floorSize.w + 0.1, h: 0.5, d: 0.2 },
     color: "white",
     dynamic: false,
   }).activate();
 
   // Front Wall
   makeBox(world, {
-    ...{ x: 0, y: -0.25, z: floorSize.d / 2 },
-    ...{ w: floorSize.w, h: 0.5, d: 0.1 },
+    ...{ x: -0.05, y: -0.25, z: floorSize.d / 2 },
+    ...{ w: floorSize.w + 0.1, h: 0.5, d: 0.2 },
     color: "white",
     dynamic: false,
   }).activate();
@@ -203,7 +203,7 @@ export function addDemonstrationEntities(world) {
 
   const head = makeEntity(world, "Head")
     .add(ComposableTransform, {
-      position: new Vector3(0, 1, 0),
+      position: new Vector3(0, 0.85, 0),
     })
     .add(HtmlNode, {
       renderable: {

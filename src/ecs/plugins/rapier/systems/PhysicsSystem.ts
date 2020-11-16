@@ -92,7 +92,7 @@ export class PhysicsSystem extends System {
           m4_3.multiplyMatrices(m4_2, m4_1);
           // add diff matrix to local
           if (!local.matrix) {
-            console.log("no local matrix");
+            // console.log("no local matrix");
             return;
           }
           local.matrix.multiply(m4_3);
