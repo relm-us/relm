@@ -12,9 +12,6 @@ import {
 
 import { World } from "hecs";
 
-import ComposablePlugin, {
-  ComposableTransform,
-} from "~/ecs/plugins/composable";
 import Css3DPlugin from "~/ecs/plugins/css3d";
 import FollowPlugin from "~/ecs/plugins/follow";
 import LightingPlugin from "~/ecs/plugins/lighting";
@@ -86,7 +83,6 @@ export function createCamera(ortho = true) {
 export function createWorld(rapier) {
   const world = new World({
     plugins: [
-      ComposablePlugin,
       [
         ThreePlugin,
         {
@@ -98,9 +94,6 @@ export function createWorld(rapier) {
       [
         RapierPlugin,
         {
-          // Let the Rapier3d physics plugin know to use ComposableTransform
-          // instead of default Transform
-          transform: ComposableTransform,
           // Pass the physics engine in to the plugin
           rapier,
         },

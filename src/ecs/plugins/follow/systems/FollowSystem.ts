@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { System, Groups } from "hecs";
-import { ComposableTransform } from "~/ecs/plugins/composable";
 import { WorldTransform, Transform } from "hecs-plugin-core";
 
 import { Follow } from "../components";
@@ -27,7 +26,7 @@ export class FollowSystem extends System {
   }
 
   follow(entity, targetId, limit) {
-    const transform = entity.get(ComposableTransform);
+    const transform = entity.get(Transform);
     const world = entity.get(WorldTransform);
 
     const targetEntity = this.world.entities.getById(targetId);

@@ -1,8 +1,8 @@
 import { Shape } from "hecs-plugin-three";
+import { Transform } from "hecs-plugin-core";
 
 import { Color, Vector3 } from "three";
 
-import { ComposableTransform } from "~/ecs/plugins/composable";
 import { RigidBody, Collider } from "~/ecs/plugins/rapier";
 import { HtmlNode, CssPlane } from "~/ecs/plugins/css3d";
 
@@ -27,7 +27,7 @@ export function makeBox(
   const linearColor = new Color(color);
   linearColor.convertSRGBToLinear();
   return makeEntity(world, name)
-    .add(ComposableTransform, {
+    .add(Transform, {
       position: new Vector3(x, y, z),
     })
     .add(Shape, {
@@ -77,7 +77,7 @@ export function makeBall(
   const linearColor = new Color(color);
   linearColor.convertSRGBToLinear();
   return makeEntity(world, name)
-    .add(ComposableTransform, {
+    .add(Transform, {
       position: new Vector3(x, y, z),
     })
     .add(Shape, {
@@ -102,7 +102,7 @@ export function makeYouTube(
   const rectangleSize = new Vector3(worldWidth, worldWidth / iframeRatio, 0.2);
   const scale = rectangleSize.x / frameWidth;
   return makeEntity(world, "Video")
-    .add(ComposableTransform, {
+    .add(Transform, {
       position: new Vector3(x, y, z),
     })
     .add(HtmlNode, {

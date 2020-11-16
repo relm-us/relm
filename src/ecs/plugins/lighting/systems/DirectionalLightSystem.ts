@@ -1,7 +1,5 @@
 import * as THREE from "three";
 import { System, Groups, Not, Modified } from "hecs";
-import { ComposableTransform } from "~/ecs/plugins/composable";
-import { WorldTransform, Transform } from "hecs-plugin-core";
 import { Object3D } from "hecs-plugin-three";
 
 import { DirectionalLight, DirectionalLightRef } from "../components";

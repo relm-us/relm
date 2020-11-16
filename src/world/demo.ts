@@ -4,11 +4,6 @@ import * as THREE from "three";
 import { Asset, Transform, Vector3, Quaternion } from "hecs-plugin-core";
 import { Model, Shape, Camera, LookAt, Object3D } from "hecs-plugin-three";
 
-import {
-  ComposableTransform,
-  OscillatePosition,
-  OscillateScale,
-} from "~/ecs/plugins/composable";
 import { HtmlNode, CssPlane } from "~/ecs/plugins/css3d";
 import { Follow } from "~/ecs/plugins/follow";
 import { DirectionalLight } from "~/ecs/plugins/lighting";
@@ -28,7 +23,7 @@ import {
 export function addDemonstrationEntities(world) {
   // Create origin entity (target for the camera)
   const origin = makeEntity(world, "Origin")
-    .add(ComposableTransform, {
+    .add(Transform, {
       position: new Vector3(0, 0, 1),
     })
     .activate();
@@ -118,7 +113,7 @@ export function addDemonstrationEntities(world) {
     color: "gray",
     name: "BlueBox",
   }).activate();
-  tvBox.get(ComposableTransform).rotation = new Quaternion().setFromEuler(
+  tvBox.get(Transform).rotation = new Quaternion().setFromEuler(
     new THREE.Euler(0, Math.PI / 4, 0)
   );
 
@@ -155,7 +150,7 @@ export function addDemonstrationEntities(world) {
 
   const avatar = makeEntity(world, "Avatar")
     .add(ThrustController)
-    .add(ComposableTransform, {})
+    .add(Transform)
     .add(Model, {
       asset: new Asset("/avatar.glb"),
     })
@@ -167,23 +162,11 @@ export function addDemonstrationEntities(world) {
       kind: "BOX",
       boxSize: new Vector3(1, 1, 1),
     })
-    .add(OscillatePosition, {
-      frequency: 1,
-      phase: Math.PI * 0,
-      min: new Vector3(0, 0.1, 0),
-      max: new Vector3(0, 0.2, 0),
-    })
-    .add(OscillateScale, {
-      frequency: 1,
-      phase: Math.PI * 1,
-      min: new Vector3(1, 1, 1),
-      max: new Vector3(1.05, 1, 1.05),
-    })
     .activate();
   (window as any).avatar = avatar;
 
   const head = makeEntity(world, "Head")
-    .add(ComposableTransform, {
+    .add(Transform, {
       position: new Vector3(0, 0.85, 0),
     })
     .add(HtmlNode, {
@@ -222,15 +205,15 @@ export function addDemonstrationEntities(world) {
   // Chair
   const chair = makeEntity(world, "Chair")
     .add(NormalizeMesh)
-    .add(ComposableTransform, {
+    .add(Transform, {
       // Put it in the corner
       position: new Vector3(5, 0, -3),
       rotation: new Quaternion().setFromEuler(
         new THREE.Euler(0, -Math.PI / 4, 0)
       ),
-      positionOffsets: {
-        static: new Vector3(0, 0.45, 0),
-      },
+      // positionOffsets: {
+      //   static: new Vector3(0, 0.45, 0),
+      // },
     })
     .add(Model, {
       asset: new Asset("/chair.glb"),
@@ -247,7 +230,7 @@ export function addDemonstrationEntities(world) {
 
   // Create the singleton camera
   const camera = makeEntity(world, "Camera")
-    .add(ComposableTransform, {
+    .add(Transform, {
       position: new Vector3(0, 9, 15),
     })
     .add(LookAt, {
@@ -263,7 +246,7 @@ export function addDemonstrationEntities(world) {
   (window as any).camera = camera;
 
   const light = makeEntity(world, "DirectionalLight")
-    .add(ComposableTransform, {
+    .add(Transform, {
       position: new Vector3(-4, 20, 10),
     })
     .add(Follow, {

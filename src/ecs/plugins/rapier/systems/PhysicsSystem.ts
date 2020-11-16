@@ -21,8 +21,6 @@ export class PhysicsSystem extends System {
   // Dynamically create the `default` query, since we don't necessarily know
   // which Transform component to use at static compile time.
   init() {
-    const { Transform } = this.world.physics;
-
     this.createQueries({
       default: [RigidBodyRef, Transform, WorldTransform],
     });
@@ -37,7 +35,7 @@ export class PhysicsSystem extends System {
   }
 
   update() {
-    const { world, eventQueue, Transform } = this.world.physics;
+    const { world, eventQueue } = this.world.physics;
 
     // console.log("fixedUpdate");
     this.queries.default.forEach((entity) => {
