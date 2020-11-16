@@ -209,11 +209,11 @@ export function addDemonstrationEntities(world) {
       renderable: {
         type: "AVATAR_HEAD",
         props: {
-          width: 60,
-          height: 60,
+          width: 70,
+          height: 70,
         },
       },
-      scale: 1.0 / 90,
+      scale: 0.7 / 70,
     })
     .add(CssPlane, {
       kind: "CIRCLE",
