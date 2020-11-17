@@ -10,15 +10,15 @@ export * from "./components";
 export { Components };
 
 export default createPlugin({
-  name: "hecs-plugin-rapier",
+  name: "rapier",
   plugins: [CorePlugin],
   systems: Object.values(Systems),
   components: Object.values(Components),
   decorate(world, options) {
     const rapier = options.rapier || RAPIER;
     if (!rapier) {
-      throw new Error("hecs-plugin-rapier: Rapier engine not found");
+      throw new Error("rapier plugin: Rapier engine not found");
     }
-    world.physics = new Physics(world, rapier, options.transform || Transform);
+    world.physics = new Physics(world, rapier);
   },
 });

@@ -1,4 +1,5 @@
 import { System, Groups, Not, Modified } from "hecs";
+import { Transform } from "hecs-plugin-core";
 import { RigidBody, RigidBodyRef } from "../components";
 
 function getBodyStatus(rapier, kind) {
@@ -42,7 +43,7 @@ export class RigidBodySystem extends System {
   }
 
   build(entity) {
-    const { world, rapier, Transform } = this.world.physics;
+    const { world, rapier } = this.world.physics;
     const spec = entity.get(RigidBody);
     const transform = entity.get(Transform);
 

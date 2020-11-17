@@ -8,7 +8,7 @@ import { HtmlNode, CssPlane } from "~/ecs/plugins/css3d";
 import { Follow } from "~/ecs/plugins/follow";
 import { DirectionalLight } from "~/ecs/plugins/lighting";
 import { NormalizeMesh } from "~/ecs/plugins/normalize";
-import { RigidBody, Collider } from "~/ecs/plugins/rapier";
+import { RigidBody, FixedJoint, Collider } from "~/ecs/plugins/rapier";
 import { TransformEffects } from "~/ecs/plugins/transform-effects";
 
 import { ThrustController } from "~/ecs/components";
@@ -212,7 +212,11 @@ export function addDemonstrationEntities(world) {
     r: 0.12,
     color: "#8daeff",
     name: "LeftHand",
-  }).activate();
+  })
+    .add(FixedJoint, {
+      entity: avatar.id,
+    })
+    .activate();
   // leftHand.setParent(avatar);
 
   const rightHand = makeBall(world, {
@@ -220,7 +224,11 @@ export function addDemonstrationEntities(world) {
     r: 0.12,
     color: "#8daeff",
     name: "RightHand",
-  }).activate();
+  })
+    .add(FixedJoint, {
+      entity: avatar.id,
+    })
+    .activate();
   // rightHand.setParent(avatar);
 
   // Chair

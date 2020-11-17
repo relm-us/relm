@@ -37,9 +37,8 @@ export class PhysicsSystem extends System {
   update() {
     const { world, eventQueue } = this.world.physics;
 
-    // console.log("fixedUpdate");
     this.queries.default.forEach((entity) => {
-      // const world = entity.get(WorldTransform);
+      const world = entity.get(WorldTransform);
       const spec = entity.get(RigidBody);
       const body = entity.get(RigidBodyRef).value;
       const transform = entity.get(Transform);
@@ -51,14 +50,10 @@ export class PhysicsSystem extends System {
         body.setNextKinematicRotation(transform.rotation);
       }
       if (spec.kind === "STATIC" || spec.kind === "DYNAMIC") {
-        body.setTranslation(transform.position, false);
-        body.setRotation(transform.rotation, false);
+        body.setTranslation(world.position, false);
+        body.setRotation(world.rotation, false);
       }
       if (spec.kind === "DYNAMIC") {
-        // console.log("apply force", force);
-        // body.applyImpulse(force);
-        // body.applyForce
-        // body.applyAngularForce
         // body.setAngularVelocity(spec.angularVelocity, false);
         // body.setLinearVelocity(spec.linearVelocity, true); // autowake is true here, may be more performant?
       }
@@ -78,8 +73,6 @@ export class PhysicsSystem extends System {
           local.position.copy(body.translation());
           local.rotation.copy(body.rotation());
         } else {
-          // local.position.copy(body.translation());
-          // local.rotation.copy(body.rotation());
           v3_1.copy(body.translation());
           q_1.copy(body.rotation());
           // make a sim world matrix
@@ -89,10 +82,6 @@ export class PhysicsSystem extends System {
           // -world * sim (diff to apply to local)
           m4_3.multiplyMatrices(m4_2, m4_1);
           // add diff matrix to local
-          if (!local.matrix) {
-            // console.log("no local matrix");
-            return;
-          }
           local.matrix.multiply(m4_3);
           // decompose and update world
           local.matrix.decompose(local.position, local.rotation, local.scale);
