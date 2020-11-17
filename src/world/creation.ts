@@ -17,15 +17,13 @@ import FollowPlugin from "~/ecs/plugins/follow";
 import LightingPlugin from "~/ecs/plugins/lighting";
 import NormalizePlugin from "~/ecs/plugins/normalize";
 import OutlinePlugin from "~/ecs/plugins/outline";
+import PlayerControlPlugin from "~/ecs/plugins/player-control";
+import PointerPlanePlugin from "~/ecs/plugins/pointer-plane";
 import RapierPlugin from "~/ecs/plugins/rapier";
 import TransformEffectsPlugin from "~/ecs/plugins/transform-effects";
 import ThreePlugin from "hecs-plugin-three";
 
-import { ThrustController, PotentiallyControllable } from "~/ecs/components";
-import { ThrustControllerSystem } from "~/ecs/systems/ThrustControllerSystem";
-import { TransferControlSystem } from "~/ecs/systems/TransferControlSystem";
-
-import { GatherStatsSystem } from "~/ecs/systems/GatherStatsSystem";
+import { PerformanceStatsSystem } from "~/ecs/systems/PerformanceStatsSystem";
 
 import { shadowMapConfig } from "./config";
 
@@ -103,11 +101,13 @@ export function createWorld(rapier) {
       FollowPlugin,
       LightingPlugin,
       NormalizePlugin,
-      TransformEffectsPlugin,
       OutlinePlugin,
+      PlayerControlPlugin,
+      PointerPlanePlugin,
+      TransformEffectsPlugin,
     ],
-    components: [ThrustController, PotentiallyControllable],
-    systems: [ThrustControllerSystem, TransferControlSystem, GatherStatsSystem],
+    components: [],
+    systems: [PerformanceStatsSystem],
   });
   return world;
 }

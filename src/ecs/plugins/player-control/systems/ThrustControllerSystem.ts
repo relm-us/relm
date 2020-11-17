@@ -3,7 +3,7 @@ import { Vector3 } from "hecs-plugin-core";
 import { get } from "svelte/store";
 
 import { keyUp, keyDown, keyLeft, keyRight, keySpace } from "~/input";
-import { ThrustController } from "../components/ThrustController";
+import { ThrustController } from "../components";
 import { RigidBodyRef } from "~/ecs/plugins/rapier/components/RigidBodyRef";
 
 const thrust = new Vector3();

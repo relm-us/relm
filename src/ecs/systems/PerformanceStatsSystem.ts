@@ -14,7 +14,7 @@ import {
   systems,
 } from "~/world/stats";
 
-export class GatherStatsSystem extends System {
+export class PerformanceStatsSystem extends System {
   // This should happen last, after everything is done, so stats are accurate
   // for the current frame
   order = Groups.Presentation + 500;

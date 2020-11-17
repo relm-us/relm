@@ -1,4 +1,11 @@
-import { Camera, Intersection, Object3D, Raycaster, Scene } from "three";
+import {
+  Camera,
+  Intersection,
+  Object3D,
+  Vector2,
+  Raycaster,
+  Scene,
+} from "three";
 
 export class IntersectionFinder {
   raycaster: Raycaster;
@@ -6,7 +13,7 @@ export class IntersectionFinder {
   scene: Scene;
 
   _intersections: Array<Intersection>;
-  _normalizedCoords: { x: number; y: number };
+  _normalizedCoords: Vector2;
 
   constructor(camera, scene) {
     this.camera = camera;
@@ -14,12 +21,14 @@ export class IntersectionFinder {
     this.raycaster = new Raycaster();
 
     this._intersections = [];
-    this._normalizedCoords = { x: 0, y: 0 };
+    this._normalizedCoords = new Vector2();
   }
 
   getNormalizedCoords(screenCoords) {
-    this._normalizedCoords.x = (screenCoords.x / window.innerWidth) * 2 - 1;
-    this._normalizedCoords.y = -(screenCoords.y / window.innerHeight) * 2 + 1;
+    this._normalizedCoords.set(
+      (screenCoords.x / window.innerWidth) * 2 - 1,
+      -(screenCoords.y / window.innerHeight) * 2 + 1
+    );
     return this._normalizedCoords;
   }
 

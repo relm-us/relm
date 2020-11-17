@@ -1,7 +1,6 @@
 import { System, Groups } from "hecs";
 import { Impact } from "~/ecs/plugins/rapier/components";
-import { PotentiallyControllable } from "../components/PotentiallyControllable";
-import { ThrustController } from "../components/ThrustController";
+import { ThrustController, PotentiallyControllable } from "../components";
 
 type Entity = any;
 type Component = any;

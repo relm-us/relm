@@ -25,11 +25,8 @@
     world.presentation.scene
   );
 
-  function setMousePositionFromEvent(event, store = false) {
+  function setMousePositionFromEvent(event) {
     mousePosition.set(event.clientX, event.clientY);
-    if (store) {
-      mouse.set(mousePosition);
-    }
   }
 
   function findIntersectionsAtMousePosition() {
@@ -59,10 +56,10 @@
   function onMousemove(event: MouseEvent) {
     if (!eventTargetsWorld(event)) return;
 
-    // Update mouse position, and notify `mouse` store of new pos also
-    setMousePositionFromEvent(event, true);
+    setMousePositionFromEvent(event);
 
     const found = findIntersectionsAtMousePosition();
+    mouse.set(finder._normalizedCoords);
     const foundSet: Set<string> = new Set(found);
 
     const added = difference(foundSet, $hovered);

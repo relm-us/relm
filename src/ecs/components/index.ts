@@ -1,2 +1,1 @@
-export { PotentiallyControllable } from "./PotentiallyControllable";
-export { ThrustController } from "./ThrustController";
+export const empty = "empty";

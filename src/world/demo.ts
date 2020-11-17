@@ -2,16 +2,17 @@ import * as THREE from "three";
 (window as any).THREE = THREE;
 
 import { Asset, Transform, Vector3, Quaternion } from "hecs-plugin-core";
-import { Model, Shape, Camera, LookAt, Object3D } from "hecs-plugin-three";
+import { Model, Camera, LookAt } from "hecs-plugin-three";
 
+// Components from ECS plugins (organized alphabetically by plugin name)
 import { HtmlNode, CssPlane } from "~/ecs/plugins/css3d";
 import { Follow } from "~/ecs/plugins/follow";
 import { DirectionalLight } from "~/ecs/plugins/lighting";
 import { NormalizeMesh } from "~/ecs/plugins/normalize";
+import { HandController, ThrustController } from "~/ecs/plugins/player-control";
+import { PointerPlane } from "~/ecs/plugins/pointer-plane";
 import { RigidBody, FixedJoint, Collider } from "~/ecs/plugins/rapier";
 import { TransformEffects } from "~/ecs/plugins/transform-effects";
-
-import { ThrustController } from "~/ecs/components";
 
 import {
   makeEntity,
@@ -151,6 +152,7 @@ export function addDemonstrationEntities(world) {
 
   const avatar = makeEntity(world, "Avatar")
     .add(ThrustController)
+    .add(PointerPlane)
     .add(Transform)
     .add(Model, {
       asset: new Asset("/avatar.glb"),
@@ -208,7 +210,7 @@ export function addDemonstrationEntities(world) {
   head.setParent(avatar);
 
   const leftHand = makeBall(world, {
-    ...{ x: -0.55, y: 0.0, z: 0.05 },
+    ...{ x: -1.55, y: 0.0, z: 0.05 },
     r: 0.12,
     color: "#8daeff",
     name: "LeftHand",
@@ -216,8 +218,11 @@ export function addDemonstrationEntities(world) {
     .add(FixedJoint, {
       entity: avatar.id,
     })
+    // .add(HandController, {
+    //   pointerPlaneEntity: avatar.id,
+    // })
     .activate();
-  // leftHand.setParent(avatar);
+  leftHand.setParent(avatar);
 
   const rightHand = makeBall(world, {
     ...{ x: 0.55, y: 0.0, z: 0.05 },
