@@ -224,7 +224,7 @@ export function addDemonstrationEntities(world) {
       keyStore: keyE,
     })
     .activate();
-  // leftHand.setParent(avatar);
+  leftHand.setParent(avatar);
 
   const rightHand = makeBall(world, {
     ...{ x: 0.55, y: 0.0, z: 0.05 },
@@ -240,7 +240,7 @@ export function addDemonstrationEntities(world) {
       keyStore: keyQ,
     })
     .activate();
-  // rightHand.setParent(avatar);
+  rightHand.setParent(avatar);
 
   // Chair
   const chair = makeEntity(world, "Chair")
