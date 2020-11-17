@@ -21,6 +21,7 @@ import {
   makePileOfBoxes,
   makeYouTube,
 } from "./prefab";
+import { keyE, keyQ } from "~/input";
 
 export function addDemonstrationEntities(world) {
   // Create origin entity (target for the camera)
@@ -210,7 +211,7 @@ export function addDemonstrationEntities(world) {
   head.setParent(avatar);
 
   const leftHand = makeBall(world, {
-    ...{ x: -1.55, y: 0.0, z: 0.05 },
+    ...{ x: -0.55, y: 0.0, z: 0.05 },
     r: 0.12,
     color: "#8daeff",
     name: "LeftHand",
@@ -218,11 +219,12 @@ export function addDemonstrationEntities(world) {
     .add(FixedJoint, {
       entity: avatar.id,
     })
-    // .add(HandController, {
-    //   pointerPlaneEntity: avatar.id,
-    // })
+    .add(HandController, {
+      pointerPlaneEntity: avatar.id,
+      keyStore: keyE,
+    })
     .activate();
-  leftHand.setParent(avatar);
+  // leftHand.setParent(avatar);
 
   const rightHand = makeBall(world, {
     ...{ x: 0.55, y: 0.0, z: 0.05 },
@@ -232,6 +234,10 @@ export function addDemonstrationEntities(world) {
   })
     .add(FixedJoint, {
       entity: avatar.id,
+    })
+    .add(HandController, {
+      pointerPlaneEntity: avatar.id,
+      keyStore: keyQ,
     })
     .activate();
   // rightHand.setParent(avatar);

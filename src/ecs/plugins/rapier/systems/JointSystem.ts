@@ -70,9 +70,14 @@ export class JointSystem extends System {
           `JointSystem: ${entity.name} targets ${targetEntity.name} but it has no RigidBodyRef`
         );
       }
+
+      const parentPosition = targetEntity.get(WorldTransform).position;
+      const childPosition = entity.get(WorldTransform).position;
       let jointParams = new rapier.JointParams.ball(
-        new Vector3(),
-        new Vector3()
+        new Vector3(0, 0.5, 0),
+        childPosition
+        // new Vector3(childPosition.x < 0 ? -0.5 : 0.5, -0.5, 0),
+        // new Vector3(childPosition.x < 0 ? 1 : -1, 0, 0) //.copy(parentPosition).sub(childPosition)
       );
 
       const joint = world.createJoint(jointParams, entityBody, targetBody);
