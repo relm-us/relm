@@ -1,5 +1,8 @@
 <script lang="ts">
-  import { keyUp, keyDown, keyLeft, keyRight } from "../store";
+  import { keyUp, keyDown, keyLeft, keyRight, keyQ, keyE } from "../store";
+
+  const KEY_Q = 81;
+  const KEY_E = 69;
 
   const KEY_W = 87;
   const KEY_A = 65;
@@ -15,6 +18,10 @@
       keyLeft.set(value);
     } else if (key === "ArrowRight" || keyCode === KEY_D) {
       keyRight.set(value);
+    } else if (keyCode === KEY_Q) {
+      keyQ.set(value);
+    } else if (keyCode === KEY_E) {
+      keyE.set(value);
     } else {
       return false;
     }
