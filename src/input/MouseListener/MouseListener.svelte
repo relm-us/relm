@@ -5,8 +5,10 @@
     selectedGroups,
     groupTree,
   } from "~/world/selection";
+  import { Vector2 } from "three";
   import { difference, intersection } from "~/utils/setOps";
   import { hasAncestor } from "~/utils/hasAncestor";
+  import { mouse } from "~/world/mouse";
 
   import { IntersectionFinder } from "./IntersectionFinder";
 
@@ -16,15 +18,23 @@
 
   let previousClickSet: Set<EntityId> = new Set();
   let previousClickIndex: number = 0;
+  let mousePosition = new Vector2();
 
   const finder = new IntersectionFinder(
     world.presentation.camera,
     world.presentation.scene
   );
 
-  function findFromMouseEvent(event) {
-    const coords = { x: event.offsetX, y: event.offsetY };
-    return [...finder.find(coords)].map((object) => object.userData.entityId);
+  function setMousePositionFromEvent(event, store = false) {
+    mousePosition.set(event.clientX, event.clientY);
+    if (store) {
+      mouse.set(mousePosition);
+    }
+  }
+
+  function findIntersectionsAtMousePosition() {
+    finder.castRay(mousePosition);
+    return [...finder.find()].map((object) => object.userData.entityId);
   }
 
   function eventTargetsWorld(event) {
@@ -46,10 +56,13 @@
     }
   }
 
-  function onMousemove(event) {
+  function onMousemove(event: MouseEvent) {
     if (!eventTargetsWorld(event)) return;
 
-    const found = findFromMouseEvent(event);
+    // Update mouse position, and notify `mouse` store of new pos also
+    setMousePositionFromEvent(event, true);
+
+    const found = findIntersectionsAtMousePosition();
     const foundSet: Set<string> = new Set(found);
 
     const added = difference(foundSet, $hovered);
@@ -60,10 +73,17 @@
     for (const entityId of deleted) hovered.delete(entityId);
   }
 
-  function onMousedown(event) {
+  /**
+   * Track mouse click events in connection with the object selection system
+   *
+   * @param event
+   */
+  function onMousedown(event: MouseEvent) {
     if (!eventTargetsWorld(event)) return;
 
-    const found = findFromMouseEvent(event);
+    setMousePositionFromEvent(event);
+
+    const found = findIntersectionsAtMousePosition();
     const foundSet: Set<string> = new Set(found);
 
     if (found.length === 0) {

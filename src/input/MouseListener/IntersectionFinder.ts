@@ -1,5 +1,4 @@
 import { Camera, Intersection, Object3D, Raycaster, Scene } from "three";
-import { filterMap } from "~/utils/filterMap";
 
 export class IntersectionFinder {
   raycaster: Raycaster;
@@ -7,6 +6,7 @@ export class IntersectionFinder {
   scene: Scene;
 
   _intersections: Array<Intersection>;
+  _normalizedCoords: { x: number; y: number };
 
   constructor(camera, scene) {
     this.camera = camera;
@@ -14,21 +14,23 @@ export class IntersectionFinder {
     this.raycaster = new Raycaster();
 
     this._intersections = [];
+    this._normalizedCoords = { x: 0, y: 0 };
   }
 
   getNormalizedCoords(screenCoords) {
-    return {
-      x: (screenCoords.x / window.innerWidth) * 2 - 1,
-      y: -(screenCoords.y / window.innerHeight) * 2 + 1,
-    };
+    this._normalizedCoords.x = (screenCoords.x / window.innerWidth) * 2 - 1;
+    this._normalizedCoords.y = -(screenCoords.y / window.innerHeight) * 2 + 1;
+    return this._normalizedCoords;
   }
 
-  find(screenCoords, firstOnly = false): Set<Object3D> {
+  castRay(screenCoords) {
     this.raycaster.setFromCamera(
       this.getNormalizedCoords(screenCoords),
       this.camera
     );
+  }
 
+  find(firstOnly = false): Set<Object3D> {
     // Reduce length to zero rather than garbage collect (speed optimization)
     this._intersections.length = 0;
     this.raycaster.intersectObject(this.scene, true, this._intersections);
