@@ -7,11 +7,13 @@ import { ThrustController } from "../components";
 import { RigidBodyRef } from "~/ecs/plugins/rapier/components/RigidBodyRef";
 import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
 import { Vector3, Euler, Quaternion } from "three";
+import { PointerPlaneRef } from "~/ecs/plugins/pointer-plane";
 
 const bodyFacing = new Vector3();
 const thrust = new Vector3();
 const vUp = new Vector3(0, 1, 0);
 const vOut = new Vector3(0, 0, 1);
+const v1 = new Vector3();
 const q = new Quaternion();
 
 export class ThrustControllerSystem extends System {
@@ -56,16 +58,22 @@ export class ThrustControllerSystem extends System {
     if (thrust.lengthSq() < 0.01) {
       // Do nothing
     } else if (angleUp > Math.PI / 8) {
+      // get up
       q.setFromEuler(new Euler(0, 1, 0));
       transform.rotation.slerp(q, 0.1);
     } else if (angle < -Math.PI / 8 || angle > Math.PI / 8) {
-      //turn
+      // turn toward direction
       thrust.set(0, Math.sign(angle) * 20, 0);
       bodyRef.value.applyTorque(thrust, true);
+      // TODO: suspend head-turning while changing directions
     } else {
-      // thrust
-      thrust.multiplyScalar(controller.thrust);
-      bodyRef.value.applyForce(thrust, true);
+      // thrust toward direction
+      v1.copy(bodyRef.value.linvel());
+      // maximum velocity
+      if (v1.length() < 5) {
+        thrust.multiplyScalar(controller.thrust);
+        bodyRef.value.applyForce(thrust, true);
+      }
     }
   }
 }
