@@ -51,7 +51,8 @@ export class RigidBodySystem extends System {
       getBodyStatus(rapier, spec.kind)
     )
       .setTranslation(transform.position)
-      .setRotation(transform.rotation);
+      .setRotation(transform.rotation)
+      .setLinearDamping(spec.damping);
     let rigidBody = world.createRigidBody(rigidBodyDesc);
 
     entity.add(RigidBodyRef, { value: rigidBody });

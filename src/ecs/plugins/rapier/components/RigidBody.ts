@@ -41,6 +41,14 @@ export class RigidBody extends Component {
         requires: [{ prop: "kind", value: "DYNAMIC" }],
       },
     },
+
+    damping: {
+      type: NumberType,
+      default: 0,
+      editor: {
+        label: "Linear Damping",
+      },
+    },
   };
 
   static editor = {

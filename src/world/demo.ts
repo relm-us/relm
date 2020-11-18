@@ -222,6 +222,7 @@ export function addDemonstrationEntities(world) {
     r: 0.12,
     color: "#8daeff",
     name: "LeftHand",
+    damping: 5,
   })
     .add(FixedJoint, {
       entity: avatar.id,
@@ -238,6 +239,7 @@ export function addDemonstrationEntities(world) {
     r: 0.12,
     color: "#8daeff",
     name: "RightHand",
+    damping: 5,
   })
     .add(FixedJoint, {
       entity: avatar.id,
