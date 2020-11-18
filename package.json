@@ -49,7 +49,7 @@
 	},
 	"dependencies": {
 		"@budibase/colorpicker": "^1.0.1",
-		"@dimforge/rapier3d": "^0.2.8",
+		"@dimforge/rapier3d": "^0.2.9",
 		"eventemitter3": "^4.0.7",
 		"hecs": "^0.16.0",
 		"hecs-plugin-core": "^0.16.0",

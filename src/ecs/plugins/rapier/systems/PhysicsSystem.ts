@@ -54,8 +54,8 @@ export class PhysicsSystem extends System {
         body.setRotation(world.rotation, false);
       }
       if (spec.kind === "DYNAMIC") {
-        // body.setAngularVelocity(spec.angularVelocity, false);
-        // body.setLinearVelocity(spec.linearVelocity, true); // autowake is true here, may be more performant?
+        body.setAngvel(spec.angularVelocity, false);
+        body.setLinvel(spec.linearVelocity, false);
       }
     });
 
@@ -89,8 +89,8 @@ export class PhysicsSystem extends System {
           world.matrix.decompose(world.position, world.rotation, world.scale);
         }
 
-        // spec.angularVelocity.copy(body.angvel());
-        // spec.linearVelocity.copy(body.linvel());
+        spec.angularVelocity.copy(body.angvel());
+        spec.linearVelocity.copy(body.linvel());
       }
     });
   }
