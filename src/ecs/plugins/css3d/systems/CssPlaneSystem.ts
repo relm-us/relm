@@ -2,11 +2,11 @@ import { System, Not, Modified, Groups } from "hecs";
 import { Object3D } from "hecs-plugin-three";
 import * as THREE from "three";
 
-import { IS_BROWSER } from "../utils";
+import { isBrowser } from "~/utils/isBrowser";
 import { CssPlane, CssShapeMesh } from "../components";
 
 export class CssPlaneSystem extends System {
-  active = IS_BROWSER;
+  active = isBrowser();
   order = Groups.Simulation + 99;
 
   static queries = {

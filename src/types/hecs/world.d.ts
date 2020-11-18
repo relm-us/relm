@@ -5,6 +5,7 @@ export type World = {
   entities: any;
   presentation: any;
   cssPresentation: any;
+  components: any;
   providers: Object;
   update: (number) => void;
   reset: Function;

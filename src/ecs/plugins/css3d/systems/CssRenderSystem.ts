@@ -1,11 +1,11 @@
 import { System, Groups } from "hecs";
 import { PerspectiveCamera, Vector3 } from "three";
-import { IS_BROWSER } from "../utils";
+import { isBrowser } from "~/utils/isBrowser";
 
 const FACTOR = 1;
 
 export class CssRenderSystem extends System {
-  active = IS_BROWSER;
+  active = isBrowser();
   order = Groups.Presentation + 100;
 
   init({ presentation, cssPresentation }) {

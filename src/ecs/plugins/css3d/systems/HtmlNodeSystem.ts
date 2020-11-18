@@ -5,7 +5,7 @@ import {
   CSS3DSprite,
 } from "three/examples/jsm/renderers/CSS3DRenderer";
 
-import { IS_BROWSER } from "../utils";
+import { isBrowser } from "~/utils/isBrowser";
 
 import { HtmlNode } from "../components/HtmlNode";
 import { HtmlInScene } from "../components/HtmlInScene";
@@ -13,7 +13,7 @@ import { HtmlInScene } from "../components/HtmlInScene";
 import { getRenderableComponentByType } from "../renderables";
 
 export class HtmlNodeSystem extends System {
-  active = IS_BROWSER;
+  active = isBrowser();
   // order = Groups.Simulation + 100;
   order = Groups.Simulation - 5;
 

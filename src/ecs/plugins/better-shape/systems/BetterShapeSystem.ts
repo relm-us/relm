@@ -2,12 +2,12 @@ import { System, Not, Modified, Groups } from "hecs";
 import { Object3D } from "hecs-plugin-three";
 import * as THREE from "three";
 
-import { IS_BROWSER } from "~/utils/IS_BROWSER";
+import { isBrowser } from "~/utils/isBrowser";
 import { BetterShape, BetterShapeMesh } from "../components";
 import { CapsuleGeometry } from "../CapsuleGeometry";
 
 export class BetterShapeSystem extends System {
-  active = IS_BROWSER;
+  active = isBrowser();
   order = Groups.Initialization;
 
   static queries = {

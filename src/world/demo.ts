@@ -28,7 +28,11 @@ import {
 } from "./prefab";
 import { keyE, keyQ } from "~/input";
 
+// import { createWorldDoc } from "./y-integration";
+
 export function addDemonstrationEntities(world) {
+  // const defaultWorld = createWorldDoc("default", world);
+
   // Create origin entity (target for the camera)
   const origin = makeEntity(world, "Origin")
     .add(Transform, {

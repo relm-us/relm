@@ -1,0 +1,57 @@
+
+1. Here is what a HECS entity looks like when serialized via `toJSON()`:
+
+[js]
+{ id: '0:31',
+  name: 'Avatar',
+  parent: null,
+  children: [ '0:32' ],
+  meta: {},
+  ThrustController: { thrust: 50, torque: 8 },
+  PointerPlane: { visible: false },
+  Transform:
+   { position:
+      [ 0.00011089805775554851,
+        0.5549998879432678,
+        0.025872545316815376 ],
+     rotation:
+      [ 0.0000459679176856298,
+        0.0000033515607356093824,
+        -1.2881781685791793e-7,
+        1 ],
+     scale: [ 1, 1, 1 ] },
+  Model: { asset: { name: '', filename: '', url: '/avatar.glb' } },
+  NormalizeMesh: { position: true, scale: true },
+  RigidBody:
+   { kind: 'DYNAMIC',
+     linearVelocity:
+      [ 3.37193171162653e-7,
+        -1.4876367693261727e-8,
+        0.00012151402188464999 ],
+     angularVelocity:
+      [ 0.0001325406919931993,
+        -1.7892885784132062e-10,
+        -3.677914435229468e-7 ],
+     mass: 0.5,
+     angularDamping: 12.5,
+     linearDamping: 0.1 },
+  Collider:
+   { shape: 'CAPSULE',
+     density: 1,
+     boxSize: [ 1, 1, 1 ],
+     sphereRadius: 0.5,
+     capsuleRadius: 0.36,
+     capsuleHeight: 0.8 },
+  TransformEffects:
+   { effects:
+      '[{"function":"position","params":{"position":{"x":0,"y":0,"z":0}}},{"function":"oscillate-scale","params":{"phase":0,"min":{"x":0.99,"y":1,"z":0.99},"max":{"x":1.02,"y":1,"z":1.02}}},{"function":"oscillate-scale","params":{"phase":3.141592653589793,"min":{"x":1,"y":0.99,"z":1},"max":{"x":1,"y":1.01,"z":1}}}]' },
+  PointerPlaneRef:
+   { planes: null,
+     XY:
+      [ 5.088079872815155,
+        1.9398373739435248,
+        -0.0000019278377294540405 ],
+     XZ:
+      [ 6.6053436072728475, 9.992007221626409e-16, -4.465283543239737 ] },
+  NormalizedMesh: {} }
+  [js]
