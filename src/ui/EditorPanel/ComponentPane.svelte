@@ -27,6 +27,9 @@
     console.log(component);
     (window as any).component = component;
   };
+  const modifyComponent = () => {
+    component.modified();
+  };
 </script>
 
 <style>
@@ -50,5 +53,6 @@
   {/each}
   <toolbar>
     <Tag on:mousedown={debugComponent} cursor="pointer">Debug</Tag>
+    <Tag on:mousedown={modifyComponent} cursor="pointer">Modified</Tag>
   </toolbar>
 </Pane>
