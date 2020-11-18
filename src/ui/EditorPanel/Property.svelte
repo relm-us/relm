@@ -1,5 +1,6 @@
 <script lang="ts">
   import AssetType from "./types/AssetType.svelte";
+  import BooleanType from "./types/BooleanType.svelte";
   import ColorType from "./types/ColorType.svelte";
   import JSONType from "./types/JSONType.svelte";
   import MiscType from "./types/MiscType.svelte";
@@ -20,6 +21,8 @@
     switch (propType) {
       case "Asset":
         return AssetType;
+      case "Boolean":
+        return BooleanType;
       case "Color":
         return ColorType;
       case "JSON":
