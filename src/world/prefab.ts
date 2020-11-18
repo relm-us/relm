@@ -73,6 +73,7 @@ export function makePileOfBoxes(
 export function makeBall(
   world,
   {
+    name = "Ball",
     x = 0,
     y = 0,
     z = 0,
@@ -80,7 +81,7 @@ export function makeBall(
     color = "red",
     dynamic = true,
     damping = 0,
-    name = "Ball",
+    mass = 0,
   }
 ) {
   const linearColor = new Color(color);
@@ -97,6 +98,7 @@ export function makeBall(
     .add(RigidBody, {
       kind: dynamic ? "DYNAMIC" : "STATIC",
       damping,
+      mass,
     })
     .add(Collider, {
       shape: "SPHERE",
