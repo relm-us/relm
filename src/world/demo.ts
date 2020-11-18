@@ -165,6 +165,7 @@ export function addDemonstrationEntities(world) {
     .add(NormalizeMesh)
     .add(RigidBody, {
       kind: "DYNAMIC",
+      damping: 0.5,
     })
     .add(Collider, {
       kind: "BOX",
