@@ -1,6 +1,6 @@
-import { Component, NumberType } from "hecs";
+import { LocalComponent, NumberType } from "hecs";
 
-export class Outline extends Component {
+export class Outline extends LocalComponent {
   static props = {
     color: {
       type: NumberType,
