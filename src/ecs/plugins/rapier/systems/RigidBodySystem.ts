@@ -52,7 +52,8 @@ export class RigidBodySystem extends System {
     )
       .setTranslation(transform.position)
       .setRotation(transform.rotation)
-      .setLinearDamping(spec.damping);
+      .setLinearDamping(spec.linearDamping)
+      .setAngularDamping(spec.angularDamping);
 
     if (spec.mass) rigidBodyDesc.setMass(spec.mass);
     let rigidBody = world.createRigidBody(rigidBodyDesc);

@@ -32,7 +32,7 @@ export class HandControllerSystem extends System {
 
     const target = pointerPlane.XY;
     if (target && get(controller.keyStore)) {
-      thrust.copy(target).normalize().multiplyScalar(20);
+      thrust.copy(target).normalize().multiplyScalar(2);
       bodyRef.value.applyForce(thrust, true);
     }
   }

@@ -80,7 +80,8 @@ export function makeBall(
     r = 0.5,
     color = "red",
     dynamic = true,
-    damping = 0,
+    linearDamping = 0,
+    angularDamping = 0,
     mass = 0,
   }
 ) {
@@ -97,7 +98,8 @@ export function makeBall(
     })
     .add(RigidBody, {
       kind: dynamic ? "DYNAMIC" : "STATIC",
-      damping,
+      linearDamping,
+      angularDamping,
       mass,
     })
     .add(Collider, {

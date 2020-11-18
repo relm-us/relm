@@ -42,7 +42,15 @@ export class RigidBody extends Component {
       },
     },
 
-    damping: {
+    angularDamping: {
+      type: NumberType,
+      default: 0,
+      editor: {
+        label: "Angular Damping",
+      },
+    },
+
+    linearDamping: {
       type: NumberType,
       default: 0,
       editor: {

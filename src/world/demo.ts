@@ -167,8 +167,9 @@ export function addDemonstrationEntities(world) {
     .add(NormalizeMesh)
     .add(RigidBody, {
       kind: "DYNAMIC",
-      damping: 0.5,
-      mass: 1,
+      linearDamping: 0.5,
+      angularDamping: 10,
+      // mass: 1,
     })
     .add(Collider, {
       kind: "BOX",
@@ -226,8 +227,8 @@ export function addDemonstrationEntities(world) {
     r: 0.12,
     color: "#8daeff",
     name: "LeftHand",
-    damping: 5,
-    mass: 0.35,
+    linearDamping: 5,
+    // mass: 0.35,
   })
     .add(FixedJoint, {
       entity: avatar.id,
@@ -244,8 +245,8 @@ export function addDemonstrationEntities(world) {
     r: 0.12,
     color: "#8daeff",
     name: "RightHand",
-    damping: 5,
-    mass: 0.35,
+    linearDamping: 5,
+    // mass: 0.35,
   })
     .add(FixedJoint, {
       entity: avatar.id,
