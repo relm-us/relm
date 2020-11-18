@@ -57,9 +57,11 @@
 		"serve": "^11.3.2",
 		"simplex-noise": "^2.4.0",
 		"stats.js": "^0.17.0",
+		"svelt-yjs": "0.2.1",
 		"svelte-icons": "^2.1.0",
 		"svelte-select": "^3.14.1",
-		"three": "0.115.0"
+		"three": "0.115.0",
+		"yjs": "^13.4.4"
 	},
 	"browserslist": [
 		"defaults"
