@@ -19,7 +19,7 @@
   pane {
     position: relative;
 
-    border: 1px solid black;
+    border: 1px solid rgba(255, 255, 255, 0.35);
     border-radius: 5px;
 
     margin: 8px 16px;
