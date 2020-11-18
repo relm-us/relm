@@ -4,20 +4,13 @@ import { MathUtils, Matrix4, Euler, Quaternion, Vector3 } from "three";
 
 import { HeadController } from "../components";
 import { PointerPlaneRef } from "~/ecs/plugins/pointer-plane";
-import { RigidBodyRef } from "~/ecs/plugins/rapier/components/RigidBodyRef";
+import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
 
 const vUp = new Vector3(0, 1, 0);
 const vOut = new Vector3(0, 0, 1);
 
 const bodyFacing = new Vector3();
-const target = new Vector3();
 const q = new Quaternion();
-
-const vA_copy = new Vector3();
-function signedAngleBetweenVectors(vA: Vector3, vB: Vector3, vNormal: Vector3) {
-  vA_copy.copy(vA);
-  return Math.atan2(vA_copy.cross(vB).dot(vNormal), vA.dot(vB));
-}
 
 function toPiRange(rad) {
   rad = rad % (Math.PI * 2);
@@ -53,6 +46,9 @@ export class HeadControllerSystem extends System {
     if (!ppEntity) return;
 
     const pointer = ppEntity.get(PointerPlaneRef);
+    // If it's a very small number, it isn't real pointer position yet
+    if (pointer.XZ.lengthSq() < 0.001) return;
+
     const local = entity.get(Transform);
 
     // A vector pointing "out" on the XZ plane, indicating which way the avatar is facing.

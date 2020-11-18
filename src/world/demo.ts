@@ -42,9 +42,9 @@ export function addDemonstrationEntities(world) {
   // Create the floor
   makeBox(world, {
     y: -0.45,
-    w: floorSize.w,
-    h: 0.1,
-    d: floorSize.d,
+    w: floorSize.w + 0.2,
+    h: 0.5,
+    d: floorSize.d + 0.2,
     color: "white",
     dynamic: false,
   }).activate();
@@ -156,7 +156,9 @@ export function addDemonstrationEntities(world) {
   (window as any).ball = ball;
 
   const avatar = makeEntity(world, "Avatar")
-    .add(ThrustController)
+    .add(ThrustController, {
+      thrust: 50,
+    })
     .add(PointerPlane)
     .add(Transform)
     .add(Model, {
@@ -166,6 +168,7 @@ export function addDemonstrationEntities(world) {
     .add(RigidBody, {
       kind: "DYNAMIC",
       damping: 0.5,
+      mass: 1,
     })
     .add(Collider, {
       kind: "BOX",
@@ -224,6 +227,7 @@ export function addDemonstrationEntities(world) {
     color: "#8daeff",
     name: "LeftHand",
     damping: 5,
+    mass: 0.35,
   })
     .add(FixedJoint, {
       entity: avatar.id,
@@ -241,6 +245,7 @@ export function addDemonstrationEntities(world) {
     color: "#8daeff",
     name: "RightHand",
     damping: 5,
+    mass: 0.35,
   })
     .add(FixedJoint, {
       entity: avatar.id,

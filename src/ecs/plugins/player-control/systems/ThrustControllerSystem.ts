@@ -1,12 +1,16 @@
 import { System, Groups } from "hecs";
-import { Vector3 } from "hecs-plugin-core";
+import { Vector3, Transform } from "hecs-plugin-core";
 import { get } from "svelte/store";
 
 import { keyUp, keyDown, keyLeft, keyRight, keySpace } from "~/input";
 import { ThrustController } from "../components";
 import { RigidBodyRef } from "~/ecs/plugins/rapier/components/RigidBodyRef";
+import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
 
+const bodyFacing = new Vector3();
 const thrust = new Vector3();
+const vOut = new Vector3(0, 0, 1);
+const vUp = new Vector3(0, 1, 0);
 
 export class ThrustControllerSystem extends System {
   order = Groups.Simulation;
@@ -32,30 +36,27 @@ export class ThrustControllerSystem extends System {
     const controller = entity.get(ThrustController);
     const bodyRef = entity.get(RigidBodyRef);
 
-    thrust.set(0, 0, 0);
-    switch (controller.plane) {
-      case "XZ":
-        thrust.set(
-          ((directions.left ? -1 : 0) + (directions.right ? 1 : 0)) *
-            controller.thrust,
-          (directions.jump ? 1 : 0) * controller.thrust,
-          // 0,
-          ((directions.up ? -1 : 0) + (directions.down ? 1 : 0)) *
-            controller.thrust
-        );
-        break;
-      case "XY":
-        thrust.set(
-          ((directions.left ? -1 : 0) + (directions.right ? 1 : 0)) *
-            controller.thrust,
-          ((directions.up ? 1 : 0) + (directions.down ? -1 : 0)) *
-            controller.thrust,
-          0
-        );
-        break;
-      default:
-        throw new Error(`Unknown controller plane: ${controller.plane}`);
+    bodyFacing.copy(vOut);
+    bodyFacing.applyQuaternion(entity.get(Transform).rotation);
+
+    thrust.set(
+      (directions.left ? -1 : 0) + (directions.right ? 1 : 0),
+      directions.jump ? 1 : 0,
+      (directions.up ? -1 : 0) + (directions.down ? 1 : 0)
+    );
+
+    const angle = signedAngleBetweenVectors(bodyFacing, thrust, vUp);
+
+    if (thrust.lengthSq() < 0.01) {
+      // Do nothing
+    } else if (angle < -Math.PI / 8 || angle > Math.PI / 8) {
+      //turn
+      thrust.set(0, Math.sign(angle) * 20, 0);
+      bodyRef.value.applyTorque(thrust, true);
+    } else {
+      // thrust
+      thrust.multiplyScalar(controller.thrust);
+      bodyRef.value.applyForce(thrust, true);
     }
-    bodyRef.value.applyForce(thrust, true);
   }
 }
