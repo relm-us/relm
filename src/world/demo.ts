@@ -9,7 +9,11 @@ import { HtmlNode, CssPlane } from "~/ecs/plugins/css3d";
 import { Follow } from "~/ecs/plugins/follow";
 import { DirectionalLight } from "~/ecs/plugins/lighting";
 import { NormalizeMesh } from "~/ecs/plugins/normalize";
-import { HandController, ThrustController } from "~/ecs/plugins/player-control";
+import {
+  HandController,
+  HeadController,
+  ThrustController,
+} from "~/ecs/plugins/player-control";
 import { PointerPlane } from "~/ecs/plugins/pointer-plane";
 import { RigidBody, FixedJoint, Collider } from "~/ecs/plugins/rapier";
 import { TransformEffects } from "~/ecs/plugins/transform-effects";
@@ -190,6 +194,9 @@ export function addDemonstrationEntities(world) {
   (window as any).avatar = avatar;
 
   const head = makeEntity(world, "Head")
+    .add(HeadController, {
+      pointerPlaneEntity: avatar.id,
+    })
     .add(Transform, {
       position: new Vector3(0, 0.85, 0),
     })
