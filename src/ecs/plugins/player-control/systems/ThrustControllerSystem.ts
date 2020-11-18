@@ -62,6 +62,13 @@ export class ThrustControllerSystem extends System {
       q.setFromEuler(new Euler(0, 1, 0));
       transform.rotation.slerp(q, 0.1);
     } else if (angle < -Math.PI / 12 || angle > Math.PI / 12) {
+      v1.copy(bodyRef.value.linvel());
+      // maximum velocity
+      if (v1.length() < 5) {
+        // less thrust when not facing direction
+        thrust.multiplyScalar(controller.thrust / 7);
+        bodyRef.value.applyForce(thrust, true);
+      }
       // turn toward direction
       thrust.set(0, Math.sign(angle) * 20, 0);
       bodyRef.value.applyTorque(thrust, true);

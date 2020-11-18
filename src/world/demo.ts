@@ -177,6 +177,7 @@ export function addDemonstrationEntities(world) {
     })
     .add(TransformEffects, {
       effects: [
+        { function: "position", params: { position: new Vector3(0, 0.45, 0) } },
         {
           function: "oscillate-scale",
           params: {
@@ -203,7 +204,7 @@ export function addDemonstrationEntities(world) {
       pointerPlaneEntity: avatar.id,
     })
     .add(Transform, {
-      position: new Vector3(0, 0.85, 0),
+      position: new Vector3(0, 1.3, 0),
     })
     .add(HtmlNode, {
       renderable: {
@@ -228,7 +229,6 @@ export function addDemonstrationEntities(world) {
     color: "#8daeff",
     name: "LeftHand",
     linearDamping: 5,
-    // mass: 0.35,
   })
     .add(FixedJoint, {
       entity: avatar.id,
@@ -246,7 +246,6 @@ export function addDemonstrationEntities(world) {
     color: "#8daeff",
     name: "RightHand",
     linearDamping: 5,
-    // mass: 0.35,
   })
     .add(FixedJoint, {
       entity: avatar.id,
