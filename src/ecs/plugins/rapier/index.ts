@@ -1,5 +1,5 @@
 import { createPlugin } from "hecs";
-import CorePlugin, { Transform } from "hecs-plugin-core";
+import CorePlugin from "hecs-plugin-core";
 
 import { Physics } from "./Physics";
 import * as Components from "./components";
@@ -9,16 +9,18 @@ export * from "./components";
 
 export { Components };
 
-export default createPlugin({
-  name: "rapier",
-  plugins: [CorePlugin],
-  systems: Object.values(Systems),
-  components: Object.values(Components),
-  decorate(world, options) {
-    const rapier = options.rapier || RAPIER;
-    if (!rapier) {
-      throw new Error("rapier plugin: Rapier engine not found");
-    }
-    world.physics = new Physics(world, rapier);
-  },
-});
+export default function ConfigurablePlugin(options) {
+  return createPlugin({
+    name: "rapier",
+    plugins: [CorePlugin],
+    systems: Object.values(Systems),
+    components: Object.values(Components),
+    decorate(world) {
+      const rapier = options.rapier || RAPIER;
+      if (!rapier) {
+        throw new Error("rapier plugin: Rapier engine not found");
+      }
+      world.physics = new Physics(world, rapier);
+    },
+  });
+}

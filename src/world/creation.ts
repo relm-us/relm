@@ -81,22 +81,17 @@ export function createCamera(ortho = true) {
 
 export function createWorld(rapier) {
   const world = new World({
+    getTime: performance.now.bind(performance),
     plugins: [
-      [
-        ThreePlugin,
-        {
-          renderer: createRenderer(),
-          scene: createScene(),
-          camera: createCamera(false),
-        },
-      ],
-      [
-        RapierPlugin,
-        {
-          // Pass the physics engine in to the plugin
-          rapier,
-        },
-      ],
+      ThreePlugin({
+        renderer: createRenderer(),
+        scene: createScene(),
+        camera: createCamera(false),
+      }),
+      RapierPlugin({
+        // Pass the physics engine in to the plugin
+        rapier,
+      }),
       Css3DPlugin,
       FollowPlugin,
       LightingPlugin,
