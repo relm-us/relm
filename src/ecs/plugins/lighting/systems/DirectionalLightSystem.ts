@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { System, Groups, Not, Modified } from "hecs";
+import { Transform } from "hecs-plugin-core";
 import { Object3D } from "hecs-plugin-three";
 
 import { DirectionalLight, DirectionalLightRef } from "../components";
@@ -47,8 +48,12 @@ export class DirectionalLightSystem extends System {
       entity.add(DirectionalLightRef, { value: light });
     });
 
-    //TODO
-    this.queries.active.forEach((entity) => {});
+    this.queries.active.forEach((entity) => {
+      const transform = entity.get(Transform);
+      // Less jitter on shadows if we keep the shadow map stable between small movements
+      transform.position.x = Math.ceil(transform.position.x);
+      transform.position.z = Math.ceil(transform.position.z);
+    });
     this.queries.modified.forEach((entity) => {});
     this.queries.removed.forEach((entity) => {});
   }

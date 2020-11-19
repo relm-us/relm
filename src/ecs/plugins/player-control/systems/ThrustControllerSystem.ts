@@ -10,6 +10,7 @@ import { Vector3, Euler, Quaternion } from "three";
 
 const bodyFacing = new Vector3();
 const thrust = new Vector3();
+const torque = new Vector3();
 const vUp = new Vector3(0, 1, 0);
 const vOut = new Vector3(0, 0, 1);
 const v1 = new Vector3();
@@ -17,7 +18,7 @@ const q = new Quaternion();
 
 const MAX_VELOCITY = 5.0;
 const MIN_DIRECTION_THRUST = 0.01;
-const UPRIGHT_SPEED = 0.05;
+const UPRIGHT_SPEED = 0.1;
 
 export class ThrustControllerSystem extends System {
   order = Groups.Simulation;
@@ -48,12 +49,13 @@ export class ThrustControllerSystem extends System {
     bodyFacing.copy(vOut);
     bodyFacing.applyQuaternion(transform.rotation);
 
-    thrust.set(
-      (directions.left ? -1 : 0) + (directions.right ? 1 : 0),
-      directions.jump ? 1 : 0,
-      (directions.up ? -1 : 0) + (directions.down ? 1 : 0)
-    );
-    const angle = signedAngleBetweenVectors(bodyFacing, thrust, vUp);
+    thrust
+      .set(
+        (directions.left ? -1 : 0) + (directions.right ? 1 : 0),
+        0, //
+        (directions.up ? -1 : 0) + (directions.down ? 1 : 0)
+      )
+      .normalize();
 
     // pull character upright if leaning in any direction
     const euler = new Euler(0, 0, 0, "YXZ").setFromQuaternion(
@@ -64,28 +66,31 @@ export class ThrustControllerSystem extends System {
     q.setFromEuler(euler).normalize();
     transform.rotation.rotateTowards(q, UPRIGHT_SPEED);
 
-    if (thrust.lengthSq() < MIN_DIRECTION_THRUST) {
-      // Do nothing
-    } else if (angle < -Math.PI / 12 || angle > Math.PI / 12) {
-      v1.copy(bodyRef.value.linvel());
-      // maximum velocity
-      if (v1.length() < MAX_VELOCITY) {
-        // less thrust when not facing direction
-        thrust.multiplyScalar(controller.thrust / 7);
-        bodyRef.value.applyForce(thrust, true);
-      }
+    const angle = signedAngleBetweenVectors(bodyFacing, thrust, vUp);
+    if (angle < -Math.PI / 12 || angle > Math.PI / 12) {
       // turn toward direction
-      thrust.set(0, Math.sign(angle) * 20, 0);
-      bodyRef.value.applyTorque(thrust, true);
-      // TODO: suspend head-turning while changing directions
-    } else {
-      // thrust toward direction
-      v1.copy(bodyRef.value.linvel());
-      // maximum velocity
-      if (v1.length() < MAX_VELOCITY) {
-        thrust.multiplyScalar(controller.thrust);
-        bodyRef.value.applyForce(thrust, true);
-      }
+      torque.set(0, Math.sign(angle) * 20, 0);
+      bodyRef.value.applyTorque(torque, true);
+    }
+
+    v1.copy(bodyRef.value.linvel());
+    v1.y = 0;
+    let velocity = v1.length();
+
+    // thrust toward direction if under maximum velocity
+    if (velocity < MAX_VELOCITY) {
+      thrust.multiplyScalar(controller.thrust);
+      bodyRef.value.applyForce(thrust, true);
+    }
+
+    // jump/fly
+    v1.copy(bodyRef.value.linvel());
+    v1.x = 0;
+    v1.z = 0;
+    velocity = v1.length();
+    if (velocity < MAX_VELOCITY) {
+      thrust.set(0, directions.jump ? controller.thrust : 0, 0);
+      bodyRef.value.applyForce(thrust, true);
     }
   }
 }

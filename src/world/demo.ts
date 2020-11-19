@@ -62,6 +62,32 @@ export function addDemonstrationEntities(world) {
     dynamic: false,
   }).activate();
 
+  // Create "Sun"
+  makeBall(world, {
+    x: 10,
+    y: 22,
+    z: -60,
+    r: 5,
+    color: "#ffffdd",
+    collider: false,
+  }).activate();
+
+  // Create Mountains
+  for (let i = 0; i < 3; i++) {
+    const mountain = makeBox(world, {
+      x: (i - 1) * 20,
+      y: -10,
+      z: -40,
+      w: 20,
+      h: 20,
+      d: 20,
+      color: "#44ba63",
+      collider: false,
+    }).activate();
+    mountain
+      .get(Transform)
+      .rotation.setFromEuler(new THREE.Euler(-Math.PI / 4, 0, -Math.PI / 4));
+  }
   /********* WALLS **********/
 
   // Left Wall
@@ -169,8 +195,8 @@ export function addDemonstrationEntities(world) {
     .add(NormalizeMesh)
     .add(RigidBody, {
       kind: "DYNAMIC",
-      linearDamping: 0.5,
-      angularDamping: 10,
+      linearDamping: 0.1,
+      angularDamping: 8.5,
       // mass: 1,
     })
     .add(Collider, {
@@ -309,11 +335,32 @@ export function addDemonstrationEntities(world) {
 
   const light = makeEntity(world, "DirectionalLight")
     .add(Transform, {
-      position: new Vector3(-4, 20, 10),
+      position: new Vector3(-20, 20, 10),
     })
     .add(Follow, {
       entity: avatar.id,
     })
-    .add(DirectionalLight)
+    .add(DirectionalLight, {
+      color: 0x553333,
+    })
     .activate();
+
+  const sunLight = makeEntity(world, "DirectionalLight")
+    .add(Transform, {
+      position: new Vector3(5, 10, -20),
+    })
+    .add(Follow, {
+      entity: avatar.id,
+    })
+    .add(DirectionalLight, {
+      color: 0xdddddd,
+    })
+    .activate();
+  // let angle = Math.PI;
+  // setInterval(() => {
+  //   const transform = light.get(Transform);
+  //   transform.position.x = Math.cos(angle) * 20;
+  //   transform.position.y = Math.sin(angle) * 20;
+  //   angle += Math.PI / 100;
+  // }, 50);
 }

@@ -31,13 +31,6 @@ export class DirectionalLight extends Component {
         label: "Cast Shadow?",
       },
     },
-    shadowRadius: {
-      type: NumberType,
-      default: 2,
-      editor: {
-        label: "Shadow Blur Radius",
-      },
-    },
     shadowTop: {
       type: NumberType,
       default: 24,
@@ -92,6 +85,13 @@ export class DirectionalLight extends Component {
       default: 1024,
       editor: {
         label: "Shadow Height",
+      },
+    },
+    shadowRadius: {
+      type: NumberType,
+      default: 2,
+      editor: {
+        label: "Shadow Blur Radius",
       },
     },
   };

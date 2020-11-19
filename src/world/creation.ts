@@ -2,6 +2,8 @@ import {
   WebGLRenderer,
   OrthographicCamera,
   Scene,
+  Fog,
+  FogExp2,
   Color,
   HemisphereLight,
   VSMShadowMap,
@@ -64,8 +66,12 @@ export function createScene() {
   scene.background = new Color(0xaec7ed);
   scene.name = "scene";
 
+  // scene.fog = new Fog(0xe5e0dd, 20, 50);
+  scene.fog = new FogExp2(0xe5e0dd, 0.022);
+  // scene.fog = new Fog(0x0, 20, 50);
+
   const hemiLight = new HemisphereLight(0x333333, 0xffffff);
-  hemiLight.position.set(0, 20, 0);
+  hemiLight.position.set(0, 20, 20);
   scene.add(hemiLight);
 
   return scene;

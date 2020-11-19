@@ -22,25 +22,31 @@ export function makeBox(
     color = "red",
     dynamic = true,
     name = "Box",
+
+    collider = true,
   }
 ) {
   const linearColor = new Color(color);
   linearColor.convertSRGBToLinear();
-  return makeEntity(world, name)
+  const entity = makeEntity(world, name)
     .add(Transform, {
       position: new Vector3(x, y, z),
     })
     .add(Shape, {
       color: "#" + linearColor.getHexString(),
       boxSize: new Vector3(w, h, d),
-    })
-    .add(RigidBody, {
-      kind: dynamic ? "DYNAMIC" : "STATIC",
-    })
-    .add(Collider, {
-      kind: "BOX",
-      boxSize: new Vector3(w, h, d),
     });
+  if (collider) {
+    entity
+      .add(RigidBody, {
+        kind: dynamic ? "DYNAMIC" : "STATIC",
+      })
+      .add(Collider, {
+        kind: "BOX",
+        boxSize: new Vector3(w, h, d),
+      });
+  }
+  return entity;
 }
 
 export function makePileOfBoxes(
@@ -83,11 +89,12 @@ export function makeBall(
     linearDamping = 0,
     angularDamping = 0,
     mass = 0,
+    collider = true,
   }
 ) {
   const linearColor = new Color(color);
   linearColor.convertSRGBToLinear();
-  return makeEntity(world, name)
+  const entity = makeEntity(world, name)
     .add(Transform, {
       position: new Vector3(x, y, z),
     })
@@ -95,17 +102,21 @@ export function makeBall(
       kind: "SPHERE",
       color: linearColor,
       sphereRadius: r,
-    })
-    .add(RigidBody, {
-      kind: dynamic ? "DYNAMIC" : "STATIC",
-      linearDamping,
-      angularDamping,
-      mass,
-    })
-    .add(Collider, {
-      shape: "SPHERE",
-      sphereRadius: r,
     });
+  if (collider) {
+    entity
+      .add(RigidBody, {
+        kind: dynamic ? "DYNAMIC" : "STATIC",
+        linearDamping,
+        angularDamping,
+        mass,
+      })
+      .add(Collider, {
+        shape: "SPHERE",
+        sphereRadius: r,
+      });
+  }
+  return entity;
 }
 export function makeYouTube(
   world,
