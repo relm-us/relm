@@ -51,14 +51,13 @@ export function addDemonstrationEntities(world) {
 
   const floorBelowSize = {
     w: 150,
+    h: 0.5,
     d: 150,
   };
   // Create the floor
   makeBox(world, {
     y: -10,
-    w: floorBelowSize.w,
-    h: 0.1,
-    d: floorBelowSize.d,
+    ...floorBelowSize,
     color: "#44ba63",
     dynamic: false,
   }).activate();
@@ -76,14 +75,6 @@ export function addDemonstrationEntities(world) {
     dynamic: false,
   }).activate();
 
-  // Right Wall
-  // makeBox(world, {
-  //   ...{ x: floorSize.w / 2, y: -0.25 },
-  //   ...{ w: 0.2, h: 0.5, d: floorSize.d },
-  //   color: "white",
-  //   dynamic: false,
-  // }).activate();
-
   // Back Wall
   makeBox(world, {
     ...{ x: -0.05, y: -0.25, z: -floorSize.d / 2 },
@@ -99,6 +90,17 @@ export function addDemonstrationEntities(world) {
     color: "white",
     dynamic: false,
   }).activate();
+
+  // Ramp
+  const ramp = makeBox(world, {
+    ...{ x: 14, y: -5, z: 0 },
+    ...{ w: 18.5, h: 0.5, d: 4 },
+    color: "white",
+    dynamic: false,
+  }).activate();
+  ramp
+    .get(Transform)
+    .rotation.setFromEuler(new THREE.Euler(0, 0, -Math.PI / 6));
 
   /********* BOXES **********/
 
@@ -172,12 +174,15 @@ export function addDemonstrationEntities(world) {
       // mass: 1,
     })
     .add(Collider, {
-      kind: "BOX",
-      boxSize: new Vector3(1, 1, 1),
+      // shape: "BOX",
+      // boxSize: new Vector3(1, 1, 1),
+      shape: "CAPSULE",
+      capsuleHeight: 0.8,
+      capsuleRadius: 0.5,
     })
     .add(TransformEffects, {
       effects: [
-        { function: "position", params: { position: new Vector3(0, 0.45, 0) } },
+        { function: "position", params: { position: new Vector3(0, 0, 0) } },
         {
           function: "oscillate-scale",
           params: {
@@ -204,7 +209,7 @@ export function addDemonstrationEntities(world) {
       pointerPlaneEntity: avatar.id,
     })
     .add(Transform, {
-      position: new Vector3(0, 1.3, 0),
+      position: new Vector3(0, 0.85, 0),
     })
     .add(HtmlNode, {
       renderable: {

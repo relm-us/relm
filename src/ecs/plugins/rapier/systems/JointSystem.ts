@@ -74,7 +74,7 @@ export class JointSystem extends System {
       const parentPosition = targetEntity.get(WorldTransform).position;
       const childPosition = entity.get(WorldTransform).position;
       let jointParams = new rapier.JointParams.ball(
-        new Vector3(childPosition.x < 0 ? -0.5 : 0.5, 0.8, 0),
+        new Vector3(childPosition.x < 0 ? -0.5 : 0.5, 0.5, 0),
         childPosition
       );
 
