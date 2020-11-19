@@ -12,6 +12,7 @@ export class Collider extends Component {
         options: [
           { label: "Box", value: "BOX" },
           { label: "Sphere", value: "SPHERE" },
+          { label: "Capsule", value: "CAPSULE" },
         ],
       },
     },
@@ -39,6 +40,23 @@ export class Collider extends Component {
       editor: {
         label: "Radius",
         requires: [{ prop: "shape", value: "SPHERE" }], // TODO: fix and re-test as it is broken
+      },
+    },
+
+    capsuleRadius: {
+      type: NumberType,
+      default: 0.5,
+      editor: {
+        label: "Radius",
+        requires: [{ prop: "kind", value: "CAPSULE" }],
+      },
+    },
+    capsuleHeight: {
+      type: NumberType,
+      default: 1,
+      editor: {
+        label: "Height",
+        requires: [{ prop: "kind", value: "CAPSULE" }],
       },
     },
   };

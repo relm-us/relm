@@ -38,6 +38,12 @@ export class ColliderSystem extends System {
       case "SPHERE":
         colliderDesc = rapier.ColliderDesc.ball(spec.sphereRadius);
         break;
+      case "CAPSULE":
+        colliderDesc = rapier.ColliderDesc.capsule(
+          spec.capsuleHeight / 2,
+          spec.capsuleRadius
+        );
+        break;
       default:
         throw new Error(`Unknown collider shape: ${spec.shape}`);
     }
