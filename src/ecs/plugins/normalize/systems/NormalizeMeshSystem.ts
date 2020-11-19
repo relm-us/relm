@@ -1,26 +1,29 @@
 import { System, Groups, Not } from "hecs";
-import { ModelMesh } from "hecs-plugin-three";
-import { Box3, Object3D, Vector3 } from "three";
+import { ModelMesh, Object3D } from "hecs-plugin-three";
+import { Box3, Vector3 } from "three";
 import { NormalizeMesh, NormalizedMesh } from "../components";
 
 export class NormalizeMeshSystem extends System {
   order = Groups.Initialization + 40;
 
   static queries = {
-    new: [ModelMesh, NormalizeMesh, Not(NormalizedMesh)],
+    new: [ModelMesh, NormalizeMesh, Object3D, Not(NormalizedMesh)],
   };
 
   update() {
     this.queries.new.forEach((entity) => {
       const object3d = entity.get(ModelMesh).value;
+      if (!object3d.parent) return;
 
       this.normalize(object3d);
+      // object3d.parent.scale.copy(parentScale);
 
       entity.add(NormalizedMesh);
     });
   }
 
   normalize(object3d) {
+    const parentScale = new Vector3().copy(object3d.parent.scale);
     const first = this.getFirstMeshOrGroup(object3d);
     if (first !== object3d) {
       object3d.parent.add(first);
@@ -45,6 +48,8 @@ export class NormalizeMeshSystem extends System {
         obj.geometry.scale(scale, scale, scale);
       }
     });
+
+    first.scale.copy(parentScale);
   }
 
   getFirstMeshOrGroup(object3d) {
