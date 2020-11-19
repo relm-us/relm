@@ -84,11 +84,8 @@ export class ThrustControllerSystem extends System {
     }
 
     // jump/fly
-    v1.copy(bodyRef.value.linvel());
-    v1.x = 0;
-    v1.z = 0;
-    velocity = v1.length();
-    if (velocity < MAX_VELOCITY) {
+    // simple hack: y is up, so don't let thrust be more than positive max velocity
+    if (bodyRef.value.linvel().y < MAX_VELOCITY) {
       thrust.set(0, directions.jump ? controller.thrust : 0, 0);
       bodyRef.value.applyForce(thrust, true);
     }
