@@ -63,7 +63,7 @@ export class PerformanceStatsSystem extends System {
         $systems[name] = createStatsStore(DATA_WINDOW_SIZE);
         newSystem = true;
       }
-      $systems[name].addData((system as any).performance);
+      $systems[name].addData((system as any).elapsedTime);
     }
     if (newSystem) {
       systems.set($systems);
