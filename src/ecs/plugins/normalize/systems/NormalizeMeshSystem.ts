@@ -4,7 +4,7 @@ import { Box3, Vector3 } from "three";
 import { NormalizeMesh, NormalizedMesh } from "../components";
 
 export class NormalizeMeshSystem extends System {
-  order = Groups.Initialization + 40;
+  order = Groups.Presentation;
 
   static queries = {
     new: [ModelMesh, NormalizeMesh, Object3D, Not(NormalizedMesh)],
