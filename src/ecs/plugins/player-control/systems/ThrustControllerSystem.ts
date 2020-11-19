@@ -1,14 +1,12 @@
 import { System, Groups } from "hecs";
-import { WorldTransform, Transform } from "hecs-plugin-core";
-import { Object3D } from "hecs-plugin-three";
+import { Transform } from "hecs-plugin-core";
 import { get } from "svelte/store";
 
 import { keyUp, keyDown, keyLeft, keyRight, keySpace } from "~/input";
-import { ThrustController } from "../components";
+import { ThrustController, HeadController } from "../components";
 import { RigidBodyRef } from "~/ecs/plugins/rapier/components/RigidBodyRef";
 import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
-import { Vector3, Euler, Quaternion, ArrowHelper } from "three";
-import { PointerPlaneRef } from "~/ecs/plugins/pointer-plane";
+import { Vector3, Euler, Quaternion } from "three";
 
 const bodyFacing = new Vector3();
 const thrust = new Vector3();
@@ -43,8 +41,8 @@ export class ThrustControllerSystem extends System {
 
   applyThrust(directions, entity) {
     const controller = entity.get(ThrustController);
+    const headController = entity.get(HeadController);
     const bodyRef = entity.get(RigidBodyRef);
-    const world = entity.get(WorldTransform);
     const transform = entity.get(Transform);
 
     bodyFacing.copy(vOut);

@@ -1,7 +1,9 @@
 import { System, Groups } from "hecs";
-import { Transform, WorldTransform } from "hecs-plugin-core";
-import { MathUtils, Matrix4, Euler, Quaternion, Vector3 } from "three";
+import { Transform } from "hecs-plugin-core";
+import { MathUtils, Euler, Quaternion, Vector3 } from "three";
+import { get } from "svelte/store";
 
+import { keyUp, keyDown, keyLeft, keyRight } from "~/input";
 import { HeadController } from "../components";
 import { PointerPlaneRef } from "~/ecs/plugins/pointer-plane";
 import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
@@ -11,20 +13,6 @@ const vOut = new Vector3(0, 0, 1);
 
 const bodyFacing = new Vector3();
 const q = new Quaternion();
-
-function toPiRange(rad) {
-  rad = rad % (Math.PI * 2);
-  if (rad > Math.PI) {
-    return -Math.PI - (Math.PI - rad);
-  } else {
-    return rad;
-  }
-}
-
-function limitDiff(angleBase, angleToLimit, maxDiff) {
-  let diff = toPiRange(angleToLimit - angleBase);
-  return Math.abs(diff) > maxDiff ? maxDiff * Math.sign(diff) : diff;
-}
 
 export class HeadControllerSystem extends System {
   order = Groups.Simulation;
@@ -49,12 +37,27 @@ export class HeadControllerSystem extends System {
     // If it's a very small number, it isn't real pointer position yet
     if (pointer.XZ.lengthSq() < 0.001) return;
 
+    // If pointer moves, re-enable the head's full range of motion
+    // TODO: this should be an external determination of some kind
+    if (!controller.lastXZ) {
+      controller.lastXZ = new Vector3();
+      controller.lastXZ.copy(pointer.XZ);
+    }
+    if (controller.lastXZ.distanceTo(pointer.XZ) > 0.05) {
+      controller.enabled = true;
+      controller.lastXZ.copy(pointer.XZ);
+    }
+
     const local = entity.get(Transform);
 
     // A vector pointing "out" on the XZ plane, indicating which way the avatar is facing.
     // This is the "center value" that the head would most naturally face if unturned.
     bodyFacing.copy(vOut);
     bodyFacing.applyQuaternion(entity.getParent().get(Transform).rotation);
+
+    if (get(keyUp) || get(keyDown) || get(keyLeft) || get(keyRight)) {
+      controller.enabled = false;
+    }
 
     /**
      * 1. Get the signed angle between vectors on a plane (vUp).
@@ -65,7 +68,11 @@ export class HeadControllerSystem extends System {
      * vUp: the XZ normal plane
      */
     const angle = MathUtils.clamp(
-      signedAngleBetweenVectors(bodyFacing, pointer.XZ, vUp),
+      signedAngleBetweenVectors(
+        bodyFacing,
+        controller.enabled ? pointer.XZ : bodyFacing,
+        vUp
+      ),
       -Math.PI / 3,
       Math.PI / 3
     );
