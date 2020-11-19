@@ -1,6 +1,5 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { getUnduplicatedName } from "~/utils/getUnduplicatedName";
   import Tag from "./Tag.svelte";
 
   import { Pane } from "~/ui/LeftPanel";
@@ -42,7 +41,7 @@
 </style>
 
 <Pane
-  title={getUnduplicatedName(Component.name)}
+  title={Component.name}
   showClose={true}
   showMinimize={true}
   on:close={() => dispatch('destroy')}>

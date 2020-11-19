@@ -3,7 +3,6 @@
 
   import Button from "~/ui/Button";
   import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
-  import { getUnduplicatedName } from "~/utils/getUnduplicatedName";
 
   import {
     fpsTime,
@@ -56,9 +55,7 @@
 
   <!-- Show most important ECS Systems' performance stats here -->
   {#each primarySystems as [systemName, systemStatsStore]}
-    <StatsPane
-      title={getUnduplicatedName(systemName)}
-      dataStore={systemStatsStore} />
+    <StatsPane title={systemName} dataStore={systemStatsStore} />
   {/each}
 
   <Button
@@ -90,9 +87,7 @@
 
   {#if systemsVisible}
     {#each secondarySystems as [systemName, systemStatsStore]}
-      <StatsPane
-        title={getUnduplicatedName(systemName)}
-        dataStore={systemStatsStore} />
+      <StatsPane title={systemName} dataStore={systemStatsStore} />
     {/each}
   {/if}
 

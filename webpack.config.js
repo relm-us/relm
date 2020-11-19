@@ -157,6 +157,11 @@ module.exports = {
   ],
   optimization: {
     minimizer: [],
+    /**
+     * For HECS to work, we need to prevent module concatenation from mangling
+     * class names. See https://github.com/gohyperr/hecs/issues/31
+     */
+    concatenateModules: false,
   },
   devtool: prod && !sourceMapsInProduction ? false : "source-map",
 };
@@ -228,12 +233,16 @@ if (prod) {
   );
 
   // Minify and treeshake JS
-  // module.exports.optimization.minimizer.push(
-  //   new TerserPlugin({
-  //     sourceMap: sourceMapsInProduction,
-  //     extractComments: false,
-  //   })
-  // );
+  module.exports.optimization.minimizer.push(
+    new TerserPlugin({
+      sourceMap: sourceMapsInProduction,
+      extractComments: false,
+      terserOptions: {
+        keep_classnames: true,
+        keep_fnames: true,
+      },
+    })
+  );
 }
 
 // Add babel if enabled
