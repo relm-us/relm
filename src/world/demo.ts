@@ -237,6 +237,17 @@ export function addDemonstrationEntities(world) {
     .add(Transform, {
       position: new Vector3(0, 0.85, 0),
     })
+    .add(Model, {
+      asset: new Asset("/head.glb"),
+    })
+    .add(NormalizeMesh)
+    .activate();
+  head.setParent(avatar);
+
+  const face = makeEntity(world, "Face")
+    .add(Transform, {
+      position: new Vector3(0, 0, 0.467),
+    })
     .add(HtmlNode, {
       renderable: {
         type: "AVATAR_HEAD",
@@ -245,14 +256,14 @@ export function addDemonstrationEntities(world) {
           height: 70,
         },
       },
-      scale: 0.7 / 70,
+      scale: 0.6 / 70,
     })
     .add(CssPlane, {
       kind: "CIRCLE",
-      circleRadius: 0.35,
+      circleRadius: 0.3,
     })
     .activate();
-  head.setParent(avatar);
+  face.setParent(head);
 
   const leftHand = makeBall(world, {
     ...{ x: -0.55, y: 0.0, z: 0.05 },
