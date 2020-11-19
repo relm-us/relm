@@ -236,6 +236,7 @@ export function addDemonstrationEntities(world) {
     })
     .add(Transform, {
       position: new Vector3(0, 0.85, 0),
+      scale: new Vector3(0.85, 0.85, 0.85),
     })
     .add(Model, {
       asset: new Asset("/head.glb"),
@@ -246,7 +247,7 @@ export function addDemonstrationEntities(world) {
 
   const face = makeEntity(world, "Face")
     .add(Transform, {
-      position: new Vector3(0, 0, 0.467),
+      position: new Vector3(0, 0, 0.458),
     })
     .add(HtmlNode, {
       renderable: {
@@ -305,13 +306,14 @@ export function addDemonstrationEntities(world) {
     .add(Transform, {
       // Put it in the corner
       position: new Vector3(5, 0, -3),
+      scale: new Vector3(1.1, 1.1, 1.1),
       rotation: new Quaternion().setFromEuler(
         new THREE.Euler(0, -Math.PI / 4, 0)
       ),
     })
     .add(TransformEffects, {
       effects: [
-        { function: "position", params: { position: new Vector3(0, 0.45, 0) } },
+        { function: "position", params: { position: new Vector3(0, 0.35, 0) } },
       ],
     })
     .add(Model, {
@@ -367,11 +369,4 @@ export function addDemonstrationEntities(world) {
       color: 0xdddddd,
     })
     .activate();
-  // let angle = Math.PI;
-  // setInterval(() => {
-  //   const transform = light.get(Transform);
-  //   transform.position.x = Math.cos(angle) * 20;
-  //   transform.position.y = Math.sin(angle) * 20;
-  //   angle += Math.PI / 100;
-  // }, 50);
 }
