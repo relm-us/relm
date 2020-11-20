@@ -284,11 +284,12 @@ export function addDemonstrationEntities(world) {
   face.setParent(head);
 
   const leftHand = makeBall(world, {
-    ...{ x: -0.55, y: 0.0, z: 0.05 },
+    ...{ x: -0.6, y: 0.0, z: 0.05 },
     r: 0.12,
     color: "#8daeff",
     name: "LeftHand",
     linearDamping: 5,
+    angularDamping: 2,
   })
     .add(FixedJoint, {
       entity: avatar.id,
@@ -298,14 +299,15 @@ export function addDemonstrationEntities(world) {
       keyStore: keyE,
     })
     .activate();
-  leftHand.setParent(avatar);
+  // leftHand.setParent(avatar);
 
   const rightHand = makeBall(world, {
-    ...{ x: 0.55, y: 0.0, z: 0.05 },
+    ...{ x: 0.6, y: 0.0, z: 0.05 },
     r: 0.12,
     color: "#8daeff",
     name: "RightHand",
     linearDamping: 5,
+    angularDamping: 2,
   })
     .add(FixedJoint, {
       entity: avatar.id,
@@ -315,7 +317,7 @@ export function addDemonstrationEntities(world) {
       keyStore: keyQ,
     })
     .activate();
-  rightHand.setParent(avatar);
+  // rightHand.setParent(avatar);
 
   // Chair
   const chair = makeEntity(world, "Chair")
