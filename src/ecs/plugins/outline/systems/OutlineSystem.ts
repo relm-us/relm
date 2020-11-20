@@ -76,7 +76,8 @@ export class OutlineSystem extends System {
   }
 
   outlinify(object, color, thickness) {
-    for (const child of object.children) {
+    for (let i = object.children.length - 1; i >= 0; i--) {
+      const child = object.children[i];
       object.remove(child);
       object.add(this.outlinify(child, color, thickness));
     }
@@ -84,6 +85,7 @@ export class OutlineSystem extends System {
     if (object.isMesh) {
       // Group to contain both the mesh & its outline
       const group = new Group();
+      group.rotation.copy(object.rotation);
 
       const coloredOutline = this.createOutlineMesh(
         object,
