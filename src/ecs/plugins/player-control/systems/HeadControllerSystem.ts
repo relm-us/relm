@@ -79,8 +79,8 @@ export class HeadControllerSystem extends System {
         controller.enabled ? vPointer : bodyFacing,
         vUp
       ),
-      -Math.PI / 3,
-      Math.PI / 3
+      -Math.PI * 0.45,
+      Math.PI * 0.45
     );
 
     // Gently rotate towards the goal using spherical lerp
