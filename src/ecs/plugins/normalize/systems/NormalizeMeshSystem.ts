@@ -13,12 +13,8 @@ export class NormalizeMeshSystem extends System {
   update() {
     this.queries.added.forEach((entity) => {
       const object3d = entity.get(ModelMesh).value;
-      console.log(`NormalizedMeshSystem: ${entity.name} added`, object3d);
       if (!object3d.parent) return;
-
       this.normalize(object3d);
-      // object3d.parent.scale.copy(parentScale);
-
       entity.add(NormalizedMesh);
     });
   }

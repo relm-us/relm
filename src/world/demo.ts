@@ -63,14 +63,16 @@ export function addDemonstrationEntities(world) {
   }).activate();
 
   // Create "Sun"
-  makeBall(world, {
+  const sun = makeBall(world, {
     x: 10,
     y: 22,
     z: -60,
     r: 5,
     color: "#ffffdd",
+    emissive: "#ffff00",
     collider: false,
   }).activate();
+  // sun.get()
 
   // Create Mountains
   for (let i = 0; i < 3; i++) {
@@ -140,6 +142,8 @@ export function addDemonstrationEntities(world) {
     z: 2,
     color: "orange",
     name: "OrangeBox",
+    metalness: 0.9,
+    roughness: 0.2,
   }).activate();
 
   // TV Box

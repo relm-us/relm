@@ -14,6 +14,7 @@ import {
 
 import { World } from "hecs";
 
+import BetterShapePlugin from "~/ecs/plugins/better-shape";
 import Css3DPlugin from "~/ecs/plugins/css3d";
 import FollowPlugin from "~/ecs/plugins/follow";
 import LightingPlugin from "~/ecs/plugins/lighting";
@@ -98,6 +99,7 @@ export function createWorld(rapier) {
         // Pass the physics engine in to the plugin
         rapier,
       }),
+      BetterShapePlugin,
       Css3DPlugin,
       FollowPlugin,
       LightingPlugin,

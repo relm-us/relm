@@ -1,4 +1,4 @@
-import { Shape } from "hecs-plugin-three";
+import { BetterShape } from "~/ecs/plugins/better-shape";
 import { Transform } from "hecs-plugin-core";
 
 import { Color, Vector3 } from "three";
@@ -22,7 +22,9 @@ export function makeBox(
     color = "red",
     dynamic = true,
     name = "Box",
-
+    metalness = 0.2,
+    roughness = 0.8,
+    emissive = "#000000",
     collider = true,
   }
 ) {
@@ -32,9 +34,12 @@ export function makeBox(
     .add(Transform, {
       position: new Vector3(x, y, z),
     })
-    .add(Shape, {
+    .add(BetterShape, {
       color: "#" + linearColor.getHexString(),
       boxSize: new Vector3(w, h, d),
+      metalness,
+      roughness,
+      emissive,
     });
   if (collider) {
     entity
@@ -89,6 +94,9 @@ export function makeBall(
     linearDamping = 0,
     angularDamping = 0,
     mass = 0,
+    metalness = 0.2,
+    roughness = 0.8,
+    emissive = "#000000",
     collider = true,
   }
 ) {
@@ -98,10 +106,13 @@ export function makeBall(
     .add(Transform, {
       position: new Vector3(x, y, z),
     })
-    .add(Shape, {
+    .add(BetterShape, {
       kind: "SPHERE",
       color: linearColor,
       sphereRadius: r,
+      metalness,
+      roughness,
+      emissive,
     });
   if (collider) {
     entity
