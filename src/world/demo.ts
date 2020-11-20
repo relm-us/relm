@@ -120,15 +120,28 @@ export function addDemonstrationEntities(world) {
   }).activate();
 
   // Ramp
-  const ramp = makeBox(world, {
-    ...{ x: 14, y: -5, z: 0 },
-    ...{ w: 18.5, h: 0.5, d: 4 },
+  const ramp1 = makeBox(world, {
+    ...{ x: 14.75, y: -5.5, z: 2 },
+    ...{ w: 20, h: 0.5, d: 4 },
     color: "white",
     dynamic: false,
   }).activate();
-  ramp
+  ramp1
     .get(Transform)
-    .rotation.setFromEuler(new THREE.Euler(0, 0, -Math.PI / 6));
+    .rotation.setFromEuler(
+      new THREE.Euler(-Math.PI / 12, 0, -Math.PI / 6, "ZYX")
+    );
+  const ramp2 = makeBox(world, {
+    ...{ x: 14.75, y: -5.5, z: -2 },
+    ...{ w: 20, h: 0.5, d: 4 },
+    color: "white",
+    dynamic: false,
+  }).activate();
+  ramp2
+    .get(Transform)
+    .rotation.setFromEuler(
+      new THREE.Euler(Math.PI / 12, 0, -Math.PI / 6, "ZYX")
+    );
 
   /********* BOXES **********/
 
