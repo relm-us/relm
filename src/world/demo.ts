@@ -298,7 +298,7 @@ export function addDemonstrationEntities(world) {
   const leftHand = makeBall(world, {
     ...{ x: -0.6, y: 0.0, z: 0.05 },
     r: 0.12,
-    color: "#8daeff",
+    color: "#59a4d8",
     name: "LeftHand",
     linearDamping: 4,
   })
@@ -315,7 +315,7 @@ export function addDemonstrationEntities(world) {
   const rightHand = makeBall(world, {
     ...{ x: 0.6, y: 0.0, z: 0.05 },
     r: 0.12,
-    color: "#8daeff",
+    color: "#59a4d8",
     name: "RightHand",
     linearDamping: 4,
   })
