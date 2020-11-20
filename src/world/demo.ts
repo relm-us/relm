@@ -230,16 +230,16 @@ export function addDemonstrationEntities(world) {
           function: "oscillate-scale",
           params: {
             phase: 0,
-            min: new Vector3(0.97, 1, 0.97),
-            max: new Vector3(1.03, 1, 1.03),
+            min: new Vector3(0.99, 1, 0.99),
+            max: new Vector3(1.02, 1, 1.02),
           },
         },
         {
           function: "oscillate-scale",
           params: {
             phase: Math.PI,
-            min: new Vector3(1, 0.95, 1),
-            max: new Vector3(1, 1.05, 1),
+            min: new Vector3(1, 0.99, 1),
+            max: new Vector3(1, 1.01, 1),
           },
         },
       ],
@@ -254,6 +254,18 @@ export function addDemonstrationEntities(world) {
     .add(Transform, {
       position: new Vector3(0, 0.85, 0),
       scale: new Vector3(0.6, 0.6, 0.6),
+    })
+    .add(TransformEffects, {
+      effects: [
+        {
+          function: "oscillate-position",
+          params: {
+            phase: Math.PI,
+            min: new Vector3(0, 0.0, 0),
+            max: new Vector3(0, 0.02, 0),
+          },
+        },
+      ],
     })
     .add(Model, {
       asset: new Asset("/head.glb"),
@@ -288,8 +300,7 @@ export function addDemonstrationEntities(world) {
     r: 0.12,
     color: "#8daeff",
     name: "LeftHand",
-    linearDamping: 5,
-    angularDamping: 2,
+    linearDamping: 4,
   })
     .add(FixedJoint, {
       entity: avatar.id,
@@ -306,8 +317,7 @@ export function addDemonstrationEntities(world) {
     r: 0.12,
     color: "#8daeff",
     name: "RightHand",
-    linearDamping: 5,
-    angularDamping: 2,
+    linearDamping: 4,
   })
     .add(FixedJoint, {
       entity: avatar.id,
