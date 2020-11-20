@@ -236,7 +236,7 @@ export function addDemonstrationEntities(world) {
     })
     .add(Transform, {
       position: new Vector3(0, 0.85, 0),
-      scale: new Vector3(0.85, 0.85, 0.85),
+      scale: new Vector3(0.6, 0.6, 0.6),
     })
     .add(Model, {
       asset: new Asset("/head.glb"),
@@ -247,7 +247,7 @@ export function addDemonstrationEntities(world) {
 
   const face = makeEntity(world, "Face")
     .add(Transform, {
-      position: new Vector3(0, 0, 0.458),
+      position: new Vector3(0, 0, 0.49),
     })
     .add(HtmlNode, {
       renderable: {
@@ -257,11 +257,11 @@ export function addDemonstrationEntities(world) {
           height: 70,
         },
       },
-      scale: 0.6 / 70,
+      scale: 0.7 / 70,
     })
     .add(CssPlane, {
       kind: "CIRCLE",
-      circleRadius: 0.3,
+      circleRadius: 0.35,
     })
     .activate();
   face.setParent(head);
@@ -306,7 +306,7 @@ export function addDemonstrationEntities(world) {
     .add(Transform, {
       // Put it in the corner
       position: new Vector3(5, 0, -3),
-      scale: new Vector3(1.1, 1.1, 1.1),
+      scale: new Vector3(0.75, 0.75, 0.75),
       rotation: new Quaternion().setFromEuler(
         new THREE.Euler(0, -Math.PI / 4, 0)
       ),

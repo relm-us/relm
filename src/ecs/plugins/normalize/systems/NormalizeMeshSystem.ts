@@ -7,12 +7,13 @@ export class NormalizeMeshSystem extends System {
   order = Groups.Presentation;
 
   static queries = {
-    new: [ModelMesh, NormalizeMesh, Object3D, Not(NormalizedMesh)],
+    added: [ModelMesh, NormalizeMesh, Object3D, Not(NormalizedMesh)],
   };
 
   update() {
-    this.queries.new.forEach((entity) => {
+    this.queries.added.forEach((entity) => {
       const object3d = entity.get(ModelMesh).value;
+      console.log(`NormalizedMeshSystem: ${entity.name} added`, object3d);
       if (!object3d.parent) return;
 
       this.normalize(object3d);
@@ -23,16 +24,14 @@ export class NormalizeMeshSystem extends System {
   }
 
   normalize(object3d) {
-    const parentScale = new Vector3().copy(object3d.parent.scale);
     const first = this.getFirstMeshOrGroup(object3d);
-    if (first !== object3d) {
-      object3d.parent.add(first);
-      object3d.parent.remove(object3d);
-    }
 
-    first.position.x = 0;
-    first.position.y = 0;
-    first.position.z = 0;
+    let child = first;
+    do {
+      child.position.set(0, 0, 0);
+      child.scale.set(1, 1, 1);
+      child = child.parent;
+    } while (child !== object3d);
 
     if (first.type === "Mesh") {
       first.geometry.center();
@@ -48,8 +47,6 @@ export class NormalizeMeshSystem extends System {
         obj.geometry.scale(scale, scale, scale);
       }
     });
-
-    first.scale.copy(parentScale);
   }
 
   getFirstMeshOrGroup(object3d) {
@@ -79,7 +76,15 @@ export class NormalizeMeshSystem extends System {
    * scaling
    */
   getScaleRatio(object3d, largestSide = 1.0) {
+    // Remove from hierarchy temporarily so that setFromObject doesn't include
+    // ancestor scale
+    const cachedParent = object3d.parent;
+    object3d.parent.remove(object3d);
+
     const bbox = new Box3().setFromObject(object3d);
+
+    cachedParent.add(object3d);
+
     let size = new Vector3();
     bbox.getSize(size);
     let ratio;
