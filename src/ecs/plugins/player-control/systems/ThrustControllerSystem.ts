@@ -17,7 +17,6 @@ const v1 = new Vector3();
 const q = new Quaternion();
 
 const MAX_VELOCITY = 5.0;
-const MIN_DIRECTION_THRUST = 0.01;
 const UPRIGHT_SPEED = 0.1;
 
 export class ThrustControllerSystem extends System {
@@ -69,7 +68,7 @@ export class ThrustControllerSystem extends System {
     const angle = signedAngleBetweenVectors(bodyFacing, thrust, vUp);
     if (angle < -Math.PI / 12 || angle > Math.PI / 12) {
       // turn toward direction
-      torque.set(0, Math.sign(angle) * 20, 0);
+      torque.set(0, Math.sign(angle) * controller.torque, 0);
       bodyRef.value.applyTorque(torque, true);
     }
 

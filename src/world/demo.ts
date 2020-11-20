@@ -76,7 +76,7 @@ export function addDemonstrationEntities(world) {
     x: -floorSize.w * 2 - 3,
     y: 1.5,
     z: 0,
-    yOffset: 1.2,
+    yOffset: 1,
   });
 
   makeThing(world, {
@@ -244,6 +244,7 @@ export function addDemonstrationEntities(world) {
   const avatar = makeEntity(world, "Avatar")
     .add(ThrustController, {
       thrust: 50,
+      torque: 8,
     })
     .add(PointerPlane)
     .add(Transform)
@@ -254,15 +255,15 @@ export function addDemonstrationEntities(world) {
     .add(RigidBody, {
       kind: "DYNAMIC",
       linearDamping: 0.1,
-      angularDamping: 8.5,
-      // mass: 1,
+      angularDamping: 12.5,
+      mass: 0.5,
     })
     .add(Collider, {
       // shape: "BOX",
       // boxSize: new Vector3(1, 1, 1),
       shape: "CAPSULE",
       capsuleHeight: 0.8,
-      capsuleRadius: 0.5,
+      capsuleRadius: 0.36,
     })
     .add(TransformEffects, {
       effects: [
