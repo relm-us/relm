@@ -24,6 +24,7 @@ import {
   makeBall,
   makePileOfBoxes,
   makeYouTube,
+  makeThing,
 } from "./prefab";
 import { keyE, keyQ } from "~/input";
 
@@ -48,13 +49,53 @@ export function addDemonstrationEntities(world) {
     color: "white",
     dynamic: false,
   }).activate();
+  // Westx1
+  makeBox(world, {
+    x: -floorSize.w,
+    y: -3,
+    w: floorSize.w + 0.2,
+    h: 0.5,
+    d: floorSize.d + 0.2,
+    color: "white",
+    dynamic: false,
+  }).activate();
+  // Westx2
+  makeBox(world, {
+    x: -floorSize.w * 2,
+    y: 1,
+    w: floorSize.w + 0.2,
+    h: 0.5,
+    d: floorSize.d + 0.2,
+    color: "white",
+    dynamic: false,
+  }).activate();
+
+  // makePlant(world, { x: -floorSize.w * 2.5, y: 1.5, z: 0 });
+  makeThing(world, {
+    url: "/lamp.glb",
+    x: -floorSize.w * 2 - 3,
+    y: 1.5,
+    z: 0,
+    yOffset: 1.2,
+  });
+
+  makeThing(world, {
+    url: "/couch.glb",
+    x: -floorSize.w * 2,
+    y: 1.5,
+    z: 0,
+    w: 4,
+    h: 2,
+    d: 2,
+    yOffset: 0.15,
+  });
 
   const floorBelowSize = {
     w: 150,
     h: 0.5,
     d: 150,
   };
-  // Create the floor
+  // Create the grass
   makeBox(world, {
     y: -10,
     ...floorBelowSize,

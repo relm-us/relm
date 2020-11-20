@@ -22,12 +22,17 @@ export class NormalizeMeshSystem extends System {
   normalize(object3d) {
     const first = this.getFirstMeshOrGroup(object3d);
 
-    let child = first;
-    do {
-      child.position.set(0, 0, 0);
-      child.scale.set(1, 1, 1);
-      child = child.parent;
-    } while (child !== object3d);
+    if (first === object3d) {
+      first.position.set(0, 0, 0);
+      first.scale.set(1, 1, 1);
+    } else {
+      let child = first;
+      while (child !== object3d) {
+        child.position.set(0, 0, 0);
+        child.scale.set(1, 1, 1);
+        child = child.parent;
+      }
+    }
 
     if (first.type === "Mesh") {
       first.geometry.center();
