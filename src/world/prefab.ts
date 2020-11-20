@@ -188,7 +188,7 @@ export function makeThing(
     })
     .add(Collider, {
       kind: "BOX",
-      boxSize: new Vector3(0.8, 0.8, 0.8),
+      boxSize: new Vector3(w, h, d),
     })
     .activate();
 }

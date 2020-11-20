@@ -85,9 +85,9 @@ export function addDemonstrationEntities(world) {
     y: 1.5,
     z: 0,
     w: 4,
-    h: 2,
-    d: 2,
-    yOffset: 0.15,
+    h: 4,
+    d: 4,
+    yOffset: -0.2,
   });
 
   const floorBelowSize = {
