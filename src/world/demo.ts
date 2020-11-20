@@ -317,7 +317,7 @@ export function addDemonstrationEntities(world) {
 
   const face = makeEntity(world, "Face")
     .add(Transform, {
-      position: new Vector3(0, 0, 0.49),
+      position: new Vector3(0, 0, 0.4),
     })
     .add(HtmlNode, {
       renderable: {
