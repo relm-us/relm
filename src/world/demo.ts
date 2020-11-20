@@ -372,8 +372,6 @@ export function addDemonstrationEntities(world) {
     })
     .add(DirectionalLight, {
       color: 0x553333,
-      // shadowLeft: -24 - 2,
-      // shadowRight: 24 - 2,
       shadowTop: 24 - 10,
       shadowBottom: -24 - 10,
     })
