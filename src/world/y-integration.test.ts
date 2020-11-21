@@ -1,6 +1,6 @@
-import { WorldDoc, EntityElement, ComponentPart } from "./y-integration";
+import { WorldDoc } from "./y-integration";
 import { World } from "hecs";
-import { Transform, Vector3 } from "hecs-plugin-core";
+import CorePlugin, { Transform, Vector3 } from "hecs-plugin-core";
 
 function subscribeSkipInitial(store, callback) {
   let count = 0;
@@ -13,9 +13,9 @@ function subscribeSkipInitial(store, callback) {
 
 describe("WorldDoc", () => {
   let world;
-  let doc;
+  let doc: WorldDoc;
   beforeEach(() => {
-    world = new World();
+    world = new World({ plugins: [CorePlugin] });
     doc = new WorldDoc("test-doc", world);
   });
 
@@ -47,14 +47,17 @@ describe("WorldDoc", () => {
   });
 
   test("adding to the WorldDoc generates entity in ECS", (done) => {
-    subscribeSkipInitial(doc.entities, (value) => {
+    doc.on("entities.added", () => {
       expect(world.entities.entities.size).toEqual(1);
-      const entity = world.entities.entities.entries().next().value;
+      const entity = world.entities.entities.values().next().value;
       const pos = entity.get(Transform).position;
       expect(pos.x).toEqual(1);
       expect(pos.y).toEqual(2);
       expect(pos.z).toEqual(3);
+      done();
     });
+
+    doc.on("entities.deleted", () => {});
 
     doc
       .create("Build-1")
@@ -63,5 +66,27 @@ describe("WorldDoc", () => {
         scale: new Vector3(2, 2, 2),
       })
       .build();
+  });
+
+  test("deleting from WorldDoc removes in ECS", (done) => {
+    let yentity;
+
+    doc.on("entities.added", () => {
+      expect(world.entities.entities.size).toEqual(1);
+    });
+
+    doc.on("entities.deleted", (id) => {
+      expect(world.entities.entities.size).toEqual(0);
+      done();
+    });
+
+    yentity = doc
+      .create("Build-2")
+      .add(Transform, {
+        position: new Vector3(1, 2, 3),
+        scale: new Vector3(2, 2, 2),
+      })
+      .build();
+    doc.destroy(yentity);
   });
 });

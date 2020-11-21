@@ -61,7 +61,7 @@
 		"svelte-icons": "^2.1.0",
 		"svelte-select": "^3.14.1",
 		"three": "0.115.0",
-		"yjs": "^13.4.4"
+		"yjs": "^13.4.5"
 	},
 	"browserslist": [
 		"defaults"

@@ -11,9 +11,11 @@ import {
   YValues,
   YValue,
   yIdToHecsId,
+  addYComponentsToEntity,
 } from "./y-utils";
 // import { WebsocketProvider } from 'y-websocket';
 import { array, map } from "svelt-yjs";
+import EventEmitter from "eventemitter3";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
 
@@ -22,7 +24,7 @@ export type EntityStore = {
   y: YEntities;
 };
 
-export class WorldDoc {
+export class WorldDoc extends EventEmitter {
   static index: Map<string, WorldDoc> = new Map();
 
   // Unique identifier for the world
@@ -41,6 +43,7 @@ export class WorldDoc {
   undoManager: Y.UndoManager;
 
   constructor(name: string, world: World) {
+    super();
     this.name = name;
     this.world = world;
     this.ydoc = new Y.Doc();
@@ -66,74 +69,95 @@ export class WorldDoc {
     return new WorldDocEntityBuilder(this.entities.y, name);
   }
 
+  destroy(yentity: YEntity) {
+    const yId = yentity._item.id;
+    this.entities.y.forEach((yentity, index) => {
+      if (Y.compareIDs(yId, yentity._item.id)) {
+        this.entities.y.delete(index, 1);
+      }
+    });
+  }
+
   _observer(events: Array<Y.YEvent>) {
     for (const event of events) {
       switch (event.path.length) {
         case 0 /* YEntities */:
-          console.log("observation YEntities");
           withArrayEdits(event as Y.YArrayEvent<YEntity>, {
             onAdd: (yId, content) => {
               const entity = this.world.entities.create(
-                content["name"],
+                content.get("name"),
                 yIdToHecsId(yId)
               );
-              console.log("  added:", yId, content, entity);
+              const ycomponents = content.get("components") as YComponents;
+              addYComponentsToEntity(entity, ycomponents);
+              entity.activate();
+
+              // Emitting here makes writing tests easier
+              this.emit("entities.added", entity);
             },
             onDelete: (yId) => {
-              console.log("  deleted", yId);
+              const id = yIdToHecsId(yId);
+              const entity = this.world.entities.getById(id);
+
+              if (entity) {
+                entity.destroy();
+                this.emit("entities.deleted", id);
+              } else {
+                console.warn(`Can't delete entity, not found: ${id}`);
+              }
             },
           });
           break;
         case 1 /* YEntity */:
-          console.log("observation YEntity");
+          // console.log("observation YEntity");
           withMapEdits(event as Y.YMapEvent<string | YComponents>, {
             onAdd(yId, key, content) {
-              console.log("  key add:", yId, key, content);
+              // console.log("  key add:", yId, key, content);
             },
             onUpdate(yId, key, content, oldContent) {
-              console.log("  key update:", yId, key, content, oldContent);
+              // console.log("  key update:", yId, key, content, oldContent);
             },
             onDelete(yId, key) {
-              console.log("  key delete:", yId, key);
+              // console.log("  key delete:", yId, key);
             },
           });
           break;
         case 2 /* YComponents */:
-          console.log("observation YComponents");
+          // console.log("observation YComponents");
           withArrayEdits(event as Y.YArrayEvent<YComponents>, {
             onAdd(yId, content) {
-              console.log("  added:", yId, content);
+              // console.log("  added:", yId, content);
             },
             onDelete(yId) {
-              console.log("  deleted", yId);
+              // console.log("  deleted", yId);
             },
           });
           break;
         case 3 /* YComponent */:
-          console.log("observation YComponent");
+          // console.log("observation YComponent");
           withMapEdits(event as Y.YMapEvent<string | YValues>, {
             onAdd(yId, key, content) {
-              console.log("  key add:", yId, key, content);
+              // console.log("  key add:", yId, key, content);
             },
             onUpdate(yId, key, content, oldContent) {
-              console.log("  key update:", yId, key, content, oldContent);
+              // console.log("  key update:", yId, key, content, oldContent);
             },
             onDelete(yId, key) {
-              console.log("  key delete:", yId, key);
+              // console.log("  key delete:", yId, key);
             },
           });
           break;
         case 4 /* YValues */:
-          console.log("observation YValues");
+          // console.log("observation YValues");
           withMapEdits(event as Y.YMapEvent<YValue>, {
             onAdd(yId, key, content) {
-              console.log("  key add:", yId, key, content);
+              // console.log("  key add:", yId, key, content);
             },
             onUpdate(yId, key, content, oldContent) {
-              console.log("  key update:", yId, key, content, oldContent);
+              // console.log("  key update:", yId, key, content, oldContent);
             },
             onDelete(yId, key) {
-              console.log("  key delete:", yId, key);
+              // console.log("  key delete:", yId, key);
             },
           });
           break;
@@ -195,6 +219,7 @@ export class WorldDocEntityBuilder {
         step(this.entitiesArr);
       }
     }, "WorldDocEntityBuilder");
+
     return this.yentity;
   }
 }

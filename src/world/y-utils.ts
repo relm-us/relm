@@ -42,7 +42,7 @@ export function withArrayEdits<T>(
   if (callbacks.onAdd) {
     for (const item of event.changes.added) {
       for (const content of item.content.getContent()) {
-        callbacks.onAdd(content._item.id, content.toJSON());
+        callbacks.onAdd(content._item.id, content);
       }
     }
   }
@@ -83,5 +83,19 @@ export function withMapEdits<T>(
         }
         break;
     }
+  }
+}
+
+export function addYComponentsToEntity(entity, ycomponents: YComponents) {
+  for (const ycomponent of ycomponents) {
+    const name = ycomponent.get("name");
+    const yvalues: YValues = ycomponent.get("values") as YValues;
+
+    const Component = entity.world.components.getByName(name);
+    if (!Component) {
+      throw new Error(`Component not found: ${name}`);
+    }
+    // TODO: Optimize toJSON/fromJSON shortcut
+    entity.add(Component, undefined, true).fromJSON(yvalues.toJSON());
   }
 }
