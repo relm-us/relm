@@ -6,6 +6,11 @@ import { array, map } from "svelt-yjs";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
 
+export type EntityStore = {
+  subscribe: Function;
+  y: Y.Array<EntityElement>;
+};
+
 export class WorldDoc {
   static index: Map<string, WorldDoc> = new Map();
 
@@ -46,51 +51,45 @@ export class WorldDoc {
    * @param id Unique identifier for the entity
    */
   create(name: string) {
-    // if (!id) id = `${this.world.id}:${this.nextEntityId++}`
     const helper = new EntityElementHelper(name);
-
-    this.entities.y.push([helper.entityElement]);
+    this.entities.y.push([helper.element]);
     return helper;
   }
 }
 
-export type EntityStore = {
-  subscribe: Function;
-  y: Y.Array<EntityElement>;
-};
-
-export type EntityElement = {
-  name: string;
-  components: Y.Array<ComponentElement>;
-};
-
 export class EntityElementHelper {
   name: string;
-  components: Y.Array<ComponentElement>;
+  components: Y.Array<ComponentPart>;
 
   constructor(name: string) {
     this.name = name;
     this.components = new Y.Array();
   }
 
-  get entityElement(): EntityElement {
+  get element(): EntityElement {
     return {
       name: this.name,
       components: this.components,
     };
   }
 
-  add(componentName: string, values: object) {
-    this.components.push([
-      {
-        name: componentName,
-        values,
-      },
-    ]);
+  add(component: any, values: object) {
+    const element: ComponentPart = {
+      name: component.constructor.name,
+      values,
+    };
+    this.components.push([element]);
+
+    return this;
   }
 }
 
-export type ComponentElement = {
+export type EntityElement = {
+  name: string;
+  components: Y.Array<ComponentPart>;
+};
+
+export type ComponentPart = {
   name: string;
   values: object;
 };

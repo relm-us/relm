@@ -1,5 +1,6 @@
-import { WorldDoc, EntityElement, ComponentElement } from "./y-integration";
+import { WorldDoc, EntityElement, ComponentPart } from "./y-integration";
 import { World } from "hecs";
+import { Transform, Vector3 } from "hecs-plugin-core";
 
 function subscribeSkipInitial(store, callback) {
   let count = 0;
@@ -32,5 +33,24 @@ describe("WorldDoc", () => {
 
     const entity = doc.create("test-entity");
     expect(entity.name).toEqual("test-entity");
+  });
+
+  test("create/add syntax", () => {
+    const entity = doc.create("test-entity").add(Transform, {
+      position: new Vector3(1, 2, 3),
+      scale: new Vector3(1, 1, 1),
+    });
+    expect(entity.components.length).toEqual(1);
+  });
+
+  test("adding to the WorldDoc generates entity in ECS", (done) => {
+    subscribeSkipInitial(doc.entities, (value) => {
+      // world.entities...
+    });
+
+    doc.create("test-entity").add(Transform, {
+      position: new Vector3(1, 2, 3),
+      scale: new Vector3(1, 1, 1),
+    });
   });
 });
