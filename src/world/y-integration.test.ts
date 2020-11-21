@@ -16,41 +16,52 @@ describe("WorldDoc", () => {
   let doc;
   beforeEach(() => {
     world = new World();
-    doc = new WorldDoc("test", world);
+    doc = new WorldDoc("test-doc", world);
   });
 
   test("create a WorldDoc", () => {
-    expect(doc.name).toEqual("test");
+    expect(doc.name).toEqual("test-doc");
   });
 
   test("create an entity and add to WorldDoc", (done) => {
     subscribeSkipInitial(doc.entities, (value) => {
       expect(value.length).toEqual(1);
-      expect(value[0].name).toEqual("test-entity");
-      expect(value[0].components.toJSON()).toEqual([]);
+      expect(value[0].get("name")).toEqual("test-entity");
+      expect(value[0].get("components").toJSON()).toEqual([]);
       done();
     });
 
-    const entity = doc.create("test-entity");
-    expect(entity.name).toEqual("test-entity");
+    const entity = doc.create("test-entity").build();
+    expect(entity.get("name")).toEqual("test-entity");
   });
 
-  test("create/add syntax", () => {
-    const entity = doc.create("test-entity").add(Transform, {
-      position: new Vector3(1, 2, 3),
-      scale: new Vector3(1, 1, 1),
-    });
-    expect(entity.components.length).toEqual(1);
+  test("builder syntax", () => {
+    const yentity = doc
+      .create("Box-1")
+      .add(Transform, {
+        position: new Vector3(1, 2, 3),
+      })
+      .build();
+
+    expect(yentity.get("components").length).toEqual(1);
   });
 
   test("adding to the WorldDoc generates entity in ECS", (done) => {
     subscribeSkipInitial(doc.entities, (value) => {
-      // world.entities...
+      expect(world.entities.entities.size).toEqual(1);
+      const entity = world.entities.entities.entries().next().value;
+      const pos = entity.get(Transform).position;
+      expect(pos.x).toEqual(1);
+      expect(pos.y).toEqual(2);
+      expect(pos.z).toEqual(3);
     });
 
-    doc.create("test-entity").add(Transform, {
-      position: new Vector3(1, 2, 3),
-      scale: new Vector3(1, 1, 1),
-    });
+    doc
+      .create("Build-1")
+      .add(Transform, {
+        position: new Vector3(1, 2, 3),
+        scale: new Vector3(2, 2, 2),
+      })
+      .build();
   });
 });
