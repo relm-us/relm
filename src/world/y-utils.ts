@@ -3,8 +3,14 @@ import * as Y from "yjs";
 // YEntities [YEntity]
 export type YEntities = Y.Array<YEntity>;
 
-// YEntity { name: string, components: YComponents }
-export type YEntity = Y.Map<string | YComponents>;
+// YEntity { id: string, name: string, parent: string, children: YChildren, meta: YMeta, components: YComponents }
+export type YEntity = Y.Map<string | YMeta | YChildren | YComponents>;
+
+// YMeta {}
+export type YMeta = Y.Map<string>;
+
+// YChildren [string]
+export type YChildren = Y.Array<string>;
 
 // YComponents [YComponent]
 export type YComponents = Y.Array<YComponent>;
@@ -23,26 +29,24 @@ type YMapChange = {
   oldValue: any;
 };
 
-export function yIdToHecsId(yId) {
-  return `${yId.client}-${yId.clock}`;
-}
+export type YIDSTR = string;
+export type HECSID = string;
 
-export function hecsIdToYId(hecsId) {
-  const parts = hecsId.split("-");
-  return { client: parts[0], clock: parts[1] };
+export function yIdToString(yId: Y.ID): YIDSTR {
+  return `${yId.client}-${yId.clock}`;
 }
 
 export function withArrayEdits<T>(
   event: Y.YArrayEvent<T>,
   callbacks: {
-    onAdd?: (yId: Y.ID, content: T) => void;
+    onAdd?: (content: T) => void;
     onDelete?: (yId: Y.ID) => void;
   }
 ) {
   if (callbacks.onAdd) {
     for (const item of event.changes.added) {
       for (const content of item.content.getContent()) {
-        callbacks.onAdd(content._item.id, content);
+        callbacks.onAdd(content);
       }
     }
   }
@@ -57,33 +61,59 @@ export function withArrayEdits<T>(
 export function withMapEdits<T>(
   event: Y.YMapEvent<T>,
   callbacks: {
-    onAdd?: (yId: Y.ID, key: string, content: T) => void;
-    onUpdate?: (yId: Y.ID, key: string, content: T, oldContent: T) => void;
-    onDelete?: (yId: Y.ID, key: string) => void;
+    onAdd?: (key: string, content: T) => void;
+    onUpdate?: (key: string, content: T, oldContent: T) => void;
+    onDelete?: (key: string, content: T, oldContent: T) => void;
   }
 ) {
   for (const key of event.keysChanged) {
-    const yId: Y.ID = event.target._item.id;
     const value: T = (event.target as Y.Map<T>).get(key);
     const change: YMapChange = event.changes.keys.get(key);
     switch (change.action) {
       case "add":
         if (callbacks.onAdd) {
-          callbacks.onAdd(yId, key, value);
+          callbacks.onAdd(key, value);
         }
         break;
       case "update":
         if (callbacks.onUpdate) {
-          callbacks.onUpdate(yId, key, value, change.oldValue);
+          callbacks.onUpdate(key, value, change.oldValue);
         }
         break;
       case "delete":
         if (callbacks.onDelete) {
-          callbacks.onDelete(yId, key);
+          callbacks.onDelete(key, value, change.oldValue);
         }
         break;
     }
   }
+}
+
+export function yEntityToJSON(yentity: YEntity) {
+  return {
+    id: yentity.get("id") as string,
+    name: yentity.get("name") as string,
+    parent: yentity.get("parent") as string,
+    children: (yentity.get("children") as YChildren).toJSON(),
+    meta: (yentity.get("meta") as YMeta).toJSON(),
+    ...yComponentsToJSON(yentity.get("components") as YComponents),
+  };
+}
+
+export function yComponentsToJSON(ycomponents: YComponents) {
+  let json = {};
+  for (const ycomponent of ycomponents) {
+    json = { ...yComponentToJSON(ycomponent) };
+  }
+  return json;
+}
+
+export function yComponentToJSON(ycomponent: YComponent) {
+  const name = ycomponent.get("name") as string;
+  const yvalues: YValues = ycomponent.get("values") as YValues;
+  return {
+    [name]: yvalues.toJSON(),
+  };
 }
 
 export function addYComponentsToEntity(entity, ycomponents: YComponents) {

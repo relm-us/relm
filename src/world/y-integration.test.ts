@@ -1,6 +1,10 @@
 import { WorldDoc } from "./y-integration";
 import { World } from "hecs";
-import CorePlugin, { Transform, Vector3 } from "hecs-plugin-core";
+import CorePlugin, {
+  WorldTransform,
+  Transform,
+  Vector3,
+} from "hecs-plugin-core";
 
 function subscribeSkipInitial(store, callback) {
   let count = 0;
@@ -87,6 +91,31 @@ describe("WorldDoc", () => {
         scale: new Vector3(2, 2, 2),
       })
       .build();
-    doc.destroy(yentity);
+    doc.destroy(yentity._item.id);
+  });
+
+  test("add component", (done) => {
+    const yentity = doc
+      .create("Box-1")
+      .add(Transform, {
+        position: new Vector3(1, 2, 3),
+      })
+      .build();
+
+    expect(yentity.get("components").length).toEqual(1);
+
+    doc.on("components.added", () => {
+      console.log("test component added");
+      expect(world.entities.entities.size).toEqual(1);
+      const entity = world.entities.entities.values().next().value;
+      expect(entity.components.size).toEqual(2);
+      done();
+    });
+
+    const yId = yentity._item.id;
+    console.log("YEntity ID", yId);
+    doc.addComponent(yId, WorldTransform, {
+      position: new Vector3(1, 0, 0),
+    });
   });
 });
