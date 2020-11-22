@@ -8,6 +8,14 @@ import {
   YComponents,
   YComponent,
   YValues,
+  YEntity,
+  YEntities,
+  applyDiffToYEntity,
+  Diff,
+  DiffKind,
+  yEntityToJSON,
+  yComponentToJSON,
+  yComponentsToJSON,
 } from "./y-utils";
 
 describe("y-utils", () => {

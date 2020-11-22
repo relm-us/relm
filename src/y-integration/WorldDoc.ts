@@ -1,10 +1,11 @@
 import { World } from "~/types/hecs/World";
 import { Component } from "hecs";
+import { DeepDiff } from "deep-diff";
 
 import * as Y from "yjs";
+import { yIdToString } from "./utils";
+import { withArrayEdits, withMapEdits } from "./observeUtils";
 import {
-  withArrayEdits,
-  withMapEdits,
   YEntities,
   YEntity,
   YMeta,
@@ -15,142 +16,16 @@ import {
   YValue,
   YIDSTR,
   HECSID,
-  yIdToString,
-  yEntityToJSON,
-  yComponentToJSON,
-  yComponentsToJSON,
-} from "./y-utils";
+} from "./types";
+import { yEntityToJSON, yComponentToJSON } from "./yToJson";
+import { jsonToYEntity } from "./jsonToY";
+
 import EventEmitter from "eventemitter3";
 import { uuidv4 } from "~/utils/uuid";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
 
-class YComponentManager {
-  yEntityManager: YEntityManager;
-  ycomponent: YComponent;
-
-  constructor(yEntityManager: YEntityManager, ycomponent: YComponent) {
-    this.yEntityManager = yEntityManager;
-    this.ycomponent = ycomponent;
-  }
-
-  update(key, value) {
-    // const component = new Component(null, values);
-    // createYComponent(this.ycomponents, Component.name, component.toJSON());
-  }
-}
-class YEntityManager {
-  worldDoc: WorldDoc;
-
-  yentity: YEntity;
-  ychildren: YChildren;
-  ymeta: YMeta;
-  ycomponents: YComponents;
-
-  ycomponentManagers: WeakMap<YComponent, YComponentManager>;
-
-  constructor(worldDoc: WorldDoc) {
-    this.worldDoc = worldDoc;
-  }
-
-  initYEntity() {
-    this.yentity = new Y.Map();
-    this.ychildren = new Y.Array();
-    this.ymeta = new Y.Map();
-    this.ycomponents = new Y.Array();
-
-    this.ycomponentManagers = new WeakMap();
-
-    return this.yentity;
-  }
-
-  setYEntity(yentity) {
-    this.yentity = yentity;
-    this.ychildren = yentity.get("children") as YChildren;
-    this.ymeta = yentity.get("meta") as YMeta;
-    this.ycomponents = yentity.get("components") as YComponents;
-
-    this.ycomponentManagers = new WeakMap();
-
-    return this.yentity;
-  }
-
-  create(name: string, id: string = uuidv4()) {
-    if (!this.worldDoc.isTransacting()) {
-      throw new Error(`Must wrap 'create' inside transact()`);
-    }
-    if (!this.yentity) {
-      throw new Error(`Must first initYEntity or setYEntity`);
-    }
-
-    this.worldDoc.entities.push([this.yentity]);
-
-    this.yentity.set("id", id);
-    this.yentity.set("name", name);
-    this.yentity.set("parent", null);
-    this.yentity.set("children", this.ychildren);
-    this.yentity.set("meta", this.ymeta);
-    this.yentity.set("components", this.ycomponents);
-  }
-
-  get(Component) {
-    const ycomponent = findInYArray(
-      this.ycomponents,
-      (ycomponent) => ycomponent.get("name") === Component.name
-    );
-    return this.getOrCreateYComponentManager(ycomponent);
-  }
-
-  getOrCreateYComponentManager(ycomponent) {
-    let mgr = this.ycomponentManagers.get(ycomponent);
-    if (!mgr) {
-      mgr = new YComponentManager(this, ycomponent);
-    }
-    return mgr;
-  }
-
-  add(Component, values) {
-    if (!this.worldDoc.isTransacting()) {
-      throw new Error(`Must wrap 'add' inside transact()`);
-    }
-
-    const component = new Component(null, values);
-    createYComponent(this.ycomponents, Component.name, component.toJSON());
-
-    return this;
-  }
-
-  remove(Component) {
-    if (!this.worldDoc.isTransacting()) {
-      throw new Error(`Must wrap 'add' inside transact()`);
-    }
-
-    findInYArray(
-      this.ycomponents,
-      (ycomponent) => ycomponent.get("name") === Component.name,
-      (_ycomponent, i) => this.ycomponents.delete(i, 1)
-    );
-
-    return this;
-  }
-
-  //TODO: setParent, getParents, getChildren, activate(?)
-}
-
-function findInYArray<T>(
-  yarray: Y.Array<T>,
-  condition: (item: T) => boolean,
-  action?: (item: T, index: number) => void
-) {
-  for (let i = 0; i < yarray.length; i++) {
-    const item = yarray.get(i);
-    if (condition(item)) {
-      if (action) action(item, i);
-      return item;
-    }
-  }
-}
-
+type Entity = any;
 export class WorldDoc extends EventEmitter {
   static index: Map<string, WorldDoc> = new Map();
 
@@ -168,8 +43,6 @@ export class WorldDoc extends EventEmitter {
   // collected when entities are removed from the Y.Doc.
   entities: YEntities;
 
-  yEntityManager: YEntityManager;
-
   // A record of Y.IDs (as strings) mapped to HECS IDs; used for deletion
   yids: Map<YIDSTR, HECSID>;
 
@@ -185,7 +58,6 @@ export class WorldDoc extends EventEmitter {
     this.world = world;
     this.ydoc = new Y.Doc();
     this.entities = this.ydoc.getArray("entities");
-    this.yEntityManager = new YEntityManager(this);
     this.yids = new Map();
     this.hids = new Map();
     this.undoManager = new Y.UndoManager([this.entities], {
@@ -206,34 +78,30 @@ export class WorldDoc extends EventEmitter {
     return this.ydoc._transaction !== null;
   }
 
-  /**
-   * Create an entity
-   *
-   * @param name Name of the entity
-   * @param id Unique identifier for the entity
-   */
-  create(name: string, id: string = uuidv4()) {
-    const yentity = this.yEntityManager.initYEntity();
-    this.hids.set(id, yentity);
-
-    this.yEntityManager.create(name, id);
-
-    return this.yEntityManager;
-  }
-
-  getById(id: HECSID) {
-    const yentity = this.hids.get(id);
-    this.yEntityManager.setYEntity(yentity);
-
-    return this.yEntityManager;
-  }
-
-  destroy(yId: Y.ID) {
-    this.entities.forEach((yentity, index) => {
-      if (Y.compareIDs(yId, yentity._item.id)) {
-        this.entities.delete(index, 1);
-      }
+  add(entity: Entity) {
+    this.ydoc.transact(() => {
+      const data = entity.toJSON();
+      const yentity = jsonToYEntity(data);
+      this.entities.push([yentity]);
     });
+  }
+
+  captureChanges(entity: Entity, changes: Function) {
+    const dataBefore = entity.toJSON();
+    console.log("dataBefore", dataBefore);
+    changes();
+    const dataAfter = entity.toJSON();
+    console.log("dataAfter", dataAfter);
+    const yentity: YEntity = this.hids.get(entity.id);
+    // https://github.com/flitbit/diff
+    DeepDiff(dataBefore, dataAfter).forEach((delta) => {
+      console.log("delta", delta, JSON.stringify(delta));
+    });
+    // findInYArray(
+    //   this.ycomponents,
+    //   (ycomponent) => ycomponent.get("name") === Component.name,
+    //   (_ycomponent, i) => this.ycomponents.delete(i, 1)
+    // );
   }
 
   getEntityFromEventPath(path) {
@@ -262,15 +130,13 @@ export class WorldDoc extends EventEmitter {
                 );
                 return;
               }
-              console.log("root/onAdd");
+              console.log("root/onAdd", yentity.toJSON());
 
               // Convert YEntity hierarchy to HECS-compatible JSON
               const data = yEntityToJSON(yentity);
-              console.log("new yentity", data);
 
               // Create a HECS entity and immediately initialize it with data
               const entity = this.world.entities.create().fromJSON(data);
-              console.log("new entity", entity);
 
               // Keep map of Y.ID to entity.id for potential later deletion
               this.yids.set(yid, entity.id);
@@ -385,49 +251,3 @@ export class WorldDoc extends EventEmitter {
     }
   }
 }
-
-function createYComponent(
-  ycomponents: YComponents,
-  componentName: string,
-  componentAttrs: object
-) {
-  const ycomponent: YComponent = new Y.Map();
-
-  ycomponents.push([ycomponent]);
-
-  ycomponent.set("name", componentName);
-
-  const yvalues: YValues = new Y.Map();
-  ycomponent.set("values", yvalues);
-
-  for (const [key, prop] of Object.entries(componentAttrs)) {
-    // console.log("createYComponent yvalues", key, prop);
-    yvalues.set(key, prop as YValue);
-  }
-
-  return ycomponent;
-}
-
-/*
-worldDoc.transact((doc) => {
-  doc
-    .create("Box")
-    .add(Transform, {
-      position: new Vector3(1, 2, 3),
-      scale: new Vector3(2, 2, 2),
-    })
-    .add(Shape, {
-      kind: "SPHERE",
-      sphereRadius: 1,
-    });
-});
-worldDoc.transact((doc) => {
-  const entity = doc.getById("0:1");
-  entity.add(Collider, {
-    shape: "BOX",
-    boxSize: new Vector3(1, 1, 1),
-  });
-  const shape = entity.get(Shape);
-  shape.update("kind", "BOX");
-});
-*/

@@ -5,27 +5,60 @@
     Transform,
     Vector3,
   } from "hecs-plugin-core";
-  import { WorldDoc } from "./world/y-integration";
+  import ThreePlugin, { Shape } from "hecs-plugin-three";
+  import TransformEffectsPlugin, {
+    TransformEffects,
+  } from "~/ecs/plugins/transform-effects";
+  import { WorldDoc } from "./y-integration/WorldDoc";
   import { World } from "hecs";
   import { uuidv4 } from "~/utils/uuid";
 
   (window as any).Y = Y;
 
-  const world = new World({ plugins: [CorePlugin] });
+  const world = new World({
+    plugins: [CorePlugin, ThreePlugin, TransformEffectsPlugin],
+  });
   (window as any).world = world;
 
   const worldDoc = new WorldDoc("sandbox", world);
   (window as any).worldDoc = worldDoc;
 
   let id = uuidv4();
-  worldDoc.transact((doc) => {
-    doc.create("Box-1", id).add(Transform, {
-      position: new Vector3(1, 2, 3),
-    });
+  const entity = world.entities.create("Box-1");
+  entity.add(TransformEffects, {
+    effects: [
+      {
+        function: "oscillate-scale",
+        params: {
+          phase: 0,
+          min: new Vector3(0.99, 1, 0.99),
+          max: new Vector3(1.02, 1, 1.02),
+        },
+      },
+    ],
   });
-  worldDoc.transact((doc) => {
-    doc.getById(id).add(Transform, {
-      position: new Vector3(1, 2, 3),
-    });
+  worldDoc.add(entity);
+  worldDoc.captureChanges(entity, () => {
+    // entity.remove(Transform);
+    // entity.add(Shape, {
+    //   kind: "BOX",
+    //   boxSize: new Vector3(1, 2, 1),
+    // });
+    // const transform = entity.get(Transform);
+    // transform.position.set(1, 2, 4);
   });
+  // worldDoc.transact((doc) => {
+  //   doc.create("Box-1", id).add(Transform, {
+  //     position: new Vector3(1, 2, 3),
+  //   });
+  // });
+  // worldDoc.transact((doc) => {
+  //   const component = doc.getById(id).get(Transform)
+  //   component.
+  // });
+  // worldDoc.transact((doc) => {
+  //   doc.getById(id).add(Transform, {
+  //     position: new Vector3(1, 2, 3),
+  //   });
+  // });
 </script>
