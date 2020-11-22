@@ -26,7 +26,7 @@ describe("WorldDoc", () => {
   test("create a WorldDoc", () => {
     expect(doc.name).toEqual("test-doc");
   });
-
+  /*
   test("create an entity and add to WorldDoc", (done) => {
     subscribeSkipInitial(doc.entities, (value) => {
       expect(value.length).toEqual(1);
@@ -118,4 +118,5 @@ describe("WorldDoc", () => {
       position: new Vector3(1, 0, 0),
     });
   });
+  */
 });

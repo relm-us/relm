@@ -5,18 +5,9 @@
     Transform,
     Vector3,
   } from "hecs-plugin-core";
-  import {
-    withArrayEdits,
-    withMapEdits,
-    YEntities,
-    YEntity,
-    YComponents,
-    YComponent,
-    YValues,
-    YValue,
-  } from "./world/y-utils";
   import { WorldDoc } from "./world/y-integration";
   import { World } from "hecs";
+  import { uuidv4 } from "~/utils/uuid";
 
   (window as any).Y = Y;
 
@@ -26,15 +17,15 @@
   const worldDoc = new WorldDoc("sandbox", world);
   (window as any).worldDoc = worldDoc;
 
-  const yentity = worldDoc
-    .create("Box-1")
-    .add(Transform, {
+  let id = uuidv4();
+  worldDoc.transact((doc) => {
+    doc.create("Box-1", id).add(Transform, {
       position: new Vector3(1, 2, 3),
-    })
-    .build();
-
-  worldDoc.addComponent(yentity._item.id, WorldTransform, {
-    position: new Vector3(1, 0, 0),
+    });
   });
-  // worldDoc.destroy(yentity._item.id);
+  worldDoc.transact((doc) => {
+    doc.getById(id).add(Transform, {
+      position: new Vector3(1, 2, 3),
+    });
+  });
 </script>
