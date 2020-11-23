@@ -1,34 +1,36 @@
-export enum DiffKind {
-  Add = "N",
-  Update = "E",
-  Delete = "D",
-  Array = "A",
-}
+export type Diff = Array<Change>;
 
-export type Diff = AddDiff | UpdateDiff | DeleteDiff | ArrayDiff;
+export type Change = AddChange | UpdateChange | DeleteChange | ArrayChange;
 
-export type AddDiff = {
+export type AddChange = {
   kind: "N";
   path: Array<string | number>;
   rhs: any;
 };
 
-export type UpdateDiff = {
+export type UpdateChange = {
   kind: "E";
   path: Array<string | number>;
   lhs: any;
   rhs: any;
 };
 
-export type DeleteDiff = {
+export type DeleteChange = {
   kind: "D";
   path: Array<string | number>;
   lhs: any;
 };
 
-export type ArrayDiff = {
+export type ArrayChange = {
   kind: "A";
   path: Array<string>;
   index: number;
-  item: AddDiff | UpdateDiff | DeleteDiff;
+  item: AddChange | UpdateChange | DeleteChange;
 };
+
+export enum ChangeKind {
+  Add = "N",
+  Update = "E",
+  Delete = "D",
+  Array = "A",
+}

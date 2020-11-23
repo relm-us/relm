@@ -3,7 +3,7 @@ import { Component } from "hecs";
 import { DeepDiff } from "deep-diff";
 
 import * as Y from "yjs";
-import { yIdToString } from "./utils";
+import { isEntityAttribute, yIdToString } from "./utils";
 import { withArrayEdits, withMapEdits } from "./observeUtils";
 import {
   YEntities,
@@ -21,7 +21,7 @@ import { yEntityToJSON, yComponentToJSON } from "./yToJson";
 import { jsonToYEntity } from "./jsonToY";
 
 import EventEmitter from "eventemitter3";
-import { uuidv4 } from "~/utils/uuid";
+import { applyChangeToYEntity } from "./applyDiff";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
 
@@ -86,22 +86,23 @@ export class WorldDoc extends EventEmitter {
     });
   }
 
-  captureChanges(entity: Entity, changes: Function) {
+  captureChanges(entity: Entity, makeChanges: Function) {
     const dataBefore = entity.toJSON();
-    console.log("dataBefore", dataBefore);
-    changes();
+    makeChanges();
     const dataAfter = entity.toJSON();
-    console.log("dataAfter", dataAfter);
+
     const yentity: YEntity = this.hids.get(entity.id);
     // https://github.com/flitbit/diff
-    DeepDiff(dataBefore, dataAfter).forEach((delta) => {
-      console.log("delta", delta, JSON.stringify(delta));
-    });
-    // findInYArray(
-    //   this.ycomponents,
-    //   (ycomponent) => ycomponent.get("name") === Component.name,
-    //   (_ycomponent, i) => this.ycomponents.delete(i, 1)
-    // );
+    const diff = DeepDiff(dataBefore, dataAfter);
+    if (diff) {
+      this.transact(() => {
+        diff.forEach((change) => {
+          applyChangeToYEntity(change, yentity);
+        });
+      });
+    } else {
+      console.log("no change");
+    }
   }
 
   getEntityFromEventPath(path) {
@@ -118,136 +119,116 @@ export class WorldDoc extends EventEmitter {
 
   _observer(events: Array<Y.YEvent>) {
     for (const event of events) {
-      switch (event.path.length) {
-        case 0 /* YEntities */:
-          withArrayEdits(event as Y.YArrayEvent<YEntity>, {
-            onAdd: (yentity) => {
-              const yid = yIdToString(yentity._item.id);
-              if (this.yids.has(yid)) {
-                console.warn(
-                  `entity already exists, won't add`,
-                  this.yids.get(yid)
-                );
-                return;
-              }
-              console.log("root/onAdd", yentity.toJSON());
-
-              // Convert YEntity hierarchy to HECS-compatible JSON
-              const data = yEntityToJSON(yentity);
-
-              // Create a HECS entity and immediately initialize it with data
-              const entity = this.world.entities.create().fromJSON(data);
-
-              // Keep map of Y.ID to entity.id for potential later deletion
-              this.yids.set(yid, entity.id);
-              this.hids.set(entity.id, yentity);
-
-              // let ECS know this entity has had all of its initial components added
-              entity.activate();
-
-              // Signal completion of onAdd for tests
-              this.emit("entities.added", entity);
-            },
-            onDelete: (yId) => {
-              console.log("root/onDelete");
-              const id = this.yids.get(yIdToString(yId));
-              const entity = this.world.entities.getById(id);
-
-              if (entity) {
-                entity.destroy();
-                this.emit("entities.deleted", id);
-              } else {
-                console.warn(`Can't delete entity, not found: ${id}`);
-              }
-            },
-          });
-          break;
-        case 1 /* YEntity */:
-          // console.log("observation YEntity");
-          withMapEdits(event as Y.YMapEvent<string | YComponents>, {
-            onAdd: (key, ycomponents) => {
-              throw new Error(`should add ${key} at initialization instead`);
-              // const entity = this.world.entities.getById(yIdToHecsId(yId));
-
-              // if (key === "components") {
-              //   const ycomponents = content as YComponents;
-              //   ycomponents.forEach((ycomponent) => {
-              //     const key = ycomponent.get("name");
-              //     const values = ycomponent.get("values") as YValues;
-              //     const Component = this.world.components.getByName(key);
-
-              //     entity.add(Component, values.toJSON());
-              //   });
-              //   this.emit("components.added", ycomponents);
-              // } else {
-              //   throw new Error(
-              //     "add attr other than components not yet supported"
-              //   );
-              // }
-            },
-            onUpdate: (key, content, oldContent) => {
-              console.log("YEntity/onUpdate", key, content, oldContent);
-            },
-            onDelete: (key, content, oldContent) => {
-              console.log("YEntity/onDelete", key, content, oldContent);
-            },
-          });
-          break;
-        case 2 /* YComponents */:
-          // console.log("observation YComponents");
+      if (event.path.length === 0) {
+        // Adding to or deleting from YEntities
+        withArrayEdits(event as Y.YArrayEvent<YEntity>, {
+          onAdd: (yentity) => {
+            this.addYEntity(yentity);
+          },
+          onDelete: (yid) => {
+            this.deleteYEntity(yid);
+          },
+        });
+      } else if (event.path.length === 2) {
+        const entity = this.getEntityFromEventPath(event.path);
+        console.log("event.path.length = 2", event.path, entity);
+        if (isEntityAttribute(event.path[1] as string)) {
+          const attr = event.path[1] as string;
+          if (attr === "name") {
+            withMapEdits(event as Y.YMapEvent<string>, {
+              onUpdate: (key, content) => {
+                entity.name = content;
+              },
+            });
+          } else if (attr === "parent") {
+            withMapEdits(event as Y.YMapEvent<string>, {
+              onUpdate: (key, parentEntityId: string) => {
+                const parent = this.world.entities.getById(parentEntityId);
+                entity.setParent(parent);
+              },
+            });
+          } else if (attr === "children") {
+            withArrayEdits(event as Y.YArrayEvent<string>, {
+              onAdd: (childEntityId: string) => {
+                const child = this.world.entities.getById(childEntityId);
+                child.setParent(entity);
+              },
+              onDelete: (yid) => {
+                console.log("update children onDelete", yid);
+              },
+            });
+          } else {
+            throw new Error(`Can't update attribute: ${attr}`);
+          }
+        } else {
+          // Adding to or deleting from YComponents
           withArrayEdits(event as Y.YArrayEvent<YComponent>, {
             onAdd: (ycomponent) => {
-              console.log("YComponents/onAdd");
-              const entity = this.getEntityFromEventPath(event.path);
-
-              // Get the right Component class
-              const key = ycomponent.get("name");
-              const Component = this.world.components.getByName(key);
-
-              // Initialize from raw JSON
-              const data = yComponentToJSON(ycomponent);
-              const component = new Component(this.world).fromJSON(data);
-
-              entity.add(component);
+              this.addYComponent(ycomponent, entity);
             },
-            onDelete: (yId) => {
-              console.log("YComponents/onDelete", yId);
+            onDelete: (yid) => {
+              this.deleteYComponent(entity, event.path[1] as string);
             },
           });
-          break;
-        case 3 /* YComponent */:
-          // console.log("observation YComponent");
-          withMapEdits(event as Y.YMapEvent<string | YValues>, {
-            onAdd: (key, content) => {
-              console.log("YComponent/onAdd", key, content);
-            },
-            onUpdate: (key, content, oldContent) => {
-              console.log("YComponent/onUpdate", key, content, oldContent);
-            },
-            onDelete: (key, content, oldContent) => {
-              console.log("YComponent/onDelete", key, content, oldContent);
-            },
-          });
-          break;
-        case 4 /* YValues */:
-          // console.log("observation YValues");
-          withMapEdits(event as Y.YMapEvent<YValue>, {
-            onAdd: (key, content) => {
-              console.log("YValues/onAdd", key, content);
-            },
-            onUpdate: (key, content, oldContent) => {
-              console.log("YValues/onUpdate", key, content, oldContent);
-            },
-            onDelete: (key, content, oldContent) => {
-              console.log("YValues/onDelete", key, content, oldContent);
-            },
-          });
-          break;
-        default:
-          throw new Error(
-            `deepObserve too deep: ${JSON.stringify(event.path)}`
-          );
+        }
       }
     }
+  }
+
+  addYEntity(yentity: YEntity) {
+    const yid = yIdToString(yentity._item.id);
+    if (this.yids.has(yid)) {
+      console.warn(`entity already exists, won't add`, this.yids.get(yid));
+      return;
+    }
+
+    // Convert YEntity hierarchy to HECS-compatible JSON
+    const data = yEntityToJSON(yentity);
+
+    // Create a HECS entity and immediately initialize it with data
+    const entity = this.world.entities.create().fromJSON(data);
+
+    // Keep map of Y.ID to entity.id for potential later deletion
+    this.yids.set(yid, entity.id);
+    this.hids.set(entity.id, yentity);
+
+    // let ECS know this entity has had all of its initial components added
+    entity.activate();
+
+    // Signal completion of onAdd for tests
+    this.emit("entities.added", entity);
+  }
+
+  deleteYEntity(yid: Y.ID) {
+    const id = this.yids.get(yIdToString(yid));
+    const entity = this.world.entities.getById(id);
+
+    if (entity) {
+      entity.destroy();
+
+      // Signal completion of onDelete for tests
+      this.emit("entities.deleted", id);
+    } else {
+      console.warn(`Can't delete entity, not found: ${id}`);
+    }
+  }
+
+  addYComponent(ycomponent: YComponent, entity: Entity) {
+    // Get the right Component class
+    const key = ycomponent.get("name");
+    const Component = this.world.components.getByName(key);
+
+    // Initialize from raw JSON
+    const data = yComponentToJSON(ycomponent);
+    const component = new Component(this.world).fromJSON(data);
+
+    entity.add(component);
+
+    // Signal completion of onAdd for tests
+    this.emit("ycomponents.added", component, entity);
+  }
+
+  deleteYComponent(entity: Entity, componentName: string) {
+    console.log("deleteYComponent", componentName, entity.id);
   }
 }

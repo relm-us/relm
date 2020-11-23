@@ -25,26 +25,36 @@
 
   let id = uuidv4();
   const entity = world.entities.create("Box-1");
-  entity.add(TransformEffects, {
-    effects: [
-      {
-        function: "oscillate-scale",
-        params: {
-          phase: 0,
-          min: new Vector3(0.99, 1, 0.99),
-          max: new Vector3(1.02, 1, 1.02),
-        },
-      },
-    ],
-  });
+  const entity2 = world.entities.create("Child");
+  // entity.add(Shape, {
+  //   kind: "BOX",
+  //   boxSize: new Vector3(1, 2, 1),
+  // });
+  // entity.add(TransformEffects, {
+  //   effects: [
+  //     {
+  //       function: "oscillate-scale",
+  //       params: {
+  //         phase: 0,
+  //         min: new Vector3(0.99, 1, 0.99),
+  //         max: new Vector3(1.02, 1, 1.02),
+  //       },
+  //     },
+  //   ],
+  // });
   worldDoc.add(entity);
+  worldDoc.add(entity2);
   worldDoc.captureChanges(entity, () => {
+    entity2.setParent(entity);
+    // const shape = entity.get(Shape);
+    // shape.sphereRadius = 10;
     // entity.remove(Transform);
     // entity.add(Shape, {
     //   kind: "BOX",
     //   boxSize: new Vector3(1, 2, 1),
     // });
-    // const transform = entity.get(Transform);
+    // const effects = entity.get(TransformEffects);
+    // effects.effects[0].params.phase = 1;
     // transform.position.set(1, 2, 4);
   });
   // worldDoc.transact((doc) => {

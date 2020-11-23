@@ -1,6 +1,6 @@
 import * as Y from "yjs";
 
-import { DiffKind, Diff } from "./diffTypes";
+import { ChangeKind, Change } from "./diffTypes";
 
 import { yComponentsToJSON } from "./yToJson";
 
@@ -15,10 +15,10 @@ import {
   YValue,
 } from "./types";
 
-import { applyDiffToYEntity } from "./applyDiff";
+import { applyChangeToYEntity } from "./applyDiff";
 import { jsonToYComponent, jsonToYComponents } from "./jsonToY";
 
-describe("applyDiffToYEntity", () => {
+describe("applyChangeToYEntity", () => {
   let ydoc: Y.Doc, yentity: YEntity;
 
   beforeEach(() => {
@@ -28,26 +28,38 @@ describe("applyDiffToYEntity", () => {
     yentities.push([yentity]);
   });
 
-  test("update attributes", () => {
-    const diff: Diff = {
+  test("update name attribute", () => {
+    const change: Change = {
       kind: "E",
       path: ["name"],
       lhs: "Box-1",
       rhs: "Not-Box-1",
     };
     expect(yentity.get("name")).toBeUndefined();
-    applyDiffToYEntity(diff, yentity);
+    applyChangeToYEntity(change, yentity);
     expect(yentity.get("name")).toEqual("Not-Box-1");
   });
 
+  // test("update children attribute", () => {
+  //   const change: Change = {
+  //     kind: "E",
+  //     path: ["name"],
+  //     lhs: "Box-1",
+  //     rhs: "Not-Box-1",
+  //   };
+  //   expect(yentity.get("name")).toBeUndefined();
+  //   applyChangeToYEntity(change, yentity);
+  //   expect(yentity.get("name")).toEqual("Not-Box-1");
+  // });
+
   test("add component", () => {
-    const diff: Diff = {
+    const change: Change = {
       kind: "N",
       path: ["Transform"],
       rhs: { position: [1, 2, 3], rotation: [0, 0, 0, 1], scale: [1, 1, 1] },
     };
     expect(yentity.get("components")).toBeUndefined();
-    applyDiffToYEntity(diff, yentity);
+    applyChangeToYEntity(change, yentity);
     const data = yComponentsToJSON(yentity.get("components") as YComponents);
     expect(data).toEqual({
       Transform: {
@@ -59,7 +71,7 @@ describe("applyDiffToYEntity", () => {
   });
 
   test("delete component", () => {
-    const diff: Diff = {
+    const change: Change = {
       kind: "D",
       path: ["Transform"],
       lhs: {},
@@ -68,14 +80,33 @@ describe("applyDiffToYEntity", () => {
     yentity.set("components", ycomponents);
 
     expect((yentity.get("components") as YComponents).get(0)).toBeDefined();
-    applyDiffToYEntity(diff, yentity);
+    applyChangeToYEntity(change, yentity);
 
     const data = yComponentsToJSON(yentity.get("components") as YComponents);
     expect(data).toEqual({});
   });
 
-  test("update component property value", () => {
-    const diff: Diff = {
+  test("update primitive component property value", () => {
+    const change: Change = {
+      kind: "E",
+      lhs: 0.5,
+      path: ["Shape", "sphereRadius"],
+      rhs: 10,
+    };
+    const ycomponents: YComponents = jsonToYComponents({
+      Shape: { sphereRadius: 0.5 },
+    });
+    yentity.set("components", ycomponents);
+
+    expect((yentity.get("components") as YComponents).get(0)).toBeDefined();
+    applyChangeToYEntity(change, yentity);
+
+    const data = yComponentsToJSON(yentity.get("components") as YComponents);
+    expect(data).toEqual({ Shape: { sphereRadius: 10 } });
+  });
+
+  test("update compound component property value", () => {
+    const change: Change = {
       kind: "E",
       path: ["Transform", "position", 2],
       lhs: 3,
@@ -87,7 +118,7 @@ describe("applyDiffToYEntity", () => {
     yentity.set("components", ycomponents);
 
     expect((yentity.get("components") as YComponents).get(0)).toBeDefined();
-    applyDiffToYEntity(diff, yentity);
+    applyChangeToYEntity(change, yentity);
 
     const data = yComponentsToJSON(yentity.get("components") as YComponents);
     expect(data).toEqual({ Transform: { position: [1, 2, 4] } });
