@@ -42,21 +42,24 @@
   //     },
   //   ],
   // });
-  worldDoc.add(entity);
-  worldDoc.add(entity2);
-  worldDoc.captureChanges(entity, () => {
-    entity2.setParent(entity);
-    // const shape = entity.get(Shape);
-    // shape.sphereRadius = 10;
-    // entity.remove(Transform);
-    // entity.add(Shape, {
-    //   kind: "BOX",
-    //   boxSize: new Vector3(1, 2, 1),
-    // });
-    // const effects = entity.get(TransformEffects);
-    // effects.effects[0].params.phase = 1;
-    // transform.position.set(1, 2, 4);
-  });
+  worldDoc.update(entity);
+  worldDoc.update(entity2);
+
+  entity2.setParent(entity);
+  worldDoc.update(entity);
+  worldDoc.update(entity2);
+  // worldDoc.captureChanges(entity, () => {
+  // const shape = entity.get(Shape);
+  // shape.sphereRadius = 10;
+  // entity.remove(Transform);
+  // entity.add(Shape, {
+  //   kind: "BOX",
+  //   boxSize: new Vector3(1, 2, 1),
+  // });
+  // const effects = entity.get(TransformEffects);
+  // effects.effects[0].params.phase = 1;
+  // transform.position.set(1, 2, 4);
+  // });
   // worldDoc.transact((doc) => {
   //   doc.create("Box-1", id).add(Transform, {
   //     position: new Vector3(1, 2, 3),

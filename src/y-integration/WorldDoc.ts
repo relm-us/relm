@@ -1,6 +1,7 @@
 import { World } from "~/types/hecs/World";
 import { Component } from "hecs";
 import { DeepDiff } from "deep-diff";
+import { IS_NODE_TEST } from "~/utils/IS_BROWSER";
 
 import * as Y from "yjs";
 import { isEntityAttribute, yIdToString } from "./utils";
@@ -22,6 +23,7 @@ import { jsonToYEntity } from "./jsonToY";
 
 import EventEmitter from "eventemitter3";
 import { applyChangeToYEntity } from "./applyDiff";
+import { Change } from "./diffTypes";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
 
@@ -78,11 +80,37 @@ export class WorldDoc extends EventEmitter {
     return this.ydoc._transaction !== null;
   }
 
+  // Update WorldDoc based on any new or updated entity
+  update(entity: Entity) {
+    if (this.hids.has(entity.id)) {
+      /* Update existing WorldDoc entity */
+
+      const yentity = this.hids.get(entity.id);
+      const before = yEntityToJSON(yentity);
+      const after = entity.toJSON();
+
+      const diff = DeepDiff(before, after);
+      if (diff) {
+        this.transact(() => {
+          diff.forEach((change: Change) => {
+            applyChangeToYEntity(change, yentity);
+          });
+        });
+      }
+    } else {
+      /* This entity is new to WorldDoc */
+
+      this.add(entity);
+    }
+  }
+
   add(entity: Entity) {
     this.ydoc.transact(() => {
       const data = entity.toJSON();
       const yentity = jsonToYEntity(data);
       this.entities.push([yentity]);
+      this.yids.set(yIdToString(yentity._item.id), entity.id);
+      this.hids.set(entity.id, yentity);
     });
   }
 
@@ -92,6 +120,7 @@ export class WorldDoc extends EventEmitter {
     const dataAfter = entity.toJSON();
 
     const yentity: YEntity = this.hids.get(entity.id);
+
     // https://github.com/flitbit/diff
     const diff = DeepDiff(dataBefore, dataAfter);
     if (diff) {
@@ -117,7 +146,15 @@ export class WorldDoc extends EventEmitter {
     }
   }
 
-  _observer(events: Array<Y.YEvent>) {
+  _observer(events: Array<Y.YEvent>, transaction: Y.Transaction) {
+    // If this is a local event, we should ignore it because the "diff"
+    // represented by this YEvent has already been applied to the HECS
+    // world. Don't ignore events in 'test' environment even though they
+    // are local.
+    if (transaction.local && !IS_NODE_TEST) {
+      return;
+    }
+
     for (const event of events) {
       if (event.path.length === 0) {
         // Adding to or deleting from YEntities
@@ -131,7 +168,7 @@ export class WorldDoc extends EventEmitter {
         });
       } else if (event.path.length === 2) {
         const entity = this.getEntityFromEventPath(event.path);
-        console.log("event.path.length = 2", event.path, entity);
+
         if (isEntityAttribute(event.path[1] as string)) {
           const attr = event.path[1] as string;
           if (attr === "name") {
