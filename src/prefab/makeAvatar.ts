@@ -1,0 +1,151 @@
+import { Asset, Transform } from "hecs-plugin-core";
+import { Vector3 } from "three";
+import { Model } from "hecs-plugin-three";
+
+// Components from ECS plugins (organized alphabetically by plugin name)
+import { HtmlNode, CssPlane } from "~/ecs/plugins/css3d";
+import { NormalizeMesh } from "~/ecs/plugins/normalize";
+import {
+  HandController,
+  HeadController,
+  ThrustController,
+} from "~/ecs/plugins/player-control";
+import { PointerPlane } from "~/ecs/plugins/pointer-plane";
+import { RigidBody, FixedJoint, Collider } from "~/ecs/plugins/rapier";
+import { TransformEffects } from "~/ecs/plugins/transform-effects";
+
+import { keyE, keyQ } from "~/input";
+
+import { makeEntity, makeBall } from "./index";
+
+export function makeAvatar(world) {
+  const avatar = makeEntity(world, "Avatar")
+    .add(ThrustController, {
+      thrust: 50,
+      torque: 8,
+    })
+    .add(PointerPlane)
+    .add(Transform)
+    .add(Model, {
+      asset: new Asset("/avatar.glb"),
+    })
+    .add(NormalizeMesh)
+    .add(RigidBody, {
+      kind: "DYNAMIC",
+      linearDamping: 0.1,
+      angularDamping: 12.5,
+      mass: 0.5,
+    })
+    .add(Collider, {
+      // shape: "BOX",
+      // boxSize: new Vector3(1, 1, 1),
+      shape: "CAPSULE",
+      capsuleHeight: 0.8,
+      capsuleRadius: 0.36,
+    })
+    .add(TransformEffects, {
+      effects: [
+        { function: "position", params: { position: new Vector3(0, 0, 0) } },
+        {
+          function: "oscillate-scale",
+          params: {
+            phase: 0,
+            min: new Vector3(0.99, 1, 0.99),
+            max: new Vector3(1.02, 1, 1.02),
+          },
+        },
+        {
+          function: "oscillate-scale",
+          params: {
+            phase: Math.PI,
+            min: new Vector3(1, 0.99, 1),
+            max: new Vector3(1, 1.01, 1),
+          },
+        },
+      ],
+    })
+    .activate();
+  (window as any).avatar = avatar;
+
+  const head = makeEntity(world, "Head")
+    .add(HeadController, {
+      pointerPlaneEntity: avatar.id,
+    })
+    .add(Transform, {
+      position: new Vector3(0, 0.85, 0),
+      scale: new Vector3(0.6, 0.6, 0.6),
+    })
+    .add(TransformEffects, {
+      effects: [
+        {
+          function: "oscillate-position",
+          params: {
+            phase: Math.PI,
+            min: new Vector3(0, 0.0, 0),
+            max: new Vector3(0, 0.02, 0),
+          },
+        },
+      ],
+    })
+    .add(Model, {
+      asset: new Asset("/head.glb"),
+    })
+    .add(NormalizeMesh)
+    .activate();
+  head.setParent(avatar);
+
+  const face = makeEntity(world, "Face")
+    .add(Transform, {
+      position: new Vector3(0, 0, 0.4),
+    })
+    .add(HtmlNode, {
+      renderable: {
+        type: "AVATAR_HEAD",
+        props: {
+          width: 70,
+          height: 70,
+        },
+      },
+      scale: 0.7 / 70,
+    })
+    .add(CssPlane, {
+      kind: "CIRCLE",
+      circleRadius: 0.35,
+    })
+    .activate();
+  face.setParent(head);
+
+  const leftHand = makeBall(world, {
+    ...{ x: -0.6, y: 0.0, z: 0.05 },
+    r: 0.12,
+    color: "#59a4d8",
+    name: "LeftHand",
+    linearDamping: 4,
+  })
+    .add(FixedJoint, {
+      entity: avatar.id,
+    })
+    .add(HandController, {
+      pointerPlaneEntity: avatar.id,
+      keyStore: keyE,
+    })
+    .activate();
+
+  const rightHand = makeBall(world, {
+    ...{ x: 0.6, y: 0.0, z: 0.05 },
+    r: 0.12,
+    color: "#59a4d8",
+    name: "RightHand",
+    linearDamping: 4,
+  })
+    .add(FixedJoint, {
+      entity: avatar.id,
+    })
+    .add(HandController, {
+      pointerPlaneEntity: avatar.id,
+      keyStore: keyQ,
+    })
+    .activate();
+
+  return { avatar, head, face, leftHand, rightHand };
+}

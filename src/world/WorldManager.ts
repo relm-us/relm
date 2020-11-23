@@ -1,10 +1,11 @@
 import { get, writable, Writable } from "svelte/store";
-import { addDemonstrationEntities } from "~/world/demo";
 import { deltaTime, fpsTime } from "./stats";
 import { World } from "~/types/hecs/world";
 import { selectedEntities } from "./selection";
 import { Outline } from "~/ecs/plugins/outline";
 import { difference } from "~/utils/setOps";
+
+import { makeDemo, makeAvatar, makeStage } from "~/prefab";
 
 export default class WorldManager {
   world: World | null = null;
@@ -90,7 +91,9 @@ export default class WorldManager {
     }
 
     // For now, we'll show a demo scene
-    addDemonstrationEntities(this.world);
+    const { avatar } = makeAvatar(this.world);
+    makeStage(this.world, avatar);
+    makeDemo(this.world);
   }
 
   depopulate() {
