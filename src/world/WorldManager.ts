@@ -1,14 +1,14 @@
 import { get, writable, Writable } from "svelte/store";
 import { deltaTime, fpsTime } from "./stats";
-import { World } from "~/types/hecs/world";
 import { selectedEntities } from "./selection";
 import { Outline } from "~/ecs/plugins/outline";
 import { difference } from "~/utils/setOps";
+import { WorldDoc } from "~/y-integration/WorldDoc";
 
 import { makeDemo, makeAvatar, makeStage } from "~/prefab";
 
 export default class WorldManager {
-  world: World | null = null;
+  wdoc: WorldDoc;
   viewport: HTMLElement;
 
   running: Writable<boolean>;
@@ -18,13 +18,13 @@ export default class WorldManager {
     this.running = writable(false);
     this.running.subscribe(($running) => {
       if ($running) {
-        if (!this.world) {
+        if (!this.wdoc) {
           throw new Error(`Can't start when world is null`);
         }
-        this.world.presentation.setLoop(this.loop.bind(this));
+        this.wdoc.world.presentation.setLoop(this.loop.bind(this));
       } else {
-        if (this.world) {
-          this.world.presentation.setLoop(null);
+        if (this.wdoc) {
+          this.wdoc.world.presentation.setLoop(null);
         }
       }
     });
@@ -34,7 +34,13 @@ export default class WorldManager {
     // Make debugging easier
     (window as any).world = world;
 
-    this.world = world;
+    this.wdoc = new WorldDoc({
+      name: "relm",
+      world,
+      connection: {
+        url: "ws://localhost:1234",
+      },
+    });
     this.maybeMount();
     this.activateSelection();
   }
@@ -45,22 +51,23 @@ export default class WorldManager {
   }
 
   maybeMount() {
-    if (this.world) {
+    const world = this.wdoc.world;
+    if (world) {
       if (this.viewport) {
-        if (this.world.cssPresentation) {
+        if (world.cssPresentation) {
           // CSS3D elements go "behind" the WebGL canvas
-          this.world.cssPresentation.setViewport(this.viewport);
-          this.world.cssPresentation.renderer.domElement.style.zIndex = 0;
+          world.cssPresentation.setViewport(this.viewport);
+          world.cssPresentation.renderer.domElement.style.zIndex = 0;
         }
 
         // WebGL canvas goes "on top" of CSS3D HTML elements
-        this.world.presentation.setViewport(this.viewport);
-        this.world.presentation.renderer.domElement.style.zIndex = 1;
+        world.presentation.setViewport(this.viewport);
+        world.presentation.renderer.domElement.style.zIndex = 1;
       } else {
-        if (this.world.cssPresentation) {
-          this.world.cssPresentation.setViewport(null);
+        if (world.cssPresentation) {
+          world.cssPresentation.setViewport(null);
         }
-        this.world.presentation.setViewport(null);
+        world.presentation.setViewport(null);
       }
     }
   }
@@ -72,13 +79,13 @@ export default class WorldManager {
       const removed = difference(previouslySelected, $selected);
 
       for (const entityId of removed) {
-        const entity = this.world.entities.getById(entityId);
+        const entity = this.wdoc.world.entities.getById(entityId);
         previouslySelected.delete(entityId);
         entity.remove(Outline);
       }
 
       for (const entityId of added) {
-        const entity = this.world.entities.getById(entityId);
+        const entity = this.wdoc.world.entities.getById(entityId);
         previouslySelected.add(entityId);
         entity.add(Outline);
       }
@@ -86,18 +93,20 @@ export default class WorldManager {
   }
 
   populate() {
-    if (!this.world) {
+    const world = this.wdoc.world;
+
+    if (!world) {
       throw new Error(`Can't populate when world is null`);
     }
 
     // For now, we'll show a demo scene
-    const { avatar } = makeAvatar(this.world);
-    makeStage(this.world, avatar);
-    makeDemo(this.world);
+    const { avatar } = makeAvatar(world);
+    makeStage(world, avatar);
+    makeDemo(world);
   }
 
   depopulate() {
-    this.world.reset();
+    this.wdoc.world.reset();
   }
 
   start() {
@@ -120,8 +129,8 @@ export default class WorldManager {
     deltaTime.addData(delta);
     fpsTime.addData(1000 / delta);
 
-    if (this.world) {
-      this.world.update(get(this.running) ? delta : 1000 / 60);
+    if (this.wdoc.world) {
+      this.wdoc.world.update(get(this.running) ? delta : 1000 / 60);
     }
 
     this.previousLoopTime = time;

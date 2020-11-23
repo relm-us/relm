@@ -83,18 +83,8 @@ export class WorldDoc extends EventEmitter {
     this.provider = new WebsocketProvider(connection.url, this.name, this.ydoc);
   }
 
-  transact(fn) {
-    this.ydoc.transact((transaction) => {
-      fn(this, transaction);
-    });
-  }
-
-  isTransacting() {
-    return this.ydoc._transaction !== null;
-  }
-
   // Update WorldDoc based on any new or updated entity
-  update(entity: Entity) {
+  syncFrom(entity: Entity) {
     if (this.hids.has(entity.id)) {
       /* Update existing WorldDoc entity */
 
@@ -104,7 +94,7 @@ export class WorldDoc extends EventEmitter {
 
       const diff = DeepDiff(before, after);
       if (diff) {
-        this.transact(() => {
+        this.ydoc.transact(() => {
           diff.forEach((change: Change) => {
             applyChangeToYEntity(change, yentity);
           });
@@ -113,11 +103,11 @@ export class WorldDoc extends EventEmitter {
     } else {
       /* This entity is new to WorldDoc */
 
-      this.add(entity);
+      this._add(entity);
     }
   }
 
-  add(entity: Entity) {
+  _add(entity: Entity) {
     this.ydoc.transact(() => {
       const data = entity.toJSON();
       const yentity = jsonToYEntity(data);
@@ -127,27 +117,7 @@ export class WorldDoc extends EventEmitter {
     });
   }
 
-  captureChanges(entity: Entity, makeChanges: Function) {
-    const dataBefore = entity.toJSON();
-    makeChanges();
-    const dataAfter = entity.toJSON();
-
-    const yentity: YEntity = this.hids.get(entity.id);
-
-    // https://github.com/flitbit/diff
-    const diff = DeepDiff(dataBefore, dataAfter);
-    if (diff) {
-      this.transact(() => {
-        diff.forEach((change) => {
-          applyChangeToYEntity(change, yentity);
-        });
-      });
-    } else {
-      console.log("no change");
-    }
-  }
-
-  getEntityFromEventPath(path) {
+  _getEntityFromEventPath(path) {
     if (path.length > 0) {
       const index = path[0] as number;
       const yentity: YEntity = this.entities.get(index);
@@ -172,14 +142,14 @@ export class WorldDoc extends EventEmitter {
         // Adding to or deleting from YEntities
         withArrayEdits(event as Y.YArrayEvent<YEntity>, {
           onAdd: (yentity) => {
-            this.addYEntity(yentity);
+            this._addYEntity(yentity);
           },
           onDelete: (yid) => {
-            this.deleteYEntity(yid);
+            this._deleteYEntity(yid);
           },
         });
       } else if (event.path.length === 2) {
-        const entity = this.getEntityFromEventPath(event.path);
+        const entity = this._getEntityFromEventPath(event.path);
 
         if (isEntityAttribute(event.path[1] as string)) {
           const attr = event.path[1] as string;
@@ -213,10 +183,10 @@ export class WorldDoc extends EventEmitter {
           // Adding to or deleting from YComponents
           withArrayEdits(event as Y.YArrayEvent<YComponent>, {
             onAdd: (ycomponent) => {
-              this.addYComponent(ycomponent, entity);
+              this._addYComponent(ycomponent, entity);
             },
             onDelete: (yid) => {
-              this.deleteYComponent(entity, event.path[1] as string);
+              this._deleteYComponent(entity, event.path[1] as string);
             },
           });
         }
@@ -224,7 +194,7 @@ export class WorldDoc extends EventEmitter {
     }
   }
 
-  addYEntity(yentity: YEntity) {
+  _addYEntity(yentity: YEntity) {
     const yid = yIdToString(yentity._item.id);
     if (this.yids.has(yid)) {
       console.warn(`entity already exists, won't add`, this.yids.get(yid));
@@ -248,7 +218,7 @@ export class WorldDoc extends EventEmitter {
     this.emit("entities.added", entity);
   }
 
-  deleteYEntity(yid: Y.ID) {
+  _deleteYEntity(yid: Y.ID) {
     const id = this.yids.get(yIdToString(yid));
     const entity = this.world.entities.getById(id);
 
@@ -262,7 +232,7 @@ export class WorldDoc extends EventEmitter {
     }
   }
 
-  addYComponent(ycomponent: YComponent, entity: Entity) {
+  _addYComponent(ycomponent: YComponent, entity: Entity) {
     // Get the right Component class
     const key = ycomponent.get("name");
     const Component = this.world.components.getByName(key);
@@ -277,7 +247,7 @@ export class WorldDoc extends EventEmitter {
     this.emit("ycomponents.added", component, entity);
   }
 
-  deleteYComponent(entity: Entity, componentName: string) {
+  _deleteYComponent(entity: Entity, componentName: string) {
     console.log("deleteYComponent", componentName, entity.id);
   }
 }

@@ -13,7 +13,7 @@ export function makeThing(
   world,
   { x, y, z, w = 1, h = 1, d = 1, yOffset = 0, url }
 ) {
-  makeEntity(world, "Thing")
+  return makeEntity(world, "Thing")
     .add(NormalizeMesh)
     .add(Transform, {
       // Put it in the corner

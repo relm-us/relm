@@ -13,8 +13,9 @@ export function makePileOfBoxes(
     color = "gray",
   }
 ) {
+  const boxes = [];
   for (let i = 0; i < count; i++) {
-    makeBox(world, {
+    const box = makeBox(world, {
       ...{
         x: x + Math.random() * 2 - 1,
         y: y + Math.random() * 5,
@@ -24,5 +25,7 @@ export function makePileOfBoxes(
       color,
       name: "GrayBox",
     }).activate();
+    boxes.push(box);
   }
+  return boxes;
 }

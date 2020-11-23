@@ -36,7 +36,7 @@ describe("WorldDoc", () => {
 
   test("add Entity", () => {
     const entity = wdoc1.world.entities.create("e1");
-    wdoc1.add(entity);
+    wdoc1.syncFrom(entity);
     expect(wdoc1.entities.length).toEqual(1);
   });
 
@@ -59,7 +59,7 @@ describe("WorldDoc", () => {
         done();
       });
 
-      wdoc1.add(e1);
+      wdoc1.syncFrom(e1);
     });
 
     test("yids and hids", (done) => {
@@ -78,7 +78,7 @@ describe("WorldDoc", () => {
         done();
       });
 
-      wdoc1.add(e1);
+      wdoc1.syncFrom(e1);
     });
   });
 });
