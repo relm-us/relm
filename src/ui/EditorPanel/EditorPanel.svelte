@@ -5,6 +5,8 @@
   import Button from "~/ui/Button";
   import ComponentPane from "./ComponentPane.svelte";
   import { hovered, selectedEntities, selectedGroups } from "~/world/selection";
+  import { worldManager } from "~/stores/worldManager";
+  import { makeBox } from "~/prefab/makeBox";
 
   const UPDATE_FREQUENCY_MS = 100;
 
@@ -42,6 +44,11 @@
 
     return () => clearInterval(interval);
   });
+
+  const onCreateEntity = () => {
+    const entity = makeBox($worldManager.world, { y: 0.5, z: -10 }).activate();
+    $worldManager.wdoc.syncFrom(entity);
+  };
 </script>
 
 <style>
@@ -53,6 +60,11 @@
 
 <LeftPanel>
   <Header>Editor</Header>
+
+  <Button style="margin-top:8px" on:click={onCreateEntity}>
+    Create Entity
+  </Button>
+
   {#if $selectedEntities.size === 0}
     <info>Nothing selected</info>
   {:else if $selectedEntities.size === 1}
