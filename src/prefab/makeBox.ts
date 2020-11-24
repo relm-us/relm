@@ -26,6 +26,7 @@ export function makeBox(
 ) {
   const linearColor = new Color(color);
   linearColor.convertSRGBToLinear();
+
   const entity = makeEntity(world, name)
     .add(Transform, {
       position: new Vector3(x, y, z),
@@ -37,6 +38,8 @@ export function makeBox(
       roughness,
       emissive,
     });
+
+  // Optionally add a collider that matches the dimensions of the visible shape
   if (collider) {
     entity
       .add(RigidBody, {

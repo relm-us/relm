@@ -21,7 +21,9 @@ export function yEntityToJSON(yentity: YEntity) {
 export function yComponentsToJSON(ycomponents: YComponents) {
   let json = {};
   for (const ycomponent of ycomponents) {
-    json = { ...yComponentToJSON(ycomponent) };
+    for (const [key, value] of Object.entries(yComponentToJSON(ycomponent))) {
+      json[key] = value;
+    }
   }
   return json;
 }

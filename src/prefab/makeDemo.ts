@@ -15,20 +15,23 @@ import {
   makeThing,
 } from "~/prefab";
 
-export function makeDemo(world) {
-  // Create origin entity (target for the camera)
-  const origin = makeEntity(world, "Origin")
-    .add(Transform, {
-      position: new Vector3(0, 0, 1),
-    })
-    .activate();
+// grass field
+const fieldSize = {
+  w: 150,
+  h: 0.5,
+  d: 150,
+};
 
-  const floorSize = {
-    w: 12,
-    d: 8,
-  };
+const floorSize = {
+  w: 12,
+  d: 8,
+};
+
+export function makeDemo(world) {
+  const entities = [];
+
   // Create the floor
-  makeBox(world, {
+  const floor1 = makeBox(world, {
     y: -0.45,
     w: floorSize.w + 0.2,
     h: 0.5,
@@ -36,8 +39,10 @@ export function makeDemo(world) {
     color: "white",
     dynamic: false,
   }).activate();
+  entities.push(floor1);
+
   // Westx1
-  makeBox(world, {
+  const floor2 = makeBox(world, {
     x: -floorSize.w,
     y: -3,
     w: floorSize.w + 0.2,
@@ -46,8 +51,10 @@ export function makeDemo(world) {
     color: "white",
     dynamic: false,
   }).activate();
+  entities.push(floor2);
+
   // Westx2
-  makeBox(world, {
+  const floor3 = makeBox(world, {
     x: -floorSize.w * 2,
     y: 1,
     w: floorSize.w + 0.2,
@@ -56,16 +63,18 @@ export function makeDemo(world) {
     color: "white",
     dynamic: false,
   }).activate();
+  entities.push(floor3);
 
-  makeThing(world, {
+  const lamp = makeThing(world, {
     url: "/lamp.glb",
     x: -floorSize.w * 2 - 3,
     y: 1.5,
     z: 0,
     yOffset: 1,
-  });
+  }).activate();
+  entities.push(lamp);
 
-  makeThing(world, {
+  const couch = makeThing(world, {
     url: "/couch.glb",
     x: -floorSize.w * 2,
     y: 1.5,
@@ -74,20 +83,17 @@ export function makeDemo(world) {
     h: 4,
     d: 4,
     yOffset: -0.2,
-  });
+  }).activate();
+  entities.push(couch);
 
-  const floorBelowSize = {
-    w: 150,
-    h: 0.5,
-    d: 150,
-  };
   // Create the grass
-  makeBox(world, {
+  const grass = makeBox(world, {
     y: -10,
-    ...floorBelowSize,
+    ...fieldSize,
     color: "#44ba63",
     dynamic: false,
   }).activate();
+  entities.push(grass);
 
   // Create "Sun"
   const sun = makeBall(world, {
@@ -99,7 +105,7 @@ export function makeDemo(world) {
     emissive: "#ffff00",
     collider: false,
   }).activate();
-  // sun.get()
+  entities.push(sun);
 
   // Create Mountains
   for (let i = 0; i < 3; i++) {
@@ -116,11 +122,13 @@ export function makeDemo(world) {
     mountain
       .get(Transform)
       .rotation.setFromEuler(new Euler(-Math.PI / 4, 0, -Math.PI / 4));
+    entities.push(mountain);
   }
+
   /********* WALLS **********/
 
   // Left Wall
-  makeBox(world, {
+  const leftWall = makeBox(world, {
     x: -floorSize.w / 2,
     y: -0.25,
     w: 0.2,
@@ -129,22 +137,25 @@ export function makeDemo(world) {
     color: "white",
     dynamic: false,
   }).activate();
+  entities.push(leftWall);
 
   // Back Wall
-  makeBox(world, {
+  const backWall = makeBox(world, {
     ...{ x: -0.05, y: -0.25, z: -floorSize.d / 2 },
     ...{ w: floorSize.w + 0.1, h: 0.5, d: 0.2 },
     color: "white",
     dynamic: false,
   }).activate();
+  entities.push(backWall);
 
   // Front Wall
-  makeBox(world, {
+  const frontWall = makeBox(world, {
     ...{ x: -0.05, y: -0.25, z: floorSize.d / 2 },
     ...{ w: floorSize.w + 0.1, h: 0.5, d: 0.2 },
     color: "white",
     dynamic: false,
   }).activate();
+  entities.push(frontWall);
 
   // Ramp
   const ramp1 = makeBox(world, {
@@ -156,6 +167,8 @@ export function makeDemo(world) {
   ramp1
     .get(Transform)
     .rotation.setFromEuler(new Euler(-Math.PI / 12, 0, -Math.PI / 6, "ZYX"));
+  entities.push(ramp1);
+
   const ramp2 = makeBox(world, {
     ...{ x: 14.75, y: -5.5, z: -2 },
     ...{ w: 20, h: 0.5, d: 4 },
@@ -165,14 +178,16 @@ export function makeDemo(world) {
   ramp2
     .get(Transform)
     .rotation.setFromEuler(new Euler(Math.PI / 12, 0, -Math.PI / 6, "ZYX"));
+  entities.push(ramp2);
 
   /********* BOXES **********/
 
   // Pile of boxes
-  makePileOfBoxes(world, { count: 10 });
+  const boxes = makePileOfBoxes(world, { count: 10 });
+  entities.push(...boxes);
 
   // Orange Box
-  makeBox(world, {
+  const orangeBox = makeBox(world, {
     x: 4,
     y: 0,
     z: 2,
@@ -181,6 +196,17 @@ export function makeDemo(world) {
     metalness: 0.9,
     roughness: 0.2,
   }).activate();
+  entities.push(orangeBox);
+
+  // Brown Box
+  const brownBox = makeBox(world, {
+    x: 2.5,
+    y: 0,
+    z: 0,
+    color: "brown",
+    name: "BrownBox",
+  }).activate();
+  entities.push(brownBox);
 
   // TV Box
   const tvBox = makeBox(world, {
@@ -191,6 +217,7 @@ export function makeDemo(world) {
   tvBox.get(Transform).rotation = new Quaternion().setFromEuler(
     new Euler(0, Math.PI / 4, 0)
   );
+  entities.push(tvBox);
 
   const video = makeYoutube(world, {
     x: 0.0,
@@ -201,17 +228,8 @@ export function makeDemo(world) {
     frameHeight: 315,
     worldWidth: 3,
   }).activate();
-
   video.setParent(tvBox);
-
-  // Brown Box
-  makeBox(world, {
-    x: 2.5,
-    y: 0,
-    z: 0,
-    color: "brown",
-    name: "BrownBox",
-  }).activate();
+  entities.push(video);
 
   /********* GAME OBJECTS *********/
 
@@ -221,7 +239,7 @@ export function makeDemo(world) {
     color: "#ddff11",
     name: "Ball",
   }).activate();
-  (window as any).ball = ball;
+  entities.push(ball);
 
   // Chair
   const chair = makeEntity(world, "Chair")
@@ -248,5 +266,7 @@ export function makeDemo(world) {
       boxSize: new Vector3(0.8, 0.8, 0.8),
     })
     .activate();
-  (window as any).chair = chair;
+  entities.push(chair);
+
+  return entities;
 }

@@ -70,6 +70,7 @@ export class WorldDoc extends EventEmitter {
     this.undoManager = new Y.UndoManager([this.entities], {
       captureTimeout: UNDO_CAPTURE_TIMEOUT,
     });
+
     this.entities.observeDeep(this._observer.bind(this));
 
     if (connection) {
@@ -213,6 +214,7 @@ export class WorldDoc extends EventEmitter {
 
     // let ECS know this entity has had all of its initial components added
     entity.activate();
+    // console.log("_addYEntity", yentity, entity);
 
     // Signal completion of onAdd for tests
     this.emit("entities.added", entity);

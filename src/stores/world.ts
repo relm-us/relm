@@ -2,12 +2,13 @@ import { readable, Readable } from "svelte/store";
 
 import { World } from "~/types/hecs/world";
 
-import { createWorld } from "./creation";
+import { createWorld } from "../world/creation";
 
-export const store: Readable<World | null> = readable(null, (set) => {
+export const world: Readable<World | null> = readable(null, (set) => {
   import("@dimforge/rapier3d")
     .then((rapier) => {
       const world = createWorld(rapier);
+
       set(world);
     })
     .catch((error) => {

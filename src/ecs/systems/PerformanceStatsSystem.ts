@@ -12,7 +12,7 @@ import {
   renderFrames,
   programs,
   systems,
-} from "~/world/stats";
+} from "~/stores/stats";
 
 export class PerformanceStatsSystem extends System {
   // This should happen last, after everything is done, so stats are accurate

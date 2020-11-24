@@ -1,9 +1,9 @@
 <script lang="ts">
   import Button from "../Button";
-  import { worldManager } from "~/world";
+  import { worldManager } from "~/stores/worldManager";
 
   const step = () => {
-    worldManager.step();
+    $worldManager.step();
   };
 </script>
 

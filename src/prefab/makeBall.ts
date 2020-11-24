@@ -28,18 +28,21 @@ export function makeBall(
 ) {
   const linearColor = new Color(color);
   linearColor.convertSRGBToLinear();
+
   const entity = makeEntity(world, name)
     .add(Transform, {
       position: new Vector3(x, y, z),
     })
     .add(BetterShape, {
       kind: "SPHERE",
-      color: linearColor,
+      color: "#" + linearColor.getHexString(),
       sphereRadius: r,
       metalness,
       roughness,
       emissive,
     });
+
+  // Optionally add a collider that matches the dimensions of the visible shape
   if (collider) {
     entity
       .add(RigidBody, {

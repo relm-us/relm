@@ -1,77 +1,76 @@
 import { get, writable, Writable } from "svelte/store";
-import { deltaTime, fpsTime } from "./stats";
-import { selectedEntities } from "./selection";
-import { Outline } from "~/ecs/plugins/outline";
-import { difference } from "~/utils/setOps";
+
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
-import { makeDemo, makeAvatar, makeStage } from "~/prefab";
+import { difference } from "~/utils/setOps";
+import { deltaTime, fpsTime } from "~/stores/stats";
+import { worldRunning } from "~/stores/worldRunning";
+import { selectedEntities } from "./selection";
+
+import { makeDemo, makeAvatar, makeStage, makeBox } from "~/prefab";
+import { Outline } from "~/ecs/plugins/outline";
 
 export default class WorldManager {
-  wdoc: WorldDoc;
+  world;
+  connection;
   viewport: HTMLElement;
 
-  running: Writable<boolean>;
+  wdoc: WorldDoc;
+
   previousLoopTime: number = 0;
 
-  constructor() {
-    this.running = writable(false);
-    this.running.subscribe(($running) => {
-      if ($running) {
-        if (!this.wdoc) {
-          throw new Error(`Can't start when world is null`);
-        }
-        this.wdoc.world.presentation.setLoop(this.loop.bind(this));
-      } else {
-        if (this.wdoc) {
-          this.wdoc.world.presentation.setLoop(null);
-        }
-      }
-    });
-  }
-
-  setWorld(world) {
-    // Make debugging easier
-    (window as any).world = world;
+  constructor({ world, connection, viewport }) {
+    if (!world) throw new Error(`world is required`);
+    if (!viewport) throw new Error(`viewport is required`);
+    this.world = world;
+    this.connection = connection;
+    this.viewport = viewport;
 
     this.wdoc = new WorldDoc({
       name: "relm",
       world,
-      connection: {
-        url: "ws://localhost:1234",
-      },
+      connection,
     });
-    this.maybeMount();
+
+    this.mount();
     this.activateSelection();
-  }
+    this.populate();
+    this.start();
 
-  setViewport(viewport) {
-    this.viewport = viewport;
-    this.maybeMount();
-  }
-
-  maybeMount() {
-    const world = this.wdoc.world;
-    if (world) {
-      if (this.viewport) {
-        if (world.cssPresentation) {
-          // CSS3D elements go "behind" the WebGL canvas
-          world.cssPresentation.setViewport(this.viewport);
-          world.cssPresentation.renderer.domElement.style.zIndex = 0;
-        }
-
-        // WebGL canvas goes "on top" of CSS3D HTML elements
-        world.presentation.setViewport(this.viewport);
-        world.presentation.renderer.domElement.style.zIndex = 1;
+    worldRunning.subscribe(($running) => {
+      if ($running) {
+        this.world.presentation.setLoop(this.loop.bind(this));
       } else {
-        if (world.cssPresentation) {
-          world.cssPresentation.setViewport(null);
-        }
-        world.presentation.setViewport(null);
+        this.world.presentation.setLoop(null);
       }
-    }
+    });
   }
 
+  mount() {
+    const world = this.world;
+
+    // CSS3D elements go "behind" the WebGL canvas
+    world.cssPresentation.setViewport(this.viewport);
+    world.cssPresentation.renderer.domElement.style.zIndex = 0;
+
+    // WebGL canvas goes "on top" of CSS3D HTML elements
+    world.presentation.setViewport(this.viewport);
+    world.presentation.renderer.domElement.style.zIndex = 1;
+  }
+
+  unmount() {
+    const world = this.world;
+
+    world.cssPresentation.setViewport(null);
+    world.presentation.setViewport(null);
+  }
+
+  reset() {
+    this.unmount();
+    this.world.reset();
+  }
+
+  // Show outline around selected entities
   activateSelection() {
     const previouslySelected = new Set();
     selectedEntities.subscribe(($selected) => {
@@ -79,13 +78,13 @@ export default class WorldManager {
       const removed = difference(previouslySelected, $selected);
 
       for (const entityId of removed) {
-        const entity = this.wdoc.world.entities.getById(entityId);
+        const entity = this.world.entities.getById(entityId);
         previouslySelected.delete(entityId);
         entity.remove(Outline);
       }
 
       for (const entityId of added) {
-        const entity = this.wdoc.world.entities.getById(entityId);
+        const entity = this.world.entities.getById(entityId);
         previouslySelected.add(entityId);
         entity.add(Outline);
       }
@@ -93,44 +92,49 @@ export default class WorldManager {
   }
 
   populate() {
-    const world = this.wdoc.world;
-
-    if (!world) {
+    if (!this.world) {
       throw new Error(`Can't populate when world is null`);
     }
 
     // For now, we'll show a demo scene
-    const { avatar } = makeAvatar(world);
-    makeStage(world, avatar);
-    makeDemo(world);
+    const avatar = makeAvatar(this.world);
+    makeStage(this.world, avatar);
+    makeBox(this.world, {
+      y: -50,
+      w: 1000,
+      h: 100,
+      d: 100,
+      color: "#22bb11",
+      dynamic: false,
+    }).activate();
   }
 
   depopulate() {
-    this.wdoc.world.reset();
+    this.world.reset();
   }
 
   start() {
-    this.running.set(true);
+    worldRunning.set(true);
   }
 
   stop() {
-    this.running.set(false);
+    worldRunning.set(false);
   }
 
   step() {
-    if (get(this.running)) {
+    if (get(worldRunning)) {
       this.stop();
     }
     requestAnimationFrame(this.loop.bind(this));
   }
 
-  loop(time) {
+  loop(time: number) {
     const delta = time - this.previousLoopTime;
     deltaTime.addData(delta);
     fpsTime.addData(1000 / delta);
 
-    if (this.wdoc.world) {
-      this.wdoc.world.update(get(this.running) ? delta : 1000 / 60);
+    if (this.world) {
+      this.world.update(get(worldRunning) ? delta : 1000 / 60);
     }
 
     this.previousLoopTime = time;

@@ -8,7 +8,7 @@
   import { Vector2 } from "three";
   import { difference, intersection } from "~/utils/setOps";
   import { hasAncestor } from "~/utils/hasAncestor";
-  import { mouse } from "~/world/mouse";
+  import { mouse } from "~/stores/mouse";
 
   import { IntersectionFinder } from "./IntersectionFinder";
 

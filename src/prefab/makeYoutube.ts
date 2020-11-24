@@ -13,7 +13,7 @@ export function makeYoutube(
   const iframeRatio = frameWidth / frameHeight;
   const rectangleSize = new Vector3(worldWidth, worldWidth / iframeRatio, 0.2);
   const scale = rectangleSize.x / frameWidth;
-  return makeEntity(world, "Video")
+  const video = makeEntity(world, "Video")
     .add(Transform, {
       position: new Vector3(x, y, z),
     })
@@ -32,4 +32,5 @@ export function makeYoutube(
       kind: "RECTANGLE",
       rectangleSize,
     });
+  return video;
 }

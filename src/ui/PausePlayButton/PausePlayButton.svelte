@@ -1,14 +1,12 @@
 <script lang="ts">
   import Button from "../Button";
-  import { worldManager } from "~/world";
-
-  const { running } = worldManager;
+  import { worldRunning } from "~/stores/worldRunning";
 
   const toggle = () => {
-    running.update(($running) => !$running);
+    worldRunning.update(($running: boolean) => !$running);
   };
 </script>
 
 <Button on:click={toggle}>
-  {#if $running}Pause{:else}Play{/if}
+  {#if $worldRunning}Pause{:else}Play{/if}
 </Button>

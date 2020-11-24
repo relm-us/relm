@@ -13,7 +13,7 @@
     memoryTextures,
     programs,
     systems,
-  } from "~/world/stats";
+  } from "~/stores/stats";
 
   let extendedStatsVisible = false;
   let systemsVisible = false;

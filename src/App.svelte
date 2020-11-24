@@ -11,7 +11,7 @@
   import GroupUngroupButton from "~/ui/GroupUngroupButton";
   import ActionButton from "~/ui/ActionButton";
 
-  import { store as world } from "./world/store";
+  import { world } from "~/stores/world";
 
   let visible = {
     perf: false,

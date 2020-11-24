@@ -19,6 +19,7 @@ import { keyE, keyQ } from "~/input";
 import { makeEntity, makeBall } from "./index";
 
 export function makeAvatar(world) {
+  // Create the avatar's torso, which we connect everything else to
   const avatar = makeEntity(world, "Avatar")
     .add(ThrustController, {
       thrust: 50,
@@ -65,6 +66,8 @@ export function makeAvatar(world) {
       ],
     })
     .activate();
+
+  // Make debugging easier
   (window as any).avatar = avatar;
 
   const head = makeEntity(world, "Head")
@@ -115,6 +118,7 @@ export function makeAvatar(world) {
     .activate();
   face.setParent(head);
 
+  // Left Hand (from avatar's point of view)
   const leftHand = makeBall(world, {
     ...{ x: -0.6, y: 0.0, z: 0.05 },
     r: 0.12,
@@ -131,6 +135,7 @@ export function makeAvatar(world) {
     })
     .activate();
 
+  // Right Hand (from avatar's point of view)
   const rightHand = makeBall(world, {
     ...{ x: 0.6, y: 0.0, z: 0.05 },
     r: 0.12,
@@ -147,5 +152,5 @@ export function makeAvatar(world) {
     })
     .activate();
 
-  return { avatar, head, face, leftHand, rightHand };
+  return avatar;
 }

@@ -13,7 +13,7 @@ export function makeThing(
   world,
   { x, y, z, w = 1, h = 1, d = 1, yOffset = 0, url }
 ) {
-  return makeEntity(world, "Thing")
+  const thing = makeEntity(world, "Thing")
     .add(NormalizeMesh)
     .add(Transform, {
       // Put it in the corner
@@ -37,6 +37,6 @@ export function makeThing(
     .add(Collider, {
       kind: "BOX",
       boxSize: new Vector3(w, h, d),
-    })
-    .activate();
+    });
+  return thing;
 }

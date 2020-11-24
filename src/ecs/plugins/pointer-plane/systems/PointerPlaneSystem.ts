@@ -2,7 +2,7 @@ import { System, Groups, Not, Modified } from "hecs";
 import { WorldTransform, Transform } from "hecs-plugin-core";
 
 import { get } from "svelte/store";
-import { mouse } from "~/world/mouse";
+import { mouse } from "~/stores/mouse";
 
 import { PointerPlane, PointerPlaneRef } from "../components";
 import {
