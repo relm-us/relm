@@ -7,11 +7,11 @@ import { DirectionalLight } from "~/ecs/plugins/lighting";
 
 import { makeEntity } from "./makeEntity";
 
-export function makeStage(world, avatar) {
+export function makeStageAndActivate(world, avatar) {
   // Create the singleton camera
   const camera = makeEntity(world, "Camera")
     .add(Transform, {
-      position: new Vector3(0, 9, 15),
+      position: new Vector3(0, 3, 5),
     })
     .add(LookAt, {
       entity: avatar.id,
@@ -23,7 +23,6 @@ export function makeStage(world, avatar) {
     })
     .add(Camera)
     .activate();
-  (window as any).camera = camera;
 
   const light = makeEntity(world, "DirectionalLight")
     .add(Transform, {

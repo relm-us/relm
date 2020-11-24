@@ -4,7 +4,6 @@ import { DeepDiff } from "deep-diff";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 
-import { isBrowser, isNode, isNodeEnv } from "~/utils/isBrowser";
 import { isEntityAttribute, yIdToString } from "./utils";
 import { withArrayEdits, withMapEdits } from "./observeUtils";
 import { YEntities, YEntity, YComponent, YIDSTR, HECSID } from "./types";
@@ -14,6 +13,8 @@ import { jsonToYEntity } from "./jsonToY";
 import EventEmitter from "eventemitter3";
 import { applyChangeToYEntity } from "./applyDiff";
 import { Change } from "./diffTypes";
+
+import { yConnectStatus } from "~/stores/connectStatus";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
 
@@ -51,15 +52,7 @@ export class WorldDoc extends EventEmitter {
   // An UndoManager allowing users to undo/redo edits on `entities`
   undoManager: Y.UndoManager;
 
-  constructor({
-    name,
-    world,
-    connection,
-  }: {
-    name: string;
-    world: World;
-    connection?: ConnectOptions;
-  }) {
+  constructor({ name, world }: { name: string; world: World }) {
     super();
     this.name = name;
     this.world = world;
@@ -73,15 +66,29 @@ export class WorldDoc extends EventEmitter {
 
     this.entities.observeDeep(this._observer.bind(this));
 
-    if (connection) {
-      this.connect(connection);
-    }
-
     WorldDoc.index.set(name, this);
   }
 
   connect(connection: ConnectOptions) {
     this.provider = new WebsocketProvider(connection.url, this.name, this.ydoc);
+    this.provider.on("sync", () => {
+      // TODO: start physics
+    });
+    this.provider.on(
+      "status",
+      ({ status }: { status: "connecting" | "connected" | "disconnected" }) => {
+        yConnectStatus.set(status);
+      }
+    );
+  }
+
+  disconnect() {
+    if (this.provider) {
+      this.provider.disconnect();
+      this.provider = null;
+    } else {
+      throw new Error(`Can't disconnect, already disconnected`);
+    }
   }
 
   // Update WorldDoc based on any new or updated entity

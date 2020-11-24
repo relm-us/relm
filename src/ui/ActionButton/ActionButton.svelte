@@ -3,7 +3,8 @@
   import { world } from "~/stores/world";
   import { worldManager } from "~/stores/worldManager";
   import { makePileOfBoxes, makeDemo } from "~/prefab";
-  const action = () => {
+
+  const onClick = () => {
     // makePileOfBoxes($world, { count: 10 });
     for (const entity of makeDemo($world)) {
       console.log("sync entity", entity.toJSON());
@@ -12,4 +13,4 @@
   };
 </script>
 
-<Button on:click={action}>Action</Button>
+<Button on:click={onClick}>Action</Button>

@@ -18,7 +18,10 @@ import { keyE, keyQ } from "~/input";
 
 import { makeEntity, makeBall } from "./index";
 
-export function makeAvatar(world) {
+export function makeAvatarAndActivate(
+  world,
+  { x = 0, y = 0.75, z = -10 } = {}
+) {
   // Create the avatar's torso, which we connect everything else to
   const avatar = makeEntity(world, "Avatar")
     .add(ThrustController, {
@@ -26,7 +29,9 @@ export function makeAvatar(world) {
       torque: 8,
     })
     .add(PointerPlane)
-    .add(Transform)
+    .add(Transform, {
+      position: new Vector3(x, y, z),
+    })
     .add(Model, {
       asset: new Asset("/avatar.glb"),
     })

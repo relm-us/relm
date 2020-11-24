@@ -2,11 +2,11 @@
   import Button from "../Button";
   import { worldRunning } from "~/stores/worldRunning";
 
-  const toggle = () => {
+  const onClick = () => {
     worldRunning.update(($running: boolean) => !$running);
   };
 </script>
 
-<Button on:click={toggle}>
+<Button on:click={onClick}>
   {#if $worldRunning}Pause{:else}Play{/if}
 </Button>

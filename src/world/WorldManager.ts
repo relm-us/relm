@@ -7,7 +7,12 @@ import { deltaTime, fpsTime } from "~/stores/stats";
 import { worldRunning } from "~/stores/worldRunning";
 import { selectedEntities } from "./selection";
 
-import { makeDemo, makeAvatar, makeStage, makeBox } from "~/prefab";
+import {
+  makeAvatarAndActivate,
+  makeStageAndActivate,
+  makeGround,
+  makeInvisibleBox,
+} from "~/prefab";
 import { Outline } from "~/ecs/plugins/outline";
 
 export default class WorldManager {
@@ -29,7 +34,6 @@ export default class WorldManager {
     this.wdoc = new WorldDoc({
       name: "relm",
       world,
-      connection,
     });
 
     this.mount();
@@ -65,6 +69,14 @@ export default class WorldManager {
     world.presentation.setViewport(null);
   }
 
+  connect() {
+    this.wdoc.connect(this.connection);
+  }
+
+  disconnect() {
+    this.wdoc.disconnect();
+  }
+
   reset() {
     this.unmount();
     this.world.reset();
@@ -97,14 +109,20 @@ export default class WorldManager {
     }
 
     // For now, we'll show a demo scene
-    const avatar = makeAvatar(this.world);
-    makeStage(this.world, avatar);
-    makeBox(this.world, {
-      y: -50,
-      w: 1000,
+    const avatar = makeAvatarAndActivate(this.world);
+    makeStageAndActivate(this.world, avatar);
+    makeGround(this.world).activate();
+    makeInvisibleBox(this.world, {
+      z: -50,
+      w: 100,
       h: 100,
-      d: 100,
-      color: "#22bb11",
+      d: 1,
+      dynamic: false,
+    }).activate();
+    makeInvisibleBox(this.world, {
+      w: 100,
+      h: 100,
+      d: 1,
       dynamic: false,
     }).activate();
   }

@@ -6,10 +6,12 @@
   import Input from "~/input";
 
   import Button from "~/ui/Button";
-  import PausePlayButton from "~/ui/PausePlayButton";
-  import StepFrameButton from "~/ui/StepFrameButton";
+
   import GroupUngroupButton from "~/ui/GroupUngroupButton";
   import ActionButton from "~/ui/ActionButton";
+  import PausePlayButton from "~/ui/PausePlayButton";
+  import StepFrameButton from "~/ui/StepFrameButton";
+  import ConnectButton from "~/ui/ConnectButton";
 
   import { world } from "~/stores/world";
 
@@ -40,7 +42,7 @@
 
 <!-- The virtual world! -->
 {#if $world}
-  <WorldContainer world={$world} />
+  <WorldContainer />
 
   {#if visible.perf}
     <PerformancePanel />
@@ -61,4 +63,5 @@
   <ActionButton />
   <PausePlayButton />
   <StepFrameButton />
+  <ConnectButton />
 </button-panel>
