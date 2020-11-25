@@ -1,5 +1,6 @@
 import { System, Groups, Not, Modified } from "hecs";
-import { Transform, WorldTransform, Vector3 } from "hecs-plugin-core";
+import { Transform, WorldTransform } from "hecs-plugin-core";
+import { Vector3 } from "three";
 import {
   BallJoint,
   BallJointRef,
@@ -79,10 +80,10 @@ export class JointSystem extends System {
       //   childPosition,
       //   new Vector3(0, 0, 1),
       // );
-      let jointParams = new rapier.JointParams.ball(
-        new Vector3(childPosition.x < 0 ? -0.5 : 0.5, 0.5, 0),
-        childPosition
-      );
+      const position: Vector3 = new Vector3()
+        .copy(childPosition)
+        .sub(parentPosition);
+      let jointParams = new rapier.JointParams.ball(spec.position, position);
 
       const joint = world.createJoint(jointParams, targetBody, entityBody);
 

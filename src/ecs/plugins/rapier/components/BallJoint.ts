@@ -1,4 +1,6 @@
-import { Component, StringType, NumberType } from "hecs";
+import { Component, StringType } from "hecs";
+import { Vector3Type } from "hecs-plugin-core";
+import { Vector3 } from "three";
 
 export class BallJoint extends Component {
   static props = {
@@ -9,18 +11,11 @@ export class BallJoint extends Component {
         input: "Entity",
       },
     },
-    breakForce: {
-      type: NumberType,
-      default: 0,
+    position: {
+      type: Vector3Type,
+      default: new Vector3(0, 0, 0),
       editor: {
-        label: "Break Force",
-      },
-    },
-    breakTorque: {
-      type: NumberType,
-      default: 0,
-      editor: {
-        label: "Break Torque",
+        label: "Joint Position",
       },
     },
   };
