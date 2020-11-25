@@ -58,6 +58,7 @@ export class ColliderSystem extends System {
     colliderDesc.setDensity(spec.density);
 
     if (colliderRef) {
+      // TODO: If fixed in Rapier, we can remove the setTimeout
       setTimeout(() => {
         world.removeCollider(colliderRef.value);
       }, 0);

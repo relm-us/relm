@@ -115,6 +115,13 @@ export class WorldDoc extends EventEmitter {
     }
   }
 
+  getJson(entityId) {
+    const yentity = this.hids.get(entityId);
+    if (yentity) {
+      return yEntityToJSON(yentity);
+    }
+  }
+
   _add(entity: Entity) {
     this.ydoc.transact(() => {
       const data = entity.toJSON();

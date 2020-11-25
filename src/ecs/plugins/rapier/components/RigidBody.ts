@@ -11,7 +11,7 @@ export class RigidBody extends Component {
         input: "Select",
         options: [
           { label: "Static", value: "STATIC" },
-          { label: "Kinematc", value: "KINEMATIC" },
+          { label: "Kinematic", value: "KINEMATIC" },
           { label: "Dynamic", value: "DYNAMIC" },
         ],
       },

@@ -13,7 +13,7 @@
     if (typeof n === "string") {
       return n;
     } else if (typeof n === "number") {
-      return n.toFixed(4);
+      return n.toFixed(3);
     } else if (n === undefined) {
       return "[undefined]";
     } else {
