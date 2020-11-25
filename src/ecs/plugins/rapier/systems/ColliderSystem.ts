@@ -1,19 +1,25 @@
 import { System, Groups, Not, Modified } from "hecs";
-import { RigidBodyRef, Collider, ColliderRef } from "../components";
+import { RigidBody, RigidBodyRef, Collider, ColliderRef } from "../components";
 
 export class ColliderSystem extends System {
-  order = Groups.Initialization;
+  order = Groups.Initialization + 10; // After RigidBodySystem
 
   static queries = {
     added: [Collider, Not(ColliderRef), RigidBodyRef],
-    modified: [Modified(Collider), ColliderRef],
+    modified: [Modified(Collider), ColliderRef, RigidBodyRef],
     removed: [Not(Collider), ColliderRef],
   };
 
   update() {
+    // create new ColliderRef
     this.queries.added.forEach((entity) => {
       this.build(entity);
     });
+    // replace ColliderRef with new spec
+    this.queries.modified.forEach((entity) => {
+      this.build(entity);
+    });
+    // Remove ColliderRef
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
     });
@@ -22,6 +28,7 @@ export class ColliderSystem extends System {
   build(entity) {
     const spec = entity.get(Collider);
     const rigidBodyRef = entity.get(RigidBodyRef);
+    const colliderRef = entity.get(ColliderRef);
     const { world, rapier } = this.world.physics;
 
     // Create a cuboid collider attached to rigidBody.
@@ -50,10 +57,19 @@ export class ColliderSystem extends System {
 
     colliderDesc.setDensity(spec.density);
 
+    if (colliderRef) {
+      setTimeout(() => {
+        world.removeCollider(colliderRef.value);
+      }, 0);
+    }
+
     let collider = world.createCollider(
       colliderDesc,
       rigidBodyRef.value.handle
     );
+    if (collider.handle === undefined) {
+      console.error("Collider handle undefined", collider, rigidBodyRef.value);
+    }
 
     entity.add(ColliderRef, { value: collider });
   }
@@ -62,6 +78,7 @@ export class ColliderSystem extends System {
     const { world } = this.world.physics;
     const colliderRef = entity.get(ColliderRef);
 
-    world.removeCollider(colliderRef.value.handle);
+    world.removeCollider(colliderRef.value);
+    entity.remove(ColliderRef);
   }
 }
