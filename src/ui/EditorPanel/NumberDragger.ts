@@ -24,6 +24,7 @@ export class NumberDragger {
     this.mousedown = ((event) => {
       this.mouseGrab = true;
       this.mouseStartValue = this.getValue();
+      event.preventDefault();
     }).bind(this);
 
     this.mouseup = ((event) => {
