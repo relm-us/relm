@@ -1,6 +1,6 @@
 import { StateComponent, RefType } from "hecs";
 
-export class FixedJointRef extends StateComponent {
+export class BallJointRef extends StateComponent {
   static props = {
     value: {
       type: RefType,

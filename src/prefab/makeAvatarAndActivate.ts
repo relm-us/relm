@@ -11,7 +11,7 @@ import {
   ThrustController,
 } from "~/ecs/plugins/player-control";
 import { PointerPlane } from "~/ecs/plugins/pointer-plane";
-import { RigidBody, FixedJoint, Collider } from "~/ecs/plugins/rapier";
+import { RigidBody, BallJoint, Collider } from "~/ecs/plugins/rapier";
 import { TransformEffects } from "~/ecs/plugins/transform-effects";
 
 import { keyE, keyQ } from "~/input";
@@ -131,7 +131,7 @@ export function makeAvatarAndActivate(
     name: "LeftHand",
     linearDamping: 4,
   })
-    .add(FixedJoint, {
+    .add(BallJoint, {
       entity: avatar.id,
     })
     .add(HandController, {
@@ -148,7 +148,7 @@ export function makeAvatarAndActivate(
     name: "RightHand",
     linearDamping: 4,
   })
-    .add(FixedJoint, {
+    .add(BallJoint, {
       entity: avatar.id,
     })
     .add(HandController, {

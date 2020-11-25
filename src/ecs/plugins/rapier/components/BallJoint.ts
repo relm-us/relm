@@ -1,6 +1,6 @@
 import { Component, StringType, NumberType } from "hecs";
 
-export class FixedJoint extends Component {
+export class BallJoint extends Component {
   static props = {
     entity: {
       type: StringType,

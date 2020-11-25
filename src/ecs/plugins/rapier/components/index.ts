@@ -1,9 +1,9 @@
 export { Collider } from "./Collider";
 export { ColliderRef } from "./ColliderRef";
 export { ColliderMapped } from "./ColliderMapped";
-export { FixedJoint } from "./FixedJoint";
-export { FixedJointBroke } from "./FixedJointBroke";
-export { FixedJointRef } from "./FixedJointRef";
+export { BallJoint } from "./BallJoint";
+export { BallJointBroke } from "./BallJointBroke";
+export { BallJointRef } from "./BallJointRef";
 export { Impact } from "./Impact";
 export { RigidBody } from "./RigidBody";
 export { RigidBodyRef } from "./RigidBodyRef";

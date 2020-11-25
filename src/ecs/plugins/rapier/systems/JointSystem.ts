@@ -1,9 +1,9 @@
 import { System, Groups, Not, Modified } from "hecs";
 import { Transform, WorldTransform, Vector3 } from "hecs-plugin-core";
 import {
-  FixedJoint,
-  FixedJointRef,
-  FixedJointBroke,
+  BallJoint,
+  BallJointRef,
+  BallJointBroke,
   RigidBodyRef,
 } from "../components";
 
@@ -11,12 +11,12 @@ export class JointSystem extends System {
   order = Groups.Initialization;
 
   static queries = {
-    new: [WorldTransform, RigidBodyRef, FixedJoint, Not(FixedJointRef)],
-    removedWorld: [Not(WorldTransform), FixedJointRef],
-    removedBody: [Not(RigidBodyRef), FixedJointRef],
-    removed: [Not(FixedJoint), FixedJointRef],
-    modified: [Modified(FixedJoint), FixedJointRef],
-    broken: [FixedJointBroke],
+    new: [WorldTransform, RigidBodyRef, BallJoint, Not(BallJointRef)],
+    removedWorld: [Not(WorldTransform), BallJointRef],
+    removedBody: [Not(RigidBodyRef), BallJointRef],
+    removed: [Not(BallJoint), BallJointRef],
+    modified: [Modified(BallJoint), BallJointRef],
+    broken: [BallJointBroke],
   };
 
   update() {
@@ -36,23 +36,23 @@ export class JointSystem extends System {
       this.build(entity);
     });
     this.queries.broken.forEach((entity) => {
-      const joint = entity.get(FixedJointRef).value;
+      const joint = entity.get(BallJointRef).value;
       // joint.release();
-      entity.remove(FixedJoint);
-      entity.remove(FixedJointRef);
-      entity.remove(FixedJointBroke);
+      entity.remove(BallJoint);
+      entity.remove(BallJointRef);
+      entity.remove(BallJointBroke);
     });
   }
 
   release(entity) {
-    const joint = entity.get(FixedJointRef).value;
+    const joint = entity.get(BallJointRef).value;
     // joint.release();
-    entity.remove(FixedJointRef);
+    entity.remove(BallJointRef);
   }
 
   build(entity) {
     const { world, rapier } = this.world.physics;
-    const spec = entity.get(FixedJoint);
+    const spec = entity.get(BallJoint);
 
     const entityBody = entity.get(RigidBodyRef).value;
     // const entityWorld = entity.get(WorldTransform);
@@ -86,13 +86,13 @@ export class JointSystem extends System {
 
       const joint = world.createJoint(jointParams, targetBody, entityBody);
 
-      const existing = entity.get(FixedJointRef);
+      const existing = entity.get(BallJointRef);
       if (existing) {
         existing.joint.release();
         existing.joint = joint;
         existing.modified();
       } else {
-        entity.add(FixedJointRef, { value: joint });
+        entity.add(BallJointRef, { value: joint });
       }
     } else {
       throw new Error("joint must specify entity");
