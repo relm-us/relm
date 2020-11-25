@@ -49,7 +49,7 @@
   {/if}
 
   {#if visible.editor}
-    <EditorPanel world={$world} />
+    <EditorPanel />
   {/if}
 
   <!-- Keyboard, Mouse input -->

@@ -10,12 +10,11 @@
 
   const UPDATE_FREQUENCY_MS = 100;
 
-  export let world;
-
   function getEntity(selected) {
-    return (
-      selected.size && world.entities.getById(selected.values().next().value)
-    );
+    if (selected.size > 0) {
+      const firstId = selected.values().next().value;
+      return $worldManager.world.entities.getById(firstId);
+    }
   }
 
   let entity;
@@ -33,7 +32,6 @@
   };
 
   const destroyComponent = (entity, Component) => {
-    console.log("destroyComponent", entity.id, Component);
     entity.remove(Component);
     refresh();
   };
@@ -41,13 +39,16 @@
   // Regularly update our panel data
   onMount(() => {
     const interval = setInterval(() => refresh(), UPDATE_FREQUENCY_MS);
-
     return () => clearInterval(interval);
   });
 
   const onCreateEntity = () => {
     const entity = makeBox($worldManager.world, { y: 0.5, z: -10 }).activate();
     $worldManager.wdoc.syncFrom(entity);
+
+    // Select the new entity
+    selectedEntities.clear();
+    selectedEntities.add(entity.id);
   };
 </script>
 

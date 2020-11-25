@@ -45,7 +45,7 @@
   showClose={true}
   showMinimize={true}
   on:close={() => dispatch('destroy')}>
-  {#each Object.entries(Component.props) as [key, prop]}
+  {#each Object.entries(Component.props) as [key, prop] (key)}
     {#if propVisible(prop)}
       <Property {key} {component} {prop} />
     {/if}

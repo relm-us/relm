@@ -7,8 +7,10 @@
 
   function onSelect(event) {
     const value = event.detail.value;
-    component[key] = value;
-    component.modified();
+    if (component[key] !== value) {
+      component[key] = value;
+      component.modified();
+    }
   }
 </script>
 
