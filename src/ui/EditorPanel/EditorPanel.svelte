@@ -62,12 +62,11 @@
 <LeftPanel>
   <Header>Editor</Header>
 
-  <Button style="margin-top:8px" on:click={onCreateEntity}>
-    Create Entity
-  </Button>
-
   {#if $selectedEntities.size === 0}
     <info>Nothing selected</info>
+    <Button style="margin-top:8px" on:click={onCreateEntity}>
+      Create Entity
+    </Button>
   {:else if $selectedEntities.size === 1}
     <!-- Components meant to be edited -->
     {#each primaryComponents as Component (Component)}

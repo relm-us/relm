@@ -11,8 +11,8 @@
   button {
     display: block;
 
-    margin-left: 4px;
-    margin-right: 4px;
+    margin-left: 16px;
+    margin-right: 16px;
     padding: 8px 12px;
 
     cursor: pointer;

@@ -29,6 +29,10 @@
   const modifyComponent = () => {
     component.modified();
   };
+
+  const canDestroy = () => {
+    return !["Transform"].includes(Component.name);
+  };
 </script>
 
 <style>
@@ -42,7 +46,7 @@
 
 <Pane
   title={Component.name}
-  showClose={true}
+  showClose={canDestroy()}
   showMinimize={true}
   on:close={() => dispatch('destroy')}>
   {#each Object.entries(Component.props) as [key, prop] (key)}

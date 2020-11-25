@@ -31,8 +31,20 @@
 </script>
 
 <style>
-  button-panel {
+  button-panel-left {
     display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 2;
+  }
+  button-panel-left.open {
+    left: 300px;
+  }
+  button-panel-right {
+    display: flex;
+    flex-direction: column;
     position: fixed;
     top: 16px;
     right: 16px;
@@ -56,12 +68,15 @@
   <Input world={$world} />
 {/if}
 
-<button-panel>
+<button-panel-left class:open={visible.perf || visible.editor}>
   <Button on:click={() => togglePanel('editor')}>Editor</Button>
   <Button on:click={() => togglePanel('perf')}>Performance</Button>
+</button-panel-left>
+
+<button-panel-right>
   <GroupUngroupButton />
   <ActionButton />
   <PausePlayButton />
   <StepFrameButton />
   <ConnectButton />
-</button-panel>
+</button-panel-right>
