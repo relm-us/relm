@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import Tag from "./Tag.svelte";
+  import Capsule from "./Capsule.svelte";
 
   import { Pane } from "~/ui/LeftPanel";
   import Property from "./Property.svelte";
@@ -51,7 +51,7 @@
     {/if}
   {/each}
   <toolbar>
-    <Tag on:mousedown={debugComponent} cursor="pointer">Debug</Tag>
-    <Tag on:mousedown={modifyComponent} cursor="pointer">Modified</Tag>
+    <Capsule value="Debug" on:mousedown={debugComponent} cursor="pointer" />
+    <Capsule value="Modified" on:mousedown={modifyComponent} cursor="pointer" />
   </toolbar>
 </Pane>

@@ -29,6 +29,7 @@
   }
 
   function onKeydown(event) {
+    if (event.target.tagName === "INPUT") return;
     if (event.repeat) return;
     if (setKeyStore(event.key, event.keyCode, true)) {
       event.preventDefault();

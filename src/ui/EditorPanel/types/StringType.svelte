@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Tag from "../Tag.svelte";
+  import Capsule from "../Capsule.svelte";
 
   export let key: string;
   export let component;
@@ -18,5 +18,5 @@
 <div>
   {(prop.editor && prop.editor.label) || key}:
 
-  <Tag>{value}</Tag>
+  <Capsule {value} />
 </div>

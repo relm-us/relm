@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Tag from "../Tag.svelte";
+  import Capsule from "../Capsule.svelte";
 
   export let key: string;
   export let prop;
@@ -17,5 +17,5 @@
 <div>
   {(prop.editor && prop.editor.label) || key}:
 
-  <Tag>[Reference]</Tag>
+  <Capsule value="[Reference]" />
 </div>

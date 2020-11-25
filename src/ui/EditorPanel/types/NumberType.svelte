@@ -1,12 +1,12 @@
 <script lang="ts">
-  import Tag from "../Tag.svelte";
+  import Capsule from "../Capsule.svelte";
   import { NumberDragger } from "../NumberDragger";
 
   export let key: string;
   export let component;
   export let prop;
 
-  let editMode = false;
+  let editing = false;
 
   let value;
   $: value = component[key];
@@ -25,13 +25,15 @@
   }
 
   const onInputChange = (event) => {
-    component[key] = event.target.value;
+    console.log("onInputChange");
+    component[key] = parseFloat(event.target.value);
     component.modified();
-    editMode = false;
+    editing = false;
   };
 
   const onInputCancel = (event) => {
-    editMode = false;
+    console.log("onInputCancel");
+    editing = false;
   };
 
   const dragger = new NumberDragger({
@@ -41,7 +43,7 @@
       component.modified();
     },
     onClick: () => {
-      editMode = true;
+      editing = true;
     },
   });
 </script>
@@ -50,26 +52,17 @@
   div {
     margin: 8px 0px 6px 16px;
   }
-  input {
-    background-color: rgba(0, 0, 0, 0);
-    color: white;
-    width: 60px;
-    border: 0;
-  }
 </style>
 
 <div>
   {(prop.editor && prop.editor.label) || key}:
 
-  <Tag on:mousedown={dragger.mousedown}>
-    {#if editMode}
-      <input
-        {value}
-        type="number"
-        on:change={onInputChange}
-        on:blur={onInputCancel} />
-    {:else}{fmt(value)}{/if}
-  </Tag>
+  <Capsule
+    {editing}
+    on:mousedown={dragger.mousedown}
+    on:change={onInputChange}
+    on:cancel={onInputCancel}
+    value={fmt(value)} />
 </div>
 
 <svelte:window on:mousemove={dragger.mousemove} on:mouseup={dragger.mouseup} />
