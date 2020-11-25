@@ -6,7 +6,8 @@ export class ColliderSystem extends System {
 
   static queries = {
     added: [Collider, Not(ColliderRef), RigidBodyRef],
-    modified: [Modified(Collider), ColliderRef, RigidBodyRef],
+    modifiedBody: [ColliderRef, Modified(RigidBody)],
+    modified: [Modified(Collider), RigidBodyRef],
     removed: [Not(Collider), ColliderRef],
   };
 
@@ -14,6 +15,9 @@ export class ColliderSystem extends System {
     // create new ColliderRef
     this.queries.added.forEach((entity) => {
       this.build(entity);
+    });
+    this.queries.modifiedBody.forEach((entity) => {
+      this.remove(entity);
     });
     // replace ColliderRef with new spec
     this.queries.modified.forEach((entity) => {
