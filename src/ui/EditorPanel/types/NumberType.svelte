@@ -6,6 +6,8 @@
   export let component;
   export let prop;
 
+  let editMode = false;
+
   let value;
   $: value = component[key];
 
@@ -22,6 +24,16 @@
     }
   }
 
+  const onInputChange = (event) => {
+    component[key] = event.target.value;
+    component.modified();
+    editMode = false;
+  };
+
+  const onInputCancel = (event) => {
+    editMode = false;
+  };
+
   const dragger = new NumberDragger({
     getValue: () => value,
     onChange: (newValue) => {
@@ -29,7 +41,7 @@
       component.modified();
     },
     onClick: () => {
-      console.log("click");
+      editMode = true;
     },
   });
 </script>
@@ -38,12 +50,26 @@
   div {
     margin: 8px 0px 6px 16px;
   }
+  input {
+    background-color: rgba(0, 0, 0, 0);
+    color: white;
+    width: 60px;
+    border: 0;
+  }
 </style>
 
 <div>
   {(prop.editor && prop.editor.label) || key}:
 
-  <Tag on:mousedown={dragger.mousedown}>{fmt(value)}</Tag>
+  <Tag on:mousedown={dragger.mousedown}>
+    {#if editMode}
+      <input
+        {value}
+        type="number"
+        on:change={onInputChange}
+        on:blur={onInputCancel} />
+    {:else}{fmt(value)}{/if}
+  </Tag>
 </div>
 
 <svelte:window on:mousemove={dragger.mousemove} on:mouseup={dragger.mouseup} />
