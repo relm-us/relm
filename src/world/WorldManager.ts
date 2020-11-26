@@ -5,7 +5,7 @@ import { WorldDoc } from "~/y-integration/WorldDoc";
 import { difference } from "~/utils/setOps";
 import { deltaTime, fpsTime } from "~/stores/stats";
 import { worldRunning } from "~/stores/worldRunning";
-import { selectedEntities } from "./selection";
+import { selectedEntities } from "~/stores/selection";
 
 import {
   makeAvatarAndActivate,

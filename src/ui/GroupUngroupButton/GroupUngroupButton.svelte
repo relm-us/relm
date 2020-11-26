@@ -4,7 +4,7 @@
     selectedEntities,
     selectedGroups,
     groupTree,
-  } from "~/world/selection";
+  } from "~/stores/selection";
 
   let action = "group";
 

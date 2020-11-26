@@ -7,7 +7,7 @@
   import IoIosArrowUp from "svelte-icons/io/IoIosArrowUp.svelte";
 
   export let title: string;
-  export let subtitle: string;
+  export let subtitle: string = null;
   export let minimized = false;
   export let showClose = false;
   export let showMinimize = false;
@@ -69,7 +69,7 @@
   {#if showClose}
     <icon
       class="close"
-      on:mousedown={() => dispatch('close')}
+      on:mousedown|preventDefault={() => dispatch('close')}
       style="right: 5px">
       <IoIosClose />
     </icon>
@@ -77,7 +77,7 @@
   {#if showMinimize}
     <icon
       class="minimize"
-      on:mousedown={() => {
+      on:mousedown|preventDefault={() => {
         minimized = !minimized;
         dispatch('minimize', minimized);
       }}

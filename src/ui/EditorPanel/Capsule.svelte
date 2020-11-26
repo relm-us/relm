@@ -1,7 +1,7 @@
 <script lang="ts">
-  export let label: string;
+  export let label: string = null;
   export let value: any;
-  export let editing: boolean;
+  export let editing: boolean = false;
   export let cursor = "default";
 
   let inputElement;

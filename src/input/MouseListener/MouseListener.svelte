@@ -4,7 +4,7 @@
     selectedEntities,
     selectedGroups,
     groupTree,
-  } from "~/world/selection";
+  } from "~/stores/selection";
   import { Vector2 } from "three";
   import { difference, intersection } from "~/utils/setOps";
   import { hasAncestor } from "~/utils/hasAncestor";

@@ -4,7 +4,11 @@
   import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
   import Button from "~/ui/Button";
   import ComponentPane from "./ComponentPane.svelte";
-  import { hovered, selectedEntities, selectedGroups } from "~/world/selection";
+  import {
+    hovered,
+    selectedEntities,
+    selectedGroups,
+  } from "~/stores/selection";
   import { worldManager } from "~/stores/worldManager";
   import { makeBox } from "~/prefab/makeBox";
 
@@ -60,7 +64,7 @@
 </style>
 
 <LeftPanel>
-  <Header>Editor</Header>
+  <Header>Entity Editor</Header>
 
   {#if $selectedEntities.size === 0}
     <info>Nothing selected</info>
