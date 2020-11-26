@@ -26,7 +26,10 @@ import RapierPlugin from "~/ecs/plugins/rapier";
 import TransformEffectsPlugin from "~/ecs/plugins/transform-effects";
 import ThreePlugin from "hecs-plugin-three";
 
+import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
+
 import { PerformanceStatsSystem } from "~/ecs/systems/PerformanceStatsSystem";
+import { InvisibleToMouseSystem } from "~/ecs/systems/InvisibleToMouseSystem";
 
 import { shadowMapConfig } from "./config";
 
@@ -109,8 +112,8 @@ export function createWorld(rapier) {
       PointerPlanePlugin,
       TransformEffectsPlugin,
     ],
-    components: [],
-    systems: [PerformanceStatsSystem],
+    components: [InvisibleToMouse],
+    systems: [PerformanceStatsSystem, InvisibleToMouseSystem],
   });
   return world;
 }

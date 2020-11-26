@@ -1,4 +1,5 @@
 import { makeBox } from "~/prefab";
+import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
 
 const groundSize = {
   w: 1000,
@@ -7,11 +8,15 @@ const groundSize = {
 };
 
 export function makeGround(world) {
-  return makeBox(world, {
+  const ground = makeBox(world, {
     ...groundSize,
-    y: -groundSize.h / 2,
-    z: -groundSize.d / 2,
+    y: -groundSize.h * 0.5,
+    z: -groundSize.d * 0.25,
     color: "#22bb11",
     dynamic: false,
   });
+
+  ground.add(InvisibleToMouse);
+
+  return ground;
 }
