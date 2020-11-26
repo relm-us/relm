@@ -56,7 +56,7 @@ export default class WorldManager {
       if (this.avatar) {
         const head = this.avatar.getChildren()[0];
         const controller = head.get(HeadController);
-        controller.enabled = true;
+        if (controller) controller.enabled = true;
       }
     });
   }
