@@ -1,6 +1,6 @@
 <script lang="ts">
   import { keySpace } from "../store";
-  import globalEvents from "~/events";
+  import { globalEvents } from "~/events";
 
   function onKeydown(event) {
     if (event.key === " ") {

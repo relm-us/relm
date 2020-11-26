@@ -6,6 +6,7 @@ import { difference } from "~/utils/setOps";
 import { deltaTime, fpsTime } from "~/stores/stats";
 import { worldRunning } from "~/stores/worldRunning";
 import { selectedEntities } from "~/stores/selection";
+import { globalEvents } from "~/events";
 
 import {
   makeAvatarAndActivate,
@@ -14,9 +15,11 @@ import {
   makeInvisibleBox,
 } from "~/prefab";
 import { Outline } from "~/ecs/plugins/outline";
+import { HeadController } from "~/ecs/plugins/player-control";
 
 export default class WorldManager {
   world;
+  avatar;
   connection;
   viewport: HTMLElement;
 
@@ -46,6 +49,14 @@ export default class WorldManager {
         this.world.presentation.setLoop(this.loop.bind(this));
       } else {
         this.world.presentation.setLoop(null);
+      }
+    });
+
+    globalEvents.on("mouseActivity", () => {
+      if (this.avatar) {
+        const head = this.avatar.getChildren()[0];
+        const controller = head.get(HeadController);
+        controller.enabled = true;
       }
     });
   }
@@ -109,8 +120,8 @@ export default class WorldManager {
     }
 
     // For now, we'll show a demo scene
-    const avatar = makeAvatarAndActivate(this.world);
-    makeStageAndActivate(this.world, avatar);
+    this.avatar = makeAvatarAndActivate(this.world);
+    makeStageAndActivate(this.world, this.avatar);
     makeGround(this.world).activate();
     makeInvisibleBox(this.world, {
       z: -50,

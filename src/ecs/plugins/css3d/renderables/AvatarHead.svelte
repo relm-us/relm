@@ -2,10 +2,15 @@
   export let width: number;
   export let height: number;
 
-  let profileVisible = false;
+  const names = ["chris", "rey", "alex", "duane", null];
+  let nameIndex = 0;
+
+  let name = names[nameIndex];
 
   const toggleProfile = () => {
-    profileVisible = !profileVisible;
+    nameIndex++;
+    if (nameIndex >= names.length) nameIndex = 0;
+    name = names[nameIndex];
   };
 </script>
 
@@ -35,9 +40,7 @@
 <div
   style="--width: {width}px; --height: {height}px"
   on:mousedown|stopPropagation={toggleProfile}>
-  {#if profileVisible}
-    <img {width} {height} src="/default-profile.jpg" alt="Head" />
-  {:else}
+  {#if name === null}
     <whitebox />
-  {/if}
+  {:else}<img {width} {height} src="/{name}.jpg" alt="Head" />{/if}
 </div>

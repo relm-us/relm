@@ -9,6 +9,7 @@
   import { difference, intersection } from "~/utils/setOps";
   import { hasAncestor } from "~/utils/hasAncestor";
   import { mouse } from "~/stores/mouse";
+  import { globalEvents } from "~/events";
 
   import { IntersectionFinder } from "./IntersectionFinder";
 
@@ -55,6 +56,8 @@
 
   function onMousemove(event: MouseEvent) {
     if (!eventTargetsWorld(event)) return;
+
+    globalEvents.emit("mouseActivity");
 
     setMousePositionFromEvent(event);
 

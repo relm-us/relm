@@ -30,26 +30,11 @@ export class HeadControllerSystem extends System {
 
   rotateTowardPointer(entity) {
     const controller = entity.get(HeadController);
-
-    const ppEntity = this.world.entities.getById(controller.pointerPlaneEntity);
-    if (!ppEntity) return;
-
-    const pointer = ppEntity.get(PointerPlaneRef);
+    const pointer = entity.get(PointerPlaneRef);
     vPointer.copy(pointer.XZ);
 
     // If it's a very small number, it isn't real pointer position yet
     if (vPointer.lengthSq() < 0.001) return;
-
-    // If pointer moves, re-enable the head's full range of motion
-    // TODO: this should be an external determination of some kind
-    if (!controller.lastXZ) {
-      controller.lastXZ = new Vector3();
-      controller.lastXZ.copy(vPointer);
-    }
-    if (controller.lastXZ.distanceTo(vPointer) > 0.05) {
-      controller.enabled = true;
-      controller.lastXZ.copy(vPointer);
-    }
 
     // A vector pointing "out" on the XZ plane, indicating which way the avatar is facing.
     // This is the "center value" that the head would most naturally face if unturned.

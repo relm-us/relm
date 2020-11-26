@@ -76,9 +76,8 @@ export function makeAvatarAndActivate(
   (window as any).avatar = avatar;
 
   const head = makeEntity(world, "Head")
-    .add(HeadController, {
-      pointerPlaneEntity: avatar.id,
-    })
+    .add(HeadController)
+    .add(PointerPlane)
     .add(Transform, {
       position: new Vector3(0, 0.85, 0),
       scale: new Vector3(0.6, 0.6, 0.6),
