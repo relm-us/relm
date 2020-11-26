@@ -11,7 +11,7 @@ import {
   makeBox,
   makeBall,
   makePileOfBoxes,
-  makeYoutube,
+  makeTv,
   makeThing,
 } from "~/prefab";
 
@@ -209,27 +209,9 @@ export function makeDemo(world, { x = 0, y = 10, z = 0 } = {}) {
   entities.push(brownBox);
 
   // TV Box
-  const tvBox = makeBox(world, {
-    ...{ x: x - 2.5, y: y + 0, z: z + 0, w: 3.2, h: 1.888, d: 0.6 },
-    color: "gray",
-    name: "BlueBox",
-  }).activate();
-  tvBox.get(Transform).rotation = new Quaternion().setFromEuler(
-    new Euler(0, Math.PI / 4, 0)
-  );
+  const tvBox = makeTv(world, { x, y, z });
   entities.push(tvBox);
-
-  const video = makeYoutube(world, {
-    x: x + 0.0,
-    y: y + 0.0,
-    z: z + 0.301,
-    embedId: "U_u91SjrEOE",
-    frameWidth: 560,
-    frameHeight: 315,
-    worldWidth: 3,
-  }).activate();
-  video.setParent(tvBox);
-  entities.push(video);
+  entities.push(tvBox.getChildren()[0]);
 
   /********* GAME OBJECTS *********/
 

@@ -10,7 +10,7 @@
     selectedGroups,
   } from "~/stores/selection";
   import { worldManager } from "~/stores/worldManager";
-  import { makeBox } from "~/prefab/makeBox";
+  import SelectCreatePrefab from "./SelectCreatePrefab.svelte";
 
   const UPDATE_FREQUENCY_MS = 100;
 
@@ -45,15 +45,6 @@
     const interval = setInterval(() => refresh(), UPDATE_FREQUENCY_MS);
     return () => clearInterval(interval);
   });
-
-  const onCreateEntity = () => {
-    const entity = makeBox($worldManager.world, { y: 0.5, z: -10 }).activate();
-    $worldManager.wdoc.syncFrom(entity);
-
-    // Select the new entity
-    selectedEntities.clear();
-    selectedEntities.add(entity.id);
-  };
 </script>
 
 <style>
@@ -68,9 +59,7 @@
 
   {#if $selectedEntities.size === 0}
     <info>Nothing selected</info>
-    <Button style="margin-top:8px" on:click={onCreateEntity}>
-      Create Entity
-    </Button>
+    <SelectCreatePrefab />
   {:else if $selectedEntities.size === 1}
     <!-- Components meant to be edited -->
     {#each primaryComponents as Component (Component)}
