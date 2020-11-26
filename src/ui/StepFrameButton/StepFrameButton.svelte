@@ -17,7 +17,7 @@
   }
 </style>
 
-<Button on:click={step} margin={4}>
+<Button on:click={step}>
   <icon>
     <IoIosSkipForward />
   </icon>

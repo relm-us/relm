@@ -2,8 +2,6 @@
   import { onMount } from "svelte";
 
   import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
-  import Button from "~/ui/Button";
-  import ComponentPane from "./ComponentPane.svelte";
   import {
     hovered,
     selectedEntities,
@@ -11,6 +9,7 @@
   } from "~/stores/selection";
   import { worldManager } from "~/stores/worldManager";
   import SelectCreatePrefab from "./SelectCreatePrefab.svelte";
+  import EditorShowSingleEntity from "./EditorShowSingleEntity.svelte";
 
   const UPDATE_FREQUENCY_MS = 100;
 
@@ -22,27 +21,23 @@
   }
 
   let entity;
+
+  const refresh = (selected) => {
+    const maybeEntity = getEntity(selected);
+    if (maybeEntity) {
+      entity = maybeEntity;
+    }
+  };
+
   // update everything whenever the selection changes
-  $: entity = getEntity($selectedEntities);
-
-  let primaryComponents, secondaryComponents;
-  $: primaryComponents = entity && entity.Components.filter((c) => c.editor);
-  $: secondaryComponents = entity && entity.Components.filter((c) => !c.editor);
-
-  let secondaryComponentsVisible = false;
-
-  const refresh = () => {
-    entity = getEntity($selectedEntities);
-  };
-
-  const destroyComponent = (entity, Component) => {
-    entity.remove(Component);
-    refresh();
-  };
+  $: refresh($selectedEntities);
 
   // Regularly update our panel data
   onMount(() => {
-    const interval = setInterval(() => refresh(), UPDATE_FREQUENCY_MS);
+    const interval = setInterval(
+      () => refresh($selectedEntities),
+      UPDATE_FREQUENCY_MS
+    );
     return () => clearInterval(interval);
   });
 </script>
@@ -54,40 +49,14 @@
   }
 </style>
 
-<LeftPanel>
+<LeftPanel on:minimize>
   <Header>Entity Editor</Header>
 
   {#if $selectedEntities.size === 0}
     <info>Nothing selected</info>
     <SelectCreatePrefab />
   {:else if $selectedEntities.size === 1}
-    <!-- Components meant to be edited -->
-    {#each primaryComponents as Component (Component)}
-      <ComponentPane
-        {Component}
-        component={entity.components.get(Component)}
-        on:destroy={() => destroyComponent(entity, Component)} />
-    {/each}
-
-    <!-- Internal Components -->
-    {#if secondaryComponents.length}
-      <Button
-        style="margin-top:8px"
-        on:click={() => {
-          secondaryComponentsVisible = !secondaryComponentsVisible;
-        }}>
-        {secondaryComponentsVisible ? 'Hide' : 'Show'}
-        ({secondaryComponents.length}) Internal Components
-      </Button>
-      {#if secondaryComponentsVisible}
-        {#each secondaryComponents as Component (Component)}
-          <ComponentPane
-            {Component}
-            component={entity.components.get(Component)}
-            on:destroy={() => destroyComponent(entity, Component)} />
-        {/each}
-      {/if}
-    {/if}
+    <EditorShowSingleEntity {entity} />
   {:else}
     <Pane title="Selected">
       {#each [...$selectedEntities] as entityId}

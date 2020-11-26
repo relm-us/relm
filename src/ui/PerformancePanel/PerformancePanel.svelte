@@ -38,7 +38,7 @@
   }
 </style>
 
-<LeftPanel>
+<LeftPanel on:minimize>
   <Header>Performance</Header>
 
   <!-- Frames per second -->

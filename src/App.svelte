@@ -3,13 +3,12 @@
 
   import EditorPanel from "~/ui/EditorPanel";
   import PerformancePanel from "~/ui/PerformancePanel";
-  import Input from "~/input";
 
+  import Input from "~/input";
   import Button from "~/ui/Button";
 
   import BuildPlayModeButton from "~/ui/BuildPlayModeButton";
   import GroupUngroupButton from "~/ui/GroupUngroupButton";
-  import ActionButton from "~/ui/ActionButton";
   import PausePlayButton from "~/ui/PausePlayButton";
   import StepFrameButton from "~/ui/StepFrameButton";
   import ConnectButton from "~/ui/ConnectButton";
@@ -17,54 +16,80 @@
   import { world } from "~/stores/world";
   import { mode } from "~/stores/mode";
 
-  let visible = {
-    perf: false,
-    editor: false,
+  let openPanel = "editor";
+
+  const playMode = () => {
+    $mode = "play";
   };
-
-  function togglePanel(panelName) {
-    const currentState = visible[panelName];
-
-    // Can't have more than one panel open at a time
-    for (const key in visible) visible[key] = false;
-
-    visible[panelName] = !currentState;
-  }
 </script>
 
 <style>
-  button-panel-left {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 16px;
-    left: 16px;
-    z-index: 2;
-  }
-  button-panel-left.open {
-    left: 300px;
-  }
-  button-panel-right {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    z-index: 2;
-  }
-  button-panel-top {
-    display: flex;
-    flex-direction: row;
-    position: fixed;
-    top: 16px;
-    left: 50%;
-    z-index: 2;
-    transform: translate(-50%);
-  }
   play-buttons {
     display: flex;
     justify-content: center;
     margin-bottom: 4px;
+  }
+
+  overlay {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+
+    pointer-events: none;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+  @media screen and (max-width: 480px) {
+    overlay {
+      display: none;
+    }
+  }
+  overlay :global(button) {
+    pointer-events: all;
+  }
+  overlay-panel {
+    /* display: flex; */
+    height: 100%;
+    width: 0px;
+  }
+  overlay.open overlay-panel {
+    width: 300px !important;
+  }
+  overlay-left {
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+    margin-left: 30px;
+  }
+  overlay-center {
+    display: flex;
+    flex-direction: row;
+    z-index: 1;
+  }
+  overlay-right {
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+  }
+  overlay-content {
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1;
+  }
+  panel-tabs {
+    display: flex;
+    --margin: 0px;
+
+    position: absolute;
+    top: -20px;
+    left: 300px;
+    transform: translate(-50%) rotate(90deg) translate(50%, -50%);
   }
 </style>
 
@@ -72,37 +97,53 @@
 {#if $world}
   <WorldContainer />
 
-  {#if $mode === 'build'}
-    {#if visible.perf}
-      <PerformancePanel />
-    {/if}
-
-    {#if visible.editor}
-      <EditorPanel />
-    {/if}
-  {/if}
-
   <!-- Keyboard, Mouse input -->
   <Input world={$world} />
 {/if}
 
-{#if $mode === 'build'}
-  <button-panel-left class:open={visible.perf || visible.editor}>
-    <play-buttons>
-      <PausePlayButton />
-      <StepFrameButton />
-    </play-buttons>
-    <Button on:click={() => togglePanel('editor')}>Entity Editor</Button>
-    <Button on:click={() => togglePanel('perf')}>Performance</Button>
-  </button-panel-left>
-{/if}
+<overlay class:open={$mode === 'build'}>
+  <overlay-panel>
+    {#if $mode === 'build'}
+      {#if openPanel === 'performance'}
+        <PerformancePanel on:minimize={playMode} />
+      {/if}
 
-<button-panel-top>
-  <BuildPlayModeButton />
-</button-panel-top>
+      {#if openPanel === 'editor'}
+        <EditorPanel on:minimize={playMode} />
+      {/if}
+      <panel-tabs>
+        <Button
+          active={openPanel === 'editor'}
+          on:click={() => (openPanel = 'editor')}>
+          Entity Editor
+        </Button>
+        <Button
+          active={openPanel === 'performance'}
+          on:click={() => (openPanel = 'performance')}>
+          Performance
+        </Button>
+      </panel-tabs>
+    {/if}
+  </overlay-panel>
 
-<button-panel-right>
-  <GroupUngroupButton />
-  <ActionButton />
-  <ConnectButton />
-</button-panel-right>
+  <overlay-content>
+    <overlay-left>
+      <play-buttons>
+        <PausePlayButton />
+        <StepFrameButton />
+      </play-buttons>
+      {#if $mode === 'build'}
+        <GroupUngroupButton />
+      {/if}
+    </overlay-left>
+
+    <overlay-center>
+      <BuildPlayModeButton />
+    </overlay-center>
+
+    <overlay-right>
+      <!-- <ActionButton /> -->
+      <ConnectButton />
+    </overlay-right>
+  </overlay-content>
+</overlay>

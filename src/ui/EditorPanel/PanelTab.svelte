@@ -2,7 +2,6 @@
   import { createEventDispatcher } from "svelte";
 
   export let enabled = true;
-  export let active;
   export let style: string | undefined = undefined;
 
   let dispatch = createEventDispatcher();
@@ -29,6 +28,8 @@
     border-bottom-right-radius: var(--right-radius, 8px);
     border-top-left-radius: var(--left-radius, 8px);
     border-bottom-left-radius: var(--left-radius, 8px);
+
+    transform: rotate(90deg);
   }
   button:focus {
     outline: none;
@@ -38,8 +39,7 @@
     pointer-events: none;
     opacity: 0.3;
   }
-  button:hover,
-  button.active {
+  button:hover {
     background-color: var(--bg-hover-color, rgba(0, 0, 0, 0.8));
   }
   button:active {
@@ -50,7 +50,6 @@
 <button
   {style}
   class:disabled={!enabled}
-  class:active
   on:mousedown|stopPropagation={() => {
     dispatch('click');
   }}>

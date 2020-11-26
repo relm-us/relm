@@ -18,7 +18,7 @@
   }
 </style>
 
-<Button on:click={onClick} margin={4}>
+<Button on:click={onClick}>
   <icon>
     {#if $worldRunning}
       <IoIosPause />
