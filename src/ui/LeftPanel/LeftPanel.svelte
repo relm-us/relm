@@ -18,6 +18,7 @@
     color: #ddd;
 
     overflow-y: auto;
+    pointer-events: all;
   }
   button {
     position: absolute;
