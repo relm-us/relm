@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { MathUtils } from "three";
+  import { MathUtils, Euler, Quaternion } from "three";
 
   import Capsule from "../Capsule.svelte";
   import { NumberDragger } from "../NumberDragger";
@@ -12,25 +12,27 @@
     x: false,
     y: false,
     z: false,
-    w: false,
   };
 
-  let value: { x: number; y: number; z: number; w: number };
-  $: value = component[key];
+  const q1: Quaternion = new Quaternion();
+
+  let value: Euler;
+  $: value = new Euler(0, 0, 0, "YXZ").setFromQuaternion(component[key]); //component[key]
 
   function fmt(n) {
     return n === undefined ? "un" : n.toFixed(1);
   }
 
   const onInputChange = (dimension) => (event) => {
-    console.log("onInputChange", event.target.value);
-    component[key][dimension] = parseFloat(event.target.value);
+    value[dimension] = parseFloat(event.target.value);
+    q1.setFromEuler(value);
+    component[key].copy(q1);
+
     component.modified();
     editing[dimension] = false;
   };
 
   const onInputCancel = (dimension) => (event) => {
-    console.log("onInputCancel");
     editing[dimension] = false;
   };
 
@@ -38,10 +40,12 @@
     return new NumberDragger({
       getValue: () => value[dimension],
       onChange: (newValue) => {
-        const value = MathUtils.clamp(newValue, -1, 1);
-        if (component[key][dimension] !== value) {
-          component[key][dimension] = value;
-          component[key].normalize();
+        const floatValue = parseFloat(newValue);
+        if (value[dimension] !== floatValue) {
+          value[dimension] = floatValue;
+          q1.setFromEuler(value);
+          component[key].copy(q1);
+
           component.modified();
         }
       },
@@ -55,20 +59,17 @@
     x: makeDragger("x"),
     y: makeDragger("y"),
     z: makeDragger("z"),
-    w: makeDragger("w"),
   };
 
   const mousemove = (event) => {
     draggers.x.mousemove(event);
     draggers.y.mousemove(event);
     draggers.z.mousemove(event);
-    draggers.w.mousemove(event);
   };
   const mouseup = (event) => {
     draggers.x.mouseup(event);
     draggers.y.mouseup(event);
     draggers.z.mouseup(event);
-    draggers.w.mouseup(event);
   };
 </script>
 
@@ -82,7 +83,7 @@
 
 <div>{(prop.editor && prop.editor.label) || key}:</div>
 <div>
-  {#each ['x', 'y', 'z', 'w'] as dim}
+  {#each ['x', 'y', 'z'] as dim}
     <Capsule
       editing={editing[dim]}
       on:mousedown={draggers[dim].mousedown}
