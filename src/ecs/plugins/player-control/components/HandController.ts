@@ -1,6 +1,6 @@
-import { Component, StringType, RefType } from "hecs";
+import { LocalComponent, StringType, RefType } from "hecs";
 
-export class HandController extends Component {
+export class HandController extends LocalComponent {
   static props = {
     pointerPlaneEntity: {
       type: StringType,

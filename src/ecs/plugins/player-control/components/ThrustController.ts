@@ -1,6 +1,6 @@
-import { Component, StringType, NumberType } from "hecs";
+import { LocalComponent, StringType, NumberType } from "hecs";
 
-export class ThrustController extends Component {
+export class ThrustController extends LocalComponent {
   static props = {
     thrust: {
       type: NumberType,

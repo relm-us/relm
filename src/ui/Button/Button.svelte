@@ -2,8 +2,8 @@
   import { createEventDispatcher } from "svelte";
 
   export let enabled = true;
-  export let active;
-  export let style: string | undefined = undefined;
+  export let active: boolean = undefined;
+  export let style: string = undefined;
 
   let dispatch = createEventDispatcher();
 </script>
@@ -50,7 +50,7 @@
 <button
   {style}
   class:disabled={!enabled}
-  class:active
+  class:active={active === true}
   on:mousedown|stopPropagation={() => {
     dispatch('click');
   }}>

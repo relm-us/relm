@@ -41,7 +41,6 @@ export class ThrustControllerSystem extends System {
 
   applyThrust(directions, entity) {
     const controller = entity.get(ThrustController);
-    const headController = entity.get(HeadController);
     const bodyRef = entity.get(RigidBodyRef);
     const transform = entity.get(Transform);
 

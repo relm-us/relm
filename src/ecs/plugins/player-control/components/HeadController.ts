@@ -1,6 +1,6 @@
-import { Component, StringType, BooleanType } from "hecs";
+import { LocalComponent, StringType, BooleanType } from "hecs";
 
-export class HeadController extends Component {
+export class HeadController extends LocalComponent {
   static props = {
     pointerPlaneEntity: {
       type: StringType,
