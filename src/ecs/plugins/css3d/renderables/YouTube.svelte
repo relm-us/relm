@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { mode } from "~/stores/mode";
+
   export let width: number;
   export let height: number;
   export let embedId: string;
@@ -99,9 +101,11 @@
   frameborder="0"
   allowfullscreen />
 
-<overlay>
-  {#if state !== 'LOADED'}
-    <div>Loading...</div>
-    {#if state === 'INIT'}(1/3){:else if state === 'LOADING'}(2/3){/if}
-  {/if}
-</overlay>
+{#if state !== 'LOADED' || $mode === 'build'}
+  <overlay>
+    {#if state !== 'LOADED'}
+      <div>Loading...</div>
+      {#if state === 'INIT'}(1/3){:else if state === 'LOADING'}(2/3){/if}
+    {/if}
+  </overlay>
+{/if}
