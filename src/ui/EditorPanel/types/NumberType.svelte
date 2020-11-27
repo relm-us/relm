@@ -25,14 +25,12 @@
   }
 
   const onInputChange = (event) => {
-    console.log("onInputChange");
     component[key] = parseFloat(event.target.value);
     component.modified();
     editing = false;
   };
 
   const onInputCancel = (event) => {
-    console.log("onInputCancel");
     editing = false;
   };
 

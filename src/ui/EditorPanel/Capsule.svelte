@@ -52,7 +52,7 @@
   input {
     background-color: rgba(0, 0, 0, 0);
     color: white;
-    width: 60px;
+    width: var(--input-width, 60px);
     border: 0;
   }
 </style>
@@ -63,7 +63,12 @@
   {/if}
   <value class:tag={!label} on:mousedown style={`cursor: ${cursor}`}>
     {#if editing}
-      <input bind:this={inputElement} {value} type="number" on:change on:blur />
+      <input
+        bind:this={inputElement}
+        {value}
+        type={typeof value === 'string' ? 'text' : 'number'}
+        on:change
+        on:blur />
     {:else}{value}{/if}
   </value>
 </capsule>
