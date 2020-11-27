@@ -11,13 +11,10 @@ export function makeTv(
   linearColor.convertSRGBToLinear();
 
   const tvBox = makeBox(world, {
-    ...{ x: x - 2.5, y: y + 0, z: z + 0, w: 3.2, h: 1.888, d: 0.6 },
+    ...{ x: x, y: y, z: z, w: 3.2, h: 1.888, d: 0.6 },
     color: `#${linearColor.getHexString()}`,
     name: "BlueBox",
   });
-  tvBox.get(Transform).rotation = new Quaternion().setFromEuler(
-    new Euler(0, Math.PI / 4, 0)
-  );
 
   const video = makeYoutube(world, {
     x: 0.0,

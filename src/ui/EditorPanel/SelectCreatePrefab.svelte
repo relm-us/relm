@@ -1,7 +1,7 @@
 <script lang="ts">
   import Button from "~/ui/Button";
   import { worldManager } from "~/stores/worldManager";
-  import { selectedEntities } from "~/stores/selection";
+  import { WorldTransform } from "hecs-plugin-core";
   import { directory } from "~/prefab";
 
   const activate = (entity) => {
@@ -12,16 +12,18 @@
     }
   };
   const create = (prefab) => () => {
-    // Clear current selection, if any
-    selectedEntities.clear();
+    const transform = $worldManager.avatar?.get(WorldTransform);
+    if (transform) {
+      const x = transform.position.x;
+      const z = transform.position.z;
+      let entities = prefab.prefab($worldManager.world, { x, y: 0.5, z });
+      if (!(entities instanceof Array)) entities = [entities];
 
-    let entities = prefab.prefab($worldManager.world, { y: 0.5, z: -10 });
-    if (!(entities instanceof Array)) entities = [entities];
-
-    for (const entity of entities) {
-      activate(entity);
-      // Select the new entity
-      selectedEntities.add(entity.id);
+      for (const entity of entities) {
+        activate(entity);
+      }
+    } else {
+      console.error(`Can't create prefab, avatar not found`);
     }
   };
 </script>
