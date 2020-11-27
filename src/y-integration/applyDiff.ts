@@ -104,7 +104,8 @@ export function applyChangeToYEntity(change: Change, yentity: YEntity) {
             propertyName,
             (yvalues) => {
               // Remove first two parts of path: component name, & property
-              change.path = change.path.slice(2);
+              change.path.shift();
+              change.path.shift();
               const value = yvalues.get(propertyName);
               applyChange(value, null, change);
 

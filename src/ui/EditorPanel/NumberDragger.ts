@@ -8,6 +8,7 @@ export class NumberDragger {
   mouseGrab = false;
   mouseStartValue = null;
   mouseStartCoords = null;
+  currentValue = null;
   dragEngageDistance = 5;
   hasEverDragged = false;
 
@@ -16,7 +17,6 @@ export class NumberDragger {
   mousemove: EventHandler<MouseEvent, Window>;
 
   getValue: Function;
-  currentValue: number;
   onDrag: Function;
   onChange: Function;
   onClick: Function;
@@ -37,7 +37,7 @@ export class NumberDragger {
     this.onChange = onChange;
     this.onClick = onClick;
 
-    this.currentValue = undefined;
+    this.currentValue = null;
 
     this.mousedown = ((event) => {
       this.mouseGrab = true;
@@ -57,7 +57,7 @@ export class NumberDragger {
       ) {
         this.onClick();
       } else {
-        if (this.currentValue !== undefined) {
+        if (this.currentValue !== null) {
           this.onChange(this.currentValue);
         }
       }
@@ -65,6 +65,7 @@ export class NumberDragger {
       this.mouseGrab = false;
       this.mouseStartValue = null;
       this.mouseStartCoords = null;
+      this.currentValue = null;
     }).bind(this);
 
     this.mousemove = ((event) => {

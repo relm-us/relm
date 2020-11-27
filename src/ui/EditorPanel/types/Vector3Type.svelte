@@ -1,10 +1,14 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
+
   import Capsule from "../Capsule.svelte";
   import { NumberDragger } from "../NumberDragger";
 
   export let key: string;
   export let component;
   export let prop;
+
+  const dispatch = createEventDispatcher();
 
   let editing = {
     x: false,
@@ -22,6 +26,7 @@
   const onInputChange = (dimension) => (event) => {
     component[key][dimension] = parseFloat(event.target.value);
     component.modified();
+    dispatch("modified");
     editing[dimension] = false;
   };
 
@@ -38,6 +43,7 @@
       onChange: (newValue) => {
         component[key][dimension] = newValue;
         component.modified();
+        dispatch("modified");
       },
       onClick: () => {
         editing[dimension] = true;

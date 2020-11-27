@@ -32,6 +32,11 @@
     }
   };
 
+  const saveEntity = (entity) => () => {
+    console.log("saveEntity", entity);
+    $worldManager.wdoc.syncFrom(entity);
+  };
+
   onMount(() => {
     $worldManager.world.on("entity-inactive", detectInactive);
     $worldManager.world.on("entity-active", detectActive);
@@ -58,7 +63,8 @@
     <ComponentPane
       {Component}
       component={entity.components.get(Component)}
-      on:destroy={() => destroyComponent(entity, Component)} />
+      on:destroy={() => destroyComponent(entity, Component)}
+      on:modified={saveEntity(entity)} />
   {/each}
 
   <!-- Internal Components -->
@@ -76,7 +82,8 @@
         <ComponentPane
           {Component}
           component={entity.components.get(Component)}
-          on:destroy={() => destroyComponent(entity, Component)} />
+          on:destroy={() => destroyComponent(entity, Component)}
+          on:modified={saveEntity(entity)} />
       {/each}
     {/if}
   {/if}

@@ -56,6 +56,6 @@
   {Type}
 {:else}
   <div>
-    <svelte:component this={Type} {key} {component} {prop} />
+    <svelte:component this={Type} {key} {component} {prop} on:modified />
   </div>
 {/if}

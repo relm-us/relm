@@ -28,6 +28,7 @@
   };
   const modifyComponent = () => {
     component.modified();
+    dispatch("modified");
   };
 
   const canDestroy = () => {
@@ -51,7 +52,7 @@
   on:close={() => dispatch('destroy')}>
   {#each Object.entries(Component.props) as [key, prop] (key)}
     {#if propVisible(prop)}
-      <Property {key} {component} {prop} />
+      <Property {key} {component} {prop} on:modified />
     {/if}
   {/each}
   <toolbar>
