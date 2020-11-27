@@ -1,7 +1,7 @@
 import { Transform, Asset } from "hecs-plugin-core";
 import { Vector3 } from "three";
 
-import { HtmlNode, CssPlane } from "~/ecs/plugins/css3d";
+import { Renderable, CssPlane } from "~/ecs/plugins/css3d";
 
 import { makeEntity } from "./makeEntity";
 
@@ -17,15 +17,11 @@ export function makeYoutube(
     .add(Transform, {
       position: new Vector3(x, y, z),
     })
-    .add(HtmlNode, {
-      renderable: {
-        type: "YOUTUBE",
-        props: {
-          width: frameWidth,
-          height: frameHeight,
-          embedId: embedId,
-        },
-      },
+    .add(Renderable, {
+      kind: "YOUTUBE",
+      width: frameWidth,
+      height: frameHeight,
+      embedId: embedId,
       scale,
     })
     .add(CssPlane, {

@@ -56,6 +56,8 @@
 <style>
   iframe {
     position: absolute;
+    top: 0;
+    left: 0;
     z-index: 0;
 
     pointer-events: auto;
@@ -74,7 +76,7 @@
     align-items: center;
 
     color: black;
-    background-color: #eeeeee;
+    background-color: rgb(240, 240, 240, 0.7);
     box-shadow: inset 0px 0px 0px 6px #000000;
   }
   .invisible {
@@ -97,9 +99,9 @@
   frameborder="0"
   allowfullscreen />
 
-{#if state !== 'LOADED'}
-  <overlay>
+<overlay>
+  {#if state !== 'LOADED'}
     <div>Loading...</div>
     {#if state === 'INIT'}(1/3){:else if state === 'LOADING'}(2/3){/if}
-  </overlay>
-{/if}
+  {/if}
+</overlay>

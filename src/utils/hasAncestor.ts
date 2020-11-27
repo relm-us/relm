@@ -1,6 +1,4 @@
-import { HtmlNode } from "~ecs/plugins/css3d";
-
-export function hasAncestor(element: HtmlNode, ancestor: HtmlNode): boolean {
+export function hasAncestor(element: Node, ancestor: Node): boolean {
   if (element === null) {
     return false;
   } else if (element === ancestor) {

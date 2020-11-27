@@ -3,7 +3,7 @@ import { Vector3 } from "three";
 import { Model } from "hecs-plugin-three";
 
 // Components from ECS plugins (organized alphabetically by plugin name)
-import { HtmlNode, CssPlane } from "~/ecs/plugins/css3d";
+import { Renderable, CssPlane } from "~/ecs/plugins/css3d";
 import { NormalizeMesh } from "~/ecs/plugins/normalize";
 import {
   HandController,
@@ -105,14 +105,10 @@ export function makeAvatarAndActivate(
     .add(Transform, {
       position: new Vector3(0, 0, 0.4),
     })
-    .add(HtmlNode, {
-      renderable: {
-        type: "AVATAR_HEAD",
-        props: {
-          width: 70,
-          height: 70,
-        },
-      },
+    .add(Renderable, {
+      kind: "AVATAR_HEAD",
+      width: 70,
+      height: 70,
       scale: 0.7 / 70,
     })
     .add(CssPlane, {
