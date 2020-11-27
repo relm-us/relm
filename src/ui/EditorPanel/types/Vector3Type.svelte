@@ -20,20 +20,21 @@
   }
 
   const onInputChange = (dimension) => (event) => {
-    console.log("onInputChange", event.target.value);
     component[key][dimension] = parseFloat(event.target.value);
     component.modified();
     editing[dimension] = false;
   };
 
   const onInputCancel = (dimension) => (event) => {
-    console.log("onInputCancel");
     editing[dimension] = false;
   };
 
   const makeDragger = (dimension) => {
     return new NumberDragger({
       getValue: () => value[dimension],
+      onDrag: (newValue) => {
+        component[key][dimension] = newValue;
+      },
       onChange: (newValue) => {
         component[key][dimension] = newValue;
         component.modified();

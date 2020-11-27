@@ -36,6 +36,9 @@
 
   const dragger = new NumberDragger({
     getValue: () => value,
+    onDrag: (newValue) => {
+      component[key] = newValue;
+    },
     onChange: (newValue) => {
       component[key] = newValue;
       component.modified();

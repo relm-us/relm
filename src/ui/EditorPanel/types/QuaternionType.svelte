@@ -36,18 +36,25 @@
     editing[dimension] = false;
   };
 
+  const setNewValue = (dimension, newValue, setModified) => {
+    const floatValue = parseFloat(newValue);
+    if (value[dimension] !== floatValue) {
+      value[dimension] = floatValue;
+      q1.setFromEuler(value);
+      component[key].copy(q1);
+
+      if (setModified) component.modified();
+    }
+  };
+
   const makeDragger = (dimension) => {
     return new NumberDragger({
       getValue: () => value[dimension],
+      onDrag: (newValue) => {
+        setNewValue(dimension, newValue, false);
+      },
       onChange: (newValue) => {
-        const floatValue = parseFloat(newValue);
-        if (value[dimension] !== floatValue) {
-          value[dimension] = floatValue;
-          q1.setFromEuler(value);
-          component[key].copy(q1);
-
-          component.modified();
-        }
+        setNewValue(dimension, newValue, true);
       },
       onClick: () => {
         editing[dimension] = true;

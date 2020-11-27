@@ -2,6 +2,8 @@ type EventHandler<E = Event, T = HTMLElement> = (
   event: E & { currentTarget: EventTarget & T }
 ) => any;
 
+const noop = () => {};
+
 export class NumberDragger {
   mouseGrab = false;
   mouseStartValue = null;
@@ -14,17 +16,33 @@ export class NumberDragger {
   mousemove: EventHandler<MouseEvent, Window>;
 
   getValue: Function;
+  currentValue: number;
+  onDrag: Function;
   onChange: Function;
   onClick: Function;
 
-  constructor({ getValue, onChange, onClick }) {
+  constructor({
+    getValue,
+    onDrag = noop,
+    onChange = noop,
+    onClick = noop,
+  }: {
+    getValue: Function;
+    onDrag?: Function;
+    onChange?: Function;
+    onClick?: Function;
+  }) {
     this.getValue = getValue;
+    this.onDrag = onDrag;
     this.onChange = onChange;
     this.onClick = onClick;
+
+    this.currentValue = undefined;
 
     this.mousedown = ((event) => {
       this.mouseGrab = true;
       this.mouseStartValue = this.getValue();
+      this.currentValue = this.getValue();
       if (event.target.tagName !== "INPUT") {
         event.preventDefault();
       }
@@ -38,6 +56,10 @@ export class NumberDragger {
         Math.abs(delta) <= this.dragEngageDistance
       ) {
         this.onClick();
+      } else {
+        if (this.currentValue !== undefined) {
+          this.onChange(this.currentValue);
+        }
       }
 
       this.mouseGrab = false;
@@ -62,7 +84,9 @@ export class NumberDragger {
           scaleFactor = 1;
         }
 
-        this.onChange(this.mouseStartValue + (delta - threshold) * scaleFactor);
+        this.currentValue =
+          this.mouseStartValue + (delta - threshold) * scaleFactor;
+        this.onDrag(this.currentValue);
         this.hasEverDragged = true;
       }
 
