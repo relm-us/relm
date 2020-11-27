@@ -12,6 +12,7 @@
   import PausePlayButton from "~/ui/PausePlayButton";
   import StepFrameButton from "~/ui/StepFrameButton";
   import ConnectButton from "~/ui/ConnectButton";
+  import ResetWorldButton from "~/ui/ResetWorldButton";
 
   import { world } from "~/stores/world";
   import { mode } from "~/stores/mode";
@@ -134,6 +135,7 @@
       </play-buttons>
       {#if $mode === 'build'}
         <GroupUngroupButton />
+        <ResetWorldButton />
       {/if}
     </overlay-left>
 

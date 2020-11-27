@@ -91,6 +91,17 @@ export class WorldDoc extends EventEmitter {
     }
   }
 
+  reapplyWorld() {
+    this.entities.forEach((yentity) => {
+      const yid = yIdToString(yentity._item.id);
+      if (this.yids.has(yid)) {
+        this._applyYEntity(yentity);
+      } else {
+        this._addYEntity(yentity);
+      }
+    });
+  }
+
   // Update WorldDoc based on any new or updated entity
   syncFrom(entity: Entity) {
     if (this.hids.has(entity.id)) {
@@ -232,6 +243,25 @@ export class WorldDoc extends EventEmitter {
 
     // Signal completion of onAdd for tests
     this.emit("entities.added", entity);
+  }
+
+  _applyYEntity(yentity: YEntity) {
+    const yid = yIdToString(yentity._item.id);
+    if (!this.yids.has(yid)) {
+      console.warn(`entity not found, won't apply`, yid);
+      return;
+    }
+
+    const hid = this.yids.get(yid);
+
+    // Convert YEntity hierarchy to HECS-compatible JSON
+    const data = yEntityToJSON(yentity);
+
+    const entity = this.world.entities.getById(hid).fromJSON(data);
+
+    // entity.activate();
+
+    this.emit("entities.applied", entity);
   }
 
   _deleteYEntity(yid: Y.ID) {
