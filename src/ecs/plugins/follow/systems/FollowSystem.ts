@@ -66,7 +66,7 @@ export class FollowSystem extends System {
       );
     }
     position.add(spec.offset);
-    transform.position.lerp(position, 0.03);
+    transform.position.lerp(position, spec.lerpAlpha);
 
     const parent = entity.getParent();
     if (parent) {
