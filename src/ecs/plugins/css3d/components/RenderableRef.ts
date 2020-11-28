@@ -1,6 +1,6 @@
-import { Component, RefType } from "hecs";
+import { LocalComponent, RefType } from "hecs";
 
-export class RenderableRef extends Component {
+export class RenderableRef extends LocalComponent {
   static props = {
     value: {
       type: RefType,
