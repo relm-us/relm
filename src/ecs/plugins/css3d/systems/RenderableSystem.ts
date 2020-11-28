@@ -99,6 +99,10 @@ export class RenderableSystem extends System {
   }
 
   copyTransform(object, transform, scale) {
+    if (!object) {
+      console.warn(`Can't copyTransform, object is null`, object);
+      return;
+    }
     object.position
       .copy(transform.position)
       .multiplyScalar(this.cssPresentation.FACTOR);
