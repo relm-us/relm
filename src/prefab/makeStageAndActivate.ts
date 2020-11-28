@@ -19,7 +19,8 @@ export function makeStageAndActivate(world, avatar) {
     })
     .add(Follow, {
       entity: avatar.id,
-      limit: "X_AXIS",
+      limit: "XY_AXIS",
+      offset: new Vector3(0, 3, 0),
     })
     .add(Camera)
     .activate();

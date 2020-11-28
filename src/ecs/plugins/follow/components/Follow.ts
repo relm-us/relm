@@ -1,4 +1,5 @@
-import { Component, StringType } from "hecs";
+import { Component, StringType, NumberType } from "hecs";
+import { Vector3, Vector3Type } from "hecs-plugin-core";
 
 export class Follow extends Component {
   static props = {
@@ -20,6 +21,20 @@ export class Follow extends Component {
           { label: "Y-Axis", value: "Y_AXIS" },
           { label: "Z-Axis", value: "Z_AXIS" },
         ],
+      },
+    },
+    offset: {
+      type: Vector3Type,
+      default: new Vector3(0, 0, 0),
+      editor: {
+        label: "Follow Offset",
+      },
+    },
+    lerpAlpha: {
+      type: NumberType,
+      default: 0.03,
+      editor: {
+        label: "LERP Alpha",
       },
     },
   };

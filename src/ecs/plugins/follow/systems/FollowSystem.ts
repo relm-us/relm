@@ -8,7 +8,7 @@ const targetPosition = new THREE.Vector3();
 const position = new THREE.Vector3();
 
 export class FollowSystem extends System {
-  order = Groups.Initialization;
+  order = Groups.Simulation;
 
   static queries = {
     targeted: [Follow],
@@ -20,12 +20,15 @@ export class FollowSystem extends System {
 
   update() {
     this.queries.targeted.forEach((entity) => {
-      const spec = entity.get(Follow);
-      this.follow(entity, spec.entity, spec.limit);
+      this.follow(entity);
     });
   }
 
-  follow(entity, targetId, limit) {
+  follow(entity) {
+    const spec = entity.get(Follow);
+    const targetId = spec.entity;
+    const limit = spec.limit;
+
     const transform = entity.get(Transform);
     const world = entity.get(WorldTransform);
 
@@ -36,15 +39,34 @@ export class FollowSystem extends System {
     if (!targetWorld) return;
 
     targetPosition.copy(targetWorld.position);
-    position.copy(world.position);
 
     if (limit === "X_AXIS") {
-      transform.position.x = targetWorld.position.x;
+      position.set(
+        targetWorld.position.x,
+        transform.position.y,
+        transform.position.z
+      );
     } else if (limit === "Y_AXIS") {
-      transform.position.y = targetWorld.position.y;
+      position.set(
+        transform.position.x,
+        targetWorld.position.y,
+        transform.position.z
+      );
     } else if (limit === "Z_AXIS") {
-      transform.position.z = targetWorld.position.z;
+      position.set(
+        transform.position.x,
+        transform.position.y,
+        targetWorld.position.z
+      );
+    } else if (limit === "XY_AXIS") {
+      position.set(
+        targetWorld.position.x,
+        targetWorld.position.y,
+        transform.position.z
+      );
     }
+    position.add(spec.offset);
+    transform.position.lerp(position, 0.03);
 
     const parent = entity.getParent();
     if (parent) {
