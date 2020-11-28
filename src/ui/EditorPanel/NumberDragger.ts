@@ -66,6 +66,7 @@ export class NumberDragger {
       this.mouseStartValue = null;
       this.mouseStartCoords = null;
       this.currentValue = null;
+      this.hasEverDragged = false;
     }).bind(this);
 
     this.mousemove = ((event) => {
