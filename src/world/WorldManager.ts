@@ -89,6 +89,7 @@ export default class WorldManager {
   }
 
   reset() {
+    this.disconnect();
     this.unmount();
     this.world.reset();
   }

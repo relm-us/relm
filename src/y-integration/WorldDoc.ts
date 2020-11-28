@@ -14,13 +14,9 @@ import EventEmitter from "eventemitter3";
 import { applyChangeToYEntity } from "./applyDiff";
 import { Change } from "./diffTypes";
 
-import { yConnectStatus } from "~/stores/connectStatus";
+import { yConnectStatus, ConnectOptions } from "~/stores/connection";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
-
-type ConnectOptions = {
-  url: string;
-};
 
 type Entity = any;
 export class WorldDoc extends EventEmitter {
@@ -70,7 +66,11 @@ export class WorldDoc extends EventEmitter {
   }
 
   connect(connection: ConnectOptions) {
-    this.provider = new WebsocketProvider(connection.url, this.name, this.ydoc);
+    this.provider = new WebsocketProvider(
+      connection.url,
+      connection.room,
+      this.ydoc
+    );
     this.provider.on("sync", () => {
       // TODO: start physics
     });
@@ -86,8 +86,6 @@ export class WorldDoc extends EventEmitter {
     if (this.provider) {
       this.provider.disconnect();
       this.provider = null;
-    } else {
-      throw new Error(`Can't disconnect, already disconnected`);
     }
   }
 

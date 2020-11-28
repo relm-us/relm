@@ -19,14 +19,14 @@
   pane {
     position: relative;
 
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.35));
     border-radius: 5px;
 
     margin: 8px 16px;
   }
 
   lbl {
-    background-color: rgba(255, 255, 255, 0.25);
+    background-color: var(--bg-color, rgba(255, 255, 255, 0.25));
     display: block;
     padding: 4px 16px;
     border-top-left-radius: 5px;
@@ -36,7 +36,7 @@
     text-overflow: ellipsis;
 
     font-weight: bold;
-    color: #eb4;
+    color: var(--label-color, #eb4);
     letter-spacing: 0.5px;
   }
 
@@ -53,6 +53,7 @@
     right: var(--right);
 
     cursor: pointer;
+    pointer-events: all;
   }
   icon.close {
     width: 24px;

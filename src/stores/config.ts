@@ -1,11 +1,9 @@
+import { writable, Writable } from "svelte/store";
+
 export type ShadowMapConfig = "BASIC" | "PCF" | "VSM";
 export const shadowMapConfig: ShadowMapConfig = "VSM";
 
-export const connection = {
-  url: config(window.location).serverYjsUrl,
-};
-
-function config(location) {
+function getDefaultConfig(location) {
   let serverUrl: string;
   let serverYjsUrl: string;
   let serverUploadUrl: string;
@@ -23,3 +21,13 @@ function config(location) {
 
   return { serverUrl, serverYjsUrl, serverUploadUrl };
 }
+
+export type Config = {
+  serverUrl: string;
+  serverYjsUrl: string;
+  serverUploadUrl: string;
+};
+
+export const config: Writable<Config> = writable(
+  getDefaultConfig(window.location)
+);

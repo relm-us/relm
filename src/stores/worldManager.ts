@@ -2,17 +2,17 @@ import { derived } from "svelte/store";
 
 import { world } from "./world";
 import { viewport } from "./viewport";
+import { connection } from "./connection";
 
-import { connection } from "~/world/config";
 import WorldManager from "~/world/WorldManager";
 
 export const worldManager = derived(
-  [world, viewport],
-  ([$world, $viewport], set) => {
+  [world, viewport, connection],
+  ([$world, $viewport, $connection], set) => {
     if ($world && $viewport) {
       const manager = new WorldManager({
         world: $world,
-        connection,
+        connection: $connection,
         viewport: $viewport,
       });
 

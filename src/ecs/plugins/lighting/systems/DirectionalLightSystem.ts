@@ -5,7 +5,7 @@ import { Object3D } from "hecs-plugin-three";
 
 import { DirectionalLight, DirectionalLightRef } from "../components";
 
-import { shadowMapConfig } from "~/world/config";
+import { shadowMapConfig } from "~/stores/config";
 
 export class DirectionalLightSystem extends System {
   order = Groups.Initialization;

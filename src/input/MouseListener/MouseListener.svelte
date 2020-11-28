@@ -35,6 +35,12 @@
     return hasAncestor(event.target, world.presentation.viewport);
   }
 
+  function removeTouchController() {
+    if ($worldManager.avatar.has(TouchController)) {
+      $worldManager.avatar.remove(TouchController);
+    }
+  }
+
   function onMousemove(event: MouseEvent) {
     if (!eventTargetsWorld(event)) return;
 
@@ -79,7 +85,7 @@
     if ($mode === "build") {
       // TODO?
     } else if ($mode === "play") {
-      $worldManager.avatar.remove(TouchController);
+      removeTouchController();
     }
   }
 
@@ -117,7 +123,7 @@
     if ($mode === "build") {
       // TODO?
     } else if ($mode === "play") {
-      $worldManager.avatar.remove(TouchController);
+      removeTouchController();
     }
   }
 </script>
