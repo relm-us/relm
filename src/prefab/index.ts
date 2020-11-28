@@ -7,6 +7,8 @@ import { makeInvisibleBox } from "./makeInvisibleBox";
 import { makePileOfBoxes } from "./makePileOfBoxes";
 import { makeThing } from "./makeThing";
 import { makeTv } from "./makeTv";
+import { makeWebPage } from "./makeWebPage";
+import { makeWebBox } from "./makeWebBox";
 import { makeYoutube } from "./makeYoutube";
 
 export {
@@ -18,6 +20,7 @@ export {
   makePileOfBoxes,
   makeThing,
   makeTv,
+  makeWebPage,
   makeYoutube,
 };
 
@@ -31,4 +34,5 @@ export const directory = [
   { name: "Ball", prefab: makeBall },
   { name: "Pile of Boxes", prefab: makePileOfBoxes },
   { name: "YouTube TV", prefab: makeTv },
+  { name: "Web Page", prefab: makeWebBox },
 ];

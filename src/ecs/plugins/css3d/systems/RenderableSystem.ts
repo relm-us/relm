@@ -76,6 +76,7 @@ export class RenderableSystem extends System {
         width: spec.width,
         height: spec.height,
         embedId: spec.embedId,
+        url: spec.url,
       },
     });
 
