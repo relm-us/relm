@@ -6,7 +6,7 @@
 
   let inputEl;
   let subtitle;
-  let minimized = false;
+  let minimized = true;
 
   const getSubtitle = (status, relmId) => {
     // prettier-ignore
