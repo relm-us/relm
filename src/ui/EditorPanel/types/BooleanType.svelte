@@ -1,9 +1,12 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
   import ToggleSwitch from "~/ui/ToggleSwitch";
 
   export let key: string;
   export let component;
   export let prop;
+
+  const dispatch = createEventDispatcher();
 
   let value: boolean;
   $: value = component[key];
@@ -11,6 +14,7 @@
   const onChange = (event) => {
     component[key] = event.detail;
     component.modified();
+    dispatch("modified");
   };
 </script>
 

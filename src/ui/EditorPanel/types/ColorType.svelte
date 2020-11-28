@@ -1,10 +1,13 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
   import ColorPicker from "@budibase/colorpicker";
   import { Color } from "three";
 
   export let key: string;
   export let component;
   export let prop;
+
+  const dispatch = createEventDispatcher();
 
   let value;
   $: {
@@ -48,7 +51,7 @@
       const newValue = '#' + color.getHexString();
       component[key] = newValue;
       component.modified();
-      console.log('color change', key, component[key], component);
+      dispatch('modified');
     }} />
 
   <color>{value}</color>

@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { MathUtils, Euler, Quaternion } from "three";
+  import { Euler, Quaternion } from "three";
+  import { createEventDispatcher } from "svelte";
 
   import Capsule from "../Capsule.svelte";
   import { NumberDragger } from "../NumberDragger";
@@ -7,6 +8,8 @@
   export let key: string;
   export let component;
   export let prop;
+
+  const dispatch = createEventDispatcher();
 
   let editing = {
     x: false,
@@ -29,6 +32,7 @@
     component[key].copy(q1);
 
     component.modified();
+    dispatch("modified");
     editing[dimension] = false;
   };
 
@@ -43,7 +47,10 @@
       q1.setFromEuler(value);
       component[key].copy(q1);
 
-      if (setModified) component.modified();
+      if (setModified) {
+        component.modified();
+        dispatch("modified");
+      }
     }
   };
 

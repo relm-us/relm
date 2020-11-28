@@ -1,15 +1,19 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
   import Select from "svelte-select";
 
   export let key: string;
   export let component;
   export let prop;
 
+  const dispatch = createEventDispatcher();
+
   function onSelect(event) {
     const value = event.detail.value;
     if (component[key] !== value) {
       component[key] = value;
       component.modified();
+      dispatch("modified");
     }
   }
 </script>
