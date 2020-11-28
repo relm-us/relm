@@ -1,5 +1,5 @@
 import { derived, writable, Readable, Writable } from "svelte/store";
-import { config, Config } from "./config";
+import { config, Config, defaultConfig } from "./config";
 
 export type ConnectionStatus =
   | "error"
@@ -16,7 +16,7 @@ export type ConnectOptions = {
   room: string;
 };
 
-export const relmId: Writable<string> = writable("default");
+export const relmId: Writable<string> = writable(defaultConfig.relmId);
 
 export const connection: Readable<ConnectOptions> = derived(
   [config, relmId],

@@ -19,6 +19,9 @@ export const worldManager = derived(
       // Make debugging eaiser
       (window as any).relm = manager;
 
+      // Initial connect
+      manager.connect();
+
       set(manager);
       return () => {
         manager.reset();
