@@ -64,6 +64,11 @@
     width: 16px;
     height: 16px;
   }
+  content {
+    display: block;
+    margin-top: 8px;
+    border-top: 1px solid rgba(48, 48, 48, 1);
+  }
 </style>
 
 <pane>

@@ -36,18 +36,22 @@
     display: flex;
     --pane-width: 180px;
   }
+  div.connected {
+    --subtitle-color: rgba(0, 210, 24, 1);
+  }
   label {
     display: block;
     margin: 8px 16px 4px 16px;
+    color: rgba(240, 240, 240, 1);
   }
   input {
-    margin: 4px 16px 8px 16px;
+    margin: 4px 16px 0px 16px;
+    padding: 0px 8px 0px 8px;
     width: 148px;
     border: none;
     border-radius: 3px;
     line-height: 32px;
     font-size: 20px;
-    border-bottom: 1px solid rgba(0, 0, 0, 1);
 
     background-color: rgba(0, 0, 0, 0.25);
     color: rgba(240, 240, 240, 1);
@@ -57,18 +61,19 @@
   buttons {
     display: flex;
     justify-content: center;
+    margin-top: 8px;
     margin-bottom: 8px;
   }
 </style>
 
-<div>
+<div class:connected={$yConnectStatus === 'connected'}>
   <Pane title="Network" {subtitle} showMinimize={true} bind:minimized>
     {#if $yConnectStatus === 'connected'}
       <buttons>
         <Button on:click={onClickDisconnect}>Disconnect</Button>
       </buttons>
     {:else if $yConnectStatus === 'disconnected'}
-      <label for="relmId">Relm:</label>
+      <label for="relmId">Connect to Relm:</label>
       <input bind:this={inputEl} type="text" name="relmId" value={$relmId} />
       <buttons>
         <Button on:click={onClickConnect}>Connect</Button>
