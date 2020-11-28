@@ -4,7 +4,7 @@ import { DeepDiff } from "deep-diff";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 
-import { isEntityAttribute, yIdToString } from "./utils";
+import { findInYArray, isEntityAttribute, yIdToString } from "./utils";
 import { withArrayEdits, withMapEdits } from "./observeUtils";
 import { YEntities, YEntity, YComponent, YIDSTR, HECSID } from "./types";
 import { yEntityToJSON, yComponentToJSON } from "./yToJson";
@@ -124,8 +124,40 @@ export class WorldDoc extends EventEmitter {
     }
   }
 
-  getJson(entityId) {
-    const yentity = this.hids.get(entityId);
+  delete(entity: Entity) {
+    this.ydoc.transact(() => {
+      this._deleteRecursive(entity);
+    });
+  }
+
+  _deleteRecursive(entity: Entity) {
+    const yentity = this.hids.get(entity.id);
+    if (!yentity) {
+      console.warn(
+        `Can't delete entity from worldDoc, does not exist`,
+        entity.id
+      );
+      return;
+    }
+
+    // Recursively delete children before parent
+    entity.getChildren().forEach((childEntity) => {
+      this.delete(childEntity);
+    });
+
+    const yid = yentity._item.id;
+    findInYArray(
+      this.entities,
+      (yentity) => yentity.get("id") === entity.id,
+      (_yentity, index) => this.entities.delete(index, 1)
+    );
+    entity.destroy();
+    this.yids.delete(yIdToString(yid));
+    this.hids.delete(entity.id);
+  }
+
+  getJson(entity) {
+    const yentity = this.hids.get(entity.id);
     if (yentity) {
       return yEntityToJSON(yentity);
     }
@@ -292,6 +324,6 @@ export class WorldDoc extends EventEmitter {
   }
 
   _deleteYComponent(entity: Entity, componentName: string) {
-    console.log("deleteYComponent", componentName, entity.id);
+    console.error("deleteYComponent not implemented", componentName, entity.id);
   }
 }

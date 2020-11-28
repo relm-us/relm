@@ -3,6 +3,7 @@
 
   export let label: string = null;
   export let value: any;
+  export let editable: boolean = true;
   export let editing: boolean = false;
   export let cursor = "default";
 
@@ -16,7 +17,15 @@
   }
 
   const onBlur = () => {
-    dispatch("cancel");
+    if (editable) {
+      dispatch("cancel");
+    }
+  };
+
+  const onFocus = () => {
+    if (editable) {
+      editing = true;
+    }
   };
 </script>
 
@@ -72,10 +81,10 @@
   <value
     class:tag={!label}
     on:mousedown
-    on:focus={() => (editing = true)}
+    on:focus={onFocus}
     style={`cursor: ${cursor}`}
     tabindex="0">
-    {#if editing}
+    {#if editable && editing}
       <input
         bind:this={inputElement}
         {value}

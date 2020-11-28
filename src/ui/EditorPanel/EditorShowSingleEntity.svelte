@@ -37,6 +37,10 @@
     $worldManager.wdoc.syncFrom(entity);
   };
 
+  const destroyEntity = () => {
+    $worldManager.wdoc.delete(entity);
+  };
+
   onMount(() => {
     $worldManager.world.on("entity-inactive", detectInactive);
     $worldManager.world.on("entity-active", detectActive);
@@ -55,7 +59,7 @@
   }
 </style>
 
-<EntityDetails {entity} {active} />
+<EntityDetails {entity} on:destroy={destroyEntity} />
 
 {#if active}
   <!-- Components meant to be edited -->

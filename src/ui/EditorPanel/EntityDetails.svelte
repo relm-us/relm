@@ -1,10 +1,13 @@
 <script lang="ts">
-  import { RigidBody, RigidBodyRef } from "~/ecs/plugins/rapier";
+  import { createEventDispatcher } from "svelte";
+
+  import { RigidBodyRef } from "~/ecs/plugins/rapier";
 
   import Capsule from "./Capsule.svelte";
 
   export let entity;
-  export let active;
+
+  const dispatch = createEventDispatcher();
 
   function isSleeping(entity) {
     const body = entity.get(RigidBodyRef);
@@ -30,12 +33,8 @@
     }
   };
 
-  const onActivate = () => {
-    entity.activate();
-    awaken();
-  };
-  const onDeactivate = () => {
-    entity.deactivate();
+  const onDestroy = () => {
+    dispatch("destroy");
   };
 </script>
 
@@ -56,23 +55,28 @@
 
 <div>
   <row>
-    <Capsule label="ID" value={entity.id} />
+    <Capsule editable={false} label="ID" value={entity.id} />
     <Capsule label="Name" value={entity.name} />
   </row>
   <toolbar>
-    {#if active}
-      <Capsule
-        value="Deactivate"
-        on:mousedown={onDeactivate}
-        cursor="pointer" />
-    {:else}
-      <Capsule value="Activate" on:mousedown={onActivate} cursor="pointer" />
-    {/if}
+    <Capsule
+      editable={false}
+      value="Delete"
+      on:mousedown={onDestroy}
+      cursor="pointer" />
     {#if hasRigidBody(entity)}
       {#if isSleeping(entity)}
-        <Capsule value="Wake" on:mousedown={awaken} cursor="pointer" />
+        <Capsule
+          editable={false}
+          value="Wake"
+          on:mousedown={awaken}
+          cursor="pointer" />
       {:else}
-        <Capsule value="Sleep" on:mousedown={asleepen} cursor="pointer" />
+        <Capsule
+          editable={false}
+          value="Sleep"
+          on:mousedown={asleepen}
+          cursor="pointer" />
       {/if}
     {/if}
   </toolbar>
