@@ -1,7 +1,7 @@
-import { Component, RefType } from "hecs";
+import { StateComponent, RefType } from "hecs";
 import { Vector3Type, Vector3 } from "hecs-plugin-core";
 
-export class PointerPlaneRef extends Component {
+export class PointerPlaneRef extends StateComponent {
   static props = {
     planes: {
       type: RefType,

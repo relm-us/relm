@@ -1,4 +1,4 @@
-import { LocalComponent, RefType } from "hecs";
+import { StateComponent, RefType } from "hecs";
 import { Matrix4 } from "three";
 
 export type EffectState = {
@@ -6,7 +6,7 @@ export type EffectState = {
   state: object;
 };
 
-export class TransformEffectsStack extends LocalComponent {
+export class TransformEffectsStack extends StateComponent {
   stack: Array<EffectState>;
 
   static props = {
