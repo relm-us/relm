@@ -6,7 +6,15 @@ import { WebsocketProvider } from "y-websocket";
 
 import { findInYArray, isEntityAttribute, yIdToString } from "./utils";
 import { withArrayEdits, withMapEdits } from "./observeUtils";
-import { YEntities, YEntity, YComponent, YIDSTR, HECSID } from "./types";
+import {
+  YEntities,
+  YEntity,
+  YComponent,
+  YIDSTR,
+  HECSID,
+  YValues,
+  YComponents,
+} from "./types";
 import { yEntityToJSON, yComponentToJSON } from "./yToJson";
 import { jsonToYEntity } from "./jsonToY";
 
@@ -239,13 +247,42 @@ export class WorldDoc extends EventEmitter {
           // Adding to or deleting from YComponents
           withArrayEdits(event as Y.YArrayEvent<YComponent>, {
             onAdd: (ycomponent) => {
-              this._addYComponent(ycomponent, entity);
+              this._addYComponent(entity, ycomponent);
             },
             onDelete: (yid) => {
               this._deleteYComponent(entity, event.path[1] as string);
             },
           });
         }
+      } else if (event.path.length === 4 && event.path[1] === "components") {
+        // Update a component's values
+        // e.g. event.path = [ 0, "components", 2, "values" ]
+        const entity = this._getEntityFromEventPath(event.path);
+
+        withMapEdits(event as Y.YMapEvent<YValues>, {
+          onUpdate: (key, content, oldContent) => {
+            const componentName = (this.entities
+              .get(event.path[0] as number)
+              .get("components") as YComponents)
+              .get(event.path[2] as number)
+              .get("name");
+            const component = entity.getByName(componentName);
+
+            // Similar to HECS Component.fromJSON, but for just one prop
+            const prop = component.constructor.props[key];
+            const type = prop.type || prop;
+            component[key] = type.fromJSON(content, component[key]);
+
+            // Mark as modified so any updates can occur
+            component.modified();
+          },
+        });
+
+        // const ycomponent =
+
+        // this._updateYComponent(entity, ycomponent)
+      } else {
+        console.warn("unknown _observer event", event.path);
       }
     }
   }
@@ -308,7 +345,7 @@ export class WorldDoc extends EventEmitter {
     }
   }
 
-  _addYComponent(ycomponent: YComponent, entity: Entity) {
+  _addYComponent(entity: Entity, ycomponent: YComponent) {
     // Get the right Component class
     const key = ycomponent.get("name");
     const Component = this.world.components.getByName(key);
