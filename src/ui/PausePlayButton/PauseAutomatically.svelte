@@ -5,10 +5,13 @@
 
   let pausedAutomatically = false;
 
+  // For debugging, it can be useful to set this to false
+  const pauseAutomatically = true;
+
   onMount(() => {
     const interval = setInterval(() => {
       const hasFocus = document.hasFocus();
-      if ($worldRunning && !hasFocus) {
+      if ($worldRunning && !hasFocus && pauseAutomatically) {
         pausedAutomatically = true;
         $worldRunning = false;
       } else if (!$worldRunning && hasFocus && pausedAutomatically) {
