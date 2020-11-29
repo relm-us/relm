@@ -14,8 +14,6 @@
   import ConnectButton from "~/ui/ConnectButton";
   import ResetWorldButton from "~/ui/ResetWorldButton";
 
-  import PausedMessage from "~/ui/PausedMessage";
-
   import { world } from "~/stores/world";
   import { mode } from "~/stores/mode";
 
@@ -102,8 +100,6 @@
 
   <!-- Keyboard, Mouse input -->
   <Input world={$world} />
-
-  <PausedMessage />
 {/if}
 
 <overlay class:open={$mode === 'build'}>
