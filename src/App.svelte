@@ -44,7 +44,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: space-between;
   }
   @media screen and (max-width: 480px) {
     overlay {
@@ -88,6 +88,7 @@
     --margin: 0px;
 
     position: absolute;
+    min-width: 500px;
     top: -20px;
     left: 300px;
     transform: translate(-50%) rotate(90deg) translate(50%, -50%);
