@@ -1,6 +1,6 @@
-import { Component, RefType } from "hecs";
+import { StateComponent, RefType } from "hecs";
 
-export class DirectionalLightRef extends Component {
+export class DirectionalLightRef extends StateComponent {
   static props = {
     value: {
       type: RefType,
