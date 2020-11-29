@@ -37,6 +37,10 @@
     $worldManager.wdoc.syncFrom(entity);
   };
 
+  const onModified = () => {
+    entity = entity;
+  };
+
   const destroyEntity = () => {
     $worldManager.wdoc.delete(entity);
   };
@@ -59,7 +63,7 @@
   }
 </style>
 
-<EntityDetails {entity} on:destroy={destroyEntity} />
+<EntityDetails {entity} on:destroy={destroyEntity} on:modified={onModified} />
 
 {#if active}
   <!-- Components meant to be edited -->

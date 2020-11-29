@@ -1,4 +1,18 @@
 /**
+ * Abuses the meaning of "Set" a bit, and returns the "first" item
+ * in the set. Useful when we know there is just one item and need
+ * to get it out of the set.
+ *
+ * @param set A Set
+ */
+export function first<T>(set: Set<T>): T {
+  if (set.size > 0) {
+    const item = set.values().next().value;
+    console.log("get first set item", item);
+    return item;
+  }
+}
+/**
  * Set union - taken from MDN
  *
  * @param {Set} setA

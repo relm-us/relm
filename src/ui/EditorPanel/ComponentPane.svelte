@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import { createEventDispatcher } from "svelte";
   import Capsule from "./Capsule.svelte";
 
@@ -31,9 +32,26 @@
     dispatch("modified");
   };
 
+  const onModified = () => {
+    Component = Component;
+    component = component;
+    dispatch("modified");
+  };
+
   const canDestroy = () => {
     return !["Transform"].includes(Component.name);
   };
+
+  if (Component.name === "Transform") {
+    const UPDATE_FREQUENCY_MS = 100;
+    // Regularly update our panel data
+    onMount(() => {
+      const interval = setInterval(() => {
+        component = component;
+      }, UPDATE_FREQUENCY_MS);
+      return () => clearInterval(interval);
+    });
+  }
 </script>
 
 <style>
@@ -52,7 +70,7 @@
   on:close={() => dispatch('destroy')}>
   {#each Object.entries(Component.props) as [key, prop] (key)}
     {#if propVisible(prop)}
-      <Property {key} {component} {prop} on:modified />
+      <Property {key} {component} {prop} on:modified={onModified} />
     {/if}
   {/each}
   <toolbar>

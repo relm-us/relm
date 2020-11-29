@@ -25,6 +25,8 @@
         return BooleanType;
       case "Color":
         return ColorType;
+      case "Entity":
+        return StringType;
       case "JSON":
         return JSONType;
       case "Number":

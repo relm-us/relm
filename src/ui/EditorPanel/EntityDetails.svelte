@@ -60,6 +60,8 @@
   const onSelectNewComponent = ({ detail }) => {
     const Component = detail.value;
     entity.add(Component);
+    $worldManager.wdoc.syncFrom(entity);
+    dispatch("modified");
   };
 </script>
 

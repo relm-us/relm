@@ -103,12 +103,14 @@ export default class WorldManager {
 
       for (const entityId of removed) {
         const entity = this.world.entities.getById(entityId);
+        if (!entity) continue;
         previouslySelected.delete(entityId);
         entity.remove(Outline);
       }
 
       for (const entityId of added) {
         const entity = this.world.entities.getById(entityId);
+        if (!entity) continue;
         previouslySelected.add(entityId);
         entity.add(Outline);
       }

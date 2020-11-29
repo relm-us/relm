@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-
   import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
   import {
     hovered,
@@ -10,36 +8,14 @@
   import { worldManager } from "~/stores/worldManager";
   import SelectCreatePrefab from "./SelectCreatePrefab.svelte";
   import EditorShowSingleEntity from "./EditorShowSingleEntity.svelte";
-
-  const UPDATE_FREQUENCY_MS = 100;
+  import { first } from "~/utils/setOps";
 
   function getEntity(selected) {
-    if (selected.size > 0) {
-      const firstId = selected.values().next().value;
-      return $worldManager.world.entities.getById(firstId);
+    const entityId = first(selected);
+    if (entityId) {
+      return $worldManager.world.entities.getById(entityId);
     }
   }
-
-  let entity;
-
-  const refresh = (selected) => {
-    const maybeEntity = getEntity(selected);
-    if (maybeEntity) {
-      entity = maybeEntity;
-    }
-  };
-
-  // update everything whenever the selection changes
-  $: refresh($selectedEntities);
-
-  // Regularly update our panel data
-  onMount(() => {
-    const interval = setInterval(
-      () => refresh($selectedEntities),
-      UPDATE_FREQUENCY_MS
-    );
-    return () => clearInterval(interval);
-  });
 </script>
 
 <style>
@@ -56,7 +32,7 @@
     <info>Nothing selected</info>
     <SelectCreatePrefab />
   {:else if $selectedEntities.size === 1}
-    <EditorShowSingleEntity {entity} />
+    <EditorShowSingleEntity entity={getEntity($selectedEntities)} />
   {:else}
     <Pane title="Selected">
       {#each [...$selectedEntities] as entityId}
