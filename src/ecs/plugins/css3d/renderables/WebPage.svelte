@@ -84,7 +84,8 @@
   {height}
   src={url}
   frameborder="0"
-  allowfullscreen />
+  allowfullscreen
+  allow="camera;microphone" />
 
 {#if $mode === 'build' || highlighted}
   <overlay class:highlighted />
