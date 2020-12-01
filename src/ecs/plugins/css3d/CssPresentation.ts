@@ -76,6 +76,7 @@ export class CssPresentation {
   createRenderer() {
     const renderer = new CSS3DRenderer();
     renderer.setSize(this.size.width, this.size.height);
+    renderer.domElement.style.backgroundColor = "black";
     renderer.domElement.style.position = "absolute";
     renderer.domElement.style.top = "0px";
     return renderer;
