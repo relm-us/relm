@@ -7,7 +7,22 @@
   import IoIosPlay from "svelte-icons/io/IoIosPlay.svelte";
   import IoIosPause from "svelte-icons/io/IoIosPause.svelte";
 
+  const DOUBLE_CLICK_MS = 400;
+
+  let prevClickTimestamp = -DOUBLE_CLICK_MS;
+  let neverPauseAutomatically = false;
+
+  const isDoubleClick = () => {
+    const now = performance.now();
+    const delta = now - prevClickTimestamp;
+    prevClickTimestamp = now;
+    return delta < DOUBLE_CLICK_MS;
+  };
+
   const onClick = () => {
+    if (isDoubleClick()) {
+      neverPauseAutomatically = !neverPauseAutomatically;
+    }
     worldRunning.update(($running: boolean) => !$running);
   };
 </script>
@@ -17,6 +32,16 @@
     display: block;
     width: 32px;
     height: 32px;
+  }
+  dot {
+    display: block;
+    width: 7px;
+    height: 7px;
+    border-radius: 7px;
+    background-color: white;
+    position: absolute;
+    margin-left: -3px;
+    margin-top: -3px;
   }
 </style>
 
@@ -28,8 +53,13 @@
       <IoIosPlay />
     {/if}
   </icon>
+  {#if neverPauseAutomatically}
+    <dot />
+  {/if}
 </Button>
 
 <PausedMessage />
 
-<PauseAutomatically />
+{#if !neverPauseAutomatically}
+  <PauseAutomatically />
+{/if}
