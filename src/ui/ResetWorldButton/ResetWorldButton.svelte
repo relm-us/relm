@@ -9,4 +9,4 @@
   };
 </script>
 
-<Button on:click={onClick}>Reset World</Button>
+<Button on:click={onClick}>Reset Physics</Button>
