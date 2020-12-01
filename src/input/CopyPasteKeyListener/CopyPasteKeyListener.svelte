@@ -2,6 +2,8 @@
   import { globalEvents } from "~/events";
 
   function onKeydown(event) {
+    if (event.target.tagName === "INPUT") return;
+
     if (event.key === "c" && (event.ctrlKey || event.metaKey)) {
       event.preventDefault();
 
