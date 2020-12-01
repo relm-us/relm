@@ -1,17 +1,9 @@
 import {
-  hovered,
   selectedEntities,
   selectedGroups,
   groupTree,
 } from "~/stores/selection";
-import { Vector2 } from "three";
-import { difference, intersection } from "~/utils/setOps";
-import { hasAncestor } from "~/utils/hasAncestor";
-import { mouse } from "~/stores/mouse";
-import { globalEvents } from "~/events";
-import { mode } from "~/stores/mode";
-
-import { IntersectionFinder } from "./IntersectionFinder";
+import { intersection } from "~/utils/setOps";
 
 type EntityId = string;
 

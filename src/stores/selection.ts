@@ -96,6 +96,14 @@ function createSetStore<T>() {
       return get(store).has(value);
     },
 
+    get: () => {
+      return get(store);
+    },
+
+    getSize: () => {
+      return get(store).size;
+    },
+
     add: (value) => {
       update(($set) => {
         $set.add(value);
@@ -113,6 +121,16 @@ function createSetStore<T>() {
     clear: () => {
       update(($set) => {
         $set.clear();
+        return $set;
+      });
+    },
+
+    copy: (otherSetStore) => {
+      update(($set) => {
+        $set.clear();
+        for (const value of otherSetStore.get()) {
+          $set.add(value);
+        }
         return $set;
       });
     },
