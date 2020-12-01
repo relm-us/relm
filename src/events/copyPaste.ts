@@ -5,6 +5,7 @@ import { copyBuffer } from "~/stores/copyBuffer";
 import { worldManager } from "~/stores/worldManager";
 import { Transform } from "hecs-plugin-core";
 import { Vector3 } from "three";
+import { nanoid } from "nanoid";
 
 function getCenter(entities) {
   const center = new Vector3();
@@ -42,7 +43,7 @@ function assignNewIds(entityManager, serializedEntities) {
 
   // First pass: Assign new IDs
   for (const sEntity of serializedEntities) {
-    const newId = `${entityManager.world.id}:${entityManager.nextEntityId++}`;
+    const newId = nanoid();
     idMap.set(sEntity.id, newId);
     sEntity.id = newId;
   }

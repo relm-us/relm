@@ -1,4 +1,4 @@
-import { get, writable, Writable } from "svelte/store";
+import { get } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
@@ -139,6 +139,10 @@ export default class WorldManager {
       d: 1,
       dynamic: false,
     }).activate();
+  }
+
+  get selected() {
+    return [...get(selectedEntities)];
   }
 
   depopulate() {
