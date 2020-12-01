@@ -8,19 +8,27 @@
   let iframe;
   let highlighted = false;
 
+  // We need to do this in Firefox, because we can't just detect a blur event
+  // and set focus on the document immediately afterward.
+  function forceRestoreFocus(msec = 10) {
+    iframe.blur();
+    setTimeout(() => {
+      if (document.activeElement === iframe) {
+        forceRestoreFocus(msec);
+      }
+    }, msec);
+  }
+
   function onWindowBlur(event: FocusEvent) {
-    if (document.activeElement === iframe && !highlighted) {
-      setTimeout(() => {
-        // Put focus back if user didn't request it
-        (event.target as HTMLElement).focus();
-      }, 0);
+    if (!highlighted) {
+      forceRestoreFocus();
     }
   }
 
   function onFrameMouseout() {
     if ($mode === "play") {
       highlighted = false;
-      window.focus();
+      forceRestoreFocus();
     }
   }
 
