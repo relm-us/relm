@@ -37,7 +37,7 @@ function serializeEntityWithOffset(entity, offset) {
 
 // Given a set of JSON-ified entities, give them all new identifiers.
 // Note that entities are organized in a hierarchy and reference each other.
-function assignNewIds(entityManager, serializedEntities) {
+function assignNewIds(serializedEntities) {
   // map from OLD IDs to NEW IDs
   const idMap = new Map();
 
@@ -108,8 +108,10 @@ export function onPaste() {
   if (get(mode) === "build") {
     const buffer = get(copyBuffer);
     if (buffer.length > 0) {
+      // Entities in copy buffer get new IDs on every paste
+      assignNewIds(buffer);
+
       const $wm = get(worldManager);
-      assignNewIds($wm.world.entities, buffer);
       const entities = [];
       for (const json of buffer) {
         const entity = $wm.world.entities.create().fromJSON(json).activate();

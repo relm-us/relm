@@ -8,7 +8,6 @@
 export function first<T>(set: Set<T>): T {
   if (set.size > 0) {
     const item = set.values().next().value;
-    console.log("get first set item", item);
     return item;
   }
 }
