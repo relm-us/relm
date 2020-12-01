@@ -194,10 +194,16 @@ export class WorldDoc extends EventEmitter {
   }
 
   _observer(events: Array<Y.YEvent>, transaction: Y.Transaction) {
-    // If this is a local event, we should ignore it because the "diff"
-    // represented by this YEvent has already been applied to the HECS
-    // world.
-    if (transaction.local) {
+    if (
+      transaction.origin &&
+      transaction.origin.constructor === Y.UndoManager
+    ) {
+      // If this is an undo/redo event, we need to apply it locally
+      console.log("undo/redo observed", events);
+    } else if (transaction.local) {
+      // If this is a local event, we should ignore it because the "diff"
+      // represented by this YEvent has already been applied to the HECS
+      // world.
       return;
     }
 

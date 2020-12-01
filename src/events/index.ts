@@ -1,6 +1,8 @@
 import EventEmitter from "eventemitter3";
 
 import { onCopy, onPaste } from "./copyPaste";
+import { onUndo, onRedo } from "./undoRedo";
+import { onSwitchMode } from "./switchMode";
 
 // This is a global event emitter. It should be used sparingly.
 export const globalEvents = new EventEmitter();
@@ -16,3 +18,8 @@ export const globalEvents = new EventEmitter();
 
 globalEvents.on("copy", onCopy);
 globalEvents.on("paste", onPaste);
+
+globalEvents.on("undo", onUndo);
+globalEvents.on("redo", onRedo);
+
+globalEvents.on("switch-mode", onSwitchMode);
