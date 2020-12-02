@@ -110,7 +110,20 @@ export function applyChangeToYEntity(change: Change, yentity: YEntity) {
               applyChange(value, null, change);
 
               // We modified in-place, so re-assign
-              yvalues.set(propertyName, value);
+
+              /**
+               * Because we modified in-place, we need to create new references
+               * here, or else Yjs will not detect that a change occurred.
+               *
+               * Check https://discuss.yjs.dev/t/indicate-to-yjs-that-content-has-been-modified/302
+               */
+              if (value instanceof Array) {
+                yvalues.set(propertyName, [...value]);
+              } else if (value instanceof Object) {
+                yvalues.set(propertyName, { ...value });
+              } else {
+                yvalues.set(propertyName, value);
+              }
             }
           );
         } else {
