@@ -11,16 +11,16 @@ export function makeStageAndActivate(world, avatar) {
   // Create the singleton camera
   const camera = makeEntity(world, "Camera")
     .add(Transform, {
-      position: new Vector3(0, 3, 5),
+      position: new Vector3(0, 15, 15),
     })
     .add(LookAt, {
       entity: avatar.id,
-      limit: "X_AXIS",
+      // limit: "X_AXIS",
     })
     .add(Follow, {
       entity: avatar.id,
-      limit: "XY_AXIS",
-      offset: new Vector3(0, 3, 0),
+      limit: "XYZ_AXIS",
+      offset: new Vector3(0, 15, 15),
     })
     .add(Camera)
     .activate();

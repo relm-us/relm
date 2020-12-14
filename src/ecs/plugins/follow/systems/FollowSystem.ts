@@ -64,9 +64,16 @@ export class FollowSystem extends System {
         targetWorld.position.y,
         transform.position.z
       );
+    } else if (limit === "XYZ_AXIS") {
+      position.set(
+        targetWorld.position.x,
+        targetWorld.position.y,
+        targetWorld.position.z
+      );
     }
     position.add(spec.offset);
-    transform.position.lerp(position, spec.lerpAlpha);
+    // transform.position.lerp(position, spec.lerpAlpha);
+    transform.position.copy(position);
 
     const parent = entity.getParent();
     if (parent) {
