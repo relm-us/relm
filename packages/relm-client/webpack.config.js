@@ -76,17 +76,10 @@ module.exports = {
       {
         test: /\.svelte$/,
         use: {
-          loader: "svelte-loader-hot",
+          loader: "svelte-loader",
           options: {
             dev: !prod,
             emitCss: prod,
-            hotReload: !prod,
-            hotOptions: {
-              // List of options and defaults:
-              // https://www.npmjs.com/package/svelte-loader-hot#usage
-              noPreserveState: false,
-              optimistic: true,
-            },
             preprocess: Preprocess({
               scss: true,
               postcss: {
@@ -143,7 +136,7 @@ module.exports = {
     ],
   },
   devServer: {
-    hot: true,
+    hot: false,
     stats: "minimal",
     contentBase: "public",
     watchContentBase: true,
