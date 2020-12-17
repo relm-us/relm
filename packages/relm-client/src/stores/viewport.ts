@@ -30,3 +30,5 @@ export const size = derived(
   },
   DEFAULT_SIZE
 );
+
+export const scale: Writable<number> = writable(0);

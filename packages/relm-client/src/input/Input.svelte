@@ -6,6 +6,7 @@
   import UndoRedoKeyListener from "./UndoRedoKeyListener";
 
   import MouseListener from "./MouseListener";
+  import WheelListener from "./WheelListener";
 
   export let world;
 </script>
@@ -17,3 +18,4 @@
 <UndoRedoKeyListener />
 
 <MouseListener {world} />
+<WheelListener />

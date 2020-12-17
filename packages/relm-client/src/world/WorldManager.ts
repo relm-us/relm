@@ -5,6 +5,7 @@ import { WorldDoc } from "~/y-integration/WorldDoc";
 import { difference } from "~/utils/setOps";
 import { deltaTime, fpsTime } from "~/stores/stats";
 import { worldRunning } from "~/stores/worldRunning";
+import { scale } from "~/stores/viewport";
 import { selectedEntities } from "~/stores/selection";
 import { globalEvents } from "~/events";
 
@@ -51,6 +52,12 @@ export default class WorldManager {
       } else {
         this.world.presentation.setLoop(null);
       }
+    });
+
+    scale.subscribe(($scale) => {
+      const position = this.camera.getByName("Follow").offset;
+      const distance = 10 + (20 * $scale) / 100;
+      position.set(0, distance, distance);
     });
 
     globalEvents.on("mouseActivity", () => {
