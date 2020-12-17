@@ -12,7 +12,7 @@ export class Follow extends Component {
     },
     limit: {
       type: StringType,
-      default: "X_AXIS",
+      default: "XYZ_AXIS",
       editor: {
         label: "Limit",
         input: "Select",

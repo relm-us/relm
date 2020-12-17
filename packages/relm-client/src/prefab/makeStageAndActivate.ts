@@ -9,33 +9,47 @@ import { makeEntity } from "./makeEntity";
 
 export function makeStageAndActivate(world, avatar) {
   // Create the singleton camera
+  const cameraPosition = new Vector3(0, 15, 15);
   const camera = makeEntity(world, "Camera")
     .add(Transform, {
-      position: new Vector3(0, 15, 15),
+      position: cameraPosition,
     })
     .add(LookAt, {
       entity: avatar.id,
-      // limit: "X_AXIS",
     })
     .add(Follow, {
       entity: avatar.id,
       limit: "XYZ_AXIS",
-      offset: new Vector3(0, 15, 15),
+      offset: cameraPosition,
     })
     .add(Camera)
     .activate();
 
+  const lightOffset = new Vector3(-5, 5, 0);
+  const lightPosition = new Vector3().add(cameraPosition).add(lightOffset);
+  const shadowSize = 7.5;
   const light = makeEntity(world, "DirectionalLight")
     .add(Transform, {
-      position: new Vector3(-20, 20, 10),
+      position: lightPosition,
     })
+    // .add(LookAt, {
+    //   entity: avatar.id,
+    // })
     .add(Follow, {
-      entity: avatar.id,
+      entity: camera.id,
+      limit: "XYZ_AXIS",
+      offset: lightOffset,
     })
     .add(DirectionalLight, {
-      color: 0x553333,
-      shadowTop: 24 - 10,
-      shadowBottom: -24 - 10,
+      target: avatar.id,
+      color: 0xaa9999,
+      shadowLeft: -shadowSize,
+      shadowRight: shadowSize,
+      shadowTop: shadowSize,
+      shadowBottom: -shadowSize,
+      shadowFar: 100,
+      shadowRadius: 1.75,
+      shadowDistanceGrowthRatio: 12,
     })
     .activate();
 
@@ -46,9 +60,9 @@ export function makeStageAndActivate(world, avatar) {
     .add(Follow, {
       entity: avatar.id,
     })
-    .add(DirectionalLight, {
-      color: 0xdddddd,
-    })
+    // .add(DirectionalLight, {
+    //   color: 0xdddddd,
+    // })
     .activate();
 
   return { camera, light, sunLight };

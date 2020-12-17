@@ -63,8 +63,12 @@ export class TransformEffectsSystem extends System {
     const stack = entity.get(TransformEffectsStack).stack;
     this.computeStack(effects, stack, delta);
 
-    const object3d = entity.get(Object3D).value;
-    this.applyStack(object3d, stack);
+    const object3d = entity.get(Object3D);
+    if (!object3d) {
+      console.warn("TransformEffectsSystem: entity has no object3d", entity);
+      return;
+    }
+    this.applyStack(object3d.value, stack);
   }
 
   removeEffectByIndex(effects, stack, index) {

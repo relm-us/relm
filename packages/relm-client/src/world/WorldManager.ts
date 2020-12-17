@@ -20,6 +20,7 @@ import { HeadController } from "~/ecs/plugins/player-control";
 export default class WorldManager {
   world;
   avatar;
+  camera;
   connection;
   viewport: HTMLElement;
 
@@ -124,7 +125,9 @@ export default class WorldManager {
 
     // For now, we'll show a demo scene
     this.avatar = makeAvatarAndActivate(this.world);
-    makeStageAndActivate(this.world, this.avatar);
+    const { camera } = makeStageAndActivate(this.world, this.avatar);
+    this.camera = camera;
+
     makeGround(this.world).activate();
     makeInvisibleBox(this.world, {
       z: -50,

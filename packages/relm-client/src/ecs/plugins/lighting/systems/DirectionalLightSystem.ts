@@ -44,18 +44,41 @@ export class DirectionalLightSystem extends System {
           height: spec.shadowHeight,
         };
         this.buildShadow(light, spec.shadowRadius, resolution, frustum);
+        // this.presentation.scene.add(
+        //   new THREE.CameraHelper(light.shadow.camera)
+        // );
       }
       entity.add(DirectionalLightRef, { value: light });
     });
 
     this.queries.active.forEach((entity) => {
-      const transform = entity.get(Transform);
-      // Less jitter on shadows if we keep the shadow map stable between small movements
-      transform.position.x = Math.ceil(transform.position.x);
-      transform.position.z = Math.ceil(transform.position.z);
+      const spec = entity.get(DirectionalLight);
+      if (spec.shadowDistanceGrowthRatio) {
+        const transform = entity.get(Transform);
+        const light = entity.get(DirectionalLightRef).value;
+
+        const dist = (transform.position as THREE.Vector3).distanceTo(
+          light.target.position
+        );
+        if (spec.shadowDistance && Math.abs(dist - spec.shadowDistance) < 0.5) {
+          return;
+        } else {
+          console.log("DirectionalLightSystem: recalc shadow size");
+        }
+
+        const size = dist / spec.shadowDistanceGrowthRatio;
+        light.shadow.camera.top = spec.shadowTop * size;
+        light.shadow.camera.bottom = spec.shadowBottom * size;
+        light.shadow.camera.left = spec.shadowLeft * size;
+        light.shadow.camera.right = spec.shadowRight * size;
+        light.shadow.needsUpdate = true;
+
+        spec.shadowDistance = dist;
+      }
     });
-    this.queries.modified.forEach((entity) => {});
-    this.queries.removed.forEach((entity) => {});
+
+    // this.queries.modified.forEach((entity) => {});
+    // this.queries.removed.forEach((entity) => {});
   }
 
   buildLight(
@@ -65,16 +88,16 @@ export class DirectionalLightSystem extends System {
     targetEntityId?: string
   ) {
     const object3d = entity.get(Object3D);
-    const dirLight = new THREE.DirectionalLight(color, intensity);
+    const light = new THREE.DirectionalLight(color, intensity);
 
-    object3d.value.add(dirLight);
+    object3d.value.add(light);
 
     if (targetEntityId) {
       const targetEntity = this.world.entities.getById(targetEntityId);
       if (targetEntity) {
         // DirectionalLight will point towards target entity, if provided
         const target = targetEntity.get(Object3D);
-        dirLight.target = target.value;
+        light.target = target.value;
       } else {
         console.warn(
           `DirectionalLight's target entity is invalid; ` +
@@ -85,13 +108,14 @@ export class DirectionalLightSystem extends System {
     } else {
       // If no target entity is provided, DirectionalLight will "float",
       // always pointing in same direction
-      dirLight.target.position.x = -object3d.value.position.x;
-      dirLight.target.position.y = -object3d.value.position.y;
-      dirLight.target.position.z = -object3d.value.position.z;
-      object3d.value.add(dirLight.target);
+      // TODO: FixMe
+      light.target.position.x = -object3d.value.position.x;
+      light.target.position.y = -object3d.value.position.y;
+      light.target.position.z = -object3d.value.position.z;
+      object3d.value.add(light.target);
     }
 
-    return dirLight;
+    return light;
   }
 
   buildShadow(light, radius, resolution, frustum) {
@@ -114,7 +138,7 @@ export class DirectionalLightSystem extends System {
       case "PCF":
         break;
       case "VSM":
-        light.shadow.bias = -0.001;
+        light.shadow.bias = -0.0002;
         break;
     }
   }

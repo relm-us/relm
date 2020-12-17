@@ -94,6 +94,12 @@ export class DirectionalLight extends Component {
         label: "Shadow Blur Radius",
       },
     },
+    shadowDistanceGrowthRatio: {
+      type: NumberType,
+      editor: {
+        label: "Shadow Distance Growth Ratio",
+      },
+    },
   };
   static editor = {
     label: "Follow",
