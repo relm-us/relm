@@ -56,7 +56,7 @@ export default class WorldManager {
 
     scale.subscribe(($scale) => {
       const position = this.camera.getByName("Follow").offset;
-      const distance = 10 + (20 * $scale) / 100;
+      const distance = 5 + (20 * $scale) / 100;
       position.set(0, distance, distance);
     });
 

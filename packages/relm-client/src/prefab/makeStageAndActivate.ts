@@ -9,7 +9,7 @@ import { makeEntity } from "./makeEntity";
 
 export function makeStageAndActivate(world, avatar) {
   // Create the singleton camera
-  const cameraPosition = new Vector3(0, 10, 10);
+  const cameraPosition = new Vector3(0, 5, 5);
   const camera = makeEntity(world, "Camera")
     .add(Transform, {
       position: cameraPosition,
