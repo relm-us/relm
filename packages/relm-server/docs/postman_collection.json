@@ -1,0 +1,528 @@
+{
+	"info": {
+		"_postman_id": "c2f96644-5e61-4227-a9eb-f244c4a06b17",
+		"name": "Relm Server",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Relms",
+			"item": [
+				{
+					"name": "List Public Relms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{serverUrl}}/relms/public",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relms",
+								"public"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List All Relms (Admin)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"description": "Signed Player ID",
+								"key": "X-Relm-S",
+								"type": "text",
+								"value": "{{relmSig}}"
+							},
+							{
+								"description": "Player ID",
+								"key": "X-Relm-Id",
+								"type": "text",
+								"value": "{{relmId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"playerId\": \"0dce4601-0a92-4c52-ad4a-f355ede669c6\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/relms/all",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relms",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Relm",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"isPublic\": true,\n    \"password\": \"welcome\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/relm/relm/create",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"relm",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Relm",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"isPublic\": true,\n    \"password\": \"welcome\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/relm/relm/delete",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"relm",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Relm Metadata",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"isPublic\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/relm/relm/meta",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"relm",
+								"meta"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Relm Metadata",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{serverUrl}}/relm/relm/meta",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"relm",
+								"meta"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Relm Data",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"type": "text",
+								"value": "{{relmSig}}"
+							},
+							{
+								"key": "X-Relm-Id",
+								"type": "text",
+								"value": "{{relmId}}"
+							}
+						],
+						"url": {
+							"raw": "{{serverUrl}}/relm/relm/data",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"relm",
+								"data"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Truncate Relm History",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"type": "text",
+								"value": "{{relmSig}}"
+							},
+							{
+								"key": "X-Relm-Id",
+								"type": "text",
+								"value": "{{relmId}}"
+							}
+						],
+						"url": {
+							"raw": "{{serverUrl}}/relm/relm/truncate",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"relm",
+								"truncate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Relm Permission",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{serverUrl}}/relm/relm/can/access",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"relm",
+								"can",
+								"access"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Invitations",
+			"item": [
+				{
+					"name": "Create Invitation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"type": "text",
+								"value": "{{relmSig}}"
+							},
+							{
+								"key": "X-Relm-Id",
+								"type": "text",
+								"value": "{{relmId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"welcome-token\",\n    \"maxUses\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/relm/relm/invitation",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"relm",
+								"invitation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Accept Invitation",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"type": "text",
+								"value": "2BNb9T3pFb8og2xeFdiSspUf/6tLfXRHB50Od/MOIntwxa/OBXorksd3c0VeZ8oRH4wdKSxM69XGtU/i35kuXyUpVOZqXEqa3PEN+1348IjlFcRXEXISfOAJ10QJ0mj5"
+							},
+							{
+								"key": "X-Relm-Id",
+								"type": "text",
+								"value": "cfec09b4-d0b4-4761-82c4-256d0bf07469"
+							},
+							{
+								"key": "X-Relm-X",
+								"value": "1dus076ICy8nNQlaXroec52c8yvotA9kokR0YRTeYfHBXgDYxY43gOi-DS2Goz5m",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Y",
+								"value": "4lVfMlamRBrsfUtJYidcCx6wXVxHHj_HkvgesZDVVmeaDaDxidvYWWc_zeLD4I34",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/relm/welcome/can/access?t=welcome-token",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"welcome",
+								"can",
+								"access"
+							],
+							"query": [
+								{
+									"key": "t",
+									"value": "welcome-token"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Authenticate (Admin)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Relm-S",
+						"value": "{{relmSig}}",
+						"description": "Signed Player ID",
+						"type": "text"
+					},
+					{
+						"key": "X-Relm-Id",
+						"value": "{{relmId}}",
+						"description": "Player ID",
+						"type": "text"
+					},
+					{
+						"key": "X-Relm-X",
+						"value": "{{relmX}}",
+						"description": "X Component of Public Key",
+						"type": "text"
+					},
+					{
+						"key": "X-Relm-Y",
+						"value": "{{relmY}}",
+						"description": "Y Component of Public Key",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{serverUrl}}/authenticate?t=setup",
+					"host": [
+						"{{serverUrl}}"
+					],
+					"path": [
+						"authenticate"
+					],
+					"query": [
+						{
+							"key": "t",
+							"value": "setup",
+							"description": "Token"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Make Admin",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"description": "Signed Player ID",
+						"key": "X-Relm-S",
+						"type": "text",
+						"value": "{{relmSig}}"
+					},
+					{
+						"description": "Player ID",
+						"key": "X-Relm-Id",
+						"type": "text",
+						"value": "{{relmId}}"
+					},
+					{
+						"description": "X Component of Public Key",
+						"key": "X-Relm-X",
+						"type": "text",
+						"value": "{{relmX}}"
+					},
+					{
+						"description": "Y Component of Public Key",
+						"key": "X-Relm-Y",
+						"type": "text",
+						"value": "{{relmY}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"playerId\": \"0dce4601-0a92-4c52-ad4a-f355ede669c6\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{serverUrl}}/mkadmin",
+					"host": [
+						"{{serverUrl}}"
+					],
+					"path": [
+						"mkadmin"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
