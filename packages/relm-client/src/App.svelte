@@ -11,6 +11,7 @@
   import GroupUngroupButton from "~/ui/GroupUngroupButton";
   import PausePlayButton from "~/ui/PausePlayButton";
   import StepFrameButton from "~/ui/StepFrameButton";
+  import UploadButton from "~/ui/UploadButton";
   import ConnectButton from "~/ui/ConnectButton";
   import ResetWorldButton from "~/ui/ResetWorldButton";
 
@@ -27,8 +28,9 @@
 <style>
   play-buttons {
     display: flex;
-    justify-content: center;
+    justify-content: left;
     margin-bottom: 4px;
+    --margin: 2px;
   }
 
   overlay {
@@ -66,7 +68,7 @@
     display: flex;
     flex-direction: column;
     margin-top: 8px;
-    margin-left: 30px;
+    margin-left: 50px;
   }
   overlay-center {
     display: flex;
@@ -133,6 +135,7 @@
       <play-buttons>
         <PausePlayButton />
         <StepFrameButton />
+        <UploadButton />
       </play-buttons>
       {#if $mode === 'build'}
         <GroupUngroupButton />

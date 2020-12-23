@@ -50,7 +50,10 @@
 	"dependencies": {
 		"@budibase/colorpicker": "^1.0.1",
 		"@dimforge/rapier3d": "0.2.13",
+		"base64-arraybuffer-es6": "^0.6.0",
+		"cropperjs": "^1.5.9",
 		"deep-diff": "^1.0.2",
+		"dropzone": "^5.7.2",
 		"eventemitter3": "^4.0.7",
 		"hecs": "^0.16.0",
 		"hecs-plugin-core": "^0.16.0",

@@ -1,3 +1,13 @@
+@import "dropzone/dist/dropzone.css";
+.dropzone .dz-preview .dz-progress {
+  top: 80%;
+}
+.dropzone .dz-preview .dz-details .dz-size {
+  margin-bottom: 2px;
+}
+
+@import "cropperjs/dist/cropper.css";
+
 html,
 body {
   position: relative;
