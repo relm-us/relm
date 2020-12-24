@@ -1,12 +1,8 @@
-@import "dropzone/dist/dropzone.css";
-.dropzone .dz-preview .dz-progress {
-  top: 80%;
-}
-.dropzone .dz-preview .dz-details .dz-size {
-  margin-bottom: 2px;
-}
-
-@import "cropperjs/dist/cropper.css";
+@import "@uppy/core/dist/style.css";
+@import "@uppy/dashboard/dist/style.css";
+@import "@uppy/webcam/dist/style.css";
+@import "@uppy/screen-capture/dist/style.css";
+@import "@uppy/image-editor/dist/style.css";
 
 html,
 body {

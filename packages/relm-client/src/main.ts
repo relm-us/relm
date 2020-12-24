@@ -4,8 +4,8 @@ import Sandbox from "./Sandbox.svelte";
 // prettier-ignore
 const app = new
 /* Pick One: */
-// App
-Sandbox
+App
+// Sandbox
 ({ target: document.body });
 
 export default app;

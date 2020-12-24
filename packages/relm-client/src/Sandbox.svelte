@@ -1,16 +1,20 @@
 <script lang="ts">
   import { get } from "svelte/store";
   import { config } from "~/stores/config";
-  import Dropzone from "~/ui/Uploader/Dropzone.svelte";
+  import Uppy from "~/ui/Uploader/Uppy.svelte";
 
-  let showDropzone = true;
+  let visible = true;
 
-  let dropzone;
+  function toggleVisibility() {
+    visible = !visible;
+    console.log("toggleVisibility", visible);
+  }
+  // get(config).serverUploadUrl
 </script>
 
-<button on:click={dropzone.showSelectFileDialog}>Dropzone</button>
-{#if showDropzone}
-  <Dropzone bind:this={dropzone} uploadUrl={get(config).serverUploadUrl} />
+<button on:click={toggleVisibility}>Dropzone</button>
+{#if visible}
+  <Uppy on:close={toggleVisibility} />
 {/if}
 
 <div>Hello, this goes here on the page</div>

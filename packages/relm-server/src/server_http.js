@@ -110,7 +110,7 @@ app.use(
 app.use(
   fileupload({
     useTempFiles: true,
-    tempFileDir: path.join(__dirname, "tmp"),
+    tempFileDir: config.TMP_DIR,
   })
 );
 
@@ -119,7 +119,7 @@ app.post(
   "/asset",
   cors(),
   wrapAsync(async (req, res) => {
-    const asset = req.files.file;
+    const asset = req.files["files[]"];
     if (asset.size > config.MAX_FILE_SIZE) {
       return util.fail(res, "file too large");
     }

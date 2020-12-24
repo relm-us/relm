@@ -4,10 +4,10 @@
 
   import Uploader from "../Uploader";
 
-  let visible = false;
+  let uploader;
 
   const onClick = () => {
-    visible = !visible;
+    uploader.open();
   };
 </script>
 
@@ -18,10 +18,6 @@
     height: 32px;
     margin: 0 auto;
   }
-  dialog {
-    display: flex;
-    flex-direction: column;
-  }
 </style>
 
 <Button on:click={onClick}>
@@ -30,8 +26,4 @@
   </icon>
 </Button>
 
-{#if visible}
-  <dialog>
-    <Uploader />
-  </dialog>
-{/if}
+<Uploader bind:this={uploader} />

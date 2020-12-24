@@ -38,8 +38,8 @@ function getDefaultConfig(location): Config {
     serverUrl = "https://y-staging.relm.us";
     serverYjsUrl = "wss://y-staging.relm.us";
   } else {
-    serverUrl = `http://${location.hostname}:1234`;
-    serverYjsUrl = `ws://${location.hostname}:1234`;
+    serverUrl = `http://${location.hostname}:3000`;
+    serverYjsUrl = `ws://${location.hostname}:3000`;
   }
   serverUploadUrl = `${serverUrl}/asset`;
 

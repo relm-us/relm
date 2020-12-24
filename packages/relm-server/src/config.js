@@ -12,6 +12,7 @@ const SETUP_TOKEN = "setup";
 const SETUP_TOKEN_COUNTER = 1;
 const CONTENT_TYPE_JSON = { "Content-Type": "application/json" };
 const ASSETS_DIR = process.env.ASSETS_DIR;
+const TMP_DIR = process.env.TMP_DIR || ASSETS_DIR;
 const PASSWORD_LENGTH_MINIMUM = 6;
 const PORT = process.env.PORT || 3000;
 
@@ -32,6 +33,7 @@ module.exports = {
   SETUP_TOKEN_COUNTER,
   CONTENT_TYPE_JSON,
   ASSETS_DIR,
+  TMP_DIR,
   PASSWORD_LENGTH_MINIMUM,
   PORT,
 
