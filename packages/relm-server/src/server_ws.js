@@ -26,6 +26,7 @@ server.on("upgrade", async (req, socket, head) => {
   const sig = params.get("s");
   let x = params.get("x");
   let y = params.get("y");
+  console.log("upgrade", { playerId, sig, x, y });
 
   let verifiedPubKey;
   try {

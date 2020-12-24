@@ -22,7 +22,11 @@ import EventEmitter from "eventemitter3";
 import { applyChangeToYEntity } from "./applyDiff";
 import { Change } from "./diffTypes";
 
-import { yConnectStatus, ConnectOptions } from "~/stores/connection";
+import {
+  yConnectStatus,
+  ConnectOptions,
+  ConnectionStatus,
+} from "~/stores/connection";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
 
@@ -77,17 +81,15 @@ export class WorldDoc extends EventEmitter {
     this.provider = new WebsocketProvider(
       connection.url,
       connection.room,
-      this.ydoc
+      this.ydoc,
+      { params: connection.params } as { params: any }
     );
     this.provider.on("sync", () => {
       // TODO: start physics
     });
-    this.provider.on(
-      "status",
-      ({ status }: { status: "connecting" | "connected" | "disconnected" }) => {
-        yConnectStatus.set(status);
-      }
-    );
+    this.provider.on("status", ({ status }: { status: ConnectionStatus }) => {
+      yConnectStatus.set(status);
+    });
   }
 
   disconnect() {

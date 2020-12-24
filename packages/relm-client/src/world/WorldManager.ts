@@ -16,6 +16,7 @@ import {
   makeInvisibleBox,
 } from "~/prefab";
 import { Outline } from "~/ecs/plugins/outline";
+import { Follow } from "~/ecs/plugins/follow";
 import { HeadController } from "~/ecs/plugins/player-control";
 
 export default class WorldManager {
@@ -29,11 +30,10 @@ export default class WorldManager {
 
   previousLoopTime: number = 0;
 
-  constructor({ world, connection, viewport }) {
+  constructor({ world, viewport }) {
     if (!world) throw new Error(`world is required`);
     if (!viewport) throw new Error(`viewport is required`);
     this.world = world;
-    this.connection = connection;
     this.viewport = viewport;
 
     this.wdoc = new WorldDoc({
@@ -55,7 +55,7 @@ export default class WorldManager {
     });
 
     scale.subscribe(($scale) => {
-      const position = this.camera.getByName("Follow").offset;
+      const position = this.camera.get(Follow).offset;
       const distance = 5 + (20 * $scale) / 100;
       position.set(0, distance, distance);
     });
@@ -88,7 +88,8 @@ export default class WorldManager {
     world.presentation.setViewport(null);
   }
 
-  connect() {
+  connect(connection) {
+    this.connection = connection;
     this.wdoc.connect(this.connection);
   }
 

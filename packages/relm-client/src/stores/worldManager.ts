@@ -12,20 +12,19 @@ export const worldManager = derived(
     if ($world && $viewport) {
       const manager = new WorldManager({
         world: $world,
-        connection: $connection,
         viewport: $viewport,
       });
 
-      // Make debugging eaiser
+      // Make debugging easier
       (window as any).relm = manager;
 
-      // Initial connect
-      manager.connect();
+      if ($connection) {
+        // Initial connect
+        manager.connect($connection);
+      }
 
       set(manager);
-      return () => {
-        manager.reset();
-      };
+      return () => manager.reset();
     } else {
       set(null);
     }
