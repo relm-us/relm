@@ -47,20 +47,20 @@ app.post(
   middleware.authenticated(),
   middleware.authorized("admin"),
   wrapAsync(async (req, res) => {
-    const permits = await Permission.getPermissions({
+    const permits = [
+      Permission.ADMIN,
+      Permission.ACCESS,
+      Permission.INVITE,
+      Permission.EDIT,
+    ];
+    await Permission.setPermissions({
       playerId: req.body.playerId,
+      permits,
     });
-    if (!permits.has("admin")) {
-      await Permission.setPermissions({
-        playerId: req.body.playerId,
-        permits: ["admin"],
-      });
-      permits.add("admin");
-    }
     util.respond(res, 200, {
       status: "success",
       action: "mkadmin",
-      permits: [...permits],
+      permits: permits,
     });
   })
 );
