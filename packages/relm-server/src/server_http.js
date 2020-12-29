@@ -124,7 +124,7 @@ app.post(
       return util.fail(res, "file too large");
     }
 
-    const extension = path.extname(asset.name);
+    const extension = path.extname(asset.name).toLowerCase();
     if (extension.length > config.MAX_FILE_EXTENSION_LENGTH) {
       return util.fail(res, "file extension too long");
     }
