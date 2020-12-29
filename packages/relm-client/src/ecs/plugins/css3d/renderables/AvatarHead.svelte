@@ -2,7 +2,7 @@
   export let width: number;
   export let height: number;
 
-  const names = ["chris", "rey", "alex", "duane", null];
+  const names = [null, "chris", "rey", "alex", "duane"];
   let nameIndex = 0;
 
   let name = names[nameIndex];
@@ -31,7 +31,7 @@
     border-radius: 100%;
     box-shadow: inset 0px 0px 0px 4px rgba(0, 0, 0, 0.75);
     display: block;
-    background-color: white;
+    background-color: rgba(200, 200, 200, 1);
     width: var(--width);
     height: var(--height);
   }
