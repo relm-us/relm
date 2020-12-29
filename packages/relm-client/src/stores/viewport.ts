@@ -1,10 +1,11 @@
 import { writable, Writable, derived } from "svelte/store";
 
+const DEFAULT_SIZE = { width: 1, height: 1 };
+const DEFAULT_SCALE = 25.0;
+
 const ResizeObserver = (window as any).ResizeObserver;
 
 export const viewport: Writable<HTMLElement> = writable(null);
-
-const DEFAULT_SIZE = { width: 1, height: 1 };
 
 export const size = derived(
   [viewport],
@@ -31,4 +32,4 @@ export const size = derived(
   DEFAULT_SIZE
 );
 
-export const scale: Writable<number> = writable(0);
+export const scale: Writable<number> = writable(DEFAULT_SCALE);

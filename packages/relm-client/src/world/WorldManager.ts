@@ -55,9 +55,13 @@ export default class WorldManager {
     });
 
     scale.subscribe(($scale) => {
-      const position = this.camera.get(Follow).offset;
+      if (!this.camera) return;
+
+      const follow = this.camera.get(Follow);
+      if (!follow) return;
+
       const distance = 5 + (20 * $scale) / 100;
-      position.set(0, distance, distance);
+      follow.offset.set(0, distance, distance);
     });
 
     globalEvents.on("mouseActivity", () => {
