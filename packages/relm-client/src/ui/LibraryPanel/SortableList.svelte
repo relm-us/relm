@@ -10,8 +10,8 @@
 
   const FLIP_DURATION = 200;
 
-  function imageUrl(relativeUrl) {
-    return `${$config.serverUploadUrl}/${relativeUrl}`;
+  function imageUrl(filename) {
+    return `${$config.serverUploadUrl}/${filename}`;
   }
 
   function acceptItems({ detail }) {
