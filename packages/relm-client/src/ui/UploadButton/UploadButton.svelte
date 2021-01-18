@@ -24,6 +24,7 @@
   <icon>
     <IoIosCloudUpload />
   </icon>
+  <slot />
 </Button>
 
-<Uploader bind:this={uploader} />
+<Uploader on:uploaded bind:this={uploader} />

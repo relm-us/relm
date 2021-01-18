@@ -15,5 +15,5 @@
 </script>
 
 {#if visible}
-  <Uppy on:close endpoint={get(config).serverUploadUrl} />
+  <Uppy on:close={close} on:uploaded endpoint={get(config).serverUploadUrl} />
 {/if}

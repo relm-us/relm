@@ -79,6 +79,8 @@ export class CssPresentation {
     renderer.domElement.style.backgroundColor = "black";
     renderer.domElement.style.position = "fixed";
     renderer.domElement.style.top = "0px";
+    // this fixes an issue in Firefox where overflow:hidden offsets
+    // the render view by some amount, inexplicably.
     renderer.domElement.style.overflow = "";
     return renderer;
   }

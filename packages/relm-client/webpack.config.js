@@ -128,11 +128,11 @@ module.exports = {
         exclude: /node_modules/,
       },
       // Include source maps from node modules
-      // {
-      //   test: /\.js$/,
-      //   enforce: "pre",
-      //   use: ["source-map-loader"],
-      // },
+      {
+        test: /\.js$/,
+        enforce: "pre",
+        use: ["source-map-loader"],
+      },
     ],
   },
   devServer: {

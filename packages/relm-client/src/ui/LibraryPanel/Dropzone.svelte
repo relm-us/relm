@@ -5,7 +5,7 @@
   import { uuidv4 } from "~/utils/uuid";
 
   export let list;
-  export let selected;
+  export let selected = false;
 
   let dropzoneId = uuidv4();
   const BLINK_DURATION = 290;
@@ -27,42 +27,52 @@
 <style>
   button {
     all: unset;
+    display: block;
 
-    width: 80px;
-    height: 80px;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 5px;
+
+    width: 68px;
+    height: 40px;
 
     margin: 8px;
+    padding: 2px;
+
+    text-align: center;
+    overflow: hidden;
   }
   .selected {
-    border: 1px solid orange !important;
-    box-shadow: 0px 0px 0px 2px orange;
+    border: 1px solid var(--selected-red) !important;
+    box-shadow: 0px 0px 0px 2px var(--selected-red);
   }
+
   @keyframes border-blink {
     from,
     to {
-      border-color: transparent;
+      box-shadow: inset 0px 0px 0px 2px transparent;
     }
     50% {
-      border-color: black;
+      box-shadow: inset 0px 0px 0px 2px white;
     }
   }
-  .border-blink {
-    border: 1px dashed orange;
-    /* add 'border-color: transparent' if you wish no border to show initially */
-  }
-  .border-blink.active {
+  .blink {
     animation: border-blink 0.15s step-end infinite;
+  }
+
+  :global(button.dropzone-favorite, button.dropzone-relm) {
+    border-color: orange;
+  }
+  :global(button.dropzone-trash) {
+    border-color: transparent;
   }
 </style>
 
 <button
   data-dropzone-id={dropzoneId}
-  class="border-blink"
+  class="dropzone-{list.category}"
   class:selected
-  class:active={$active}
+  class:blink={$active}
   on:click>
-  {list.name}
-  {#each items as item (item.id)}
-    <item data-id={item.id}>{item.name}<br />{item.id}</item>
-  {/each}
+  <slot {list}>{list.name}</slot>
 </button>

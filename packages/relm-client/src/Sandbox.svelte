@@ -1,6 +1,6 @@
 <script>
-  import SortableList from "./SortableList.svelte";
-  import Dropzone from "./Dropzone.svelte";
+  import SortableList from "./ui/LibraryPanel/SortableList.svelte";
+  import Dropzone from "./ui/LibraryPanel/Dropzone.svelte";
   import { uuidv4 } from "~/utils/uuid";
 
   let currentListId = "list-1";

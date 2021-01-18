@@ -24,22 +24,21 @@
     margin: 0 auto;
   }
 
-  contain-build {
+  contain-build,
+  contain-play {
     --margin: 0px;
-    --right-radius: 0px;
   }
-  contain-build.selected {
-    --bg-color: rgba(255, 80, 80, 0.75);
-    --bg-hover-color: rgba(220, 0, 0, 0.75);
+  contain-build {
+    --right-radius: 0px;
   }
 
   contain-play {
-    --margin: 0px;
     --left-radius: 0px;
   }
+  contain-build.selected,
   contain-play.selected {
-    --bg-color: rgba(255, 80, 80, 0.75);
-    --bg-hover-color: rgba(220, 0, 0, 0.75);
+    --bg-color: var(--selected-red);
+    --bg-hover-color: var(--selected-red-hover);
   }
 </style>
 

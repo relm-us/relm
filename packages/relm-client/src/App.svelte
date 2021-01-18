@@ -1,6 +1,7 @@
 <script lang="ts">
   import WorldContainer from "~/ui/WorldContainer";
 
+  import LibraryPanel from "~/ui/LibraryPanel";
   import EditorPanel from "~/ui/EditorPanel";
   import PerformancePanel from "~/ui/PerformancePanel";
 
@@ -18,7 +19,9 @@
   import { world } from "~/stores/world";
   import { mode } from "~/stores/mode";
 
-  let openPanel = "editor";
+  type PanelType = "library" | "editor" | "performance";
+
+  let openPanel: PanelType = "library";
 
   const playMode = () => {
     $mode = "play";
@@ -108,6 +111,10 @@
 <overlay class:open={$mode === 'build'}>
   <overlay-panel>
     {#if $mode === 'build'}
+      {#if openPanel === 'library'}
+        <LibraryPanel on:minimize={playMode} />
+      {/if}
+
       {#if openPanel === 'performance'}
         <PerformancePanel on:minimize={playMode} />
       {/if}
@@ -116,6 +123,11 @@
         <EditorPanel on:minimize={playMode} />
       {/if}
       <panel-tabs>
+        <Button
+          active={openPanel === 'library'}
+          on:click={() => (openPanel = 'library')}>
+          Collections
+        </Button>
         <Button
           active={openPanel === 'editor'}
           on:click={() => (openPanel = 'editor')}>

@@ -4,6 +4,17 @@
 @import "@uppy/screen-capture/dist/style.css";
 @import "@uppy/image-editor/dist/style.css";
 
+:root {
+  --selected-red: rgba(255, 80, 80, 0.75);
+  --selected-red-hover: rgba(220, 0, 0, 0.75);
+
+  --unselected-gray: rgba(50, 50, 50, 0.25);
+  --unselected-gray-hover: rgba(20, 20, 20, 0.25);
+
+  --background-transparent-gray: rgba(0, 0, 0, 0.85);
+  --foreground-white: #ddd;
+}
+
 html,
 body {
   position: relative;

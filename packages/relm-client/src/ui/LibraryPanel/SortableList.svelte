@@ -9,6 +9,10 @@
 
   const FLIP_DURATION = 200;
 
+  function imageUrl(relativeUrl) {
+    return `http://localhost:3000/asset/${relativeUrl}`;
+  }
+
   function acceptItems({ detail }) {
     items = detail.items;
   }
@@ -41,26 +45,28 @@
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
-    width: 220px;
+    width: 208px;
     height: 100%;
-    border: 1px dashed orange;
     overflow: scroll;
-
-    margin-top: 8px;
-    margin-bottom: 8px;
+  }
+  section:focus {
+    outline: none;
   }
 
   item {
-    display: block;
+    display: flex;
     position: relative;
 
-    width: 100px;
-    height: 100px;
+    width: 95px;
+    height: 95px;
 
     cursor: pointer;
-    border: 1px solid black;
+    border-radius: 5px;
+    border: 1px solid rgba(200, 200, 200, 0.5);
 
-    margin: 4px;
+    margin: 4px 0px 4px 4px;
+
+    overflow: hidden;
   }
 
   item.custom-shadow-item {
@@ -70,22 +76,32 @@
     right: 0;
     bottom: 0;
     visibility: visible;
-    /* border: 1px dashed grey;
-    background: lightblue; */
     opacity: 0.5;
     margin: 0;
+  }
+
+  img {
+    display: flex;
+    width: 100%;
+    object-fit: contain;
   }
 </style>
 
 <section
-  use:dndzone={{ items, flipDurationMs: FLIP_DURATION, customDrop }}
+  use:dndzone={{ items, flipDurationMs: FLIP_DURATION, customDrop, dropTargetStyle: '' }}
   on:consider={acceptItems}
   on:finalize={acceptItems}>
   {#each items as item (item.id)}
     <item data-id={item.id} animate:flip={{ duration: FLIP_DURATION }}>
-      <slot {item}>{item.name}<br />{item.id}</slot>
+      {#if item.thumbnail}
+        <img src={imageUrl(item.thumbnail)} alt="thumbnail" />
+      {:else}{item.name}<br />{item.id}{/if}
       {#if item[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
-        <item class="custom-shadow-item">{item.name}<br />{item.id}</item>
+        <item class="custom-shadow-item">
+          {#if item.thumbnail}
+            <img src={imageUrl(item.thumbnail)} alt="thumbnail" />
+          {:else}{item.name}<br />{item.id}{/if}
+        </item>
       {/if}
     </item>
   {/each}

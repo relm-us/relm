@@ -18,6 +18,7 @@
     const uppy = Uppy({
       debug: true,
       autoProceed: false,
+      allowMultipleUploads: false,
       restrictions: {
         maxFileSize: 1024 * 1024 * 4,
         maxNumberOfFiles: 12,
@@ -30,7 +31,7 @@
         limit: 4,
       })
       .use(Dashboard, {
-        // trigger: ".UppyModalOpenerBtn",
+        trigger: false,
         // inline: true,
         // maxWidth: 300,
         // maxHeight: 350,
@@ -48,7 +49,7 @@
         proudlyDisplayPoweredByUppy: false,
         closeAfterFinish: true,
       })
-      .use(Webcam, { target: Dashboard })
+      .use(Webcam, { target: Dashboard, modes: ["picture"] })
       .use(ScreenCapture, { target: Dashboard })
       .use(ImageEditor, {
         target: Dashboard,
@@ -62,8 +63,17 @@
       });
 
     uppy.on("complete", (result) => {
-      console.log("successful files:", result.successful);
-      console.log("failed files:", result.failed);
+      if (result.successful.length > 0) {
+        dispatch("uploaded", {
+          results: result.successful.map((r) => ({
+            name: r.meta.name,
+            types: (r.response.body as any).files,
+          })),
+        });
+      }
+      if (result.failed.length > 0) {
+        console.warn("upload failed", result);
+      }
     });
 
     const dashboard = uppy.getPlugin("Dashboard") as Dashboard;

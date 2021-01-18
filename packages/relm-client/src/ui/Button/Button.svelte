@@ -10,7 +10,10 @@
 
 <style>
   button {
-    display: block;
+    display: flex;
+    flex-direction: var(--direction, column);
+    justify-content: center;
+    align-items: center;
 
     margin-left: var(--margin, 16px);
     margin-right: var(--margin, 16px);

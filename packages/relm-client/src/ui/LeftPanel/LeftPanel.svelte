@@ -14,8 +14,8 @@
     width: 300px;
     height: 100%;
 
-    background-color: rgba(0, 0, 0, 0.85);
-    color: #ddd;
+    background-color: var(--background-transparent-gray);
+    color: var(--foreground-white);
 
     overflow-y: auto;
     pointer-events: all;
