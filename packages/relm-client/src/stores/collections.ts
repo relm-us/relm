@@ -4,8 +4,10 @@ import { IndexeddbPersistence } from "y-indexeddb";
 
 const ydoc: Y.Doc = new Y.Doc();
 
-const yarray: Y.Array<string> = ydoc.getArray("favorites");
+const yMyFavs: Y.Array<string> = ydoc.getArray("my-favs");
+const yRelmFavs: Y.Array<string> = ydoc.getArray("relm-favs");
 
 const provider = new IndexeddbPersistence("relm", ydoc);
 
-export const favorites = array.readable(yarray);
+export const myFavs = array.readable(yMyFavs);
+export const relmFavs = array.readable(yRelmFavs);
