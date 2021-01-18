@@ -1,6 +1,7 @@
 <script>
   import { flip } from "svelte/animate";
   import { dndzone, SHADOW_ITEM_MARKER_PROPERTY_NAME } from "svelte-dnd-action";
+  import { config } from "~/stores/config";
 
   import { dropzones } from "./dropzones";
 
@@ -10,7 +11,7 @@
   const FLIP_DURATION = 200;
 
   function imageUrl(relativeUrl) {
-    return `http://localhost:3000/asset/${relativeUrl}`;
+    return `${$config.serverUploadUrl}/${relativeUrl}`;
   }
 
   function acceptItems({ detail }) {
