@@ -18,6 +18,7 @@
 
   import { world } from "~/stores/world";
   import { mode } from "~/stores/mode";
+  import { runCommand } from "~/commands";
 
   type PanelType = "library" | "editor" | "performance";
 
@@ -26,7 +27,80 @@
   const playMode = () => {
     $mode = "play";
   };
+
+  const onUpload = ({ detail }) => {
+    for (const result of detail.results) {
+      const src = result.types.webp;
+      runCommand("createPrefab", { name: "Image", src });
+    }
+  };
 </script>
+
+<!-- The virtual world! -->
+{#if $world}
+  <WorldContainer />
+
+  <!-- Keyboard, Mouse input -->
+  <Input world={$world} />
+{/if}
+
+<overlay class:open={$mode === "build"}>
+  <overlay-panel>
+    {#if $mode === "build"}
+      {#if openPanel === "library"}
+        <LibraryPanel on:minimize={playMode} />
+      {/if}
+
+      {#if openPanel === "performance"}
+        <PerformancePanel on:minimize={playMode} />
+      {/if}
+
+      {#if openPanel === "editor"}
+        <EditorPanel on:minimize={playMode} />
+      {/if}
+      <panel-tabs>
+        <Button
+          active={openPanel === "library"}
+          on:click={() => (openPanel = "library")}
+        >Collections</Button
+        >
+        <Button
+          active={openPanel === "editor"}
+          on:click={() => (openPanel = "editor")}
+        >Entity Editor</Button
+        >
+        <Button
+          active={openPanel === "performance"}
+          on:click={() => (openPanel = "performance")}
+        >Performance</Button
+        >
+      </panel-tabs>
+    {/if}
+  </overlay-panel>
+
+  <overlay-content>
+    <overlay-left>
+      <play-buttons>
+        <PausePlayButton />
+        <StepFrameButton />
+        <UploadButton on:uploaded={onUpload} />
+      </play-buttons>
+      {#if $mode === "build"}
+        <GroupUngroupButton />
+        <ResetWorldButton />
+      {/if}
+    </overlay-left>
+
+    <overlay-center>
+      <BuildPlayModeButton />
+    </overlay-center>
+
+    <overlay-right>
+      <!-- <ActionButton /> -->
+      <ConnectButton />
+    </overlay-right>
+  </overlay-content>
+</overlay>
 
 <style>
   play-buttons {
@@ -99,69 +173,3 @@
     transform: translate(-50%) rotate(90deg) translate(50%, -50%);
   }
 </style>
-
-<!-- The virtual world! -->
-{#if $world}
-  <WorldContainer />
-
-  <!-- Keyboard, Mouse input -->
-  <Input world={$world} />
-{/if}
-
-<overlay class:open={$mode === 'build'}>
-  <overlay-panel>
-    {#if $mode === 'build'}
-      {#if openPanel === 'library'}
-        <LibraryPanel on:minimize={playMode} />
-      {/if}
-
-      {#if openPanel === 'performance'}
-        <PerformancePanel on:minimize={playMode} />
-      {/if}
-
-      {#if openPanel === 'editor'}
-        <EditorPanel on:minimize={playMode} />
-      {/if}
-      <panel-tabs>
-        <Button
-          active={openPanel === 'library'}
-          on:click={() => (openPanel = 'library')}>
-          Collections
-        </Button>
-        <Button
-          active={openPanel === 'editor'}
-          on:click={() => (openPanel = 'editor')}>
-          Entity Editor
-        </Button>
-        <Button
-          active={openPanel === 'performance'}
-          on:click={() => (openPanel = 'performance')}>
-          Performance
-        </Button>
-      </panel-tabs>
-    {/if}
-  </overlay-panel>
-
-  <overlay-content>
-    <overlay-left>
-      <play-buttons>
-        <PausePlayButton />
-        <StepFrameButton />
-        <UploadButton />
-      </play-buttons>
-      {#if $mode === 'build'}
-        <GroupUngroupButton />
-        <ResetWorldButton />
-      {/if}
-    </overlay-left>
-
-    <overlay-center>
-      <BuildPlayModeButton />
-    </overlay-center>
-
-    <overlay-right>
-      <!-- <ActionButton /> -->
-      <ConnectButton />
-    </overlay-right>
-  </overlay-content>
-</overlay>

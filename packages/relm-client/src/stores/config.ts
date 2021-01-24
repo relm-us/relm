@@ -1,4 +1,4 @@
-import { writable, Writable } from "svelte/store";
+import { writable, Writable, get } from "svelte/store";
 
 export type ShadowMapConfig = "BASIC" | "PCF" | "VSM";
 export const shadowMapConfig: ShadowMapConfig = "VSM";
@@ -61,3 +61,8 @@ export type Config = {
 };
 
 export const config: Writable<Config> = writable(defaultConfig);
+
+export function assetUrl(filename) {
+  const $config = get(config);
+  return `${$config.serverUploadUrl}/${filename}`;
+}

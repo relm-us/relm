@@ -5,7 +5,7 @@
     TRIGGERS,
     SHADOW_ITEM_MARKER_PROPERTY_NAME,
   } from "svelte-dnd-action";
-  import { config } from "~/stores/config";
+  import { assetUrl } from "~/stores/config";
 
   import { dropzones } from "./dropzones";
 
@@ -13,10 +13,6 @@
   export let items;
 
   const FLIP_DURATION = 200;
-
-  function imageUrl(filename) {
-    return `${$config.serverUploadUrl}/${filename}`;
-  }
 
   function consider(event) {
     if (event.detail.info.trigger === TRIGGERS.USER_DROPPED) {
@@ -88,12 +84,12 @@
   {#each items as item (item.id)}
     <item data-id={item.id} animate:flip={{ duration: FLIP_DURATION }}>
       {#if item.thumbnail}
-        <img src={imageUrl(item.thumbnail)} alt="thumbnail" />
+        <img src={assetUrl(item.thumbnail)} alt="thumbnail" />
       {:else}{item.name}<br />{item.id}{/if}
       {#if item[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
         <item class="custom-shadow-item">
           {#if item.thumbnail}
-            <img src={imageUrl(item.thumbnail)} alt="thumbnail" />
+            <img src={assetUrl(item.thumbnail)} alt="thumbnail" />
           {:else}{item.name}<br />{item.id}{/if}
         </item>
       {/if}
