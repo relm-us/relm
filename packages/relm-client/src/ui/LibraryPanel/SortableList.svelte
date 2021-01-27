@@ -6,6 +6,7 @@
     SHADOW_ITEM_MARKER_PROPERTY_NAME,
   } from "svelte-dnd-action";
   import { assetUrl } from "~/stores/config";
+  import { globalEvents } from "~/events";
 
   import { dropzones } from "./dropzones";
 
@@ -20,17 +21,22 @@
       const els = Array.from(document.elementsFromPoint(mouse.x, mouse.y));
 
       let dropzoneId;
+      let viewport;
       for (const el of els) {
         if (el.dataset.dropzoneId) {
           dropzoneId = el.dataset.dropzoneId;
         }
+        if (el.tagName === "VIEWPORT") {
+          viewport = el;
+        }
       }
 
+      const item = event.detail.items.find(
+        (i) => i.id === event.detail.info.id
+      );
+      delete item[SHADOW_ITEM_MARKER_PROPERTY_NAME];
+
       if (dropzoneId) {
-        const item = event.detail.items.find(
-          (i) => i.id === event.detail.info.id
-        );
-        delete item[SHADOW_ITEM_MARKER_PROPERTY_NAME];
         const dz = dropzones.get(dropzoneId);
         // don't allow dropping on "self"
         if (dz.list.id !== list.id) {
@@ -39,6 +45,10 @@
           // no animation
           event.preventDefault();
         }
+      } else if (viewport) {
+        globalEvents.emit("drop-item", { item });
+      } else {
+        console.log("dropped onto nothing", els);
       }
     } else {
       items = event.detail.items;
@@ -47,28 +57,6 @@
 
   function finalize({ detail }) {
     items = detail.items;
-  }
-
-  function customDrop(item, mouse) {
-    const els = Array.from(document.elementsFromPoint(mouse.x, mouse.y));
-
-    let dropzoneId;
-    for (const el of els) {
-      if (el.dataset.dropzoneId) {
-        dropzoneId = el.dataset.dropzoneId;
-      }
-    }
-
-    if (dropzoneId) {
-      const dz = dropzones.get(dropzoneId);
-      // don't allow dropping on "self"
-      if (dz.list.id !== list.id) {
-        dz.dispatch("drop", { item, list });
-        dz.active.set(true);
-        // no animation
-        return false;
-      }
-    }
   }
 </script>
 

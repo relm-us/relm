@@ -8,7 +8,7 @@
 
   import IoIosTrash from "svelte-icons/io/IoIosTrash.svelte";
 
-  import { favorites } from "~/stores/collections";
+  // import { favorites } from "~/stores/collections";
 
   let currentListId = "list-1";
   let currentList;
@@ -134,6 +134,39 @@
   }
 </script>
 
+<LeftPanel on:minimize>
+  <Header>Collections</Header>
+  <container>
+    <div class="categories">
+      {#each lists as list (list.id)}
+        <Dropzone
+          {list}
+          selected={list.id === currentListId}
+          on:drop={handleDrop(list)}
+          on:click={switchCategory(list)}
+        />
+      {/each}
+      <Dropzone
+        list={{ name: "Trash", id: "trash", category: "trash" }}
+        on:drop={handleTrash}
+      >
+        <icon>
+          <IoIosTrash />
+        </icon>
+      </Dropzone>
+    </div>
+    <div class="items">
+      <div class="list-header">{currentList.name}</div>
+      <div class="upload">
+        <UploadButton on:uploaded={onUploaded}>
+          <lbl>Upload</lbl>
+        </UploadButton>
+      </div>
+      <SortableList bind:items={currentList.items} list={currentList} />
+    </div>
+  </container>
+</LeftPanel>
+
 <style>
   .categories {
     display: flex;
@@ -172,34 +205,3 @@
     margin-left: 8px;
   }
 </style>
-
-<LeftPanel on:minimize>
-  <Header>Collections</Header>
-  <container>
-    <div class="categories">
-      {#each lists as list (list.id)}
-        <Dropzone
-          {list}
-          selected={list.id === currentListId}
-          on:drop={handleDrop(list)}
-          on:click={switchCategory(list)} />
-      {/each}
-      <Dropzone
-        list={{ name: 'Trash', id: 'trash', category: 'trash' }}
-        on:drop={handleTrash}>
-        <icon>
-          <IoIosTrash />
-        </icon>
-      </Dropzone>
-    </div>
-    <div class="items">
-      <div class="list-header">{currentList.name}</div>
-      <div class="upload">
-        <UploadButton on:uploaded={onUploaded}>
-          <lbl>Upload</lbl>
-        </UploadButton>
-      </div>
-      <SortableList bind:items={currentList.items} list={currentList} />
-    </div>
-  </container>
-</LeftPanel>
