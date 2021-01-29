@@ -135,7 +135,10 @@ export class DirectionalLightSystem extends System {
 
     switch (shadowMapConfig) {
       case "BASIC":
+        break;
       case "PCF":
+        light.shadow.normalBias = 0.1;
+        light.shadow.bias = 0.0008;
         break;
       case "VSM":
         light.shadow.bias = -0.0002;
