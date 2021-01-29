@@ -1,8 +1,10 @@
 <script lang="ts">
   import { keySpace } from "../store";
   import { globalEvents } from "~/events";
+  import { isInputEvent } from "~/input/isInputEvent";
 
   function onKeydown(event) {
+    if (isInputEvent(event)) return;
     if (event.key === " ") {
       event.preventDefault();
 

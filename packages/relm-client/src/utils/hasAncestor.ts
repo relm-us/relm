@@ -1,9 +1,9 @@
-export function hasAncestor(element: Node, ancestor: Node): boolean {
+export function hasAncestor(element: HTMLElement, ancestor: Node): boolean {
   if (element === null) {
     return false;
   } else if (element === ancestor) {
     return true;
   } else {
-    return hasAncestor(element.parentNode, ancestor);
+    return hasAncestor(element.parentElement, ancestor);
   }
 }

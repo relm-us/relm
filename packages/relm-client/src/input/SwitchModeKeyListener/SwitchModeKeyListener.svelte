@@ -1,9 +1,9 @@
 <script lang="ts">
   import { globalEvents } from "~/events";
+  import { isInputEvent } from "~/input/isInputEvent";
 
   function onKeydown(event) {
-    if (event.target.tagName === "INPUT" || event.target.tagName === "BUTTON")
-      return;
+    if (isInputEvent(event)) return;
 
     if (event.key === "Tab") {
       event.preventDefault();

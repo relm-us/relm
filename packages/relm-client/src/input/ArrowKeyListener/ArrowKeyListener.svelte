@@ -1,5 +1,6 @@
 <script lang="ts">
   import { keyUp, keyDown, keyLeft, keyRight, keyQ, keyE } from "../store";
+  import { isInputEvent } from "~/input/isInputEvent";
 
   const KEY_Q = 81;
   const KEY_E = 69;
@@ -29,7 +30,7 @@
   }
 
   function onKeydown(event) {
-    if (event.target.tagName === "INPUT") return;
+    if (isInputEvent(event)) return;
     if (event.repeat) return;
     if (setKeyStore(event.key, event.keyCode, true)) {
       event.preventDefault();

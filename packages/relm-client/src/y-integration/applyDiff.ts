@@ -96,7 +96,7 @@ export function applyChangeToYEntity(change: Change, yentity: YEntity) {
             throw new Error("Not implemented");
           }
         } else if (change.path.length > 2) {
-          // Add, update, or delete a compount Component property,
+          // Add, update, or delete a compound Component property,
           //   e.g. transform.position = new Vector3(0, 0, 1)
           withYComponentValues(
             yentity,
