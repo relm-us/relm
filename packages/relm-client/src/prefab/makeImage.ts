@@ -4,7 +4,7 @@ import { Vector3 } from "three";
 
 import { RigidBody, Collider } from "~/ecs/plugins/rapier";
 import { TransformEffects } from "~/ecs/plugins/transform-effects";
-import { Image } from "hecs-plugin-three";
+import { BetterImage } from "~/ecs/plugins/better-image";
 
 import { makeEntity } from "./makeEntity";
 
@@ -39,7 +39,7 @@ export function makeImage(
   }
 
   // Always add image
-  thing.add(Image, {
+  thing.add(BetterImage, {
     asset: new Asset(url),
   });
 
