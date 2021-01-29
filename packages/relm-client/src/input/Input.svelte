@@ -18,4 +18,4 @@
 <UndoRedoKeyListener />
 
 <MouseListener {world} />
-<WheelListener />
+<WheelListener {world} />
