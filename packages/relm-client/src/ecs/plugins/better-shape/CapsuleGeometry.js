@@ -11,11 +11,7 @@ import * as THREE from "three";
     using a positive PID2 will invert the caps
 */
 
-export const CapsuleGeometry = (
-  radius = 1,
-  height = 2,
-  N = 12
-): THREE.Geometry => {
+export const CapsuleGeometry = (radius = 1, height = 2, N = 12) => {
   const geometry = new THREE.Geometry();
   const TWOPI = Math.PI * 2;
 
