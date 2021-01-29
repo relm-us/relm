@@ -3,6 +3,7 @@
 
   import LibraryPanel from "~/ui/LibraryPanel";
   import EditorPanel from "~/ui/EditorPanel";
+  import ExportPanel from "~/ui/ExportPanel";
   import PerformancePanel from "~/ui/PerformancePanel";
 
   import Input from "~/input";
@@ -20,7 +21,7 @@
   import { mode } from "~/stores/mode";
   import { runCommand } from "~/commands";
 
-  type PanelType = "library" | "editor" | "performance";
+  type PanelType = "library" | "editor" | "export" | "performance";
 
   let openPanel: PanelType = "library";
 
@@ -55,6 +56,10 @@
         <PerformancePanel on:minimize={playMode} />
       {/if}
 
+      {#if openPanel === "export"}
+        <ExportPanel on:minimize={playMode} />
+      {/if}
+
       {#if openPanel === "editor"}
         <EditorPanel on:minimize={playMode} />
       {/if}
@@ -67,7 +72,12 @@
         <Button
           active={openPanel === "editor"}
           on:click={() => (openPanel = "editor")}
-        >Entity Editor</Button
+        >Editor</Button
+        >
+        <Button
+          active={openPanel === "export"}
+          on:click={() => (openPanel = "export")}
+        >Export</Button
         >
         <Button
           active={openPanel === "performance"}

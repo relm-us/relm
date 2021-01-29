@@ -110,6 +110,18 @@ export class WorldDoc extends EventEmitter {
     });
   }
 
+  syncFromJSON(json) {
+    const hid = json.id;
+    if (this.hids.has(hid)) {
+      const entity = this.world.entities.getById(hid).fromJSON(json);
+      this.syncFrom(entity);
+    } else {
+      const entity = this.world.entities.create().fromJSON(json);
+      this.syncFrom(entity);
+      entity.activate();
+    }
+  }
+
   // Update WorldDoc based on any new or updated entity
   syncFrom(entity: Entity) {
     if (this.hids.has(entity.id)) {
