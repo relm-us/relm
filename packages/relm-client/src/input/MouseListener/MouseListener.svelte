@@ -23,7 +23,7 @@
   const mouseStartPosition = new Vector2();
   let mouseMode: "initial" | "click" | "drag" = "initial";
   let pointerPlaneEntity;
-  let clickedEntity;
+  let dragOffset;
 
   const finder = new IntersectionFinder(
     world.presentation.camera,
@@ -72,28 +72,30 @@
         // Keep svelte `hovered` store up to date based on mouse movements
         for (const entityId of added) hovered.add(entityId);
         for (const entityId of deleted) hovered.delete(entityId);
-      } else {
+      } else if ($wm.selection.length > 0) {
         // drag  mode start
         mouseMode = "drag";
-        clickedEntity = $wm.selection.entities[0];
-        if (clickedEntity) {
-          const transform = clickedEntity.get(Transform);
-          const position = new Vector3().copy(transform.position);
-
-          pointerPlaneEntity = world.entities
-            .create("MouseDragPointerPlane", uuidv4())
-            .add(Transform, { position })
-            .add(PointerPlane)
-            .activate();
-        }
+        dragOffset = null;
+        pointerPlaneEntity = world.entities
+          .create("MouseDragPointerPlane", uuidv4())
+          .add(Transform, { position: $wm.selection.centroid })
+          .add(PointerPlane)
+          .activate();
       }
     } else if (mouseMode === "drag") {
-      const transform = pointerPlaneEntity.get(Transform);
       const ref = pointerPlaneEntity.get(PointerPlaneRef);
-      if (ref && clickedEntity) {
-        const clickedTransform = clickedEntity.get(Transform);
-        clickedTransform.position.x = transform.position.x + ref.XZ.x;
-        clickedTransform.position.z = transform.position.z + ref.XZ.z;
+      if (ref) {
+        if (!dragOffset && (ref.XZ.x !== 0 || ref.XZ.z !== 0)) {
+          $wm.selection.savePositions();
+          dragOffset = new Vector3().copy(ref.XZ);
+          // console.log("set dragOffset", dragOffset);
+        }
+        if (dragOffset) {
+          const position = new Vector3().copy(ref.XZ);
+          position.x -= dragOffset.x;
+          position.z -= dragOffset.z;
+          $wm.selection.moveRelativeToSavedPositions(position);
+        }
       }
     }
   }
@@ -128,8 +130,8 @@
     if ($mode === "build") {
       if (mouseMode === "click") {
         selectionLogic.mouseup();
-      } else if (mouseMode === "drag" && clickedEntity) {
-        $wm.wdoc.syncFrom(clickedEntity);
+      } else if (mouseMode === "drag") {
+        $wm.selection.syncEntities();
       }
     } else if ($mode === "play") {
       removeTouchController();
@@ -138,10 +140,6 @@
     if (pointerPlaneEntity) {
       pointerPlaneEntity.destroy();
       pointerPlaneEntity = null;
-    }
-
-    if (clickedEntity) {
-      clickedEntity = null;
     }
 
     // reset mouse mode

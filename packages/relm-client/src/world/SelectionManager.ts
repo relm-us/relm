@@ -19,6 +19,10 @@ export class SelectionManager {
     return [...get(selectedEntities)];
   }
 
+  get length() {
+    return this.ids.length;
+  }
+
   get entities() {
     return this.ids.map((id) => this.wdoc.world.entities.getById(id));
   }
@@ -37,6 +41,28 @@ export class SelectionManager {
       center.divideScalar(count);
       return center;
     }
+  }
+
+  savePositions() {
+    for (const entity of this.entities) {
+      const position = entity.get(Transform).position;
+      entity.savedPosition = new Vector3().copy(position);
+    }
+  }
+
+  moveRelativeToSavedPositions(vector) {
+    for (const entity of this.entities) {
+      const position = entity.get(Transform).position;
+      if (entity.savedPosition) {
+        position.copy(entity.savedPosition).add(vector);
+      }
+    }
+  }
+
+  syncEntities() {
+    this.entities.forEach((entity) => {
+      this.wdoc.syncFrom(entity);
+    });
   }
 
   // Show outline around selected entities
