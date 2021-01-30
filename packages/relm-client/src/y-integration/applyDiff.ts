@@ -1,6 +1,6 @@
 import * as Y from "yjs";
 import { applyChange } from "deep-diff";
-import { ChangeKind, Change } from "./diffTypes";
+import { ChangeKind, Change, Diff } from "./diffTypes";
 import { jsonToYComponent } from "./jsonToY";
 import { YEntity, YMeta, YChildren, YComponents, YValues } from "./types";
 
@@ -84,48 +84,40 @@ export function applyChangeToYEntity(change: Change, yentity: YEntity) {
         if (change.path.length === 2) {
           // Set a Component property primitive, e.g. shape.sphereRadius = 1.0
           if (change.kind === ChangeKind.Update) {
-            withYComponentValues(
-              yentity,
-              componentName,
-              propertyName,
-              (yvalues) => {
-                yvalues.set(propertyName, change.rhs);
-              }
-            );
+            withYComponentValues(yentity, componentName, (yvalues) => {
+              yvalues.set(propertyName, change.rhs);
+            });
           } else {
             throw new Error("Not implemented");
           }
         } else if (change.path.length > 2) {
           // Add, update, or delete a compound Component property,
           //   e.g. transform.position = new Vector3(0, 0, 1)
-          withYComponentValues(
-            yentity,
-            componentName,
-            propertyName,
-            (yvalues) => {
-              // Remove first two parts of path: component name, & property
-              change.path.shift();
-              change.path.shift();
-              const value = yvalues.get(propertyName);
+          withYComponentValues(yentity, componentName, (yvalues) => {
+            // Remove first two parts of path: component name, & property
+            change.path.shift();
+            change.path.shift();
+            const value = yvalues.get(propertyName);
+
+            /**
+             * We need to create new references here and avoid modifying-in-place, or
+             * else Yjs will not detect that a change occurred and undo/redo will fail.
+             *
+             * Check https://discuss.yjs.dev/t/indicate-to-yjs-that-content-has-been-modified/302
+             */
+            if (value instanceof Array) {
+              const newValue = [...value];
+              applyChange(newValue, null, change);
+              yvalues.set(propertyName, newValue);
+            } else if (value instanceof Object) {
+              const newValue = { ...value };
+              applyChange(newValue, null, change);
+              yvalues.set(propertyName, newValue);
+            } else {
               applyChange(value, null, change);
-
-              // We modified in-place, so re-assign
-
-              /**
-               * Because we modified in-place, we need to create new references
-               * here, or else Yjs will not detect that a change occurred.
-               *
-               * Check https://discuss.yjs.dev/t/indicate-to-yjs-that-content-has-been-modified/302
-               */
-              if (value instanceof Array) {
-                yvalues.set(propertyName, [...value]);
-              } else if (value instanceof Object) {
-                yvalues.set(propertyName, { ...value });
-              } else {
-                yvalues.set(propertyName, value);
-              }
+              yvalues.set(propertyName, value);
             }
-          );
+          });
         } else {
           throw new Error(`Can't happen`);
         }
@@ -135,10 +127,19 @@ export function applyChangeToYEntity(change: Change, yentity: YEntity) {
   }
 }
 
+export function applyDiffToYEntity(diff: Diff, yentity: YEntity, ydoc) {
+  if (diff) {
+    ydoc.transact(() => {
+      diff.forEach((change: Change) => {
+        applyChangeToYEntity(change, yentity);
+      });
+    });
+  }
+}
+
 function withYComponentValues(
   yentity: YEntity,
   componentName: string,
-  propertyName: string,
   fn: (yvalues) => void
 ) {
   let ycomponents = yentity.get("components") as YComponents;
