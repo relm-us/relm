@@ -12,7 +12,19 @@
     if (nameIndex >= names.length) nameIndex = 0;
     name = names[nameIndex];
   };
+
+  // ignore warning about missing props
+  $$props;
 </script>
+
+<div
+  style="--width: {width}px; --height: {height}px"
+  on:mousedown|stopPropagation={toggleProfile}
+>
+  {#if name === null}
+    <whitebox />
+  {:else}<img {width} {height} src="/{name}.jpg" alt="Head" />{/if}
+</div>
 
 <style>
   div {
@@ -36,11 +48,3 @@
     height: var(--height);
   }
 </style>
-
-<div
-  style="--width: {width}px; --height: {height}px"
-  on:mousedown|stopPropagation={toggleProfile}>
-  {#if name === null}
-    <whitebox />
-  {:else}<img {width} {height} src="/{name}.jpg" alt="Head" />{/if}
-</div>

@@ -7,7 +7,8 @@
   import { worldManager } from "~/stores/worldManager";
   import type WorldManager from "~/world/WorldManager";
   import { yEntityToJSON } from "~/y-integration/yToJson";
-  import { YEntity } from "~/y-integration/types";
+  import type { YEntity } from "~/y-integration/types";
+  import { selectedEntities } from "~/stores/selection";
 
   let text;
   let errorState = false;
@@ -24,9 +25,17 @@
 
   function applyJson(json) {
     const wm: WorldManager = $worldManager;
+    selectedEntities.clear();
+    const hids = [];
     json.entities.forEach((data) => {
+      hids.push(data.id);
       wm.wdoc.syncFromJSON(data);
     });
+    setTimeout(() => {
+      hids.forEach((hid) => {
+        selectedEntities.add(hid);
+      });
+    }, 1500);
   }
 
   onMount(() => {
