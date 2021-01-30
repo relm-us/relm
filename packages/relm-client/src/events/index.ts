@@ -2,6 +2,7 @@ import EventEmitter from "eventemitter3";
 
 import { onCopy, onPaste } from "./copyPaste";
 import { onUndo, onRedo } from "./undoRedo";
+import { onDelete } from "./delete";
 import { onSwitchMode } from "./switchMode";
 import { onDropItem } from "./dropItem";
 
@@ -22,6 +23,8 @@ globalEvents.on("paste", onPaste);
 
 globalEvents.on("undo", onUndo);
 globalEvents.on("redo", onRedo);
+
+globalEvents.on("delete", onDelete);
 
 globalEvents.on("switch-mode", onSwitchMode);
 globalEvents.on("drop-item", onDropItem);

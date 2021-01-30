@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
 import { mode } from "~/stores/mode";
-import { selectedEntities, selectedGroups } from "~/stores/selection";
+import { selectedEntities } from "~/stores/selection";
 import { copyBuffer } from "~/stores/copyBuffer";
 import { worldManager } from "~/stores/worldManager";
 import { Transform } from "hecs-plugin-core";
