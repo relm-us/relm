@@ -25,7 +25,10 @@ function maybeSelectGroupContainingEntity(entityId) {
   }
 }
 
-export function mousedown(found, shiftKey) {
+let found: Array<string>;
+let shiftKey: boolean;
+
+export function mouseup() {
   const foundSet: Set<string> = new Set(found);
 
   if (found.length === 0) {
@@ -84,4 +87,9 @@ export function mousedown(found, shiftKey) {
   }
 
   previousClickSet = foundSet;
+}
+
+export function mousedown(foundOnMousedown, shiftKeyOnMousedown) {
+  found = foundOnMousedown;
+  shiftKey = shiftKeyOnMousedown;
 }

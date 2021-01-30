@@ -83,7 +83,7 @@
 
   function onMouseup(event: MouseEvent) {
     if ($mode === "build") {
-      // TODO?
+      selectionLogic.mouseup();
     } else if ($mode === "play") {
       removeTouchController();
     }
@@ -135,4 +135,5 @@
   on:touchstart={onTouchStart}
   on:touchmove={onTouchMove}
   on:touchend={onTouchEnd}
-  on:touchcancel={onTouchEnd} />
+  on:touchcancel={onTouchEnd}
+/>
