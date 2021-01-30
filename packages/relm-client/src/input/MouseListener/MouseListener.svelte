@@ -10,15 +10,15 @@
 
   import { IntersectionFinder } from "./IntersectionFinder";
 
-  import { worldManager } from "~/stores/worldManager";
+  import { worldManager as wm } from "~/stores/worldManager";
   import { TouchController } from "~/ecs/plugins/player-control";
   import { PointerPlane, PointerPlaneRef } from "~/ecs/plugins/pointer-plane";
-  import { Transform, WorldTransform } from "hecs-plugin-core";
+  import { Transform } from "hecs-plugin-core";
   import { uuidv4 } from "~/utils/uuid";
 
   export let world;
 
-  const DRAG_THRESHOLD = 15;
+  const DRAG_DISTANCE_THRESHOLD = 15;
   const mousePosition = new Vector2();
   const mouseStartPosition = new Vector2();
   let mouseMode: "initial" | "click" | "drag" = "initial";
@@ -45,8 +45,8 @@
   }
 
   function removeTouchController() {
-    if ($worldManager.avatar.has(TouchController)) {
-      $worldManager.avatar.remove(TouchController);
+    if ($wm.avatar.has(TouchController)) {
+      $wm.avatar.remove(TouchController);
     }
   }
 
@@ -61,7 +61,9 @@
     mouse.set(finder._normalizedCoords);
 
     if (mouseMode === "click") {
-      if (mousePosition.distanceTo(mouseStartPosition) <= DRAG_THRESHOLD) {
+      if (
+        mousePosition.distanceTo(mouseStartPosition) <= DRAG_DISTANCE_THRESHOLD
+      ) {
         const foundSet: Set<string> = new Set(found);
 
         const added = difference(foundSet, $hovered);
@@ -73,7 +75,7 @@
       } else {
         // drag  mode start
         mouseMode = "drag";
-        clickedEntity = $worldManager.getFirstSelectedEntity();
+        clickedEntity = $wm.selection.entities[0];
         if (clickedEntity) {
           const transform = clickedEntity.get(Transform);
           const position = new Vector3().copy(transform.position);
@@ -114,8 +116,8 @@
 
       selectionLogic.mousedown(found, event.shiftKey);
     } else if ($mode === "play") {
-      if (found.includes($worldManager.avatar.id)) {
-        $worldManager.avatar.add(TouchController);
+      if (found.includes($wm.avatar.id)) {
+        $wm.avatar.add(TouchController);
       }
     }
   }
@@ -127,7 +129,7 @@
       if (mouseMode === "click") {
         selectionLogic.mouseup();
       } else if (mouseMode === "drag" && clickedEntity) {
-        $worldManager.wdoc.syncFrom(clickedEntity);
+        $wm.wdoc.syncFrom(clickedEntity);
       }
     } else if ($mode === "play") {
       removeTouchController();
@@ -157,8 +159,8 @@
     if ($mode === "build") {
       selectionLogic.mousedown(found, false);
     } else if ($mode === "play") {
-      if (found.includes($worldManager.avatar.id)) {
-        $worldManager.avatar.add(TouchController);
+      if (found.includes($wm.avatar.id)) {
+        $wm.avatar.add(TouchController);
       }
     }
   }

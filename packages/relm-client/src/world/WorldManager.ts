@@ -2,13 +2,10 @@ import { get } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
-import { difference } from "~/utils/setOps";
 import { deltaTime, fpsTime } from "~/stores/stats";
 import { worldRunning } from "~/stores/worldRunning";
 import { scale } from "~/stores/viewport";
-import { selectedEntities } from "~/stores/selection";
 import { globalEvents } from "~/events";
-import { first } from "~/utils/setOps";
 
 import {
   makeAvatarAndActivate,
@@ -16,9 +13,9 @@ import {
   makeGround,
   makeInvisibleBox,
 } from "~/prefab";
-import { Outline } from "~/ecs/plugins/outline";
 import { Follow } from "~/ecs/plugins/follow";
 import { HeadController } from "~/ecs/plugins/player-control";
+import { SelectionManager } from "./SelectionManager";
 
 export default class WorldManager {
   world;
@@ -28,6 +25,7 @@ export default class WorldManager {
   viewport: HTMLElement;
 
   wdoc: WorldDoc;
+  selection: SelectionManager;
 
   previousLoopTime: number = 0;
 
@@ -42,8 +40,9 @@ export default class WorldManager {
       world,
     });
 
+    this.selection = new SelectionManager(this.wdoc);
+
     this.mount();
-    this.activateSelection();
     this.populate();
     this.start();
 
@@ -108,37 +107,6 @@ export default class WorldManager {
     this.world.reset();
   }
 
-  getFirstSelectedEntity() {
-    const $selected = get(selectedEntities);
-    const entityId = first($selected);
-    if (entityId) {
-      return this.world.entities.getById(entityId);
-    }
-  }
-
-  // Show outline around selected entities
-  activateSelection() {
-    const previouslySelected = new Set();
-    selectedEntities.subscribe(($selected) => {
-      const added = difference($selected, previouslySelected);
-      const removed = difference(previouslySelected, $selected);
-
-      for (const entityId of removed) {
-        const entity = this.world.entities.getById(entityId);
-        if (!entity || !entity.has(Outline)) continue;
-        previouslySelected.delete(entityId);
-        entity.remove(Outline);
-      }
-
-      for (const entityId of added) {
-        const entity = this.world.entities.getById(entityId);
-        if (!entity || entity.has(Outline)) continue;
-        previouslySelected.add(entityId);
-        entity.add(Outline);
-      }
-    });
-  }
-
   populate() {
     if (!this.world) {
       throw new Error(`Can't populate when world is null`);
@@ -163,10 +131,6 @@ export default class WorldManager {
       d: 1,
       dynamic: false,
     }).activate();
-  }
-
-  get selected() {
-    return [...get(selectedEntities)];
   }
 
   depopulate() {

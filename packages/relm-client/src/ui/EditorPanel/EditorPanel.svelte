@@ -17,7 +17,7 @@
     <info>Nothing selected</info>
     <SelectCreatePrefab />
   {:else if $selectedEntities.size === 1}
-    <EditorShowSingleEntity entity={$worldManager.getFirstSelectedEntity()} />
+    <EditorShowSingleEntity entity={$worldManager.selection.entities[0]} />
   {:else}
     <Pane title="Selected">
       {#each [...$selectedEntities] as entityId}
