@@ -63,7 +63,7 @@ export class DirectionalLightSystem extends System {
         if (spec.shadowDistance && Math.abs(dist - spec.shadowDistance) < 0.5) {
           return;
         } else {
-          console.log("DirectionalLightSystem: recalc shadow size");
+          // console.log("DirectionalLightSystem: recalc shadow size");
         }
 
         const size = dist / spec.shadowDistanceGrowthRatio;

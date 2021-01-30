@@ -50,7 +50,6 @@ export const connection: Readable<ConnectOptions> = derived(
       .then((params) => {
         playerPermit(params, $config.serverUrl, $relmId)
           .then((relm) => {
-            console.log("player permitted to enter", relm);
             set({
               url: $config.serverYjsUrl,
               room: relm.permanentDocId,
