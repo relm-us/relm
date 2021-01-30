@@ -8,22 +8,7 @@
   import { worldManager } from "~/stores/worldManager";
   import SelectCreatePrefab from "./SelectCreatePrefab.svelte";
   import EditorShowSingleEntity from "./EditorShowSingleEntity.svelte";
-  import { first } from "~/utils/setOps";
-
-  function getEntity(selected) {
-    const entityId = first(selected);
-    if (entityId) {
-      return $worldManager.world.entities.getById(entityId);
-    }
-  }
 </script>
-
-<style>
-  info {
-    display: block;
-    margin: 32px auto;
-  }
-</style>
 
 <LeftPanel on:minimize>
   <Header>Entity Editor</Header>
@@ -32,7 +17,7 @@
     <info>Nothing selected</info>
     <SelectCreatePrefab />
   {:else if $selectedEntities.size === 1}
-    <EditorShowSingleEntity entity={getEntity($selectedEntities)} />
+    <EditorShowSingleEntity entity={$worldManager.getFirstSelectedEntity()} />
   {:else}
     <Pane title="Selected">
       {#each [...$selectedEntities] as entityId}
@@ -49,3 +34,10 @@
     </Pane>
   {/if}
 </LeftPanel>
+
+<style>
+  info {
+    display: block;
+    margin: 32px auto;
+  }
+</style>

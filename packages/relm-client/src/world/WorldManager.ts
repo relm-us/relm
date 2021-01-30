@@ -8,6 +8,7 @@ import { worldRunning } from "~/stores/worldRunning";
 import { scale } from "~/stores/viewport";
 import { selectedEntities } from "~/stores/selection";
 import { globalEvents } from "~/events";
+import { first } from "~/utils/setOps";
 
 import {
   makeAvatarAndActivate,
@@ -105,6 +106,14 @@ export default class WorldManager {
     this.disconnect();
     this.unmount();
     this.world.reset();
+  }
+
+  getFirstSelectedEntity() {
+    const $selected = get(selectedEntities);
+    const entityId = first($selected);
+    if (entityId) {
+      return this.world.entities.getById(entityId);
+    }
   }
 
   // Show outline around selected entities

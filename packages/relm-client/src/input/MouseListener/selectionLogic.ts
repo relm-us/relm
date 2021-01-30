@@ -1,3 +1,4 @@
+import { Vector2 } from "three";
 import {
   selectedEntities,
   selectedGroups,
@@ -9,6 +10,9 @@ type EntityId = string;
 
 let previousClickSet: Set<EntityId> = new Set();
 let previousClickIndex: number = 0;
+
+let found: Array<string>;
+let shiftKey: boolean;
 
 function maybeSelectGroupContainingEntity(entityId) {
   const rootGroupId = groupTree.getRoot(entityId);
@@ -24,9 +28,6 @@ function maybeSelectGroupContainingEntity(entityId) {
     });
   }
 }
-
-let found: Array<string>;
-let shiftKey: boolean;
 
 export function mouseup() {
   const foundSet: Set<string> = new Set(found);
@@ -89,7 +90,10 @@ export function mouseup() {
   previousClickSet = foundSet;
 }
 
-export function mousedown(foundOnMousedown, shiftKeyOnMousedown) {
+export function mousedown(
+  foundOnMousedown: Array<string>,
+  shiftKeyOnMousedown: boolean
+) {
   found = foundOnMousedown;
   shiftKey = shiftKeyOnMousedown;
 }

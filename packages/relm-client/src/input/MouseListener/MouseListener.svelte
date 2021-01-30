@@ -1,7 +1,7 @@
 <script lang="ts">
   import { hovered } from "~/stores/selection";
-  import { Vector2 } from "three";
-  import { difference, intersection } from "~/utils/setOps";
+  import { Vector2, Vector3 } from "three";
+  import { difference } from "~/utils/setOps";
   import { hasAncestor } from "~/utils/hasAncestor";
   import { mouse } from "~/stores/mouse";
   import { globalEvents } from "~/events";
@@ -12,18 +12,27 @@
 
   import { worldManager } from "~/stores/worldManager";
   import { TouchController } from "~/ecs/plugins/player-control";
+  import { PointerPlane, PointerPlaneRef } from "~/ecs/plugins/pointer-plane";
+  import { Transform, WorldTransform } from "hecs-plugin-core";
+  import { uuidv4 } from "~/utils/uuid";
 
   export let world;
 
-  let mousePosition = new Vector2();
+  const DRAG_THRESHOLD = 15;
+  const mousePosition = new Vector2();
+  const mouseStartPosition = new Vector2();
+  let mouseMode: "initial" | "click" | "drag" = "initial";
+  let pointerPlaneEntity;
+  let clickedEntity;
 
   const finder = new IntersectionFinder(
     world.presentation.camera,
     world.presentation.scene
   );
 
-  function setMousePositionFromEvent(event) {
+  function setMousePositionFromEvent(event, isStart = false) {
     mousePosition.set(event.clientX, event.clientY);
+    if (isStart) mouseStartPosition.copy(mousePosition);
   }
 
   function findIntersectionsAtMousePosition() {
@@ -50,14 +59,41 @@
 
     const found = findIntersectionsAtMousePosition();
     mouse.set(finder._normalizedCoords);
-    const foundSet: Set<string> = new Set(found);
 
-    const added = difference(foundSet, $hovered);
-    const deleted = difference($hovered, foundSet);
+    if (mouseMode === "click") {
+      if (mousePosition.distanceTo(mouseStartPosition) <= DRAG_THRESHOLD) {
+        const foundSet: Set<string> = new Set(found);
 
-    // Keep svelte `hovered` store up to date based on mouse movements
-    for (const entityId of added) hovered.add(entityId);
-    for (const entityId of deleted) hovered.delete(entityId);
+        const added = difference(foundSet, $hovered);
+        const deleted = difference($hovered, foundSet);
+
+        // Keep svelte `hovered` store up to date based on mouse movements
+        for (const entityId of added) hovered.add(entityId);
+        for (const entityId of deleted) hovered.delete(entityId);
+      } else {
+        // drag  mode start
+        mouseMode = "drag";
+        clickedEntity = $worldManager.getFirstSelectedEntity();
+        if (clickedEntity) {
+          const transform = clickedEntity.get(Transform);
+          const position = new Vector3().copy(transform.position);
+
+          pointerPlaneEntity = world.entities
+            .create("MouseDragPointerPlane", uuidv4())
+            .add(Transform, { position })
+            .add(PointerPlane)
+            .activate();
+        }
+      }
+    } else if (mouseMode === "drag") {
+      const transform = pointerPlaneEntity.get(Transform);
+      const ref = pointerPlaneEntity.get(PointerPlaneRef);
+      if (ref && clickedEntity) {
+        const clickedTransform = clickedEntity.get(Transform);
+        clickedTransform.position.x = transform.position.x + ref.XZ.x;
+        clickedTransform.position.z = transform.position.z + ref.XZ.z;
+      }
+    }
   }
 
   /**
@@ -68,11 +104,14 @@
   function onMousedown(event: MouseEvent) {
     if (!eventTargetsWorld(event)) return;
 
-    setMousePositionFromEvent(event);
+    setMousePositionFromEvent(event, true);
 
     const found = findIntersectionsAtMousePosition();
 
     if ($mode === "build") {
+      // At this point, at least a 'click' has started. TBD if it's a drag.
+      mouseMode = "click";
+
       selectionLogic.mousedown(found, event.shiftKey);
     } else if ($mode === "play") {
       if (found.includes($worldManager.avatar.id)) {
@@ -82,11 +121,29 @@
   }
 
   function onMouseup(event: MouseEvent) {
+    if (!eventTargetsWorld(event)) return;
+
     if ($mode === "build") {
-      selectionLogic.mouseup();
+      if (mouseMode === "click") {
+        selectionLogic.mouseup();
+      } else if (mouseMode === "drag" && clickedEntity) {
+        $worldManager.wdoc.syncFrom(clickedEntity);
+      }
     } else if ($mode === "play") {
       removeTouchController();
     }
+
+    if (pointerPlaneEntity) {
+      pointerPlaneEntity.destroy();
+      pointerPlaneEntity = null;
+    }
+
+    if (clickedEntity) {
+      clickedEntity = null;
+    }
+
+    // reset mouse mode
+    mouseMode = "initial";
   }
 
   function onTouchStart(event: TouchEvent) {
