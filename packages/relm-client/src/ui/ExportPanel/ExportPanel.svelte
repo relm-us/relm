@@ -32,10 +32,11 @@
       wm.wdoc.syncFromJSON(data);
     });
     setTimeout(() => {
+      console.log("select imported", hids);
       hids.forEach((hid) => {
         selectedEntities.add(hid);
       });
-    }, 1500);
+    }, 200);
   }
 
   onMount(() => {

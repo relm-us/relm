@@ -27,6 +27,7 @@ import {
   ConnectOptions,
   ConnectionStatus,
 } from "~/stores/connection";
+import { selectedEntities } from "~/stores/selection";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
 
@@ -140,9 +141,15 @@ export class WorldDoc extends EventEmitter {
   }
 
   delete(entity: Entity) {
+    selectedEntities.delete(entity.id);
     this.ydoc.transact(() => {
       this._deleteRecursive(entity);
     });
+  }
+
+  deleteById(entityId: string) {
+    const entity = this.world.entities.getById(entityId);
+    this.delete(entity);
   }
 
   _deleteRecursive(entity: Entity) {
