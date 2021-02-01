@@ -18,12 +18,14 @@
 
   export let world;
 
-  const DRAG_DISTANCE_THRESHOLD = 15;
+  const DRAG_DISTANCE_THRESHOLD = 8;
   const mousePosition = new Vector2();
   const mouseStartPosition = new Vector2();
   let mouseMode: "initial" | "click" | "drag" = "initial";
   let pointerPlaneEntity;
   let dragOffset;
+  let dragPlane: "XZ" | "XY" = "XZ";
+  let shiftKey = false;
 
   const finder = new IntersectionFinder(
     world.presentation.camera,
@@ -80,6 +82,7 @@
       // drag  mode start
       mouseMode = "drag";
       dragOffset = null;
+      dragPlane = shiftKey ? "XY" : "XZ";
       const position = $wm.selection.centroid;
 
       pointerPlaneEntity = world.entities
@@ -92,12 +95,12 @@
       const ref = pointerPlaneEntity.get(PointerPlaneRef);
       if (ref) {
         if (dragOffset) {
-          const position = new Vector3().copy(ref.XZ);
+          const position = new Vector3().copy(ref[dragPlane]);
           position.sub(dragOffset);
           $wm.selection.moveRelativeToSavedPositions(position);
         } else if (ref.updateCount > 1) {
           $wm.selection.savePositions();
-          dragOffset = new Vector3().copy(ref.XZ);
+          dragOffset = new Vector3().copy(ref[dragPlane]);
         }
       }
     }
@@ -118,6 +121,7 @@
     if ($mode === "build") {
       // At this point, at least a 'click' has started. TBD if it's a drag.
       mouseMode = "click";
+      shiftKey = event.shiftKey;
 
       selectionLogic.mousedown(found, event.shiftKey);
     } else if ($mode === "play") {
