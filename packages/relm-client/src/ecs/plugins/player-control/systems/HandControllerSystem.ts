@@ -30,10 +30,12 @@ export class HandControllerSystem extends System {
     const pointerPlane = ppEntity.get(PointerPlaneRef);
     const bodyRef = entity.get(RigidBodyRef);
 
-    const target = pointerPlane.XY;
-    if (target && get(controller.keyStore)) {
-      thrust.copy(target).normalize().multiplyScalar(2);
-      bodyRef.value.applyForce(thrust, true);
+    if (pointerPlane) {
+      const target = pointerPlane.XY;
+      if (target && get(controller.keyStore)) {
+        thrust.copy(target).normalize().multiplyScalar(2);
+        bodyRef.value.applyForce(thrust, true);
+      }
     }
   }
 }

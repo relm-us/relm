@@ -22,6 +22,8 @@ import {
 
 type Orientation = "XY" | "XZ" | "YZ";
 
+const _raycaster = new Raycaster();
+const _intersections = [];
 export class PointerPlaneSystem extends System {
   order = Groups.Initialization + 10;
 
@@ -34,8 +36,6 @@ export class PointerPlaneSystem extends System {
 
   init({ presentation }) {
     this.presentation = presentation;
-    this.raycaster = new Raycaster();
-    this._intersections = [];
   }
 
   update() {
@@ -63,7 +63,7 @@ export class PointerPlaneSystem extends System {
       this.createPlane(desc, spec.visible)
     );
 
-    entity.add(PointerPlaneRef, { planes });
+    const component = entity.add(PointerPlaneRef, { planes });
   }
 
   updateIntersections(entity, coords) {
@@ -74,15 +74,23 @@ export class PointerPlaneSystem extends System {
       plane.position.copy(world.position);
     });
 
-    this._intersections.length = 0;
-    this.raycaster.setFromCamera(coords, this.presentation.camera);
-    this.raycaster.intersectObjects(ref.planes, false, this._intersections);
+    _intersections.length = 0;
+    _raycaster.setFromCamera(coords, this.presentation.camera);
+    _raycaster.intersectObjects(ref.planes, false, _intersections);
 
-    for (let i = 0; i < this._intersections.length; i++) {
-      const isect = this._intersections[i];
+    for (let i = 0; i < _intersections.length; i++) {
+      const isect = _intersections[i];
       const orientation = isect.object.userData.orientation;
-      ref[orientation].copy(isect.point).sub(world.position);
+      if (orientation === "XZ") {
+        ref.XZ.x = isect.point.x - world.position.x;
+        ref.XZ.z = isect.point.z - world.position.z;
+      } else if (orientation === "XY") {
+        ref.XY.x = isect.point.x - world.position.x;
+        ref.XY.y = isect.point.y - world.position.y;
+      }
     }
+
+    ref.updateCount++;
   }
 
   release(entity) {
@@ -128,7 +136,7 @@ export class PointerPlaneSystem extends System {
     });
 
     const plane = new Mesh(geometry, material);
-    plane.position.set(0.001, 0.001, 0.001);
+    // plane.position.set(0.001, 0.001, 0.001);
     plane.userData.orientation = orientation;
 
     if (visible) {

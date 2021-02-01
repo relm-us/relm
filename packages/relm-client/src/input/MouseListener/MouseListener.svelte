@@ -58,43 +58,46 @@
     setMousePositionFromEvent(event);
 
     const found = findIntersectionsAtMousePosition();
+    // console.log("mouse.set", finder._normalizedCoords);
     mouse.set(finder._normalizedCoords);
 
-    if (mouseMode === "click") {
-      if (
-        mousePosition.distanceTo(mouseStartPosition) <= DRAG_DISTANCE_THRESHOLD
-      ) {
-        const foundSet: Set<string> = new Set(found);
+    {
+      // Keep svelte `hovered` store up to date based on mouse movements
+      const foundSet: Set<string> = new Set(found);
 
-        const added = difference(foundSet, $hovered);
-        const deleted = difference($hovered, foundSet);
+      const added = difference(foundSet, $hovered);
+      const deleted = difference($hovered, foundSet);
 
-        // Keep svelte `hovered` store up to date based on mouse movements
-        for (const entityId of added) hovered.add(entityId);
-        for (const entityId of deleted) hovered.delete(entityId);
-      } else if ($wm.selection.length > 0) {
-        // drag  mode start
-        mouseMode = "drag";
-        dragOffset = null;
-        pointerPlaneEntity = world.entities
-          .create("MouseDragPointerPlane", uuidv4())
-          .add(Transform, { position: $wm.selection.centroid })
-          .add(PointerPlane)
-          .activate();
-      }
+      for (const entityId of added) hovered.add(entityId);
+      for (const entityId of deleted) hovered.delete(entityId);
+    }
+
+    if (
+      mouseMode === "click" &&
+      mousePosition.distanceTo(mouseStartPosition) > DRAG_DISTANCE_THRESHOLD &&
+      $wm.selection.length > 0
+    ) {
+      // drag  mode start
+      mouseMode = "drag";
+      dragOffset = null;
+      const position = $wm.selection.centroid;
+
+      pointerPlaneEntity = world.entities
+        .create("MouseDragPointerPlane", uuidv4())
+        .add(Transform, { position })
+        .add(PointerPlane, { visible: false })
+        .activate();
     } else if (mouseMode === "drag") {
+      // drag mode
       const ref = pointerPlaneEntity.get(PointerPlaneRef);
       if (ref) {
-        if (!dragOffset && (ref.XZ.x !== 0 || ref.XZ.z !== 0)) {
-          $wm.selection.savePositions();
-          dragOffset = new Vector3().copy(ref.XZ);
-          // console.log("set dragOffset", dragOffset);
-        }
         if (dragOffset) {
           const position = new Vector3().copy(ref.XZ);
-          position.x -= dragOffset.x;
-          position.z -= dragOffset.z;
+          position.sub(dragOffset);
           $wm.selection.moveRelativeToSavedPositions(position);
+        } else if (ref.updateCount > 1) {
+          $wm.selection.savePositions();
+          dragOffset = new Vector3().copy(ref.XZ);
         }
       }
     }

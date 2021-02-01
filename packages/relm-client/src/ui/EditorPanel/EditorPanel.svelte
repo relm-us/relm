@@ -17,7 +17,10 @@
     <info>Nothing selected</info>
     <SelectCreatePrefab />
   {:else if $selectedEntities.size === 1}
-    <EditorShowSingleEntity entity={$worldManager.selection.entities[0]} />
+    <!-- Must pass in $selectedEntities so svelte knows to re-render on new selection -->
+    <EditorShowSingleEntity
+      entity={$worldManager.selection.getFirst($selectedEntities)}
+    />
   {:else}
     <Pane title="Selected">
       {#each [...$selectedEntities] as entityId}

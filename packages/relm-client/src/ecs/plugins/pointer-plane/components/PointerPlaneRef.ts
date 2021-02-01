@@ -1,4 +1,4 @@
-import { StateComponent, RefType } from "hecs";
+import { StateComponent, RefType, NumberType } from "hecs";
 import { Vector3Type, Vector3 } from "hecs-plugin-core";
 
 export class PointerPlaneRef extends StateComponent {
@@ -22,6 +22,10 @@ export class PointerPlaneRef extends StateComponent {
       editor: {
         label: "Pointer Coordinate on XZ Plane",
       },
+    },
+    updateCount: {
+      type: NumberType,
+      default: 0,
     },
   };
 }

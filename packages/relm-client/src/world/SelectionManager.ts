@@ -5,6 +5,7 @@ import { difference } from "~/utils/setOps";
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import { Outline } from "~/ecs/plugins/outline";
 import { Transform } from "hecs-plugin-core";
+import { first } from "~/utils/setOps";
 
 export class SelectionManager {
   wdoc: WorldDoc;
@@ -25,6 +26,14 @@ export class SelectionManager {
 
   get entities() {
     return this.ids.map((id) => this.wdoc.world.entities.getById(id));
+  }
+
+  getFirst(_) {
+    const $selected = get(selectedEntities);
+    const entityId = first($selected);
+    if (entityId) {
+      return this.wdoc.world.entities.getById(entityId);
+    }
   }
 
   get centroid() {
