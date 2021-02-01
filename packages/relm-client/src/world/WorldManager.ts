@@ -118,19 +118,6 @@ export default class WorldManager {
     this.camera = camera;
 
     makeGround(this.world).activate();
-    makeInvisibleBox(this.world, {
-      z: -50,
-      w: 100,
-      h: 100,
-      d: 1,
-      dynamic: false,
-    }).activate();
-    makeInvisibleBox(this.world, {
-      w: 100,
-      h: 100,
-      d: 1,
-      dynamic: false,
-    }).activate();
   }
 
   depopulate() {
