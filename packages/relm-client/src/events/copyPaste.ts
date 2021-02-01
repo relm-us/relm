@@ -94,7 +94,10 @@ export function onCopy() {
         }
       });
 
-      copyBuffer.set(serialized);
+      copyBuffer.set({
+        center,
+        entities: serialized,
+      });
     } else {
       console.warn("Nothing copied (nothing selected)");
     }
@@ -107,20 +110,25 @@ export function onPaste() {
   const offset = new Vector3();
   if (get(mode) === "build") {
     const buffer = get(copyBuffer);
-    if (buffer.length > 0) {
+    if (buffer.entities.length > 0) {
       // Entities in copy buffer get new IDs on every paste
-      assignNewIds(buffer);
+      assignNewIds(buffer.entities);
 
       const $wm = get(worldManager);
+
+      const targetPosition = new Vector3().copy(
+        $wm.avatar.get(Transform).position
+      );
+      targetPosition.y = buffer.center.y;
+
       const entities = [];
-      for (const json of buffer) {
+
+      for (const json of buffer.entities) {
         const entity = $wm.world.entities.create().fromJSON(json).activate();
         const transform = entity.get(Transform);
         if (transform && entity.parent === null) {
           offset.copy(transform.position);
-          transform.position
-            .copy($wm.avatar.get(Transform).position)
-            .add(offset);
+          transform.position.copy(targetPosition).add(offset);
         }
         entities.push(entity);
       }
