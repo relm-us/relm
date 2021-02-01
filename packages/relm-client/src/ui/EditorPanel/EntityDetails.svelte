@@ -65,12 +65,39 @@
   };
 </script>
 
+<div>
+  <info>
+    <Capsule editable={false} label="ID" value={entity.id} />
+    <Capsule label="Name" value={entity.name} />
+  </info>
+  <toolbar>
+    <Button on:click={destroy}>Delete</Button>
+    {#if hasRigidBody(entity)}
+      {#if isSleeping(entity)}
+        <Button on:click={awaken}>Wake</Button>
+      {:else}
+        <Button on:click={asleepen}>Sleep</Button>
+      {/if}
+    {/if}
+  </toolbar>
+  <select-container>
+    <Select
+      placeholder="Add Component..."
+      isClearable={false}
+      items={componentOptions}
+      on:select={onSelectNewComponent}
+    />
+  </select-container>
+</div>
+
 <style>
   div {
-    margin: 8px auto;
+    width: 268px;
+    margin: 8px 16px;
   }
-  row {
+  info {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
 
     margin: 0px 8px;
@@ -91,29 +118,7 @@
     --itemColor: #333;
     --background: none;
     --height: 24px;
+    --inputLeft: 0;
+    --inputPadding: 0px 0px 0px 16px;
   }
 </style>
-
-<div>
-  <row>
-    <Capsule editable={false} label="ID" value={entity.id} />
-    <Capsule label="Name" value={entity.name} />
-  </row>
-  <toolbar>
-    <Button on:click={destroy}>Delete</Button>
-    {#if hasRigidBody(entity)}
-      {#if isSleeping(entity)}
-        <Button on:click={awaken}>Wake</Button>
-      {:else}
-        <Button on:click={asleepen}>Sleep</Button>
-      {/if}
-    {/if}
-  </toolbar>
-  <select-container>
-    <Select
-      placeholder="Add Component..."
-      isClearable={false}
-      items={componentOptions}
-      on:select={onSelectNewComponent} />
-  </select-container>
-</div>
