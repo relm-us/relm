@@ -1,12 +1,18 @@
-import { Component, BooleanType } from "hecs";
+import { Component, StringType } from "hecs";
 
 export class PointerPlane extends Component {
   static props = {
     visible: {
-      type: BooleanType,
-      default: false,
+      type: StringType,
+      default: null,
       editor: {
-        label: "Visible",
+        label: "Visible Plane",
+        input: "Select",
+        options: [
+          { label: "None", value: null },
+          { label: "XY Plane", value: "XY" },
+          { label: "XZ Plane", value: "XZ" },
+        ],
       },
     },
   };

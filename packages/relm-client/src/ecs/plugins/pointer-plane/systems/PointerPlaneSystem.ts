@@ -8,16 +8,13 @@ import { PointerPlane, PointerPlaneRef } from "../components";
 import {
   Color,
   PlaneBufferGeometry,
-  LineBasicMaterial,
   Mesh,
   MeshBasicMaterial,
   Vector3,
   DoubleSide,
   Raycaster,
   Euler,
-  LineDashedMaterial,
-  BufferGeometry,
-  Line,
+  GridHelper,
 } from "three";
 
 type Orientation = "XY" | "XZ" | "YZ";
@@ -59,8 +56,8 @@ export class PointerPlaneSystem extends System {
   build(entity) {
     const spec = entity.get(PointerPlane);
 
-    const planes = ["XY", "XZ"].map((desc: Orientation) =>
-      this.createPlane(desc, spec.visible)
+    const planes = ["XY", "XZ"].map((orientation: Orientation) =>
+      this.createPlane(orientation, spec.visible === orientation)
     );
 
     const component = entity.add(PointerPlaneRef, { planes });
@@ -112,23 +109,11 @@ export class PointerPlaneSystem extends System {
     }
   }
 
-  getColor(orientation: Orientation) {
-    switch (orientation) {
-      case "XY":
-        return new Color(0xffff00);
-      case "XZ":
-        return new Color(0xff00ff);
-      case "YZ":
-        return new Color(0x00ffff);
-    }
-  }
-
   createPlane(orientation: Orientation, visible = false) {
     const size = 1000;
-    const color = this.getColor(orientation);
     const geometry = new PlaneBufferGeometry(size, size, 1, 1);
     const material = new MeshBasicMaterial({
-      color,
+      color: 0xffff00,
       visible,
       transparent: true,
       opacity: visible ? 0.15 : 0,
@@ -139,11 +124,6 @@ export class PointerPlaneSystem extends System {
     // plane.position.set(0.001, 0.001, 0.001);
     plane.userData.orientation = orientation;
 
-    if (visible) {
-      this.addPlaneHelper(plane, color);
-      this.addCrosshairs(plane);
-    }
-
     switch (orientation) {
       case "XY":
         break;
@@ -152,55 +132,14 @@ export class PointerPlaneSystem extends System {
         break;
     }
 
+    if (visible) {
+      const gridHelper = new GridHelper(100, 100, 0xffffff, 0x888888);
+      gridHelper.setRotationFromEuler(new Euler(-Math.PI / 2, 0, 0));
+      plane.add(gridHelper);
+    }
+
     this.presentation.scene.add(plane);
 
     return plane;
-  }
-
-  addPlaneHelper(parent, color) {
-    const size = 1000;
-
-    const points = [];
-    const dashedLineMaterial = new LineDashedMaterial({
-      color,
-      dashSize: 0.3,
-      gapSize: 0.1,
-    });
-
-    let x = -10;
-    for (let i = 0; i < 6; i++) {
-      points.length = 0;
-      points.push(new Vector3(x, -0.01, -size / 2));
-      points.push(new Vector3(x, -0.01, size / 2));
-      const geometry = new BufferGeometry().setFromPoints(points);
-      const line = new Line(geometry, dashedLineMaterial);
-      line.computeLineDistances();
-
-      parent.add(line);
-      x += 4;
-    }
-  }
-
-  addCrosshairs(parent) {
-    const points = [];
-    const solidLineMaterial = new LineBasicMaterial({
-      color: "black",
-    });
-    solidLineMaterial.depthTest = false;
-    // crosshairs
-    for (let i = 0; i < 2; i++) {
-      points.length = 0;
-      if (i === 0) {
-        points.push(new Vector3(0.01, -0.01, -2));
-        points.push(new Vector3(0.01, -0.01, 2));
-      } else {
-        points.push(new Vector3(-2, -0.01, 0.01));
-        points.push(new Vector3(2, -0.01, 0.01));
-      }
-      const geometry = new BufferGeometry().setFromPoints(points);
-      const line = new Line(geometry, solidLineMaterial);
-
-      parent.add(line);
-    }
   }
 }

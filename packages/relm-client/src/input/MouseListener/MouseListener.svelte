@@ -88,7 +88,7 @@
       pointerPlaneEntity = world.entities
         .create("MouseDragPointerPlane", uuidv4())
         .add(Transform, { position })
-        .add(PointerPlane, { visible: false })
+        .add(PointerPlane, { visible: dragPlane })
         .activate();
     } else if (mouseMode === "drag") {
       // drag mode
