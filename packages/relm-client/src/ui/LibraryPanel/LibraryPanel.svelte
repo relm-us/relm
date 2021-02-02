@@ -20,16 +20,6 @@
       category: "favorite",
       items: [],
     },
-    // {
-    //   id: "list-2",
-    //   name: "This Relm",
-    //   category: "relm",
-    //   items: [3].map((i) => ({
-    //     id: `item-${i}`,
-    //     originalId: `item-${i}`,
-    //     name: `Relm ${i}`,
-    //   })),
-    // },
     {
       id: "list-3",
       name: "Stone",
@@ -39,6 +29,8 @@
           id: `stone-1`,
           originalId: `stone-1`,
           name: `Stone 1`,
+          orientation: "down",
+          size: { w: 2, h: 2, d: 0.1 },
           thumbnail: "65ad631eef317b581c4968c43267ca52-87624.webp",
           asset: "65ad631eef317b581c4968c43267ca52-87624.webp",
         },
@@ -46,6 +38,8 @@
           id: `stone-2`,
           originalId: `stone-2`,
           name: `Stone 2`,
+          orientation: "down",
+          size: { w: 2, h: 2, d: 0.1 },
           thumbnail: "e6804f7e4edb66330e55bb2212a424f8-88518.webp",
           asset: "e6804f7e4edb66330e55bb2212a424f8-88518.webp",
         },
@@ -53,6 +47,8 @@
           id: `stone-3`,
           originalId: `stone-3`,
           name: `Stone 3`,
+          orientation: "down",
+          size: { w: 2, h: 2, d: 0.1 },
           thumbnail: "8030aa0937d770c22e5ac458a7af985b-154776.webp",
           asset: "8030aa0937d770c22e5ac458a7af985b-154776.webp",
         },
@@ -60,6 +56,8 @@
           id: `stone-4`,
           originalId: `stone-4`,
           name: `Stone 4`,
+          orientation: "down",
+          size: { w: 2, h: 2, d: 0.1 },
           thumbnail: "c714b0efc3388209cc9e42923a0ff904-147970.webp",
           asset: "c714b0efc3388209cc9e42923a0ff904-147970.webp",
         },
@@ -67,6 +65,8 @@
           id: `stone-5`,
           originalId: `stone-5`,
           name: `Stone 5`,
+          orientation: "down",
+          size: { w: 2, h: 2, d: 0.1 },
           thumbnail: "db4a63746c3c1bb936c0c1ee686306e5-175918.webp",
           asset: "db4a63746c3c1bb936c0c1ee686306e5-175918.webp",
         },
@@ -74,6 +74,8 @@
           id: `stone-6`,
           originalId: `stone-6`,
           name: `Stone 6`,
+          orientation: "down",
+          size: { w: 2, h: 2, d: 0.1 },
           thumbnail: "d786c985cedd9d196fab2994d080e258-53796.webp",
           asset: "d786c985cedd9d196fab2994d080e258-53796.webp",
         },
@@ -84,7 +86,7 @@
   $: currentList = lists.find((list) => list.id === currentListId);
 
   const handleDrop = (destList) => ({ detail }) => {
-    console.log(`received`, detail);
+    // console.log(`received`, detail);
 
     const sourceList = lists.find((l) => l.id === detail.list.id);
 

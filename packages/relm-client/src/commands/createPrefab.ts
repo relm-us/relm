@@ -21,7 +21,7 @@ export const createPrefab = {
       })),
     },
   },
-  command: ($worldManager, { name, src }) => {
+  command: ($worldManager, { name, src }, props) => {
     const transform = $worldManager.avatar?.get(WorldTransform);
     if (transform) {
       const x = transform.position.x;
@@ -31,8 +31,8 @@ export const createPrefab = {
       if (prefab) {
         const url = assetUrl(src);
         let entities = prefab.prefab($worldManager.world, {
+          ...props,
           x,
-          y: 0.5,
           z,
           url,
         });

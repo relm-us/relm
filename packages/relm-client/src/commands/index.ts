@@ -13,13 +13,13 @@ function getWorldManager() {
 
 export const commands = { createPrefab };
 
-export const runCommand = (name, args) => {
+export const runCommand = (name, ...args) => {
   const $worldManager = getWorldManager();
 
   if (name in commands) {
     const { params, command } = commands[name];
     // TODO: validate args against params
-    command($worldManager, args);
+    command($worldManager, ...args);
   } else {
     throw new Error(`Command not found: '${name}'`);
   }

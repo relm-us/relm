@@ -4,7 +4,6 @@ export type Collection = {
   id: string;
   name: string;
   category: Category;
-  // items: ItemStore;
   items: Array<Item>;
   thumbnail?: string;
 };
@@ -15,6 +14,8 @@ export type Item = {
   id: string;
   originalId: string;
   name: string;
+  orientation: "up" | "down";
+  size: { w: number; h: number; d: number };
   thumbnail?: string;
   asset?: string;
 };
