@@ -4,7 +4,7 @@ export class ThrustController extends LocalComponent {
   static props = {
     thrust: {
       type: NumberType,
-      default: 50.0,
+      default: 1.0,
       editor: {
         label: "Thrust Magnitude",
       },

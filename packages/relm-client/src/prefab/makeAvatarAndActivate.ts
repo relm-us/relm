@@ -25,7 +25,7 @@ export function makeAvatarAndActivate(
   // Create the avatar's torso, which we connect everything else to
   const avatar = makeEntity(world, "Avatar")
     .add(ThrustController, {
-      thrust: 50,
+      thrust: 15,
       torque: 8,
     })
     .add(PointerPlane)

@@ -76,10 +76,10 @@ export class ThrustControllerSystem extends System {
     let velocity = v1.length();
 
     // thrust toward direction if under maximum velocity
-    if (velocity < MAX_VELOCITY) {
-      thrust.multiplyScalar(controller.thrust);
-      bodyRef.value.applyForce(thrust, true);
-    }
+    thrust.multiplyScalar(-controller.thrust);
+    v1.multiplyScalar(-1);
+    v1.sub(thrust);
+    bodyRef.value.applyForce(v1, true);
 
     // jump/fly
     // simple hack: y is up, so don't let thrust be more than positive max velocity
