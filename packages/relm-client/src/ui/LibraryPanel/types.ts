@@ -15,6 +15,7 @@ export type Item = {
   originalId: string;
   name: string;
   orientation: "up" | "down";
+  base: number;
   size: { w: number; h: number; d: number };
   thumbnail?: string;
   asset?: string;
