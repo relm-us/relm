@@ -72,12 +72,7 @@ export class RenderableSystem extends System {
     const RenderableComponent = getRenderableComponentByType(spec.kind);
     object.userData.renderable = new RenderableComponent({
       target: containerElement,
-      props: {
-        width: spec.width,
-        height: spec.height,
-        embedId: spec.embedId,
-        url: spec.url,
-      },
+      props: spec,
     });
 
     this.copyTransform(object, transform, spec.scale);

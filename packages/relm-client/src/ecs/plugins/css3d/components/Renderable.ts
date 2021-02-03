@@ -10,6 +10,7 @@ export class Renderable extends Component {
         input: "Select",
         options: [
           { label: "Avatar Head", value: "AVATAR_HEAD" },
+          { label: "Label", value: "LABEL" },
           { label: "Web Page", value: "WEB_PAGE" },
           { label: "YouTube", value: "YOUTUBE" },
         ],
@@ -21,7 +22,7 @@ export class Renderable extends Component {
       default: "U_u91SjrEOE",
       editor: {
         label: "YouTube Embed ID",
-        requires: [{ prop: "kind", value: "YOUTUBE" }], // TODO: fix and re-test as it is broken
+        requires: [{ prop: "kind", value: "YOUTUBE" }],
       },
     },
 
@@ -30,7 +31,45 @@ export class Renderable extends Component {
       default: "https://google.com?igu=1",
       editor: {
         label: "Web Page URL",
-        requires: [{ prop: "kind", value: "WEB_PAGE" }], // TODO: fix and re-test as it is broken
+        requires: [{ prop: "kind", value: "WEB_PAGE" }],
+      },
+    },
+
+    text: {
+      type: StringType,
+      default: "hello",
+      editor: {
+        label: "Text",
+        requires: [{ prop: "kind", value: "LABEL" }],
+      },
+    },
+
+    fontSize: {
+      type: StringType,
+      default: 32,
+      editor: {
+        label: "Font Size",
+        requires: [{ prop: "kind", value: "LABEL" }],
+      },
+    },
+
+    fontColor: {
+      type: StringType,
+      default: "#fbfbfb",
+      editor: {
+        label: "Font Color",
+        input: "Color",
+        requires: [{ prop: "kind", value: "LABEL" }],
+      },
+    },
+
+    bgColor: {
+      type: StringType,
+      default: "#151515",
+      editor: {
+        label: "Background Color",
+        input: "Color",
+        requires: [{ prop: "kind", value: "LABEL" }],
       },
     },
 
