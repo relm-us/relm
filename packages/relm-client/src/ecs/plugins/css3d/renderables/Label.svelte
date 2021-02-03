@@ -19,12 +19,17 @@
 
 <style>
   div {
-    padding: 16px 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
     text-align: center;
     color: var(--color, white);
     background-color: var(--bgColor, black);
     font-size: var(--size, 20px);
     width: var(--width, 200px);
     height: var(--height, 50px);
+
+    overflow: auto;
   }
 </style>
