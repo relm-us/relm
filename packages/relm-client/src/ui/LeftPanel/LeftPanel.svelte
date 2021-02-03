@@ -5,6 +5,13 @@
   const dispatch = createEventDispatcher();
 </script>
 
+<panel>
+  <button on:click={() => dispatch("minimize")}>
+    <IoIosArrowBack />
+  </button>
+  <slot />
+</panel>
+
 <style>
   panel {
     position: relative;
@@ -36,10 +43,3 @@
     cursor: pointer;
   }
 </style>
-
-<panel>
-  <button on:click={() => dispatch('minimize')}>
-    <IoIosArrowBack />
-  </button>
-  <slot />
-</panel>

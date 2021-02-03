@@ -93,6 +93,7 @@
     width: 208px;
     height: 100%;
     overflow: scroll;
+    padding-bottom: 120px;
   }
   section:focus {
     outline: none;
