@@ -10,7 +10,7 @@
 
   // import { favorites } from "~/stores/collections";
 
-  let currentListId = "list-1";
+  let currentListId = "list-2";
   let currentList;
 
   const lists: Array<Collection> = [
@@ -432,17 +432,6 @@
     display: flex;
     flex-direction: column;
     max-width: 220px;
-
-    overflow-y: scroll;
-    /* hide scroll bars */
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
-    scrollbar-width: none; /* Firefox */
-  }
-  .items::-webkit-scrollbar {
-    /* hide scroll bars */
-    display: none; /* Safari and Chrome */
-    width: 0;
-    height: 0;
   }
   container {
     display: flex;

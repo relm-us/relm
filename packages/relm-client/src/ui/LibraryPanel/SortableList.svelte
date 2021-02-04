@@ -92,8 +92,16 @@
     align-content: flex-start;
     width: 208px;
     height: 100%;
-    overflow: scroll;
     padding-bottom: 120px;
+
+    /* hide scroll bars */
+    overflow-y: scroll;
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+  }
+  section::-webkit-scrollbar {
+    /* hide scroll bars */
+    display: none; /* Safari and Chrome */
   }
   section:focus {
     outline: none;
