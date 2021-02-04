@@ -22,6 +22,93 @@
     },
     {
       id: "list-2",
+      name: "Trees",
+      category: "library",
+      items: [
+        {
+          id: `tree-1`,
+          originalId: `tree-1`,
+          name: `Tree 1`,
+          orientation: "up",
+          size: { w: 6, h: 6, d: 0.1 },
+          base: 2.3,
+          thumbnail: "1219d2f700b7daa0335507a06f70e701-211714.webp",
+          asset: "1219d2f700b7daa0335507a06f70e701-211714.webp",
+        },
+        {
+          id: `tree-2`,
+          originalId: `tree-2`,
+          name: `Tree 2`,
+          orientation: "up",
+          size: { w: 3.4, h: 3.4, d: 0.1 },
+          base: 1.8,
+          thumbnail: "790c498fed1d6aae04b7e560f7aaf822-49468.webp",
+          asset: "790c498fed1d6aae04b7e560f7aaf822-49468.webp",
+        },
+        {
+          id: `tree-3`,
+          originalId: `tree-3`,
+          name: `Tree 3`,
+          orientation: "up",
+          size: { w: 7, h: 7, d: 0.1 },
+          base: 3.4,
+          thumbnail: "5775c0901dd939dacda9f2d40502d2de-363150.webp",
+          asset: "5775c0901dd939dacda9f2d40502d2de-363150.webp",
+        },
+        {
+          id: `tree-4`,
+          originalId: `tree-4`,
+          name: `Tree 4`,
+          orientation: "up",
+          size: { w: 9, h: 9, d: 0.1 },
+          base: 3.6,
+          thumbnail: "93064d65baa31484c404c38f681d01a4-200378.webp",
+          asset: "93064d65baa31484c404c38f681d01a4-200378.webp",
+        },
+        {
+          id: `tree-5`,
+          originalId: `tree-5`,
+          name: `Tree 5`,
+          orientation: "up",
+          size: { w: 7, h: 7, d: 0.1 },
+          base: 3.5,
+          thumbnail: "9f548af74fb29a27086f6926ba69aa6d-119028.webp",
+          asset: "9f548af74fb29a27086f6926ba69aa6d-119028.webp",
+        },
+        {
+          id: `tree-6`,
+          originalId: `tree-6`,
+          name: `Tree 6`,
+          orientation: "up",
+          size: { w: 18, h: 18, d: 0.1 },
+          base: 3.6,
+          thumbnail: "05159a8f60d21324382c7779497500b3-205526.webp",
+          asset: "05159a8f60d21324382c7779497500b3-205526.webp",
+        },
+        {
+          id: `tree-7`,
+          originalId: `tree-7`,
+          name: `Tree 7`,
+          orientation: "up",
+          size: { w: 5, h: 5, d: 0.1 },
+          base: 2.4,
+          thumbnail: "aa9ec5f02162b7b9ae124d071383aa6f-225858.webp",
+          asset: "aa9ec5f02162b7b9ae124d071383aa6f-225858.webp",
+        },
+        {
+          id: `tree-8`,
+          originalId: `tree-8`,
+          name: `Tree 8`,
+          orientation: "up",
+          size: { w: 5, h: 5, d: 0.1 },
+          base: 2.2,
+          thumbnail: "006ceace39ed4b812657fb12e99672e6-72306.webp",
+          asset: "006ceace39ed4b812657fb12e99672e6-72306.webp",
+        },
+      ],
+    },
+    {
+      id: "list-3",
       name: "Signs",
       category: "library",
       items: [
@@ -168,7 +255,7 @@
       ],
     },
     {
-      id: "list-3",
+      id: "list-4",
       name: "Stone",
       category: "library",
       items: [
@@ -345,6 +432,17 @@
     display: flex;
     flex-direction: column;
     max-width: 220px;
+
+    overflow-y: scroll;
+    /* hide scroll bars */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+  }
+  .items::-webkit-scrollbar {
+    /* hide scroll bars */
+    display: none; /* Safari and Chrome */
+    width: 0;
+    height: 0;
   }
   container {
     display: flex;
