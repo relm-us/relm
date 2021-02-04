@@ -1,4 +1,4 @@
-import { Component } from "hecs";
+import { StateComponent } from "hecs";
 
 // Indicate that the mesh HAS been normalized
-export class NormalizedMesh extends Component {}
+export class NormalizedMesh extends StateComponent {}

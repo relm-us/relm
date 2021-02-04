@@ -150,4 +150,12 @@ export default class WorldManager {
 
     this.previousLoopTime = time;
   }
+
+  /**
+   * Convenience Accessors
+   */
+
+  get scene() {
+    return this.world.presentation.scene;
+  }
 }

@@ -33,7 +33,7 @@
   };
 
   const saveEntity = (entity) => () => {
-    console.log("saveEntity", entity);
+    // console.log("saveEntity", entity);
     $worldManager.wdoc.syncFrom(entity);
   };
 
@@ -56,13 +56,6 @@
   });
 </script>
 
-<style>
-  info {
-    display: block;
-    margin: 32px auto;
-  }
-</style>
-
 <EntityDetails {entity} on:destroy={destroyEntity} on:modified={onModified} />
 
 {#if active}
@@ -72,7 +65,8 @@
       {Component}
       component={entity.components.get(Component)}
       on:destroy={() => destroyComponent(entity, Component)}
-      on:modified={saveEntity(entity)} />
+      on:modified={saveEntity(entity)}
+    />
   {/each}
 
   <!-- Internal Components -->
@@ -81,8 +75,9 @@
       style="margin-top:8px"
       on:click={() => {
         secondaryComponentsVisible = !secondaryComponentsVisible;
-      }}>
-      {secondaryComponentsVisible ? 'Hide' : 'Show'}
+      }}
+    >
+      {secondaryComponentsVisible ? "Hide" : "Show"}
       ({secondaryComponents.length}) Internal Components
     </Button>
     {#if secondaryComponentsVisible}
@@ -91,10 +86,18 @@
           {Component}
           component={entity.components.get(Component)}
           on:destroy={() => destroyComponent(entity, Component)}
-          on:modified={saveEntity(entity)} />
+          on:modified={saveEntity(entity)}
+        />
       {/each}
     {/if}
   {/if}
 {:else}
   <info>Entity Deactivated</info>
 {/if}
+
+<style>
+  info {
+    display: block;
+    margin: 32px auto;
+  }
+</style>

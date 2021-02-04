@@ -31,8 +31,11 @@
 
   const onUpload = ({ detail }) => {
     for (const result of detail.results) {
-      const src = result.types.webp;
-      runCommand("createPrefab", { name: "Image", src });
+      if (result.types.webp) {
+        runCommand("createPrefab", { name: "Image", src: result.types.webp });
+      } else if (result.types.gltf) {
+        runCommand("createPrefab", { name: "Thing", src: result.types.gltf });
+      }
     }
   };
 </script>
@@ -66,23 +69,19 @@
       <panel-tabs>
         <Button
           active={openPanel === "library"}
-          on:click={() => (openPanel = "library")}
-        >Collections</Button
+          on:click={() => (openPanel = "library")}>Collections</Button
         >
         <Button
           active={openPanel === "editor"}
-          on:click={() => (openPanel = "editor")}
-        >Editor</Button
+          on:click={() => (openPanel = "editor")}>Editor</Button
         >
         <Button
           active={openPanel === "export"}
-          on:click={() => (openPanel = "export")}
-        >Export</Button
+          on:click={() => (openPanel = "export")}>Export</Button
         >
         <Button
           active={openPanel === "performance"}
-          on:click={() => (openPanel = "performance")}
-        >Performance</Button
+          on:click={() => (openPanel = "performance")}>Performance</Button
         >
       </panel-tabs>
     {/if}

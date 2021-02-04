@@ -14,12 +14,12 @@ export class NormalizeMeshSystem extends System {
     this.queries.added.forEach((entity) => {
       const object3d = entity.get(ModelMesh).value;
       if (!object3d.parent) return;
-      this.normalize(object3d);
+      this.normalize(object3d, entity);
       entity.add(NormalizedMesh);
     });
   }
 
-  normalize(object3d) {
+  normalize(object3d, entity) {
     const first = this.getFirstMeshOrGroup(object3d);
 
     if (first === object3d) {
@@ -36,8 +36,18 @@ export class NormalizeMeshSystem extends System {
 
     if (first.type === "Mesh") {
       first.geometry.center();
-    } else {
-      console.warn("Not Implemented: center mesh with multiple children");
+    } else if (first.type === "Group") {
+      const cent = new Vector3();
+      const bbox = new Box3().setFromObject(first);
+      bbox.getCenter(cent);
+      console.warn(
+        entity.name,
+        "(Group centering not implemented)",
+        "bbox:",
+        bbox,
+        "center:",
+        cent
+      );
     }
 
     const scale = this.getScaleRatio(first);
@@ -48,6 +58,28 @@ export class NormalizeMeshSystem extends System {
         obj.geometry.scale(scale, scale, scale);
       }
     });
+  }
+
+  // TODO: Remove this (for reference only)
+  normalize2(object3d) {
+    const cent = new Vector3();
+    const size = new Vector3();
+    const bbox = new Box3().setFromObject(object3d);
+    bbox.getCenter(cent);
+    bbox.getSize(size);
+
+    //Rescale the object to normalized space
+    var maxAxis = Math.max(size.x, size.y, size.z);
+    object3d.scale.multiplyScalar(1.0 / maxAxis);
+
+    //Now get the updated/scaled bounding box again..
+    bbox.setFromObject(object3d);
+    bbox.getCenter(cent);
+    bbox.getSize(size);
+
+    object3d.position.x = -cent.x;
+    object3d.position.y = -cent.y; //0;
+    object3d.position.z = -cent.z;
   }
 
   getFirstMeshOrGroup(object3d) {
