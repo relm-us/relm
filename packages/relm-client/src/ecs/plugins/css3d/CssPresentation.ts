@@ -1,4 +1,4 @@
-import { PerspectiveCamera } from "three";
+import { PerspectiveCamera, sRGBEncoding } from "three";
 import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer";
 
 const ResizeObserver = (window as any).ResizeObserver;
@@ -19,6 +19,7 @@ export class CssPresentation {
     this.size = { width: 1, height: 1 };
 
     this.renderer = this.createRenderer();
+    this.renderer.outputEncoding = sRGBEncoding;
     this.camera = this.createCamera();
     this.scene = world.presentation.scene;
 

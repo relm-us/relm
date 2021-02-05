@@ -42,7 +42,7 @@ export function makeStageAndActivate(world, avatar) {
     })
     .add(DirectionalLight, {
       target: avatar.id,
-      color: 0xaa9999,
+      color: 0x999999,
       shadowLeft: -shadowSize,
       shadowRight: shadowSize,
       shadowTop: shadowSize,

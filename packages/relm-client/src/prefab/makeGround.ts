@@ -9,10 +9,11 @@ const groundSize = {
 
 export function makeGround(world) {
   const ground = makeBox(world, {
+    name: "Ground",
     ...groundSize,
     y: -groundSize.h * 0.5,
     z: -groundSize.d * 0.25,
-    color: "#22bb11",
+    color: "#55814e",
     dynamic: false,
   });
 

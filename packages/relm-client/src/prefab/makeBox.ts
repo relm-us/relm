@@ -15,7 +15,7 @@ export function makeBox(
     w = 1,
     h = 1,
     d = 1,
-    color = "red",
+    color = "white",
     dynamic = true,
     name = "Box",
     metalness = 0.2,
@@ -25,7 +25,7 @@ export function makeBox(
   }
 ) {
   const linearColor = new Color(color);
-  linearColor.convertSRGBToLinear();
+  // linearColor.convertSRGBToLinear();
 
   const entity = makeEntity(world, name)
     .add(Transform, {

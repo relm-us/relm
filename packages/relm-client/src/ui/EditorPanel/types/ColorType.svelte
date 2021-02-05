@@ -19,6 +19,29 @@
   $$props;
 </script>
 
+<div>
+  <lbl>{(prop.editor && prop.editor.label) || key}:</lbl>
+
+  <ColorPicker
+    {value}
+    disableSwatches={true}
+    format="hex"
+    open={false}
+    width="20px"
+    height="20px"
+    on:change={({ detail }) => {
+      const cssColor = detail.indexOf("#") === 0 ? detail.slice(0, 7) : detail;
+      const color = new Color(cssColor);
+      const newValue = "#" + color.getHexString();
+      component[key] = newValue;
+      component.modified();
+      dispatch("modified");
+    }}
+  />
+
+  <color>{value}</color>
+</div>
+
 <style>
   div {
     margin-left: 16px;
@@ -34,25 +57,3 @@
     font-size: 12px;
   }
 </style>
-
-<div>
-  <lbl>{(prop.editor && prop.editor.label) || key}:</lbl>
-
-  <ColorPicker
-    {value}
-    disableSwatches={true}
-    format="hex"
-    open={false}
-    width="20px"
-    height="20px"
-    on:change={({ detail }) => {
-      const cssColor = detail.indexOf('#') === 0 ? detail.slice(0, 7) : detail;
-      const color = new Color(cssColor);
-      const newValue = '#' + color.getHexString();
-      component[key] = newValue;
-      component.modified();
-      dispatch('modified');
-    }} />
-
-  <color>{value}</color>
-</div>

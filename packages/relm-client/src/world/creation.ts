@@ -73,7 +73,7 @@ export function createScene() {
 
   // scene.fog = new FogExp2(0xe5e0dd, 0.022);
 
-  const hemiLight = new HemisphereLight(0x999999, 0xffffff);
+  const hemiLight = new HemisphereLight(0xffffff, 0xffffff);
   hemiLight.position.set(0, 20, 20);
   scene.add(hemiLight);
 
