@@ -1,6 +1,7 @@
 <script lang="ts">
   import { worldManager as wm } from "~/stores/worldManager";
   import { mode } from "~/stores/mode";
+  import { cleanHtml } from "~/utils/cleanHtml";
 
   import { Renderable } from "../components";
 
@@ -35,7 +36,7 @@
   contenteditable={canEdit ? "true" : undefined}
   style="--width:{width}px;--height:{height}px;--size:{fontSize}px;--color:{fontColor};--bgColor:{bgColor};"
 >
-  {@html text}
+  {@html cleanHtml(text)}
 </div>
 
 <style>
