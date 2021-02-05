@@ -1,4 +1,4 @@
-import { Component, StringType, NumberType } from "hecs";
+import { Component, StringType, NumberType, BooleanType } from "hecs";
 
 export class Renderable extends Component {
   static props = {
@@ -69,6 +69,15 @@ export class Renderable extends Component {
       editor: {
         label: "Background Color",
         input: "Color",
+        requires: [{ prop: "kind", value: "LABEL" }],
+      },
+    },
+
+    editable: {
+      type: BooleanType,
+      default: false,
+      editor: {
+        label: "Editable",
         requires: [{ prop: "kind", value: "LABEL" }],
       },
     },

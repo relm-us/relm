@@ -83,12 +83,15 @@ export function applyChangeToYEntity(change: Change, yentity: YEntity) {
           throw new Error(`Attributes must be primitive types '${key}'`);
         if (change.path.length === 2) {
           // Set a Component property primitive, e.g. shape.sphereRadius = 1.0
-          if (change.kind === ChangeKind.Update) {
+          if (
+            change.kind === ChangeKind.Update ||
+            change.kind === ChangeKind.Add
+          ) {
             withYComponentValues(yentity, componentName, (yvalues) => {
               yvalues.set(propertyName, change.rhs);
             });
           } else {
-            throw new Error("Not implemented");
+            throw new Error(`Change not implemented: '${change.kind}'`);
           }
         } else if (change.path.length > 2) {
           // Add, update, or delete a compound Component property,
