@@ -4,6 +4,8 @@
   import { WorldTransform } from "hecs-plugin-core";
   import { directory } from "~/prefab";
 
+  const PLAYER_CENTER_HEIGHT = 0.755;
+
   const activate = (entity) => {
     entity.activate();
     $worldManager.wdoc.syncFrom(entity);
@@ -11,12 +13,14 @@
       activate(child);
     }
   };
+
   const create = (prefab) => () => {
     const transform = $worldManager.avatar?.get(WorldTransform);
     if (transform) {
       const x = transform.position.x;
+      const y = transform.position.y - PLAYER_CENTER_HEIGHT + 0.5;
       const z = transform.position.z;
-      let entities = prefab.prefab($worldManager.world, { x, y: 0.5, z });
+      let entities = prefab.prefab($worldManager.world, { x, y, z });
       if (!(entities instanceof Array)) entities = [entities];
 
       for (const entity of entities) {

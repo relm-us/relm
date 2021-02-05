@@ -9,13 +9,13 @@ export function makeLabel(
   world,
   {
     x = 0,
-    y = 0,
+    y = 1.5,
     z = 0,
     text,
     fontSize,
-    frameWidth = 500,
-    frameHeight = 500,
-    worldWidth = 3,
+    frameWidth = 200,
+    frameHeight = 200,
+    worldWidth = 1,
   }
 ) {
   const iframeRatio = frameWidth / frameHeight;
