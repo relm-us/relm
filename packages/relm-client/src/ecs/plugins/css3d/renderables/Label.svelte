@@ -35,7 +35,7 @@
   contenteditable={canEdit ? "true" : undefined}
   style="--width:{width}px;--height:{height}px;--size:{fontSize}px;--color:{fontColor};--bgColor:{bgColor};"
 >
-  {text}
+  {@html text}
 </div>
 
 <style>
@@ -44,7 +44,9 @@
     flex-direction: column;
     justify-content: center;
 
-    font: 400 var(--size, 20px) Arial;
+    font-weight: bold;
+    font-size: var(--size, 20px);
+    font-family: Arial, sans;
     text-align: center;
 
     color: var(--color, white);
