@@ -26,7 +26,7 @@ export function makeAvatarAndActivate(
   const avatar = makeEntity(world, "Avatar")
     .add(ThrustController, {
       thrust: 15,
-      torque: 8,
+      torque: 4,
     })
     .add(PointerPlane)
     .add(Transform, {

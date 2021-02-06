@@ -1,4 +1,5 @@
 import { System, Groups } from "hecs";
+import type { RigidBody as RapierRigidBody } from "@dimforge/rapier3d";
 import { RigidBody, RigidBodyRef } from "../components";
 import {
   Transform,
@@ -40,7 +41,7 @@ export class PhysicsSystem extends System {
     this.queries.default.forEach((entity) => {
       const world = entity.get(WorldTransform);
       const spec = entity.get(RigidBody);
-      const body = entity.get(RigidBodyRef).value;
+      const body = entity.get(RigidBodyRef).value as RapierRigidBody;
       const transform = entity.get(Transform);
 
       // @todo Should we teleport if the distance is huge?

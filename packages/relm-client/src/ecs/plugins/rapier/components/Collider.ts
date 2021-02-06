@@ -19,7 +19,7 @@ export class Collider extends Component {
 
     density: {
       type: NumberType,
-      default: 1.0,
+      default: 0.4,
       editor: {
         label: "Density",
       },

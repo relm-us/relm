@@ -1,6 +1,7 @@
 import { System, Groups, Not, Modified } from "hecs";
 import { WorldTransform, Transform } from "hecs-plugin-core";
 import { RigidBody, RigidBodyRef } from "../components";
+import type { RigidBodyDesc as RapierRigidBodyDesc } from "@dimforge/rapier3d";
 
 function getBodyStatus(rapier, kind) {
   switch (kind) {
@@ -47,15 +48,20 @@ export class RigidBodySystem extends System {
     const spec = entity.get(RigidBody);
     const transform = entity.get(Transform);
 
-    let rigidBodyDesc = new rapier.RigidBodyDesc(
+    let rigidBodyDesc: RapierRigidBodyDesc = new rapier.RigidBodyDesc(
       getBodyStatus(rapier, spec.kind)
     )
-      .setTranslation(transform.position)
+      .setTranslation(
+        transform.position.x,
+        transform.position.y,
+        transform.position.z
+      )
       .setRotation(transform.rotation)
       .setLinearDamping(spec.linearDamping)
       .setAngularDamping(spec.angularDamping);
 
-    if (spec.mass) rigidBodyDesc.setMass(spec.mass);
+    if (spec.mass) rigidBodyDesc.setMass(spec.mass, true);
+
     let rigidBody = world.createRigidBody(rigidBodyDesc);
 
     entity.add(RigidBodyRef, { value: rigidBody });

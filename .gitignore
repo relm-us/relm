@@ -1,6 +1,5 @@
 **/node_modules/
 **/public/build/
-**/yarn.lock
+**/yarn-error.log
 **/.DS_Store
 packages/relm-server/data
-**/yarn-error.log

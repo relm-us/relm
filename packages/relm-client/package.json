@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@budibase/colorpicker": "^1.0.1",
-    "@dimforge/rapier3d": "0.2.13",
+    "@dimforge/rapier3d": "^0.3.0",
     "@uppy/core": "^1.14.2",
     "@uppy/dashboard": "^1.13.1",
     "@uppy/drag-drop": "^1.4.21",
@@ -82,7 +82,7 @@
     "yjs": "^13.4.5"
   },
   "resolutions": {
-    "@uppy/utils": "3.3.0"
+    "@uppy/utils": "3.4.0"
   },
   "browserslist": [
     "defaults"

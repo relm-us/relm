@@ -1,5 +1,6 @@
 import { System, Groups, Not, Modified } from "hecs";
 import { RigidBody, RigidBodyRef, Collider, ColliderRef } from "../components";
+import type { ColliderDesc as RapierColliderDesc } from "@dimforge/rapier3d";
 
 export class ColliderSystem extends System {
   order = Groups.Initialization + 10; // After RigidBodySystem
@@ -36,7 +37,7 @@ export class ColliderSystem extends System {
     const { world, rapier } = this.world.physics;
 
     // Create a cuboid collider attached to rigidBody.
-    let colliderDesc;
+    let colliderDesc: RapierColliderDesc;
     switch (spec.shape) {
       case "BOX":
         const size = spec.boxSize;
