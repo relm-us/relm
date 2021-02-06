@@ -1,6 +1,10 @@
 <script lang="ts">
-  import { worldRunning } from "~/stores/worldRunning";
+  import { worldState } from "~/stores/worldState";
 </script>
+
+{#if $worldState === "paused"}
+  <message>Paused</message>
+{/if}
 
 <style>
   message {
@@ -16,7 +20,3 @@
     color: white;
   }
 </style>
-
-{#if !$worldRunning}
-  <message>Paused</message>
-{/if}

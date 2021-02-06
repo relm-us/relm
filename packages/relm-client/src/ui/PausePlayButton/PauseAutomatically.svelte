@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { worldRunning } from "~/stores/worldRunning";
+  import { worldState } from "~/stores/worldState";
 
   let pausedAutomatically = false;
 
   function onChangeFocus(event) {
     const hasFocus = document.hasFocus();
-    if ($worldRunning && !hasFocus) {
+    if ($worldState === "running" && !hasFocus) {
       pausedAutomatically = true;
-      $worldRunning = false;
-    } else if (!$worldRunning && hasFocus && pausedAutomatically) {
+      $worldState = "paused";
+    } else if ($worldState === "paused" && hasFocus && pausedAutomatically) {
       pausedAutomatically = false;
-      $worldRunning = true;
+      $worldState = "running";
     }
   }
 </script>

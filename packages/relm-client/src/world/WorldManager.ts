@@ -3,7 +3,7 @@ import { get } from "svelte/store";
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
 import { deltaTime, fpsTime } from "~/stores/stats";
-import { worldRunning } from "~/stores/worldRunning";
+import { worldState, WorldState } from "~/stores/worldState";
 import { scale } from "~/stores/viewport";
 import { globalEvents } from "~/events";
 
@@ -19,6 +19,7 @@ import { SelectionManager } from "./SelectionManager";
 
 export default class WorldManager {
   world;
+  state: WorldState;
   avatar;
   camera;
   connection;
@@ -46,11 +47,14 @@ export default class WorldManager {
     this.populate();
     this.start();
 
-    worldRunning.subscribe(($running) => {
-      if ($running) {
-        this.world.presentation.setLoop(this.loop.bind(this));
-      } else {
-        this.world.presentation.setLoop(null);
+    worldState.subscribe(($state) => {
+      switch ($state) {
+        case "running":
+          this.world.presentation.setLoop(this.loop.bind(this));
+          break;
+        case "paused":
+          this.world.presentation.setLoop(null);
+          break;
       }
     });
 
@@ -125,15 +129,15 @@ export default class WorldManager {
   }
 
   start() {
-    worldRunning.set(true);
+    worldState.set("running");
   }
 
   stop() {
-    worldRunning.set(false);
+    worldState.set("paused");
   }
 
   step() {
-    if (get(worldRunning)) {
+    if (get(worldState) === "running") {
       this.stop();
     }
     requestAnimationFrame(this.loop.bind(this));
@@ -145,7 +149,7 @@ export default class WorldManager {
     fpsTime.addData(1000 / delta);
 
     if (this.world) {
-      this.world.update(get(worldRunning) ? delta : 1000 / 60);
+      this.world.update(get(worldState) === "running" ? delta : 1000 / 60);
     }
 
     this.previousLoopTime = time;

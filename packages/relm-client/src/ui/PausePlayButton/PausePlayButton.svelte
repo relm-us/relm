@@ -1,6 +1,6 @@
 <script lang="ts">
   import Button from "../Button";
-  import { worldRunning } from "~/stores/worldRunning";
+  import { worldState } from "~/stores/worldState";
   import PausedMessage from "./PausedMessage.svelte";
   import PauseAutomatically from "./PauseAutomatically.svelte";
 
@@ -23,39 +23,32 @@
     if (isDoubleClick()) {
       neverPauseAutomatically = !neverPauseAutomatically;
     }
-    worldRunning.update(($running: boolean) => !$running);
+    worldState.update(($state) => {
+      switch ($state) {
+        case "running":
+          return "paused";
+        case "paused":
+          return "running";
+        default:
+          return $state;
+      }
+    });
   };
 </script>
 
-<style>
-  icon {
-    display: block;
-    width: 32px;
-    height: 32px;
-  }
-  dot {
-    display: block;
-    width: 7px;
-    height: 7px;
-    border-radius: 7px;
-    background-color: white;
-    position: absolute;
-    margin-left: -3px;
-    margin-top: -3px;
-  }
-</style>
-
 <Button on:click={onClick}>
-  <icon>
-    {#if $worldRunning}
-      <IoIosPause />
-    {:else}
-      <IoIosPlay />
+  <div>
+    <icon>
+      {#if $worldState === "running"}
+        <IoIosPause />
+      {:else if $worldState === "paused"}
+        <IoIosPlay />
+      {/if}
+    </icon>
+    {#if neverPauseAutomatically}
+      <dot />
     {/if}
-  </icon>
-  {#if neverPauseAutomatically}
-    <dot />
-  {/if}
+  </div>
 </Button>
 
 <PausedMessage />
@@ -63,3 +56,26 @@
 {#if !neverPauseAutomatically}
   <PauseAutomatically />
 {/if}
+
+<style>
+  icon {
+    display: block;
+    width: 32px;
+    height: 32px;
+  }
+  div {
+    position: relative;
+  }
+  dot {
+    display: block;
+    width: 7px;
+    height: 7px;
+
+    position: absolute;
+    left: -4px;
+    top: 12.5px;
+
+    border-radius: 7px;
+    background-color: white;
+  }
+</style>
