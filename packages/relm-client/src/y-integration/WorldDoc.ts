@@ -31,7 +31,8 @@ import { selectedEntities } from "~/stores/selection";
 const UNDO_CAPTURE_TIMEOUT = 50;
 const RELM_EXPORT_VERSION = "relm-export v.1.1";
 
-type LoadingCallback = (bytes: number, isLoaded: boolean) => void;
+type LoadingCallbackStatus = "loading" | "loaded" | "error";
+type LoadingCallback = (status: LoadingCallbackStatus, bytes?: number) => void;
 
 type Entity = any;
 export class WorldDoc extends EventEmitter {
@@ -93,21 +94,24 @@ export class WorldDoc extends EventEmitter {
       { params: connection.params } as { params: any }
     );
 
+    let interval = null;
     if (onLoading) {
-      let bytesLoaded = 0;
-      const onUpdate = (update, _origin) => {
-        bytesLoaded += update.length;
-        onLoading(bytesLoaded, false);
-      };
-      this.ydoc.on("update", onUpdate);
+      onLoading("loading");
+      interval = setInterval(() => {
+        onLoading("loading");
+      }, 100);
       this.provider.on("sync", () => {
-        onLoading(bytesLoaded, true);
-        this.ydoc.off("update", onUpdate);
+        clearInterval(interval);
+        interval = null;
+        onLoading("loaded");
       });
     }
 
     this.provider.on("status", ({ status }: { status: ConnectionStatus }) => {
-      console.log("status", status);
+      if (status === "error" && interval !== null) {
+        clearInterval(interval);
+        onLoading("error");
+      }
       yConnectStatus.set(status);
     });
   }

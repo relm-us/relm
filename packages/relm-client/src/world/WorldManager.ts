@@ -105,16 +105,17 @@ export default class WorldManager {
     let metadataTotal = this.loading.getMaximum() / 2;
     this.loading.setStateOnce("init");
 
-    const handleLoading = (bytes, isLoaded) => {
-      if (!isLoaded) {
+    const handleLoading = (state) => {
+      if (state === "loading") {
         this.loading.setStateOnce("loading-metadata");
+        // fake progress, because we can't see inside websocket data transfer rate
         if (metadataLoaded < metadataTotal) {
-          metadataLoaded += 0.2;
+          metadataLoaded++;
         }
         this.loading.setProgress(assetsLoaded + metadataLoaded);
         // Continue
         this.worldStep();
-      } /* final call */ else {
+      } else if (state === "loaded") {
         metadataLoaded = metadataTotal;
         this.loading.setProgress(assetsLoaded + metadataLoaded);
 
@@ -124,12 +125,11 @@ export default class WorldManager {
         const progress = () => {
           this.worldStep();
 
-          const remaining = this.countAssetsLoading() || 0;
+          const remaining = this.countAssetsLoading();
           if (remaining > assetsTotal) {
             assetsTotal = remaining;
           }
           assetsLoaded = assetsTotal - remaining;
-
           this.loading.setProgress(assetsLoaded + metadataLoaded);
 
           if (remaining === 0 || waitCycle === 0) {
