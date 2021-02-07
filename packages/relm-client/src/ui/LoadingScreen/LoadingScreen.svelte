@@ -7,8 +7,8 @@
   let loading, low, high;
   $: if ($wm) {
     loading = $wm.loading.state;
-    low = $wm.loading.assetsLoaded;
-    high = $wm.loading.assetsMax;
+    low = $wm.loading.loaded;
+    high = $wm.loading.max;
   } else {
     low = writable(0);
     high = writable(1);

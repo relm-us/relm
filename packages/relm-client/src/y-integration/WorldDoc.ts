@@ -31,6 +31,8 @@ import { selectedEntities } from "~/stores/selection";
 const UNDO_CAPTURE_TIMEOUT = 50;
 const RELM_EXPORT_VERSION = "relm-export v.1.1";
 
+type LoadingCallback = (bytes: number, isLoaded: boolean) => void;
+
 type Entity = any;
 export class WorldDoc extends EventEmitter {
   static index: Map<string, WorldDoc> = new Map();
@@ -41,8 +43,8 @@ export class WorldDoc extends EventEmitter {
   // The Hecs world that this document will synchronize with
   world: World;
 
-  // Passed-in loading state
-  onSync: Function;
+  // Callback that receives current byte count and isLoaded flag
+  onLoading: LoadingCallback;
 
   // The "root node" (document) containing all specification data for the world
   ydoc: Y.Doc;
@@ -64,12 +66,11 @@ export class WorldDoc extends EventEmitter {
   // An UndoManager allowing users to undo/redo edits on `entities`
   undoManager: Y.UndoManager;
 
-  constructor(name: string, world: World, onSync: Function = () => {}) {
+  constructor(name: string, world: World) {
     super();
 
     this.name = name;
     this.world = world;
-    this.onSync = onSync;
 
     this.ydoc = new Y.Doc();
     this.entities = this.ydoc.getArray("entities");
@@ -84,7 +85,7 @@ export class WorldDoc extends EventEmitter {
     WorldDoc.index.set(name, this);
   }
 
-  connect(connection: ConnectOptions) {
+  connect(connection: ConnectOptions, onLoading?: LoadingCallback) {
     this.provider = new WebsocketProvider(
       connection.url,
       connection.room,
@@ -92,9 +93,21 @@ export class WorldDoc extends EventEmitter {
       { params: connection.params } as { params: any }
     );
 
-    this.provider.on("sync", this.onSync);
+    if (onLoading) {
+      let bytesLoaded = 0;
+      const onUpdate = (update, _origin) => {
+        bytesLoaded += update.length;
+        onLoading(bytesLoaded, false);
+      };
+      this.ydoc.on("update", onUpdate);
+      this.provider.on("sync", () => {
+        onLoading(bytesLoaded, true);
+        this.ydoc.off("update", onUpdate);
+      });
+    }
 
     this.provider.on("status", ({ status }: { status: ConnectionStatus }) => {
+      console.log("status", status);
       yConnectStatus.set(status);
     });
   }

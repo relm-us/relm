@@ -39,35 +39,7 @@ export default class WorldManager {
     this.loading = new LoadingState();
     this.state = worldState;
 
-    this.wdoc = new WorldDoc("relm", world, () => {
-      this.loading.state.set("loading-assets");
-
-      // simulate 2 world ticks so that initial assets get requested
-      this.worldStep();
-      this.worldStep();
-
-      // first-time count is the "max"
-      const max = this.countAssetsLoading() || 1;
-      this.loading.setMaximum(max);
-
-      let waitCycle = 500; // 10 seconds max
-      const progress = () => {
-        const count = this.countAssetsLoading() || 0;
-        this.worldStep();
-        this.loading.setProgress(max > count ? max - count : 0);
-        if (count === 0 || waitCycle === 0) {
-          this.loading.setProgress(max);
-          setTimeout(() => {
-            this.loading.state.set("done");
-            this.start();
-          }, 50);
-        } else {
-          waitCycle--;
-          setTimeout(progress, 50);
-        }
-      };
-      progress();
-    });
+    this.wdoc = new WorldDoc("relm", world);
 
     this.selection = new SelectionManager(this.wdoc);
 
@@ -124,9 +96,58 @@ export default class WorldManager {
   }
 
   connect(connection) {
-    this.loading.state.set("init");
     this.connection = connection;
-    this.wdoc.connect(this.connection);
+
+    // Init loading
+    let assetsLoaded = 0;
+    let assetsTotal = this.loading.getMaximum() / 2;
+    let metadataLoaded = 0;
+    let metadataTotal = this.loading.getMaximum() / 2;
+    this.loading.setStateOnce("init");
+
+    const handleLoading = (bytes, isLoaded) => {
+      if (!isLoaded) {
+        this.loading.setStateOnce("loading-metadata");
+        if (metadataLoaded < metadataTotal) {
+          metadataLoaded += 0.2;
+        }
+        this.loading.setProgress(assetsLoaded + metadataLoaded);
+        // Continue
+        this.worldStep();
+      } /* final call */ else {
+        metadataLoaded = metadataTotal;
+        this.loading.setProgress(assetsLoaded + metadataLoaded);
+
+        this.loading.setStateOnce("loading-assets");
+
+        let waitCycle = 500; // 10 seconds max
+        const progress = () => {
+          this.worldStep();
+
+          const remaining = this.countAssetsLoading() || 0;
+          if (remaining > assetsTotal) {
+            assetsTotal = remaining;
+          }
+          assetsLoaded = assetsTotal - remaining;
+
+          this.loading.setProgress(assetsLoaded + metadataLoaded);
+
+          if (remaining === 0 || waitCycle === 0) {
+            this.loading.setProgress(assetsTotal + metadataTotal);
+            setTimeout(() => {
+              this.loading.state.set("done");
+              this.start();
+            }, 50);
+          } else {
+            waitCycle--;
+            setTimeout(progress, 50);
+          }
+        };
+        progress();
+      }
+    };
+
+    this.wdoc.connect(this.connection, handleLoading.bind(this));
   }
 
   disconnect() {

@@ -1,4 +1,4 @@
-import { writable, Writable } from "svelte/store";
+import { get, writable, Writable } from "svelte/store";
 
 type State = "init" | "loading-metadata" | "loading-assets" | "done";
 
@@ -10,20 +10,31 @@ type State = "init" | "loading-metadata" | "loading-assets" | "done";
 
 export class LoadingState {
   state: Writable<State>;
-  assetsLoaded: Writable<number>;
-  assetsMax: Writable<number>;
+  loaded: Writable<number>;
+  max: Writable<number>;
 
   constructor() {
     this.state = writable("init");
-    this.assetsLoaded = writable(0);
-    this.assetsMax = writable(null);
+    this.loaded = writable(0);
+    this.max = writable(100);
+  }
+
+  setStateOnce(newState: State) {
+    const $loading = get(this.state);
+    if ($loading !== newState) {
+      this.state.set(newState);
+    }
   }
 
   setProgress(n) {
-    this.assetsLoaded.set(n);
+    this.loaded.set(n);
   }
 
   setMaximum(n) {
-    this.assetsMax.set(n);
+    this.max.set(n);
+  }
+
+  getMaximum() {
+    return get(this.max);
   }
 }
