@@ -131,12 +131,16 @@ export class BetterImageSystem extends System {
   }
 
   cleanup(entity) {
-    if (!entity.has(BetterImageMesh)) return;
-    const mesh = entity.get(BetterImageMesh).value;
-    mesh.parent.remove(mesh);
-    mesh.geometry.dispose();
-    mesh.material.map?.dispose();
-    mesh.material.dispose();
-    entity.remove(BetterImageMesh);
+    if (entity.has(BetterImageLoader)) {
+      entity.remove(BetterImageLoader);
+    }
+    if (entity.has(BetterImageMesh)) {
+      const mesh = entity.get(BetterImageMesh).value;
+      mesh.parent.remove(mesh);
+      mesh.geometry.dispose();
+      mesh.material.map?.dispose();
+      mesh.material.dispose();
+      entity.remove(BetterImageMesh);
+    }
   }
 }
