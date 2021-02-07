@@ -20,7 +20,7 @@
   $: n = $high || 1;
 </script>
 
-{#if $loading !== "done"}
+{#if $worldState === "loading"}
   <loading transition:fade>
     <container>
       <img src="/loading.png" alt="Loading" />
@@ -43,26 +43,36 @@
 
     font-size: 4vw;
     color: black;
-    background-color: rgba(45, 45, 45, 1);
+    background: rgba(45, 45, 45, 1);
   }
 
   container {
     display: block;
     position: relative;
+    width: 263px;
+    height: 122px;
   }
 
   img {
+    position: absolute;
+    left: 0;
+    bottom: 0px;
     width: 263px;
     height: 122px;
   }
 
   progress-bar {
     position: absolute;
-    bottom: 10px;
+    bottom: 2px;
     left: 0;
     width: 100%;
     height: 35px;
-    background-color: rgba(241, 157, 90, 1);
+    background: rgb(242, 156, 88);
+    background: linear-gradient(
+      180deg,
+      rgba(242, 156, 88, 1) 0%,
+      rgba(220, 219, 167, 1) 100%
+    );
     clip-path: circle(var(--percent) at left);
     border-radius: 16px;
     z-index: -1;
