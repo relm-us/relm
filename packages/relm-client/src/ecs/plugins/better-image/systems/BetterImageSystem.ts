@@ -46,14 +46,19 @@ export class BetterImageSystem extends System {
     const { loadTexture } = this.world.presentation;
     const url = entity.get(BetterImage).asset.url;
     if (!url) {
-      if (entity.has(BetterImageMesh)) this.cleanup(entity);
+      this.cleanup(entity);
       return;
     }
     const loader =
       entity.get(BetterImageLoader) ||
       entity.add(BetterImageLoader, undefined, true);
     loader.id = ++loaderIds;
-    loader.texture = await loadTexture(url);
+    try {
+      loader.texture = await loadTexture(url);
+    } catch (err) {
+      console.warn("Unable to load asset for BetterImage:", url, entity.id);
+      this.cleanup(entity);
+    }
   }
 
   build(entity) {
@@ -126,6 +131,7 @@ export class BetterImageSystem extends System {
   }
 
   cleanup(entity) {
+    if (!entity.has(BetterImageMesh)) return;
     const mesh = entity.get(BetterImageMesh).value;
     mesh.parent.remove(mesh);
     mesh.geometry.dispose();
