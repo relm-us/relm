@@ -20,8 +20,8 @@
   $: subtitle = getSubtitle($yConnectStatus, $relmId);
 
   const onClickConnect = () => {
+    // Setting relmId will trigger WorldManager to re-connect
     $relmId = inputEl.value;
-    $worldManager.connect();
     minimized = true;
   };
 
@@ -29,6 +29,22 @@
     $worldManager.disconnect();
   };
 </script>
+
+<div class:connected={$yConnectStatus === "connected"}>
+  <Pane title="Network" {subtitle} showMinimize={true} bind:minimized>
+    {#if $yConnectStatus === "connected"}
+      <buttons>
+        <Button on:click={onClickDisconnect}>Disconnect</Button>
+      </buttons>
+    {:else if $yConnectStatus === "disconnected"}
+      <label for="relmId">Connect to Relm:</label>
+      <input bind:this={inputEl} type="text" name="relmId" value={$relmId} />
+      <buttons>
+        <Button on:click={onClickConnect}>Connect</Button>
+      </buttons>
+    {/if}
+  </Pane>
+</div>
 
 <style>
   div {
@@ -65,19 +81,3 @@
     margin-bottom: 8px;
   }
 </style>
-
-<div class:connected={$yConnectStatus === 'connected'}>
-  <Pane title="Network" {subtitle} showMinimize={true} bind:minimized>
-    {#if $yConnectStatus === 'connected'}
-      <buttons>
-        <Button on:click={onClickDisconnect}>Disconnect</Button>
-      </buttons>
-    {:else if $yConnectStatus === 'disconnected'}
-      <label for="relmId">Connect to Relm:</label>
-      <input bind:this={inputEl} type="text" name="relmId" value={$relmId} />
-      <buttons>
-        <Button on:click={onClickConnect}>Connect</Button>
-      </buttons>
-    {/if}
-  </Pane>
-</div>
