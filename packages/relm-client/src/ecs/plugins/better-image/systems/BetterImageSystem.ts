@@ -57,7 +57,10 @@ export class BetterImageSystem extends System {
       loader.texture = await loadTexture(url);
     } catch (err) {
       console.warn("Unable to load asset for BetterImage:", url, entity.id);
-      this.cleanup(entity);
+      if (entity.has(BetterImageLoader)) {
+        entity.remove(BetterImage);
+        entity.remove(BetterImageLoader);
+      }
     }
   }
 
@@ -131,9 +134,6 @@ export class BetterImageSystem extends System {
   }
 
   cleanup(entity) {
-    if (entity.has(BetterImageLoader)) {
-      entity.remove(BetterImageLoader);
-    }
     if (entity.has(BetterImageMesh)) {
       const mesh = entity.get(BetterImageMesh).value;
       mesh.parent.remove(mesh);
