@@ -3,53 +3,19 @@
   import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
   import Button from "~/ui/Button";
   import LeftPanel, { Header } from "~/ui/LeftPanel";
-  import { parse } from "./parse";
-  import { worldManager } from "~/stores/worldManager";
-  import type WorldManager from "~/world/WorldManager";
-  import { yEntityToJSON } from "~/y-integration/yToJson";
-  import type { YEntity } from "~/y-integration/types";
-  import { selectedEntities } from "~/stores/selection";
+  import { parse } from "~/utils/parse";
+  import { worldManager as wm } from "~/stores/worldManager";
 
   let text;
   let errorState = false;
 
   function applyText() {
     const json = parse(text);
-    if (json !== undefined && json.entities) {
-      errorState = false;
-      applyJson(json);
-    } else {
-      errorState = true;
-    }
-  }
-
-  function applyJson(json) {
-    const wm: WorldManager = $worldManager;
-    selectedEntities.clear();
-    const hids = [];
-    json.entities.forEach((data) => {
-      hids.push(data.id);
-      wm.wdoc.syncFromJSON(data);
-    });
-    setTimeout(() => {
-      console.log("select imported", hids);
-      hids.forEach((hid) => {
-        selectedEntities.add(hid);
-      });
-    }, 200);
+    errorState = !$wm.fromJSON(json);
   }
 
   onMount(() => {
-    const wm: WorldManager = $worldManager;
-    text = JSON.stringify(
-      {
-        version: "relm-export v.1.1",
-        relm: wm.wdoc.name,
-        entities: wm.wdoc.entities.map((e) => yEntityToJSON(e as YEntity)),
-      },
-      null,
-      2
-    );
+    text = JSON.stringify($wm.toJSON(), null, 2);
   });
 </script>
 

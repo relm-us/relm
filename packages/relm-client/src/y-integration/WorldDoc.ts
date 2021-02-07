@@ -29,6 +29,7 @@ import {
 import { selectedEntities } from "~/stores/selection";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
+const RELM_EXPORT_VERSION = "relm-export v.1.1";
 
 type Entity = any;
 export class WorldDoc extends EventEmitter {
@@ -114,6 +115,28 @@ export class WorldDoc extends EventEmitter {
         this._addYEntity(yentity);
       }
     });
+  }
+
+  toJSON() {
+    return {
+      relm: this.name,
+      version: RELM_EXPORT_VERSION,
+      entities: this.entities.map((e) => yEntityToJSON(e as YEntity)),
+    };
+  }
+
+  fromJSON(json) {
+    if (!json.version || json.version !== RELM_EXPORT_VERSION) {
+      throw new Error(
+        `Imported JSON requires "version": "${RELM_EXPORT_VERSION}"`
+      );
+    }
+    const hids = [];
+    json.entities.forEach((data) => {
+      hids.push(data.id);
+      this.syncFromJSON(data);
+    });
+    return hids;
   }
 
   syncFromJSON(json) {

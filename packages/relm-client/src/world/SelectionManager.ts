@@ -28,6 +28,14 @@ export class SelectionManager {
     return this.ids.map((id) => this.wdoc.world.entities.getById(id));
   }
 
+  clear() {
+    selectedEntities.clear();
+  }
+
+  addEntityId(entityId) {
+    selectedEntities.add(entityId);
+  }
+
   getFirst(_) {
     const $selected = get(selectedEntities);
     const entityId = first($selected);

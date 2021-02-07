@@ -197,6 +197,31 @@ export default class WorldManager {
     this.previousLoopTime = time;
   }
 
+  toJSON() {
+    // Export everything as a JSON document
+    return this.wdoc.toJSON();
+  }
+
+  fromJSON(json) {
+    this.selection.clear();
+    let entityIds = [];
+    try {
+      // Import everything in the JSON document
+      entityIds = this.wdoc.fromJSON(json);
+    } catch (err) {
+      console.warn(err);
+      return false;
+    }
+
+    // Select everything that was just imported
+    setTimeout(() => {
+      entityIds.forEach((id) => {
+        this.selection.addEntityId(id);
+      });
+    }, 200);
+    return true;
+  }
+
   /**
    * Convenience Accessors
    */
