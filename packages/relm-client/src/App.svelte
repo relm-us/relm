@@ -17,6 +17,8 @@
   import ConnectButton from "~/ui/ConnectButton";
   import ResetWorldButton from "~/ui/ResetWorldButton";
 
+  import LoadingScreen from "~/ui/LoadingScreen";
+
   import { world } from "~/stores/world";
   import { mode } from "~/stores/mode";
   import { runCommand } from "~/commands";
@@ -39,6 +41,8 @@
     }
   };
 </script>
+
+<LoadingScreen />
 
 <!-- The virtual world! -->
 {#if $world}

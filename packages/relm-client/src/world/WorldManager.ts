@@ -1,4 +1,4 @@
-import { get } from "svelte/store";
+import { get, Writable } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
@@ -11,19 +11,20 @@ import {
   makeAvatarAndActivate,
   makeStageAndActivate,
   makeGround,
-  makeInvisibleBox,
 } from "~/prefab";
 import { Follow } from "~/ecs/plugins/follow";
 import { HeadController } from "~/ecs/plugins/player-control";
 import { SelectionManager } from "./SelectionManager";
+import { LoadingState } from "./LoadingState";
 
 export default class WorldManager {
   world;
-  state: WorldState;
+  viewport: HTMLElement;
+  loading: LoadingState;
+  state: Writable<WorldState>;
   avatar;
   camera;
   connection;
-  viewport: HTMLElement;
 
   wdoc: WorldDoc;
   selection: SelectionManager;
@@ -35,17 +36,43 @@ export default class WorldManager {
     if (!viewport) throw new Error(`viewport is required`);
     this.world = world;
     this.viewport = viewport;
+    this.loading = new LoadingState();
+    this.state = worldState;
 
-    this.wdoc = new WorldDoc({
-      name: "relm",
-      world,
+    this.wdoc = new WorldDoc("relm", world, () => {
+      this.loading.state.set("loading-assets");
+
+      // simulate 2 world ticks so that initial assets get requested
+      this.worldStep();
+      this.worldStep();
+
+      // first-time count is the "max"
+      const max = this.countAssetsLoading() || 1;
+      this.loading.setMaximum(max);
+
+      let waitCycle = 500; // 10 seconds max
+      const progress = () => {
+        const count = this.countAssetsLoading() || 0;
+        this.worldStep();
+        this.loading.setProgress(max > count ? max - count : 0);
+        if (count === 0 || waitCycle === 0) {
+          this.loading.setProgress(max);
+          setTimeout(() => {
+            this.loading.state.set("done");
+            this.start();
+          }, 50);
+        } else {
+          waitCycle--;
+          setTimeout(progress, 50);
+        }
+      };
+      progress();
     });
 
     this.selection = new SelectionManager(this.wdoc);
 
     this.mount();
     this.populate();
-    this.start();
 
     worldState.subscribe(($state) => {
       switch ($state) {
@@ -97,6 +124,7 @@ export default class WorldManager {
   }
 
   connect(connection) {
+    this.loading.state.set("init");
     this.connection = connection;
     this.wdoc.connect(this.connection);
   }
@@ -128,6 +156,15 @@ export default class WorldManager {
     this.world.reset();
   }
 
+  countAssetsLoading() {
+    let count = 0;
+    this.world.entities.entities.forEach((e) => {
+      if (e.getByName("BetterImageLoader") || e.getByName("ModelLoading"))
+        count++;
+    });
+    return count;
+  }
+
   start() {
     worldState.set("running");
   }
@@ -143,14 +180,19 @@ export default class WorldManager {
     requestAnimationFrame(this.loop.bind(this));
   }
 
+  worldStep(delta?: number) {
+    if (this.world) {
+      const isRunning = get(worldState) === "running";
+      this.world.update(isRunning && delta !== undefined ? delta : 1000 / 60);
+    }
+  }
+
   loop(time: number) {
     const delta = time - this.previousLoopTime;
     deltaTime.addData(delta);
     fpsTime.addData(1000 / delta);
 
-    if (this.world) {
-      this.world.update(get(worldState) === "running" ? delta : 1000 / 60);
-    }
+    this.worldStep(delta);
 
     this.previousLoopTime = time;
   }

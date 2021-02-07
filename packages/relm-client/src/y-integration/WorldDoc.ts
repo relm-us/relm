@@ -20,7 +20,6 @@ import { jsonToYEntity } from "./jsonToY";
 
 import EventEmitter from "eventemitter3";
 import { applyDiffToYEntity } from "./applyDiff";
-import { Change } from "./diffTypes";
 
 import {
   yConnectStatus,
@@ -40,6 +39,9 @@ export class WorldDoc extends EventEmitter {
 
   // The Hecs world that this document will synchronize with
   world: World;
+
+  // Passed-in loading state
+  onSync: Function;
 
   // The "root node" (document) containing all specification data for the world
   ydoc: Y.Doc;
@@ -61,10 +63,13 @@ export class WorldDoc extends EventEmitter {
   // An UndoManager allowing users to undo/redo edits on `entities`
   undoManager: Y.UndoManager;
 
-  constructor({ name, world }: { name: string; world: World }) {
+  constructor(name: string, world: World, onSync: Function = () => {}) {
     super();
+
     this.name = name;
     this.world = world;
+    this.onSync = onSync;
+
     this.ydoc = new Y.Doc();
     this.entities = this.ydoc.getArray("entities");
     this.yids = new Map();
@@ -85,9 +90,9 @@ export class WorldDoc extends EventEmitter {
       this.ydoc,
       { params: connection.params } as { params: any }
     );
-    this.provider.on("sync", () => {
-      // TODO: start physics
-    });
+
+    this.provider.on("sync", this.onSync);
+
     this.provider.on("status", ({ status }: { status: ConnectionStatus }) => {
       yConnectStatus.set(status);
     });
