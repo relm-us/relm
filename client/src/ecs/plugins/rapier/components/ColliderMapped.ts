@@ -1,3 +1,5 @@
-import { Component } from "hecs";
+import { LocalComponent } from "hecs";
 
-export class ColliderMapped extends Component {}
+// Store the fact that the entity with this collider has been mapped in
+// the ImpactSystem's handleToEntityId & entityIdToHandle maps
+export class ColliderMapped extends LocalComponent {}

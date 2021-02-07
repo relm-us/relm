@@ -11,7 +11,12 @@ import {
   ThrustController,
 } from "~/ecs/plugins/player-control";
 import { PointerPlane } from "~/ecs/plugins/pointer-plane";
-import { RigidBody, BallJoint, Collider } from "~/ecs/plugins/rapier";
+import {
+  RigidBody,
+  BallJoint,
+  Collider,
+  Impactable,
+} from "~/ecs/plugins/rapier";
 import { TransformEffects } from "~/ecs/plugins/transform-effects";
 
 import { keyE, keyQ } from "~/input";
@@ -29,6 +34,7 @@ export function makeAvatarAndActivate(
       torque: 4,
     })
     .add(PointerPlane)
+    .add(Impactable)
     .add(Transform, {
       position: new Vector3(x, y, z),
     })

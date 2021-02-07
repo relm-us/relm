@@ -5,5 +5,6 @@ export { BallJoint } from "./BallJoint";
 export { BallJointBroke } from "./BallJointBroke";
 export { BallJointRef } from "./BallJointRef";
 export { Impact } from "./Impact";
+export { Impactable } from "./Impactable";
 export { RigidBody } from "./RigidBody";
 export { RigidBodyRef } from "./RigidBodyRef";
