@@ -70,7 +70,11 @@
   on:finalize={finalize}
 >
   {#each items as item (item.id)}
-    <item data-id={item.id} animate:flip={{ duration: FLIP_DURATION }}>
+    <item
+      data-id={item.id}
+      animate:flip={{ duration: FLIP_DURATION }}
+      on:click={() => globalEvents.emit("drop-item", { item })}
+    >
       {#if item.thumbnail}
         <img src={assetUrl(item.thumbnail)} alt="thumbnail" />
       {:else}{item.name}<br />{item.id}{/if}
