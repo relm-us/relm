@@ -2,4 +2,4 @@
 **/public/build/
 **/yarn-error.log
 **/.DS_Store
-packages/relm-server/data
+server/data
