@@ -24,7 +24,7 @@ import { applyDiffToYEntity } from "./applyDiff";
 import {
   yConnectStatus,
   ConnectOptions,
-  ConnectionStatus,
+  YConnectionStatus,
 } from "~/stores/connection";
 import { selectedEntities } from "~/stores/selection";
 
@@ -107,7 +107,7 @@ export class WorldDoc extends EventEmitter {
       });
     }
 
-    this.provider.on("status", ({ status }: { status: ConnectionStatus }) => {
+    this.provider.on("status", ({ status }: { status: YConnectionStatus }) => {
       if (status === "error" && interval !== null) {
         clearInterval(interval);
         onLoading("error");

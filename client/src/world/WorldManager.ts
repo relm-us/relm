@@ -16,6 +16,7 @@ import { Follow } from "~/ecs/plugins/follow";
 import { HeadController } from "~/ecs/plugins/player-control";
 import { SelectionManager } from "./SelectionManager";
 import { LoadingState } from "./LoadingState";
+import { ConnectOptions } from "~/stores/connection";
 
 export default class WorldManager {
   world;
@@ -95,7 +96,7 @@ export default class WorldManager {
     world.presentation.setViewport(null);
   }
 
-  connect(connection) {
+  connect(connection: ConnectOptions) {
     this.connection = connection;
 
     // Init loading

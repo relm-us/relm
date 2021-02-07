@@ -18,9 +18,11 @@ export const worldManager = derived(
       // Make debugging easier
       (window as any).relm = manager;
 
-      if ($connection) {
+      if ($connection.state === "connected") {
         // Initial connect
         manager.connect($connection);
+      } else if ($connection.state === "error") {
+        manager.state.set("error");
       }
 
       set(manager);

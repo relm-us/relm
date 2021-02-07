@@ -4,21 +4,31 @@ import axios from "axios";
 import { config, Config, defaultConfig } from "./config";
 import { getSecureParams } from "~/auth";
 
-export type ConnectionStatus =
+export type YConnectionStatus =
   | "error"
   | "connecting"
   | "connected"
   | "disconnected";
 
-export const yConnectStatus: Writable<ConnectionStatus> = writable(
+export const yConnectStatus: Writable<YConnectionStatus> = writable(
   "disconnected"
 );
+yConnectStatus.subscribe((status) => console.log("yConnectStatus", status));
 
+export type ConnectInitial = {
+  state: "initial";
+};
 export type ConnectOptions = {
+  state: "connected";
   url: string;
   room: string;
   params: object;
 };
+export type ConnectError = {
+  state: "error";
+  error: string;
+};
+export type ConnectStatus = ConnectInitial | ConnectOptions | ConnectError;
 
 export const relmId: Writable<string> = writable(defaultConfig.relmId);
 
@@ -43,30 +53,35 @@ async function playerPermit(params, serverUrl, room) {
   }
 }
 
-export const connection: Readable<ConnectOptions> = derived(
+export const connection: Readable<ConnectStatus> = derived(
   [config, relmId],
-  ([$config, $relmId]: [Config, string], set) => {
+  ([$config, $relmId]: [Config, string], set: (ConnectStatus) => void) => {
     getSecureParams(window.location.href)
       .then((params) => {
         playerPermit(params, $config.serverUrl, $relmId)
           .then((relm) => {
             set({
+              state: "connected",
               url: $config.serverYjsUrl,
               room: relm.permanentDocId,
               params,
             });
           })
           .catch((err) => {
+            set({
+              state: "error",
+              error: err.message,
+            });
             console.error(err);
           });
       })
       .catch((err) => {
-        console.error(err);
         set({
-          url: $config.serverYjsUrl,
-          room: $relmId,
-          params: {},
+          state: "error",
+          error: err.message,
         });
+        console.error(err);
       });
-  }
+  },
+  { state: "initial" }
 );

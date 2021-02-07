@@ -27,6 +27,11 @@
       <progress-bar style="--percent:{(m / n) * 140}%" />
     </container>
   </loading>
+{:else if $worldState === "error"}
+  <loading transition:fade>
+    <h1>Oh!</h1>
+    <h2>Unable to load this relm.</h2>
+  </loading>
 {/if}
 
 <style>
@@ -41,9 +46,16 @@
     height: 100%;
     z-index: 2;
 
-    font-size: 4vw;
-    color: black;
     background: rgba(45, 45, 45, 1);
+  }
+
+  h1 {
+    font-size: 48px;
+    color: white;
+  }
+  h2 {
+    font-size: 32px;
+    color: rgba(200, 200, 200, 1);
   }
 
   container {

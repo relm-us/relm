@@ -19,10 +19,8 @@ export type SecureParams = {
 export async function getSecureParams(href: string): Promise<SecureParams> {
   if (!window.crypto.subtle) {
     throw new Error(
-      `Unable to authenticate: ` +
-        `please use a browser that ` +
-        `supports signing with public keys, ` +
-        `such as Firefox or Chrome.`
+      `Unable to authenticate: please use a browser that ` +
+        `supports signing with public keys, such as Firefox or Chrome.`
     );
   }
 
