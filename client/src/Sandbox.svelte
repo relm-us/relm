@@ -1,6 +1,6 @@
 <script>
-  import SortableList from "./ui/LibraryPanel/SortableList.svelte";
-  import Dropzone from "./ui/LibraryPanel/Dropzone.svelte";
+  import SortableList from "./ui/CollectionsPanel/SortableList.svelte";
+  import Dropzone from "./ui/CollectionsPanel/Dropzone.svelte";
   import { uuidv4 } from "~/utils/uuid";
 
   let currentListId = "list-1";
@@ -105,6 +105,26 @@
   };
 </script>
 
+<container>
+  <div class="categories">
+    {#each lists as list (list.id)}
+      <Dropzone
+        {list}
+        selected={list.id === currentListId}
+        on:drop={handleDrop(list)}
+        on:click={switchCategory(list)}
+      />
+    {/each}
+    <Dropzone
+      list={{ name: "Trash", id: "trash", category: "trash" }}
+      on:drop={handleTrash}
+    />
+  </div>
+  <div class="items">
+    <SortableList bind:items={currentList.items} list={currentList} />
+  </div>
+</container>
+
 <style>
   .categories {
     display: flex;
@@ -120,21 +140,3 @@
     height: 100%;
   }
 </style>
-
-<container>
-  <div class="categories">
-    {#each lists as list (list.id)}
-      <Dropzone
-        {list}
-        selected={list.id === currentListId}
-        on:drop={handleDrop(list)}
-        on:click={switchCategory(list)} />
-    {/each}
-    <Dropzone
-      list={{ name: 'Trash', id: 'trash', category: 'trash' }}
-      on:drop={handleTrash} />
-  </div>
-  <div class="items">
-    <SortableList bind:items={currentList.items} list={currentList} />
-  </div>
-</container>
