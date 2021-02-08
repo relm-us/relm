@@ -28,17 +28,15 @@ export class ImpactSystem extends System {
     this.queries.added.forEach((entity) => {
       const ref = entity.get(ColliderRef);
       this.handleToEntity.set(ref.value.handle, entity);
-      entity.add(ColliderMapped);
-      console.log("ColliderMapped added", entity.name, entity.id);
+      entity.add(ColliderMapped, { handle: ref.value.handle });
     });
 
     // Don't keep manual map around for entities that no longer have
     // ColliderRef on them
     this.queries.removed.forEach((entity) => {
-      const ref = entity.get(ColliderRef);
-      this.handleToEntity.delete(ref.value.handle);
+      const map = entity.get(ColliderMapped);
+      this.handleToEntity.delete(map.handle);
       entity.remove(ColliderMapped);
-      console.log("ColliderMapped removed", entity.name, entity.id);
     });
 
     // Impact components last just one cycle; clean up old ones
@@ -53,12 +51,12 @@ export class ImpactSystem extends System {
     }
   }
 
-  getContacts() {
+  getContacts(): Map<Entity, OtherContacts> {
     const { eventQueue } = this.world.physics;
 
     const contacts: Map<Entity, OtherContacts> = new Map();
 
-    const getContacts = (entity: Entity): OtherContacts => {
+    const getOtherContacts = (entity: Entity): OtherContacts => {
       let entityContacts: OtherContacts;
       if (!contacts.has(entity)) {
         entityContacts = new Map();
@@ -81,8 +79,8 @@ export class ImpactSystem extends System {
         if (entity1 && entity2) {
           const magnitude = this.linearVelocityMagnitude(entity1, entity2);
 
-          const e1contacts: OtherContacts = getContacts(entity1);
-          const e2contacts: OtherContacts = getContacts(entity2);
+          const e1contacts: OtherContacts = getOtherContacts(entity1);
+          const e2contacts: OtherContacts = getOtherContacts(entity2);
 
           e1contacts.set(entity2, magnitude);
           e2contacts.set(entity1, magnitude);

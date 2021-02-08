@@ -1,12 +1,9 @@
-import { Component, JSONType } from "hecs";
+import { LocalComponent, RefType } from "hecs";
 
-export class Impact extends Component {
+export class Impact extends LocalComponent {
   static props = {
     others: {
-      type: JSONType,
-      editor: {
-        label: "Other Entities' Impact Magnitudes",
-      },
+      type: RefType,
     },
   };
 }
