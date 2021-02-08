@@ -1,13 +1,8 @@
-import { System, Groups } from "hecs";
+import { System, Groups } from "~/ecs/base";
 import type { RigidBody as RapierRigidBody } from "@dimforge/rapier3d";
 import { RigidBody, RigidBodyRef } from "../components";
-import {
-  Transform,
-  WorldTransform,
-  Matrix4,
-  Vector3,
-  Quaternion,
-} from "hecs-plugin-core";
+import { Transform, WorldTransform } from "~/ecs/plugins/core";
+import { Matrix4, Vector3, Quaternion } from "three";
 
 const v3_1 = new Vector3();
 const q_1 = new Quaternion();
@@ -36,7 +31,7 @@ export class PhysicsSystem extends System {
   }
 
   update() {
-    const { world, eventQueue } = this.world.physics;
+    const { world, eventQueue } = (this.world as any).physics;
 
     this.queries.default.forEach((entity) => {
       const world = entity.get(WorldTransform);

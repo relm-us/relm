@@ -1,4 +1,4 @@
-import { LocalComponent, NumberType } from "hecs";
+import { LocalComponent, NumberType } from "~/ecs/base";
 
 export class Outline extends LocalComponent {
   static props = {

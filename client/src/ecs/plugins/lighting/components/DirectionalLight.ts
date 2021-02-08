@@ -1,4 +1,4 @@
-import { Component, StringType, BooleanType, NumberType } from "hecs";
+import { Component, StringType, BooleanType, NumberType } from "~/ecs/base";
 
 export class DirectionalLight extends Component {
   static props = {

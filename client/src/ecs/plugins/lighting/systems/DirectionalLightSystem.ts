@@ -1,13 +1,16 @@
 import * as THREE from "three";
-import { System, Groups, Not, Modified } from "hecs";
-import { Transform } from "hecs-plugin-core";
-import { Object3D } from "hecs-plugin-three";
+import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
+import { Transform } from "~/ecs/plugins/core";
+import { Object3D } from "~/ecs/plugins/three";
 
 import { DirectionalLight, DirectionalLightRef } from "../components";
 
 import { shadowMapConfig } from "~/stores/config";
+import { Presentation } from "~ecs/plugins/three/Presentation";
 
 export class DirectionalLightSystem extends System {
+  presentation: Presentation;
+
   order = Groups.Initialization;
 
   static queries = {
@@ -93,7 +96,7 @@ export class DirectionalLightSystem extends System {
     object3d.value.add(light);
 
     if (targetEntityId) {
-      const targetEntity = this.world.entities.getById(targetEntityId);
+      const targetEntity: Entity = this.world.entities.getById(targetEntityId);
       if (targetEntity) {
         // DirectionalLight will point towards target entity, if provided
         const target = targetEntity.get(Object3D);

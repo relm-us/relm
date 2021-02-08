@@ -1,7 +1,7 @@
 import * as Y from "yjs";
 import { WorldDoc } from "./WorldDoc";
-import { World } from "hecs";
-import CorePlugin from "hecs-plugin-core";
+import { World } from "~/ecs/base";
+import CorePlugin from "~/ecs/plugins/core";
 
 function keepYDocsInSync(ydoc1, ydoc2) {
   ydoc1.on("update", (update) => {

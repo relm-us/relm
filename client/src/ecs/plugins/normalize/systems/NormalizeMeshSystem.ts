@@ -1,5 +1,5 @@
-import { System, Groups, Not } from "hecs";
-import { ModelMesh, Object3D } from "hecs-plugin-three";
+import { System, Groups, Not } from "~/ecs/base";
+import { ModelMesh, Object3D } from "~/ecs/plugins/three";
 import { Box3, Vector3 } from "three";
 import { NormalizeMesh, NormalizedMesh } from "../components";
 

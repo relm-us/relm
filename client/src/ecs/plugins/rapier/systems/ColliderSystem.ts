@@ -1,4 +1,4 @@
-import { System, Groups, Not, Modified } from "hecs";
+import { System, Groups, Not, Modified } from "~/ecs/base";
 import { RigidBody, RigidBodyRef, Collider, ColliderRef } from "../components";
 import type { ColliderDesc as RapierColliderDesc } from "@dimforge/rapier3d";
 
@@ -34,7 +34,7 @@ export class ColliderSystem extends System {
     const spec = entity.get(Collider);
     const rigidBodyRef = entity.get(RigidBodyRef);
     const colliderRef = entity.get(ColliderRef);
-    const { world, rapier } = this.world.physics;
+    const { world, rapier } = (this.world as any).physics;
 
     // Create a cuboid collider attached to rigidBody.
     let colliderDesc: RapierColliderDesc;
@@ -81,7 +81,7 @@ export class ColliderSystem extends System {
   }
 
   remove(entity) {
-    const { world } = this.world.physics;
+    const { world } = (this.world as any).physics;
     const colliderRef = entity.get(ColliderRef);
 
     world.removeCollider(colliderRef.value);

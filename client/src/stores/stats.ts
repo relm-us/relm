@@ -42,5 +42,5 @@ export const renderFrames = createStatsStore(DATA_WINDOW_SIZE);
 
 export const programs = writable([]);
 
-// Gathered from profiling the HECS system loop
+// Gathered from profiling the ECS system loop
 export const systems: Writable<Record<string, StatsStore>> = writable({});

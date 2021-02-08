@@ -1,4 +1,4 @@
-import { Transform } from "hecs-plugin-core";
+import { Transform } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
 import { Renderable, CssPlane } from "~/ecs/plugins/css3d";

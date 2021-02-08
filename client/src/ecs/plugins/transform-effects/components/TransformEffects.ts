@@ -1,4 +1,4 @@
-import { Component, JSONType } from "hecs";
+import { Component, JSONType } from "~/ecs/base";
 
 export type TransformEffectSpec = {
   function: string;

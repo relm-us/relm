@@ -1,4 +1,4 @@
-import { WorldTransform } from "hecs-plugin-core";
+import { WorldTransform } from "~/ecs/plugins/core";
 import { directory } from "~/prefab";
 import { assetUrl } from "~/stores/config";
 

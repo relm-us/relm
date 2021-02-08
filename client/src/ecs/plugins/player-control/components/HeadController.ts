@@ -1,4 +1,4 @@
-import { LocalComponent, StringType, BooleanType } from "hecs";
+import { LocalComponent, StringType, BooleanType } from "~/ecs/base";
 
 export class HeadController extends LocalComponent {
   static props = {

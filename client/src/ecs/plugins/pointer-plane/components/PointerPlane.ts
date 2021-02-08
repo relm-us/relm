@@ -1,4 +1,4 @@
-import { Component, StringType } from "hecs";
+import { Component, StringType } from "~/ecs/base";
 
 export class PointerPlane extends Component {
   static props = {

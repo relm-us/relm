@@ -1,4 +1,4 @@
-import { StateComponent, NumberType, RefType } from "hecs";
+import { StateComponent, NumberType, RefType } from "~/ecs/base";
 
 export class BetterImageLoader extends StateComponent {
   static props = {

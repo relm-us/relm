@@ -1,6 +1,7 @@
 import * as THREE from "three";
-import { System, Groups } from "hecs";
-import { WorldTransform, Transform } from "hecs-plugin-core";
+import { System, Groups } from "~/ecs/base";
+import { WorldTransform, Transform } from "~/ecs/plugins/core";
+import { Presentation } from "~ecs/plugins/three/Presentation";
 
 import { Follow } from "../components";
 
@@ -8,6 +9,8 @@ const targetPosition = new THREE.Vector3();
 const position = new THREE.Vector3();
 
 export class FollowSystem extends System {
+  presentation: Presentation;
+
   order = Groups.Simulation;
 
   static queries = {
@@ -35,7 +38,7 @@ export class FollowSystem extends System {
     const targetEntity = this.world.entities.getById(targetId);
     if (!targetEntity) return;
 
-    const targetWorld = targetEntity.get(WorldTransform);
+    const targetWorld = targetEntity.get(WorldTransform) as any;
     if (!targetWorld) return;
 
     targetPosition.copy(targetWorld.position);

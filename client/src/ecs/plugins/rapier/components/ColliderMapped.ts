@@ -1,4 +1,4 @@
-import { StateComponent, NumberType } from "hecs";
+import { StateComponent, NumberType } from "~/ecs/base";
 
 // Store the fact that the entity with this collider has been mapped in
 // the ImpactSystem's handleToEntityId & entityIdToHandle maps

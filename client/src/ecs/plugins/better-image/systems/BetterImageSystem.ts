@@ -1,15 +1,16 @@
-import { System, Not, Modified, Groups } from "hecs";
+import { System, Not, Modified, Groups } from "~/ecs/base";
 import * as THREE from "three";
 
 import { BetterImage, BetterImageLoader, BetterImageMesh } from "../components";
-import { Object3D } from "hecs-plugin-three";
+import { Object3D } from "~/ecs/plugins/three";
+import { Queries } from "~/ecs/base/Query";
 
 let loaderIds = 0;
 
 export class BetterImageSystem extends System {
   order = Groups.Initialization;
 
-  static queries = {
+  static queries: Queries = {
     added: [
       Object3D,
       BetterImage,
@@ -43,7 +44,7 @@ export class BetterImageSystem extends System {
   }
 
   async load(entity) {
-    const { loadTexture } = this.world.presentation;
+    const { loadTexture } = (this.world as any).presentation;
     const url = entity.get(BetterImage).asset.url;
     if (!url) {
       this.cleanup(entity);

@@ -1,5 +1,5 @@
-import { System, Groups, Not } from "hecs";
-import { Object3D } from "hecs-plugin-three";
+import { System, Groups, Not } from "~/ecs/base";
+import { Object3D } from "~/ecs/plugins/three";
 
 import { Matrix4 } from "three";
 

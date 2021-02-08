@@ -13,7 +13,7 @@
   import { worldManager as wm } from "~/stores/worldManager";
   import { TouchController } from "~/ecs/plugins/player-control";
   import { PointerPlane, PointerPlaneRef } from "~/ecs/plugins/pointer-plane";
-  import { Transform } from "hecs-plugin-core";
+  import { Transform } from "~/ecs/plugins/core";
   import { uuidv4 } from "~/utils/uuid";
 
   export let world;

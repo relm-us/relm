@@ -1,5 +1,5 @@
-import { System, Groups, Not, Modified } from "hecs";
-import { WorldTransform } from "hecs-plugin-core";
+import { System, Groups, Not, Modified } from "~/ecs/base";
+import { WorldTransform } from "~/ecs/plugins/core";
 import {
   CSS3DObject,
   CSS3DSprite,
@@ -10,13 +10,17 @@ import { isBrowser } from "~/utils/isBrowser";
 import { Renderable, RenderableRef } from "../components";
 
 import { getRenderableComponentByType } from "../renderables";
+import { Queries } from "~/ecs/base/Query";
+import { CssPresentation } from "../CssPresentation";
 
 export class RenderableSystem extends System {
+  cssPresentation: CssPresentation;
+
   active = isBrowser();
   // order = Groups.Simulation + 100;
   order = Groups.Simulation - 5;
 
-  static queries = {
+  static queries: Queries = {
     added: [Renderable, Not(RenderableRef)],
     modified: [Modified(Renderable), RenderableRef],
     active: [Renderable, RenderableRef],

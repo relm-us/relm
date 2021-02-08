@@ -1,4 +1,4 @@
-import { Component, BooleanType } from "hecs";
+import { Component, BooleanType } from "~/ecs/base";
 
 // Indicate that the mesh SHOULD be centered
 export class NormalizeMesh extends Component {

@@ -1,5 +1,5 @@
-import { System, Groups, Not, Modified } from "hecs";
-import { WorldTransform, Transform } from "hecs-plugin-core";
+import { System, Groups, Not, Modified } from "~/ecs/base";
+import { WorldTransform, Transform } from "~/ecs/plugins/core";
 import { RigidBody, RigidBodyRef } from "../components";
 import type { RigidBodyDesc as RapierRigidBodyDesc } from "@dimforge/rapier3d";
 
@@ -44,7 +44,7 @@ export class RigidBodySystem extends System {
   }
 
   build(entity) {
-    const { world, rapier } = this.world.physics;
+    const { world, rapier } = (this.world as any).physics;
     const spec = entity.get(RigidBody);
     const transform = entity.get(Transform);
 
@@ -68,7 +68,7 @@ export class RigidBodySystem extends System {
   }
 
   remove(entity) {
-    const { world } = this.world.physics;
+    const { world } = (this.world as any).physics;
     const bodyRef = entity.get(RigidBodyRef);
 
     world.removeRigidBody(bodyRef.value);

@@ -1,4 +1,4 @@
-import { LocalComponent, RefType } from "hecs";
+import { LocalComponent, RefType } from "~/ecs/base";
 
 export class Impact extends LocalComponent {
   static props = {

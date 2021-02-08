@@ -1,4 +1,4 @@
-import { LocalComponent, StringType, NumberType } from "hecs";
+import { LocalComponent, StringType, NumberType } from "~/ecs/base";
 
 export class ThrustController extends LocalComponent {
   static props = {

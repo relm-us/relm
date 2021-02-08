@@ -1,4 +1,4 @@
-import { Transform } from "hecs-plugin-core";
+import { Transform } from "~/ecs/plugins/core";
 import { Color, Vector3 } from "three";
 
 import { BetterShape } from "~/ecs/plugins/better-shape";

@@ -1,4 +1,4 @@
-import { System, Groups, Not } from "hecs";
+import { System, Groups, Not } from "~/ecs/base";
 import {
   ColliderRef,
   ColliderMapped,
@@ -24,7 +24,7 @@ export class ImpactSystem extends System {
 
   update() {
     // We need to manually map Rapier physics collider's handles to
-    // HECS entities' IDs
+    // ECS entities' IDs
     this.queries.added.forEach((entity) => {
       const ref = entity.get(ColliderRef);
       this.handleToEntity.set(ref.value.handle, entity);
@@ -52,7 +52,7 @@ export class ImpactSystem extends System {
   }
 
   getContacts(): Map<Entity, OtherContacts> {
-    const { eventQueue } = this.world.physics;
+    const { eventQueue } = (this.world as any).physics;
 
     const contacts: Map<Entity, OtherContacts> = new Map();
 

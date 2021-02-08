@@ -1,5 +1,5 @@
-import { System, Groups, Not } from "hecs";
-import { Transform } from "hecs-plugin-core";
+import { System, Groups, Not } from "~/ecs/base";
+import { Transform } from "~/ecs/plugins/core";
 import { Portal } from "../components";
 import { Impact, Impactable } from "~/ecs/plugins/rapier";
 import { ThrustController } from "~/ecs/plugins/player-control";

@@ -57,7 +57,7 @@ export class CssPresentation {
   }
 
   updateCamera() {
-    // The way hecs-plugin-three works, it's the camera's *parent* that
+    // The way plugin/three works, it's the camera's *parent* that
     // holds positional information:
     const camera = this.world.presentation.camera.parent;
     if (!camera) return;

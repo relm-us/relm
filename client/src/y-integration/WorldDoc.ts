@@ -1,4 +1,4 @@
-import { World } from "~/types/hecs/World";
+import { World } from "~/ecs/base";
 import { DeepDiff } from "deep-diff";
 
 import * as Y from "yjs";
@@ -329,7 +329,7 @@ export class WorldDoc extends EventEmitter {
               .get(event.path[0] as number)
               .get("components") as YComponents)
               .get(event.path[2] as number)
-              .get("name");
+              .get("name") as string;
             const component = entity.getByName(componentName);
 
             // Similar to HECS Component.fromJSON, but for just one prop
@@ -411,7 +411,7 @@ export class WorldDoc extends EventEmitter {
 
   _addYComponent(entity: Entity, ycomponent: YComponent) {
     // Get the right Component class
-    const key = ycomponent.get("name");
+    const key = ycomponent.get("name") as string;
     const Component = this.world.components.getByName(key);
 
     // Initialize from raw JSON

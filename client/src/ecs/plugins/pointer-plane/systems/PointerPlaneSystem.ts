@@ -1,5 +1,5 @@
-import { System, Groups, Not, Modified } from "hecs";
-import { WorldTransform, Transform } from "hecs-plugin-core";
+import { System, Groups, Not, Modified } from "~/ecs/base";
+import { WorldTransform, Transform } from "~/ecs/plugins/core";
 
 import { get } from "svelte/store";
 import { mouse } from "~/stores/mouse";
@@ -16,12 +16,15 @@ import {
   Euler,
   GridHelper,
 } from "three";
+import { Presentation } from "~ecs/plugins/three/Presentation";
 
 type Orientation = "XY" | "XZ" | "YZ";
 
 const _raycaster = new Raycaster();
 const _intersections = [];
 export class PointerPlaneSystem extends System {
+  presentation: Presentation;
+
   order = Groups.Initialization + 10;
 
   static queries = {

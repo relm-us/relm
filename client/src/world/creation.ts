@@ -12,7 +12,7 @@ import {
   PerspectiveCamera,
 } from "three";
 
-import { World } from "hecs";
+import { World } from "~/ecs/base";
 
 import BetterShapePlugin from "~/ecs/plugins/better-shape";
 import BetterImagePlugin from "~/ecs/plugins/better-image";
@@ -26,7 +26,7 @@ import PointerPlanePlugin from "~/ecs/plugins/pointer-plane";
 import PortalPlugin from "~/ecs/plugins/portal";
 import RapierPlugin from "~/ecs/plugins/rapier";
 import TransformEffectsPlugin from "~/ecs/plugins/transform-effects";
-import ThreePlugin from "hecs-plugin-three";
+import ThreePlugin from "~/ecs/plugins/three";
 
 import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
 

@@ -1,18 +1,22 @@
-import { System, Groups } from "hecs";
+import { System, Groups } from "~/ecs/base";
 import { PerspectiveCamera, Vector3 } from "three";
 import { isBrowser } from "~/utils/isBrowser";
+import { Presentation } from "~/ecs/plugins/three/Presentation";
+import { CssPresentation } from "../CssPresentation";
 
 const FACTOR = 1;
 
 export class CssRenderSystem extends System {
+  presentation: Presentation;
+  cssPresentation: CssPresentation;
+  frame: number;
+
   active = isBrowser();
   order = Groups.Presentation + 100;
 
   init({ presentation, cssPresentation }) {
     if (!presentation) {
-      throw new Error(
-        "hecs-plugin-css3d must be loaded after hecs-plugin-three"
-      );
+      throw new Error("ECS: plugin/css3d must be loaded after plugin/three");
     }
     this.presentation = presentation;
     this.cssPresentation = cssPresentation;

@@ -1,5 +1,5 @@
-import { createPlugin } from "hecs";
-import CorePlugin from "hecs-plugin-core";
+import { createPlugin, World } from "~/ecs/base";
+import CorePlugin from "~/ecs/plugins/core";
 
 import { Physics } from "./Physics";
 import * as Components from "./components";
@@ -15,12 +15,12 @@ export default function ConfigurablePlugin(options) {
     plugins: [CorePlugin],
     systems: Object.values(Systems),
     components: Object.values(Components),
-    decorate(world) {
+    decorate(world: World) {
       const rapier = options.rapier || RAPIER;
       if (!rapier) {
         throw new Error("rapier plugin: Rapier engine not found");
       }
-      world.physics = new Physics(world, rapier);
+      (world as any).physics = new Physics(world, rapier);
     },
   });
 }

@@ -4,7 +4,7 @@ import { selectedEntities } from "~/stores/selection";
 import { difference } from "~/utils/setOps";
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import { Outline } from "~/ecs/plugins/outline";
-import { Transform } from "hecs-plugin-core";
+import { Transform } from "~/ecs/plugins/core";
 import { first } from "~/utils/setOps";
 
 export class SelectionManager {
@@ -63,15 +63,15 @@ export class SelectionManager {
   savePositions() {
     for (const entity of this.entities) {
       const position = entity.get(Transform).position;
-      entity.savedPosition = new Vector3().copy(position);
+      (entity as any).savedPosition = new Vector3().copy(position);
     }
   }
 
   moveRelativeToSavedPositions(vector) {
     for (const entity of this.entities) {
       const position = entity.get(Transform).position;
-      if (entity.savedPosition) {
-        position.copy(entity.savedPosition).add(vector);
+      if ((entity as any).savedPosition) {
+        position.copy((entity as any).savedPosition).add(vector);
       }
     }
   }

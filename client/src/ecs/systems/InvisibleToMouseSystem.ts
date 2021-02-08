@@ -1,5 +1,5 @@
-import { System, Groups } from "hecs";
-import { Object3D } from "hecs-plugin-three";
+import { System, Groups } from "~/ecs/base";
+import { Object3D } from "~/ecs/plugins/three";
 import { InvisibleToMouse } from "../components/InvisibleToMouse";
 
 export class InvisibleToMouseSystem extends System {

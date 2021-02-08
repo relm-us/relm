@@ -1,5 +1,5 @@
-import { System, Groups } from "hecs";
-import { Transform } from "hecs-plugin-core";
+import { System, Groups } from "~/ecs/base";
+import { Transform } from "~/ecs/plugins/core";
 import { get } from "svelte/store";
 
 import { keyUp, keyDown, keyLeft, keyRight, keySpace } from "~/input";

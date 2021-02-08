@@ -1,5 +1,5 @@
-import { System, Groups } from "hecs";
-import { WorldTransform, Transform } from "hecs-plugin-core";
+import { System, Groups } from "~/ecs/base";
+import { WorldTransform, Transform } from "~/ecs/plugins/core";
 import { MathUtils, Euler, Quaternion, Vector3, Matrix4 } from "three";
 import { get } from "svelte/store";
 

@@ -3,7 +3,7 @@ import { mode } from "~/stores/mode";
 import { selectedEntities } from "~/stores/selection";
 import { copyBuffer } from "~/stores/copyBuffer";
 import { worldManager } from "~/stores/worldManager";
-import { Transform } from "hecs-plugin-core";
+import { Transform } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 import { nanoid } from "nanoid";
 

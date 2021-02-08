@@ -48,6 +48,7 @@
   "dependencies": {
     "@budibase/colorpicker": "^1.0.1",
     "@dimforge/rapier3d": "^0.3.0",
+    "@types/resize-observer-browser": "^0.1.5",
     "@uppy/core": "^1.14.2",
     "@uppy/dashboard": "^1.13.1",
     "@uppy/drag-drop": "^1.4.21",
@@ -62,9 +63,6 @@
     "base64-arraybuffer-es6": "^0.6.0",
     "deep-diff": "^1.0.2",
     "eventemitter3": "^4.0.7",
-    "hecs": "^0.16.0",
-    "hecs-plugin-core": "^0.16.0",
-    "hecs-plugin-three": "^0.16.0",
     "nanoid": "^3.1.20",
     "regenerator-runtime": "^0.13.7",
     "sanitize-html": "^2.3.2",

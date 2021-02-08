@@ -1,4 +1,4 @@
-import { System, Groups, Not } from "hecs";
+import { System, Groups, Not } from "~/ecs/base";
 import { get } from "svelte/store";
 import {
   DATA_WINDOW_SIZE,
@@ -15,6 +15,8 @@ import {
 } from "~/stores/stats";
 
 export class PerformanceStatsSystem extends System {
+  programHash: string;
+
   // This should happen last, after everything is done, so stats are accurate
   // for the current frame
   order = Groups.Presentation + 500;
@@ -24,7 +26,7 @@ export class PerformanceStatsSystem extends System {
   }
 
   update() {
-    const info = this.world.presentation?.renderer?.info;
+    const info = (this.world as any).presentation?.renderer?.info;
     // Rendering performance
     if (info) {
       memoryGeometries.addData(info.memory.geometries);

@@ -1,5 +1,5 @@
-import { System, Groups, Not, Modified } from "hecs";
-import { Transform, WorldTransform } from "hecs-plugin-core";
+import { System, Groups, Not, Modified } from "~/ecs/base";
+import { Transform, WorldTransform } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 import {
   BallJoint,
@@ -52,7 +52,7 @@ export class JointSystem extends System {
   }
 
   build(entity) {
-    const { world, rapier } = this.world.physics;
+    const { world, rapier } = (this.world as any).physics;
     const spec = entity.get(BallJoint);
 
     const entityBody = entity.get(RigidBodyRef).value;

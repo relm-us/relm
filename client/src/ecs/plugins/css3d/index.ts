@@ -1,5 +1,5 @@
-import { createPlugin } from "hecs";
-import ThreePlugin from "hecs-plugin-three";
+import { createPlugin } from "~/ecs/base";
+import ThreePlugin from "~/ecs/plugins/three";
 
 import { CssPresentation } from "./CssPresentation";
 
@@ -16,9 +16,9 @@ export default createPlugin({
   systems: Object.values(Systems),
   components: Object.values(Components),
   decorate(world) {
-    if (!world.presentation) {
-      throw new Error("css3d plugin reguires hecs-plugin-three");
+    if (!(world as any).presentation) {
+      throw new Error("css3d plugin reguires plugin/three");
     }
-    world.cssPresentation = new CssPresentation(world);
+    (world as any).cssPresentation = new CssPresentation(world);
   },
 });

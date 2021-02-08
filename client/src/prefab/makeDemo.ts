@@ -1,6 +1,6 @@
-import { Asset, Transform, Vector3, Quaternion } from "hecs-plugin-core";
-import { Model, Camera, LookAt } from "hecs-plugin-three";
-import { Euler } from "three";
+import { Asset, Transform } from "~/ecs/plugins/core";
+import { Model } from "~/ecs/plugins/three";
+import { Euler, Vector3, Quaternion } from "three";
 
 import { NormalizeMesh } from "~/ecs/plugins/normalize";
 import { RigidBody, Collider } from "~/ecs/plugins/rapier";

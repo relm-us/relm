@@ -6,7 +6,7 @@
   import EntityDetails from "./EntityDetails.svelte";
   import { worldManager } from "~/stores/worldManager";
   import { sortAlphabetically } from "~/utils/sortAlphabetically";
-  import { Transform } from "hecs-plugin-core";
+  import { Transform } from "~/ecs/plugins/core";
 
   export let entity;
 

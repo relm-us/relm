@@ -1,6 +1,6 @@
 import { readable, Readable } from "svelte/store";
 
-import { World } from "~/types/hecs/world";
+import { World } from "~/ecs/base";
 
 import { createWorld } from "../world/creation";
 

@@ -1,5 +1,5 @@
-import { System, Not, Modified, Groups } from "hecs";
-import { Object3D } from "hecs-plugin-three";
+import { System, Not, Modified, Groups } from "~/ecs/base";
+import { Object3D } from "~/ecs/plugins/three";
 import * as THREE from "three";
 
 import { isBrowser } from "~/utils/isBrowser";

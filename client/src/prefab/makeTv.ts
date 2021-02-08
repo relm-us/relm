@@ -1,6 +1,4 @@
-import { Transform, Quaternion } from "hecs-plugin-core";
-import { Euler, Color } from "three";
-
+import { Color } from "three";
 import { makeBox, makeYoutube } from "~/prefab";
 
 // The Boy Who Tricked the Devil : 4nZ9gNGZwO0

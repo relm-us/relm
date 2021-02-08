@@ -1,5 +1,5 @@
-import { Transform } from "hecs-plugin-core";
-import { LookAt, Camera } from "hecs-plugin-three";
+import { Transform } from "~/ecs/plugins/core";
+import { LookAt, Camera } from "~/ecs/plugins/three";
 import { Vector3 } from "three";
 
 import { Follow } from "~/ecs/plugins/follow";

@@ -1,4 +1,4 @@
-import { StateComponent, RefType } from "hecs";
+import { StateComponent, RefType } from "~/ecs/base";
 
 export class BallJointRef extends StateComponent {
   static props = {

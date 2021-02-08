@@ -1,7 +1,7 @@
 <script lang="ts">
   import Button from "~/ui/Button";
   import { worldManager } from "~/stores/worldManager";
-  import { WorldTransform } from "hecs-plugin-core";
+  import { WorldTransform } from "~/ecs/plugins/core";
   import { directory } from "~/prefab";
 
   const PLAYER_CENTER_HEIGHT = 0.755;

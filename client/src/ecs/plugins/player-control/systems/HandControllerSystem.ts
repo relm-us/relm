@@ -1,5 +1,5 @@
-import { System, Groups } from "hecs";
-import { Vector3 } from "hecs-plugin-core";
+import { System, Groups } from "~/ecs/base";
+import { Vector3 } from "three";
 import { get } from "svelte/store";
 
 import { HandController } from "../components";

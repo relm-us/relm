@@ -1184,6 +1184,11 @@
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.4.tgz#15925414e0ad2cd765bfef58842f7e26a7accb24"
   integrity sha512-1HcDas8SEj4z1Wc696tH56G8OlRaH/sqZOynNNB+HF0WOeXPaxTtbYzJY2oEfiUxjSKjhCKr+MvR7dCHcEelug==
 
+"@types/resize-observer-browser@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@types/resize-observer-browser/-/resize-observer-browser-0.1.5.tgz#36d897708172ac2380cd486da7a3daf1161c1e23"
+  integrity sha512-8k/67Z95Goa6Lznuykxkfhq9YU3l1Qe6LNZmwde1u7802a3x8v44oq0j91DICclxatTr0rNnhXx7+VTIetSrSQ==
+
 "@types/sass@^1.16.0":
   version "1.16.0"
   resolved "https://registry.yarnpkg.com/@types/sass/-/sass-1.16.0.tgz#b41ac1c17fa68ffb57d43e2360486ef526b3d57d"
@@ -4357,23 +4362,6 @@ hash.js@^1.0.0, hash.js@^1.0.3:
   dependencies:
     inherits "^2.0.3"
     minimalistic-assert "^1.0.1"
-
-hecs-plugin-core@^0.16.0:
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/hecs-plugin-core/-/hecs-plugin-core-0.16.0.tgz#f7f47fde17a685c1ec35365c6d834ba1ada2742d"
-  integrity sha512-Rx4HlmYHtPybUcdVxOIvkQBZcqXSn9ghsYkurlJXi1RFK6Bykf2uavKz7XfbxjVfBvZvMg0TM8roGdJ6B9UfJw==
-
-hecs-plugin-three@^0.16.0:
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/hecs-plugin-three/-/hecs-plugin-three-0.16.0.tgz#be606686db098df30b47de869b9871bd819ef468"
-  integrity sha512-TZTOpGVZpCTUUWjTubnlCEJ36Iy49R7tdI+PZXL1QNh/QjyuKMYdwT1te/Yaj07+yI11prfuCmMPiuVndlhqdw==
-
-hecs@^0.16.0:
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/hecs/-/hecs-0.16.0.tgz#46400c2e50342b3b8e9eae605801c907744b7bcd"
-  integrity sha512-pLntD+RZVvoNF05rV9CaJ9b6Olctvh4o46Ib/lg5wkz4WtiVa+yXYI4keGGQbepACy5pTVkrBj8xp7trqQc8+A==
-  dependencies:
-    eventemitter3 "^4.0.7"
 
 hex-color-regex@^1.1.0:
   version "1.1.0"

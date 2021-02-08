@@ -1,4 +1,4 @@
-import { StateComponent, RefType } from "hecs";
+import { StateComponent, RefType } from "~/ecs/base";
 import { Matrix4 } from "three";
 
 export type EffectState = {

@@ -1,5 +1,4 @@
-import { Transform, Quaternion } from "hecs-plugin-core";
-import { Euler, Color } from "three";
+import { Color } from "three";
 
 import { makeBox, makeWebPage } from "~/prefab";
 

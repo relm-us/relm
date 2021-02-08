@@ -1,4 +1,4 @@
-import { Transform, Asset } from "hecs-plugin-core";
+import { Transform, Asset } from "~/ecs/plugins/core";
 
 import { Vector3, Quaternion, Euler } from "three";
 

@@ -1,3 +1,3 @@
-import { Component } from "hecs";
+import { Component } from "~/ecs/base";
 
 export class Impactable extends Component {}

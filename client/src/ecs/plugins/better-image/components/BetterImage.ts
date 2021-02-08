@@ -1,5 +1,5 @@
-import { Component, StringType, NumberType } from "hecs";
-import { AssetType } from "hecs-plugin-core";
+import { Component, StringType, NumberType } from "~/ecs/base";
+import { AssetType } from "~/ecs/plugins/core";
 
 export class BetterImage extends Component {
   static props = {

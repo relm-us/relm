@@ -1,5 +1,5 @@
-import { Component, StringType, NumberType } from "hecs";
-import { Vector3Type } from "hecs-plugin-core";
+import { Component, StringType, NumberType } from "~/ecs/base";
+import { Vector3Type } from "~/ecs/plugins/core";
 
 export class RigidBody extends Component {
   static props = {

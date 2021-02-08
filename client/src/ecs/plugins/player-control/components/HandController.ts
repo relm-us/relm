@@ -1,4 +1,4 @@
-import { LocalComponent, StringType, RefType } from "hecs";
+import { LocalComponent, StringType, RefType } from "~/ecs/base";
 
 export class HandController extends LocalComponent {
   static props = {

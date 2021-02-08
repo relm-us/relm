@@ -1,4 +1,4 @@
-import { Component, StringType, NumberType, BooleanType } from "hecs";
+import { Component, StringType, NumberType, BooleanType } from "~/ecs/base";
 
 export class Renderable extends Component {
   static props = {
@@ -106,6 +106,7 @@ export class Renderable extends Component {
       },
     },
   };
+
   static editor = {
     name: "Renderable",
   };

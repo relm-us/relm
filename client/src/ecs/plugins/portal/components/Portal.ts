@@ -1,5 +1,5 @@
-import { Component, StringType } from "hecs";
-import { Vector3Type } from "hecs-plugin-core";
+import { Component, StringType } from "~/ecs/base";
+import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
 export class Portal extends Component {

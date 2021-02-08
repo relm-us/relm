@@ -1,11 +1,11 @@
-import { Transform, Asset } from "hecs-plugin-core";
+import { Transform, Asset } from "~/ecs/plugins/core";
 
 import { Vector3 } from "three";
 
 import { RigidBody, Collider } from "~/ecs/plugins/rapier";
 import { NormalizeMesh } from "~/ecs/plugins/normalize";
 import { TransformEffects } from "~/ecs/plugins/transform-effects";
-import { Model } from "hecs-plugin-three";
+import { Model } from "~/ecs/plugins/three";
 
 import { makeEntity } from "./makeEntity";
 

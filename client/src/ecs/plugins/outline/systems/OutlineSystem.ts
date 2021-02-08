@@ -1,4 +1,4 @@
-import { System, Groups, Not, Modified } from "hecs";
+import { System, Groups, Not, Modified } from "~/ecs/base";
 import {
   Mesh,
   Group,
@@ -10,7 +10,7 @@ import { Outline, OutlineApplied } from "../components";
 import { WireframeGeometry2 } from "three/examples/jsm/lines/WireframeGeometry2";
 import { Wireframe } from "three/examples/jsm/lines/Wireframe";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
-import { Object3D } from "hecs-plugin-three";
+import { Object3D } from "~/ecs/plugins/three";
 import { BetterShape } from "~/ecs/plugins/better-shape";
 
 function dashes(n) {

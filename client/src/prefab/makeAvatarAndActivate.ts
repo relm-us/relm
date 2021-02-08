@@ -1,6 +1,6 @@
-import { Asset, Transform } from "hecs-plugin-core";
+import { Asset, Transform } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
-import { Model } from "hecs-plugin-three";
+import { Model } from "~/ecs/plugins/three";
 
 // Components from ECS plugins (organized alphabetically by plugin name)
 import { Renderable, CssPlane } from "~/ecs/plugins/css3d";

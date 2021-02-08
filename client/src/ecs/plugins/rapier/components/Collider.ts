@@ -1,5 +1,6 @@
-import { Component, StringType, NumberType } from "hecs";
-import { Vector3, Vector3Type } from "hecs-plugin-core";
+import { Component, StringType, NumberType } from "~/ecs/base";
+import { Vector3Type } from "~/ecs/plugins/core";
+import { Vector3 } from "three";
 
 export class Collider extends Component {
   static props = {
