@@ -1,1 +1,1 @@
-export { LocalPortal } from "./LocalPortal";
+export { Portal } from "./Portal";
