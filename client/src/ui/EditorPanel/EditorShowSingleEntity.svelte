@@ -5,12 +5,32 @@
   import ComponentPane from "./ComponentPane.svelte";
   import EntityDetails from "./EntityDetails.svelte";
   import { worldManager } from "~/stores/worldManager";
+  import { sortAlphabetically } from "~/utils/sortAlphabetically";
+  import { Transform } from "hecs-plugin-core";
 
   export let entity;
 
-  let primaryComponents, secondaryComponents;
-  $: primaryComponents = entity && entity.Components.filter((c) => c.editor);
-  $: secondaryComponents = entity && entity.Components.filter((c) => !c.editor);
+  type Component = any;
+
+  let primaryComponents: Array<Component>;
+  $: {
+    primaryComponents = entity.Components.filter(
+      (c) => c.editor && c !== Transform
+    );
+    sortAlphabetically(primaryComponents, (c) => c.editor.label);
+
+    // Always show Transform component first
+    primaryComponents.unshift(Transform);
+  }
+
+  let secondaryComponents: Array<Component>;
+  $: {
+    secondaryComponents = entity.Components.filter((c) => !c.editor);
+    sortAlphabetically(
+      secondaryComponents,
+      (c) => c.prototype.constructor.name
+    );
+  }
 
   let secondaryComponentsVisible = false;
 

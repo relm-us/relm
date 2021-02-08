@@ -7,6 +7,7 @@
   import Capsule from "./Capsule.svelte";
   import Button from "~/ui/Button";
   import { worldManager } from "~/stores/worldManager";
+  import { sortAlphabetically } from "~/utils/sortAlphabetically";
 
   export let entity;
 
@@ -17,7 +18,9 @@
 
   const getComponents = (worldManager, entity) => {
     const entityComponentNames = entity.Components.map((c) => c.name);
-    return Object.entries(worldManager.world.components.componentsByName)
+    const components = Object.entries(
+      worldManager.world.components.componentsByName
+    )
       .filter(([componentName, fn]) => {
         const Component = fn as any;
         return (
@@ -27,6 +30,8 @@
         );
       })
       .map(([componentName, fn]) => ({ label: componentName, value: fn }));
+    sortAlphabetically(components, (c) => c.label);
+    return components;
   };
 
   function isSleeping(entity) {
