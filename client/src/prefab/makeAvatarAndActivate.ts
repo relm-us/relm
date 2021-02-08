@@ -128,6 +128,7 @@ export function makeAvatarAndActivate(
   const leftHand = makeBall(world, {
     ...{ x: x - 0.6, y: y + 0.0, z: z + 0.05 },
     r: 0.12,
+    density: 0.2,
     color: "#59a4d8",
     name: "LeftHand",
     linearDamping: 4,
@@ -146,6 +147,7 @@ export function makeAvatarAndActivate(
   const rightHand = makeBall(world, {
     ...{ x: x + 0.6, y: y + 0.0, z: z + 0.05 },
     r: 0.12,
+    density: 0.2,
     color: "#59a4d8",
     name: "RightHand",
     linearDamping: 4,
@@ -159,6 +161,9 @@ export function makeAvatarAndActivate(
       keyStore: keyQ,
     })
     .activate();
+
+  // Move these things as a unit on portal
+  avatar.subgroup = [leftHand, rightHand];
 
   return avatar;
 }

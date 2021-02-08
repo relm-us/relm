@@ -13,7 +13,6 @@ export type YConnectionStatus =
 export const yConnectStatus: Writable<YConnectionStatus> = writable(
   "disconnected"
 );
-yConnectStatus.subscribe((status) => console.log("yConnectStatus", status));
 
 export type ConnectInitial = {
   state: "initial";

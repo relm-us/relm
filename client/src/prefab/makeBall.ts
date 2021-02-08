@@ -20,6 +20,7 @@ export function makeBall(
     linearDamping = 0,
     angularDamping = 0,
     mass = 0,
+    density = 0.4,
     metalness = 0.2,
     roughness = 0.8,
     emissive = "#000000",
@@ -54,6 +55,7 @@ export function makeBall(
       .add(Collider, {
         shape: "SPHERE",
         sphereRadius: r,
+        density,
       });
   }
   return entity;

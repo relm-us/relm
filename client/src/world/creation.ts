@@ -23,6 +23,7 @@ import NormalizePlugin from "~/ecs/plugins/normalize";
 import OutlinePlugin from "~/ecs/plugins/outline";
 import PlayerControlPlugin from "~/ecs/plugins/player-control";
 import PointerPlanePlugin from "~/ecs/plugins/pointer-plane";
+import PortalPlugin from "~/ecs/plugins/portal";
 import RapierPlugin from "~/ecs/plugins/rapier";
 import TransformEffectsPlugin from "~/ecs/plugins/transform-effects";
 import ThreePlugin from "hecs-plugin-three";
@@ -110,6 +111,7 @@ export function createWorld(rapier) {
       OutlinePlugin,
       PlayerControlPlugin,
       PointerPlanePlugin,
+      PortalPlugin,
       TransformEffectsPlugin,
     ],
     components: [InvisibleToMouse],
