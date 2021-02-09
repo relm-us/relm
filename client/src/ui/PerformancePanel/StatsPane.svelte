@@ -7,12 +7,16 @@
   export let dataStore;
   export let value;
   export let maximum;
+
+  // ignore warning about missing props
+  $$props;
 </script>
 
 <Pane
   {title}
   subtitle={value || $dataStore[0].toFixed(1)}
   showMinimize={true}
-  {minimized}>
+  {minimized}
+>
   <Chart data={$dataStore} {maximum} />
 </Pane>
