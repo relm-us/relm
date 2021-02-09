@@ -186,6 +186,7 @@ export class WorldDoc extends EventEmitter {
   }
 
   delete(entity: Entity) {
+    if (!entity) return;
     selectedEntities.delete(entity.id);
     this.ydoc.transact(() => {
       this._deleteRecursive(entity);
