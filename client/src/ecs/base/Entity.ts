@@ -220,11 +220,21 @@ export class Entity {
   }
 
   toJSON() {
+    let children;
+    try {
+      children = this.getChildren().map((child) => child.id);
+    } catch (err) {
+      children = [];
+      console.warn(
+        `Can't get children of '${this.id}' (${this.name}):`,
+        err.message
+      );
+    }
     const data = {
       id: this.id,
       name: this.name,
       parent: this.getParent()?.id || null,
-      children: this.getChildren().map((child) => child.id),
+      children,
       meta: { ...this.meta },
     };
     this.components.forEach((component) => {
