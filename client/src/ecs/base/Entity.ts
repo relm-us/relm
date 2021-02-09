@@ -251,7 +251,13 @@ export class Entity {
       )
         continue;
       const Component = this.world.components.getByName(key);
-      this.add(Component, undefined, true).fromJSON(data[key]);
+      if (Component) {
+        this.add(Component, undefined, true).fromJSON(data[key]);
+      } else {
+        console.warn(
+          `Can't add missing component: '${key}' to ${this.id} (${this.name})`
+        );
+      }
     }
     this.needsBind = true;
     return this;
