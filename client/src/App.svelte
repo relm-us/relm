@@ -72,8 +72,8 @@
       {/if}
       <panel-tabs>
         <Button
-          active={openPanel === "library"}
-          on:click={() => (openPanel = "library")}>Collections</Button
+          active={openPanel === "collections"}
+          on:click={() => (openPanel = "collections")}>Collections</Button
         >
         <Button
           active={openPanel === "editor"}
@@ -115,6 +115,7 @@
   </overlay-content>
 </overlay>
 
+<!-- The virtual world! -->
 <style>
   play-buttons {
     display: flex;

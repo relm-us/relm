@@ -1,5 +1,3 @@
-import { IsJsonable } from "./IsJsonable";
-
 export type PropertyType = {
   name: string;
   initial: (value: any) => any;
