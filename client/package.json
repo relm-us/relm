@@ -1,5 +1,9 @@
 {
-  "private": true,
+  "name": "relm-client",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Duane Johnson",
+  "license": "GPL-3.0-only",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack",
     "start": "webpack-dev-server --content-base public",
