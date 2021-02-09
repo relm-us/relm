@@ -1,26 +1,21 @@
 import { System, Not, Modified, Groups } from "~/ecs/base";
 import * as THREE from "three";
 
-import { BetterImage, BetterImageLoader, BetterImageMesh } from "../components";
+import { Image, ImageLoader, ImageMesh } from "../components";
 import { Object3D } from "~/ecs/plugins/three";
 import { Queries } from "~/ecs/base/Query";
 
 let loaderIds = 0;
 
-export class BetterImageSystem extends System {
+export class ImageSystem extends System {
   order = Groups.Initialization;
 
   static queries: Queries = {
-    added: [
-      Object3D,
-      BetterImage,
-      Not(BetterImageLoader),
-      Not(BetterImageMesh),
-    ],
-    unbuilt: [Object3D, BetterImage, BetterImageLoader],
-    modified: [Object3D, Modified(BetterImage)],
-    removedObj: [Not(Object3D), BetterImageMesh],
-    removed: [Not(BetterImage), BetterImageMesh],
+    added: [Object3D, Image, Not(ImageLoader), Not(ImageMesh)],
+    unbuilt: [Object3D, Image, ImageLoader],
+    modified: [Object3D, Modified(Image)],
+    removedObj: [Not(Object3D), ImageMesh],
+    removed: [Not(Image), ImageMesh],
   };
 
   update() {
@@ -28,7 +23,7 @@ export class BetterImageSystem extends System {
       this.load(entity);
     });
     this.queries.unbuilt.forEach((entity) => {
-      const loader = entity.get(BetterImageLoader);
+      const loader = entity.get(ImageLoader);
       if (!loader.texture) return;
       this.build(entity);
     });
@@ -45,30 +40,29 @@ export class BetterImageSystem extends System {
 
   async load(entity) {
     const { loadTexture } = (this.world as any).presentation;
-    const url = entity.get(BetterImage).asset.url;
+    const url = entity.get(Image).asset.url;
     if (!url) {
       this.cleanup(entity);
       return;
     }
     const loader =
-      entity.get(BetterImageLoader) ||
-      entity.add(BetterImageLoader, undefined, true);
+      entity.get(ImageLoader) || entity.add(ImageLoader, undefined, true);
     loader.id = ++loaderIds;
     try {
       loader.texture = await loadTexture(url);
     } catch (err) {
-      console.warn("Unable to load asset for BetterImage:", url, entity.id);
-      if (entity.has(BetterImageLoader)) {
-        entity.remove(BetterImage);
-        entity.remove(BetterImageLoader);
+      console.warn("Unable to load asset for Image:", url, entity.id);
+      if (entity.has(ImageLoader)) {
+        entity.remove(Image);
+        entity.remove(ImageLoader);
       }
     }
   }
 
   build(entity) {
-    const spec = entity.get(BetterImage);
+    const spec = entity.get(Image);
     const object3d = entity.get(Object3D).value;
-    const texture = entity.get(BetterImageLoader).texture;
+    const texture = entity.get(ImageLoader).texture;
     let planeWidth = spec.width;
     let planeHeight = spec.height;
 
@@ -120,8 +114,8 @@ export class BetterImageSystem extends System {
     mesh.receiveShadow = true;
     // mesh.castShadow = false;
     object3d.add(mesh);
-    if (entity.has(BetterImageMesh)) {
-      const component = entity.get(BetterImageMesh);
+    if (entity.has(ImageMesh)) {
+      const component = entity.get(ImageMesh);
       component.value.parent.remove(component.value);
       component.value.geometry.dispose();
       component.value.material.map?.dispose();
@@ -129,19 +123,19 @@ export class BetterImageSystem extends System {
       component.value = mesh;
       component.modified();
     } else {
-      entity.add(BetterImageMesh, { value: mesh });
+      entity.add(ImageMesh, { value: mesh });
     }
-    entity.remove(BetterImageLoader);
+    entity.remove(ImageLoader);
   }
 
   cleanup(entity) {
-    if (entity.has(BetterImageMesh)) {
-      const mesh = entity.get(BetterImageMesh).value;
+    if (entity.has(ImageMesh)) {
+      const mesh = entity.get(ImageMesh).value;
       mesh.parent.remove(mesh);
       mesh.geometry.dispose();
       mesh.material.map?.dispose();
       mesh.material.dispose();
-      entity.remove(BetterImageMesh);
+      entity.remove(ImageMesh);
     }
   }
 }

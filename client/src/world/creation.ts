@@ -15,7 +15,7 @@ import {
 import { World } from "~/ecs/base";
 
 import BetterShapePlugin from "~/ecs/plugins/better-shape";
-import BetterImagePlugin from "~/ecs/plugins/better-image";
+import ImagePlugin from "~/ecs/plugins/image";
 import Css3DPlugin from "~/ecs/plugins/css3d";
 import FollowPlugin from "~/ecs/plugins/follow";
 import LightingPlugin from "~/ecs/plugins/lighting";
@@ -103,7 +103,7 @@ export function createWorld(rapier) {
         rapier,
       }),
       BetterShapePlugin,
-      BetterImagePlugin,
+      ImagePlugin,
       Css3DPlugin,
       FollowPlugin,
       LightingPlugin,

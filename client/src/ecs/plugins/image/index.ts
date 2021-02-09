@@ -9,7 +9,7 @@ export * from "./components";
 export { Components };
 
 export default createPlugin({
-  name: "better-image",
+  name: "image",
   plugins: [ThreePlugin],
   systems: Object.values(Systems) as any,
   components: Object.values(Components),

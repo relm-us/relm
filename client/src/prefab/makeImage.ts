@@ -4,7 +4,7 @@ import { Vector3, Quaternion, Euler } from "three";
 
 import { RigidBody, Collider } from "~/ecs/plugins/rapier";
 import { TransformEffects } from "~/ecs/plugins/transform-effects";
-import { BetterImage } from "~/ecs/plugins/better-image";
+import { Image } from "~/ecs/plugins/image";
 
 import { makeEntity } from "./makeEntity";
 
@@ -44,7 +44,7 @@ export function makeImage(
   }
 
   // Always add image
-  thing.add(BetterImage, {
+  thing.add(Image, {
     asset: new Asset(url),
   });
 

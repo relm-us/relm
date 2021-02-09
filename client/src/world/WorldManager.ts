@@ -181,8 +181,7 @@ export default class WorldManager {
   countAssetsLoading() {
     let count = 0;
     this.world.entities.entities.forEach((e) => {
-      if (e.getByName("BetterImageLoader") || e.getByName("ModelLoading"))
-        count++;
+      if (e.getByName("ImageLoader") || e.getByName("ModelLoading")) count++;
     });
     return count;
   }
