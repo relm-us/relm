@@ -7,7 +7,9 @@ import { DirectionalLight, DirectionalLightRef } from "../components";
 
 import { shadowMapConfig } from "~/stores/config";
 import { Presentation } from "~/ecs/plugins/three/Presentation";
+import { OrthographicCamera, PerspectiveCamera } from "three";
 
+let helper;
 export class DirectionalLightSystem extends System {
   presentation: Presentation;
 
@@ -34,50 +36,21 @@ export class DirectionalLightSystem extends System {
         spec.target
       );
       if (spec.shadow) {
-        const frustum = {
-          top: spec.shadowTop,
-          bottom: spec.shadowBottom,
-          left: spec.shadowLeft,
-          right: spec.shadowRight,
-          near: spec.shadowNear,
-          far: spec.shadowFar,
-        };
         const resolution = {
           width: spec.shadowWidth,
           height: spec.shadowHeight,
         };
-        this.buildShadow(light, spec.shadowRadius, resolution, frustum);
-        // this.presentation.scene.add(
-        //   new THREE.CameraHelper(light.shadow.camera)
-        // );
+        this.buildShadow(
+          light,
+          spec.shadowRadius,
+          resolution,
+          this.getFrustumFromSpec(spec)
+        );
+
+        // helper = new THREE.CameraHelper(light.shadow.camera);
+        // this.presentation.scene.add(helper);
       }
       entity.add(DirectionalLightRef, { value: light });
-    });
-
-    this.queries.active.forEach((entity) => {
-      const spec = entity.get(DirectionalLight);
-      if (spec.shadowDistanceGrowthRatio) {
-        const transform = entity.get(Transform);
-        const light = entity.get(DirectionalLightRef).value;
-
-        const dist = (transform.position as THREE.Vector3).distanceTo(
-          light.target.position
-        );
-        if (spec.shadowDistance && Math.abs(dist - spec.shadowDistance) < 0.5) {
-          return;
-        } else {
-          // console.log("DirectionalLightSystem: recalc shadow size");
-        }
-
-        const size = dist / spec.shadowDistanceGrowthRatio;
-        light.shadow.camera.top = spec.shadowTop * size;
-        light.shadow.camera.bottom = spec.shadowBottom * size;
-        light.shadow.camera.left = spec.shadowLeft * size;
-        light.shadow.camera.right = spec.shadowRight * size;
-        light.shadow.needsUpdate = true;
-
-        spec.shadowDistance = dist;
-      }
     });
 
     // this.queries.modified.forEach((entity) => {});
@@ -147,5 +120,16 @@ export class DirectionalLightSystem extends System {
         light.shadow.bias = -0.0002;
         break;
     }
+  }
+
+  getFrustumFromSpec(spec) {
+    return {
+      top: spec.shadowTop,
+      bottom: spec.shadowBottom,
+      left: spec.shadowLeft,
+      right: spec.shadowRight,
+      near: spec.shadowNear,
+      far: spec.shadowFar,
+    };
   }
 }
