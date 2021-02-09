@@ -3,19 +3,19 @@ import { Object3D } from "~/ecs/plugins/three";
 import * as THREE from "three";
 
 import { isBrowser } from "~/utils/isBrowser";
-import { BetterShape, BetterShapeMesh } from "../components";
+import { Shape, ShapeMesh } from "../components";
 import { CapsuleGeometry } from "../CapsuleGeometry";
 
 const geometryCache: Map<string, any> = new Map();
-export class BetterShapeSystem extends System {
+export class ShapeSystem extends System {
   active = isBrowser();
   order = Groups.Initialization;
 
   static queries = {
-    added: [Object3D, BetterShape, Not(BetterShapeMesh)],
-    modified: [Object3D, Modified(BetterShape), BetterShapeMesh],
-    removedObj: [Not(Object3D), BetterShapeMesh],
-    removed: [Object3D, Not(BetterShape), BetterShapeMesh],
+    added: [Object3D, Shape, Not(ShapeMesh)],
+    modified: [Object3D, Modified(Shape), ShapeMesh],
+    removedObj: [Not(Object3D), ShapeMesh],
+    removed: [Object3D, Not(Shape), ShapeMesh],
   };
 
   update() {
@@ -24,26 +24,26 @@ export class BetterShapeSystem extends System {
     });
     this.queries.modified.forEach((entity) => {
       const object3d = entity.get(Object3D).value;
-      const mesh = entity.get(BetterShapeMesh).value;
+      const mesh = entity.get(ShapeMesh).value;
       object3d.remove(mesh);
       mesh.geometry.dispose();
       mesh.material.dispose();
       this.build(entity);
     });
     this.queries.removedObj.forEach((entity) => {
-      const mesh = entity.get(BetterShapeMesh).value;
+      const mesh = entity.get(ShapeMesh).value;
       mesh.parent.remove(mesh);
       mesh.geometry.dispose();
       mesh.material.dispose();
-      entity.remove(BetterShapeMesh);
+      entity.remove(ShapeMesh);
     });
     this.queries.removed.forEach((entity) => {
       const object3d = entity.get(Object3D).value;
-      const mesh = entity.get(BetterShapeMesh).value;
+      const mesh = entity.get(ShapeMesh).value;
       object3d.remove(mesh);
       mesh.geometry.dispose();
       mesh.material.dispose();
-      entity.remove(BetterShapeMesh);
+      entity.remove(ShapeMesh);
     });
   }
 
@@ -96,12 +96,12 @@ export class BetterShapeSystem extends System {
         geometryCache.set(cacheKey, capsule);
         return capsule;
       default:
-        throw new Error(`BetterShapeSystem: invalid shape.kind ${shape.kind}`);
+        throw new Error(`ShapeSystem: invalid shape.kind ${shape.kind}`);
     }
   }
 
   build(entity) {
-    const shape = entity.get(BetterShape);
+    const shape = entity.get(Shape);
     const object3d = entity.get(Object3D).value;
     const geometry = this.getGeometry(shape);
 
@@ -116,6 +116,6 @@ export class BetterShapeSystem extends System {
     mesh.receiveShadow = true;
     // mesh.material.envMap = this.envMap
     object3d.add(mesh);
-    entity.add(BetterShapeMesh, { value: mesh });
+    entity.add(ShapeMesh, { value: mesh });
   }
 }

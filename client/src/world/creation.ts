@@ -14,7 +14,7 @@ import {
 
 import { World } from "~/ecs/base";
 
-import BetterShapePlugin from "~/ecs/plugins/better-shape";
+import ShapePlugin from "~/ecs/plugins/shape";
 import ImagePlugin from "~/ecs/plugins/image";
 import Css3DPlugin from "~/ecs/plugins/css3d";
 import FollowPlugin from "~/ecs/plugins/follow";
@@ -102,7 +102,7 @@ export function createWorld(rapier) {
         // Pass the physics engine in to the plugin
         rapier,
       }),
-      BetterShapePlugin,
+      ShapePlugin,
       ImagePlugin,
       Css3DPlugin,
       FollowPlugin,

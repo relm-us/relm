@@ -11,7 +11,7 @@ import { WireframeGeometry2 } from "three/examples/jsm/lines/WireframeGeometry2"
 import { Wireframe } from "three/examples/jsm/lines/Wireframe";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
 import { Object3D } from "~/ecs/plugins/three";
-import { BetterShape } from "~/ecs/plugins/better-shape";
+import { Shape } from "~/ecs/plugins/shape";
 
 function dashes(n) {
   return Array.apply(null, { length: n })
@@ -28,7 +28,7 @@ export class OutlineSystem extends System {
     added: [Outline, Not(OutlineApplied), Object3D],
     removed: [Not(Outline), OutlineApplied],
 
-    shapeModified: [Object3D, Modified(BetterShape), OutlineApplied],
+    shapeModified: [Object3D, Modified(Shape), OutlineApplied],
     // shapeRemoved: [Object3D, Not(Shape), OutlineApplied],
     // objectRemoved: [Not(Object3D), Outline],
   };

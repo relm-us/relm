@@ -2,7 +2,7 @@ import { Transform } from "~/ecs/plugins/core";
 
 import { Color, Vector3 } from "three";
 
-import { BetterShape } from "~/ecs/plugins/better-shape";
+import { Shape } from "~/ecs/plugins/shape";
 import { RigidBody, Collider } from "~/ecs/plugins/rapier";
 
 import { makeEntity } from "./makeEntity";
@@ -34,7 +34,7 @@ export function makeBall(
     .add(Transform, {
       position: new Vector3(x, y, z),
     })
-    .add(BetterShape, {
+    .add(Shape, {
       kind: "SPHERE",
       color: "#" + linearColor.getHexString(),
       sphereRadius: r,

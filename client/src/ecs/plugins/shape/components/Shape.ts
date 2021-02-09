@@ -75,9 +75,32 @@ export class Shape extends Component {
     },
     color: {
       type: StringType,
+      default: "#333333",
       editor: {
         label: "Color",
         input: "Color",
+      },
+    },
+    emissive: {
+      type: StringType,
+      default: "#000000",
+      editor: {
+        label: "Emissive Color",
+        input: "Color",
+      },
+    },
+    roughness: {
+      type: NumberType,
+      default: 0.8,
+      editor: {
+        label: "Roughness",
+      },
+    },
+    metalness: {
+      type: NumberType,
+      default: 0.9,
+      editor: {
+        label: "Metalness",
       },
     },
   };

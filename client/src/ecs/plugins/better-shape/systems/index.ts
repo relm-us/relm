@@ -1,1 +1,0 @@
-export { BetterShapeSystem } from "./BetterShapeSystem";
