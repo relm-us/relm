@@ -6,7 +6,7 @@ import { Object3D } from "~/ecs/plugins/three";
 import { DirectionalLight, DirectionalLightRef } from "../components";
 
 import { shadowMapConfig } from "~/stores/config";
-import { Presentation } from "~ecs/plugins/three/Presentation";
+import { Presentation } from "~/ecs/plugins/three/Presentation";
 
 export class DirectionalLightSystem extends System {
   presentation: Presentation;
