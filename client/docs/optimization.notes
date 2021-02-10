@@ -1,0 +1,12 @@
+
+Ideas for Further Optimization
+
+- Load images async using ImageBitmapLoader
+  https://threejs.org/docs/#api/en/loaders/ImageBitmapLoader
+  https://discourse.threejs.org/t/framedrop-when-object-appears-in-view/6177/4
+
+- Instancing
+  - BufferGeometryUtils
+  - Use Three.bas
+    https://github.com/zadvorsky/three.bas
+
