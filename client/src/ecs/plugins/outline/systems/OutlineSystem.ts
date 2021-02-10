@@ -16,7 +16,7 @@ function dashes(n) {
 }
 
 export class OutlineSystem extends System {
-  order = Groups.Initialization + 50;
+  order = Groups.Initialization - 200;
 
   static queries = {
     added: [Outline, Not(OutlineApplied), Object3D],
