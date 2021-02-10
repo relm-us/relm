@@ -9,8 +9,8 @@ export class CssRenderSystem extends System {
   frame: number;
 
   active = isBrowser();
-  order = Groups.Presentation + 100;
-  // order = Groups.Simulation - 1;
+  // This needs to be immediately after RenderableSystem
+  order = Groups.Presentation + 400;
 
   init({ presentation, cssPresentation }) {
     if (!presentation) {

@@ -17,8 +17,11 @@ export class RenderableSystem extends System {
   cssPresentation: CssPresentation;
 
   active = isBrowser();
-  // order = Groups.Simulation + 100;
-  order = Groups.Simulation - 5;
+  // This needs to be after WorldTransformationSystem, so that the CSS
+  // is updated with the latest world coords as soon as possible after
+  // having computed them during WebGL render. It must be immediately
+  // followed up with CssRenderSystem so that the actual render occurs.
+  order = Groups.Presentation + 300;
 
   static queries: Queries = {
     added: [Renderable, Not(RenderableRef)],

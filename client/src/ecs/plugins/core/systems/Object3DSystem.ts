@@ -7,7 +7,7 @@ import { Presentation } from "../Presentation";
 export class Object3DSystem extends System {
   presentation: Presentation;
 
-  order = Groups.Presentation - 10;
+  order = Groups.Initialization - 100;
 
   static queries: Queries = {
     new: [Transform, Not(Object3D)],
@@ -27,9 +27,19 @@ export class Object3DSystem extends System {
       const object3d = new THREE.Object3D();
       object3d.name = entity.name;
       object3d.userData.entityId = entity.id;
-      const parentObject3D = entity.parent
-        ? entity.getParent().get(Object3D).value
-        : this.presentation.scene;
+      let parentObject3D;
+      if (entity.parent) {
+        const component = entity.getParent().get(Object3D);
+        if (component && component.value) {
+          parentObject3D = component.value;
+        } else {
+          // Wait until next loop to make this
+          return;
+        }
+      } else {
+        parentObject3D = this.presentation.scene;
+      }
+
       parentObject3D.add(object3d);
       this.presentation.object3ds.push(object3d);
       entity.add(Object3D, { value: object3d });

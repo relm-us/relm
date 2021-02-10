@@ -19,3 +19,66 @@
   CssRenderSystem: Presentation + 100 (3100)
 }
 [js]
+
+Order of Systems BEFORE fast-transform update:
+0: CameraSystem `1000`
+1: LookAtSystem `1000`
+2: ModelSystem `1000`
+3: JointSystem `1000`
+4: RigidBodySystem `1000`
+5: ShapeSystem `1000`
+6: ImageSystem `1000`
+7: DirectionalLightSystem `1000`
+8: InvisibleToMouseSystem `1000`
+9: ColliderSystem `1010`
+10: PointerPlaneSystem `1010`
+11: OutlineSystem `1050`
+12: WorldTransformSystem `1990`
+13: RenderableSystem `1995`
+14: ImpactSystem `2000`
+15: PhysicsSystem `2000`
+16: FollowSystem `2000`
+17: HandControllerSystem `2000`
+18: HeadControllerSystem `2000`
+19: ThrustControllerSystem `2000`
+20: TouchControllerSystem `2000`
+21: PortalSystem `2001`
+22: CssPlaneSystem `2099`
+23: Object3DSystem `2990`
+24: TransformEffectsSystem `2995`
+25: NormalizeMeshSystem `3000`
+26: RenderSystem `3100`
+27: CssRenderSystem `3100`
+28: PerformanceStatsSystem `3500`
+
+
+Desired order of Systems:
+22: Object3DSystem !900`
+0: CameraSystem `1000`
+1: LookAtSystem `1000`
+2: ModelSystem `1000`
+3: JointSystem `1000`
+4: RigidBodySystem `1000`
+5: ShapeSystem `1000`
+6: ImageSystem `1000`
+7: DirectionalLightSystem `1000`
+8: InvisibleToMouseSystem `1000`
+9: ColliderSystem `1010`
+10: PointerPlaneSystem `1010`
+11: OutlineSystem `1050`
+13: ImpactSystem `2000`
+14: PhysicsSystem `2000`
+15: FollowSystem `2000`
+16: HandControllerSystem `2000`
+17: HeadControllerSystem `2000`
+18: ThrustControllerSystem `2000`
+19: TouchControllerSystem `2000`
+20: PortalSystem `2001`
+21: CssPlaneSystem `2099` should be 1000ish?
+23: TransformEffectsSystem `2995`
+24: NormalizeMeshSystem `3000`
+26: RenderSystem `3100`
+12: WorldTransformSystem !3200`
+25: RenderableSystem `3300`
+27: CssRenderSystem `3400`
+28: PerformanceStatsSystem `3500`

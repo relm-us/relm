@@ -1,12 +1,11 @@
 import { System, Not, Groups } from "~/ecs/base";
 import { WorldTransform, Object3D } from "../components";
-import { Matrix4 } from "three";
 import { Queries } from "~/ecs/base/Query";
 
 export class WorldTransformSystem extends System {
   frame: number;
 
-  order = Groups.Simulation - 10;
+  order = Groups.Presentation + 200;
 
   static queries: Queries = {
     new: [Object3D, Not(WorldTransform)],
