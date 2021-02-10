@@ -137,6 +137,8 @@ export default class WorldManager {
             this.loading.setProgress(assetsTotal + metadataTotal);
             setTimeout(() => {
               this.loading.state.set("done");
+              // optimization: send textures to GPU
+              this.world.presentation.compile();
               this.start();
             }, 50);
           } else {

@@ -159,4 +159,8 @@ export class Presentation {
       1000
     );
   }
+
+  compile() {
+    this.renderer.compile(this.scene, this.camera);
+  }
 }
