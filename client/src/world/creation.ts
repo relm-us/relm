@@ -26,7 +26,7 @@ import PointerPlanePlugin from "~/ecs/plugins/pointer-plane";
 import PortalPlugin from "~/ecs/plugins/portal";
 import RapierPlugin from "~/ecs/plugins/rapier";
 import TransformEffectsPlugin from "~/ecs/plugins/transform-effects";
-import ThreePlugin from "~/ecs/plugins/three";
+import CorePlugin from "~/ecs/plugins/core";
 
 import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
 
@@ -93,7 +93,7 @@ export function createWorld(rapier) {
   const world = new World({
     getTime: performance.now.bind(performance),
     plugins: [
-      ThreePlugin({
+      CorePlugin({
         renderer: createRenderer(),
         scene: createScene(),
         camera: createCamera(false),

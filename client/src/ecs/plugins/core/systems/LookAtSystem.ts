@@ -1,9 +1,8 @@
 import * as THREE from "three";
 import { System, Groups } from "~/ecs/base";
-import { WorldTransform, Transform } from "~/ecs/plugins/core";
 
 import { IS_BROWSER } from "../utils";
-import { LookAt, LookAtCamera } from "../components";
+import { Transform, WorldTransform, LookAt, LookAtCamera } from "../components";
 import { Presentation } from "../Presentation";
 import { Queries } from "~/ecs/base/Query";
 

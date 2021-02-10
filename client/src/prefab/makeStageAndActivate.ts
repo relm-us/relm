@@ -1,5 +1,5 @@
 import { Transform } from "~/ecs/plugins/core";
-import { LookAt, Camera } from "~/ecs/plugins/three";
+import { LookAt, Camera } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
 import { Follow } from "~/ecs/plugins/follow";

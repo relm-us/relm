@@ -1,10 +1,7 @@
 import { System, Groups } from "~/ecs/base";
-import { PerspectiveCamera, Vector3 } from "three";
 import { isBrowser } from "~/utils/isBrowser";
-import { Presentation } from "~/ecs/plugins/three/Presentation";
+import { Presentation } from "~/ecs/plugins/core/Presentation";
 import { CssPresentation } from "../CssPresentation";
-
-const FACTOR = 1;
 
 export class CssRenderSystem extends System {
   presentation: Presentation;
@@ -13,15 +10,16 @@ export class CssRenderSystem extends System {
 
   active = isBrowser();
   order = Groups.Presentation + 100;
+  // order = Groups.Simulation - 1;
 
   init({ presentation, cssPresentation }) {
     if (!presentation) {
-      throw new Error("ECS: plugin/css3d must be loaded after plugin/three");
+      throw new Error("ECS: plugin/css3d must be loaded after plugin/core");
     }
     this.presentation = presentation;
     this.cssPresentation = cssPresentation;
 
-    this.frame = 0;
+    // this.frame = 0;
   }
 
   update() {

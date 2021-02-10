@@ -1,13 +1,11 @@
 import * as THREE from "three";
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
-import { Transform } from "~/ecs/plugins/core";
-import { Object3D } from "~/ecs/plugins/three";
+import { Object3D } from "~/ecs/plugins/core";
 
 import { DirectionalLight, DirectionalLightRef } from "../components";
 
 import { shadowMapConfig } from "~/stores/config";
-import { Presentation } from "~/ecs/plugins/three/Presentation";
-import { OrthographicCamera, PerspectiveCamera } from "three";
+import { Presentation } from "~/ecs/plugins/core/Presentation";
 
 let helper;
 export class DirectionalLightSystem extends System {

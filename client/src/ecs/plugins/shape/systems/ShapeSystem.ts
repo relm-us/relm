@@ -1,5 +1,5 @@
 import { System, Not, Modified, Groups } from "~/ecs/base";
-import { Object3D } from "~/ecs/plugins/three";
+import { Object3D } from "~/ecs/plugins/core";
 import * as THREE from "three";
 
 import { isBrowser } from "~/utils/isBrowser";

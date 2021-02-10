@@ -1,5 +1,5 @@
 import { Asset, Transform } from "~/ecs/plugins/core";
-import { Model } from "~/ecs/plugins/three";
+import { Model } from "~/ecs/plugins/core";
 import { Euler, Vector3, Quaternion } from "three";
 
 import { NormalizeMesh } from "~/ecs/plugins/normalize";

@@ -1,5 +1,5 @@
 import { System, Not, Groups } from "~/ecs/base";
-import { WorldTransform, Transform } from "../components";
+import { WorldTransform, Object3D } from "../components";
 import { Matrix4 } from "three";
 import { Queries } from "~/ecs/base/Query";
 
@@ -9,9 +9,9 @@ export class WorldTransformSystem extends System {
   order = Groups.Simulation - 10;
 
   static queries: Queries = {
-    new: [Transform, Not(WorldTransform)],
-    active: [Transform, WorldTransform],
-    removed: [Not(Transform), WorldTransform],
+    new: [Object3D, Not(WorldTransform)],
+    active: [Object3D, WorldTransform],
+    removed: [Not(Object3D), WorldTransform],
   };
 
   init() {
@@ -32,33 +32,12 @@ export class WorldTransformSystem extends System {
   }
 
   updateTransform(entity) {
-    const transform = entity.get(Transform);
+    const object3d = entity.get(Object3D).value;
     const world = entity.get(WorldTransform);
-    const parent = entity.getParent();
+    object3d.matrixWorld.decompose(world.position, world.rotation, world.scale);
 
-    if (world.frame === this.frame) {
-      return world;
-    }
-
-    if (!transform.matrix) transform.matrix = new Matrix4();
-    if (!world.matrix) world.matrix = new Matrix4();
-
-    transform.matrix.compose(
-      transform.position,
-      transform.rotation,
-      transform.scale
-    );
-
-    if (parent) {
-      const parentWorld = this.updateTransform(parent);
-      world.matrix.multiplyMatrices(parentWorld.matrix, transform.matrix);
-    } else {
-      world.matrix.copy(transform.matrix);
-    }
-
-    world.matrix.decompose(world.position, world.rotation, world.scale);
-    world.frame = this.frame;
-
-    return world;
+    // if (world.frame === this.frame) {
+    //   return world;
+    // }
   }
 }

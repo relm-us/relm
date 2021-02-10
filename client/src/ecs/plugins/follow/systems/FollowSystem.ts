@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { System, Groups } from "~/ecs/base";
 import { WorldTransform, Transform } from "~/ecs/plugins/core";
-import { Presentation } from "~/ecs/plugins/three/Presentation";
+import { Presentation } from "~/ecs/plugins/core/Presentation";
 
 import { Follow } from "../components";
 

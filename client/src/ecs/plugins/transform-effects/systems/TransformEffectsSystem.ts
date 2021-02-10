@@ -1,5 +1,5 @@
 import { System, Groups, Not } from "~/ecs/base";
-import { Object3D } from "~/ecs/plugins/three";
+import { Object3D } from "~/ecs/plugins/core";
 
 import { Matrix4 } from "three";
 

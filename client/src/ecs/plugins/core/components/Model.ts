@@ -1,5 +1,5 @@
 import { Component } from "~/ecs/base";
-import { AssetType } from "~/ecs/plugins/core";
+import { AssetType } from "../types/AssetType";
 
 export class Model extends Component {
   static props = {

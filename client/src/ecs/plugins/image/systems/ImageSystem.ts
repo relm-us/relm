@@ -2,7 +2,7 @@ import { System, Not, Modified, Groups } from "~/ecs/base";
 import * as THREE from "three";
 
 import { Image, ImageLoader, ImageMesh } from "../components";
-import { Object3D } from "~/ecs/plugins/three";
+import { Object3D } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
 
 let loaderIds = 0;

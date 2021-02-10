@@ -1,5 +1,5 @@
 import { createPlugin } from "~/ecs/base";
-import ThreePlugin from "~/ecs/plugins/three";
+import CorePlugin from "~/ecs/plugins/core";
 
 import * as Components from "./components";
 import * as Systems from "./systems";
@@ -10,7 +10,7 @@ export { Components };
 
 export default createPlugin({
   name: "image",
-  plugins: [ThreePlugin],
+  plugins: [CorePlugin],
   systems: Object.values(Systems) as any,
   components: Object.values(Components),
 });

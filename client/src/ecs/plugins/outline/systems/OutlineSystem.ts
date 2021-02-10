@@ -1,16 +1,10 @@
-import { System, Groups, Not, Modified } from "~/ecs/base";
-import {
-  Mesh,
-  Group,
-  DoubleSide,
-  MeshLambertMaterial,
-  AlwaysDepth,
-} from "three";
-import { Outline, OutlineApplied } from "../components";
 import { WireframeGeometry2 } from "three/examples/jsm/lines/WireframeGeometry2";
 import { Wireframe } from "three/examples/jsm/lines/Wireframe";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
-import { Object3D } from "~/ecs/plugins/three";
+import { System, Groups, Not, Modified } from "~/ecs/base";
+import { Mesh, Group, DoubleSide, MeshLambertMaterial } from "three";
+import { Object3D } from "~/ecs/plugins/core";
+import { Outline, OutlineApplied } from "../components";
 import { Shape } from "~/ecs/plugins/shape";
 
 function dashes(n) {

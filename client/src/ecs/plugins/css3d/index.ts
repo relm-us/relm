@@ -1,5 +1,5 @@
 import { createPlugin } from "~/ecs/base";
-import ThreePlugin from "~/ecs/plugins/three";
+import CorePlugin from "~/ecs/plugins/core";
 
 import { CssPresentation } from "./CssPresentation";
 
@@ -12,7 +12,7 @@ export { Components };
 
 export default createPlugin({
   name: "css3d",
-  plugins: [ThreePlugin],
+  plugins: [CorePlugin],
   systems: Object.values(Systems),
   components: Object.values(Components),
   decorate(world) {

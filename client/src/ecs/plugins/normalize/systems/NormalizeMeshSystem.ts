@@ -1,5 +1,6 @@
 import { System, Groups, Not } from "~/ecs/base";
-import { ModelMesh, Object3D } from "~/ecs/plugins/three";
+import { Object3D } from "~/ecs/plugins/core";
+import { ModelMesh } from "~/ecs/plugins/core";
 import { Box3, Vector3 } from "three";
 import { NormalizeMesh, NormalizedMesh } from "../components";
 

@@ -1,8 +1,7 @@
 import * as THREE from "three";
 import { System, Not, Groups } from "~/ecs/base";
-import { WorldTransform } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
-import { Object3D } from "../components";
+import { Object3D, Transform } from "../components";
 import { Presentation } from "../Presentation";
 
 export class Object3DSystem extends System {
@@ -11,9 +10,8 @@ export class Object3DSystem extends System {
   order = Groups.Presentation - 10;
 
   static queries: Queries = {
-    new: [WorldTransform, Not(Object3D)],
-    active: [WorldTransform, Object3D],
-    removed: [Not(WorldTransform), Object3D],
+    new: [Transform, Not(Object3D)],
+    removed: [Not(Transform), Object3D],
   };
 
   init({ presentation }) {
@@ -29,17 +27,26 @@ export class Object3DSystem extends System {
       const object3d = new THREE.Object3D();
       object3d.name = entity.name;
       object3d.userData.entityId = entity.id;
-      this.presentation.scene.add(object3d);
+      const parentObject3D = entity.parent
+        ? entity.getParent().get(Object3D).value
+        : this.presentation.scene;
+      parentObject3D.add(object3d);
       this.presentation.object3ds.push(object3d);
       entity.add(Object3D, { value: object3d });
+
+      // First, copy Transform values into Object3D
+      const transform = entity.get(Transform);
+      object3d.position.copy(transform.position);
+      object3d.quaternion.copy(transform.rotation);
+      object3d.scale.copy(transform.scale);
+
+      // Finally, use Object3D values as Transform values
+      // (This saves CPU & Memory)
+      transform.position = object3d.position;
+      transform.rotation = object3d.quaternion;
+      transform.scale = object3d.scale;
     });
-    this.queries.active.forEach((entity) => {
-      const object3d = entity.get(Object3D).value;
-      const world = entity.get(WorldTransform);
-      object3d.position.copy(world.position);
-      object3d.quaternion.copy(world.rotation);
-      object3d.scale.copy(world.scale);
-    });
+
     this.queries.removed.forEach((entity) => {
       const object3d = entity.get(Object3D).value;
       object3d.parent.remove(object3d);

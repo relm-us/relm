@@ -16,7 +16,7 @@ import {
   Euler,
   GridHelper,
 } from "three";
-import { Presentation } from "~/ecs/plugins/three/Presentation";
+import { Presentation } from "~/ecs/plugins/core/Presentation";
 
 type Orientation = "XY" | "XZ" | "YZ";
 

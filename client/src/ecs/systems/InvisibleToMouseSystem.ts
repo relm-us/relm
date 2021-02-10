@@ -1,5 +1,5 @@
 import { System, Groups } from "~/ecs/base";
-import { Object3D } from "~/ecs/plugins/three";
+import { Object3D } from "~/ecs/plugins/core";
 import { InvisibleToMouse } from "../components/InvisibleToMouse";
 
 export class InvisibleToMouseSystem extends System {
