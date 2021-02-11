@@ -1,10 +1,16 @@
-# Relm (experimental)
+# Relm v5.0
 
-This is a work-in-progress next version of Relm (version 5).
+Relm is a community of artists, engineers, philosophers, and spiritual thinkers making a new kind of home on the internet.
+
+Specifically, we're making a browser-based world that enables "virtual locality"--providing a way to be together with friends online in a community that meets more of our universal human needs than today's social networks do. Think of it as personal growth, spirituality-lite, and community, all being grown inside a browser so it's readily available and easy to use.
+
+See https://www.relm.us for more info.
 
 ## Getting Started
 
 To run Relm 5.0 locally, clone this repo, then:
+
+TODO: mention Postgresql setup.
 
 ```bash
 yarn
