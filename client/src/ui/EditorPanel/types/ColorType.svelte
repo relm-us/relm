@@ -25,7 +25,6 @@
   <ColorPicker
     {value}
     disableSwatches={true}
-    format="hex"
     open={false}
     width="20px"
     height="20px"
