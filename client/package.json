@@ -50,6 +50,7 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
+    "@braintree/browser-detection": "^1.11.0",
     "@budibase/colorpicker": "^1.0.1",
     "@dimforge/rapier3d": "^0.3.0",
     "@types/resize-observer-browser": "^0.1.5",

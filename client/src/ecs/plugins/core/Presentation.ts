@@ -4,6 +4,7 @@ import { World } from "~/ecs/base";
 import {
   Object3D,
   TextureLoader,
+  ImageBitmapLoader,
   Color,
   HemisphereLight,
   DirectionalLight,
@@ -12,10 +13,15 @@ import {
   WebGLRenderer,
   VSMShadowMap,
   sRGBEncoding,
+  CanvasTexture,
+  Texture,
 } from "three";
+import isFirefox from "@braintree/browser-detection/is-firefox";
+import isIosSafari from "@braintree/browser-detection/is-ios-safari";
 
 let loader;
 let textureLoader;
+let imageBitmapLoader;
 
 declare class ResizeObserver {
   constructor(fn: () => void);
@@ -39,6 +45,7 @@ export class Presentation {
   camera: PerspectiveCamera;
   capture: Capture;
   resizeObserver: ResizeObserver;
+  loadTexture: (url) => Promise<Texture>;
 
   constructor(world: World, options: PresentationOptions) {
     this.world = world;
@@ -52,6 +59,16 @@ export class Presentation {
     this.capture = new Capture(this);
     if (!loader) loader = new Loader();
     if (!textureLoader) textureLoader = new TextureLoader();
+    if (!imageBitmapLoader) {
+      imageBitmapLoader = new ImageBitmapLoader();
+      imageBitmapLoader.options = { imageOrientation: "flipY" };
+    }
+
+    if (isFirefox() || isIosSafari()) {
+      this.loadTexture = this.loadTextureTextureLoader;
+    } else {
+      this.loadTexture = this.loadTextureImageBitmapLoader;
+    }
   }
 
   setViewport(viewport) {
@@ -79,9 +96,24 @@ export class Presentation {
     return loader.load(url);
   }
 
-  async loadTexture(url) {
+  async loadTextureTextureLoader(url: string): Promise<Texture> {
     return new Promise((resolve, reject) => {
+      console.log("textureLoader", url);
       textureLoader.load(url, resolve, null, reject);
+    });
+  }
+
+  async loadTextureImageBitmapLoader(url: string): Promise<Texture> {
+    return new Promise((resolve, reject) => {
+      imageBitmapLoader.load(
+        url,
+        (imageBitmap) => {
+          console.log("imageBitmapLoader", url);
+          resolve(new CanvasTexture(imageBitmap));
+        },
+        null,
+        reject
+      );
     });
   }
 
