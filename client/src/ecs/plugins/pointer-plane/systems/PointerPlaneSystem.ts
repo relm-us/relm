@@ -63,7 +63,7 @@ export class PointerPlaneSystem extends System {
       this.createPlane(orientation, spec.visible === orientation)
     );
 
-    const component = entity.add(PointerPlaneRef, { planes });
+    entity.add(PointerPlaneRef, { planes });
   }
 
   updateIntersections(entity, coords) {

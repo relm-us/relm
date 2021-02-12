@@ -19,7 +19,7 @@ export class HeadControllerSystem extends System {
   order = Groups.Simulation;
 
   static queries = {
-    default: [HeadController],
+    default: [HeadController, PointerPlaneRef],
   };
 
   update() {
