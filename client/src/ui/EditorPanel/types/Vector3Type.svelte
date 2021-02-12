@@ -3,6 +3,7 @@
 
   import Capsule from "../Capsule.svelte";
   import { NumberDragger } from "../NumberDragger";
+  import { formatNumber } from "./formatNumber";
 
   export let key: string;
   export let component;
@@ -18,10 +19,6 @@
 
   let value: { x: number; y: number; z: number };
   $: value = component[key];
-
-  function fmt(n) {
-    return n === undefined ? "un" : n.toFixed(1);
-  }
 
   const onInputChange = (dimension) => (event) => {
     component[key][dimension] = parseFloat(event.target.value);
@@ -69,25 +66,30 @@
   };
 </script>
 
-<style>
-  div {
-    margin-left: 16px;
-    display: flex;
-    flex-wrap: wrap;
-  }
-</style>
-
 <div>{(prop.editor && prop.editor.label) || key}:</div>
-<div>
-  {#each ['x', 'y', 'z'] as dim}
+<div class="capsules">
+  {#each ["x", "y", "z"] as dim}
     <Capsule
       editing={editing[dim]}
       on:mousedown={draggers[dim].mousedown}
       on:change={onInputChange(dim)}
       on:cancel={onInputCancel(dim)}
       label={dim.toUpperCase()}
-      value={fmt(value[dim])} />
+      value={formatNumber(value[dim], editing[dim])}
+    />
   {/each}
 </div>
 
 <svelte:window on:mousemove={mousemove} on:mouseup={mouseup} />
+
+<style>
+  div {
+    margin-left: 16px;
+    display: flex;
+  }
+  div.capsules {
+    margin-top: 4px;
+    margin-bottom: 6px;
+    justify-content: center;
+  }
+</style>

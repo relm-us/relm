@@ -29,9 +29,32 @@
   };
 </script>
 
+<capsule>
+  {#if label}
+    <lbl>{label}</lbl>
+  {/if}
+  <value
+    class:tag={!label}
+    on:mousedown
+    on:focus={onFocus}
+    style={`cursor: ${cursor}`}
+    tabindex="0"
+  >
+    {#if editable && editing}
+      <input
+        bind:this={inputElement}
+        {value}
+        type={typeof value === "string" ? "text" : "number"}
+        on:change
+        on:blur={onBlur}
+      />
+    {:else}{value}{/if}
+  </value>
+</capsule>
+
 <style>
   capsule {
-    margin: 4px 8px 4px 0px;
+    margin: 0px 8px 0px 0px;
     display: flex;
     font-size: 12px;
   }
@@ -73,24 +96,3 @@
     border: 0;
   }
 </style>
-
-<capsule>
-  {#if label}
-    <lbl>{label}</lbl>
-  {/if}
-  <value
-    class:tag={!label}
-    on:mousedown
-    on:focus={onFocus}
-    style={`cursor: ${cursor}`}
-    tabindex="0">
-    {#if editable && editing}
-      <input
-        bind:this={inputElement}
-        {value}
-        type={typeof value === 'string' ? 'text' : 'number'}
-        on:change
-        on:blur={onBlur} />
-    {:else}{value}{/if}
-  </value>
-</capsule>

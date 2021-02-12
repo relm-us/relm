@@ -5,15 +5,63 @@
   import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
   import IoIosArrowDown from "svelte-icons/io/IoIosArrowDown.svelte";
   import IoIosArrowUp from "svelte-icons/io/IoIosArrowUp.svelte";
+  import IoIosMenu from "svelte-icons/io/IoIosMenu.svelte";
 
   export let title: string;
   export let subtitle: string = null;
   export let minimized = false;
+
   export let showClose = false;
   export let showMinimize = false;
+  export let showSettings = false;
 
   const dispatch = createEventDispatcher();
 </script>
+
+<pane>
+  <icon-bar>
+    {#if showClose}
+      <icon on:mousedown|preventDefault={() => dispatch("close")}>
+        <IoIosClose />
+      </icon>
+    {/if}
+    {#if showSettings}
+      <icon
+        class="small"
+        on:mousedown|preventDefault={() => dispatch("settings")}
+      >
+        <IoIosMenu />
+      </icon>
+    {/if}
+    {#if showMinimize}
+      <icon
+        class="minimize"
+        on:mousedown|preventDefault={() => {
+          minimized = !minimized;
+          dispatch("minimize", minimized);
+        }}
+      >
+        {#if minimized}
+          <IoIosArrowDown />
+        {:else}
+          <IoIosArrowUp />
+        {/if}
+      </icon>
+    {/if}
+  </icon-bar>
+
+  {#if title}
+    <lbl>
+      {title}
+      {#if subtitle}
+        <info>{subtitle}</info>
+      {/if}
+    </lbl>
+  {/if}
+  {#if !minimized}
+    <slot />
+  {/if}
+</pane>
 
 <style>
   pane {
@@ -45,60 +93,29 @@
     color: #eee;
   }
 
-  icon {
-    display: block;
+  icon-bar {
+    display: flex;
     position: absolute;
+    justify-content: flex-start;
+    flex-direction: row-reverse;
 
+    width: 100%;
     top: 2px;
-    right: var(--right);
+    right: 8px;
 
     cursor: pointer;
     pointer-events: all;
   }
-  icon.close {
+  icon {
     width: 24px;
     height: 24px;
+    margin-left: -2px;
+    margin-right: -2px;
+  }
+  icon.small {
+    transform: scale(0.75);
   }
   icon.minimize {
-    top: 6px;
-    width: 16px;
-    height: 16px;
+    transform: scale(0.68) translateY(-2px);
   }
 </style>
-
-<pane>
-  {#if showClose}
-    <icon
-      class="close"
-      on:mousedown|preventDefault={() => dispatch('close')}
-      style="right: 5px">
-      <IoIosClose />
-    </icon>
-  {/if}
-  {#if showMinimize}
-    <icon
-      class="minimize"
-      on:mousedown|preventDefault={() => {
-        minimized = !minimized;
-        dispatch('minimize', minimized);
-      }}
-      style={`right: ${showClose ? 28 : 5}px`}>
-      {#if minimized}
-        <IoIosArrowDown />
-      {:else}
-        <IoIosArrowUp />
-      {/if}
-    </icon>
-  {/if}
-  {#if title}
-    <lbl>
-      {title}
-      {#if subtitle}
-        <info>{subtitle}</info>
-      {/if}
-    </lbl>
-  {/if}
-  {#if !minimized}
-    <slot />
-  {/if}
-</pane>

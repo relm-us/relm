@@ -9,6 +9,8 @@
   export let Component;
   export let component;
 
+  let toolbarVisible = false;
+
   const dispatch = createEventDispatcher();
 
   const propVisible = (prop) => {
@@ -38,6 +40,10 @@
     dispatch("modified");
   };
 
+  const onSettings = () => {
+    toolbarVisible = !toolbarVisible;
+  };
+
   const canDestroy = () => {
     return !["Transform"].includes(Component.name);
   };
@@ -54,6 +60,37 @@
   }
 </script>
 
+<Pane
+  title={Component.name}
+  showClose={canDestroy()}
+  showMinimize={true}
+  showSettings={true}
+  on:close={() => dispatch("destroy")}
+  on:settings={onSettings}
+>
+  {#each Object.entries(Component.props) as [key, prop] (key)}
+    {#if propVisible(prop)}
+      <Property {key} {component} {prop} on:modified={onModified} />
+    {/if}
+  {/each}
+  {#if toolbarVisible}
+    <toolbar>
+      <Capsule
+        value="Debug"
+        editable={false}
+        on:mousedown={debugComponent}
+        cursor="pointer"
+      />
+      <Capsule
+        value="Modified"
+        editable={false}
+        on:mousedown={modifyComponent}
+        cursor="pointer"
+      />
+    </toolbar>
+  {/if}
+</Pane>
+
 <style>
   toolbar {
     display: flex;
@@ -62,19 +99,3 @@
     border-top: 1px solid #555;
   }
 </style>
-
-<Pane
-  title={Component.name}
-  showClose={canDestroy()}
-  showMinimize={true}
-  on:close={() => dispatch('destroy')}>
-  {#each Object.entries(Component.props) as [key, prop] (key)}
-    {#if propVisible(prop)}
-      <Property {key} {component} {prop} on:modified={onModified} />
-    {/if}
-  {/each}
-  <toolbar>
-    <Capsule value="Debug" on:mousedown={debugComponent} cursor="pointer" />
-    <Capsule value="Modified" on:mousedown={modifyComponent} cursor="pointer" />
-  </toolbar>
-</Pane>

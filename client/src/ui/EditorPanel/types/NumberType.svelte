@@ -2,6 +2,7 @@
   import { createEventDispatcher } from "svelte";
   import Capsule from "../Capsule.svelte";
   import { NumberDragger } from "../NumberDragger";
+  import { formatNumber } from "./formatNumber";
 
   export let key: string;
   export let component;
@@ -13,19 +14,6 @@
 
   let value;
   $: value = component[key];
-
-  function fmt(n) {
-    if (typeof n === "string") {
-      return n;
-    } else if (typeof n === "number") {
-      return n.toFixed(3);
-    } else if (n === undefined) {
-      return "[undefined]";
-    } else {
-      console.warn("unknown type of NumberType", n);
-      return "[unknown]";
-    }
-  }
 
   const onInputChange = (event) => {
     component[key] = parseFloat(event.target.value);
@@ -54,21 +42,38 @@
   });
 </script>
 
-<style>
-  div {
-    margin: 8px 0px 6px 16px;
-  }
-</style>
-
 <div>
-  {(prop.editor && prop.editor.label) || key}:
+  <div class="label">
+    {(prop.editor && prop.editor.label) || key}:
+  </div>
 
-  <Capsule
-    {editing}
-    on:mousedown={dragger.mousedown}
-    on:change={onInputChange}
-    on:cancel={onInputCancel}
-    value={fmt(value)} />
+  <div class="capsule">
+    <Capsule
+      {editing}
+      on:mousedown={dragger.mousedown}
+      on:change={onInputChange}
+      on:cancel={onInputCancel}
+      value={formatNumber(value, editing, 3)}
+    />
+  </div>
 </div>
 
 <svelte:window on:mousemove={dragger.mousemove} on:mouseup={dragger.mouseup} />
+
+<style>
+  div {
+    display: flex;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    align-items: center;
+  }
+
+  div.label {
+    margin-left: 16px;
+    flex-grow: 1;
+  }
+  div.capsule {
+    margin-left: 8px;
+    flex-grow: 1;
+  }
+</style>

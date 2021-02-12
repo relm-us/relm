@@ -48,8 +48,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-left: 16px;
-    margin-right: 16px;
+    margin: 2px 16px 8px 16px;
   }
   lbl {
     padding-right: 8px;
