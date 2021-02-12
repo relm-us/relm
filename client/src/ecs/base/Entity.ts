@@ -55,6 +55,11 @@ export class Entity {
     return ret ? component : this;
   }
 
+  addByName(componentName: string, values?, ret = false) {
+    const Component = this.world.components.getByName(componentName);
+    return this.add(Component, values, ret);
+  }
+
   // TODO: can we return type information here?
   get(Component: TypeOfComponent): any {
     return this.components.get(Component);

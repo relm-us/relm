@@ -11,10 +11,12 @@
 
   export let entity;
 
+  const dispatch = createEventDispatcher();
+
   let componentOptions;
   $: componentOptions = getComponents($worldManager, entity);
 
-  const dispatch = createEventDispatcher();
+  let selectedValue;
 
   const getComponents = (worldManager, entity) => {
     const entityComponentNames = entity.Components.map((c) => c.name);
@@ -29,7 +31,10 @@
           !entityComponentNames.includes(componentName)
         );
       })
-      .map(([componentName, fn]) => ({ label: componentName, value: fn }));
+      .map(([componentName, fn]) => ({
+        label: componentName,
+        value: (fn as any).name,
+      }));
     sortAlphabetically(components, (c) => c.label);
     return components;
   };
@@ -63,10 +68,15 @@
   };
 
   const onSelectNewComponent = ({ detail }) => {
-    const Component = detail.value;
-    entity.add(Component);
-    $worldManager.wdoc.syncFrom(entity);
-    dispatch("modified");
+    const componentName = detail.value;
+    setTimeout(() => {
+      entity.addByName(componentName);
+      $worldManager.wdoc.syncFrom(entity);
+      dispatch("modified");
+
+      componentOptions = getComponents($worldManager, entity);
+      selectedValue = undefined;
+    }, 300);
   };
 </script>
 
@@ -87,6 +97,7 @@
   </toolbar>
   <select-container>
     <Select
+      bind:selectedValue
       placeholder="Add Component..."
       isClearable={false}
       items={componentOptions}

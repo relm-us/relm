@@ -1,3 +1,10 @@
+2021-02-11
+- NEW: (Build Mode) There is now a "hamburger menu" on each component of the Editor. Opening it shows the Debug & Modified buttons (these are not used often).
+- CHANGED: (Build Mode) Editor UI has been tidied up. Numbers keep their precision; panes are more compact; better justification of color picker and editable numbers; color picker hex value uses fixed-width font.
+- CHANGED: (Build Mode) Removed "Thing" prefab from editor (it didn't do anything).
+- FIXED: (Build Mode) Drag-to-move and editing the Transform component attributes wasn't working properly due to the physics engine overwriting changes to these values.
+- FIXED: (Build Mode) Adding and removing components syncs with yjs doc and shows up in Editor panel.
+
 2021-02-10
 - FIXED: (Build Mode) Deleting any selected items would cause a JS error
 

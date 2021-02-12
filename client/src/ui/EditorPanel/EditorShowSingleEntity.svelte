@@ -38,6 +38,9 @@
 
   const destroyComponent = (entity, Component) => {
     entity.remove(Component);
+    $worldManager.wdoc.syncFrom(entity);
+    primaryComponents = primaryComponents;
+    secondaryComponents = secondaryComponents;
   };
 
   const detectInactive = (emitEntity) => {
@@ -59,6 +62,8 @@
 
   const onModified = () => {
     entity = entity;
+    primaryComponents = primaryComponents;
+    secondaryComponents = secondaryComponents;
   };
 
   const destroyEntity = () => {
