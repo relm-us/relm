@@ -12,7 +12,7 @@ const m4_3 = new Matrix4();
 const scale = new Vector3(1, 1, 1);
 
 export class PhysicsSystem extends System {
-  order = Groups.Simulation;
+  order = Groups.Presentation + 300;
 
   // Dynamically create the `default` query, since we don't necessarily know
   // which Transform component to use at static compile time.
