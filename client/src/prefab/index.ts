@@ -37,7 +37,6 @@ export const directory = [
   { name: "Box", prefab: makeBox },
   { name: "Ball", prefab: makeBall },
   { name: "Image", prefab: makeImage },
-  { name: "Thing", prefab: makeThing },
   { name: "Label", prefab: makeLabel },
   { name: "Pile of Boxes", prefab: makePileOfBoxes },
   { name: "YouTube TV", prefab: makeTv },
