@@ -22,37 +22,46 @@
 <div>
   <lbl>{(prop.editor && prop.editor.label) || key}:</lbl>
 
-  <ColorPicker
-    {value}
-    disableSwatches={true}
-    open={false}
-    width="20px"
-    height="20px"
-    on:change={({ detail }) => {
-      const cssColor = detail.indexOf("#") === 0 ? detail.slice(0, 7) : detail;
-      const color = new Color(cssColor);
-      const newValue = "#" + color.getHexString();
-      component[key] = newValue;
-      component.modified();
-      dispatch("modified");
-    }}
-  />
-
-  <color>{value}</color>
+  <color>
+    <color-value>{value}</color-value>
+    <ColorPicker
+      {value}
+      disableSwatches={true}
+      open={false}
+      width="20px"
+      height="20px"
+      on:change={({ detail }) => {
+        const cssColor =
+          detail.indexOf("#") === 0 ? detail.slice(0, 7) : detail;
+        const color = new Color(cssColor);
+        const newValue = "#" + color.getHexString();
+        component[key] = newValue;
+        component.modified();
+        dispatch("modified");
+      }}
+    />
+  </color>
 </div>
 
 <style>
   div {
-    margin-left: 16px;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
+    margin-left: 16px;
+    margin-right: 16px;
   }
   lbl {
     padding-right: 8px;
   }
   color {
-    padding-left: 8px;
+    display: flex;
+    align-items: center;
+  }
+  color-value {
+    padding-right: 8px;
+    font-family: Consolas, "Liberation Mono", Monaco, "Lucida Console",
+      monospace;
     font-size: 12px;
   }
 </style>
