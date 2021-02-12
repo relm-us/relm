@@ -36,15 +36,17 @@ export class ModelSystem extends System {
         `ModelSystem: ${entity.name} Model modified`,
         JSON.stringify(model.asset)
       );
-      const mesh = entity.get(ModelMesh)?.value;
-      if (mesh) {
-        mesh.parent.remove(mesh);
-        mesh.dispose?.();
-        mesh.geometry?.dispose();
-        mesh.material?.dispose();
+      if (entity.has(ModelMesh)) {
+        const mesh = entity.get(ModelMesh).value;
+        if (mesh) {
+          mesh.parent.remove(mesh);
+          mesh.dispose?.();
+          mesh.geometry?.dispose();
+          mesh.material?.dispose();
+        }
+        entity.remove(ModelMesh);
       }
-      entity.remove(ModelMesh);
-      entity.remove(ModelLoading);
+      if (entity.has(ModelLoading)) entity.remove(ModelLoading);
       this.build(entity);
     });
     this.queries.removedObj.forEach((entity) => {
