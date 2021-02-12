@@ -20,14 +20,14 @@ export function makeThing(
       position: new Vector3(x, y, z),
       scale: new Vector3(w, h, d),
     })
-    .add(TransformEffects, {
-      effects: [
-        {
-          function: "position",
-          params: { position: new Vector3(0, yOffset, 0) },
-        },
-      ],
-    })
+    // .add(TransformEffects, {
+    //   effects: [
+    //     {
+    //       function: "position",
+    //       params: { position: new Vector3(0, yOffset, 0) },
+    //     },
+    //   ],
+    // })
     .add(Model, {
       asset: new Asset(url),
     })

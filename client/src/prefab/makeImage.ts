@@ -32,16 +32,16 @@ export function makeImage(
     scale: new Vector3(w, h, d),
   });
 
-  if (yOffset !== 0) {
-    thing.add(TransformEffects, {
-      effects: [
-        {
-          function: "position",
-          params: { position: new Vector3(0, yOffset, 0) },
-        },
-      ],
-    });
-  }
+  // if (yOffset !== 0) {
+  //   thing.add(TransformEffects, {
+  //     effects: [
+  //       {
+  //         function: "position",
+  //         params: { position: new Vector3(0, yOffset, 0) },
+  //       },
+  //     ],
+  //   });
+  // }
 
   // Always add image
   thing.add(Image, {
