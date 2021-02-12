@@ -136,7 +136,7 @@
 
     if ($mode === "build") {
       if (mouseMode === "click") {
-        selectionLogic.mouseup();
+        selectionLogic.mouseup($wm.selection);
       } else if (mouseMode === "drag") {
         $wm.selection.syncEntities();
       }

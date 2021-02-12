@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
 import { Vector3 } from "three";
-import { selectedEntities } from "~/stores/selection";
+import { selectedEntities, selectedGroups } from "~/stores/selection";
 import { difference } from "~/utils/setOps";
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import { Outline } from "~/ecs/plugins/outline";
@@ -28,12 +28,27 @@ export class SelectionManager {
     return this.ids.map((id) => this.wdoc.world.entities.getById(id));
   }
 
-  clear() {
+  hasEntityId(entityId) {
+    return selectedEntities.has(entityId);
+  }
+
+  clear(groupsToo = false) {
     selectedEntities.clear();
+    if (groupsToo) {
+      selectedGroups.clear();
+    }
   }
 
   addEntityId(entityId) {
     selectedEntities.add(entityId);
+  }
+
+  addGroupId(groupId) {
+    selectedGroups.add(groupId);
+  }
+
+  deleteEntityId(entityId) {
+    selectedEntities.delete(entityId);
   }
 
   getFirst(_) {
@@ -70,8 +85,9 @@ export class SelectionManager {
   moveRelativeToSavedPositions(vector) {
     for (const entity of this.entities) {
       const position = entity.get(Transform).position;
-      if ((entity as any).savedPosition) {
-        position.copy((entity as any).savedPosition).add(vector);
+      const savedPos = (entity as any).savedPosition;
+      if (savedPos) {
+        position.copy(savedPos).add(vector);
       }
     }
   }
