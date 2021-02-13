@@ -3,6 +3,7 @@ import {
   Float32BufferAttribute,
   CubicBezierCurve3,
   Vector3,
+  MathUtils,
 } from "three";
 
 export function wallGeometryData(
@@ -12,10 +13,11 @@ export function wallGeometryData(
   convexity = 0,
   N = 6
 ) {
+  if (width <= 0) throw new Error(`width must be greater than 0`);
+  if (height <= 0) throw new Error(`height must be greater than 0`);
+  if (depth <= 0) throw new Error(`depth must be greater than 0`);
+  convexity = MathUtils.clamp(convexity, -1, 1);
   if (N < 1) throw new Error(`WallGeometry requries N >= 1`);
-
-  if (convexity < -1) convexity = -1;
-  if (convexity > 1) convexity = 1;
 
   // Make sure N is an integer
   N = Math.floor(N);
