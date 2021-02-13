@@ -1,3 +1,10 @@
+2021-02-12
+- NEW: (Build Mode) Walls! Create straight walls, or curved walls, using the Wall component. Walls can have convexity (e.g. bending in or out) and a number of segments. Currently, walls do not have images or colliders.
+- FIXED: (Build Mode) Outline is cleaned up after shape or wall is modified
+- FIXED: (Build Mode) Prefab objects should now mostly be "on the ground" (yOffset is configurable per-prefab-type).
+- FIXED: (Build Mode) When dragging numbers as sliders in the Editor panel, changes are reflected immediately in-scene.
+- CODE NOTES: Fixed StatsPane warnings in console; Removed unused ActionButton and createDemo.
+
 2021-02-11
 - NEW: (Build Mode) There is now a "hamburger menu" on each component of the Editor. Opening it shows the Debug & Modified buttons (these are not used often).
 - CHANGED: (Build Mode) Editor UI has been tidied up. Numbers keep their precision; panes are more compact; better justification of color picker and editable numbers; color picker hex value uses fixed-width font.
