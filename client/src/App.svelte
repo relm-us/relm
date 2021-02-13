@@ -109,7 +109,6 @@
     </overlay-center>
 
     <overlay-right>
-      <!-- <ActionButton /> -->
       <ConnectButton />
     </overlay-right>
   </overlay-content>
