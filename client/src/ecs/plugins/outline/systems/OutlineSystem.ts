@@ -59,7 +59,6 @@ export class OutlineSystem extends System {
   }
 
   removeOutline(entity) {
-    const object3d = entity.get(Object3D);
     const applied = entity.get(OutlineApplied);
     if (applied) {
       this.restoreState(applied.parent);

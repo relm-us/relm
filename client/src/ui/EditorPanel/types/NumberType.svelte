@@ -1,8 +1,8 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import Capsule from "../Capsule.svelte";
-  import { NumberDragger } from "../NumberDragger";
-  import { formatNumber } from "./formatNumber";
+  import { NumberDragger } from "./utils/NumberDragger";
+  import { formatNumber } from "./utils/formatNumber";
 
   export let key: string;
   export let component;
@@ -30,6 +30,7 @@
     getValue: () => value,
     onDrag: (newValue) => {
       component[key] = newValue;
+      component.modified();
     },
     onChange: (newValue) => {
       component[key] = newValue;
