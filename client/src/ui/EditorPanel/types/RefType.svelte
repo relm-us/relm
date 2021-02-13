@@ -8,14 +8,14 @@
   $$props;
 </script>
 
+<div>
+  {(prop.editor && prop.editor.label) || key}:
+
+  <Capsule editable={false} value="[Reference]" />
+</div>
+
 <style>
   div {
     margin: 8px 0px 6px 16px;
   }
 </style>
-
-<div>
-  {(prop.editor && prop.editor.label) || key}:
-
-  <Capsule value="[Reference]" />
-</div>

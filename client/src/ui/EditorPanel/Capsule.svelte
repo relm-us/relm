@@ -71,6 +71,7 @@
   }
   value {
     min-width: 30px;
+    min-height: 15px;
     padding: 2px 8px 2px 4px;
 
     border-top-right-radius: 4px;
@@ -81,6 +82,7 @@
     color: #eee;
 
     cursor: var(--cursor);
+    width: var(--value-width, inherit);
   }
   value.tag {
     min-width: 48px;
@@ -92,7 +94,7 @@
   input {
     background-color: rgba(0, 0, 0, 0);
     color: white;
-    width: var(--input-width, 60px);
+    width: var(--input-width, 100%);
     border: 0;
   }
 </style>

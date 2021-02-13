@@ -25,13 +25,6 @@
   };
 </script>
 
-<style>
-  div {
-    margin: 8px 0px 6px 16px;
-    --input-width: 120px;
-  }
-</style>
-
 <div>
   {(prop.editor && prop.editor.label) || key}:
 
@@ -40,5 +33,13 @@
     on:mousedown={() => (editing = true)}
     on:change={onInputChange}
     on:cancel={onInputCancel}
-    {value} />
+    {value}
+  />
 </div>
+
+<style>
+  div {
+    margin: 8px 0px 6px 16px;
+    --value-width: 100%;
+  }
+</style>
