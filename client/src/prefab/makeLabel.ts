@@ -11,6 +11,7 @@ export function makeLabel(
     x = 0,
     y = 1.5,
     z = 0,
+    yOffset = 0,
     text,
     fontSize,
     frameWidth = 200,
@@ -23,7 +24,7 @@ export function makeLabel(
   const scale = rectangleSize.x / frameWidth;
   const label = makeEntity(world, "Label")
     .add(Transform, {
-      position: new Vector3(x, y, z),
+      position: new Vector3(x, y + yOffset, z),
     })
     .add(Renderable, {
       kind: "LABEL",

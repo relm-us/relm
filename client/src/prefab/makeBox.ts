@@ -10,13 +10,14 @@ export function makeBox(
   world,
   {
     x = 0,
-    y = 0,
+    y = 0.5,
     z = 0,
     w = 1,
     h = 1,
     d = 1,
+    yOffset = 0,
     color = "white",
-    dynamic = true,
+    dynamic = false,
     name = "Box",
     metalness = 0.2,
     roughness = 0.8,
@@ -29,7 +30,7 @@ export function makeBox(
 
   const entity = makeEntity(world, name)
     .add(Transform, {
-      position: new Vector3(x, y, z),
+      position: new Vector3(x, y + yOffset, z),
     })
     .add(Shape, {
       color: "#" + linearColor.getHexString(),

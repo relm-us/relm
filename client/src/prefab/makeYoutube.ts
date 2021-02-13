@@ -7,7 +7,16 @@ import { makeEntity } from "./makeEntity";
 
 export function makeYoutube(
   world,
-  { x = 0, y = 0, z = 0, embedId, frameWidth, frameHeight, worldWidth }
+  {
+    x = 0,
+    y = 4,
+    z = 0,
+    yOffset = 0,
+    embedId,
+    frameWidth,
+    frameHeight,
+    worldWidth,
+  }
 ) {
   // YouTube Video
   const iframeRatio = frameWidth / frameHeight;
@@ -15,7 +24,7 @@ export function makeYoutube(
   const scale = rectangleSize.x / frameWidth;
   const video = makeEntity(world, "Video")
     .add(Transform, {
-      position: new Vector3(x, y, z),
+      position: new Vector3(x, y + yOffset, z),
     })
     .add(Renderable, {
       kind: "YOUTUBE",

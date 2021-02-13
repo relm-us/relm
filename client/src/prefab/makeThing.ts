@@ -11,28 +11,20 @@ import { makeEntity } from "./makeEntity";
 
 export function makeThing(
   world,
-  { x, y, z, w = 1, h = 1, d = 1, yOffset = 0, url }
+  { x, y = 0.5, z, w = 1, h = 1, d = 1, yOffset = 0, dynamic = false, url }
 ) {
   const thing = makeEntity(world, "Thing")
     .add(NormalizeMesh)
     .add(Transform, {
       // Put it in the corner
-      position: new Vector3(x, y, z),
+      position: new Vector3(x, y + yOffset, z),
       scale: new Vector3(w, h, d),
     })
-    // .add(TransformEffects, {
-    //   effects: [
-    //     {
-    //       function: "position",
-    //       params: { position: new Vector3(0, yOffset, 0) },
-    //     },
-    //   ],
-    // })
     .add(Model, {
       asset: new Asset(url),
     })
     .add(RigidBody, {
-      kind: "DYNAMIC",
+      kind: dynamic ? "DYNAMIC" : "STATIC",
     })
     .add(Collider, {
       kind: "BOX",

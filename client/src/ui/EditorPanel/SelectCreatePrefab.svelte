@@ -18,9 +18,9 @@
     const transform = $worldManager.avatar?.get(WorldTransform);
     if (transform) {
       const x = transform.position.x;
-      const y = transform.position.y - PLAYER_CENTER_HEIGHT + 0.5;
+      const y = transform.position.y - PLAYER_CENTER_HEIGHT;
       const z = transform.position.z;
-      let entities = prefab.prefab($worldManager.world, { x, y, z });
+      let entities = prefab.prefab($worldManager.world, { x, yOffset: y, z });
       if (!(entities instanceof Array)) entities = [entities];
 
       for (const entity of entities) {

@@ -7,7 +7,7 @@ import { makeEntity } from "./makeEntity";
 
 export function makeWebPage(
   world,
-  { x = 0, y = 0, z = 0, url, frameWidth, frameHeight, worldWidth }
+  { x = 0, y = 0, z = 0, yOffset = 0, url, frameWidth, frameHeight, worldWidth }
 ) {
   // Web Page
   const iframeRatio = frameWidth / frameHeight;
@@ -15,7 +15,7 @@ export function makeWebPage(
   const scale = rectangleSize.x / frameWidth;
   const page = makeEntity(world, "Web Page")
     .add(Transform, {
-      position: new Vector3(x, y, z),
+      position: new Vector3(x, y + yOffset, z),
     })
     .add(Renderable, {
       kind: "WEB_PAGE",
