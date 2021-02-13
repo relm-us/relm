@@ -23,6 +23,7 @@ export function makeBox(
     roughness = 0.8,
     emissive = "#000000",
     collider = true,
+    interaction = 0x00010001,
   }
 ) {
   const linearColor = new Color(color);
@@ -49,6 +50,7 @@ export function makeBox(
       .add(Collider, {
         kind: "BOX",
         boxSize: new Vector3(w, h, d),
+        interaction,
       });
   }
   return entity;

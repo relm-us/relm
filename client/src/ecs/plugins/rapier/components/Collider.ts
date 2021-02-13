@@ -52,12 +52,24 @@ export class Collider extends Component {
         requires: [{ prop: "kind", value: "CAPSULE" }],
       },
     },
+
     capsuleHeight: {
       type: NumberType,
       default: 1,
       editor: {
         label: "Height",
         requires: [{ prop: "kind", value: "CAPSULE" }],
+      },
+    },
+
+    // Rapier3D has optional rules that allow groups of colliders to interact
+    // See https://rapier.rs/javascript2d/globals.html#interactiongroups
+    interaction: {
+      type: NumberType,
+      default: 0x00010001,
+      editor: {
+        label: "Interaction Group Bits",
+        // input: "Bitfield",
       },
     },
   };

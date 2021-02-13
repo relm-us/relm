@@ -1,20 +1,37 @@
 <script lang="ts">
   import Button from "../Button";
   import { mode } from "~/stores/mode";
-  import { selectedEntities } from "~/stores/selection";
+  import { globalEvents } from "~/events";
 
   import IoIosBuild from "svelte-icons/io/IoIosBuild.svelte";
   import IoIosRocket from "svelte-icons/io/IoIosRocket.svelte";
 
   const playMode = () => {
-    $mode = "play";
-    selectedEntities.clear();
+    globalEvents.emit("switch-mode", "play");
   };
 
   const buildMode = () => {
-    $mode = "build";
+    globalEvents.emit("switch-mode", "build");
   };
 </script>
+
+<contain-build class:selected={$mode == "build"}>
+  <Button on:click={buildMode} style="min-width:80px">
+    <icon>
+      <IoIosBuild />
+    </icon>
+    Build
+  </Button>
+</contain-build>
+
+<contain-play class:selected={$mode == "play"}>
+  <Button on:click={playMode} style="min-width:80px">
+    <icon>
+      <IoIosRocket />
+    </icon>
+    Play
+  </Button>
+</contain-play>
 
 <style>
   icon {
@@ -41,21 +58,3 @@
     --bg-hover-color: var(--selected-red-hover);
   }
 </style>
-
-<contain-build class:selected={$mode == 'build'}>
-  <Button on:click={buildMode} style="min-width:80px">
-    <icon>
-      <IoIosBuild />
-    </icon>
-    Build
-  </Button>
-</contain-build>
-
-<contain-play class:selected={$mode == 'play'}>
-  <Button on:click={playMode} style="min-width:80px">
-    <icon>
-      <IoIosRocket />
-    </icon>
-    Play
-  </Button>
-</contain-play>

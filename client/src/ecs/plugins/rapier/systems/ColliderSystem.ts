@@ -61,6 +61,7 @@ export class ColliderSystem extends System {
     }
 
     colliderDesc.setDensity(spec.density);
+    colliderDesc.setCollisionGroups(spec.interaction);
 
     if (colliderRef) {
       world.removeCollider(colliderRef.value);

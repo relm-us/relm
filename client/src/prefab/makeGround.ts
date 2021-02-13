@@ -8,16 +8,13 @@ const groundSize = {
 };
 
 export function makeGround(world) {
-  const ground = makeBox(world, {
+  return makeBox(world, {
     name: "Ground",
     ...groundSize,
     y: -groundSize.h * 0.5,
     z: -groundSize.d * 0.25,
     color: "#55814e",
     dynamic: false,
-  });
-
-  ground.add(InvisibleToMouse);
-
-  return ground;
+    interaction: 0x00010003,
+  }).add(InvisibleToMouse);
 }

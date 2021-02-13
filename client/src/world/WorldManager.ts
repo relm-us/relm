@@ -12,14 +12,16 @@ import {
   makeStageAndActivate,
   makeGround,
 } from "~/prefab";
+import { World } from "~/ecs/base";
 import { Follow } from "~/ecs/plugins/follow";
 import { HeadController } from "~/ecs/plugins/player-control";
 import { SelectionManager } from "./SelectionManager";
 import { LoadingState } from "./LoadingState";
 import { ConnectOptions } from "~/stores/connection";
+import { Collider } from "~/ecs/plugins/rapier";
 
 export default class WorldManager {
-  world;
+  world: World & { physics: any; presentation: any; cssPresentation: any };
   viewport: HTMLElement;
   loading: LoadingState;
   state: Writable<WorldState>;
@@ -178,6 +180,18 @@ export default class WorldManager {
 
   depopulate() {
     this.world.reset();
+  }
+
+  disablePhysics() {
+    const collider = this.avatar.components.get(Collider);
+    collider.interaction = 0x00020001; // interact only with ground
+    collider.modified();
+  }
+
+  enablePhysics() {
+    const collider = this.avatar.components.get(Collider);
+    collider.interaction = 0x00010001; // interact with normal things
+    collider.modified();
   }
 
   countAssetsLoading() {
