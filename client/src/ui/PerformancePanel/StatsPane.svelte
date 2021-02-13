@@ -5,8 +5,8 @@
   export let title: string;
   export let minimized = true;
   export let dataStore;
-  export let value;
-  export let maximum;
+  export let value = undefined;
+  export let maximum = undefined;
 
   // ignore warning about missing props
   $$props;
