@@ -1,19 +1,19 @@
 import { System, Not, Modified, Groups } from "~/ecs/base";
 import { Object3D } from "~/ecs/plugins/core";
 import * as THREE from "three";
-import { VertexNormalsHelper } from "three/examples/jsm/helpers/VertexNormalsHelper";
+import { RigidBodyRef } from "~/ecs/plugins/rapier";
 
 import { isBrowser } from "~/utils/isBrowser";
-import { Wall, WallMesh } from "../components";
-import { WallGeometry } from "../WallGeometry";
+import { Wall, WallMesh, WallColliderRef } from "../components";
+import { WallGeometry, wallGeometryData } from "../WallGeometry";
 
-const geometryCache: Map<string, any> = new Map();
 export class WallSystem extends System {
   active = isBrowser();
   order = Groups.Initialization;
 
   static queries = {
     added: [Object3D, Wall, Not(WallMesh)],
+    needsCollider: [Wall, RigidBodyRef, Not(WallColliderRef)],
     modified: [Object3D, Modified(Wall), WallMesh],
     removedObj: [Not(Object3D), WallMesh],
     removed: [Object3D, Not(Wall), WallMesh],
@@ -31,8 +31,13 @@ export class WallSystem extends System {
       mesh.material.dispose();
       this.build(entity);
 
+      this.removeCollider(entity);
+
       // Notify outline to rebuild if necessary
       entity.getByName("Outline")?.modified();
+    });
+    this.queries.needsCollider.forEach((entity) => {
+      this.buildCollider(entity);
     });
     this.queries.removedObj.forEach((entity) => {
       const mesh = entity.get(WallMesh).value;
@@ -66,9 +71,8 @@ export class WallSystem extends System {
       roughness: wall.roughness,
       metalness: wall.metalness,
       emissive: wall.emissive,
-      // side: THREE.DoubleSide,
     };
-    // console.log("material", materialOpts);
+
     const material = new THREE.MeshStandardMaterial(materialOpts);
     const mesh = new THREE.Mesh(geometry, material);
     mesh.castShadow = true;
@@ -76,9 +80,42 @@ export class WallSystem extends System {
 
     object3d.add(mesh);
 
-    // const helper = new VertexNormalsHelper(mesh, 2, 0x00ff00);
-    // object3d.add(helper);
-
     entity.add(WallMesh, { value: mesh });
+  }
+
+  removeCollider(entity) {
+    const { world } = (this.world as any).physics;
+    const colliderRef = entity.get(WallColliderRef);
+    if (!colliderRef) return;
+
+    world.removeCollider(colliderRef.value);
+    entity.remove(WallColliderRef);
+  }
+
+  buildCollider(entity) {
+    const rigidBodyRef = entity.get(RigidBodyRef);
+
+    const { world, rapier } = (this.world as any).physics;
+
+    const wall = entity.get(Wall);
+    const { vertices, indices } = wallGeometryData(
+      wall.size.x,
+      wall.size.y,
+      wall.size.z,
+      wall.convexity,
+      wall.segments
+    );
+
+    const colliderDesc = rapier.ColliderDesc.trimesh(
+      new Float32Array(vertices),
+      new Uint32Array(indices)
+    );
+
+    const collider = world.createCollider(
+      colliderDesc,
+      rigidBodyRef.value.handle
+    );
+
+    entity.add(WallColliderRef, { value: collider });
   }
 }

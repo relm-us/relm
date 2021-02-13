@@ -4,22 +4,14 @@ import {
   CubicBezierCurve3,
   Vector3,
 } from "three";
-export function WallGeometry(
+
+export function wallGeometryData(
   width = 2,
   height = 2,
   depth = 0.25,
   convexity = 0,
   N = 6
 ) {
-  if (N < 1) throw new Error(`WallGeometry requries N >= 1`);
-
-  if (convexity < -1) convexity = -1;
-  if (convexity > 1) convexity = 1;
-
-  // Make sure N is an integer
-  N = Math.floor(N);
-
-  const geometry = new BufferGeometry();
   const normals = [];
   const vertices = [];
   const indices = [];
@@ -174,6 +166,33 @@ export function WallGeometry(
   indices.push(endStart2, endStart2 + 1, endStart2 + 2);
   indices.push(endStart2 + 2, endStart2 + 1, endStart2 + 3);
 
+  return { vertices, normals, indices };
+}
+
+export function WallGeometry(
+  width = 2,
+  height = 2,
+  depth = 0.25,
+  convexity = 0,
+  N = 6
+) {
+  if (N < 1) throw new Error(`WallGeometry requries N >= 1`);
+
+  if (convexity < -1) convexity = -1;
+  if (convexity > 1) convexity = 1;
+
+  // Make sure N is an integer
+  N = Math.floor(N);
+
+  const geometry = new BufferGeometry();
+
+  const { vertices, normals, indices } = wallGeometryData(
+    width,
+    height,
+    depth,
+    convexity,
+    N
+  );
   geometry.setIndex(indices);
   geometry.setAttribute("normal", new Float32BufferAttribute(normals, 3));
   geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3));
