@@ -12,6 +12,14 @@ export function wallGeometryData(
   convexity = 0,
   N = 6
 ) {
+  if (N < 1) throw new Error(`WallGeometry requries N >= 1`);
+
+  if (convexity < -1) convexity = -1;
+  if (convexity > 1) convexity = 1;
+
+  // Make sure N is an integer
+  N = Math.floor(N);
+
   const normals = [];
   const vertices = [];
   const indices = [];
@@ -176,14 +184,6 @@ export function WallGeometry(
   convexity = 0,
   N = 6
 ) {
-  if (N < 1) throw new Error(`WallGeometry requries N >= 1`);
-
-  if (convexity < -1) convexity = -1;
-  if (convexity > 1) convexity = 1;
-
-  // Make sure N is an integer
-  N = Math.floor(N);
-
   const geometry = new BufferGeometry();
 
   const { vertices, normals, indices } = wallGeometryData(
