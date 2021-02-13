@@ -13,6 +13,9 @@ export function WallGeometry(
 ) {
   if (N < 1) throw new Error(`WallGeometry requries N >= 1`);
 
+  if (convexity < -1) convexity = -1;
+  if (convexity > 1) convexity = 1;
+
   // Make sure N is an integer
   N = Math.floor(N);
 
@@ -21,11 +24,16 @@ export function WallGeometry(
   const vertices = [];
   const indices = [];
 
+  const controlPoint = (w) => {
+    const divisor = 3.5;
+    return new Vector3(w / divisor, 0, convexity * Math.abs(w) * 0.6);
+  };
+
   // The central curve is not drawn, but guides the inner and outer curves
   const centerCurve = new CubicBezierCurve3(
     new Vector3(-width / 2, 0, 0),
-    new Vector3(-width / 3, 0, (convexity * width) / 2),
-    new Vector3(width / 3, 0, (convexity * width) / 2),
+    controlPoint(-width),
+    controlPoint(width),
     new Vector3(width / 2, 0, 0)
   );
 
@@ -54,14 +62,14 @@ export function WallGeometry(
     .normalize();
 
   const createCurve = (d: number): CubicBezierCurve3 => {
-    const plus = new Vector3(0, 0, d);
+    const plus = new Vector3(0, 0, d / (1 - Math.abs(convexity) / 3.5));
     return new CubicBezierCurve3(
       new Vector3()
         .copy(orthoStart)
         .multiplyScalar(d)
         .add(centerCurvePoints[0]),
-      new Vector3(-width / 3, 0, (convexity * width) / 2).add(plus),
-      new Vector3(width / 3, 0, (convexity * width) / 2).add(plus),
+      controlPoint(-width).add(plus),
+      controlPoint(width).add(plus),
       new Vector3().copy(orthoEnd).multiplyScalar(d).add(centerCurvePoints[N])
     );
   };
