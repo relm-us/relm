@@ -29,6 +29,9 @@ export class ShapeSystem extends System {
       mesh.geometry.dispose();
       mesh.material.dispose();
       this.build(entity);
+
+      // Notify outline to rebuild if necessary
+      entity.getByName("Outline")?.modified();
     });
     this.queries.removedObj.forEach((entity) => {
       const mesh = entity.get(ShapeMesh).value;

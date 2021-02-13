@@ -5,7 +5,6 @@ import { System, Groups, Not, Modified } from "~/ecs/base";
 import { Mesh, Group, DoubleSide, MeshLambertMaterial } from "three";
 import { Object3D } from "~/ecs/plugins/core";
 import { Outline, OutlineApplied } from "../components";
-import { Shape } from "~/ecs/plugins/shape";
 
 function dashes(n) {
   return Array.apply(null, { length: n })
@@ -16,26 +15,22 @@ function dashes(n) {
 }
 
 export class OutlineSystem extends System {
-  order = Groups.Initialization - 200;
+  order = Groups.Initialization + 50;
 
   static queries = {
     added: [Outline, Not(OutlineApplied), Object3D],
     removed: [Not(Outline), OutlineApplied],
-
-    shapeModified: [Object3D, Modified(Shape), OutlineApplied],
-    // shapeRemoved: [Object3D, Not(Shape), OutlineApplied],
-    // objectRemoved: [Not(Object3D), Outline],
+    modified: [Modified(Outline)],
   };
 
   update() {
+    this.queries.modified.forEach((entity) => {
+      this.removeOutline(entity);
+    });
     this.queries.added.forEach((entity) => {
       this.addOutline(entity);
     });
     this.queries.removed.forEach((entity) => {
-      this.removeOutline(entity);
-    });
-
-    this.queries.shapeModified.forEach((entity) => {
       this.removeOutline(entity);
     });
   }
@@ -56,7 +51,10 @@ export class OutlineSystem extends System {
         outline.thickness
       );
       object3d.value.add(outlineObject3d);
-      entity.add(OutlineApplied, { object: outlineObject3d });
+      entity.add(OutlineApplied, {
+        object: outlineObject3d,
+        parent: object3d.value,
+      });
     }
   }
 
@@ -64,7 +62,7 @@ export class OutlineSystem extends System {
     const object3d = entity.get(Object3D);
     const applied = entity.get(OutlineApplied);
     if (applied) {
-      this.restoreState(object3d.value);
+      this.restoreState(applied.parent);
       applied.object.parent.remove(applied.object);
       entity.remove(OutlineApplied);
     }

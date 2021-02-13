@@ -5,5 +5,8 @@ export class OutlineApplied extends StateComponent {
     object: {
       type: RefType,
     },
+    parent: {
+      type: RefType,
+    },
   };
 }
