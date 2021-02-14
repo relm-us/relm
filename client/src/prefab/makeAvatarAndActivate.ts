@@ -17,11 +17,11 @@ import {
   Collider,
   Impactable,
 } from "~/ecs/plugins/rapier";
-import { TransformEffects } from "~/ecs/plugins/transform-effects";
 
 import { keyE, keyQ } from "~/input";
 
 import { makeEntity, makeBall } from "./index";
+import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
 
 export function makeAvatarAndActivate(
   world,
@@ -49,33 +49,11 @@ export function makeAvatarAndActivate(
       mass: 0.5,
     })
     .add(Collider, {
-      // shape: "BOX",
-      // boxSize: new Vector3(1, 1, 1),
       shape: "CAPSULE",
       capsuleHeight: 0.8,
       capsuleRadius: 0.36,
     })
-    // .add(TransformEffects, {
-    //   effects: [
-    //     { function: "position", params: { position: new Vector3(0, 0, 0) } },
-    //     {
-    //       function: "oscillate-scale",
-    //       params: {
-    //         phase: 0,
-    //         min: new Vector3(0.99, 1, 0.99),
-    //         max: new Vector3(1.02, 1, 1.02),
-    //       },
-    //     },
-    //     {
-    //       function: "oscillate-scale",
-    //       params: {
-    //         phase: Math.PI,
-    //         min: new Vector3(1, 0.99, 1),
-    //         max: new Vector3(1, 1.01, 1),
-    //       },
-    //     },
-    //   ],
-    // })
+    .add(InvisibleToMouse)
     .activate();
 
   // Make debugging easier
@@ -88,22 +66,11 @@ export function makeAvatarAndActivate(
       position: new Vector3(0, 0.85, 0),
       scale: new Vector3(0.6, 0.6, 0.6),
     })
-    // .add(TransformEffects, {
-    //   effects: [
-    //     {
-    //       function: "oscillate-position",
-    //       params: {
-    //         phase: Math.PI,
-    //         min: new Vector3(0, 0.0, 0),
-    //         max: new Vector3(0, 0.02, 0),
-    //       },
-    //     },
-    //   ],
-    // })
     .add(Model, {
       asset: new Asset("/head.glb"),
     })
     .add(NormalizeMesh)
+    .add(InvisibleToMouse)
     .activate();
   head.setParent(avatar);
 
@@ -141,6 +108,7 @@ export function makeAvatarAndActivate(
       pointerPlaneEntity: avatar.id,
       keyStore: keyE,
     })
+    .add(InvisibleToMouse)
     .activate();
 
   // Right Hand (from avatar's point of view)
@@ -160,6 +128,7 @@ export function makeAvatarAndActivate(
       pointerPlaneEntity: avatar.id,
       keyStore: keyQ,
     })
+    .add(InvisibleToMouse)
     .activate();
 
   // Move these things as a unit on portal
