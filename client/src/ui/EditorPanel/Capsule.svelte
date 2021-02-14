@@ -78,6 +78,7 @@
     border-bottom-right-radius: 4px;
 
     text-align: center;
+    word-break: break-all;
     background-color: rgba(255, 255, 255, 0.25);
     color: #eee;
 
