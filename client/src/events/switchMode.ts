@@ -3,8 +3,6 @@ import { mode } from "~/stores/mode";
 import { worldManager } from "~/stores/worldManager";
 
 export function onSwitchMode(switchTo) {
-  console.log("switchTo", switchTo);
-
   if (!switchTo) {
     const $mode = get(mode);
     if ($mode === "play") switchTo = "build";
