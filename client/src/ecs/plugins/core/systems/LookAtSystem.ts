@@ -1,17 +1,16 @@
-import * as THREE from "three";
-import { System, Groups } from "~/ecs/base";
+import { Vector3, Matrix4, Quaternion } from "three";
+import { System, Groups, Entity } from "~/ecs/base";
 
 import { IS_BROWSER } from "../utils";
-import { Transform, WorldTransform, LookAt, LookAtCamera } from "../components";
+import { Transform, WorldTransform, LookAt } from "../components";
 import { Presentation } from "../Presentation";
-import { Queries } from "~/ecs/base/Query";
 
-const m1 = new THREE.Matrix4();
-const q1 = new THREE.Quaternion();
-const targetPosition = new THREE.Vector3();
-const position = new THREE.Vector3();
-const up = new THREE.Vector3(0, 1, 0);
-const delta = new THREE.Vector3();
+const m1 = new Matrix4();
+const q1 = new Quaternion();
+const targetPosition = new Vector3();
+const position = new Vector3();
+const up = new Vector3(0, 1, 0);
+const delta = new Vector3();
 
 export class LookAtSystem extends System {
   presentation: Presentation;
@@ -20,9 +19,8 @@ export class LookAtSystem extends System {
   active = IS_BROWSER;
   order = Groups.Initialization;
 
-  static queries: Queries = {
+  static queries = {
     targeted: [LookAt],
-    cameras: [LookAtCamera],
   };
 
   init({ presentation }) {
@@ -35,17 +33,12 @@ export class LookAtSystem extends System {
     this.cameraId = this.presentation.camera.parent?.userData.entityId;
 
     this.queries.targeted.forEach((entity) => {
-      const spec = entity.get(LookAt);
-      this.lookAt(entity, spec.entity, spec.limit);
-    });
-
-    this.queries.cameras.forEach((entity) => {
-      const { limit } = entity.get(LookAtCamera);
-      this.lookAt(entity, this.cameraId, limit);
+      const { target, limit, offset } = entity.get(LookAt);
+      this.lookAt(entity, target, limit, offset);
     });
   }
 
-  lookAt(entity, targetId, limit) {
+  lookAt(entity: Entity, targetId: string, limit: string, offset: Vector3) {
     const transform = entity.get(Transform);
     const world = entity.get(WorldTransform);
     const targetEntity = this.world.entities.getById(targetId);
@@ -76,6 +69,8 @@ export class LookAtSystem extends System {
       delta.copy(targetPosition).sub(position).multiplyScalar(2);
       targetPosition.sub(delta);
     }
+
+    targetPosition.add(offset);
 
     m1.lookAt(targetPosition, position, up);
     transform.rotation.setFromRotationMatrix(m1);

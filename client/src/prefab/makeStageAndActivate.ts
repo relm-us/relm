@@ -15,7 +15,7 @@ export function makeStageAndActivate(world, avatar) {
       position: cameraPosition,
     })
     .add(LookAt, {
-      entity: avatar.id,
+      target: avatar.id,
     })
     .add(Follow, {
       entity: avatar.id,
