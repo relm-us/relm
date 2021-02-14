@@ -1,8 +1,13 @@
+2021-02-14
+- FIXED: (Build Mode) Capsule-shaped Colliders weren't showing their radius/height parameters in the Collider component.
+
 2021-02-13
 - NEW: Walls now have colliders!
 - NEW: (Build Mode) Avatar does not collide with things when in build mode (except for the ground).
 - NEW: (Build Mode) Colliders are visible! For example, even if the object has no Shape component, or if the Collider is a different kind or size than the Shape, you can see what where the collider is. Note: this makes it possible to remove a Shape component and still be able to click on an "invisible" object that has only a Collider.
+- NEW: (Build Mode) Colliders now have a "Collide in Build Mode" toggle. Useful for floors or other things that need to keep the Avatar from falling through things in Build Mode.
 - NEW: (Build Mode) Avatar becomes ghost-like (translucent) as a visual indicator that you can now "go through" things.
+- CHANGED: Colliders scale with the size of the object as specified by the Transform component's scale x/y/z.
 - CHANGED: (Build Mode) String, Asset URL, and Reference input types have 100% width.
 - FIXED: Walls, avatar hands don't collide.
 - FIXED: (Build Mode) You can no longer select the avatar; also, you can't accidentally create inactive avatar bodies.

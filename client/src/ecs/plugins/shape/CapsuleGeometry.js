@@ -19,7 +19,6 @@ export function CapsuleGeometry(radius = 1, height = 2, N = 12) {
   const PID2 = 1.570796326794896619231322;
 
   const normals = [];
-  console.log("CapsuleGeom", radius, height, N);
 
   // top cap
   for (let i = 0; i <= N / 4; i++) {

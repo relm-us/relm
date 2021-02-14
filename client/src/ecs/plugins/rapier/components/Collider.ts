@@ -53,7 +53,7 @@ export class Collider extends Component {
       default: 0.5,
       editor: {
         label: "Radius",
-        requires: [{ prop: "kind", value: "CAPSULE" }],
+        requires: [{ prop: "shape", value: "CAPSULE" }],
       },
     },
 
@@ -62,7 +62,7 @@ export class Collider extends Component {
       default: 1,
       editor: {
         label: "Height",
-        requires: [{ prop: "kind", value: "CAPSULE" }],
+        requires: [{ prop: "shape", value: "CAPSULE" }],
       },
     },
 
