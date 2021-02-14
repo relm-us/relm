@@ -1,4 +1,8 @@
 2021-02-14
+- CHANGED: Brighter lighting.
+- FIXED: (Build Mode) High-precision numbers are kept when using text entry. (e.g. Rotation & Scale values of Transform component).
+- FIXED: (Build Mode) Can't enter non-numeric values where you shouldn't. Fixes issue that could make entire relm crash.
+- FIXED: (Build Mode) Long text in Asset type will now wrap, e.g. URLs.
 - FIXED: (Build Mode) Capsule-shaped Colliders weren't showing their radius/height parameters in the Collider component.
 
 2021-02-13

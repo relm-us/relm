@@ -22,13 +22,14 @@
   import { world } from "~/stores/world";
   import { mode } from "~/stores/mode";
   import { runCommand } from "~/commands";
+  import { globalEvents } from "~/events";
 
   type PanelType = "collections" | "editor" | "export" | "performance";
 
   let openPanel: PanelType = "collections";
 
   const playMode = () => {
-    $mode = "play";
+    globalEvents.emit("switch-mode", "play");
   };
 
   const onUpload = ({ detail }) => {
