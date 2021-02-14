@@ -84,8 +84,10 @@ export class Collider extends Component {
       // See https://rapier.rs/javascript2d/globals.html#interactiongroups
       default: 0x00010001,
       editor: {
-        label: "Interaction Group Bits",
-        // input: "Bitfield",
+        label: "Collide in Build Mode",
+        input: "Boolean",
+        inputTrue: 0x00010003,
+        inputFalse: 0x00010001,
       },
     },
   };

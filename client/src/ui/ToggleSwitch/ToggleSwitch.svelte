@@ -11,6 +11,16 @@
   };
 </script>
 
+<container on:mousedown|stopPropagation={toggle}>
+  <toggle class:enabled>
+    <knob class:enabled />
+  </toggle>
+
+  <lbl>
+    {#if enabled}On{:else}Off{/if}
+  </lbl>
+</container>
+
 <style>
   container {
     display: flex;
@@ -45,19 +55,10 @@
 
   knob.enabled {
     left: 26px;
+    background-color: rgba(140, 215, 100, 1);
   }
 
   lbl {
     margin-left: 12px;
   }
 </style>
-
-<container on:mousedown|stopPropagation={toggle}>
-  <toggle class:enabled>
-    <knob class:enabled />
-  </toggle>
-
-  <lbl>
-    {#if enabled}On{:else}Off{/if}
-  </lbl>
-</container>
