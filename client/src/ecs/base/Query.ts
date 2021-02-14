@@ -1,6 +1,7 @@
 import { World } from "./World";
 import { Archetype } from "./Archetype";
 import { Component, ComponentClass } from "./Component";
+import { Entity } from "./Entity";
 
 export type Predicate = {
   Component: typeof Component;
@@ -51,7 +52,7 @@ export class Query {
     return false;
   }
 
-  forEach(callback) {
+  forEach(callback: (entity: Entity) => void) {
     if (this.Modified.length) {
       this._forEachModified(callback);
     } else {
