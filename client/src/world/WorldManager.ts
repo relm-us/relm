@@ -182,16 +182,18 @@ export default class WorldManager {
     this.world.reset();
   }
 
-  disablePhysics() {
-    const collider = this.avatar.components.get(Collider);
-    collider.interaction = 0x00020001; // interact only with ground
-    collider.modified();
-  }
+  enableAvatarPhysics(enabled = true) {
+    const entities = [this.avatar, ...this.avatar.subgroup];
+    for (const entity of entities) {
+      const collider = entity.components.get(Collider);
 
-  enablePhysics() {
-    const collider = this.avatar.components.get(Collider);
-    collider.interaction = 0x00010001; // interact with normal things
-    collider.modified();
+      // prettier-ignore
+      collider.interaction = enabled ?
+      0x00010001 : // interact with normal things
+      0x00020001 ; // interact only with ground
+
+      collider.modified();
+    }
   }
 
   // Make the avatar translucent or opaque

@@ -14,11 +14,11 @@ export function onSwitchMode(switchTo) {
   if (switchTo === "play") {
     mode.set("play");
     $wm.selection.clear();
-    $wm.enablePhysics();
+    $wm.enableAvatarPhysics(true);
     $wm.ghost(false);
   } else if (switchTo === "build") {
     mode.set("build");
-    $wm.disablePhysics();
+    $wm.enableAvatarPhysics(false);
     $wm.ghost(true);
   } else {
     throw new Error(`Unknown mode to switch to: ${switchTo}`);
