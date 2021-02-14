@@ -1,6 +1,7 @@
 export function formatNumber(n, editing, digits = 1) {
   if (typeof n === "string") {
-    return n;
+    return 0;
+    // return n;
   } else if (typeof n === "number") {
     const fixed = n.toFixed(digits);
     if (editing) {

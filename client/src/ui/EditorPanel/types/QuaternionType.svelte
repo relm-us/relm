@@ -28,13 +28,16 @@
   }
 
   const onInputChange = (dimension) => (event) => {
-    value[dimension] = parseFloat(event.target.value);
-    q1.setFromEuler(value);
-    component[key].copy(q1);
+    const newValue = parseFloat(event.target.value);
+    if (!Number.isNaN(newValue)) {
+      value[dimension] = newValue;
+      q1.setFromEuler(value);
+      component[key].copy(q1);
 
-    component.modified();
-    dispatch("modified");
-    editing[dimension] = false;
+      component.modified();
+      dispatch("modified");
+      editing[dimension] = false;
+    }
   };
 
   const onInputCancel = (dimension) => (event) => {

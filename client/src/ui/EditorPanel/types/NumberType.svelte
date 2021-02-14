@@ -16,10 +16,13 @@
   $: value = component[key];
 
   const onInputChange = (event) => {
-    component[key] = parseFloat(event.target.value);
-    component.modified();
-    dispatch("modified");
-    editing = false;
+    const newValue = parseFloat(event.target.value);
+    if (!Number.isNaN(newValue)) {
+      component[key] = newValue;
+      component.modified();
+      dispatch("modified");
+      editing = false;
+    }
   };
 
   const onInputCancel = (event) => {
@@ -43,7 +46,7 @@
   });
 </script>
 
-<div>
+<container>
   <div class="label">
     {(prop.editor && prop.editor.label) || key}:
   </div>
@@ -57,24 +60,22 @@
       value={formatNumber(value, editing, 3)}
     />
   </div>
-</div>
+</container>
 
 <svelte:window on:mousemove={dragger.mousemove} on:mouseup={dragger.mouseup} />
 
 <style>
-  div {
+  container {
     display: flex;
-    flex-wrap: wrap;
-    flex-grow: 1;
+    flex-wrap: nowrap;
     align-items: center;
+    justify-content: space-between;
   }
 
   div.label {
     margin-left: 16px;
-    flex-grow: 1;
   }
   div.capsule {
     margin-left: 8px;
-    flex-grow: 1;
   }
 </style>

@@ -21,10 +21,13 @@
   $: value = component[key];
 
   const onInputChange = (dimension) => (event) => {
-    component[key][dimension] = parseFloat(event.target.value);
-    component.modified();
-    dispatch("modified");
-    editing[dimension] = false;
+    const newValue = parseFloat(event.target.value);
+    if (!Number.isNaN(newValue) && component[key][dimension] !== newValue) {
+      component[key][dimension] = newValue;
+      component.modified();
+      dispatch("modified");
+      editing[dimension] = false;
+    }
   };
 
   const onInputCancel = (dimension) => (event) => {

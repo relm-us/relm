@@ -60,6 +60,8 @@
     margin: 8px 0px 6px 16px;
   }
   div.switch {
+    display: flex;
+    justify-content: center;
     margin-top: 4px;
   }
 </style>
