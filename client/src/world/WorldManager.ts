@@ -194,6 +194,32 @@ export default class WorldManager {
     collider.modified();
   }
 
+  // Make the avatar translucent or opaque
+  ghost(enabled = true, opacity = 0.5) {
+    const entities = [this.avatar, ...this.avatar.subgroup];
+
+    for (const entity of entities) {
+      const parent = entity.getByName("Object3D").value;
+
+      parent.traverse((child) => {
+        if (child.isMesh) {
+          if (enabled) {
+            child.userData.ghost = { opacity: child.material.opacity };
+          }
+
+          child.material.transparent = enabled;
+          child.material.opacity = enabled
+            ? opacity
+            : child.userData.ghost.opacity;
+
+          if (!enabled) {
+            delete child.userData.ghost;
+          }
+        }
+      });
+    }
+  }
+
   countAssetsLoading() {
     let count = 0;
     this.world.entities.entities.forEach((e) => {
