@@ -17,6 +17,10 @@ export class Shape extends Component {
         ],
       },
     },
+
+    /**
+     * Box Properties
+     */
     boxSize: {
       type: Vector3Type,
       default: new Vector3(1, 1, 1),
@@ -25,6 +29,11 @@ export class Shape extends Component {
         requires: [{ prop: "kind", value: "BOX" }],
       },
     },
+
+    /**
+     * Sphere Properties
+     */
+
     sphereRadius: {
       type: NumberType,
       default: 0.5,
@@ -33,6 +42,7 @@ export class Shape extends Component {
         requires: [{ prop: "kind", value: "SPHERE" }],
       },
     },
+
     sphereWidthSegments: {
       type: NumberType,
       default: 16,
@@ -41,6 +51,7 @@ export class Shape extends Component {
         requires: [{ prop: "kind", value: "SPHERE" }],
       },
     },
+
     sphereHeightSegments: {
       type: NumberType,
       default: 12,
@@ -49,6 +60,11 @@ export class Shape extends Component {
         requires: [{ prop: "kind", value: "SPHERE" }],
       },
     },
+
+    /**
+     * Capsule Properties
+     */
+
     capsuleRadius: {
       type: NumberType,
       default: 0.5,
@@ -57,6 +73,7 @@ export class Shape extends Component {
         requires: [{ prop: "kind", value: "CAPSULE" }],
       },
     },
+
     capsuleHeight: {
       type: NumberType,
       default: 1,
@@ -65,6 +82,7 @@ export class Shape extends Component {
         requires: [{ prop: "kind", value: "CAPSULE" }],
       },
     },
+
     capsuleSegments: {
       type: NumberType,
       default: 5,
@@ -73,6 +91,10 @@ export class Shape extends Component {
         requires: [{ prop: "kind", value: "CAPSULE" }],
       },
     },
+
+    /**
+     * General Properties
+     */
     color: {
       type: StringType,
       default: "#333333",
@@ -81,6 +103,7 @@ export class Shape extends Component {
         input: "Color",
       },
     },
+
     emissive: {
       type: StringType,
       default: "#000000",
@@ -89,6 +112,7 @@ export class Shape extends Component {
         input: "Color",
       },
     },
+
     roughness: {
       type: NumberType,
       default: 0.8,
@@ -96,6 +120,7 @@ export class Shape extends Component {
         label: "Roughness",
       },
     },
+
     metalness: {
       type: NumberType,
       default: 0.9,

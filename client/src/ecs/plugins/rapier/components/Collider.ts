@@ -18,13 +18,9 @@ export class Collider extends Component {
       },
     },
 
-    density: {
-      type: NumberType,
-      default: 0.4,
-      editor: {
-        label: "Density",
-      },
-    },
+    /**
+     * Box Properties
+     */
 
     boxSize: {
       type: Vector3Type,
@@ -35,6 +31,10 @@ export class Collider extends Component {
       },
     },
 
+    /**
+     * Sphere Properties
+     */
+
     sphereRadius: {
       type: NumberType,
       default: 0.5,
@@ -43,6 +43,10 @@ export class Collider extends Component {
         requires: [{ prop: "shape", value: "SPHERE" }], // TODO: fix and re-test as it is broken
       },
     },
+
+    /**
+     * Capsule Properties
+     */
 
     capsuleRadius: {
       type: NumberType,
@@ -62,10 +66,22 @@ export class Collider extends Component {
       },
     },
 
-    // Rapier3D has optional rules that allow groups of colliders to interact
-    // See https://rapier.rs/javascript2d/globals.html#interactiongroups
+    /**
+     * General Properties
+     */
+
+    density: {
+      type: NumberType,
+      default: 0.4,
+      editor: {
+        label: "Density",
+      },
+    },
+
     interaction: {
       type: NumberType,
+      // Rapier3D has optional rules that allow groups of colliders to interact
+      // See https://rapier.rs/javascript2d/globals.html#interactiongroups
       default: 0x00010001,
       editor: {
         label: "Interaction Group Bits",
