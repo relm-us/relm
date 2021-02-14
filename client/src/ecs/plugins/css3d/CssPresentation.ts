@@ -19,7 +19,8 @@ export class CssPresentation {
     this.size = { width: 1, height: 1 };
 
     this.renderer = this.createRenderer();
-    this.renderer.outputEncoding = sRGBEncoding;
+    // TODO: Remove this--not necessary?
+    // this.renderer.outputEncoding = sRGBEncoding;
     this.camera = this.createCamera();
     this.scene = world.presentation.scene;
 

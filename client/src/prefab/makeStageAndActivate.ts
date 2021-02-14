@@ -25,16 +25,13 @@ export function makeStageAndActivate(world, avatar) {
     .add(Camera)
     .activate();
 
-  const lightOffset = new Vector3(-5, 5, 0);
+  const lightOffset = new Vector3(-5, 5, 2);
   const lightPosition = new Vector3().add(cameraPosition).add(lightOffset);
   const shadowSize = 7.5;
   const light = makeEntity(world, "DirectionalLight")
     .add(Transform, {
       position: lightPosition,
     })
-    // .add(LookAt, {
-    //   entity: avatar.id,
-    // })
     .add(Follow, {
       entity: camera.id,
       limit: "XYZ_AXIS",
@@ -42,7 +39,8 @@ export function makeStageAndActivate(world, avatar) {
     })
     .add(DirectionalLight, {
       target: avatar.id,
-      color: 0x999999,
+      color: 0xffffff,
+      intensity: 2.5,
       shadowLeft: -shadowSize,
       shadowRight: shadowSize,
       shadowTop: shadowSize,
@@ -53,17 +51,5 @@ export function makeStageAndActivate(world, avatar) {
     })
     .activate();
 
-  const sunLight = makeEntity(world, "DirectionalLight")
-    .add(Transform, {
-      position: new Vector3(5, 10, -20),
-    })
-    .add(Follow, {
-      entity: avatar.id,
-    })
-    // .add(DirectionalLight, {
-    //   color: 0xdddddd,
-    // })
-    .activate();
-
-  return { camera, light, sunLight };
+  return { camera, light };
 }

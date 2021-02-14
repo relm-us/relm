@@ -5,6 +5,7 @@ import {
   Fog,
   FogExp2,
   Color,
+  AmbientLight,
   HemisphereLight,
   VSMShadowMap,
   PCFShadowMap,
@@ -75,9 +76,11 @@ export function createScene() {
 
   // scene.fog = new FogExp2(0xe5e0dd, 0.022);
 
-  const hemiLight = new HemisphereLight(0xffffff, 0xffffff);
-  hemiLight.position.set(0, 20, 20);
-  scene.add(hemiLight);
+  // const hemiLight = new HemisphereLight(0xffffff, 0xffffff, 2);
+  // scene.add(hemiLight);
+
+  const ambientLight = new AmbientLight(0xffffff, 1);
+  scene.add(ambientLight);
 
   return scene;
 }

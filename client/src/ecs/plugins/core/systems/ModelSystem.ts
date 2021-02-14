@@ -5,6 +5,7 @@ import { IS_BROWSER } from "../utils";
 import { Object3D, Model, ModelLoading, ModelMesh } from "../components";
 import { Presentation } from "../Presentation";
 import { Queries } from "~/ecs/base/Query";
+import { traverseMaterials } from "~/utils/traverseMaterials";
 
 let ids = 0;
 
@@ -87,6 +88,7 @@ export class ModelSystem extends System {
     let mesh;
     try {
       mesh = await this.presentation.load(asset.url);
+      this.applyMeshSettings(mesh);
     } catch (error) {
       console.error(error);
       return;
@@ -109,5 +111,14 @@ export class ModelSystem extends System {
     entity.remove(ModelLoading);
     object3d.add(mesh);
     entity.add(ModelMesh, { value: mesh });
+  }
+
+  applyMeshSettings(mesh) {
+    const encoding = THREE.sRGBEncoding;
+    traverseMaterials(mesh, (material) => {
+      if (material.map) material.map.encoding = encoding;
+      if (material.emissiveMap) material.emissiveMap.encoding = encoding;
+      if (material.map || material.emissiveMap) material.needsUpdate = true;
+    });
   }
 }
