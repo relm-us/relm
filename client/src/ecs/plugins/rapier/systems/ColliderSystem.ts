@@ -1,5 +1,5 @@
 import { BufferGeometry, Color, Mesh, MeshStandardMaterial } from "three";
-import { System, Groups, Not, Modified } from "~/ecs/base";
+import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import {
   RigidBody,
   RigidBodyRef,
@@ -7,12 +7,14 @@ import {
   ColliderRef,
   ColliderVisible,
 } from "../components";
-import { Object3D } from "~/ecs/plugins/core";
+import { Object3D, Transform, WorldTransform } from "~/ecs/plugins/core";
 import { ColliderDesc as RapierColliderDesc } from "@dimforge/rapier3d";
 import { getGeometry } from "~/ecs/plugins/shape/ShapeCache";
 import { get } from "svelte/store";
 import { mode } from "~/stores/mode";
 import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
+
+const MIN_SIZE = 0.01;
 
 function colliderToShape(collider) {
   return {
@@ -28,11 +30,12 @@ function colliderToShape(collider) {
 }
 
 export class ColliderSystem extends System {
-  order = Groups.Initialization + 10; // After RigidBodySystem
+  order = Groups.Presentation + 250; // After WorldTransform
 
   static queries = {
     added: [Collider, Not(ColliderRef), RigidBodyRef],
     modifiedBody: [ColliderRef, Modified(RigidBody)],
+    modifiedTransform: [ColliderRef, Modified(Transform)],
     modified: [Modified(Collider), RigidBodyRef],
     removed: [Not(Collider), ColliderRef],
 
@@ -48,6 +51,9 @@ export class ColliderSystem extends System {
       this.build(entity);
     });
     this.queries.modifiedBody.forEach((entity) => {
+      this.remove(entity);
+    });
+    this.queries.modifiedTransform.forEach((entity) => {
       this.remove(entity);
     });
     // replace ColliderRef with new spec
@@ -71,32 +77,46 @@ export class ColliderSystem extends System {
     }
   }
 
-  build(entity) {
+  build(entity: Entity) {
     const spec = entity.get(Collider);
     const rigidBodyRef = entity.get(RigidBodyRef);
     const colliderRef = entity.get(ColliderRef);
     const { world, rapier } = (this.world as any).physics;
 
+    const worldTransform = entity.get(WorldTransform);
+
     // Create a cuboid collider attached to rigidBody.
     let colliderDesc: RapierColliderDesc;
+    const scale = worldTransform.scale;
     switch (spec.shape) {
-      case "BOX":
+      case "BOX": {
         const size = spec.boxSize;
+        const x = (scale.x * size.x) / 2;
+        const y = (scale.y * size.y) / 2;
+        const z = (scale.z * size.z) / 2;
         colliderDesc = rapier.ColliderDesc.cuboid(
-          size.x / 2,
-          size.y / 2,
-          size.z / 2
+          x > 0 ? x : MIN_SIZE,
+          y > 0 ? y : MIN_SIZE,
+          z > 0 ? z : MIN_SIZE
         );
         break;
-      case "SPHERE":
-        colliderDesc = rapier.ColliderDesc.ball(spec.sphereRadius);
+      }
+      case "SPHERE": {
+        const max = Math.max(scale.x, scale.y, scale.z);
+        const r = max * spec.sphereRadius;
+        colliderDesc = rapier.ColliderDesc.ball(r > 0 ? r : MIN_SIZE);
         break;
-      case "CAPSULE":
+      }
+      case "CAPSULE": {
+        const max = Math.max(scale.x, scale.z);
+        const h = (scale.y * spec.capsuleHeight) / 2;
+        const r = max * spec.capsuleRadius;
         colliderDesc = rapier.ColliderDesc.capsule(
-          spec.capsuleHeight / 2,
-          spec.capsuleRadius
+          h > 0 ? h : MIN_SIZE,
+          r > 0 ? r : MIN_SIZE
         );
         break;
+      }
       default:
         throw new Error(`Unknown collider shape: ${spec.shape}`);
     }
@@ -153,9 +173,12 @@ export class ColliderSystem extends System {
   }
 
   removeVisible(entity) {
+    if (!entity.has(Object3D)) return;
     const object3d = entity.get(Object3D).value;
+
     if (!entity.has(ColliderVisible)) return;
     const mesh = entity.get(ColliderVisible).value;
+
     object3d.remove(mesh);
     mesh.geometry.dispose();
     mesh.material.dispose();
