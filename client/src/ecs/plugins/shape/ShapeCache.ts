@@ -13,9 +13,7 @@ function getCacheKeyForShape(shape) {
       cacheKey += `${shape.sphereRadius},${shape.sphereWidthSegments},${shape.sphereHeightSegments})`;
       break;
     case "CAPSULE":
-      cacheKey += `${shape.capsuleRadius},${shape.capsuleHeight},${
-        shape.capsuleSegments * 4
-      })`;
+      cacheKey += `${shape.capsuleRadius},${shape.capsuleHeight},${shape.capsuleSegments})`;
       break;
   }
   return cacheKey;

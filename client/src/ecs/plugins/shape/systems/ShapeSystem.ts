@@ -22,11 +22,7 @@ export class ShapeSystem extends System {
       this.build(entity);
     });
     this.queries.modified.forEach((entity) => {
-      const object3d = entity.get(Object3D).value;
-      const mesh = entity.get(ShapeMesh).value;
-      object3d.remove(mesh);
-      mesh.geometry.dispose();
-      mesh.material.dispose();
+      this.remove(entity);
       this.build(entity);
 
       // Notify outline to rebuild if necessary
@@ -40,11 +36,7 @@ export class ShapeSystem extends System {
       entity.remove(ShapeMesh);
     });
     this.queries.removed.forEach((entity) => {
-      const object3d = entity.get(Object3D).value;
-      const mesh = entity.get(ShapeMesh).value;
-      object3d.remove(mesh);
-      mesh.geometry.dispose();
-      mesh.material.dispose();
+      this.remove(entity);
       entity.remove(ShapeMesh);
     });
   }
@@ -66,5 +58,13 @@ export class ShapeSystem extends System {
 
     object3d.add(mesh);
     entity.add(ShapeMesh, { value: mesh });
+  }
+
+  remove(entity) {
+    const object3d = entity.get(Object3D).value;
+    const mesh = entity.get(ShapeMesh).value;
+    object3d.remove(mesh);
+    mesh.geometry.dispose();
+    mesh.material.dispose();
   }
 }
