@@ -1,3 +1,12 @@
+2021-02-13
+- NEW: Walls now have colliders!
+- NEW: (Build Mode) Avatar does not collide with things when in build mode (except for the ground).
+- NEW: (Build Mode) Colliders are visible! For example, even if the object has no Shape component, or if the Collider is a different kind or size than the Shape, you can see what where the collider is. Note: this makes it possible to remove a Shape component and still be able to click on an "invisible" object that has only a Collider.
+- NEW: (Build Mode) Avatar becomes ghost-like (translucent) as a visual indicator that you can now "go through" things.
+- CHANGED: (Build Mode) String, Asset URL, and Reference input types have 100% width.
+- FIXED: Walls, avatar hands don't collide.
+- FIXED: (Build Mode) You can no longer select the avatar; also, you can't accidentally create inactive avatar bodies.
+
 2021-02-12
 - NEW: (Build Mode) Walls! Create straight walls, or curved walls, using the Wall component. Walls can have convexity (e.g. bending in or out) and a number of segments. Currently, walls do not have images or colliders.
 - FIXED: (Build Mode) Outline is cleaned up after shape or wall is modified
