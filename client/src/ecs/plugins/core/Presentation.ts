@@ -1,5 +1,4 @@
 import { Loader } from "./Loader";
-import { Capture } from "./Capture";
 import { World } from "~/ecs/base";
 import {
   Object3D,
@@ -43,7 +42,6 @@ export class Presentation {
   scene: Scene;
   renderer: WebGLRenderer;
   camera: PerspectiveCamera;
-  capture: Capture;
   resizeObserver: ResizeObserver;
   loadTexture: (url) => Promise<Texture>;
 
@@ -56,7 +54,6 @@ export class Presentation {
     this.renderer = options.renderer || this.createRenderer();
     this.camera = options.camera || this.createCamera();
     this.resizeObserver = new ResizeObserver(this.resize.bind(this));
-    this.capture = new Capture(this);
     if (!loader) loader = new Loader();
     if (!textureLoader) textureLoader = new TextureLoader();
     if (!imageBitmapLoader) {
@@ -130,11 +127,6 @@ export class Presentation {
     if (this.viewport) {
       this.renderer.render(this.scene, this.camera);
     }
-  }
-
-  takePhoto(width, height) {
-    // this method is just a proxy method for simplicity
-    return this.capture.takePhoto(width, height);
   }
 
   createScene() {
