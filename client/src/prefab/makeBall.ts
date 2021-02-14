@@ -26,6 +26,7 @@ export function makeBall(
     roughness = 0.8,
     emissive = "#000000",
     collider = true,
+    interaction = 0x00010001,
   }
 ) {
   const linearColor = new Color(color);
@@ -57,6 +58,7 @@ export function makeBall(
         shape: "SPHERE",
         sphereRadius: r,
         density,
+        interaction,
       });
   }
   return entity;

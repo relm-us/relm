@@ -111,6 +111,9 @@ export class WallSystem extends System {
       new Uint32Array(indices)
     );
 
+    // TODO: Make this configurable, like ColliderSystem
+    colliderDesc.setCollisionGroups(0x00010001);
+
     const collider = world.createCollider(
       colliderDesc,
       rigidBodyRef.value.handle
