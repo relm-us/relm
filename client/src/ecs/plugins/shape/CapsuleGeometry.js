@@ -1,4 +1,5 @@
-import { BufferGeometry, Vector3, Vector4, Face3 } from "three";
+import { Vector3, Vector4, Face3 } from "three";
+import { Geometry } from "three/examples/jsm/deprecated/Geometry";
 
 /*
   Implemented from a technique described here:
@@ -12,12 +13,13 @@ import { BufferGeometry, Vector3, Vector4, Face3 } from "three";
 */
 
 export function CapsuleGeometry(radius = 1, height = 2, N = 12) {
-  const geometry = new BufferGeometry();
+  const geometry = new Geometry();
   const TWOPI = Math.PI * 2;
 
   const PID2 = 1.570796326794896619231322;
 
   const normals = [];
+  console.log("CapsuleGeom", radius, height, N);
 
   // top cap
   for (let i = 0; i <= N / 4; i++) {
@@ -108,5 +110,5 @@ export function CapsuleGeometry(radius = 1, height = 2, N = 12) {
   geometry.computeFaceNormals();
   // geometry.computeVertexNormals();
 
-  return geometry;
+  return geometry.toBufferGeometry();
 }
