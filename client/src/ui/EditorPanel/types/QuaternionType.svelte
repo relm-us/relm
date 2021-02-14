@@ -108,7 +108,6 @@
   div {
     margin-left: 16px;
     display: flex;
-    flex-wrap: wrap;
   }
   div.capsules {
     margin-top: 4px;
