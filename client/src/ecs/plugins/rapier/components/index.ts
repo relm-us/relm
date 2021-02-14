@@ -1,6 +1,7 @@
 export { Collider } from "./Collider";
 export { ColliderRef } from "./ColliderRef";
 export { ColliderMapped } from "./ColliderMapped";
+export { ColliderVisible } from "./ColliderVisible";
 export { BallJoint } from "./BallJoint";
 export { BallJointBroke } from "./BallJointBroke";
 export { BallJointRef } from "./BallJointRef";

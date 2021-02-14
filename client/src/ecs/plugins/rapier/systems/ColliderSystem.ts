@@ -1,6 +1,31 @@
+import { BufferGeometry, Color, Mesh, MeshStandardMaterial } from "three";
 import { System, Groups, Not, Modified } from "~/ecs/base";
-import { RigidBody, RigidBodyRef, Collider, ColliderRef } from "../components";
-import type { ColliderDesc as RapierColliderDesc } from "@dimforge/rapier3d";
+import {
+  RigidBody,
+  RigidBodyRef,
+  Collider,
+  ColliderRef,
+  ColliderVisible,
+} from "../components";
+import { Object3D } from "~/ecs/plugins/core";
+import { ColliderDesc as RapierColliderDesc } from "@dimforge/rapier3d";
+import { getGeometry } from "~/ecs/plugins/shape/ShapeCache";
+import { get } from "svelte/store";
+import { mode } from "~/stores/mode";
+import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
+
+function colliderToShape(collider) {
+  return {
+    kind: collider.shape,
+    boxSize: collider.boxSize,
+    sphereRadius: collider.sphereRadius,
+    sphereWidthSegments: 16,
+    sphereHeightSegments: 12,
+    capsuleRadius: collider.capsuleRadius,
+    capsuleHeight: collider.capsuleHeight,
+    capsuleSegments: 5,
+  };
+}
 
 export class ColliderSystem extends System {
   order = Groups.Initialization + 10; // After RigidBodySystem
@@ -10,9 +35,14 @@ export class ColliderSystem extends System {
     modifiedBody: [ColliderRef, Modified(RigidBody)],
     modified: [Modified(Collider), RigidBodyRef],
     removed: [Not(Collider), ColliderRef],
+
+    needsVisible: [Collider, Not(InvisibleToMouse), Not(ColliderVisible)],
+    needsHidden: [ColliderVisible],
   };
 
   update() {
+    const $mode = get(mode);
+
     // create new ColliderRef
     this.queries.added.forEach((entity) => {
       this.build(entity);
@@ -23,11 +53,22 @@ export class ColliderSystem extends System {
     // replace ColliderRef with new spec
     this.queries.modified.forEach((entity) => {
       this.build(entity);
+      this.removeVisible(entity);
     });
     // Remove ColliderRef
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
     });
+
+    if ($mode === "build") {
+      this.queries.needsVisible.forEach((entity) => {
+        this.buildVisible(entity);
+      });
+    } else if ($mode === "play") {
+      this.queries.needsHidden.forEach((entity) => {
+        this.removeVisible(entity);
+      });
+    }
   }
 
   build(entity) {
@@ -84,5 +125,41 @@ export class ColliderSystem extends System {
 
     world.removeCollider(colliderRef.value);
     entity.remove(ColliderRef);
+  }
+
+  buildVisible(entity) {
+    const collider = entity.get(Collider);
+    const object3d = entity.get(Object3D).value;
+
+    // Prevent things like ground and avatar from showing collider shapes
+    if (object3d.userData.invisibleToMouse) return;
+
+    const shapeSpec = colliderToShape(collider);
+    const geometry: BufferGeometry = getGeometry(shapeSpec);
+
+    const material = new MeshStandardMaterial({
+      color: new Color("#333333"),
+      roughness: 0.5,
+      metalness: 0.5,
+      emissive: new Color("#333333"),
+      transparent: true,
+      opacity: 0.5,
+    });
+    const mesh = new Mesh(geometry, material);
+    mesh.scale.multiplyScalar(0.99);
+
+    object3d.add(mesh);
+    entity.add(ColliderVisible, { value: mesh });
+  }
+
+  removeVisible(entity) {
+    const object3d = entity.get(Object3D).value;
+    if (!entity.has(ColliderVisible)) return;
+    const mesh = entity.get(ColliderVisible).value;
+    object3d.remove(mesh);
+    mesh.geometry.dispose();
+    mesh.material.dispose();
+
+    entity.remove(ColliderVisible);
   }
 }
