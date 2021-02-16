@@ -32,9 +32,16 @@
   };
 </script>
 
+<h2>Click to Create:</h2>
 {#each directory as prefab}
   <Button style="margin-top:8px" on:click={create(prefab)}>
-    Create
     {prefab.name}
   </Button>
 {/each}
+
+<style>
+  h2 {
+    text-align: center;
+    margin: 4px;
+  }
+</style>
