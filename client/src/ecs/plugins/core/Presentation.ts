@@ -62,9 +62,9 @@ export class Presentation {
     }
 
     if (isFirefox() || isIosSafari()) {
-      this.loadTexture = this.loadTextureTextureLoader;
+      this.loadTexture = this.loadTexture_TextureLoader;
     } else {
-      this.loadTexture = this.loadTextureImageBitmapLoader;
+      this.loadTexture = this.loadTexture_ImageBitmapLoader;
     }
   }
 
@@ -93,14 +93,13 @@ export class Presentation {
     return loader.load(url);
   }
 
-  async loadTextureTextureLoader(url: string): Promise<Texture> {
+  async loadTexture_TextureLoader(url: string): Promise<Texture> {
     return new Promise((resolve, reject) => {
-      console.log("textureLoader", url);
       textureLoader.load(url, resolve, null, reject);
     });
   }
 
-  async loadTextureImageBitmapLoader(url: string): Promise<Texture> {
+  async loadTexture_ImageBitmapLoader(url: string): Promise<Texture> {
     return new Promise((resolve, reject) => {
       imageBitmapLoader.load(
         url,
