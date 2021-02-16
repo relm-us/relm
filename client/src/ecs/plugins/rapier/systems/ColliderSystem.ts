@@ -23,9 +23,12 @@ function colliderToShape(collider) {
     sphereRadius: collider.sphereRadius,
     sphereWidthSegments: 16,
     sphereHeightSegments: 12,
+    cylinderRadius: collider.cylinderRadius,
+    cylinderHeight: collider.cylinderHeight,
+    cylinderSegments: 32,
     capsuleRadius: collider.capsuleRadius,
     capsuleHeight: collider.capsuleHeight,
-    capsuleSegments: 5,
+    capsuleSegments: 16,
   };
 }
 
@@ -107,6 +110,16 @@ export class ColliderSystem extends System {
         colliderDesc = rapier.ColliderDesc.ball(r > 0 ? r : MIN_SIZE);
         break;
       }
+      case "CYLINDER": {
+        const max = Math.max(scale.x, scale.z);
+        const h = (scale.y * spec.cylinderHeight) / 2;
+        const r = max * spec.cylinderRadius;
+        colliderDesc = rapier.ColliderDesc.cylinder(
+          h > 0 ? h : MIN_SIZE,
+          r > 0 ? r : MIN_SIZE
+        );
+        break;
+      }
       case "CAPSULE": {
         const max = Math.max(scale.x, scale.z);
         const h = (scale.y * spec.capsuleHeight) / 2;
@@ -145,6 +158,8 @@ export class ColliderSystem extends System {
 
     world.removeCollider(colliderRef.value);
     entity.remove(ColliderRef);
+
+    this.removeVisible(entity);
   }
 
   buildVisible(entity) {

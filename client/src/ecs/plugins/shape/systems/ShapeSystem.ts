@@ -52,6 +52,9 @@ export class ShapeSystem extends System {
       metalness: shape.metalness,
       emissive: shape.emissive,
     });
+    if (shape.kind === "CYLINDER" && shape.cylinderSegments <= 6) {
+      material.flatShading = true;
+    }
     const mesh = new THREE.Mesh(geometry, material);
     mesh.castShadow = true;
     mesh.receiveShadow = true;

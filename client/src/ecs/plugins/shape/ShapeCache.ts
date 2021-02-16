@@ -1,4 +1,8 @@
-import { BoxBufferGeometry, SphereBufferGeometry } from "three";
+import {
+  BoxBufferGeometry,
+  SphereBufferGeometry,
+  CylinderBufferGeometry,
+} from "three";
 import { CapsuleGeometry } from "./CapsuleGeometry";
 
 const geometryCache: Map<string, any> = new Map();
@@ -11,6 +15,9 @@ function getCacheKeyForShape(shape) {
       break;
     case "SPHERE":
       cacheKey += `${shape.sphereRadius},${shape.sphereWidthSegments},${shape.sphereHeightSegments})`;
+      break;
+    case "CYLINDER":
+      cacheKey += `${shape.cylinderRadius},${shape.cylinderHeight},${shape.cylinderSegments})`;
       break;
     case "CAPSULE":
       cacheKey += `${shape.capsuleRadius},${shape.capsuleHeight},${shape.capsuleSegments})`;
@@ -41,6 +48,15 @@ export function getGeometry(shape) {
       );
       geometryCache.set(cacheKey, sphere);
       return sphere;
+    case "CYLINDER":
+      const cylinder = new CylinderBufferGeometry(
+        shape.cylinderRadius,
+        shape.cylinderRadius,
+        shape.cylinderHeight,
+        shape.cylinderSegments
+      );
+      geometryCache.set(cacheKey, cylinder);
+      return cylinder;
     case "CAPSULE":
       const capsule = CapsuleGeometry(
         shape.capsuleRadius,

@@ -13,6 +13,7 @@ export class Collider extends Component {
         options: [
           { label: "Box", value: "BOX" },
           { label: "Sphere", value: "SPHERE" },
+          { label: "Cylinder", value: "CYLINDER" },
           { label: "Capsule", value: "CAPSULE" },
         ],
       },
@@ -41,6 +42,37 @@ export class Collider extends Component {
       editor: {
         label: "Radius",
         requires: [{ prop: "shape", value: "SPHERE" }], // TODO: fix and re-test as it is broken
+      },
+    },
+
+    /**
+     * Cylinder Properties
+     */
+
+    cylinderRadius: {
+      type: NumberType,
+      default: 0.5,
+      editor: {
+        label: "Radius",
+        requires: [{ prop: "shape", value: "CYLINDER" }],
+      },
+    },
+
+    cylinderHeight: {
+      type: NumberType,
+      default: 1,
+      editor: {
+        label: "Height",
+        requires: [{ prop: "shape", value: "CYLINDER" }],
+      },
+    },
+
+    cylinderSegments: {
+      type: NumberType,
+      default: 6,
+      editor: {
+        label: "Segments",
+        requires: [{ prop: "shape", value: "CYLINDER" }],
       },
     },
 

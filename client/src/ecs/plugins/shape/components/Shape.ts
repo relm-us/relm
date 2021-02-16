@@ -13,6 +13,7 @@ export class Shape extends Component {
         options: [
           { label: "Box", value: "BOX" },
           { label: "Sphere", value: "SPHERE" },
+          { label: "Cylinder", value: "CYLINDER" },
           { label: "Capsule", value: "CAPSULE" },
         ],
       },
@@ -58,6 +59,37 @@ export class Shape extends Component {
       editor: {
         label: "Height Segments",
         requires: [{ prop: "kind", value: "SPHERE" }],
+      },
+    },
+
+    /**
+     * Cylinder Properties
+     */
+
+    cylinderRadius: {
+      type: NumberType,
+      default: 0.5,
+      editor: {
+        label: "Radius",
+        requires: [{ prop: "kind", value: "CYLINDER" }],
+      },
+    },
+
+    cylinderHeight: {
+      type: NumberType,
+      default: 1,
+      editor: {
+        label: "Height",
+        requires: [{ prop: "kind", value: "CYLINDER" }],
+      },
+    },
+
+    cylinderSegments: {
+      type: NumberType,
+      default: 6,
+      editor: {
+        label: "Segments",
+        requires: [{ prop: "kind", value: "CYLINDER" }],
       },
     },
 

@@ -6,6 +6,7 @@ import { Follow } from "~/ecs/plugins/follow";
 import { DirectionalLight } from "~/ecs/plugins/lighting";
 
 import { makeEntity } from "./makeEntity";
+import { makeBox } from "./makeBox";
 
 export function makeStageAndActivate(world, avatar) {
   // Create the singleton camera
