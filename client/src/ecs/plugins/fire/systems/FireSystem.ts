@@ -1,7 +1,7 @@
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
 import { Presentation, Object3D } from "~/ecs/plugins/core";
 import { Fire, FireMesh } from "../components";
-import { Vector3, Color } from "three";
+import { MathUtils, Color } from "three";
 import { Fire as ThreeFire } from "../Fire";
 
 export class FireSystem extends System {
@@ -29,9 +29,10 @@ export class FireSystem extends System {
       this.build(entity);
     });
     this.queries.active.forEach((entity) => {
+      const spec = entity.get(Fire);
       const mesh = entity.get(FireMesh);
       mesh.value.update(mesh.time);
-      mesh.time += 0.08;
+      mesh.time += spec.speed;
     });
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
@@ -43,7 +44,12 @@ export class FireSystem extends System {
     const object3d = entity.get(Object3D).value;
 
     const fireTex = await this.presentation.loadTexture("/fire.png");
-    const mesh = new ThreeFire(fireTex, new Color(spec.color), spec.blaze);
+    const mesh = new ThreeFire(
+      fireTex,
+      new Color(spec.color),
+      MathUtils.clamp(spec.blaze, 5, 30),
+      MathUtils.clamp(spec.octaves, 1, 5)
+    );
 
     object3d.add(mesh);
 

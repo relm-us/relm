@@ -4,9 +4,25 @@ export class Fire extends Component {
   static props = {
     blaze: {
       type: NumberType,
-      default: 0.0,
+      default: 15,
       editor: {
         label: "Blaze",
+      },
+    },
+
+    octaves: {
+      type: NumberType,
+      default: 3,
+      editor: {
+        label: "Octaves",
+      },
+    },
+
+    speed: {
+      type: NumberType,
+      default: 0.08,
+      editor: {
+        label: "Speed",
       },
     },
 

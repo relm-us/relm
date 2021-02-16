@@ -4,6 +4,7 @@ import {
   Color,
   Texture,
   BoxGeometry,
+  Object3D,
   Mesh,
   UniformsUtils,
   ShaderMaterial,
@@ -23,8 +24,9 @@ export class Fire extends Mesh {
   fireTex: Texture;
   color: Color;
   blaze: number;
+  octaves: number;
 
-  constructor(fireTex, color, blaze) {
+  constructor(fireTex, color, blaze, octaves) {
     var fireMaterial = new ShaderMaterial({
       defines: FireShader.defines,
       uniforms: UniformsUtils.clone(FireShader.uniforms),
@@ -32,7 +34,7 @@ export class Fire extends Mesh {
       fragmentShader: FireShader.fragmentShader,
       transparent: true,
       depthWrite: false,
-      depthTest: false,
+      depthTest: true,
     });
 
     // initialize uniforms
@@ -42,10 +44,11 @@ export class Fire extends Mesh {
 
     fireMaterial.uniforms.fireTex.value = fireTex;
     fireMaterial.uniforms.color.value = color;
-    fireMaterial.uniforms.blaze.value = blaze;
     fireMaterial.uniforms.invModelMatrix.value = new Matrix4();
     fireMaterial.uniforms.scale.value = new Vector3(1, 1, 1);
     fireMaterial.uniforms.seed.value = Math.random() * 19.19;
+    fireMaterial.defines.ITERATIONS = blaze;
+    fireMaterial.defines.OCTAVES = Math.floor(octaves);
 
     const box = new BoxGeometry(1, 1, 1);
     super(box, fireMaterial);
@@ -72,6 +75,9 @@ export class Fire extends Mesh {
   }
 
   clone(recursive?: boolean): Object3D {
-    return new Fire(this.fireTex, this.color, this.blaze).copy(this, recursive);
+    return new Fire(this.fireTex, this.color, this.blaze, this.octaves).copy(
+      this,
+      recursive
+    );
   }
 }
