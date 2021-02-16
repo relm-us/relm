@@ -11,7 +11,7 @@ export { Asset } from "./Asset";
 export * from "./types";
 export * from "./components";
 
-export { Components };
+export { Components, Presentation };
 
 export default function ConfigurablePlugin(options?) {
   return createPlugin({

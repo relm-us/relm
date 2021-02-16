@@ -1,5 +1,5 @@
 import AvatarHead from "./AvatarHead.svelte";
-import Label from "./Label.svelte";
+import Billboard from "./Billboard.svelte";
 import WebPage from "./WebPage.svelte";
 import YouTube from "./YouTube.svelte";
 
@@ -9,8 +9,9 @@ export function getRenderableComponentByType(type) {
   switch (type) {
     case "AVATAR_HEAD":
       return AvatarHead;
-    case "LABEL":
-      return Label;
+    case "BILLBOARD":
+    case "LABEL": // backwards compat
+      return Billboard;
     case "WEB_PAGE":
       return WebPage;
     case "YOUTUBE":

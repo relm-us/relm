@@ -38,7 +38,30 @@
       iframe.focus();
     }
   }
+
+  // ignore warning about missing props
+  $$props;
 </script>
+
+<svelte:window on:blur={onWindowBlur} />
+
+<iframe
+  bind:this={iframe}
+  on:mouseout={onFrameMouseout}
+  title="Web Page"
+  {width}
+  {height}
+  src={url}
+  frameborder="0"
+  allowfullscreen
+  allow="camera;microphone"
+/>
+
+<overlay
+  class:build-mode={$mode === "build"}
+  class:highlighted
+  on:mousedown={onOverlayMousedown}
+/>
 
 <style>
   iframe {
@@ -74,21 +97,3 @@
     background-color: rgb(240, 240, 240, 0.7);
   }
 </style>
-
-<svelte:window on:blur={onWindowBlur} />
-
-<iframe
-  bind:this={iframe}
-  on:mouseout={onFrameMouseout}
-  title="Web Page"
-  {width}
-  {height}
-  src={url}
-  frameborder="0"
-  allowfullscreen
-  allow="camera;microphone" />
-
-<overlay
-  class:build-mode={$mode === 'build'}
-  class:highlighted
-  on:mousedown={onOverlayMousedown} />

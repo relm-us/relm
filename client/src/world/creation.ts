@@ -21,6 +21,7 @@ import WallPlugin from "~/ecs/plugins/wall";
 import ImagePlugin from "~/ecs/plugins/image";
 import Css3DPlugin from "~/ecs/plugins/css3d";
 import FollowPlugin from "~/ecs/plugins/follow";
+import Html2dPlugin from "~/ecs/plugins/html2d";
 import LightingPlugin from "~/ecs/plugins/lighting";
 import NormalizePlugin from "~/ecs/plugins/normalize";
 import OutlinePlugin from "~/ecs/plugins/outline";
@@ -111,6 +112,7 @@ export function createWorld(rapier) {
       ImagePlugin,
       Css3DPlugin,
       FollowPlugin,
+      Html2dPlugin,
       LightingPlugin,
       NormalizePlugin,
       OutlinePlugin,

@@ -1,12 +1,13 @@
 // Regular construction set
-import { makeBox } from "./makeBox";
 import { makeBall } from "./makeBall";
+import { makeBillboard } from "./makeBillboard";
+import { makeBox } from "./makeBox";
 import { makeEntity } from "./makeEntity";
 import { makeGround } from "./makeGround";
+import { makeImage } from "./makeImage";
 import { makeLabel } from "./makeLabel";
 import { makePileOfBoxes } from "./makePileOfBoxes";
 import { makeThing } from "./makeThing";
-import { makeImage } from "./makeImage";
 import { makeTv } from "./makeTv";
 import { makeWall } from "./makeWall";
 import { makeWebPage } from "./makeWebPage";
@@ -14,14 +15,15 @@ import { makeWebBox } from "./makeWebBox";
 import { makeYoutube } from "./makeYoutube";
 
 export {
-  makeBox,
   makeBall,
+  makeBillboard,
+  makeBox,
   makeEntity,
   makeGround,
   makeLabel,
+  makeImage,
   makePileOfBoxes,
   makeThing,
-  makeImage,
   makeTv,
   makeWall,
   makeWebPage,
@@ -33,13 +35,14 @@ export { makeAvatarAndActivate } from "./makeAvatarAndActivate";
 export { makeStageAndActivate } from "./makeStageAndActivate";
 
 export const directory = [
-  { name: "Box", prefab: makeBox },
   { name: "Ball", prefab: makeBall },
+  { name: "Billboard", prefab: makeBillboard },
+  { name: "Box", prefab: makeBox },
   { name: "Image", prefab: makeImage },
-  { name: "Thing", prefab: makeThing },
-  { name: "Wall", prefab: makeWall },
   { name: "Label", prefab: makeLabel },
   { name: "Pile of Boxes", prefab: makePileOfBoxes },
-  { name: "YouTube TV", prefab: makeTv },
+  { name: "Thing", prefab: makeThing },
+  { name: "Wall", prefab: makeWall },
   { name: "Web Page", prefab: makeWebBox },
+  { name: "YouTube TV", prefab: makeTv },
 ];

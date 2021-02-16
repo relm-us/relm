@@ -1,42 +1,31 @@
-import { Transform } from "~/ecs/plugins/core";
-import { Vector3 } from "three";
-
-import { Renderable, CssPlane } from "~/ecs/plugins/css3d";
+import { Color, Vector3 } from "three";
 
 import { makeEntity } from "./makeEntity";
 
+import { Transform } from "~/ecs/plugins/core";
+import { Html2d } from "~/ecs/plugins/html2d";
+import { Shape } from "~/ecs/plugins/shape";
+
 export function makeLabel(
   world,
-  {
-    x = 0,
-    y = 1.5,
-    z = 0,
-    yOffset = 0,
-    text,
-    fontSize,
-    frameWidth = 200,
-    frameHeight = 200,
-    worldWidth = 1,
-  }
+  { x = 0, y = 0.5, z = 0, yOffset = 0, content = "Hello" }
 ) {
-  const iframeRatio = frameWidth / frameHeight;
-  const rectangleSize = new Vector3(worldWidth, worldWidth / iframeRatio, 0.2);
-  const scale = rectangleSize.x / frameWidth;
-  const label = makeEntity(world, "Label")
+  const linearColor = new Color("#BBFF00");
+  linearColor.convertSRGBToLinear();
+
+  return makeEntity(world, "Label")
     .add(Transform, {
       position: new Vector3(x, y + yOffset, z),
     })
-    .add(Renderable, {
+    .add(Html2d, {
       kind: "LABEL",
-      width: frameWidth,
-      height: frameHeight,
-      scale,
-      text,
-      fontSize,
+      content,
+      offset: new Vector3(0.1, 0, 0),
+      hanchor: 1,
     })
-    .add(CssPlane, {
-      kind: "RECTANGLE",
-      rectangleSize,
+    .add(Shape, {
+      kind: "SPHERE",
+      color: linearColor.getHexString(),
+      sphereRadius: 0.1,
     });
-  return label;
 }
