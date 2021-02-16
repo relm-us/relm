@@ -80,6 +80,8 @@ export class Html2dSystem extends System {
   remove(entity: Entity) {
     const container = entity.get(Html2dRef).value;
     container.remove();
+
+    entity.remove(Html2dRef);
   }
 
   project(position: Vector3, camera: PerspectiveCamera) {
