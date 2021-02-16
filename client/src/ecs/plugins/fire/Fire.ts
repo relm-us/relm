@@ -2,6 +2,7 @@ import {
   Vector3,
   Matrix4,
   Color,
+  Texture,
   BoxGeometry,
   Mesh,
   UniformsUtils,
@@ -19,6 +20,9 @@ import { FireShader } from "./FireShader";
 
 export class Fire extends Mesh {
   material: ShaderMaterial;
+  fireTex: Texture;
+  color: Color;
+  blaze: number;
 
   constructor(fireTex, color, blaze) {
     var fireMaterial = new ShaderMaterial({
@@ -45,6 +49,10 @@ export class Fire extends Mesh {
 
     const box = new BoxGeometry(1, 1, 1);
     super(box, fireMaterial);
+
+    this.fireTex = fireTex;
+    this.color = color;
+    this.blaze = blaze;
   }
 
   update(time) {
@@ -61,5 +69,9 @@ export class Fire extends Mesh {
     this.material.uniforms.invModelMatrix.value = invModelMatrix;
 
     this.material.uniforms.scale.value = this.scale;
+  }
+
+  clone(recursive?: boolean): Object3D {
+    return new Fire(this.fireTex, this.color, this.blaze).copy(this, recursive);
   }
 }
