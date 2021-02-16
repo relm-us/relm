@@ -6,6 +6,7 @@ import { WorldDoc } from "~/y-integration/WorldDoc";
 import { Outline } from "~/ecs/plugins/outline";
 import { Transform } from "~/ecs/plugins/core";
 import { first } from "~/utils/setOps";
+import { openPanel } from "~/stores/openPanel";
 
 export class SelectionManager {
   wdoc: WorldDoc;
@@ -104,6 +105,10 @@ export class SelectionManager {
     selectedEntities.subscribe(($selected) => {
       const added = difference($selected, previouslySelected);
       const removed = difference(previouslySelected, $selected);
+
+      if ($selected.size === 1 && added.size === 1) {
+        openPanel.set("editor");
+      }
 
       for (const entityId of removed) {
         const entity = this.wdoc.world.entities.getById(entityId);

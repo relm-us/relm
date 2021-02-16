@@ -19,14 +19,12 @@
 
   import LoadingScreen from "~/ui/LoadingScreen";
 
-  import { world } from "~/stores/world";
-  import { mode } from "~/stores/mode";
   import { runCommand } from "~/commands";
   import { globalEvents } from "~/events";
 
-  type PanelType = "collections" | "editor" | "export" | "performance";
-
-  let openPanel: PanelType = "collections";
+  import { world } from "~/stores/world";
+  import { mode } from "~/stores/mode";
+  import { openPanel } from "~/stores/openPanel";
 
   const playMode = () => {
     globalEvents.emit("switch-mode", "play");
@@ -56,37 +54,37 @@
 <overlay class:open={$mode === "build"}>
   <overlay-panel>
     {#if $mode === "build"}
-      {#if openPanel === "collections"}
+      {#if $openPanel === "collections"}
         <CollectionsPanel on:minimize={playMode} />
       {/if}
 
-      {#if openPanel === "performance"}
+      {#if $openPanel === "performance"}
         <PerformancePanel on:minimize={playMode} />
       {/if}
 
-      {#if openPanel === "export"}
+      {#if $openPanel === "export"}
         <ExportPanel on:minimize={playMode} />
       {/if}
 
-      {#if openPanel === "editor"}
+      {#if $openPanel === "editor"}
         <EditorPanel on:minimize={playMode} />
       {/if}
       <panel-tabs>
         <Button
-          active={openPanel === "collections"}
-          on:click={() => (openPanel = "collections")}>Collections</Button
+          active={$openPanel === "collections"}
+          on:click={() => ($openPanel = "collections")}>Collections</Button
         >
         <Button
-          active={openPanel === "editor"}
-          on:click={() => (openPanel = "editor")}>Editor</Button
+          active={$openPanel === "editor"}
+          on:click={() => ($openPanel = "editor")}>Editor</Button
         >
         <Button
-          active={openPanel === "export"}
-          on:click={() => (openPanel = "export")}>Export</Button
+          active={$openPanel === "export"}
+          on:click={() => ($openPanel = "export")}>Export</Button
         >
         <Button
-          active={openPanel === "performance"}
-          on:click={() => (openPanel = "performance")}>Performance</Button
+          active={$openPanel === "performance"}
+          on:click={() => ($openPanel = "performance")}>Performance</Button
         >
       </panel-tabs>
     {/if}
