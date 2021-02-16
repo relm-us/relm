@@ -67,15 +67,6 @@ export class Collider extends Component {
       },
     },
 
-    cylinderSegments: {
-      type: NumberType,
-      default: 6,
-      editor: {
-        label: "Segments",
-        requires: [{ prop: "shape", value: "CYLINDER" }],
-      },
-    },
-
     /**
      * Capsule Properties
      */
