@@ -16,7 +16,23 @@
       dispatch("modified");
     }
   }
+
+  function getLabelForKey(key) {
+    return prop.editor.options.find((item) => item.value === component[key]);
+  }
 </script>
+
+<div>
+  <lbl>{(prop.editor && prop.editor.label) || key}:</lbl>
+
+  <!-- https://github.com/rob-balfre/svelte-select -->
+  <Select
+    isClearable={false}
+    items={prop.editor.options}
+    selectedValue={getLabelForKey(key)}
+    on:select={onSelect}
+  />
+</div>
 
 <style>
   div {
@@ -33,14 +49,3 @@
     margin-right: 8px;
   }
 </style>
-
-<div>
-  <lbl>{(prop.editor && prop.editor.label) || key}:</lbl>
-
-  <!-- https://github.com/rob-balfre/svelte-select -->
-  <Select
-    isClearable={false}
-    items={prop.editor.options}
-    selectedValue={component[key]}
-    on:select={onSelect} />
-</div>
