@@ -1,3 +1,15 @@
+2021-02-16
+- NEW: Chat icon in the lower right opens to text box that currently allows you to create a Label. NOTE: In future, this will be an actual chat box; for now, it is a shortcut to creating labels, similar to Relm v4.
+- NEW: Pressing "Enter" or "Return" is a shortcut key that opens the Chat box.
+
+2021-02-15
+- NEW: Zoom-invariant labels! Transparent text labels over top of the world. Click create "Label" in editor when nothing is selected.
+- NEW: Cylinder shape and collider.
+- NEW: Campfire! New volumetric Fire component has Color, Speed, Octaves, and Blaze parameters.
+- CHANGED: What used to be called a Label is now a "Billboard" (non-transparent background text)
+- CHANGED: Buttons don't repeat "create" e.g. "Create Box" any more
+- FIXED: Dropdown boxes use labels when available
+
 2021-02-14
 - CHANGED: Brighter lighting.
 - FIXED: (Build Mode) High-precision numbers are kept when using text entry. (e.g. Rotation & Scale values of Transform component).
