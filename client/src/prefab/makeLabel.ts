@@ -25,7 +25,7 @@ export function makeLabel(
     })
     .add(Shape, {
       kind: "SPHERE",
-      color: linearColor.getHexString(),
+      color: "#" + linearColor.getHexString(),
       sphereRadius: 0.1,
     });
 }

@@ -1,14 +1,16 @@
 <script lang="ts">
-  import { globalEvents } from "~/events";
   import { isInputEvent } from "~/input/isInputEvent";
+  import { chatOpen } from "~/stores/chat";
 
   function onKeydown(event) {
     if (isInputEvent(event)) return;
 
-    if (event.key === "Tab") {
+    if (event.key === "Enter" || event.key === "Return") {
       event.preventDefault();
 
-      globalEvents.emit("switch-mode");
+      chatOpen.update((value) => {
+        return !value;
+      });
     }
   }
 </script>

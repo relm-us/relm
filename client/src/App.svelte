@@ -16,6 +16,7 @@
   import UploadButton from "~/ui/UploadButton";
   import ConnectButton from "~/ui/ConnectButton";
   import ResetWorldButton from "~/ui/ResetWorldButton";
+  import Chat from "~/ui/Chat";
 
   import LoadingScreen from "~/ui/LoadingScreen";
 
@@ -112,6 +113,8 @@
     </overlay-right>
   </overlay-content>
 </overlay>
+
+<Chat />
 
 <!-- The virtual world! -->
 <style>
