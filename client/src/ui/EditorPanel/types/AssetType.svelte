@@ -6,7 +6,7 @@
   export let component;
   export let prop;
 
-  const FILENAME_WITH_SIZE_RE = /^[^\-]+-([^\.]+)\..{1,5}$/;
+  const FILENAME_WITH_SIZE_RE = /^.+-([^\.]+)\..{1,5}$/;
 
   let editing = false;
 
