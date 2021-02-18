@@ -69,5 +69,7 @@ export class ShapeSystem extends System {
     object3d.remove(mesh);
     mesh.geometry.dispose();
     mesh.material.dispose();
+
+    entity.remove(ShapeMesh);
   }
 }

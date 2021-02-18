@@ -11,7 +11,7 @@ function getCacheKeyForShape(shape) {
   let cacheKey = `${shape.kind}(`;
   switch (shape.kind) {
     case "BOX":
-      cacheKey += `${shape.boxSize.x},${shape.boxSize.y},${shape.boxSize.y})`;
+      cacheKey += `${shape.boxSize.x},${shape.boxSize.y},${shape.boxSize.z})`;
       break;
     case "SPHERE":
       cacheKey += `${shape.sphereRadius},${shape.sphereWidthSegments},${shape.sphereHeightSegments})`;
