@@ -7,6 +7,7 @@ import { ThrustController, HeadController } from "../components";
 import { RigidBodyRef } from "~/ecs/plugins/rapier/components/RigidBodyRef";
 import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
 import { Vector3, Euler, Quaternion } from "three";
+import { RigidBody } from "@dimforge/rapier3d";
 
 const bodyFacing = new Vector3();
 const thrust = new Vector3();
@@ -60,6 +61,7 @@ export class ThrustControllerSystem extends System {
       transform.rotation
     );
     euler.x = 0;
+    controller.angle = euler.y; // capture this value for network
     euler.z = 0;
     q.setFromEuler(euler).normalize();
     transform.rotation.rotateTowards(q, UPRIGHT_SPEED);

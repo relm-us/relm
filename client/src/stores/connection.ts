@@ -21,7 +21,12 @@ export type ConnectOptions = {
   state: "connected";
   url: string;
   room: string;
-  params: object;
+  params: {
+    s: string;
+    x: string;
+    y: string;
+    id: string;
+  };
 };
 export type ConnectError = {
   state: "error";

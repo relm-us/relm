@@ -5,11 +5,6 @@ import { Model } from "~/ecs/plugins/core";
 // Components from ECS plugins (organized alphabetically by plugin name)
 import { Renderable, CssPlane } from "~/ecs/plugins/css3d";
 import { NormalizeMesh } from "~/ecs/plugins/normalize";
-import {
-  HandController,
-  HeadController,
-  ThrustController,
-} from "~/ecs/plugins/player-control";
 import { PointerPlane } from "~/ecs/plugins/pointer-plane";
 import {
   RigidBody,
@@ -18,14 +13,16 @@ import {
   Impactable,
 } from "~/ecs/plugins/rapier";
 
-import { keyE, keyQ } from "~/input";
-
 import { makeEntity, makeBall } from "./index";
 import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
 
-export function makeAvatar(world, { x = 0, y = 0.75, z = -10 } = {}) {
+export function makeAvatar(
+  world,
+  { x = 0, y = 0.75, z = -10, kinematic = false } = {},
+  id?
+) {
   // Create the avatar's torso, which we connect everything else to
-  const avatar = makeEntity(world, "Avatar")
+  const avatar = makeEntity(world, "Avatar", id)
     .add(PointerPlane)
     .add(Impactable)
     .add(Transform, {
@@ -36,7 +33,7 @@ export function makeAvatar(world, { x = 0, y = 0.75, z = -10 } = {}) {
     })
     .add(NormalizeMesh)
     .add(RigidBody, {
-      kind: "DYNAMIC",
+      kind: kinematic ? "KINEMATIC" : "DYNAMIC",
       linearDamping: 0.1,
       angularDamping: 12.5,
       mass: 0.5,

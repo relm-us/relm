@@ -34,9 +34,5 @@ export class WorldTransformSystem extends System {
     const object3d = entity.get(Object3D).value;
     const world = entity.get(WorldTransform);
     object3d.matrixWorld.decompose(world.position, world.rotation, world.scale);
-
-    // if (world.frame === this.frame) {
-    //   return world;
-    // }
   }
 }

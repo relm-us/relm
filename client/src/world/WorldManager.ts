@@ -12,14 +12,20 @@ import {
   makeStageAndActivate,
   makeGround,
 } from "~/prefab";
-import { World } from "~/ecs/base";
+import { Euler } from "three";
+import { World, Entity } from "~/ecs/base";
 import { Follow } from "~/ecs/plugins/follow";
 import { HeadController } from "~/ecs/plugins/player-control";
 import { SelectionManager } from "./SelectionManager";
 import { LoadingState } from "./LoadingState";
-import { ConnectOptions } from "~/stores/connection";
+import { connection, ConnectOptions } from "~/stores/connection";
 import { Collider } from "~/ecs/plugins/rapier";
+import { Object3D, Transform } from "~/ecs/plugins/core";
+import { ThrustController } from "~/ecs/plugins/player-control";
+import { makeAvatar } from "~/prefab/makeAvatar";
 
+const m = [];
+const e1 = new Euler(0, 0, 0, "YXZ");
 export default class WorldManager {
   world: World & { physics: any; presentation: any; cssPresentation: any };
   viewport: HTMLElement;
@@ -27,12 +33,14 @@ export default class WorldManager {
   state: Writable<WorldState>;
   avatar;
   camera;
-  connection;
+  connectOpts;
 
   wdoc: WorldDoc;
   selection: SelectionManager;
 
+  playerId: string;
   previousLoopTime: number = 0;
+  sendLocalStateInterval: any; // Timeout
 
   constructor({ world, viewport }) {
     if (!world) throw new Error(`world is required`);
@@ -48,6 +56,12 @@ export default class WorldManager {
 
     this.mount();
     this.populate();
+
+    connection.subscribe(($status) => {
+      if ($status.state === "connected") {
+        this.playerId = $status.params.id;
+      }
+    });
 
     worldState.subscribe(($state) => {
       switch ($state) {
@@ -98,8 +112,8 @@ export default class WorldManager {
     world.presentation.setViewport(null);
   }
 
-  connect(connection: ConnectOptions) {
-    this.connection = connection;
+  connect(connectOpts: ConnectOptions) {
+    this.connectOpts = connectOpts;
 
     // Init loading
     let assetsLoaded = 0;
@@ -152,10 +166,71 @@ export default class WorldManager {
       }
     };
 
-    this.wdoc.connect(this.connection, handleLoading.bind(this));
+    this.wdoc.connect(this.connectOpts, handleLoading.bind(this));
+
+    this.sendLocalStateInterval = setInterval(
+      this.setLocalStateFromAvatar.bind(this),
+      20
+    );
+
+    this.wdoc.provider.awareness.on("change", (changes) => {
+      this.removeOtherAvatars(changes.removed);
+
+      const states = this.wdoc.provider.awareness.getStates();
+
+      states.forEach((value, key) => {
+        // Ignore updates that don't include matrix transform data
+        if (!value.m) return;
+
+        // Ignore updates about ourselves
+        if (key === this.wdoc.ydoc.clientID) return;
+
+        this.updateOtherAvatar(key, value.m);
+      });
+    });
+  }
+
+  removeOtherAvatars(ids) {
+    for (const id of ids) {
+      const otherAvatar = this.world.entities.getById(id);
+      for (const entity of (otherAvatar as any).subgroup) {
+        (entity as Entity).destroy();
+      }
+      otherAvatar.destroy();
+    }
+  }
+
+  updateOtherAvatar(id, [x, y, z, theta]) {
+    let otherAvatar = this.world.entities.getById(id);
+    if (!otherAvatar) {
+      const { avatar, head, face, leftHand, rightHand } = makeAvatar(
+        this.world,
+        {
+          x,
+          y,
+          z,
+          kinematic: true,
+        },
+        id
+      );
+      avatar.activate();
+      head.activate();
+      face.activate();
+      // leftHand.activate();
+      // rightHand.activate();
+      otherAvatar = avatar;
+    } else {
+      const transform = otherAvatar.get(Transform);
+      transform.position.set(x, y, z);
+      e1.setFromQuaternion(transform.rotation);
+      e1.y = theta;
+      transform.rotation.setFromEuler(e1);
+    }
   }
 
   disconnect() {
+    clearInterval(this.sendLocalStateInterval);
+    this.sendLocalStateInterval = undefined;
     this.wdoc.disconnect();
   }
 
@@ -163,6 +238,26 @@ export default class WorldManager {
     this.disconnect();
     this.unmount();
     this.world.reset();
+  }
+
+  setLocalState(state) {
+    if (this.playerId) {
+      const yaware = this.wdoc.provider.awareness;
+      // yaware.setLocalStateField("id", this.playerId);
+      yaware.setLocalState(state);
+    }
+  }
+
+  setLocalStateFromAvatar() {
+    const body = this.avatar.get(Object3D).value;
+    const controller = this.avatar.get(ThrustController);
+    // const head = this.avatar.children[0].get(Object3D).value;
+    // const lhand = this.avatar.subgroup[0].get(Object3D).value;
+    // const rhand = this.avatar.subgroup[1].get(Object3D).value;
+
+    body.position.toArray(m, 0);
+    m[3] = controller.angle;
+    this.setLocalState({ m });
   }
 
   populate() {
