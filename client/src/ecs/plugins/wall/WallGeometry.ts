@@ -6,6 +6,26 @@ import {
   MathUtils,
 } from "three";
 
+function validateWallArgs(width, height, depth, N) {
+  if (width <= 0) {
+    console.warn(`wall width must be greater than 0`, width);
+    return false;
+  }
+  if (height <= 0) {
+    console.warn(`wall height must be greater than 0`, height);
+    return false;
+  }
+  if (depth <= 0) {
+    console.warn(`wall depth must be greater than 0`, depth);
+    return false;
+  }
+  if (N < 1) {
+    console.warn(`WallGeometry requries N >= 1`);
+    return false;
+  }
+  return true;
+}
+
 export function wallGeometryData(
   width = 2,
   height = 2,
@@ -13,11 +33,9 @@ export function wallGeometryData(
   convexity = 0,
   N = 6
 ) {
-  if (width <= 0) throw new Error(`width must be greater than 0`);
-  if (height <= 0) throw new Error(`height must be greater than 0`);
-  if (depth <= 0) throw new Error(`depth must be greater than 0`);
+  if (!validateWallArgs(width, height, depth, N)) return;
+
   convexity = MathUtils.clamp(convexity, -1, 1);
-  if (N < 1) throw new Error(`WallGeometry requries N >= 1`);
 
   // Make sure N is an integer
   N = Math.floor(N);
