@@ -56,10 +56,12 @@ export class Fire extends Mesh {
     const box = new BoxGeometry(1, 1, 1);
     super(box, fireMaterial);
 
+    // Keep initializer args around so we can `copy` later
     this.fireTex = fireTex;
     this.color = color;
     this.colorMix = colorMix;
     this.blaze = blaze;
+    this.octaves = octaves;
   }
 
   update(time) {

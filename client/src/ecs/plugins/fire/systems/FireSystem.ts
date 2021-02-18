@@ -58,8 +58,8 @@ export class FireSystem extends System {
         fireTex,
         new Color(spec.color),
         MathUtils.clamp(spec.colmix, 0, 1),
-        MathUtils.clamp(spec.blaze, 5, 30),
-        MathUtils.clamp(spec.octaves, 1, 5)
+        Math.floor(MathUtils.clamp(spec.blaze, 5, 30)),
+        Math.floor(MathUtils.clamp(spec.octaves, 1, 5))
       );
 
       object3d.add(mesh);
