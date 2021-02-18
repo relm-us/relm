@@ -31,8 +31,10 @@ export class FireSystem extends System {
     this.queries.active.forEach((entity) => {
       const spec = entity.get(Fire);
       const mesh = entity.get(FireMesh);
-      mesh.value.update(mesh.time);
-      mesh.time += spec.speed;
+      if (mesh.loaded) {
+        mesh.value.update(mesh.time);
+        mesh.time += spec.speed;
+      }
     });
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
@@ -43,17 +45,26 @@ export class FireSystem extends System {
     const spec = entity.get(Fire);
     const object3d = entity.get(Object3D).value;
 
+    if (!entity.has(FireMesh)) {
+      entity.add(FireMesh);
+    }
+
     const fireTex = await this.presentation.loadTexture("/fire.png");
-    const mesh = new ThreeFire(
-      fireTex,
-      new Color(spec.color),
-      MathUtils.clamp(spec.blaze, 5, 30),
-      MathUtils.clamp(spec.octaves, 1, 5)
-    );
+    const fireMesh = entity.get(FireMesh);
+    if (fireMesh) {
+      fireMesh.loaded = true;
 
-    object3d.add(mesh);
+      const mesh = new ThreeFire(
+        fireTex,
+        new Color(spec.color),
+        MathUtils.clamp(spec.colmix, 0, 1),
+        MathUtils.clamp(spec.blaze, 5, 30),
+        MathUtils.clamp(spec.octaves, 1, 5)
+      );
 
-    entity.add(FireMesh, { value: mesh });
+      object3d.add(mesh);
+      fireMesh.value = mesh;
+    }
   }
 
   remove(entity: Entity) {

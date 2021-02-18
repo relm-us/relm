@@ -23,6 +23,7 @@ export const FireShader = {
   uniforms: {
     fireTex: { type: "t", value: null },
     color: { type: "c", value: null },
+    colorMix: { type: "f", value: 0.7 },
     blaze: { type: "f", value: 0.0 },
     time: { type: "f", value: 0.0 },
     seed: { type: "f", value: 0.0 },
@@ -54,6 +55,7 @@ export const FireShader = {
     "uniform float magnitude;",
     "uniform float lacunarity;",
     "uniform float gain;",
+    "uniform float colorMix;",
 
     "uniform sampler2D fireTex;",
 
@@ -202,7 +204,7 @@ export const FireShader = {
     "  }",
 
     "  col.a = col.r;",
-    "  col.rgb = mix(col.rgb, color.rgb, 0.7);",
+    "  col.rgb = mix(col.rgb, color.rgb, colorMix);",
     "  gl_FragColor = col;",
     "}",
   ].join("\n"),

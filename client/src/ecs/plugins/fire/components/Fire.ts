@@ -34,6 +34,14 @@ export class Fire extends Component {
         input: "Color",
       },
     },
+
+    colmix: {
+      type: NumberType,
+      default: 0.7,
+      editor: {
+        label: "Color Mix",
+      },
+    },
   };
 
   static editor = {

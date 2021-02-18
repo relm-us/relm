@@ -10,6 +10,7 @@ import {
   ShaderMaterial,
   LinearFilter,
   ClampToEdgeWrapping,
+  MathUtils,
 } from "three";
 import { FireShader } from "./FireShader";
 
@@ -23,10 +24,11 @@ export class Fire extends Mesh {
   material: ShaderMaterial;
   fireTex: Texture;
   color: Color;
+  colorMix: number;
   blaze: number;
   octaves: number;
 
-  constructor(fireTex, color, blaze, octaves) {
+  constructor(fireTex, color, colorMix, blaze, octaves) {
     var fireMaterial = new ShaderMaterial({
       defines: FireShader.defines,
       uniforms: UniformsUtils.clone(FireShader.uniforms),
@@ -47,6 +49,7 @@ export class Fire extends Mesh {
     fireMaterial.uniforms.invModelMatrix.value = new Matrix4();
     fireMaterial.uniforms.scale.value = new Vector3(1, 1, 1);
     fireMaterial.uniforms.seed.value = Math.random() * 19.19;
+    fireMaterial.uniforms.colorMix.value = MathUtils.clamp(colorMix, 0, 1);
     fireMaterial.defines.ITERATIONS = blaze;
     fireMaterial.defines.OCTAVES = Math.floor(octaves);
 
@@ -55,6 +58,7 @@ export class Fire extends Mesh {
 
     this.fireTex = fireTex;
     this.color = color;
+    this.colorMix = colorMix;
     this.blaze = blaze;
   }
 
@@ -75,9 +79,12 @@ export class Fire extends Mesh {
   }
 
   clone(recursive?: boolean): Object3D {
-    return new Fire(this.fireTex, this.color, this.blaze, this.octaves).copy(
-      this,
-      recursive
-    );
+    return new Fire(
+      this.fireTex,
+      this.color,
+      this.colorMix,
+      this.blaze,
+      this.octaves
+    ).copy(this, recursive);
   }
 }
