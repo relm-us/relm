@@ -12,8 +12,11 @@
   function onMousedown(event) {
     event.preventDefault();
     if ($mode === "build") {
+      // Uses setTimeout because a click on "nothing" will deselect everything
       // TODO: use selectionLogic to implement complete set of selection possibilities
-      $wm.selection.addEntityId(entity.id);
+      setTimeout(() => {
+        $wm.selection.addEntityId(entity.id);
+      }, 10);
     }
   }
 
