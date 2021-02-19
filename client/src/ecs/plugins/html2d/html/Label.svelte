@@ -32,7 +32,7 @@
 <style>
   div {
     /* Line clamp with ellipsis; see https://stackoverflow.com/a/32585024/159344 */
-    line-height: 1.4rem;
+    line-height: 1.5rem;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -53,5 +53,7 @@
     background-color: rgba(0, 0, 0, 0.15);
     border-radius: 5px;
     display: block;
+    position: relative;
+    min-width: 300px;
   }
 </style>

@@ -107,9 +107,7 @@ export class Html2dSystem extends System {
     container.style.top = v1.y + "px";
 
     // calculate width
-    let width = (50 / boundsWidth) * spec.width * 30;
-    if (width > 200) width = 200;
-
+    let width = (35 / boundsWidth) * spec.width * 60;
     container.style.maxWidth = Math.floor(width) + "px";
   }
 }
