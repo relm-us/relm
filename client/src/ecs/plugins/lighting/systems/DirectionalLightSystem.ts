@@ -51,6 +51,21 @@ export class DirectionalLightSystem extends System {
       entity.add(DirectionalLightRef, { value: light });
     });
 
+    this.queries.active.forEach((entity) => {
+      const light = entity.get(DirectionalLightRef).value;
+      const size = Math.max(
+        this.presentation.visibleBounds.max.x -
+          this.presentation.visibleBounds.min.x,
+        this.presentation.visibleBounds.max.y -
+          this.presentation.visibleBounds.min.y
+      );
+      // size ranges from about 10 to 60
+      // zoom ranges from about 1 to 0.30
+      light.shadow.camera.zoom = (1 - (size - 10) / 50) * 0.5 + 0.2;
+      console.log(light.shadow.camera.zoom);
+      light.shadow.camera.updateProjectionMatrix();
+    });
+
     // this.queries.modified.forEach((entity) => {});
     // this.queries.removed.forEach((entity) => {});
   }
