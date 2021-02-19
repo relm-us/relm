@@ -62,7 +62,6 @@ export class DirectionalLightSystem extends System {
       // size ranges from about 10 to 60
       // zoom ranges from about 1 to 0.30
       light.shadow.camera.zoom = (1 - (size - 10) / 50) * 0.5 + 0.2;
-      console.log(light.shadow.camera.zoom);
       light.shadow.camera.updateProjectionMatrix();
     });
 
