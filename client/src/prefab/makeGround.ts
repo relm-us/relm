@@ -1,20 +1,32 @@
-import { makeBox } from "~/prefab";
+import { makeEntity } from "./makeEntity";
+import { Transform } from "~/ecs/plugins/core";
+import { RigidBody, Collider } from "~/ecs/plugins/rapier";
+import { Shape } from "~/ecs/plugins/shape";
+import { Color, Vector3 } from "three";
 import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
 
-const groundSize = {
-  w: 1000,
-  h: 100,
-  d: 100,
-};
+export function makeGround(world, { x = 0, y = 0, z = 0, yOffset = -0.5 }) {
+  const color = new Color("#55814e");
 
-export function makeGround(world) {
-  return makeBox(world, {
-    name: "Ground",
-    ...groundSize,
-    y: -groundSize.h * 0.5,
-    z: -groundSize.d * 0.25,
-    color: "#55814e",
-    dynamic: false,
-    interaction: 0x00010003,
-  }).add(InvisibleToMouse);
+  return makeEntity(world, "Ground")
+    .add(Transform, { position: new Vector3(x, y + yOffset, z) })
+    .add(Shape, {
+      color: "#" + color.getHexString(),
+      kind: "CYLINDER",
+      cylinderRadius: 15,
+      cylinderHeight: 1,
+      cylinderSegments: 60,
+      metalness: 0.2,
+      roughness: 0.8,
+      emissive: "#000000",
+    })
+    .add(RigidBody, {
+      kind: "STATIC",
+    })
+    .add(Collider, {
+      shape: "CYLINDER",
+      cylinderRadius: 15,
+      cylinderHeight: 1,
+      interaction: 0x00010003,
+    });
 }

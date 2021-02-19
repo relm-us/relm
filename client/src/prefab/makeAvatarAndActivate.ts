@@ -8,10 +8,7 @@ import {
 
 import { keyE, keyQ } from "~/input";
 
-export function makeAvatarAndActivate(
-  world,
-  { x = 0, y = 0.75, z = -10 } = {}
-) {
+export function makeAvatarAndActivate(world, { x = 0, y = 0.75, z = 0 } = {}) {
   const { avatar, head, face, leftHand, rightHand } = makeAvatar(world, {
     x,
     y,

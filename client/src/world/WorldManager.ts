@@ -10,7 +10,7 @@ import { globalEvents } from "~/events";
 import {
   makeAvatarAndActivate,
   makeStageAndActivate,
-  makeGround,
+  makeInitialCollider,
 } from "~/prefab";
 import { Euler } from "three";
 import { World, Entity } from "~/ecs/base";
@@ -282,7 +282,7 @@ export default class WorldManager {
     const { camera } = makeStageAndActivate(this.world, this.avatar);
     this.camera = camera;
 
-    makeGround(this.world).activate();
+    makeInitialCollider(this.world).activate();
   }
 
   depopulate() {

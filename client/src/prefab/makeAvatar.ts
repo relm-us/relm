@@ -18,7 +18,7 @@ import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
 
 export function makeAvatar(
   world,
-  { x = 0, y = 0.75, z = -10, kinematic = false } = {},
+  { x = 0, y = 0.75, z = 0, kinematic = false } = {},
   id?
 ) {
   // Create the avatar's torso, which we connect everything else to
