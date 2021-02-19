@@ -34,13 +34,11 @@
 
 <style>
   div {
-    /* Line clamp with ellipsis; see https://stackoverflow.com/a/32585024/159344 */
     line-height: 1.5rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
     overflow: hidden;
     hyphens: auto;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     color: var(--color, #e5e5e5);
@@ -53,10 +51,14 @@
   }
 
   div:hover {
+    position: relative;
+
+    display: block;
+    min-width: 300px;
+
     background-color: rgba(0, 0, 0, 0.15);
     border-radius: 5px;
-    display: block;
-    position: relative;
-    min-width: 300px;
+
+    white-space: normal;
   }
 </style>
