@@ -25,6 +25,14 @@ export class Html2d extends Component {
       },
     },
 
+    width: {
+      type: NumberType,
+      default: 3,
+      editor: {
+        label: "Max. Width",
+      },
+    },
+
     vanchor: {
       type: NumberType,
       default: 0,

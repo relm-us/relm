@@ -55,8 +55,6 @@ export class CssPlaneSystem extends System {
     switch (plane.kind) {
       case "RECTANGLE":
         const size = plane.rectangleSize;
-        // console.log("rectangle size", size);
-        // geometry = new THREE.BoxGeometry(2, 2, 2);
         geometry = new THREE.PlaneGeometry(size.x, size.y);
         break;
       case "CIRCLE":

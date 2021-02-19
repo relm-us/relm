@@ -22,7 +22,8 @@
 </script>
 
 <div
-  style="--color:{color};--shadow-color:{shadowColor}}"
+  class="truncate-overflow"
+  style="--color:{color};--shadow-color:{shadowColor};"
   on:mousedown={onMousedown}
 >
   {content}
@@ -30,6 +31,13 @@
 
 <style>
   div {
+    /* Line clamp with ellipsis; see https://stackoverflow.com/a/32585024/159344 */
+    line-height: 1.4rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     color: var(--color, #e5e5e5);
     letter-spacing: 1px;
@@ -43,5 +51,6 @@
   div:hover {
     background-color: rgba(0, 0, 0, 0.15);
     border-radius: 5px;
+    display: block;
   }
 </style>

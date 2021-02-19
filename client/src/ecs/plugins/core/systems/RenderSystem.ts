@@ -16,10 +16,6 @@ export class RenderSystem extends System {
   }
 
   update() {
-    if (!this.presentation.viewport) return;
-    this.presentation.renderer.render(
-      this.presentation.scene,
-      this.presentation.camera
-    );
+    this.presentation.update();
   }
 }

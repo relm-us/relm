@@ -1,13 +1,14 @@
-import { PerspectiveCamera, Vector3 } from "three";
+import { PerspectiveCamera, Plane, Raycaster, Vector3 } from "three";
 import { System, Groups, Not, Entity, Modified } from "~/ecs/base";
 import { Html2d, Html2dRef } from "../components";
 import { Presentation, WorldTransform } from "~/ecs/plugins/core";
 import { getHtmlComponent } from "../html";
+import { HtmlPresentation } from "../HtmlPresentation";
 
 const v1 = new Vector3();
-
 export class Html2dSystem extends System {
   presentation: Presentation;
+  htmlPresentation: HtmlPresentation;
 
   order = Groups.Presentation + 250;
 
@@ -18,11 +19,16 @@ export class Html2dSystem extends System {
     removed: [Not(Html2d), Html2dRef],
   };
 
-  init({ presentation }) {
+  init({ presentation, htmlPresentation }) {
     this.presentation = presentation;
+    this.htmlPresentation = htmlPresentation;
   }
 
   update() {
+    const boundsWidth =
+      this.presentation.visibleBounds.max.x -
+      this.presentation.visibleBounds.min.x;
+
     this.queries.new.forEach((entity) => {
       this.build(entity);
     });
@@ -31,12 +37,7 @@ export class Html2dSystem extends System {
       this.build(entity);
     });
     this.queries.active.forEach((entity) => {
-      const world = entity.get(WorldTransform);
-      const spec = entity.get(Html2d);
-      v1.copy(world.position);
-      v1.add(spec.offset);
-      this.project(v1, this.presentation.camera);
-      this.updatePosition(entity, v1);
+      this.updatePosition(entity, boundsWidth);
     });
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
@@ -62,19 +63,19 @@ export class Html2dSystem extends System {
     // when an Html2d object touches the edge of the page, we don't want it to resize
     style.width = "fit-content";
     // position the element where we need it, "on top of" the 3d world
-    style.position = "absolute";
+    style.position = "fixed";
     style.transform = `translate(${pct(spec.hanchor)},${pct(spec.vanchor)})`;
 
-    document.body.appendChild(container);
+    this.htmlPresentation.domElement.appendChild(container);
 
     // Create whatever Svelte component is specified by the type
     const Component = getHtmlComponent(spec.kind);
-    new Component({
+    const component = new Component({
       target: container,
       props: { ...spec, entity },
     });
 
-    entity.add(Html2dRef, { value: container });
+    entity.add(Html2dRef, { value: container, component });
   }
 
   remove(entity: Entity) {
@@ -91,9 +92,24 @@ export class Html2dSystem extends System {
     position.z = 0;
   }
 
-  updatePosition(entity: Entity, position: Vector3) {
+  updatePosition(entity: Entity, boundsWidth: number) {
+    const world = entity.get(WorldTransform);
+    const spec = entity.get(Html2d);
+
+    // calculate left, top
+    v1.copy(world.position);
+    v1.add(spec.offset);
+
+    this.project(v1, this.presentation.camera);
+
     const container = entity.get(Html2dRef).value;
-    container.style.left = position.x + "px";
-    container.style.top = position.y + "px";
+    container.style.left = v1.x + "px";
+    container.style.top = v1.y + "px";
+
+    // calculate width
+    let width = (50 / boundsWidth) * spec.width * 30;
+    if (width > 200) width = 200;
+
+    container.style.maxWidth = Math.floor(width) + "px";
   }
 }

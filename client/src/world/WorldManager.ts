@@ -27,7 +27,12 @@ import { makeAvatar } from "~/prefab/makeAvatar";
 const m = [];
 const e1 = new Euler(0, 0, 0, "YXZ");
 export default class WorldManager {
-  world: World & { physics: any; presentation: any; cssPresentation: any };
+  world: World & {
+    physics: any;
+    presentation: any;
+    cssPresentation: any;
+    htmlPresentation: any;
+  };
   viewport: HTMLElement;
   loading: LoadingState;
   state: Writable<WorldState>;
@@ -103,6 +108,10 @@ export default class WorldManager {
     // WebGL canvas goes "on top" of CSS3D HTML elements
     world.presentation.setViewport(this.viewport);
     world.presentation.renderer.domElement.style.zIndex = 1;
+
+    // HTML2D elements go "above" the WebGL canvas
+    world.htmlPresentation.setViewport(this.viewport);
+    world.htmlPresentation.domElement.style.zIndex = 2;
   }
 
   unmount() {
@@ -267,6 +276,9 @@ export default class WorldManager {
 
     // For now, we'll show a demo scene
     this.avatar = makeAvatarAndActivate(this.world);
+    this.world.presentation.setCameraTarget(
+      this.avatar.get(Transform).position
+    );
     const { camera } = makeStageAndActivate(this.world, this.avatar);
     this.camera = camera;
 

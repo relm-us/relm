@@ -14,6 +14,11 @@ import {
   sRGBEncoding,
   CanvasTexture,
   Texture,
+  Vector3,
+  Vector2,
+  Raycaster,
+  Plane,
+  Box3,
 } from "three";
 import isFirefox from "@braintree/browser-detection/is-firefox";
 import isIosSafari from "@braintree/browser-detection/is-ios-safari";
@@ -34,6 +39,12 @@ export type PresentationOptions = {
   camera: PerspectiveCamera;
 };
 
+const _raycaster = new Raycaster();
+const _intersect = new Vector3();
+const _up = new Vector3(0, 1, 0);
+const _plane = new Plane(_up, -0.01);
+const _v2 = new Vector2();
+
 export class Presentation {
   world: World;
   viewport: HTMLElement;
@@ -42,7 +53,9 @@ export class Presentation {
   scene: Scene;
   renderer: WebGLRenderer;
   camera: PerspectiveCamera;
+  cameraTarget: Vector3;
   resizeObserver: ResizeObserver;
+  visibleBounds: Box3;
   loadTexture: (url) => Promise<Texture>;
 
   constructor(world: World, options: PresentationOptions) {
@@ -53,7 +66,9 @@ export class Presentation {
     this.scene = options.scene || this.createScene();
     this.renderer = options.renderer || this.createRenderer();
     this.camera = options.camera || this.createCamera();
+    this.cameraTarget = null; // can be set later with setCameraTarget
     this.resizeObserver = new ResizeObserver(this.resize.bind(this));
+    this.visibleBounds = new Box3();
     if (!loader) loader = new Loader();
     if (!textureLoader) textureLoader = new TextureLoader();
     if (!imageBitmapLoader) {
@@ -183,7 +198,37 @@ export class Presentation {
     );
   }
 
+  setCameraTarget(target: Vector3) {
+    this.cameraTarget = target;
+  }
+
   compile() {
     this.renderer.compile(this.scene, this.camera);
+  }
+
+  update() {
+    if (!this.viewport) return;
+    this.renderer.render(this.scene, this.camera);
+    this.updateVisibleBounds();
+  }
+
+  updateVisibleBounds() {
+    if (this.cameraTarget) {
+      _plane.set(_up, -this.cameraTarget.y);
+    }
+    this.visibleBounds = new Box3();
+    for (let x = -1; x <= 1; x += 2) {
+      for (let y = -1; y <= 1; y += 2) {
+        _v2.set(x, y);
+        _raycaster.setFromCamera(_v2, this.camera);
+        _raycaster.ray.intersectPlane(_plane, _intersect);
+        this.visibleBounds.expandByPoint(_intersect);
+      }
+    }
+    // if (counter % 200 === 100) {
+    //   this.scene.add(new Box3Helper(this.visibleBounds));
+    // }
+
+    // counter++;
   }
 }

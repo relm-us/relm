@@ -5,5 +5,9 @@ export class Html2dRef extends StateComponent {
     value: {
       type: RefType,
     },
+
+    component: {
+      type: RefType,
+    },
   };
 }
