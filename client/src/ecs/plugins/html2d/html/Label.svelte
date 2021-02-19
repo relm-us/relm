@@ -37,6 +37,7 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    hyphens: auto;
 
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     color: var(--color, #e5e5e5);
