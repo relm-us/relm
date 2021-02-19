@@ -74,6 +74,11 @@ export class Entity {
     return !!this.components.get(Component);
   }
 
+  hasByName(componentName: string) {
+    const Component = this.world.components.getByName(componentName);
+    return this.has(Component);
+  }
+
   remove(Component: TypeOfComponent): Entity {
     if (!this.components.has(Component)) {
       console.warn("Entity: cannot remove component as it doesnt have one");

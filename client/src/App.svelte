@@ -4,6 +4,7 @@
   import CollectionsPanel from "~/ui/CollectionsPanel";
   import EditorPanel from "~/ui/EditorPanel";
   import ExportPanel from "~/ui/ExportPanel";
+  import RelmSettingsPanel from "~/ui/RelmSettingsPanel";
   import PerformancePanel from "~/ui/PerformancePanel";
 
   import Input from "~/input";
@@ -59,17 +60,22 @@
         <CollectionsPanel on:minimize={playMode} />
       {/if}
 
-      {#if $openPanel === "performance"}
-        <PerformancePanel on:minimize={playMode} />
+      {#if $openPanel === "editor"}
+        <EditorPanel on:minimize={playMode} />
       {/if}
 
       {#if $openPanel === "export"}
         <ExportPanel on:minimize={playMode} />
       {/if}
 
-      {#if $openPanel === "editor"}
-        <EditorPanel on:minimize={playMode} />
+      {#if $openPanel === "performance"}
+        <PerformancePanel on:minimize={playMode} />
       {/if}
+
+      {#if $openPanel === "settings"}
+        <RelmSettingsPanel on:minimize={playMode} />
+      {/if}
+
       <panel-tabs>
         <Button
           active={$openPanel === "collections"}
@@ -86,6 +92,10 @@
         <Button
           active={$openPanel === "performance"}
           on:click={() => ($openPanel = "performance")}>Performance</Button
+        >
+        <Button
+          active={$openPanel === "settings"}
+          on:click={() => ($openPanel = "settings")}>Settings</Button
         >
       </panel-tabs>
     {/if}

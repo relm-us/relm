@@ -19,6 +19,7 @@ import CorePlugin from "~/ecs/plugins/core";
 import ShapePlugin from "~/ecs/plugins/shape";
 import WallPlugin from "~/ecs/plugins/wall";
 import ImagePlugin from "~/ecs/plugins/image";
+
 import Css3DPlugin from "~/ecs/plugins/css3d";
 import FirePlugin from "~/ecs/plugins/fire";
 import FollowPlugin from "~/ecs/plugins/follow";
@@ -30,6 +31,7 @@ import PlayerControlPlugin from "~/ecs/plugins/player-control";
 import PointerPlanePlugin from "~/ecs/plugins/pointer-plane";
 import PortalPlugin from "~/ecs/plugins/portal";
 import RapierPlugin from "~/ecs/plugins/rapier";
+import SkyboxPlugin from "~/ecs/plugins/skybox";
 import TransformEffectsPlugin from "~/ecs/plugins/transform-effects";
 
 import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
@@ -121,6 +123,7 @@ export function createWorld(rapier) {
       PlayerControlPlugin,
       PointerPlanePlugin,
       PortalPlugin,
+      SkyboxPlugin,
       TransformEffectsPlugin,
     ],
     components: [InvisibleToMouse],

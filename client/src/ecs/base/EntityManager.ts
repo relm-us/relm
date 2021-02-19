@@ -22,6 +22,16 @@ export class EntityManager {
     return this.entities.get(id);
   }
 
+  getByComponentName(componentName) {
+    const entities = [];
+    this.entities.forEach((entity, _id) => {
+      if (entity.hasByName(componentName)) {
+        entities.push(entity);
+      }
+    });
+    return entities;
+  }
+
   onEntityActive(entity) {
     this.entities.set(entity.id, entity);
     this.world.emit("entity-active", entity);
