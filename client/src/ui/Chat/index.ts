@@ -1,1 +1,1 @@
-export { default } from "./ChatBar.svelte";
+export { default } from "./Chat.svelte";

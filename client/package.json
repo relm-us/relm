@@ -75,7 +75,7 @@
     "serve": "^11.3.2",
     "simplex-noise": "^2.4.0",
     "stats.js": "^0.17.0",
-    "svelt-yjs": "0.2.1",
+    "svelt-yjs": "^0.2.1",
     "svelte-dnd-action": "^0.7.3",
     "svelte-icons": "^2.1.0",
     "svelte-loader": "^2.13.6",

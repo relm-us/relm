@@ -1,9 +1,18 @@
 <script>
-  import { fly, slide } from "svelte/transition";
-  import IoIosChatbubbles from "svelte-icons/io/IoIosChatbubbles.svelte";
-  import { chatOpen } from "~/stores/chat";
+  import { createEventDispatcher } from "svelte";
   import { worldManager as wm } from "~/stores/worldManager";
   import { makeLabel } from "~/prefab";
+  import { chatOpen } from "~/stores/chatOpen";
+
+  const dispatch = createEventDispatcher();
+
+  let inputEl;
+
+  chatOpen.subscribe(($chatOpen) => {
+    if (!inputEl) return;
+    if ($chatOpen) inputEl.focus();
+    else inputEl.blur();
+  });
 
   function createLabel(text) {
     const position = $wm.avatar.getByName("WorldTransform").position;
@@ -15,68 +24,39 @@
     $wm.wdoc.syncFrom(label);
   }
 
+  function addMessage(text) {
+    if (text.match(/^\s*$/)) {
+      dispatch("close");
+    } else {
+      $wm.chat.addMessage({ u: $wm.wdoc.ydoc.clientID, c: text });
+    }
+  }
+
   function onKeydown(event) {
     if (event.key === "Escape") {
-      $chatOpen = false;
+      dispatch("close");
     } else if (event.key === "Enter" || event.key === "Return") {
-      createLabel(event.target.value);
+      addMessage(event.target.value);
+      // createLabel(event.target.value);
       event.target.value = "";
     }
   }
 
-  function onClick(event) {
-    $chatOpen = !$chatOpen;
-  }
-
   function onBlur(event) {
-    $chatOpen = false;
-  }
-
-  function init(el) {
-    el.focus();
+    dispatch("close");
   }
 </script>
 
-<container>
-  <button on:click={onClick}>
-    <icon>
-      <IoIosChatbubbles />
-    </icon>
-  </button>
-  {#if $chatOpen}
-    <entry transition:slide>
-      <input type="text" on:blur={onBlur} on:keydown={onKeydown} use:init />
-    </entry>
-  {/if}
-</container>
+<entry>
+  <input
+    type="text"
+    on:blur={onBlur}
+    on:keydown={onKeydown}
+    bind:this={inputEl}
+  />
+</entry>
 
 <style>
-  container {
-    position: fixed;
-    right: 8px;
-    bottom: 8px;
-    z-index: 1;
-
-    display: flex;
-    align-items: center;
-  }
-
-  button {
-    all: unset;
-    cursor: pointer;
-  }
-
-  icon {
-    color: var(--foreground-white);
-    display: block;
-    width: 48px;
-    height: 48px;
-  }
-
-  icon:hover {
-    color: var(--selected-red);
-  }
-
   entry {
     display: block;
     overflow: hidden;

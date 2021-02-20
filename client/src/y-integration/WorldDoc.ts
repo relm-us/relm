@@ -58,6 +58,9 @@ export class WorldDoc extends EventEmitter {
   // collected when entities are removed from the Y.Doc.
   entities: YEntities;
 
+  // An array of js objects for chat;
+  messages: Y.Array<any>;
+
   // A record of Y.IDs (as strings) mapped to HECS IDs; used for deletion
   yids: Map<YIDSTR, HECSID>;
 
@@ -82,6 +85,8 @@ export class WorldDoc extends EventEmitter {
     });
 
     this.entities.observeDeep(this._observer.bind(this));
+
+    this.messages = this.ydoc.getArray("messages");
 
     WorldDoc.index.set(name, this);
   }

@@ -1,6 +1,5 @@
 <script lang="ts">
   import LeftPanel, { Header } from "~/ui/LeftPanel";
-  import { uuidv4 } from "~/utils/uuid";
   import UploadButton from "~/ui/UploadButton";
   import { Skybox } from "~/ecs/plugins/skybox";
   import { worldManager as wm } from "~/stores/worldManager";
@@ -8,7 +7,7 @@
   import { Asset } from "~/ecs/plugins/core";
   import { assetUrl } from "~/stores/config";
 
-  function onUploaded({ detail }) {
+  function onUploadedSkybox({ detail }) {
     if (detail.results.length === 0) return;
     const result = detail.results[0];
     const imageUrl = assetUrl(result.types.webp);
@@ -34,7 +33,7 @@
     <setting>
       <h2>Skybox</h2>
       <div class="upload">
-        <UploadButton on:uploaded={onUploaded}>
+        <UploadButton on:uploaded={onUploadedSkybox}>
           <lbl>Upload</lbl>
         </UploadButton>
       </div>

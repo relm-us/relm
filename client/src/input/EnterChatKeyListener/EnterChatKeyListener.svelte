@@ -1,6 +1,6 @@
 <script lang="ts">
   import { isInputEvent } from "~/input/isInputEvent";
-  import { chatOpen } from "~/stores/chat";
+  import { chatOpen } from "~/stores/chatOpen";
 
   function onKeydown(event) {
     if (isInputEvent(event)) return;

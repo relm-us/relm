@@ -16,13 +16,15 @@ import { Euler } from "three";
 import { World, Entity } from "~/ecs/base";
 import { Follow } from "~/ecs/plugins/follow";
 import { HeadController } from "~/ecs/plugins/player-control";
-import { SelectionManager } from "./SelectionManager";
 import { LoadingState } from "./LoadingState";
 import { connection, ConnectOptions } from "~/stores/connection";
 import { Collider } from "~/ecs/plugins/rapier";
 import { Object3D, Transform } from "~/ecs/plugins/core";
 import { ThrustController } from "~/ecs/plugins/player-control";
 import { makeAvatar } from "~/prefab/makeAvatar";
+
+import { SelectionManager } from "./SelectionManager";
+import { ChatManager, ChatMessage } from "./ChatManager";
 
 const m = [];
 const e1 = new Euler(0, 0, 0, "YXZ");
@@ -42,6 +44,7 @@ export default class WorldManager {
 
   wdoc: WorldDoc;
   selection: SelectionManager;
+  chat: ChatManager;
 
   playerId: string;
   previousLoopTime: number = 0;
@@ -58,6 +61,7 @@ export default class WorldManager {
     this.wdoc = new WorldDoc("relm", world);
 
     this.selection = new SelectionManager(this.wdoc);
+    this.chat = new ChatManager(this.wdoc);
 
     this.mount();
     this.populate();
