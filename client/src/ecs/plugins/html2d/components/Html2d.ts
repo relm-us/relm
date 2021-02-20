@@ -12,7 +12,7 @@ export class Html2d extends Component {
         input: "Select",
         options: [
           { label: "Label", value: "LABEL" },
-          { label: "Test", value: "TEST" },
+          { label: "Speech", value: "SPEECH" },
         ],
       },
     },
