@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { worldManager as wm } from "~/stores/worldManager";
+  import { Relm } from "~/stores/Relm";
   import { mode } from "~/stores/mode";
   import { cleanHtml } from "~/utils/cleanHtml";
 
@@ -23,7 +23,7 @@
 
     const renderable = entity.get(Renderable);
     renderable.text = text;
-    $wm.wdoc.syncFrom(entity);
+    $Relm.wdoc.syncFrom(entity);
   }
 
   // ignore warning about missing props

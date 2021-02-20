@@ -2,11 +2,11 @@ import { WorldTransform } from "~/ecs/plugins/core";
 import { directory } from "~/prefab";
 import { assetUrl } from "~/stores/config";
 
-function activate($worldManager, entity) {
+function activate($Relm, entity) {
   entity.activate();
-  $worldManager.wdoc.syncFrom(entity);
+  $Relm.wdoc.syncFrom(entity);
   for (const child of entity.getChildren()) {
-    activate($worldManager, child);
+    activate($Relm, child);
   }
 }
 
@@ -21,8 +21,8 @@ export const createPrefab = {
       })),
     },
   },
-  command: ($worldManager, { name, src }, props) => {
-    const transform = $worldManager.avatar?.get(WorldTransform);
+  command: ($Relm, { name, src }, props) => {
+    const transform = $Relm.avatar?.get(WorldTransform);
     if (transform) {
       const x = transform.position.x;
       const z = transform.position.z;
@@ -30,7 +30,7 @@ export const createPrefab = {
       const prefab = directory.find((item) => item.name === name);
       if (prefab) {
         const url = assetUrl(src);
-        let entities = prefab.prefab($worldManager.world, {
+        let entities = prefab.prefab($Relm.world, {
           ...props,
           x,
           z,
@@ -39,7 +39,7 @@ export const createPrefab = {
         if (!(entities instanceof Array)) entities = [entities];
 
         for (const entity of entities) {
-          activate($worldManager, entity);
+          activate($Relm, entity);
         }
       } else {
         console.error(`Prefab not found: '${name}'`);

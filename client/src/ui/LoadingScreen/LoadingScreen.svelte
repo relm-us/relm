@@ -2,13 +2,13 @@
   import { writable } from "svelte/store";
   import { fade } from "svelte/transition";
   import { worldState } from "~/stores/worldState";
-  import { worldManager as wm } from "~/stores/worldManager";
+  import { Relm } from "~/stores/Relm";
 
   let loading, low, high;
-  $: if ($wm) {
-    loading = $wm.loading.state;
-    low = $wm.loading.loaded;
-    high = $wm.loading.max;
+  $: if ($Relm) {
+    loading = $Relm.loading.state;
+    low = $Relm.loading.loaded;
+    high = $Relm.loading.max;
   } else {
     low = writable(0);
     high = writable(1);

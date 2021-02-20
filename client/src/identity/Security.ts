@@ -1,4 +1,3 @@
-import { uuidv4 } from "~/utils/uuid";
 import * as base64 from "base64-arraybuffer-es6";
 
 const TextEncoder = window.TextEncoder;
@@ -10,37 +9,10 @@ const SECURITY_CONFIG = {
   namedHash: "SHA-384",
 };
 
-/**
- * Find a named UUID in local storage, or create one if not found.
- *
- * @param {string} name - name of the local ID, e.g. 'secureId', or 'mouseId'
- */
-const getOrCreateLocalId = (name) => {
-  let uuid = localStorage.getItem(name);
-  if (!uuid) {
-    uuid = uuidv4();
-    localStorage.setItem(name, uuid);
-  }
-  return uuid;
-};
-
 export class Security {
   secureId;
   secret;
   keypair;
-
-  /**
-   * Returns the `secureId` stored in LocalStorage. If none is stored,
-   * randomly generates a secureId and stores it.
-   *
-   * @returns {string} secureId
-   */
-  async getOrCreateId() {
-    if (!this.secureId) {
-      this.secureId = getOrCreateLocalId("secureId");
-    }
-    return this.secureId;
-  }
 
   async getOrCreateSecret() {
     if (!this.secret) {

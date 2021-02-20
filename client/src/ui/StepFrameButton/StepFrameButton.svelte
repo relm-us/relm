@@ -1,13 +1,19 @@
 <script lang="ts">
   import Button from "../Button";
-  import { worldManager } from "~/stores/worldManager";
+  import { Relm } from "~/stores/Relm";
 
   import IoIosSkipForward from "svelte-icons/io/IoIosSkipForward.svelte";
 
   const step = () => {
-    $worldManager.step();
+    $Relm.step();
   };
 </script>
+
+<Button on:click={step}>
+  <icon>
+    <IoIosSkipForward />
+  </icon>
+</Button>
 
 <style>
   icon {
@@ -16,9 +22,3 @@
     height: 32px;
   }
 </style>
-
-<Button on:click={step}>
-  <icon>
-    <IoIosSkipForward />
-  </icon>
-</Button>

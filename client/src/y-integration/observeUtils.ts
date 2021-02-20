@@ -50,6 +50,9 @@ export function withMapEdits<T>(
   for (const key of event.keysChanged) {
     const value: T = (event.target as Y.Map<T>).get(key);
     const change: YMapChange = event.changes.keys.get(key);
+    if (!change) {
+      console.warn(`change key not found`, key, event.changes);
+    }
     switch (change.action) {
       case "add":
         if (callbacks.onAdd) {

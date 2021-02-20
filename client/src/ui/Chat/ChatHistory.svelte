@@ -1,6 +1,8 @@
 <script>
   import { beforeUpdate, afterUpdate } from "svelte";
-  import { colors } from "~/utils/colors";
+  import { get } from "svelte/store";
+  import { Relm } from "~/stores/Relm";
+  import Message from "./Message.svelte";
 
   export let messages;
   export let myID;
@@ -8,8 +10,9 @@
   let div;
   let autoscroll;
 
-  function col(i) {
-    return colors[i % colors.length];
+  function sharedStore(playerId) {
+    const store = $Relm.identities.get(playerId);
+    return store;
   }
 
   beforeUpdate(() => {
@@ -33,11 +36,7 @@
         {#if message.u === myID}
           <message class:mine={true}>{message.c}</message>
         {:else}
-          <message>
-            <id-circle
-              style="background-color:{col(message.u)}"
-            />{message.c}</message
-          >
+          <Message who={sharedStore(message.u)} content={message.c} />
         {/if}
       {/each}
     </scroll-container>
@@ -72,19 +71,6 @@
     color: yellow;
   }
 
-  message {
-    display: flex;
-    align-items: center;
-
-    color: #333;
-    background-color: #eee;
-
-    border-radius: 9px 9px 9px 0;
-
-    padding: 6px 10px;
-    margin: 3px;
-  }
-
   message.mine {
     color: white;
     background-color: #1277d6;
@@ -93,17 +79,8 @@
 
     align-self: flex-end;
     text-align: right;
-  }
 
-  id-circle {
-    display: block;
-    flex-shrink: 0;
-
-    width: 16px;
-    height: 16px;
-    border: 2px solid white;
-    border-radius: 100%;
-    margin-left: 8px;
-    margin-right: 8px;
+    padding: 6px 10px;
+    margin: 3px;
   }
 </style>

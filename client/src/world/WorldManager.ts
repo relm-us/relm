@@ -2,32 +2,31 @@ import { get, Writable } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
+import { globalEvents } from "~/events";
+
 import { deltaTime, fpsTime } from "~/stores/stats";
 import { worldState, WorldState } from "~/stores/worldState";
 import { scale } from "~/stores/viewport";
-import { globalEvents } from "~/events";
 
 import {
   makeAvatarAndActivate,
   makeStageAndActivate,
   makeInitialCollider,
 } from "~/prefab";
-import { Euler } from "three";
-import { World, Entity } from "~/ecs/base";
+import { Entity, World } from "~/ecs/base";
 import { Follow } from "~/ecs/plugins/follow";
 import { HeadController } from "~/ecs/plugins/player-control";
 import { LoadingState } from "./LoadingState";
-import { connection, ConnectOptions } from "~/stores/connection";
+import { ConnectOptions } from "~/stores/connection";
 import { Collider } from "~/ecs/plugins/rapier";
 import { Object3D, Transform } from "~/ecs/plugins/core";
 import { ThrustController } from "~/ecs/plugins/player-control";
-import { makeAvatar } from "~/prefab/makeAvatar";
 
 import { SelectionManager } from "./SelectionManager";
-import { ChatManager, ChatMessage } from "./ChatManager";
+import { IdentityManager } from "~/identity/IdentityManager";
+import { ChatManager } from "./ChatManager";
 
 const m = [];
-const e1 = new Euler(0, 0, 0, "YXZ");
 export default class WorldManager {
   world: World & {
     physics: any;
@@ -38,15 +37,14 @@ export default class WorldManager {
   viewport: HTMLElement;
   loading: LoadingState;
   state: Writable<WorldState>;
-  avatar;
   camera;
   connectOpts;
 
   wdoc: WorldDoc;
   selection: SelectionManager;
+  identities: IdentityManager;
   chat: ChatManager;
 
-  playerId: string;
   previousLoopTime: number = 0;
   sendLocalStateInterval: any; // Timeout
 
@@ -55,22 +53,17 @@ export default class WorldManager {
     if (!viewport) throw new Error(`viewport is required`);
     this.world = world;
     this.viewport = viewport;
-    this.loading = new LoadingState();
     this.state = worldState;
+    this.loading = new LoadingState();
 
     this.wdoc = new WorldDoc("relm", world);
 
     this.selection = new SelectionManager(this.wdoc);
-    this.chat = new ChatManager(this.wdoc);
+    this.identities = new IdentityManager(this.wdoc);
+    this.chat = new ChatManager(this.identities, this.wdoc.messages);
 
     this.mount();
     this.populate();
-
-    connection.subscribe(($status) => {
-      if ($status.state === "connected") {
-        this.playerId = $status.params.id;
-      }
-    });
 
     worldState.subscribe(($state) => {
       switch ($state) {
@@ -187,58 +180,22 @@ export default class WorldManager {
     );
 
     this.wdoc.provider.awareness.on("change", (changes) => {
-      this.removeOtherAvatars(changes.removed);
+      for (let id of changes.removed) {
+        // this.identities.goodbye(id);
+      }
 
       const states = this.wdoc.provider.awareness.getStates();
 
-      states.forEach((value, key) => {
+      states.forEach(({ m }, clientId) => {
         // Ignore updates that don't include matrix transform data
-        if (!value.m) return;
+        if (!m) return;
 
         // Ignore updates about ourselves
-        if (key === this.wdoc.ydoc.clientID) return;
+        if (clientId === this.wdoc.ydoc.clientID) return;
 
-        this.updateOtherAvatar(key, value.m);
+        this.identities.setTransform(clientId, m);
       });
     });
-  }
-
-  removeOtherAvatars(ids) {
-    for (const id of ids) {
-      const otherAvatar = this.world.entities.getById(id);
-      for (const entity of (otherAvatar as any).subgroup) {
-        (entity as Entity).destroy();
-      }
-      otherAvatar.destroy();
-    }
-  }
-
-  updateOtherAvatar(id, [x, y, z, theta]) {
-    let otherAvatar = this.world.entities.getById(id);
-    if (!otherAvatar) {
-      const { avatar, head, face, leftHand, rightHand } = makeAvatar(
-        this.world,
-        {
-          x,
-          y,
-          z,
-          kinematic: true,
-        },
-        id
-      );
-      avatar.activate();
-      head.activate();
-      face.activate();
-      // leftHand.activate();
-      // rightHand.activate();
-      otherAvatar = avatar;
-    } else {
-      const transform = otherAvatar.get(Transform);
-      transform.position.set(x, y, z);
-      e1.setFromQuaternion(transform.rotation);
-      e1.y = theta;
-      transform.rotation.setFromEuler(e1);
-    }
   }
 
   disconnect() {
@@ -253,11 +210,9 @@ export default class WorldManager {
     this.world.reset();
   }
 
-  setLocalState(state) {
-    if (this.playerId) {
-      const yaware = this.wdoc.provider.awareness;
-      // yaware.setLocalStateField("id", this.playerId);
-      yaware.setLocalState(state);
+  setLocalStateField(field, state) {
+    if (this.wdoc.provider) {
+      this.wdoc.provider.awareness.setLocalStateField(field, state);
     }
   }
 
@@ -270,7 +225,11 @@ export default class WorldManager {
 
     body.position.toArray(m, 0);
     m[3] = controller.angle;
-    this.setLocalState({ m });
+    this.setLocalStateField("m", m);
+  }
+
+  get avatar(): Entity {
+    return this.identities.me.avatar.entity;
   }
 
   populate() {
@@ -278,8 +237,8 @@ export default class WorldManager {
       throw new Error(`Can't populate when world is null`);
     }
 
-    // For now, we'll show a demo scene
-    this.avatar = makeAvatarAndActivate(this.world);
+    // TODO: this.avatar = ?
+
     this.world.presentation.setCameraTarget(
       this.avatar.get(Transform).position
     );
@@ -299,7 +258,7 @@ export default class WorldManager {
       const collider = entity.components.get(Collider);
 
       // prettier-ignore
-      collider.interaction = enabled ?
+      (collider as any).interaction = enabled ?
       0x00010001 : // interact with normal things
       0x00020001 ; // interact only with ground
 

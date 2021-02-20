@@ -6,7 +6,7 @@
 
   import Capsule from "./Capsule.svelte";
   import Button from "~/ui/Button";
-  import { worldManager } from "~/stores/worldManager";
+  import { Relm } from "~/stores/Relm";
   import { sortAlphabetically } from "~/utils/sortAlphabetically";
 
   export let entity;
@@ -14,7 +14,7 @@
   const dispatch = createEventDispatcher();
 
   let componentOptions;
-  $: componentOptions = getComponents($worldManager, entity);
+  $: componentOptions = getComponents($Relm, entity);
 
   let selectedValue;
 
@@ -71,10 +71,10 @@
     const componentName = detail.value;
     setTimeout(() => {
       entity.addByName(componentName);
-      $worldManager.wdoc.syncFrom(entity);
+      $Relm.wdoc.syncFrom(entity);
       dispatch("modified");
 
-      componentOptions = getComponents($worldManager, entity);
+      componentOptions = getComponents($Relm, entity);
       selectedValue = undefined;
     }, 300);
   };

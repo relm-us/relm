@@ -9162,10 +9162,10 @@ supports-hyperlinks@^2.0.0:
     has-flag "^4.0.0"
     supports-color "^7.0.0"
 
-svelt-yjs@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/svelt-yjs/-/svelt-yjs-0.2.1.tgz#d9aa2610925a6ad778965102dc307a79cd5d113f"
-  integrity sha512-9ZqLtwp3f1XuZ5oMHITCjcLiG5nPjCVJuZJ7SnfWuzlJzbL7FXOlUAfUJJNM3mPmh4TDjZ/eV5zeBPkHgVV4gA==
+svelt-yjs@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/svelt-yjs/-/svelt-yjs-1.0.0.tgz#b5f04d56b29a2e0ed89ebd540eec986520fa6420"
+  integrity sha512-IP6wzS90QVmpeWFm6D1jNsB9Mc8GJeghouQkHwEULMPLSrBkoh9c3qfcajWbk7hpfCBIG3llexKIough4DhDdw==
   dependencies:
     tslib "~2.0.1"
     yjs "^13.4.1"
@@ -9227,6 +9227,11 @@ svelte-loader@^2.13.6:
   dependencies:
     loader-utils "^1.1.0"
     svelte-dev-helper "^1.1.9"
+
+svelte-local-storage-store@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/svelte-local-storage-store/-/svelte-local-storage-store-0.1.4.tgz#49a636ed7dd1bd969e4f4103a4aed31685338d45"
+  integrity sha512-XlSJqMdV1UAROsKHYQSKwI9xU0u8En/nQ6ti2flmUhBA0PM+oqXjvCyM2849ONb5JbrpyUO18CwXcSJgxYCR8w==
 
 svelte-preprocess@^4.0.0, svelte-preprocess@^4.2.0:
   version "4.6.6"

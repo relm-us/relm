@@ -2,9 +2,9 @@
   import LeftPanel, { Header } from "~/ui/LeftPanel";
   import UploadButton from "~/ui/UploadButton";
   import { Skybox } from "~/ecs/plugins/skybox";
-  import { worldManager as wm } from "~/stores/worldManager";
   import { nanoid } from "nanoid";
   import { Asset } from "~/ecs/plugins/core";
+  import { Relm } from "~/stores/Relm";
   import { assetUrl } from "~/stores/config";
 
   function onUploadedSkybox({ detail }) {
@@ -13,17 +13,17 @@
     const imageUrl = assetUrl(result.types.webp);
 
     // Delete any previous Skybox object
-    const entities = $wm.world.entities.getByComponentName("Skybox");
+    const entities = $Relm.world.entities.getByComponentName("Skybox");
     for (let entity of entities) {
-      $wm.wdoc.deleteById(entity.id);
+      $Relm.wdoc.deleteById(entity.id);
     }
 
     // Create a new Skybox
-    const skybox = $wm.world.entities
+    const skybox = $Relm.world.entities
       .create("Skybox", nanoid())
       .add(Skybox, { image: new Asset(imageUrl) })
       .activate();
-    $wm.wdoc.syncFrom(skybox);
+    $Relm.wdoc.syncFrom(skybox);
   }
 </script>
 

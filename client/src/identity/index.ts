@@ -1,4 +1,5 @@
 import { Security } from "./Security";
+import { playerId } from "./playerId";
 
 const URL = window.URL;
 
@@ -16,7 +17,7 @@ export type SecureParams = {
  *
  * @param href window.location.href
  */
-export async function getSecureParams(href: string): Promise<SecureParams> {
+export async function getSecureParams(href?: string): Promise<SecureParams> {
   if (!window.crypto.subtle) {
     throw new Error(
       `Unable to authenticate: please use a browser that ` +
@@ -24,7 +25,6 @@ export async function getSecureParams(href: string): Promise<SecureParams> {
     );
   }
 
-  const playerId = await security.getOrCreateId();
   const pubkey = await security.exportPublicKey();
   const signature = await security.sign(playerId);
   const params: SecureParams = {
@@ -33,10 +33,12 @@ export async function getSecureParams(href: string): Promise<SecureParams> {
     x: pubkey.x,
     y: pubkey.y,
   };
-  const url = new URL(href);
-  const token = url.searchParams.get("t");
-  if (token) {
-    params.t = token;
+  if (href) {
+    const url = new URL(href);
+    const token = url.searchParams.get("t");
+    if (token) {
+      params.t = token;
+    }
   }
 
   return params;

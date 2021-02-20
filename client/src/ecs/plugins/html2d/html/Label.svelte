@@ -1,6 +1,6 @@
 <script>
+  import { Relm } from "~/stores/Relm";
   import { mode } from "~/stores/mode";
-  import { worldManager as wm } from "~/stores/worldManager";
 
   export let content;
   export let color;
@@ -16,7 +16,7 @@
       // Uses setTimeout because a click on "nothing" will deselect everything
       // TODO: use selectionLogic to implement complete set of selection possibilities
       setTimeout(() => {
-        $wm.selection.addEntityId(entity.id);
+        $Relm.selection.addEntityId(entity.id);
       }, 10);
     }
   }

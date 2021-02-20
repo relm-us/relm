@@ -3,8 +3,9 @@
   import ChatBar from "./ChatBar.svelte";
   import ChatHistory from "./ChatHistory.svelte";
 
-  import { worldManager as wm } from "~/stores/worldManager";
+  import { Relm } from "~/stores/Relm";
   import { chatOpen } from "~/stores/chatOpen";
+  import { playerId } from "~/identity/playerId";
 
   let chatBar;
 
@@ -18,11 +19,14 @@
 </script>
 
 <container class:close={!$chatOpen} class:open={$chatOpen}>
-  {#if $wm}
-    <ChatHistory messages={$wm.chat.messages} myID={$wm.wdoc.ydoc.clientID} />
+  {#if $Relm}
+    <ChatHistory messages={$Relm.chat.messages} myID={playerId} />
   {/if}
   <bottom>
-    <ChatButton on:click={toggleChat} unread={$wm && $wm.chat.unreadCount} />
+    <ChatButton
+      on:click={toggleChat}
+      unread={$Relm && $Relm.chat.unreadCount}
+    />
     <ChatBar bind:this={chatBar} on:close={closeChat} />
   </bottom>
 </container>

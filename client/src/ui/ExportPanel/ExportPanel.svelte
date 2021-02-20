@@ -4,18 +4,18 @@
   import Button from "~/ui/Button";
   import LeftPanel, { Header } from "~/ui/LeftPanel";
   import { parse } from "~/utils/parse";
-  import { worldManager as wm } from "~/stores/worldManager";
+  import { Relm } from "~/stores/Relm";
 
   let text;
   let errorState = false;
 
   function applyText() {
     const json = parse(text);
-    errorState = !$wm.fromJSON(json);
+    errorState = !$Relm.fromJSON(json);
   }
 
   onMount(() => {
-    text = JSON.stringify($wm.toJSON(), null, 2);
+    text = JSON.stringify($Relm.toJSON(), null, 2);
   });
 </script>
 

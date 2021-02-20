@@ -5,7 +5,7 @@
     selectedEntities,
     selectedGroups,
   } from "~/stores/selection";
-  import { worldManager } from "~/stores/worldManager";
+  import { Relm } from "~/stores/Relm";
   import SelectCreatePrefab from "./SelectCreatePrefab.svelte";
   import EditorShowSingleEntity from "./EditorShowSingleEntity.svelte";
 </script>
@@ -19,7 +19,7 @@
   {:else if $selectedEntities.size === 1}
     <!-- Must pass in $selectedEntities so svelte knows to re-render on new selection -->
     <EditorShowSingleEntity
-      entity={$worldManager.selection.getFirst($selectedEntities)}
+      entity={$Relm.selection.getFirst($selectedEntities)}
     />
   {:else}
     <Pane title="Selected">

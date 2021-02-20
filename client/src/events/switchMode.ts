@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
+import { Relm } from "~/stores/Relm";
 import { mode } from "~/stores/mode";
-import { worldManager } from "~/stores/worldManager";
 
 export function onSwitchMode(switchTo) {
   if (!switchTo) {
@@ -9,17 +9,17 @@ export function onSwitchMode(switchTo) {
     else if ($mode === "build") switchTo = "play";
   }
 
-  const $wm = get(worldManager);
+  const $Relm = get(Relm);
 
   if (switchTo === "play") {
     mode.set("play");
-    $wm.selection.clear();
-    $wm.enableAvatarPhysics(true);
-    $wm.ghost(false);
+    $Relm.selection.clear();
+    $Relm.enableAvatarPhysics(true);
+    $Relm.ghost(false);
   } else if (switchTo === "build") {
     mode.set("build");
-    $wm.enableAvatarPhysics(false);
-    $wm.ghost(true);
+    $Relm.enableAvatarPhysics(false);
+    $Relm.ghost(true);
   } else {
     throw new Error(`Unknown mode to switch to: ${switchTo}`);
   }

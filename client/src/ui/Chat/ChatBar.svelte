@@ -1,8 +1,9 @@
 <script>
   import { createEventDispatcher } from "svelte";
-  import { worldManager as wm } from "~/stores/worldManager";
-  import { makeLabel } from "~/prefab";
+  import { Relm } from "~/stores/Relm";
   import { chatOpen } from "~/stores/chatOpen";
+  import { makeLabel } from "~/prefab";
+  import { playerId } from "~/identity/playerId";
 
   const dispatch = createEventDispatcher();
 
@@ -15,20 +16,20 @@
   });
 
   function createLabel(text) {
-    const position = $wm.avatar.getByName("WorldTransform").position;
-    const label = makeLabel($wm.world, {
+    const position = $Relm.avatar.getByName("WorldTransform").position;
+    const label = makeLabel($Relm.world, {
       x: position.x,
       z: position.z,
       content: text,
     }).activate();
-    $wm.wdoc.syncFrom(label);
+    $Relm.wdoc.syncFrom(label);
   }
 
   function addMessage(text) {
     if (text.match(/^\s*$/)) {
       dispatch("close");
     } else {
-      $wm.chat.addMessage({ u: $wm.wdoc.ydoc.clientID, c: text });
+      $Relm.chat.addMessage({ u: playerId, c: text });
     }
   }
 

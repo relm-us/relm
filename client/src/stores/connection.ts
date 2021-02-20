@@ -2,7 +2,7 @@ import { derived, writable, Readable, Writable } from "svelte/store";
 import axios from "axios";
 
 import { config, Config, defaultConfig } from "./config";
-import { getSecureParams } from "~/auth";
+import { getSecureParams } from "~/identity";
 
 export type YConnectionStatus =
   | "error"

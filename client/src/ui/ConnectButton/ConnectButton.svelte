@@ -1,6 +1,6 @@
 <script lang="ts">
   import Button from "../Button";
-  import { worldManager } from "~/stores/worldManager";
+  import { Relm } from "~/stores/Relm";
   import { yConnectStatus, relmId } from "~/stores/connection";
   import Pane from "./Pane.svelte";
 
@@ -26,7 +26,7 @@
   };
 
   const onClickDisconnect = () => {
-    $worldManager.disconnect();
+    $Relm.disconnect();
   };
 </script>
 

@@ -1,8 +1,8 @@
 import { get } from "svelte/store";
+import { Relm } from "~/stores/Relm";
 import { mode } from "~/stores/mode";
 import { selectedEntities } from "~/stores/selection";
 import { copyBuffer } from "~/stores/copyBuffer";
-import { worldManager } from "~/stores/worldManager";
 import { Transform } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 import { nanoid } from "nanoid";
@@ -71,10 +71,10 @@ export function onCopy() {
   if (get(mode) === "build") {
     const selectedIds = selectedEntities.get();
     if (selectedIds.size > 0) {
-      const $wm = get(worldManager);
+      const $Relm = get(Relm);
 
       const entities = [...selectedIds].map((id) =>
-        $wm.world.entities.getById(id)
+        $Relm.world.entities.getById(id)
       );
 
       // expand selection to include children
@@ -114,17 +114,17 @@ export function onPaste() {
       // Entities in copy buffer get new IDs on every paste
       assignNewIds(buffer.entities);
 
-      const $wm = get(worldManager);
+      const $Relm = get(Relm);
 
       const targetPosition = new Vector3().copy(
-        $wm.avatar.get(Transform).position
+        $Relm.avatar.get(Transform).position
       );
       targetPosition.y = buffer.center.y;
 
       const entities = [];
 
       for (const json of buffer.entities) {
-        const entity = $wm.world.entities.create().fromJSON(json).activate();
+        const entity = $Relm.world.entities.create().fromJSON(json).activate();
         const transform = entity.get(Transform);
         if (transform && entity.parent === null) {
           offset.copy(transform.position);
@@ -134,7 +134,7 @@ export function onPaste() {
       }
       for (const entity of entities) {
         entity.bind();
-        $wm.wdoc.syncFrom(entity);
+        $Relm.wdoc.syncFrom(entity);
       }
     } else {
       console.warn("Nothing pasted (nothing in copy buffer)");

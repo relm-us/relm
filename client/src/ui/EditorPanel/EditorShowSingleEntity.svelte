@@ -4,7 +4,7 @@
   import Button from "~/ui/Button";
   import ComponentPane from "./ComponentPane.svelte";
   import EntityDetails from "./EntityDetails.svelte";
-  import { worldManager } from "~/stores/worldManager";
+  import { Relm } from "~/stores/Relm";
   import { sortAlphabetically } from "~/utils/sortAlphabetically";
   import { Transform } from "~/ecs/plugins/core";
 
@@ -38,7 +38,7 @@
 
   const destroyComponent = (entity, Component) => {
     entity.remove(Component);
-    $worldManager.wdoc.syncFrom(entity);
+    $Relm.wdoc.syncFrom(entity);
     primaryComponents = primaryComponents;
     secondaryComponents = secondaryComponents;
   };
@@ -57,7 +57,7 @@
 
   const saveEntity = (entity) => () => {
     // console.log("saveEntity", entity);
-    $worldManager.wdoc.syncFrom(entity);
+    $Relm.wdoc.syncFrom(entity);
   };
 
   const onModified = () => {
@@ -67,16 +67,16 @@
   };
 
   const destroyEntity = () => {
-    $worldManager.wdoc.delete(entity);
+    $Relm.wdoc.delete(entity);
   };
 
   onMount(() => {
-    $worldManager.world.on("entity-inactive", detectInactive);
-    $worldManager.world.on("entity-active", detectActive);
+    $Relm.world.on("entity-inactive", detectInactive);
+    $Relm.world.on("entity-active", detectActive);
 
     return () => {
-      $worldManager.world.off("entity-inactive", detectInactive);
-      $worldManager.world.off("entity-active", detectActive);
+      $Relm.world.off("entity-inactive", detectInactive);
+      $Relm.world.off("entity-active", detectActive);
     };
   });
 </script>

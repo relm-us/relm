@@ -1,25 +1,25 @@
-import { worldManager } from "~/stores/worldManager";
+import { Relm } from "~/stores/Relm";
 import { get } from "svelte/store";
 
 import { createPrefab } from "./createPrefab";
 
-function getWorldManager() {
-  const $worldManager = get(worldManager);
-  if (!$worldManager) {
+function getRelm() {
+  const $Relm = get(Relm);
+  if (!$Relm) {
     throw new Error("Can't execute command, worldManager not set");
   }
-  return $worldManager;
+  return $Relm;
 }
 
 export const commands = { createPrefab };
 
 export const runCommand = (name, ...args) => {
-  const $worldManager = getWorldManager();
+  const $Relm = getRelm();
 
   if (name in commands) {
     const { params, command } = commands[name];
     // TODO: validate args against params
-    command($worldManager, ...args);
+    command($Relm, ...args);
   } else {
     throw new Error(`Command not found: '${name}'`);
   }

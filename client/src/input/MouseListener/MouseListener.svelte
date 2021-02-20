@@ -1,20 +1,21 @@
 <script lang="ts">
-  import { hovered } from "~/stores/selection";
   import { Vector2, Vector3 } from "three";
   import { difference } from "~/utils/setOps";
   import { hasAncestor } from "~/utils/hasAncestor";
-  import { mouse } from "~/stores/mouse";
   import { globalEvents } from "~/events";
-  import { mode } from "~/stores/mode";
   import * as selectionLogic from "./selectionLogic";
 
   import { IntersectionFinder } from "./IntersectionFinder";
 
-  import { worldManager as wm } from "~/stores/worldManager";
   import { TouchController } from "~/ecs/plugins/player-control";
   import { PointerPlane, PointerPlaneRef } from "~/ecs/plugins/pointer-plane";
   import { Transform } from "~/ecs/plugins/core";
   import { uuidv4 } from "~/utils/uuid";
+
+  import { Relm } from "~/stores/Relm";
+  import { mode } from "~/stores/mode";
+  import { hovered } from "~/stores/selection";
+  import { mouse } from "~/stores/mouse";
 
   export let world;
 
@@ -47,8 +48,8 @@
   }
 
   function removeTouchController() {
-    if ($wm.avatar.has(TouchController)) {
-      $wm.avatar.remove(TouchController);
+    if ($Relm.avatar.has(TouchController)) {
+      $Relm.avatar.remove(TouchController);
     }
   }
 
@@ -77,13 +78,13 @@
     if (
       mouseMode === "click" &&
       mousePosition.distanceTo(mouseStartPosition) > DRAG_DISTANCE_THRESHOLD &&
-      $wm.selection.length > 0
+      $Relm.selection.length > 0
     ) {
       // drag  mode start
       mouseMode = "drag";
       dragOffset = null;
       dragPlane = shiftKey ? "XY" : "XZ";
-      const position = $wm.selection.centroid;
+      const position = $Relm.selection.centroid;
 
       pointerPlaneEntity = world.entities
         .create("MouseDragPointerPlane", uuidv4())
@@ -97,9 +98,9 @@
         if (dragOffset) {
           const position = new Vector3().copy(ref[dragPlane]);
           position.sub(dragOffset);
-          $wm.selection.moveRelativeToSavedPositions(position);
+          $Relm.selection.moveRelativeToSavedPositions(position);
         } else if (ref.updateCount > 1) {
-          $wm.selection.savePositions();
+          $Relm.selection.savePositions();
           dragOffset = new Vector3().copy(ref[dragPlane]);
         }
       }
@@ -125,8 +126,8 @@
 
       selectionLogic.mousedown(found, event.shiftKey);
     } else if ($mode === "play") {
-      if (found.includes($wm.avatar.id)) {
-        $wm.avatar.add(TouchController);
+      if (found.includes($Relm.avatar.id)) {
+        $Relm.avatar.add(TouchController);
       }
     }
   }
@@ -136,9 +137,9 @@
 
     if ($mode === "build") {
       if (mouseMode === "click") {
-        selectionLogic.mouseup($wm.selection);
+        selectionLogic.mouseup($Relm.selection);
       } else if (mouseMode === "drag") {
-        $wm.selection.syncEntities();
+        $Relm.selection.syncEntities();
       }
     } else if ($mode === "play") {
       removeTouchController();
@@ -164,8 +165,8 @@
     if ($mode === "build") {
       selectionLogic.mousedown(found, false);
     } else if ($mode === "play") {
-      if (found.includes($wm.avatar.id)) {
-        $wm.avatar.add(TouchController);
+      if (found.includes($Relm.avatar.id)) {
+        $Relm.avatar.add(TouchController);
       }
     }
   }

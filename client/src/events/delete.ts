@@ -1,10 +1,10 @@
 import { get } from "svelte/store";
-import { worldManager } from "~/stores/worldManager";
+import { Relm } from "~/stores/Relm";
 import { selectedEntities } from "~/stores/selection";
 
 export function onDelete() {
-  const $wm = get(worldManager);
+  const $Relm = get(Relm);
   get(selectedEntities).forEach((entityId) => {
-    $wm.wdoc.deleteById(entityId);
+    $Relm.wdoc.deleteById(entityId);
   });
 }

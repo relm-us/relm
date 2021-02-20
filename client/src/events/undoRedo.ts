@@ -1,11 +1,11 @@
 import { get } from "svelte/store";
+import { Relm } from "~/stores/Relm";
 import { mode } from "~/stores/mode";
-import { worldManager } from "~/stores/worldManager";
 
 export function onUndo() {
   if (get(mode) === "build") {
-    const $wm = get(worldManager);
-    $wm.wdoc.undoManager.undo();
+    const $Relm = get(Relm);
+    $Relm.wdoc.undoManager.undo();
   } else {
     console.warn("Nothing undone (play mode)");
   }
@@ -13,8 +13,8 @@ export function onUndo() {
 
 export function onRedo() {
   if (get(mode) === "build") {
-    const $wm = get(worldManager);
-    $wm.wdoc.undoManager.redo();
+    const $Relm = get(Relm);
+    $Relm.wdoc.undoManager.redo();
   } else {
     console.warn("Nothing redone (play mode)");
   }
