@@ -50,10 +50,5 @@
   .close {
     transition: 0.2s;
     right: -308px;
-    /* animation: close 0.45s step-end infinite; */
-  }
-
-  slider {
-    display: block;
   }
 </style>

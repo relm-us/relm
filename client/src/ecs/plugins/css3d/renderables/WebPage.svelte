@@ -39,6 +39,8 @@
     }
   }
 
+  $: if ($mode === "build") highlighted = false;
+
   // ignore warning about missing props
   $$props;
 </script>

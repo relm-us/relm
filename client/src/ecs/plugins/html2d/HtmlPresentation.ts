@@ -19,6 +19,7 @@ export class HtmlPresentation {
     el.style.left = "0px";
     el.style.width = "100%";
     el.style.height = "100%";
+    el.style.pointerEvents = "none";
 
     return el;
   }

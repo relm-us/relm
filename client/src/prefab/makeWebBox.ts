@@ -6,8 +6,11 @@ export function makeWebBox(
   world,
   {
     x = 0,
-    y = 0,
+    y = 1.6,
     z = 0,
+    w = 3.2,
+    h = 3.2,
+    d = 0.6,
     yOffset = 0,
     url = "https://google.com?igu=1",
     color = "gray",
@@ -16,8 +19,9 @@ export function makeWebBox(
   const linearColor = new Color(color);
   linearColor.convertSRGBToLinear();
 
+  console.log("create web box", y, yOffset);
   const box = makeBox(world, {
-    ...{ x: x, y: y + yOffset, z: z, w: 3.2, h: 3.2, d: 0.6 },
+    ...{ x, y: y + yOffset, z, w, h, d },
     color: `#${linearColor.getHexString()}`,
     name: "Web Box",
   });

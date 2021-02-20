@@ -105,6 +105,7 @@ export class Html2dSystem extends System {
     const container = entity.get(Html2dRef).value;
     container.style.left = v1.x + "px";
     container.style.top = v1.y + "px";
+    container.style.pointerEvents = "auto";
 
     // calculate width
     let width = (35 / boundsWidth) * spec.width * 60;
