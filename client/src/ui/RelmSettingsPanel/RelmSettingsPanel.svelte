@@ -55,12 +55,6 @@
     width: 100%;
   }
 
-  icon {
-    display: block;
-    width: 48px;
-    height: 48px;
-    margin: auto auto;
-  }
   .upload {
     --direction: row;
     --margin: 4px;
