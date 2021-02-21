@@ -1,4 +1,4 @@
-import { Component, NumberType, StringType } from "~/ecs/base";
+import { BooleanType, Component, NumberType, StringType } from "~/ecs/base";
 import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
@@ -76,6 +76,17 @@ export class Html2d extends Component {
       editor: {
         label: "Shadow Color",
         input: "Color",
+        requires: [{ prop: "kind", value: "LABEL" }],
+      },
+    },
+
+    underlineColor: {
+      type: StringType,
+      default: null,
+      editor: {
+        label: "Underline Color",
+        input: "Color",
+        requires: [{ prop: "kind", value: "LABEL" }],
       },
     },
 

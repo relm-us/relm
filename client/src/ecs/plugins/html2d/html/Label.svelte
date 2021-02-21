@@ -5,6 +5,7 @@
   export let content;
   export let color;
   export let shadowColor;
+  export let underlineColor;
 
   // The entity that this Label is attached to
   export let entity;
@@ -26,7 +27,8 @@
 
 <div
   class="truncate-overflow"
-  style="--color:{color};--shadow-color:{shadowColor};"
+  class:underline={!!underlineColor}
+  style="--color:{color};--shadow-color:{shadowColor};--underline-color:{underlineColor}"
   on:mousedown={onMousedown}
 >
   {content}
@@ -40,9 +42,9 @@
     white-space: nowrap;
     text-overflow: ellipsis;
 
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
     color: var(--color, #e5e5e5);
-    letter-spacing: 1px;
+    letter-spacing: 1.2px;
     font-weight: 700;
     text-shadow: 0 0 3px var(--shadow-color, "black");
 
@@ -50,11 +52,15 @@
     cursor: default;
   }
 
+  div.underline {
+    border-bottom: 2px solid var(--underline-color);
+  }
+
   div:hover {
     position: relative;
 
     display: block;
-    min-width: 300px;
+    /* min-width: 300px; */
 
     background-color: rgba(0, 0, 0, 0.15);
     border-radius: 5px;
