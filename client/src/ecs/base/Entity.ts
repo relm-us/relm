@@ -13,6 +13,7 @@ export class Entity {
   components: Map<TypeOfComponent, Component>;
   parent: MaybeUnboundEntity;
   children: Array<MaybeUnboundEntity>;
+  subgroup: Array<Entity>;
   inactiveComponents: Array<Component>;
   archetypeId: string;
 
@@ -30,6 +31,7 @@ export class Entity {
     this.components = new Map();
     this.parent = null;
     this.children = [];
+    this.subgroup = [];
     this.needsBind = false;
     this.inactiveComponents = [];
     this.archetypeId = world.archetypes.initialId;
@@ -133,11 +135,18 @@ export class Entity {
     return this.children as Array<Entity>;
   }
 
-  traverse(callback: (e: Entity) => void) {
+  traverse(callback: (e: Entity) => void, children = true, subgroup = false) {
     this.bind();
     callback(this);
-    for (let i = 0; i < this.children.length; i++) {
-      (this.children[i] as Entity).traverse(callback);
+    if (children) {
+      for (let i = 0; i < this.children.length; i++) {
+        (this.children[i] as Entity).traverse(callback);
+      }
+    }
+    if (subgroup) {
+      for (let i = 0; i < this.subgroup.length; i++) {
+        this.subgroup[i].traverse(callback);
+      }
     }
   }
 
