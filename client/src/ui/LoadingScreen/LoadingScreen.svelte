@@ -44,7 +44,7 @@
     position: fixed;
     width: 100%;
     height: 100%;
-    z-index: 2;
+    z-index: 3;
 
     background: rgba(45, 45, 45, 1);
   }
