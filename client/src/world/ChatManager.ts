@@ -52,22 +52,22 @@ export class ChatManager {
       doneFirstPass = true;
     });
 
-    //
-    this.messages.subscribe(($messages) => {
-      const $processed = get(this.processed);
-      const newIndex = $messages.length - $processed;
-      const newMessages = $messages.slice(newIndex);
-      for (let message of newMessages) {
-        const user = message.u;
-        // TODO: lookup playerId from user, then show speech bubble
-      }
-    });
-
-    // Whenever chat is opened, consider all messages "read"
     chatOpen.subscribe(($open) => {
+      // Whenever chat is opened, consider all messages "read"
       if ($open) {
         this.readCount.set(get(this.messages).length);
       }
+
+      // Broadcast speech state to all players
+      if (!$open) {
+        this.setSpeakingState(false);
+      }
+    });
+  }
+
+  setSpeakingState(value: boolean) {
+    this.identities.me.sharedFields.update(($fields) => {
+      return { ...$fields, speaking: value };
     });
   }
 
@@ -78,5 +78,6 @@ export class ChatManager {
     });
     // Broadcast via yjs
     this.messages.y.push([msg]);
+    this.setSpeakingState(true);
   }
 }

@@ -1,20 +1,23 @@
 <script>
+  import { afterUpdate } from "svelte";
   import ChatButton from "./ChatButton.svelte";
   import ChatBar from "./ChatBar.svelte";
   import ChatHistory from "./ChatHistory.svelte";
 
   import { Relm } from "~/stores/Relm";
-  import { chatOpen } from "~/stores/chatOpen";
+  import { chatOpen, chatFocused } from "~/stores/chatOpen";
   import { playerId } from "~/identity/playerId";
 
   let chatBar;
 
   function toggleChat() {
     $chatOpen = !$chatOpen;
+    $chatFocused = $chatOpen;
   }
 
   function closeChat() {
     $chatOpen = false;
+    $chatFocused = false;
   }
 </script>
 

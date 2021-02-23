@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from "svelte";
   import { Relm } from "~/stores/Relm";
-  import { chatOpen } from "~/stores/chatOpen";
+  import { chatFocused, chatOpen } from "~/stores/chatOpen";
   import { playerId } from "~/identity/playerId";
 
   const dispatch = createEventDispatcher();
@@ -33,7 +33,12 @@
   }
 
   function onBlur(event) {
-    dispatch("close");
+    $chatFocused = false;
+  }
+
+  $: if ($chatFocused && inputEl) {
+    console.log("sh focus");
+    inputEl.focus();
   }
 </script>
 

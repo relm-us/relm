@@ -1,8 +1,18 @@
 export type SharedIdentityFields = {
+  // Participant's name (chosen randomly at first, "Guest-xyz")
   name?: string;
+
+  // Participant's preferred color (chosen randomly at first)
   color?: string;
+
+  // Yjs clientID
   clientId?: number;
+
+  // Has participant notified that they will be "away"?
   status?: PlayerStatus;
+
+  // Show the speech bubble?
+  speaking?: boolean;
 };
 
 export type LocalIdentityFields = {

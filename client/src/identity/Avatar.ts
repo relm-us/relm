@@ -63,15 +63,16 @@ export class Avatar {
   syncEntity(identity: IdentityData) {
     console.log("syncEntity", identity);
     this.syncLabel(identity.shared);
-    this.syncSpeech(identity.local);
+    this.syncSpeech(identity);
   }
 
-  syncSpeech(fields: LocalIdentityFields) {
-    if (fields.message && !this.head.has(Html2d)) {
-      this.addSpeech(fields.message);
-    } else if (fields.message && this.head.has(Html2d)) {
-      this.changeSpeech(fields.message);
-    } else if (!fields.message && this.head.has(Html2d)) {
+  syncSpeech(identity: IdentityData) {
+    const visible = !!identity.local.message && identity.shared.speaking;
+    if (visible && !this.head.has(Html2d)) {
+      this.addSpeech(identity.local.message);
+    } else if (visible && this.head.has(Html2d)) {
+      this.changeSpeech(identity.local.message);
+    } else if (!visible && this.head.has(Html2d)) {
       this.head.remove(Html2d);
     }
   }
