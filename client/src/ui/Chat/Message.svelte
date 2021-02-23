@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Readable } from "svelte/store";
   import type { IdentityData } from "~/identity/types";
+  import { cleanHtml } from "~/utils/cleanHtml";
 
   export let who: Readable<IdentityData>;
   export let content: string;
@@ -11,7 +12,7 @@
     <id-circle style="background-color:{$who.shared.color}" />
     <container>
       <who>{$who.shared.name}</who>
-      <content>{content}</content>
+      <content>{@html cleanHtml(content)}</content>
     </container>
   </message>
 {:else}

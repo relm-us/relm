@@ -1,7 +1,9 @@
 <script>
   import { fade } from "svelte/transition";
+
   import { Relm } from "~/stores/Relm";
   import { makeLabel, makeBillboard } from "~/prefab";
+  import { cleanHtml } from "~/utils/cleanHtml";
 
   import IoMdCloseCircleOutline from "svelte-icons/io/IoMdCloseCircleOutline.svelte";
   import IoMdPricetag from "svelte-icons/io/IoMdPricetag.svelte";
@@ -69,7 +71,7 @@
     on:focus={showControls}
     on:blur={hideControls}
   >
-    {content}
+    {@html cleanHtml(content)}
     {#if controlsVisible}
       <controls transition:fade={{ duration: 150 }}>
         <button on:click={close}>

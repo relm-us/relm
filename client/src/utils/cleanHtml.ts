@@ -1,4 +1,6 @@
+// TODO: is DOMPurify any smaller/faster?
 import sanitizeHtml from "sanitize-html";
+import anchorme from "anchorme";
 
 const defaultOptions = {
   // prettier-ignore
@@ -23,5 +25,15 @@ const defaultOptions = {
 };
 
 export function cleanHtml(html) {
-  return sanitizeHtml(html, defaultOptions);
+  const cleanText = sanitizeHtml(html, defaultOptions);
+  return anchorme({
+    input: cleanText,
+    options: {
+      truncate: 30,
+      middleTruncation: true,
+      attributes: {
+        target: "_blank",
+      },
+    },
+  });
 }

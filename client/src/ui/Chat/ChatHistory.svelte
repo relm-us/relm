@@ -1,7 +1,7 @@
 <script>
   import { beforeUpdate, afterUpdate } from "svelte";
-  import { get } from "svelte/store";
   import { Relm } from "~/stores/Relm";
+  import { cleanHtml } from "~/utils/cleanHtml";
   import Message from "./Message.svelte";
 
   export let messages;
@@ -34,7 +34,7 @@
     <scroll-container>
       {#each $messages as message}
         {#if message.u === myID}
-          <message class:mine={true}>{message.c}</message>
+          <message class:mine={true}>{@html cleanHtml(message.c)}</message>
         {:else}
           <Message who={sharedStore(message.u)} content={message.c} />
         {/if}
@@ -59,6 +59,11 @@
     overflow-y: scroll;
   }
 
+  container :global(a),
+  container :global(a:visited) {
+    color: yellow;
+  }
+
   scroll-container {
     display: flex;
     flex-direction: column;
@@ -68,7 +73,7 @@
     display: flex;
     justify-content: center;
     margin-bottom: 16px;
-    color: yellow;
+    color: #333;
   }
 
   message.mine {
