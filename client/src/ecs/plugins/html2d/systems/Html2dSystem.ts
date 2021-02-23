@@ -57,6 +57,16 @@ export class Html2dSystem extends System {
     };
     // Prepare a container for Svelte
     const container = document.createElement("div");
+
+    // When hovering over the container and we're zoomed out, we still want
+    // the HTML label (for example) to have plenty of width so it can be read.
+    container.addEventListener("mouseenter", () => {
+      container.style.minWidth = "300px";
+    });
+    container.addEventListener("mouseleave", () => {
+      container.style.minWidth = "";
+    });
+
     const style = container.style;
     // just above the 3d world, but below the editor panel
     style.zIndex = "1";

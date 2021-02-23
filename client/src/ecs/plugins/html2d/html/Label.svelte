@@ -42,16 +42,17 @@
 
 <style>
   div {
-    line-height: 1.5rem;
     overflow: hidden;
     hyphens: auto;
     white-space: nowrap;
     text-overflow: ellipsis;
+    word-break: break-word;
 
     /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
     color: var(--color, #e5e5e5);
     letter-spacing: 1.2px;
     font-weight: 700;
+    line-height: 1.5rem;
     text-shadow: 0 0 3px var(--shadow-color, "black");
 
     padding: 4px 8px;
