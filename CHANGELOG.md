@@ -1,3 +1,41 @@
+2021-02-22
+- NEW: Speech html2d component (unused, so far)
+- NEW: Players have a color and a name (so far, you can't choose them)
+- NEW: Speech bubbles work! Whenever you say something in the chat box, your most recent message will appear as a speech bubble above your avatar's head.
+- NEW: Context-sensitive speech bubble buttons. Click the speech bubble to show buttons:
+  1. Close Button: closes the speech bubble (local only)
+  2. Label Button: materializes what you said as a zoom-invariant label.
+  3. Easel Button: materializes what you said as an easel (billboard, for now). Text in easel is editable.
+- CHANGED: Chat history shows names
+- FIXED: Labels (esp. avatar names) are hidden when loading screen is shown.
+- FIXED: web pages could no longer get mouse events
+- CODE NOTES: Big "Identity" related refactor! We have much better access to combined properties, regardless of their source--for example, shared properties like name and color, as well as physics-engine-related properties such as transform (position, rotation) for players.
+
+2021-02-19
+- NEW: Chat! Lower-right hand corner has a chat icon & clicking on it opens a chat history where you can type messages to each other.
+- NEW: The count of unread chat messages shows up as a number in red above the chat icon.
+- NEW: (Build Mode) Labels have a "max width" setting
+- NEW: Labels shrink when zoomed out so they don't overlap as much
+- NEW: (Build Mode) There is now a "Settings" tab on the side panel
+- NEW: (Build Mode) Inside the Settings tab, a Skybox image can be uploaded
+- CHANGED: Relms no longer have a very large default rectangular ground. Instead, there is a small collider that prevents the character from falling, and a "Ground" button in the editor prefabs that you can use to add ground (circle, square).
+- CHANGED: Labels only show one line of text (also avoids an odd rendering bug that smudges parts of text onto world canvas).
+- CHANGED: Width of labels relative to screen size and "Max. Width" parameter updated to reflect actual world size.
+- CHANGED: Hovering over a label makes its width grow temporarily so it looks reasonable when zoomed out.
+- CHANGED: Very long labels show ellipsis (...), and can be hovered to show all
+- FIXED: Long labels wrap at max width.
+- FIXED: Labels no longer prevent scroll wheel zoom.
+- FIXED: Labels won't show bits and pieces of 3rd line of hidden text on long content.
+- FIXED: Clicking text of a label in Build Mode should select the accompanying object.
+- FIXED: Shadow map resizes to zoom level, covering entire visible area.
+
+2021-02-17
+- NEW: Basic MULTIPLAYER is finally here! Presence only (no physics).
+- NEW: Fire has a "Color Mix" value that provides more control over color of the flame (e.g. setting to "1.0" will make it saturate the color).
+- NEW: Asset type in editor now shows file size in KB or MB.
+- FIXED: Shape cache lookup was wrong when cubes' Y or Z size changed.
+- FIXED: Invalid wall sizes now warn instead of throwing an error.
+
 2021-02-16
 - NEW: Chat icon in the lower right opens to text box that currently allows you to create a Label. NOTE: In future, this will be an actual chat box; for now, it is a shortcut to creating labels, similar to Relm v4.
 - NEW: Pressing "Enter" or "Return" is a shortcut key that opens the Chat box.
