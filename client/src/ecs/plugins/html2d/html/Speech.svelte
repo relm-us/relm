@@ -1,14 +1,90 @@
 <script>
+  import { fade } from "svelte/transition";
+  import { Relm } from "~/stores/Relm";
+  import { makeLabel, makeBillboard } from "~/prefab";
+
+  import IoMdCloseCircleOutline from "svelte-icons/io/IoMdCloseCircleOutline.svelte";
+  import IoMdPricetag from "svelte-icons/io/IoMdPricetag.svelte";
+  import IoMdEasel from "svelte-icons/io/IoMdEasel.svelte";
+
   export let content;
   export let hanchor;
+
+  let visible = true;
+  let controlsVisible = false;
+
+  function showControls() {
+    controlsVisible = true;
+  }
+
+  function hideControls() {
+    controlsVisible = false;
+  }
+
+  function close() {
+    visible = false;
+  }
+
+  function materializeLabel() {
+    visible = false;
+    createLabel(content);
+  }
+
+  function materializeBillboard() {
+    visible = false;
+    createBillboard(content);
+  }
+
+  function createLabel(text) {
+    const position = $Relm.avatar.getByName("WorldTransform").position;
+    const label = makeLabel($Relm.world, {
+      x: position.x,
+      z: position.z,
+      content: text,
+    }).activate();
+    $Relm.wdoc.syncFrom(label);
+  }
+
+  function createBillboard(text) {
+    const position = $Relm.avatar.getByName("WorldTransform").position;
+    const label = makeBillboard($Relm.world, {
+      x: position.x,
+      z: position.z,
+      text: text,
+      editable: true,
+    }).activate();
+    $Relm.wdoc.syncFrom(label);
+  }
 
   // ignore warning about missing props
   $$props;
 </script>
 
-<div class="bubble" class:right={hanchor === 2} class:left={hanchor === 1}>
-  {content}
-</div>
+{#if visible}
+  <div
+    tabindex="0"
+    class="bubble"
+    class:right={hanchor === 2}
+    class:left={hanchor === 1}
+    on:focus={showControls}
+    on:blur={hideControls}
+  >
+    {content}
+    {#if controlsVisible}
+      <controls transition:fade={{ duration: 150 }}>
+        <button on:click={close}>
+          <IoMdCloseCircleOutline />
+        </button>
+        <button on:click={materializeLabel} style="margin-top:auto">
+          <IoMdPricetag />
+        </button>
+        <button on:click={materializeBillboard}>
+          <IoMdEasel />
+        </button>
+      </controls>
+    {/if}
+  </div>
+{/if}
 
 <style lang="scss">
   .bubble {
@@ -21,6 +97,7 @@
     background: white;
     /* font-family: "Permanent Marker"; */
     clear: both;
+    min-width: 60px;
 
     &:before {
       content: "";
@@ -53,5 +130,29 @@
       }
     }
     // For "think" and "yell" see https://codepen.io/quatmo/pen/jVoXQe
+  }
+
+  controls {
+    display: flex;
+    flex-direction: column;
+
+    position: absolute;
+    top: -17px;
+    right: -34px;
+    height: calc(100% + 16px);
+
+    --margin: 0;
+  }
+  button {
+    all: unset;
+    display: block;
+    width: 32px;
+    height: 32px;
+
+    color: var(--foreground-white);
+  }
+
+  button:hover {
+    color: white;
   }
 </style>

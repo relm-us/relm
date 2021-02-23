@@ -2,7 +2,6 @@
   import { createEventDispatcher } from "svelte";
   import { Relm } from "~/stores/Relm";
   import { chatOpen } from "~/stores/chatOpen";
-  import { makeLabel } from "~/prefab";
   import { playerId } from "~/identity/playerId";
 
   const dispatch = createEventDispatcher();
@@ -14,16 +13,6 @@
     if ($chatOpen) inputEl.focus();
     else inputEl.blur();
   });
-
-  function createLabel(text) {
-    const position = $Relm.avatar.getByName("WorldTransform").position;
-    const label = makeLabel($Relm.world, {
-      x: position.x,
-      z: position.z,
-      content: text,
-    }).activate();
-    $Relm.wdoc.syncFrom(label);
-  }
 
   function addMessage(text) {
     if (text.match(/^\s*$/)) {

@@ -6,13 +6,17 @@
   export let content: string;
 </script>
 
-<message>
-  <id-circle style="background-color:{$who.shared.color}" />
-  <container>
-    <who>{$who.shared.name}</who>
-    <content>{content}</content>
-  </container>
-</message>
+{#if $who}
+  <message>
+    <id-circle style="background-color:{$who.shared.color}" />
+    <container>
+      <who>{$who.shared.name}</who>
+      <content>{content}</content>
+    </container>
+  </message>
+{:else}
+  <message>Loading...</message>
+{/if}
 
 <style>
   message {

@@ -55,7 +55,7 @@ export class Renderable extends Component {
 
     fontColor: {
       type: StringType,
-      default: "#fbfbfb",
+      default: "#151515",
       editor: {
         label: "Font Color",
         input: "Color",
@@ -65,7 +65,7 @@ export class Renderable extends Component {
 
     bgColor: {
       type: StringType,
-      default: "#151515",
+      default: "#fbfbfb",
       editor: {
         label: "Background Color",
         input: "Color",

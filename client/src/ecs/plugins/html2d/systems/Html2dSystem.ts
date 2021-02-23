@@ -15,7 +15,7 @@ export class Html2dSystem extends System {
   static queries = {
     new: [Html2d, Not(Html2dRef)],
     modified: [Modified(Html2d), Html2dRef],
-    active: [Html2d, Html2dRef],
+    active: [Html2d, Html2dRef, WorldTransform],
     removed: [Not(Html2d), Html2dRef],
   };
 

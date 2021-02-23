@@ -1,7 +1,8 @@
 import * as Y from "yjs";
 import EventEmitter from "eventemitter3";
+import { get } from "svelte/store";
 
-import { withMapEdits } from "~/y-integration/observeUtils";
+import { withArrayEdits, withMapEdits } from "~/y-integration/observeUtils";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
@@ -15,11 +16,14 @@ import {
 
 import { defaultIdentity } from "./defaultIdentity";
 import { Identity } from "./Identity";
+import { ChatMessage } from "~/world/ChatManager";
 
 export class IdentityManager extends EventEmitter {
   wdoc: WorldDoc;
 
   yfields: Y.Map<SharedIdentityFields>;
+
+  ymessages: Y.Array<ChatMessage>;
 
   identities: Map<PlayerID, Identity>;
 
@@ -36,6 +40,7 @@ export class IdentityManager extends EventEmitter {
     super();
     this.wdoc = wdoc;
     this.yfields = wdoc.ydoc.getMap("identities");
+    this.ymessages = wdoc.ydoc.getArray("messages");
     this.identities = new Map();
     this.lookupPlayerId = new Map();
     this.setTransformFns = new Map();
@@ -43,7 +48,8 @@ export class IdentityManager extends EventEmitter {
 
     this.registerMe(myData, this.wdoc.ydoc.clientID);
 
-    this.observe();
+    this.observeFields();
+    this.observeChat();
   }
 
   registerMe(myData: IdentityData, clientId: YClientID) {
@@ -95,7 +101,10 @@ export class IdentityManager extends EventEmitter {
       identity = new Identity(this.wdoc.world, playerId, { localFields });
       this.identities.set(playerId, identity);
     } else {
-      identity.localFields.set(localFields);
+      const existingLocalFields = get(identity.localFields);
+      identity.localFields.set(
+        Object.assign({}, existingLocalFields, localFields)
+      );
     }
     return identity;
   }
@@ -132,7 +141,7 @@ export class IdentityManager extends EventEmitter {
     fn(transform);
   }
 
-  observe() {
+  observeFields() {
     this.yfields.observe(
       (
         event: Y.YMapEvent<SharedIdentityFields>,
@@ -145,6 +154,19 @@ export class IdentityManager extends EventEmitter {
           onDelete: (playerId, fields) => {
             this.lookupPlayerId.delete(fields.clientId);
             this.identities.delete(playerId);
+          },
+        });
+      }
+    );
+  }
+
+  observeChat() {
+    this.ymessages.observe(
+      (event: Y.YArrayEvent<ChatMessage>, transaction: Y.Transaction) => {
+        withArrayEdits(event, {
+          onAdd: (msg: ChatMessage) => {
+            const playerId = msg.u;
+            this.updateLocalFields(playerId, { message: msg.c });
           },
         });
       }

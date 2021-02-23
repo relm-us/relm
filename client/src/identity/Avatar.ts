@@ -1,7 +1,11 @@
 import { Readable } from "svelte/store";
 import { Vector3, Euler } from "three";
 
-import { IdentityData, SharedIdentityFields } from "./types";
+import {
+  IdentityData,
+  LocalIdentityFields,
+  SharedIdentityFields,
+} from "./types";
 import { makeAvatar } from "~/prefab/makeAvatar";
 import { makeAvatarAndActivate } from "~/prefab/makeAvatarAndActivate";
 
@@ -35,9 +39,14 @@ export class Avatar {
       }
 
       if (this.entity) {
-        this.syncEntity($id.shared);
+        this.syncEntity($id);
       }
     });
+  }
+
+  // TODO: more configurable avatars; for now, we cheat a bit and return the head.
+  get head() {
+    return this.entity?.getChildren()[0];
   }
 
   makeLocalAvatar() {
@@ -51,7 +60,40 @@ export class Avatar {
     return avatar;
   }
 
-  syncEntity(fields: SharedIdentityFields) {
+  syncEntity(identity: IdentityData) {
+    console.log("syncEntity", identity);
+    this.syncLabel(identity.shared);
+    this.syncSpeech(identity.local);
+  }
+
+  syncSpeech(fields: LocalIdentityFields) {
+    if (fields.message && !this.head.has(Html2d)) {
+      this.addSpeech(fields.message);
+    } else if (fields.message && this.head.has(Html2d)) {
+      this.changeSpeech(fields.message);
+    } else if (!fields.message && this.head.has(Html2d)) {
+      this.head.remove(Html2d);
+    }
+  }
+
+  addSpeech(message: string) {
+    const speech = {
+      kind: "SPEECH",
+      content: message,
+      offset: new Vector3(0.5, 0, 0),
+      hanchor: 1,
+      vanchor: 2,
+    };
+    this.head.add(Html2d, speech);
+  }
+
+  changeSpeech(message: string) {
+    const label = this.head.get(Html2d);
+    label.content = message;
+    label.modified();
+  }
+
+  syncLabel(fields: SharedIdentityFields) {
     if (fields.name && !this.entity.has(Html2d)) {
       this.addLabel(fields.name, fields.color);
     } else if (fields.name && this.entity.has(Html2d)) {

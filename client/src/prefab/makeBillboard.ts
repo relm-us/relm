@@ -13,6 +13,7 @@ export function makeBillboard(
     z = 0,
     yOffset = 0,
     text,
+    editable = false,
     fontSize,
     frameWidth = 200,
     frameHeight = 200,
@@ -32,6 +33,7 @@ export function makeBillboard(
       height: frameHeight,
       scale,
       text,
+      editable,
       fontSize,
     })
     .add(CssPlane, {

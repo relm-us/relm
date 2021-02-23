@@ -10,14 +10,18 @@
   // The entity that this Label is attached to
   export let entity;
 
+  let canEdit = false;
+
   function onMousedown(event) {
-    event.preventDefault();
     if ($mode === "build") {
+      event.preventDefault();
       // Uses setTimeout because a click on "nothing" will deselect everything
       // TODO: use selectionLogic to implement complete set of selection possibilities
       setTimeout(() => {
         $Relm.selection.addEntityId(entity.id);
-      }, 10);
+      }, 100);
+    } else if ($mode === "play") {
+      canEdit = true;
     }
   }
 
@@ -25,6 +29,7 @@
   $$props;
 </script>
 
+<!-- contenteditable={canEdit} -->
 <div
   class="truncate-overflow"
   class:underline={!!underlineColor}

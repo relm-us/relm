@@ -12,6 +12,9 @@ export type LocalIdentityFields = {
   // Milliseconds since last seen (useful for visualizing disconnected players)
   lastSeen?: number;
 
+  // Most recent chat message (used for chat bubble)
+  message?: string;
+
   /**
    * Whether this avatar is
    *  a) local (controlled by the player), or
