@@ -113,7 +113,7 @@ export class IdentityManager extends EventEmitter {
     return this.identities.get(playerId);
   }
 
-  setTransform(clientId: YClientID, transform: Array<number>) {
+  setTransformData(clientId: YClientID, transform: Array<number>) {
     let fn = this.setTransformFns.get(clientId);
 
     if (!fn) {
@@ -134,7 +134,7 @@ export class IdentityManager extends EventEmitter {
         lastSeen: performance.now(),
       });
 
-      fn = identity.avatar.setTransform.bind(identity.avatar);
+      fn = identity.avatar.setTransformData.bind(identity.avatar);
       this.setTransformFns.set(clientId, fn);
     }
 

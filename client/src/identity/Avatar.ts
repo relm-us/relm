@@ -126,7 +126,17 @@ export class Avatar {
     label.modified();
   }
 
-  setTransform([x, y, z, theta]) {
+  getTransformData() {
+    const transformData = [];
+    const transform = this.entity.get(Transform);
+
+    transform.position.toArray(transformData, 0);
+    e1.setFromQuaternion(transform.rotation);
+    transformData[3] = e1.y;
+    return transformData;
+  }
+
+  setTransformData([x, y, z, theta]) {
     const transform = this.entity.get(Transform);
     transform.position.set(x, y, z);
     e1.setFromQuaternion(transform.rotation);

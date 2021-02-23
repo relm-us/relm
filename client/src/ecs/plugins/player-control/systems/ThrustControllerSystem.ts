@@ -15,10 +15,8 @@ const torque = new Vector3();
 const vUp = new Vector3(0, 1, 0);
 const vOut = new Vector3(0, 0, 1);
 const v1 = new Vector3();
-const q = new Quaternion();
 
 const MAX_VELOCITY = 5.0;
-const UPRIGHT_SPEED = 0.1;
 
 export class ThrustControllerSystem extends System {
   order = Groups.Simulation;
@@ -55,16 +53,6 @@ export class ThrustControllerSystem extends System {
         (directions.up ? -1 : 0) + (directions.down ? 1 : 0)
       )
       .normalize();
-
-    // pull character upright if leaning in any direction
-    const euler = new Euler(0, 0, 0, "YXZ").setFromQuaternion(
-      transform.rotation
-    );
-    euler.x = 0;
-    controller.angle = euler.y; // capture this value for network
-    euler.z = 0;
-    q.setFromEuler(euler).normalize();
-    transform.rotation.rotateTowards(q, UPRIGHT_SPEED);
 
     const angle = signedAngleBetweenVectors(bodyFacing, thrust, vUp);
     if (angle < -Math.PI / 12 || angle > Math.PI / 12) {

@@ -26,7 +26,6 @@ import { SelectionManager } from "./SelectionManager";
 import { IdentityManager } from "~/identity/IdentityManager";
 import { ChatManager } from "./ChatManager";
 
-const m = [];
 export default class WorldManager {
   world: World & {
     physics: any;
@@ -193,7 +192,7 @@ export default class WorldManager {
         // Ignore updates about ourselves
         if (clientId === this.wdoc.ydoc.clientID) return;
 
-        this.identities.setTransform(clientId, m);
+        this.identities.setTransformData(clientId, m);
       });
     });
   }
@@ -217,15 +216,7 @@ export default class WorldManager {
   }
 
   setLocalStateFromAvatar() {
-    const body = this.avatar.get(Object3D).value;
-    const controller = this.avatar.get(ThrustController);
-    // const head = this.avatar.children[0].get(Object3D).value;
-    // const lhand = this.avatar.subgroup[0].get(Object3D).value;
-    // const rhand = this.avatar.subgroup[1].get(Object3D).value;
-
-    body.position.toArray(m, 0);
-    m[3] = controller.angle;
-    this.setLocalStateField("m", m);
+    this.setLocalStateField("m", this.identities.me.avatar.getTransformData());
   }
 
   get avatar(): Entity {

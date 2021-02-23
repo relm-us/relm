@@ -1,3 +1,6 @@
+2021-02-23
+- FIXED: Avatar was drifting.
+
 2021-02-22
 - NEW: Players have a color and a name (so far, you can't choose them)
 - NEW: Speech bubbles work! Whenever you say something in the chat box, your most recent message will appear as a speech bubble above your avatar's head.
