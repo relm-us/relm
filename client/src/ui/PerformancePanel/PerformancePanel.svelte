@@ -1,8 +1,10 @@
 <script>
   import StatsPane from "./StatsPane.svelte";
+  import ToggleSwitch from "../ToggleSwitch";
 
   import Button from "~/ui/Button";
   import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
+  import { shadowsEnabled } from "~/stores/settings";
 
   import {
     fpsTime,
@@ -30,14 +32,6 @@
   );
 </script>
 
-<style>
-  table {
-    width: 100%;
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-</style>
-
 <LeftPanel on:minimize>
   <Header>Performance</Header>
 
@@ -47,7 +41,13 @@
     minimized={false}
     dataStore={fpsTime}
     value={($fpsTime[0] || 0).toFixed(1)}
-    maximum={60} />
+    maximum={60}
+  />
+
+  <setting>
+    <b>Shadows Enabled:</b>
+    <ToggleSwitch bind:enabled={$shadowsEnabled} />
+  </setting>
 
   <!-- Show most relevant render stats here -->
   <StatsPane title="Render Calls" dataStore={renderCalls} />
@@ -62,8 +62,9 @@
     style="margin-top:8px"
     on:click={() => {
       extendedStatsVisible = !extendedStatsVisible;
-    }}>
-    {extendedStatsVisible ? 'Hide' : 'Show'}
+    }}
+  >
+    {extendedStatsVisible ? "Hide" : "Show"}
     Extended Stats
   </Button>
 
@@ -71,7 +72,8 @@
     <StatsPane
       title="Millis"
       dataStore={deltaTime}
-      value={($deltaTime[0] || 0).toFixed(1)} />
+      value={($deltaTime[0] || 0).toFixed(1)}
+    />
     <StatsPane title="Geometries" dataStore={memoryGeometries} />
     <StatsPane title="Textures" dataStore={memoryTextures} />
   {/if}
@@ -80,8 +82,9 @@
     style="margin-top:8px"
     on:click={() => {
       systemsVisible = !systemsVisible;
-    }}>
-    {systemsVisible ? 'Hide' : 'Show'}
+    }}
+  >
+    {systemsVisible ? "Hide" : "Show"}
     Systems
   </Button>
 
@@ -95,8 +98,9 @@
     style="margin-top:8px"
     on:click={() => {
       shadersVisible = !shadersVisible;
-    }}>
-    {shadersVisible ? 'Hide' : 'Show'}
+    }}
+  >
+    {shadersVisible ? "Hide" : "Show"}
     Shaders
   </Button>
 
@@ -121,3 +125,21 @@
     </Pane>
   {/if}
 </LeftPanel>
+
+<style>
+  table {
+    width: 100%;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  setting {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 16px;
+  }
+  setting b {
+    padding-right: 8px;
+  }
+</style>

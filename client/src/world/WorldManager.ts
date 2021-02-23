@@ -6,25 +6,22 @@ import { globalEvents } from "~/events";
 
 import { deltaTime, fpsTime } from "~/stores/stats";
 import { worldState, WorldState } from "~/stores/worldState";
+import { ConnectOptions } from "~/stores/connection";
 import { scale } from "~/stores/viewport";
+import { shadowsEnabled } from "~/stores/settings";
 
-import {
-  makeAvatarAndActivate,
-  makeStageAndActivate,
-  makeInitialCollider,
-} from "~/prefab";
+import { makeStageAndActivate, makeInitialCollider } from "~/prefab";
 import { Entity, World } from "~/ecs/base";
 import { Follow } from "~/ecs/plugins/follow";
 import { HeadController } from "~/ecs/plugins/player-control";
-import { LoadingState } from "./LoadingState";
-import { ConnectOptions } from "~/stores/connection";
 import { Collider } from "~/ecs/plugins/rapier";
-import { Object3D, Transform } from "~/ecs/plugins/core";
-import { ThrustController } from "~/ecs/plugins/player-control";
+import { Transform } from "~/ecs/plugins/core";
 
 import { SelectionManager } from "./SelectionManager";
+import { LoadingState } from "./LoadingState";
 import { IdentityManager } from "~/identity/IdentityManager";
 import { ChatManager } from "./ChatManager";
+import { DirectionalLight, PerspectiveCamera } from "three";
 
 export default class WorldManager {
   world: World & {
@@ -36,7 +33,8 @@ export default class WorldManager {
   viewport: HTMLElement;
   loading: LoadingState;
   state: Writable<WorldState>;
-  camera;
+  camera: Entity;
+  light: Entity;
   connectOpts;
 
   wdoc: WorldDoc;
@@ -63,6 +61,13 @@ export default class WorldManager {
 
     this.mount();
     this.populate();
+
+    shadowsEnabled.subscribe(($enabled) => {
+      const ref = this.light.getByName("DirectionalLightRef");
+      if (!ref) return;
+      const light: DirectionalLight = ref.value;
+      light.castShadow = $enabled;
+    });
 
     worldState.subscribe(($state) => {
       switch ($state) {
@@ -233,8 +238,9 @@ export default class WorldManager {
     this.world.presentation.setCameraTarget(
       this.avatar.get(Transform).position
     );
-    const { camera } = makeStageAndActivate(this.world, this.avatar);
+    const { camera, light } = makeStageAndActivate(this.world, this.avatar);
     this.camera = camera;
+    this.light = light;
 
     makeInitialCollider(this.world).activate();
   }
