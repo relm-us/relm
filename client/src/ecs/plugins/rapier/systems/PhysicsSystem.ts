@@ -74,7 +74,7 @@ export class PhysicsSystem extends System {
           // make a sim world matrix
           m4_1.compose(v3_1, q_1, scale);
           // make an inverse world matrix
-          m4_2.getInverse(world.matrix);
+          m4_2.copy(world.matrix).invert();
           // -world * sim (diff to apply to local)
           m4_3.multiplyMatrices(m4_2, m4_1);
           // add diff matrix to local
