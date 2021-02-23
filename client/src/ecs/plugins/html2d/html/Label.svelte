@@ -1,6 +1,7 @@
 <script>
   import { Relm } from "~/stores/Relm";
   import { mode } from "~/stores/mode";
+  import { cleanHtml } from "~/utils/cleanHtml";
 
   export let content;
   export let color;
@@ -10,7 +11,7 @@
   // The entity that this Label is attached to
   export let entity;
 
-  let canEdit = false;
+  // let canEdit = false;
 
   function onMousedown(event) {
     if ($mode === "build") {
@@ -21,7 +22,7 @@
         $Relm.selection.addEntityId(entity.id);
       }, 100);
     } else if ($mode === "play") {
-      canEdit = true;
+      // canEdit = true;
     }
   }
 
@@ -36,7 +37,7 @@
   style="--color:{color};--shadow-color:{shadowColor};--underline-color:{underlineColor}"
   on:mousedown={onMousedown}
 >
-  {content}
+  {@html cleanHtml(content)}
 </div>
 
 <style>

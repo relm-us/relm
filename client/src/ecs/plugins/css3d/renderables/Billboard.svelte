@@ -56,5 +56,6 @@
     height: var(--height, 50px);
 
     overflow: auto;
+    word-break: break-word;
   }
 </style>
