@@ -57,6 +57,11 @@
     padding: 4px 8px;
     cursor: default;
   }
+  div :global(a),
+  div :global(a:visited) {
+    color: var(--color, #e5e5e5);
+    text-decoration: underline;
+  }
 
   div.underline {
     border-bottom: 2px solid var(--underline-color);
