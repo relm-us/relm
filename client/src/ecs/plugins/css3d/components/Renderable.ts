@@ -10,7 +10,7 @@ export class Renderable extends Component {
         input: "Select",
         options: [
           { label: "Avatar Head", value: "AVATAR_HEAD" },
-          { label: "Label", value: "LABEL" },
+          { label: "Billboard", value: "LABEL" },
           { label: "Web Page", value: "WEB_PAGE" },
           { label: "YouTube", value: "YOUTUBE" },
         ],
