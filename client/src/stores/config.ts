@@ -3,7 +3,8 @@ import { writable, Writable, get } from "svelte/store";
 export type ShadowMapConfig = "BASIC" | "PCF" | "VSM";
 export const shadowMapConfig: ShadowMapConfig = "PCF";
 
-const DEFAULT_RELM_ID = "default";
+export const DEFAULT_RELM_ID = "default";
+export const DRAG_DISTANCE_THRESHOLD = 8;
 
 function getDefaultRelmId(location): string {
   const params = new URLSearchParams(location.search.substring(1));

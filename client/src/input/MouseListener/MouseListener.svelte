@@ -16,10 +16,10 @@
   import { mode } from "~/stores/mode";
   import { hovered } from "~/stores/selection";
   import { mouse } from "~/stores/mouse";
+  import { DRAG_DISTANCE_THRESHOLD } from "~/stores/config";
 
   export let world;
 
-  const DRAG_DISTANCE_THRESHOLD = 8;
   const mousePosition = new Vector2();
   const mouseStartPosition = new Vector2();
   let mouseMode: "initial" | "click" | "drag" = "initial";

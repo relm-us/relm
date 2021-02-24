@@ -1,21 +1,53 @@
 <script>
+  import { Vector2 } from "three";
+  import { cleanHtml } from "~/utils/cleanHtml";
+
+  import { Html2d } from "../components";
   import { Relm } from "~/stores/Relm";
   import { mode } from "~/stores/mode";
-  import { cleanHtml } from "~/utils/cleanHtml";
+  import { DRAG_DISTANCE_THRESHOLD } from "~/stores/config";
 
   export let content;
   export let color;
   export let shadowColor;
   export let underlineColor;
   export let draggable;
+  export let editable;
 
   // The entity that this Label is attached to
   export let entity;
 
-  // let canEdit = false;
   let labelEl;
+  let clickStarted = false;
   let dragging = false;
-  let dragStart = {};
+  let editing = false;
+
+  const initialMousePos = new Vector2();
+  const mousePos = new Vector2();
+
+  function doneEditing() {
+    editing = false;
+
+    const text = labelEl.innerHTML;
+    const component = entity.get(Html2d);
+    component.content = text;
+    $Relm.wdoc.syncFrom(entity);
+  }
+
+  function onKeydown(event) {
+    if (
+      event.key === "Tab" ||
+      event.key === "Escape" ||
+      /**
+       * `enter` means "done", except when shift key is
+       * pressed, in which case `enter` means "newline"
+       */
+      ((event.key === "Enter" || event.key === "Return") && !event.shiftKey)
+    ) {
+      event.preventDefault();
+      doneEditing();
+    }
+  }
 
   function onMousedown(event) {
     if ($mode === "build") {
@@ -23,17 +55,13 @@
       // Uses setTimeout because a click on "nothing" will deselect everything
       // TODO: use selectionLogic to implement complete set of selection possibilities
       setTimeout(() => {
+        $Relm.selection.clear();
         $Relm.selection.addEntityId(entity.id);
       }, 100);
     } else if ($mode === "play") {
-      // canEdit = true;
-      if (!draggable) return;
       var rect = event.target.parentElement.getBoundingClientRect();
-      dragStart = {
-        x: event.clientX - rect.left,
-        y: event.clientY - rect.top,
-      };
-      dragging = true;
+      initialMousePos.set(event.clientX - rect.left, event.clientY - rect.top);
+      clickStarted = true;
     }
   }
 
@@ -41,16 +69,33 @@
     if (dragging) {
       $Relm.wdoc.syncFrom(entity);
       dragging = false;
+    } else if (clickStarted && editable) {
+      editing = true;
+      setTimeout(() => labelEl.focus(), 100);
     }
+    clickStarted = false;
   }
 
   function onMousemove(event) {
+    if (!editing) event.preventDefault();
+
+    var rect = event.target.parentElement.getBoundingClientRect();
+    mousePos.set(event.clientX - rect.left, event.clientY - rect.top);
+
+    if (
+      draggable &&
+      clickStarted &&
+      mousePos.distanceTo(initialMousePos) > DRAG_DISTANCE_THRESHOLD
+    ) {
+      // this is the start of a drag
+      dragging = true;
+    }
+
     if (!dragging) return;
-    event.preventDefault();
 
     const drag = $Relm.world.presentation.getWorldFromScreenCoords(
-      event.clientX - dragStart.x,
-      event.clientY - dragStart.y
+      event.clientX - initialMousePos.x,
+      event.clientY - initialMousePos.y
     );
 
     const position = entity.getByName("Transform").position;
@@ -62,13 +107,16 @@
   $$props;
 </script>
 
-<!-- contenteditable={canEdit} -->
 <div
+  contenteditable={editing}
   class="truncate-overflow"
   class:underline={!!underlineColor}
+  class:dragging
   style="--color:{color};--shadow-color:{shadowColor};--underline-color:{underlineColor}"
   bind:this={labelEl}
   on:mousedown={onMousedown}
+  on:blur={doneEditing}
+  on:keydown={onKeydown}
 >
   {@html cleanHtml(content)}
 </div>
@@ -103,7 +151,8 @@
     border-bottom: 2px solid var(--underline-color);
   }
 
-  div:hover {
+  div:hover,
+  .dragging {
     position: relative;
 
     display: block;
