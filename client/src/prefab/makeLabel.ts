@@ -22,6 +22,7 @@ export function makeLabel(
       content,
       offset: new Vector3(0.1, 0, 0),
       hanchor: 1,
+      draggable: true,
     })
     .add(Shape, {
       kind: "SPHERE",

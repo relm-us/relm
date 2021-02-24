@@ -97,6 +97,14 @@ export class Html2d extends Component {
         label: "HTML Content",
       },
     },
+
+    draggable: {
+      type: BooleanType,
+      default: false,
+      editor: {
+        label: "Draggable",
+      },
+    },
   };
 
   static editor = {

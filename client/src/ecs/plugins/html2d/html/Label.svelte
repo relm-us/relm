@@ -7,11 +7,15 @@
   export let color;
   export let shadowColor;
   export let underlineColor;
+  export let draggable;
 
   // The entity that this Label is attached to
   export let entity;
 
   // let canEdit = false;
+  let labelEl;
+  let dragging = false;
+  let dragStart = {};
 
   function onMousedown(event) {
     if ($mode === "build") {
@@ -23,7 +27,35 @@
       }, 100);
     } else if ($mode === "play") {
       // canEdit = true;
+      if (!draggable) return;
+      var rect = event.target.parentElement.getBoundingClientRect();
+      dragStart = {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
+      };
+      dragging = true;
     }
+  }
+
+  function onMouseup(_event) {
+    if (dragging) {
+      $Relm.wdoc.syncFrom(entity);
+      dragging = false;
+    }
+  }
+
+  function onMousemove(event) {
+    if (!dragging) return;
+    event.preventDefault();
+
+    const drag = $Relm.world.presentation.getWorldFromScreenCoords(
+      event.clientX - dragStart.x,
+      event.clientY - dragStart.y
+    );
+
+    const position = entity.getByName("Transform").position;
+    position.x = drag.x;
+    position.z = drag.z;
   }
 
   // ignore warning about missing props
@@ -35,10 +67,13 @@
   class="truncate-overflow"
   class:underline={!!underlineColor}
   style="--color:{color};--shadow-color:{shadowColor};--underline-color:{underlineColor}"
+  bind:this={labelEl}
   on:mousedown={onMousedown}
 >
   {@html cleanHtml(content)}
 </div>
+
+<svelte:window on:mousemove={onMousemove} on:mouseup={onMouseup} />
 
 <style>
   div {
