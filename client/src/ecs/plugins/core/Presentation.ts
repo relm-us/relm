@@ -212,6 +212,21 @@ export class Presentation {
     this.updateVisibleBounds();
   }
 
+  getWorldFromScreenCoords(
+    x: number,
+    y: number,
+    alreadyNormalized = false
+  ): Vector3 {
+    if (!alreadyNormalized) {
+      x = (x * 2) / window.innerWidth - 1;
+      y = (-y * 2) / window.innerHeight + 1;
+    }
+    _v2.set(x, y);
+    _raycaster.setFromCamera(_v2, this.camera);
+    _raycaster.ray.intersectPlane(_plane, _intersect);
+    return _intersect;
+  }
+
   updateVisibleBounds() {
     if (this.cameraTarget) {
       _plane.set(_up, -this.cameraTarget.y);
@@ -219,16 +234,9 @@ export class Presentation {
     this.visibleBounds = new Box3();
     for (let x = -1; x <= 1; x += 2) {
       for (let y = -1; y <= 1; y += 2) {
-        _v2.set(x, y);
-        _raycaster.setFromCamera(_v2, this.camera);
-        _raycaster.ray.intersectPlane(_plane, _intersect);
-        this.visibleBounds.expandByPoint(_intersect);
+        const point = this.getWorldFromScreenCoords(x, y, true);
+        this.visibleBounds.expandByPoint(point);
       }
     }
-    // if (counter % 200 === 100) {
-    //   this.scene.add(new Box3Helper(this.visibleBounds));
-    // }
-
-    // counter++;
   }
 }
