@@ -113,6 +113,19 @@ export class IdentityManager extends EventEmitter {
     return this.identities.get(playerId);
   }
 
+  remove(playerId: PlayerID) {
+    const identity = this.get(playerId);
+    identity?.avatar.destroy();
+    this.identities.delete(playerId);
+  }
+
+  removeByClientId(clientId: YClientID) {
+    const playerId = this.lookupPlayerId.get(clientId);
+    if (playerId) this.remove(playerId);
+    this.lookupPlayerId.delete(clientId);
+    this.setTransformFns.delete(clientId);
+  }
+
   setTransformData(clientId: YClientID, transform: Array<number>) {
     let fn = this.setTransformFns.get(clientId);
 

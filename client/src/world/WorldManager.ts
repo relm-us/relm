@@ -185,7 +185,7 @@ export default class WorldManager {
 
     this.wdoc.provider.awareness.on("change", (changes) => {
       for (let id of changes.removed) {
-        // this.identities.goodbye(id);
+        this.identities.removeByClientId(id);
       }
 
       const states = this.wdoc.provider.awareness.getStates();

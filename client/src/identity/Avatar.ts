@@ -60,6 +60,10 @@ export class Avatar {
     return avatar;
   }
 
+  destroy() {
+    this.entity?.destroy();
+  }
+
   syncEntity(identity: IdentityData) {
     this.syncLabel(identity.shared);
     this.syncSpeech(identity);
