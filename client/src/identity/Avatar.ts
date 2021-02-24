@@ -61,7 +61,6 @@ export class Avatar {
   }
 
   syncEntity(identity: IdentityData) {
-    console.log("syncEntity", identity);
     this.syncLabel(identity.shared);
     this.syncSpeech(identity);
   }
