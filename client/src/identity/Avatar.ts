@@ -139,17 +139,36 @@ export class Avatar {
     const transformData = [];
     const transform = this.entity.get(Transform);
 
+    // Get position of body
     transform.position.toArray(transformData, 0);
+
+    // Get angle of body
     e1.setFromQuaternion(transform.rotation);
     transformData[3] = e1.y;
+
+    // Get angle of head
+    const transformHead = this.head.get(Transform);
+    e1.setFromQuaternion(transformHead.rotation);
+    transformData[4] = e1.y;
+
     return transformData;
   }
 
-  setTransformData([x, y, z, theta]) {
+  setTransformData([x, y, z, theta, headTheta]) {
     const transform = this.entity.get(Transform);
+
+    // Set position of body
     transform.position.set(x, y, z);
+
+    // Set angle of body
     e1.setFromQuaternion(transform.rotation);
     e1.y = theta;
     transform.rotation.setFromEuler(e1);
+
+    // Set angle of head
+    const transformHead = this.head.get(Transform);
+    e1.setFromQuaternion(transform.rotation);
+    e1.y = headTheta;
+    transformHead.rotation.setFromEuler(e1);
   }
 }
