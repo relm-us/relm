@@ -76,7 +76,7 @@ export function makeAvatar(
 
   // Left Hand (from avatar's point of view)
   const leftHand = makeBall(world, {
-    ...{ x: x - 0.6, y: y + 0.0, z: z + 0.05 },
+    ...{ x: x + 0.6, y: y + 0.0, z: z + 0.05 },
     r: 0.12,
     density: 0.2,
     color: "#59a4d8",
@@ -91,7 +91,7 @@ export function makeAvatar(
 
   // Right Hand (from avatar's point of view)
   const rightHand = makeBall(world, {
-    ...{ x: x + 0.6, y: y + 0.0, z: z + 0.05 },
+    ...{ x: x - 0.6, y: y + 0.0, z: z + 0.05 },
     r: 0.12,
     density: 0.2,
     color: "#59a4d8",

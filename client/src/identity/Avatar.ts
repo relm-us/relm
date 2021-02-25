@@ -1,11 +1,7 @@
 import { Readable } from "svelte/store";
 import { Vector3, Euler } from "three";
 
-import {
-  IdentityData,
-  LocalIdentityFields,
-  SharedIdentityFields,
-} from "./types";
+import { IdentityData } from "./types";
 import { makeAvatar } from "~/prefab/makeAvatar";
 import { makeAvatarAndActivate } from "~/prefab/makeAvatarAndActivate";
 
