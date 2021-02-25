@@ -81,13 +81,7 @@ export class PointerPlaneSystem extends System {
     for (let i = 0; i < _intersections.length; i++) {
       const isect = _intersections[i];
       const orientation = isect.object.userData.orientation;
-      if (orientation === "XZ") {
-        ref.XZ.x = isect.point.x - world.position.x;
-        ref.XZ.z = isect.point.z - world.position.z;
-      } else if (orientation === "XY") {
-        ref.XY.x = isect.point.x - world.position.x;
-        ref.XY.y = isect.point.y - world.position.y;
-      }
+      ref[orientation].copy(isect.point).sub(world.position);
     }
 
     ref.updateCount++;

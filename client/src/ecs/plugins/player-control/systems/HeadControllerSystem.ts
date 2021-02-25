@@ -33,6 +33,7 @@ export class HeadControllerSystem extends System {
     const pointer = entity.get(PointerPlaneRef);
     vPointer.copy(pointer.XZ);
 
+    const world = entity.getByName("WorldTransform");
     // If it's a very small number, it isn't real pointer position yet
     if (vPointer.lengthSq() < 0.001) return;
 
@@ -46,8 +47,6 @@ export class HeadControllerSystem extends System {
     }
 
     // Pretend like the pointer plane is at the same height as the head
-    const world = entity.get(WorldTransform);
-    vPointer.y = world.position.y;
     bodyFacing.y = world.position.y;
 
     /**
@@ -64,8 +63,12 @@ export class HeadControllerSystem extends System {
         controller.enabled ? vPointer : bodyFacing,
         vUp
       ),
-      -Math.PI * 0.45,
-      Math.PI * 0.45
+      // Any more than 0.49 of PI and the slerp below will make it so
+      // the head moves in an "impossible" way because the shortest
+      // angle from looking over one shoulder to the other shoulder
+      // is to spin the head backwards.
+      -Math.PI * 0.49,
+      Math.PI * 0.49
     );
 
     // Gently rotate towards the goal using spherical lerp

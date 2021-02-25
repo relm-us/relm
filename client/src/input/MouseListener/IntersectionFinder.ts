@@ -26,8 +26,8 @@ export class IntersectionFinder {
 
   getNormalizedCoords(screenCoords) {
     this._normalizedCoords.set(
-      (screenCoords.x / window.innerWidth) * 2 - 1,
-      -(screenCoords.y / window.innerHeight) * 2 + 1
+      (screenCoords.x * 2) / window.innerWidth - 1,
+      -(screenCoords.y * 2) / window.innerHeight + 1
     );
     return this._normalizedCoords;
   }

@@ -76,7 +76,7 @@ export function makeAvatar(
 
   // Left Hand (from avatar's point of view)
   const leftHand = makeBall(world, {
-    ...{ x: x + 0.6, y: y + 0.0, z: z + 0.05 },
+    ...{ x: x + 0.6, y: y + 0.0, z: z + 0.1 },
     r: 0.12,
     density: 0.2,
     color: "#59a4d8",
@@ -85,13 +85,13 @@ export function makeAvatar(
   })
     .add(BallJoint, {
       entity: avatar.id,
-      position: new Vector3(-0.6, 0.5, 0.05),
+      position: new Vector3(0.6, 0.5, 0.1),
     })
     .add(InvisibleToMouse);
 
   // Right Hand (from avatar's point of view)
   const rightHand = makeBall(world, {
-    ...{ x: x - 0.6, y: y + 0.0, z: z + 0.05 },
+    ...{ x: x - 0.6, y: y + 0, z: z + 0.1 },
     r: 0.12,
     density: 0.2,
     color: "#59a4d8",
@@ -100,7 +100,7 @@ export function makeAvatar(
   })
     .add(BallJoint, {
       entity: avatar.id,
-      position: new Vector3(0.6, 0.5, 0.05),
+      position: new Vector3(-0.6, 0.5, 0.1),
     })
     .add(InvisibleToMouse);
 
