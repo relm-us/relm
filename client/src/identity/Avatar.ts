@@ -65,7 +65,7 @@ export class Avatar {
   }
 
   syncEntity(identity: IdentityData) {
-    this.syncLabel(identity.shared);
+    this.syncLabel(identity);
     this.syncSpeech(identity);
   }
 
@@ -97,23 +97,28 @@ export class Avatar {
     label.modified();
   }
 
-  syncLabel(fields: SharedIdentityFields) {
-    if (fields.name && !this.entity.has(Html2d)) {
-      this.addLabel(fields.name, fields.color);
-    } else if (fields.name && this.entity.has(Html2d)) {
-      this.changeLabel(fields.name, fields.color);
-    } else if (!fields.name && this.entity.has(Html2d)) {
+  syncLabel(identity: IdentityData) {
+    if (identity.shared.name && !this.entity.has(Html2d)) {
+      this.addLabel(
+        identity.shared.name,
+        identity.local.isLocal,
+        identity.shared.color
+      );
+    } else if (identity.shared.name && this.entity.has(Html2d)) {
+      this.changeLabel(identity.shared.name, identity.shared.color);
+    } else if (!identity.shared.name && this.entity.has(Html2d)) {
       this.entity.remove(Html2d);
     }
   }
 
-  addLabel(name: string, color?: string) {
+  addLabel(name: string, editable: boolean, color?: string) {
     const label = {
       kind: "LABEL",
       content: name,
       underlineColor: null,
       offset: new Vector3(0, -0.75, 0),
       vanchor: 1,
+      editable,
     };
     if (color) {
       label.underlineColor = color;

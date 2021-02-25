@@ -66,12 +66,14 @@ export class IdentityManager extends EventEmitter {
     });
 
     /**
-     * After getting 'sync' signal, yjs doc is synced and
-     * can accept a new "me" as more recent than previous.
+     * After getting 'sync' signal, yjs doc is synced and can accept
+     * more up to date values, such as the clientId of this connection.
      */
     this.wdoc.on("sync", () => {
       this.isSynced = true;
-      identity.sharedFields.set(myData.shared);
+      identity.sharedFields.update(($fields) => {
+        return { ...$fields, clientId: clientId };
+      });
     });
 
     this.me = identity;

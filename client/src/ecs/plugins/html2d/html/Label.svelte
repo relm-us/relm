@@ -26,12 +26,23 @@
   const mousePos = new Vector2();
 
   function doneEditing() {
+    if (!editing) return;
     editing = false;
 
     const text = labelEl.innerHTML;
     const component = entity.get(Html2d);
     component.content = text;
-    $Relm.wdoc.syncFrom(entity);
+
+    if ($Relm.avatar === entity) {
+      // TODO: make a way for Avatar to subscribe to ECS component
+      // changes instead of this hack:
+      $Relm.identities.me.sharedFields.update(($fields) => {
+        return { ...$fields, name: text };
+      });
+    } else {
+      // Broadcast changes
+      $Relm.wdoc.syncFrom(entity);
+    }
   }
 
   function onKeydown(event) {
