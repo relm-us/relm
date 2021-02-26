@@ -39,7 +39,7 @@ import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
 import { PerformanceStatsSystem } from "~/ecs/systems/PerformanceStatsSystem";
 import { InvisibleToMouseSystem } from "~/ecs/systems/InvisibleToMouseSystem";
 
-import { shadowMapConfig } from "~/stores/config";
+import { shadowMapConfig } from "~/config/constants";
 
 export function createRenderer() {
   const renderer = new WebGLRenderer({

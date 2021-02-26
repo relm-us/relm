@@ -1,14 +1,12 @@
-import { makeEntity } from "./makeEntity";
+import { Vector3 } from "three";
+
 import { Transform } from "~/ecs/plugins/core";
 import { RigidBody, Collider } from "~/ecs/plugins/rapier";
 import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
-import { Vector3 } from "three";
 
-const groundSize = {
-  w: 1000,
-  h: 100,
-  d: 100,
-};
+import { GROUND_INTERACTION } from "~/config/colliderInteractions";
+
+import { makeEntity } from "./makeEntity";
 
 export function makeInitialCollider(world) {
   return makeEntity(world, "InitialCollider")
@@ -20,7 +18,7 @@ export function makeInitialCollider(world) {
       shape: "CYLINDER",
       cylinderRadius: 2,
       cylinderHeight: 1,
-      interaction: 0x00010003,
+      interaction: GROUND_INTERACTION,
     })
     .add(InvisibleToMouse);
 }

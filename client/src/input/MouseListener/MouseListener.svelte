@@ -16,7 +16,8 @@
   import { mode } from "~/stores/mode";
   import { hovered } from "~/stores/selection";
   import { mouse } from "~/stores/mouse";
-  import { DRAG_DISTANCE_THRESHOLD } from "~/stores/config";
+
+  import { DRAG_DISTANCE_THRESHOLD } from "~/config/constants";
 
   export let world;
 

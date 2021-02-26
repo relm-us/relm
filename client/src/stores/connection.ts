@@ -1,7 +1,7 @@
 import { derived, writable, Readable, Writable } from "svelte/store";
 import axios from "axios";
 
-import { config, Config, defaultConfig } from "./config";
+import { config, Config, defaultConfig } from "~/config/store";
 import { getSecureParams } from "~/identity";
 
 export type YConnectionStatus =

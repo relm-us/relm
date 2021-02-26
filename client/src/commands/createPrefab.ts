@@ -1,6 +1,6 @@
 import { WorldTransform } from "~/ecs/plugins/core";
 import { directory } from "~/prefab";
-import { assetUrl } from "~/stores/config";
+import { assetUrl } from "~/config/assetUrl";
 
 function activate($Relm, entity) {
   entity.activate();

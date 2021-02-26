@@ -1,3 +1,4 @@
+import { DirectionalLight } from "three";
 import { get, Writable } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
@@ -21,7 +22,10 @@ import { SelectionManager } from "./SelectionManager";
 import { LoadingState } from "./LoadingState";
 import { IdentityManager } from "~/identity/IdentityManager";
 import { ChatManager } from "./ChatManager";
-import { DirectionalLight, PerspectiveCamera } from "three";
+import {
+  AVATAR_BUILDER_INTERACTION,
+  AVATAR_INTERACTION,
+} from "~/config/colliderInteractions";
 
 export default class WorldManager {
   world: World & {
@@ -250,17 +254,17 @@ export default class WorldManager {
   }
 
   enableAvatarPhysics(enabled = true) {
-    const entities = [this.avatar, ...this.avatar.subgroup];
-    for (const entity of entities) {
+    this.avatar.traverse((entity) => {
       const collider = entity.components.get(Collider);
+      if (!collider) return;
 
       // prettier-ignore
-      (collider as any).interaction = enabled ?
-      0x00010001 : // interact with normal things
-      0x00020001 ; // interact only with ground
+      (collider as any).interaction =
+        enabled ? AVATAR_INTERACTION: // interact with normal things
+                  AVATAR_BUILDER_INTERACTION ; // interact only with ground
 
       collider.modified();
-    }
+    });
   }
 
   // Make the avatar translucent or opaque

@@ -5,7 +5,7 @@
   import { Html2d } from "../components";
   import { Relm } from "~/stores/Relm";
   import { mode } from "~/stores/mode";
-  import { DRAG_DISTANCE_THRESHOLD } from "~/stores/config";
+  import { DRAG_DISTANCE_THRESHOLD } from "~/config/constants";
 
   export let content;
   export let color;

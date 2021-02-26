@@ -1,5 +1,6 @@
-import { Asset, Transform } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
+
+import { Asset, Transform } from "~/ecs/plugins/core";
 import { Model } from "~/ecs/plugins/core";
 
 // Components from ECS plugins (organized alphabetically by plugin name)
@@ -15,6 +16,8 @@ import {
 
 import { makeEntity, makeBall } from "./index";
 import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
+
+import { AVATAR_INTERACTION } from "~/config/colliderInteractions";
 
 export function makeAvatar(
   world,
@@ -42,6 +45,7 @@ export function makeAvatar(
       shape: "CAPSULE",
       capsuleHeight: 0.8,
       capsuleRadius: 0.36,
+      interaction: AVATAR_INTERACTION,
     })
     .add(InvisibleToMouse);
 

@@ -4,7 +4,7 @@ import { Object3D } from "~/ecs/plugins/core";
 
 import { DirectionalLight, DirectionalLightRef } from "../components";
 
-import { shadowMapConfig } from "~/stores/config";
+import { shadowMapConfig } from "~/config/constants";
 import { Presentation } from "~/ecs/plugins/core/Presentation";
 
 let helper;

@@ -5,7 +5,7 @@
   import { nanoid } from "nanoid";
   import { Asset } from "~/ecs/plugins/core";
   import { Relm } from "~/stores/Relm";
-  import { assetUrl } from "~/stores/config";
+  import { assetUrl } from "~/config/assetUrl";
 
   function onUploadedSkybox({ detail }) {
     if (detail.results.length === 0) return;

@@ -5,7 +5,7 @@
     TRIGGERS,
     SHADOW_ITEM_MARKER_PROPERTY_NAME,
   } from "svelte-dnd-action";
-  import { assetUrl } from "~/stores/config";
+  import { assetUrl } from "~/config/assetUrl";
   import { globalEvents } from "~/events";
 
   import { dropzones } from "./dropzones";

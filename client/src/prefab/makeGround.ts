@@ -1,9 +1,12 @@
-import { makeEntity } from "./makeEntity";
+import { Color, Vector3 } from "three";
+
 import { Transform } from "~/ecs/plugins/core";
 import { RigidBody, Collider } from "~/ecs/plugins/rapier";
 import { Shape } from "~/ecs/plugins/shape";
-import { Color, Vector3 } from "three";
-import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
+
+import { GROUND_INTERACTION } from "~/config/colliderInteractions";
+
+import { makeEntity } from "./makeEntity";
 
 export function makeGround(world, { x = 0, y = 0, z = 0, yOffset = -0.5 }) {
   const color = new Color("#55814e");
@@ -27,6 +30,6 @@ export function makeGround(world, { x = 0, y = 0, z = 0, yOffset = -0.5 }) {
       shape: "CYLINDER",
       cylinderRadius: 15,
       cylinderHeight: 1,
-      interaction: 0x00010003,
+      interaction: GROUND_INTERACTION,
     });
 }

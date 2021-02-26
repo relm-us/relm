@@ -1,6 +1,10 @@
 import { Component, StringType, NumberType } from "~/ecs/base";
 import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
+import {
+  GROUND_INTERACTION,
+  OBJECT_INTERACTION,
+} from "~/config/colliderInteractions";
 
 export class Collider extends Component {
   static props = {
@@ -105,12 +109,12 @@ export class Collider extends Component {
       type: NumberType,
       // Rapier3D has optional rules that allow groups of colliders to interact
       // See https://rapier.rs/javascript2d/globals.html#interactiongroups
-      default: 0x00010001,
+      default: OBJECT_INTERACTION,
       editor: {
         label: "Collide in Build Mode",
         input: "Boolean",
-        inputTrue: 0x00010003,
-        inputFalse: 0x00010001,
+        inputTrue: GROUND_INTERACTION,
+        inputFalse: OBJECT_INTERACTION,
       },
     },
   };
