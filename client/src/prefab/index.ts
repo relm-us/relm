@@ -7,7 +7,6 @@ import { makeGround } from "./makeGround";
 import { makeInitialCollider } from "./makeInitialCollider";
 import { makeImage } from "./makeImage";
 import { makeLabel } from "./makeLabel";
-import { makePileOfBoxes } from "./makePileOfBoxes";
 import { makeThing } from "./makeThing";
 import { makeTv } from "./makeTv";
 import { makeWall } from "./makeWall";
@@ -24,7 +23,6 @@ export {
   makeInitialCollider,
   makeLabel,
   makeImage,
-  makePileOfBoxes,
   makeThing,
   makeTv,
   makeWall,
@@ -43,7 +41,6 @@ export const directory = [
   { name: "Ground", prefab: makeGround },
   { name: "Image", prefab: makeImage },
   { name: "Label", prefab: makeLabel },
-  { name: "Pile of Boxes", prefab: makePileOfBoxes },
   { name: "Thing", prefab: makeThing },
   { name: "Wall", prefab: makeWall },
   { name: "Web Page", prefab: makeWebBox },
