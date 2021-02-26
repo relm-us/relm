@@ -4,6 +4,7 @@ import { get, Writable } from "svelte/store";
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
 import { globalEvents } from "~/events";
+import { exportRelm, importRelm } from "./Export";
 
 import { deltaTime, fpsTime } from "~/stores/stats";
 import { worldState, WorldState } from "~/stores/worldState";
@@ -334,8 +335,7 @@ export default class WorldManager {
   }
 
   toJSON() {
-    // Export everything as a JSON document
-    return this.wdoc.toJSON();
+    return exportRelm(this.wdoc);
   }
 
   fromJSON(json) {
@@ -343,7 +343,7 @@ export default class WorldManager {
     let entityIds = [];
     try {
       // Import everything in the JSON document
-      entityIds = this.wdoc.fromJSON(json);
+      entityIds = importRelm(this.wdoc, json);
     } catch (err) {
       console.warn(err);
       return false;
@@ -351,9 +351,7 @@ export default class WorldManager {
 
     // Select everything that was just imported
     setTimeout(() => {
-      entityIds.forEach((id) => {
-        this.selection.addEntityId(id);
-      });
+      this.selection.addEntityIds(entityIds);
     }, 200);
     return true;
   }

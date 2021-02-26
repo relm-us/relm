@@ -1,4 +1,4 @@
-import { World } from "~/ecs/base";
+import { World, Entity, EntityId } from "~/ecs/base";
 import { DeepDiff } from "deep-diff";
 
 import * as Y from "yjs";
@@ -11,7 +11,6 @@ import {
   YEntity,
   YComponent,
   YIDSTR,
-  HECSID,
   YValues,
   YComponents,
 } from "./types";
@@ -29,12 +28,10 @@ import {
 import { selectedEntities } from "~/stores/selection";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
-const RELM_EXPORT_VERSION = "relm-export v.1.1";
 
 type LoadingCallbackStatus = "loading" | "loaded" | "error";
 type LoadingCallback = (status: LoadingCallbackStatus, bytes?: number) => void;
 
-type Entity = any;
 export class WorldDoc extends EventEmitter {
   static index: Map<string, WorldDoc> = new Map();
 
@@ -62,10 +59,10 @@ export class WorldDoc extends EventEmitter {
   messages: Y.Array<any>;
 
   // A table of Y.IDs (as strings) mapped to HECS IDs; used for deletion
-  yids: Map<YIDSTR, HECSID>;
+  yids: Map<YIDSTR, EntityId>;
 
   // A table of HECS IDs mapped to YEntity; used for fast lookup
-  hids: Map<HECSID, YEntity>;
+  hids: Map<EntityId, YEntity>;
 
   // An UndoManager allowing users to undo/redo edits on `entities`
   undoManager: Y.UndoManager;
@@ -139,28 +136,6 @@ export class WorldDoc extends EventEmitter {
         this._addYEntity(yentity);
       }
     });
-  }
-
-  toJSON() {
-    return {
-      relm: this.name,
-      version: RELM_EXPORT_VERSION,
-      entities: this.entities.map((e) => yEntityToJSON(e as YEntity)),
-    };
-  }
-
-  fromJSON(json) {
-    if (!json.version || json.version !== RELM_EXPORT_VERSION) {
-      throw new Error(
-        `Imported JSON requires "version": "${RELM_EXPORT_VERSION}"`
-      );
-    }
-    const hids = [];
-    json.entities.forEach((data) => {
-      hids.push(data.id);
-      this.syncFromJSON(data);
-    });
-    return hids;
   }
 
   syncFromJSON(json) {

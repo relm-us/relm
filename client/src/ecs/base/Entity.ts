@@ -4,10 +4,12 @@ import { StateComponent } from "./StateComponent";
 
 type MaybeUnboundEntity = string | Entity;
 
+export type EntityId = string | number;
+
 export class Entity {
   name: string;
   world: World;
-  id: string;
+  id: EntityId;
   meta: object;
   Components: Array<TypeOfComponent>;
   components: Map<TypeOfComponent, Component>;

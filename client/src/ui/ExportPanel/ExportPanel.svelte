@@ -5,6 +5,8 @@
   import LeftPanel, { Header } from "~/ui/LeftPanel";
   import { parse } from "~/utils/parse";
   import { Relm } from "~/stores/Relm";
+  import { exportRelm, FormatOpts, jsonFormat } from "~/world/Export";
+  import { config } from "~/config";
 
   let text;
   let errorState = false;
@@ -15,7 +17,19 @@
   }
 
   onMount(() => {
-    text = JSON.stringify($Relm.toJSON(), null, 2);
+    const meta: FormatOpts = {
+      relm: $config.relmId,
+      server: $config.serverUrl,
+    };
+    let exported;
+    if ($Relm.selection.length > 0) {
+      exported = exportRelm($Relm.wdoc, $Relm.selection.ids);
+      meta.scope = "selection";
+    } else {
+      exported = exportRelm($Relm.wdoc);
+    }
+    const json = jsonFormat(exported, meta);
+    text = JSON.stringify(json, null, 2);
   });
 </script>
 

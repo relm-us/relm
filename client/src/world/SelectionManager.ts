@@ -1,11 +1,14 @@
 import { get } from "svelte/store";
 import { Vector3 } from "three";
-import { selectedEntities, selectedGroups } from "~/stores/selection";
-import { difference } from "~/utils/setOps";
+
 import { WorldDoc } from "~/y-integration/WorldDoc";
+import { first, difference } from "~/utils/setOps";
+
+import { EntityId } from "~/ecs/base";
 import { Outline } from "~/ecs/plugins/outline";
 import { Transform } from "~/ecs/plugins/core";
-import { first } from "~/utils/setOps";
+
+import { selectedEntities, selectedGroups } from "~/stores/selection";
 import { openPanel } from "~/stores/openPanel";
 
 export class SelectionManager {
@@ -29,7 +32,7 @@ export class SelectionManager {
     return this.ids.map((id) => this.wdoc.world.entities.getById(id));
   }
 
-  hasEntityId(entityId) {
+  hasEntityId(entityId: EntityId) {
     return selectedEntities.has(entityId);
   }
 
@@ -40,8 +43,14 @@ export class SelectionManager {
     }
   }
 
-  addEntityId(entityId) {
+  addEntityId(entityId: EntityId) {
     selectedEntities.add(entityId);
+  }
+
+  addEntityIds(entityIds: Array<EntityId>) {
+    for (const id of entityIds) {
+      this.addEntityId(id);
+    }
   }
 
   addGroupId(groupId) {
