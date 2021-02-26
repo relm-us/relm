@@ -28,7 +28,9 @@ export function jsonFormat(
 }
 
 function getAll(wdoc: WorldDoc) {
-  return wdoc.entities.map((yentity) => yEntityToJSON(yentity as YEntity));
+  return wdoc.entities.map((yentity) => {
+    return yEntityToJSON(yentity as YEntity);
+  });
 }
 
 function getSome(wdoc: WorldDoc, entityIds: Array<EntityId>) {
@@ -52,7 +54,11 @@ export function importRelm(wdoc: WorldDoc, json) {
   const entityIds = [];
   json.entities.forEach((data) => {
     entityIds.push(data.id);
-    wdoc.syncFromJSON(data);
+    try {
+      wdoc.syncFromJSON(data);
+    } catch (err) {
+      console.warn(err);
+    }
   });
 
   return entityIds;
