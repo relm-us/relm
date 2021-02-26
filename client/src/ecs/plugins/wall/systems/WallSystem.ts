@@ -6,6 +6,7 @@ import { RigidBodyRef } from "~/ecs/plugins/rapier";
 import { isBrowser } from "~/utils/isBrowser";
 import { Wall, WallMesh, WallColliderRef } from "../components";
 import { WallGeometry, wallGeometryData } from "../WallGeometry";
+import { OBJECT_INTERACTION } from "~/config/colliderInteractions";
 
 export class WallSystem extends System {
   active = isBrowser();
@@ -112,7 +113,7 @@ export class WallSystem extends System {
     );
 
     // TODO: Make this configurable, like ColliderSystem
-    colliderDesc.setCollisionGroups(0x00010001);
+    colliderDesc.setCollisionGroups(OBJECT_INTERACTION);
 
     const collider = world.createCollider(
       colliderDesc,

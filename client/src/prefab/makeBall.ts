@@ -6,6 +6,7 @@ import { Shape } from "~/ecs/plugins/shape";
 import { RigidBody, Collider } from "~/ecs/plugins/rapier";
 
 import { makeEntity } from "./makeEntity";
+import { OBJECT_INTERACTION } from "~/config/colliderInteractions";
 
 export function makeBall(
   world,
@@ -26,7 +27,7 @@ export function makeBall(
     roughness = 0.8,
     emissive = "#000000",
     collider = true,
-    interaction = 0x00010001,
+    interaction = OBJECT_INTERACTION,
   }
 ) {
   const linearColor = new Color(color);
