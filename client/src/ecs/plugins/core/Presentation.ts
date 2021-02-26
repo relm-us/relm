@@ -119,7 +119,6 @@ export class Presentation {
       imageBitmapLoader.load(
         url,
         (imageBitmap) => {
-          console.log("imageBitmapLoader", url);
           resolve(new CanvasTexture(imageBitmap));
         },
         null,
