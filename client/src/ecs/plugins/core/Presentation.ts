@@ -70,19 +70,17 @@ export class Presentation {
     this.resizeObserver = new ResizeObserver(this.resize.bind(this));
     this.visibleBounds = new Box3();
     if (!loader) loader = new Loader();
-    if (!textureLoader) textureLoader = new TextureLoader();
-    if (!imageBitmapLoader) {
-      imageBitmapLoader = new ImageBitmapLoader();
-      imageBitmapLoader.options = { imageOrientation: "flipY" };
-    }
 
-    this.loadTexture = this.loadTexture_TextureLoader;
-    // TODO: Autodetect isn't working on iosSafari
-    // if (isFirefox() || isIosSafari()) {
-    //   this.loadTexture = this.loadTexture_TextureLoader;
-    // } else {
-    //   this.loadTexture = this.loadTexture_ImageBitmapLoader;
-    // }
+    if (isFirefox() || isIosSafari()) {
+      if (!textureLoader) textureLoader = new TextureLoader();
+      this.loadTexture = this.loadTexture_TextureLoader;
+    } else {
+      if (!imageBitmapLoader) {
+        imageBitmapLoader = new ImageBitmapLoader();
+        imageBitmapLoader.options = { imageOrientation: "flipY" };
+      }
+      this.loadTexture = this.loadTexture_ImageBitmapLoader;
+    }
   }
 
   setViewport(viewport) {
