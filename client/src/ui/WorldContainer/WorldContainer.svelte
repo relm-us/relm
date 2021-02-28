@@ -2,6 +2,13 @@
   import { viewport } from "~/stores/viewport";
 </script>
 
+<!-- svelte-ignore component-name-lowercase -->
+<viewport bind:this={$viewport}>
+  <!-- The CSS3DRenderer container goes here -->
+  <!-- The WebGLRenderer canvas goes here -->
+  <!-- The Html2D container hoes here -->
+</viewport>
+
 <style>
   viewport {
     display: block;
@@ -10,9 +17,3 @@
     height: 100%;
   }
 </style>
-
-<!-- svelte-ignore component-name-lowercase -->
-<viewport bind:this={$viewport}>
-  <!-- The CSS3DRenderer container goes here -->
-  <!-- The WebGLRenderer canvas goes here -->
-</viewport>
