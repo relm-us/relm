@@ -71,16 +71,20 @@ export class Presentation {
     this.visibleBounds = new Box3();
     if (!loader) loader = new Loader();
 
-    if (isFirefox() || isIosSafari()) {
-      if (!textureLoader) textureLoader = new TextureLoader();
-      this.loadTexture = this.loadTexture_TextureLoader;
-    } else {
-      if (!imageBitmapLoader) {
-        imageBitmapLoader = new ImageBitmapLoader();
-        imageBitmapLoader.options = { imageOrientation: "flipY" };
-      }
-      this.loadTexture = this.loadTexture_ImageBitmapLoader;
-    }
+    if (!textureLoader) textureLoader = new TextureLoader();
+    this.loadTexture = this.loadTexture_TextureLoader;
+
+    // TODO: Why doesn't this autodetect correctly in safari?
+    // if (isFirefox() || isIosSafari()) {
+    //   if (!textureLoader) textureLoader = new TextureLoader();
+    //   this.loadTexture = this.loadTexture_TextureLoader;
+    // } else {
+    //   if (!imageBitmapLoader) {
+    //     imageBitmapLoader = new ImageBitmapLoader();
+    //     imageBitmapLoader.options = { imageOrientation: "flipY" };
+    //   }
+    //   this.loadTexture = this.loadTexture_ImageBitmapLoader;
+    // }
   }
 
   setViewport(viewport) {
