@@ -76,11 +76,13 @@ export class Presentation {
       imageBitmapLoader.options = { imageOrientation: "flipY" };
     }
 
-    if (isFirefox() || isIosSafari()) {
-      this.loadTexture = this.loadTexture_TextureLoader;
-    } else {
-      this.loadTexture = this.loadTexture_ImageBitmapLoader;
-    }
+    this.loadTexture = this.loadTexture_TextureLoader;
+    // TODO: Autodetect isn't working on iosSafari
+    // if (isFirefox() || isIosSafari()) {
+    //   this.loadTexture = this.loadTexture_TextureLoader;
+    // } else {
+    //   this.loadTexture = this.loadTexture_ImageBitmapLoader;
+    // }
   }
 
   setViewport(viewport) {
