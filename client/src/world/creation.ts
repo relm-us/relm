@@ -46,7 +46,6 @@ export function createRenderer() {
     antialias: true,
     alpha: true,
     stencil: false,
-    powerPreference: "high-performance",
   });
 
   renderer.setClearColor(0x000000, 1.0);
