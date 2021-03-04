@@ -226,6 +226,7 @@ export class Presentation {
   getWorldFromScreenCoords(
     x: number,
     y: number,
+    target: Vector3 = _intersect,
     alreadyNormalized = false
   ): Vector3 {
     if (!alreadyNormalized) {
@@ -234,8 +235,8 @@ export class Presentation {
     }
     _v2.set(x, y);
     _raycaster.setFromCamera(_v2, this.camera);
-    _raycaster.ray.intersectPlane(_plane, _intersect);
-    return _intersect;
+    _raycaster.ray.intersectPlane(_plane, target);
+    return target;
   }
 
   updateVisibleBounds() {
@@ -245,7 +246,7 @@ export class Presentation {
     this.visibleBounds = new Box3();
     for (let x = -1; x <= 1; x += 2) {
       for (let y = -1; y <= 1; y += 2) {
-        const point = this.getWorldFromScreenCoords(x, y, true);
+        const point = this.getWorldFromScreenCoords(x, y, _intersect, true);
         this.visibleBounds.expandByPoint(point);
       }
     }

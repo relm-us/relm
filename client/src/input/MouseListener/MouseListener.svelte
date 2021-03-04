@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Vector2, Vector3 } from "three";
+  import { Box2, Vector2, Vector3 } from "three";
   import { difference } from "~/utils/setOps";
   import { hasAncestor } from "~/utils/hasAncestor";
   import { globalEvents } from "~/events";
@@ -23,11 +23,12 @@
 
   const mousePosition = new Vector2();
   const mouseStartPosition = new Vector2();
-  let mouseMode: "initial" | "click" | "drag" = "initial";
+  let mouseMode: "initial" | "click" | "drag" | "drag-select" = "initial";
   let pointerPlaneEntity;
   let dragOffset;
   let dragPlane: "XZ" | "XY" = "XZ";
   let shiftKey = false;
+  let selectionRectangle = new Box2();
 
   const finder = new IntersectionFinder(
     world.presentation.camera,
@@ -78,13 +79,18 @@
 
     if (
       mouseMode === "click" &&
-      mousePosition.distanceTo(mouseStartPosition) > DRAG_DISTANCE_THRESHOLD &&
-      $Relm.selection.length > 0
+      mousePosition.distanceTo(mouseStartPosition) > DRAG_DISTANCE_THRESHOLD
     ) {
       // drag  mode start
-      mouseMode = "drag";
+      if ($Relm.selection.length > 0) {
+        mouseMode = "drag";
+        dragPlane = shiftKey ? "XY" : "XZ";
+      } else {
+        mouseMode = "drag-select";
+        dragPlane = "XZ";
+      }
+
       dragOffset = null;
-      dragPlane = shiftKey ? "XY" : "XZ";
       const position = $Relm.selection.centroid;
 
       pointerPlaneEntity = world.entities
@@ -103,6 +109,23 @@
         } else if (ref.updateCount > 1) {
           $Relm.selection.savePositions();
           dragOffset = new Vector3().copy(ref[dragPlane]);
+        }
+      }
+    } else if (mouseMode === "drag-select") {
+      selectionLogic.getSelectionBox(
+        $Relm.world,
+        mouseStartPosition,
+        mousePosition,
+        selectionRectangle
+      );
+      const p = new Vector2();
+      for (let entity of $Relm.world.entities.entities.values()) {
+        const position = entity.getByName("Transform")?.position;
+        if (!position) continue;
+        p.x = position.x;
+        p.y = position.z; // note: switching from 3D XZ plane to 2D XY plane
+        if (selectionRectangle.containsPoint(p)) {
+          $Relm.selection.addEntityId(entity.id);
         }
       }
     }
