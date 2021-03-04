@@ -3,6 +3,7 @@
   import CopyPasteKeyListener from "./CopyPasteKeyListener";
   import SpaceKeyListener from "./SpaceKeyListener";
   import DeleteKeyListener from "./DeleteKeyListener";
+  import EscapeKeyListener from "./EscapeKeyListener";
   import SwitchModeKeyListener from "./SwitchModeKeyListener";
   import UndoRedoKeyListener from "./UndoRedoKeyListener";
   import EnterChatKeyListener from "./EnterChatKeyListener";
@@ -17,6 +18,7 @@
 <CopyPasteKeyListener />
 <SpaceKeyListener />
 <DeleteKeyListener />
+<EscapeKeyListener />
 <SwitchModeKeyListener />
 <UndoRedoKeyListener />
 <EnterChatKeyListener />
