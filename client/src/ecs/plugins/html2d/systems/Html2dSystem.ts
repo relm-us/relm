@@ -112,6 +112,8 @@ export class Html2dSystem extends System {
   }
 
   updatePosition(entity: Entity, boundsWidth: number) {
+    if (this.presentation.skipUpdate > 0) return;
+    
     const world = entity.get(WorldTransform);
     const spec = entity.get(Html2d);
 

@@ -56,6 +56,7 @@ export class Presentation {
   cameraTarget: Vector3;
   resizeObserver: ResizeObserver;
   visibleBounds: Box3;
+  skipUpdate: number;
   loadTexture: (url) => Promise<Texture>;
 
   constructor(world: World, options: PresentationOptions) {
@@ -69,6 +70,7 @@ export class Presentation {
     this.cameraTarget = null; // can be set later with setCameraTarget
     this.resizeObserver = new ResizeObserver(this.resize.bind(this));
     this.visibleBounds = new Box3();
+    this.skipUpdate = 0;
     if (!loader) loader = new Loader();
 
     if (!textureLoader) textureLoader = new TextureLoader();
@@ -211,6 +213,12 @@ export class Presentation {
 
   update() {
     if (!this.viewport) return;
+    if (this.skipUpdate > 0) {
+      this.scene.updateMatrixWorld();
+      this.camera.updateMatrixWorld();
+      this.skipUpdate--;
+      return;
+    }
     this.renderer.render(this.scene, this.camera);
     this.updateVisibleBounds();
   }
