@@ -6,6 +6,8 @@ Specifically, we're making a browser-based world that enables "virtual locality"
 
 See https://www.relm.us for more info.
 
+<img src="client/public/relm-sample.webp">
+
 ## Local Development
 
 To run Relm 5.0 locally, you will need the following prerequisites:
