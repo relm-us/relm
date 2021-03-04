@@ -32,7 +32,7 @@ This should start both the backend server (yjs, assets, permissions) and fronten
 
 After your first-time use, the `?token=setup` is no longer required.
 
-## Notes on Server Installation
+## Notes on Production Deployment
 
 These are some rough notes on getting Relm running on your own hosted server:
 
