@@ -14,7 +14,7 @@ The backend server has a RESTful API (see `server/src/server_http.js`), as well 
 
 ## Frontend Client
 
-The frontend client is compatible with all modern desktop browsers (Chrome, Firefox, Edge). It has 3 major components:
+The frontend client is compatible with all modern desktop browsers (Chrome, Firefox, Safari, Edge). It has 3 major components:
 
 - an ECS (Entity Component System) based on [hecs](https://github.com/gohyperr/hecs) (see `client/src/ecs`)
 - a UI implemented in [svelte](https://svelte.dev/) (see `client/src/ui`)
