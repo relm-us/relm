@@ -1,5 +1,5 @@
 import { System, Not, Modified, Groups } from "~/ecs/base";
-import { Object3D } from "~/ecs/plugins/core";
+import { Object3D, Transform } from "~/ecs/plugins/core";
 import * as THREE from "three";
 import { RigidBodyRef } from "~/ecs/plugins/rapier";
 import { mode } from "~/stores/mode";
@@ -19,6 +19,7 @@ export class WallSystem extends System {
     added: [Object3D, Wall, Not(WallMesh)],
     needsCollider: [Wall, RigidBodyRef, Not(WallColliderRef)],
     modified: [Object3D, Modified(Wall), WallMesh],
+    modifiedTransform: [WallColliderRef, Modified(Transform)],
     removedObj: [Not(Object3D), WallMesh],
     removed: [Object3D, Not(Wall), WallMesh],
 
@@ -38,6 +39,9 @@ export class WallSystem extends System {
 
       // Notify outline to rebuild if necessary
       entity.getByName("Outline")?.modified();
+    });
+    this.queries.modifiedTransform.forEach((entity) => {
+      this.removeCollider(entity);
     });
     this.queries.needsCollider.forEach((entity) => {
       this.buildCollider(entity);
@@ -79,13 +83,7 @@ export class WallSystem extends System {
       wall.convexity,
       wall.segments
     );
-    let materialOpts: any = {
-      color: wall.color,
-      roughness: wall.roughness,
-      metalness: wall.metalness,
-      emissive: wall.emissive,
-    };
-
+    
     let material;
     if (wall.visible) {
       material = new THREE.MeshStandardMaterial({
@@ -131,14 +129,16 @@ export class WallSystem extends System {
 
   buildCollider(entity) {
     const rigidBodyRef = entity.get(RigidBodyRef);
+    const transform = entity.get(Transform);
 
     const { world, rapier } = (this.world as any).physics;
 
     const wall = entity.get(Wall);
+    const scale = transform.scale;
     const { vertices, indices } = wallGeometryData(
-      wall.size.x,
-      wall.size.y,
-      wall.size.z,
+      scale.x * wall.size.x,
+      scale.y * wall.size.y,
+      scale.z * wall.size.z,
       wall.convexity,
       wall.segments
     );
