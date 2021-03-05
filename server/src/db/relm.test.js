@@ -30,7 +30,6 @@ describe('Relm model tests', () => {
         relmId: expect.stringMatching(UUID_RE),
         relmName: 'relm-being-created',
         isPublic: false,
-        defaultEntrywayId: null,
         createdBy: null,
         createdAt: expect.any(Date),
         transientDocId: expect.stringMatching(UUID_RE),

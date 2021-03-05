@@ -9,7 +9,6 @@ const mkRelm = nullOr(
     relm_id = req`relm_id`,
     relm_name = req`relm_name`,
     is_public = req`is_public`,
-    default_entryway_id,
     created_by,
     created_at = req`created_at`,
   }) => {
@@ -17,7 +16,6 @@ const mkRelm = nullOr(
       relmId: relm_id,
       relmName: relm_name,
       isPublic: is_public,
-      defaultEntrywayId: default_entryway_id || null,
       createdBy: created_by || null,
       createdAt: created_at,
     }
@@ -29,14 +27,12 @@ const mkRelmSummary = nullOr(
     relm_id = req`relm_id`,
     relm_name = req`relm_name`,
     is_public = req`is_public`,
-    default_entryway_id,
     created_at = req`created_at`,
   }) => {
     return {
       relmId: relm_id,
       relmName: relm_name,
       isPublic: is_public,
-      defaultEntrywayId: default_entryway_id || null,
       createdAt: created_at,
     }
   }
@@ -107,7 +103,6 @@ const Relm = (module.exports = {
     relmId,
     relmName = req`relmName`,
     isPublic,
-    defaultEntrywayId,
     createdBy,
   }) => {
     const attrs = {
@@ -115,8 +110,6 @@ const Relm = (module.exports = {
     }
     if (relmId !== undefined) attrs.relm_id = relmId
     if (isPublic !== undefined) attrs.is_public = isPublic
-    if (defaultEntrywayId !== undefined)
-      attrs.default_entryway_id = defaultEntrywayId
     if (createdBy !== undefined) attrs.created_by = createdBy
 
     const row = await db.oneOrNone(sql`
@@ -150,13 +143,10 @@ const Relm = (module.exports = {
     relmId = req`relmId`,
     relmName,
     isPublic,
-    defaultEntrywayId,
   }) => {
     const attrs = {}
     if (relmName !== undefined) attrs.relm_name = relmName
     if (isPublic !== undefined) attrs.is_public = isPublic
-    if (defaultEntrywayId !== undefined)
-      attrs.default_entryway_id = defaultEntrywayId
 
     if (getDefinedKeys(attrs).length > 0) {
       const row = await db.oneOrNone(sql`

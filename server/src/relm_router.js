@@ -29,7 +29,6 @@ relmRouter.post(
       const relm = await Relm.createRelm({
         relmName: req.relmName,
         isPublic: !!req.body.isPublic,
-        defaultEntryway: req.body.defaultEntryway,
         createdBy: req.authenticatedPlayerId,
       })
 
@@ -172,7 +171,6 @@ relmRouter.put(
     const attrs = {
       relmId: req.relm.relmId,
       isPublic: !!req.body.isPublic,
-      defaultEntryway: req.body.defaultEntryway,
       createdBy: req.authenticatedPlayerId,
     }
 
