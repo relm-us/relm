@@ -1,6 +1,6 @@
 const pgp = require('pg-promise')()
 const { sql } = require('pg-sql')
-const { createDb, migrate } = require('postgres-migrations')
+const { migrate } = require('postgres-migrations')
 const moment = require('moment')
 
 const config = require('../config.js')
