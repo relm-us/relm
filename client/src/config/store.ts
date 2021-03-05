@@ -1,29 +1,44 @@
-import { writable, Writable } from "svelte/store";
-import { DEFAULT_RELM_ID } from "./constants";
+import { DEFAULT_RELM_ID, DEFAULT_ENTRYWAY } from "./constants";
 
-function getDefaultRelmId(location): string {
-  const params = new URLSearchParams(location.search.substring(1));
+export type Config = {
+  serverUrl: string;
+  serverYjsUrl: string;
+  serverUploadUrl: string;
+  subrelm: string;
+  entryway: string;
+};
 
-  const relm = {
-    // Normally, the relm is specified as part of the path, e.g. "/demo"
-    path: location.pathname.split("/")[1],
-    // Also allow relmId to be specified as a query param, e.g. "?relm=demo"
-    queryParam: params.get("relm"),
-  };
+export const config: Config = getConfig(window.location);
 
-  let relmId;
-  if (relm.queryParam) {
-    relmId = relm.queryParam;
-  } else if (relm.path !== "") {
-    relmId = relm.path;
-  } else {
-    relmId = DEFAULT_RELM_ID;
-  }
+/**
+ * Helper functions
+ */
 
-  return relmId.toLowerCase().replace(/[^a-z0-9\-]+/, "-");
+function canonicalIdentifier(id: string) {
+  return id.toLowerCase().replace(/[^a-z0-9\-]+/, "-");
 }
 
-function getDefaultConfig(location): Config {
+function getSubrelmAndEntryway(
+  location: Location
+): { subrelm: string; entryway: string } {
+  const params = new URLSearchParams(location.search.substring(1));
+
+  const pathParts = location.pathname
+    .split("/")
+    .map((part) => (part === "" ? null : part));
+
+  // Normally, the subrelm is specified as part of the path, e.g. "/demo", but
+  // allow a `?subrelm=[value]` to override it.
+  const subrelm = params.get("subrelm") || pathParts[1] || DEFAULT_RELM_ID;
+  const entryway = params.get("entryway") || pathParts[2] || DEFAULT_ENTRYWAY;
+
+  return {
+    subrelm: canonicalIdentifier(subrelm),
+    entryway: canonicalIdentifier(entryway),
+  };
+}
+
+function getConfig(location): Config {
   let serverUrl: string;
   let serverYjsUrl: string;
   let serverUploadUrl: string;
@@ -43,17 +58,7 @@ function getDefaultConfig(location): Config {
     serverUrl,
     serverYjsUrl,
     serverUploadUrl,
-    relmId: getDefaultRelmId(location),
+    ...getSubrelmAndEntryway(location)
   };
 }
 
-export const defaultConfig = getDefaultConfig(window.location);
-
-export type Config = {
-  serverUrl: string;
-  serverYjsUrl: string;
-  serverUploadUrl: string;
-  relmId: string;
-};
-
-export const config: Writable<Config> = writable(defaultConfig);

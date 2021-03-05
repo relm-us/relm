@@ -5,7 +5,8 @@
   import LeftPanel, { Header } from "~/ui/LeftPanel";
   import { parse } from "~/utils/parse";
   import { Relm } from "~/stores/Relm";
-  import { exportRelm, FormatOpts, jsonFormat } from "~/world/Export";
+  import { exportRelm, jsonFormat } from "~/world/Export";
+  import type { FormatOpts } from "~/world/Export";
   import { config } from "~/config";
 
   let text;
@@ -18,8 +19,8 @@
 
   onMount(() => {
     const meta: FormatOpts = {
-      relm: $config.relmId,
-      server: $config.serverUrl,
+      relm: config.subrelm,
+      server: config.serverUrl,
     };
     let exported;
     if ($Relm.selection.length > 0) {

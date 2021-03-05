@@ -4,13 +4,13 @@ import { Portal } from "../components";
 import { Impact, Impactable } from "~/ecs/plugins/rapier";
 import { ThrustController } from "~/ecs/plugins/player-control";
 import { Vector3 } from "three";
-import { relmId } from "~/stores/connection";
+import { subrelm } from "~/stores/subrelm";
 
 const bodyFacing = new Vector3();
 const vOut = new Vector3(0, 0, 1);
 export class PortalSystem extends System {
   presentation: Presentation;
-  
+
   order = Groups.Simulation - 1;
 
   static queries = {
@@ -57,7 +57,7 @@ export class PortalSystem extends System {
             // a chance to "catch up" to the participant's new position
             this.presentation.skipUpdate = 3;
           } else if (portal.kind === "REMOTE") {
-            relmId.set(portal.relm);
+            subrelm.set(portal.subrelm);
           }
         }
       }

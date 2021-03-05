@@ -1,8 +1,9 @@
 import { derived, writable, Readable, Writable } from "svelte/store";
 import axios from "axios";
 
-import { config, Config, defaultConfig } from "~/config/store";
+import { config } from "~/config/store";
 import { getSecureParams } from "~/identity";
+import { subrelm } from "./subrelm";
 
 export type YConnectionStatus =
   | "error"
@@ -34,8 +35,6 @@ export type ConnectError = {
 };
 export type ConnectStatus = ConnectInitial | ConnectOptions | ConnectError;
 
-export const relmId: Writable<string> = writable(defaultConfig.relmId);
-
 async function playerPermit(params, serverUrl, room) {
   let url = `${serverUrl}/relm/${room}/can/access`;
   if (params.t) {
@@ -58,15 +57,15 @@ async function playerPermit(params, serverUrl, room) {
 }
 
 export const connection: Readable<ConnectStatus> = derived(
-  [config, relmId],
-  ([$config, $relmId]: [Config, string], set: (ConnectStatus) => void) => {
+  [subrelm],
+  ([$subrelm]: [string], set: (ConnectStatus) => void) => {
     getSecureParams(window.location.href)
       .then((params) => {
-        playerPermit(params, $config.serverUrl, $relmId)
+        playerPermit(params, config.serverUrl, $subrelm)
           .then((relm) => {
             set({
               state: "connected",
-              url: $config.serverYjsUrl,
+              url: config.serverYjsUrl,
               room: relm.permanentDocId,
               params,
             });

@@ -1,27 +1,28 @@
 <script lang="ts">
   import Button from "../Button";
   import { Relm } from "~/stores/Relm";
-  import { yConnectStatus, relmId } from "~/stores/connection";
+  import { subrelm } from "~/stores/subrelm";
+  import { yConnectStatus } from "~/stores/connection";
   import Pane from "./Pane.svelte";
 
   let inputEl;
   let subtitle;
   let minimized = true;
 
-  const getSubtitle = (status, relmId) => {
+  const getSubtitle = (status, subrelm) => {
     // prettier-ignore
     switch (status) {
-      case 'connected':    return `connected (${relmId})`
+      case 'connected':    return `connected (${subrelm})`
       case 'connecting':   return `connecting...`
       case 'disconnected': return `disconnected`
     }
   };
 
-  $: subtitle = getSubtitle($yConnectStatus, $relmId);
+  $: subtitle = getSubtitle($yConnectStatus, $subrelm);
 
   const onClickConnect = () => {
     // Setting relmId will trigger WorldManager to re-connect
-    $relmId = inputEl.value;
+    $subrelm = inputEl.value;
     minimized = true;
   };
 
@@ -38,7 +39,7 @@
       </buttons>
     {:else if $yConnectStatus === "disconnected"}
       <label for="relmId">Connect to Relm:</label>
-      <input bind:this={inputEl} type="text" name="relmId" value={$relmId} />
+      <input bind:this={inputEl} type="text" name="relmId" value={$subrelm} />
       <buttons>
         <Button on:click={onClickConnect}>Connect</Button>
       </buttons>

@@ -58,6 +58,9 @@ export class WorldDoc extends EventEmitter {
   // An array of js objects for chat;
   messages: Y.Array<any>;
 
+  // A map of entryways into this subrelm. Default is [0, 0, 0].
+  entryways: Y.Map<any>;
+
   // A table of Y.IDs (as strings) mapped to HECS IDs; used for deletion
   yids: Map<YIDSTR, EntityId>;
 
@@ -81,6 +84,8 @@ export class WorldDoc extends EventEmitter {
     this.entities.observeDeep(this._observer.bind(this));
 
     this.messages = this.ydoc.getArray("messages");
+
+    this.entryways = this.ydoc.getMap("entryways");
 
     this.undoManager = new Y.UndoManager([this.entities], {
       captureTimeout: UNDO_CAPTURE_TIMEOUT,

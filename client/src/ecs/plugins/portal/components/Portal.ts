@@ -34,11 +34,11 @@ export class Portal extends Component {
       },
     },
 
-    relm: {
+    subrelm: {
       type: StringType,
       default: "relm",
       editor: {
-        label: "Relm Name",
+        label: "Subrelm Name",
         requires: [{ prop: "kind", value: "REMOTE" }],
       },
     },
