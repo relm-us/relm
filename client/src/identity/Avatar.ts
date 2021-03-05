@@ -6,7 +6,7 @@ import { makeAvatar } from "~/prefab/makeAvatar";
 import { makeAvatarAndActivate } from "~/prefab/makeAvatarAndActivate";
 
 import { World, Entity } from "~/ecs/base";
-import { Transform } from "~/ecs/plugins/core";
+import { Presentation, Transform } from "~/ecs/plugins/core";
 import { Html2d } from "~/ecs/plugins/html2d";
 
 const LAST_SEEN_TIMEOUT = 15000;
@@ -131,6 +131,11 @@ export class Avatar {
     label.modified();
   }
 
+  moveTo(coords: Vector3) {
+    const presentation = (this.world as any).presentation;
+    moveAvatarTo(coords, presentation, this.entity);
+  }
+
   getTransformData() {
     const transformData = [];
     const transform = this.entity.get(Transform);
@@ -167,4 +172,20 @@ export class Avatar {
     e1.y = headTheta;
     transformHead.rotation.setFromEuler(e1);
   }
+}
+
+export function moveAvatarTo(
+  newCoords: Vector3,
+  presentation: Presentation,
+  entity: Entity
+) {
+  const transform = entity.get(Transform);
+  const delta = new Vector3().copy(newCoords).sub(transform.position);
+
+  // Move the participant
+  entity.traverse((e) => e.get(Transform).position.add(delta), false, true);
+
+  // Don't render the next 3 frames so that everything has
+  // a chance to "catch up" to the participant's new position
+  presentation.skipUpdate = 3;
 }

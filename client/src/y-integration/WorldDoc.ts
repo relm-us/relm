@@ -1,5 +1,6 @@
 import { World, Entity, EntityId } from "~/ecs/base";
 import { DeepDiff } from "deep-diff";
+import { readableMap, YReadableMap } from 'svelt-yjs'
 
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
@@ -59,7 +60,7 @@ export class WorldDoc extends EventEmitter {
   messages: Y.Array<any>;
 
   // A map of entryways into this subrelm. Default is [0, 0, 0].
-  entryways: Y.Map<any>;
+  entryways: YReadableMap<any>;
 
   // A table of Y.IDs (as strings) mapped to HECS IDs; used for deletion
   yids: Map<YIDSTR, EntityId>;
@@ -85,7 +86,7 @@ export class WorldDoc extends EventEmitter {
 
     this.messages = this.ydoc.getArray("messages");
 
-    this.entryways = this.ydoc.getMap("entryways");
+    this.entryways = readableMap(this.ydoc.getMap("entryways"));
 
     this.undoManager = new Y.UndoManager([this.entities], {
       captureTimeout: UNDO_CAPTURE_TIMEOUT,

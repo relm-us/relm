@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Capsule from "../Capsule.svelte";
+  import Capsule from "~/ui/Capsule";
 
   export let key: string;
   export let prop;

@@ -4,7 +4,7 @@
 
   import { RigidBodyRef } from "~/ecs/plugins/rapier";
 
-  import Capsule from "./Capsule.svelte";
+  import Capsule from "~/ui/Capsule";
   import Button from "~/ui/Button";
   import { Relm } from "~/stores/Relm";
   import { sortAlphabetically } from "~/utils/sortAlphabetically";

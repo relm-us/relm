@@ -2,7 +2,7 @@
   import { Euler, Quaternion } from "three";
   import { createEventDispatcher } from "svelte";
 
-  import Capsule from "../Capsule.svelte";
+  import Capsule from "~/ui/Capsule";
   import { NumberDragger } from "./utils/NumberDragger";
   import { formatNumber } from "./utils/formatNumber";
 

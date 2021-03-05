@@ -1,11 +1,25 @@
 <script lang="ts">
   import LeftPanel, { Header } from "~/ui/LeftPanel";
   import UploadButton from "~/ui/UploadButton";
+  import Capsule from "~/ui/Capsule";
   import { Skybox } from "~/ecs/plugins/skybox";
   import { nanoid } from "nanoid";
   import { Asset } from "~/ecs/plugins/core";
   import { Relm } from "~/stores/Relm";
   import { assetUrl } from "~/config/assetUrl";
+  import EntrywayMap from "./EntrywayMap.svelte";
+  import { Vector3 } from "three";
+
+  let newEntrywayName = "";
+
+  function addEntryway(event) {
+    const coords: Vector3 = $Relm.avatar.getByName("Transform").position;
+    $Relm.wdoc.entryways.y.set(event.target.value, [coords.x, coords.y, coords.z]);
+  }
+
+  function onDeleteEntryway({ detail: name }) {
+    $Relm.wdoc.entryways.y.delete(name)
+  }
 
   function onUploadedSkybox({ detail }) {
     if (detail.results.length === 0) return;
@@ -38,12 +52,24 @@
         </UploadButton>
       </div>
     </setting>
+    <setting>
+      <h2>Entryways</h2>
+      <EntrywayMap entryways={$Relm.wdoc.entryways} on:delete={onDeleteEntryway} />
+      <Capsule
+        label="Add Entryway"
+        value={newEntrywayName}
+        editable={true}
+        on:change={addEntryway}
+      />
+    </setting>
   </container>
 </LeftPanel>
 
 <style>
   container {
     display: flex;
+    flex-direction: column;
+
     height: 100%;
     overflow: hidden;
   }

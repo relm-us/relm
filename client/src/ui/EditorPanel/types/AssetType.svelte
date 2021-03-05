@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Capsule from "../Capsule.svelte";
+  import Capsule from "~/ui/Capsule";
   import byteSize from "byte-size";
 
   export let key: string;

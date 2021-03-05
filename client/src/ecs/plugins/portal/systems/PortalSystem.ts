@@ -5,6 +5,7 @@ import { Impact, Impactable } from "~/ecs/plugins/rapier";
 import { ThrustController } from "~/ecs/plugins/player-control";
 import { Vector3 } from "three";
 import { subrelm } from "~/stores/subrelm";
+import { moveAvatarTo } from "~/identity/Avatar";
 
 const bodyFacing = new Vector3();
 const vOut = new Vector3(0, 0, 1);
@@ -34,9 +35,7 @@ export class PortalSystem extends System {
         if (otherEntity.has(ThrustController)) {
           if (portal.kind === "LOCAL") {
             const transform = otherEntity.get(Transform);
-            const delta = new Vector3()
-              .copy(portal.coords)
-              .sub(transform.position);
+            const newCoords = new Vector3().copy(portal.coords);
 
             // Make participant show up on the "other side" of the
             // portal destination, depending on movement direction.
@@ -44,18 +43,13 @@ export class PortalSystem extends System {
               .copy(vOut)
               .applyQuaternion(transform.rotation)
               .normalize();
-            delta.add(bodyFacing);
+            newCoords.add(bodyFacing);
 
-            // Move the participant
-            otherEntity.traverse(
-              (e) => e.get(Transform).position.add(delta),
-              false,
-              true
+            moveAvatarTo(
+              newCoords,
+              (this.world as any).presentation,
+              otherEntity
             );
-
-            // Don't render the next 3 frames so that everything has
-            // a chance to "catch up" to the participant's new position
-            this.presentation.skipUpdate = 3;
           } else if (portal.kind === "REMOTE") {
             subrelm.set(portal.subrelm);
           }

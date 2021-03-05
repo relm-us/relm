@@ -1,4 +1,4 @@
-import { DirectionalLight } from "three";
+import { Vector3, DirectionalLight } from "three";
 import { get, Writable } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
@@ -11,6 +11,7 @@ import { worldState, WorldState } from "~/stores/worldState";
 import { ConnectOptions } from "~/stores/connection";
 import { scale } from "~/stores/viewport";
 import { shadowsEnabled } from "~/stores/settings";
+import { entryway } from "~/stores/subrelm";
 
 import { makeStageAndActivate, makeInitialCollider } from "~/prefab";
 import { Entity, World } from "~/ecs/base";
@@ -67,6 +68,18 @@ export default class WorldManager {
     this.mount();
     this.populate();
 
+    // Move avatar to named entryway once world has loaded
+    let enteredOnce = false;
+    this.wdoc.on("sync", () => {
+      this.enter(get(entryway));
+      enteredOnce = true;
+    });
+    entryway.subscribe(($entryway) => {
+      if (enteredOnce) {
+        this.enter($entryway);
+      }
+    });
+
     shadowsEnabled.subscribe(($enabled) => {
       const ref = this.light.getByName("DirectionalLightRef");
       if (!ref) return;
@@ -102,6 +115,15 @@ export default class WorldManager {
         if (controller) controller.enabled = true;
       }
     });
+  }
+
+  enter(entryway: string) {
+    const entryways = this.wdoc.entryways.y.toJSON();
+    const coords = new Vector3(0, 0, 0);
+    if (entryway in entryways) {
+      coords.fromArray(entryways[entryway]);
+    }
+    this.identities.me.avatar.moveTo(coords);
   }
 
   mount() {

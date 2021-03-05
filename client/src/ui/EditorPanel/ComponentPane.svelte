@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { createEventDispatcher } from "svelte";
-  import Capsule from "./Capsule.svelte";
 
   import { Pane } from "~/ui/LeftPanel";
+  import Capsule from "~/ui/Capsule";
   import Property from "./Property.svelte";
 
   export let Component;
