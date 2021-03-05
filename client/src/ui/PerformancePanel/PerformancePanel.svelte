@@ -1,6 +1,7 @@
 <script>
   import StatsPane from "./StatsPane.svelte";
   import ToggleSwitch from "../ToggleSwitch";
+  import SystemToggle from './SystemToggle.svelte'
 
   import Button from "~/ui/Button";
   import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
@@ -55,7 +56,9 @@
 
   <!-- Show most important ECS Systems' performance stats here -->
   {#each primarySystems as [systemName, systemStatsStore]}
-    <StatsPane title={systemName} dataStore={systemStatsStore} />
+    <StatsPane title={systemName} dataStore={systemStatsStore}>
+      <SystemToggle name={systemName} />
+    </StatsPane>
   {/each}
 
   <Button

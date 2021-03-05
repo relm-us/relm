@@ -19,4 +19,5 @@
   {minimized}
 >
   <Chart data={$dataStore} {maximum} />
+  <slot />
 </Pane>
