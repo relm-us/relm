@@ -36,6 +36,7 @@ export class WallSystem extends System {
       this.build(entity);
 
       this.removeCollider(entity);
+      entity.remove(WallVisible);
 
       // Notify outline to rebuild if necessary
       entity.getByName("Outline")?.modified();
@@ -67,7 +68,8 @@ export class WallSystem extends System {
     } else if ($mode === "play") {
       this.queries.needsHidden.forEach((entity) => {
         const object3d = entity.get(Object3D).value;
-        object3d.visible = false;
+        const wall = entity.get(Wall);
+        object3d.visible = wall.visible;
         entity.remove(WallVisible);
       });
     }
@@ -83,7 +85,7 @@ export class WallSystem extends System {
       wall.convexity,
       wall.segments
     );
-    
+
     let material;
     if (wall.visible) {
       material = new THREE.MeshStandardMaterial({
@@ -101,6 +103,7 @@ export class WallSystem extends System {
 
     object3d.add(mesh);
 
+    // Honor visibility of wall right from the start
     object3d.visible = wall.visible;
 
     entity.add(WallMesh, { value: mesh });
