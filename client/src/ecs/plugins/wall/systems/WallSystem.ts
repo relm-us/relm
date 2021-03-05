@@ -132,16 +132,14 @@ export class WallSystem extends System {
 
   buildCollider(entity) {
     const rigidBodyRef = entity.get(RigidBodyRef);
-    const transform = entity.get(Transform);
 
     const { world, rapier } = (this.world as any).physics;
 
     const wall = entity.get(Wall);
-    const scale = transform.scale;
     const { vertices, indices } = wallGeometryData(
-      scale.x * wall.size.x,
-      scale.y * wall.size.y,
-      scale.z * wall.size.z,
+      wall.size.x,
+      wall.size.y,
+      wall.size.z,
       wall.convexity,
       wall.segments
     );
