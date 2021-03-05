@@ -850,7 +850,7 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@dimforge/rapier3d@^0.3.0":
+"@dimforge/rapier3d@^0.3.1":
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@dimforge/rapier3d/-/rapier3d-0.3.1.tgz#2a2fc8895498e6142ea305317761204f32b985b6"
   integrity sha512-ytNcx5j7PHt1BTvJSkowwMx6XTh8etCiU0Nf2ydyWKdXcL52FXZuhLF3/nF5cNW3FbM9XI8dQ//ac6lxsb6/NQ==
@@ -1415,7 +1415,7 @@
     "@uppy/utils" "^3.4.0"
     preact "8.2.9"
 
-"@uppy/utils@3.4.0", "@uppy/utils@^3.3.0", "@uppy/utils@^3.4.0":
+"@uppy/utils@^3.3.0", "@uppy/utils@^3.4.0":
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/@uppy/utils/-/utils-3.4.0.tgz#4afcf8c26dec13ee54676bd1f7958fc1063b68df"
   integrity sha512-XcT4UgUm1NhWAeQjMrr5LCE7Uookg12FTwQw/QwXBuGABoVilfk56i6h8ecf1bVX0D74zdpSnUiB1h+8a7ollw==
@@ -9167,10 +9167,10 @@ supports-hyperlinks@^2.0.0:
     has-flag "^4.0.0"
     supports-color "^7.0.0"
 
-svelt-yjs@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/svelt-yjs/-/svelt-yjs-1.0.0.tgz#b5f04d56b29a2e0ed89ebd540eec986520fa6420"
-  integrity sha512-IP6wzS90QVmpeWFm6D1jNsB9Mc8GJeghouQkHwEULMPLSrBkoh9c3qfcajWbk7hpfCBIG3llexKIough4DhDdw==
+svelt-yjs@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/svelt-yjs/-/svelt-yjs-1.1.0.tgz#e296ff3db76c048de68a6f5a768a890b726f01cb"
+  integrity sha512-2cG19yT1/j3INP19TilDw8H3oyznCC1dyickRnfgs0Ecpdoa7y2yAQ21/7Qihy4m2OArxZRIaX1hmbMyYItFeA==
   dependencies:
     tslib "~2.0.1"
     yjs "^13.4.1"
