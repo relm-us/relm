@@ -2,11 +2,14 @@ import { System, Not, Modified, Groups } from "~/ecs/base";
 import { Object3D } from "~/ecs/plugins/core";
 import * as THREE from "three";
 import { RigidBodyRef } from "~/ecs/plugins/rapier";
+import { mode } from "~/stores/mode";
+import { get } from "svelte/store";
 
 import { isBrowser } from "~/utils/isBrowser";
-import { Wall, WallMesh, WallColliderRef } from "../components";
+import { Wall, WallMesh, WallColliderRef, WallVisible } from "../components";
 import { WallGeometry, wallGeometryData } from "../WallGeometry";
 import { OBJECT_INTERACTION } from "~/config/colliderInteractions";
+import { colliderMaterial } from "~/ecs/shared/colliderMaterial";
 
 export class WallSystem extends System {
   active = isBrowser();
@@ -18,6 +21,9 @@ export class WallSystem extends System {
     modified: [Object3D, Modified(Wall), WallMesh],
     removedObj: [Not(Object3D), WallMesh],
     removed: [Object3D, Not(Wall), WallMesh],
+
+    needsVisible: [Wall, Not(WallVisible)],
+    needsHidden: [WallVisible],
   };
 
   update() {
@@ -25,11 +31,7 @@ export class WallSystem extends System {
       this.build(entity);
     });
     this.queries.modified.forEach((entity) => {
-      const object3d = entity.get(Object3D).value;
-      const mesh = entity.get(WallMesh).value;
-      object3d.remove(mesh);
-      mesh.geometry.dispose();
-      mesh.material.dispose();
+      this.remove(entity);
       this.build(entity);
 
       this.removeCollider(entity);
@@ -48,13 +50,23 @@ export class WallSystem extends System {
       entity.remove(WallMesh);
     });
     this.queries.removed.forEach((entity) => {
-      const object3d = entity.get(Object3D).value;
-      const mesh = entity.get(WallMesh).value;
-      object3d.remove(mesh);
-      mesh.geometry.dispose();
-      mesh.material.dispose();
-      entity.remove(WallMesh);
+      this.remove(entity);
     });
+
+    const $mode = get(mode);
+    if ($mode === "build") {
+      this.queries.needsVisible.forEach((entity) => {
+        const object3d = entity.get(Object3D).value;
+        object3d.visible = true;
+        entity.add(WallVisible);
+      });
+    } else if ($mode === "play") {
+      this.queries.needsHidden.forEach((entity) => {
+        const object3d = entity.get(Object3D).value;
+        object3d.visible = false;
+        entity.remove(WallVisible);
+      });
+    }
   }
 
   build(entity) {
@@ -67,21 +79,45 @@ export class WallSystem extends System {
       wall.convexity,
       wall.segments
     );
-    const materialOpts = {
+    let materialOpts: any = {
       color: wall.color,
       roughness: wall.roughness,
       metalness: wall.metalness,
       emissive: wall.emissive,
     };
 
-    const material = new THREE.MeshStandardMaterial(materialOpts);
+    let material;
+    if (wall.visible) {
+      material = new THREE.MeshStandardMaterial({
+        color: wall.color,
+        roughness: wall.roughness,
+        metalness: wall.metalness,
+        emissive: wall.emissive,
+      });
+    } else {
+      material = colliderMaterial;
+    }
     const mesh = new THREE.Mesh(geometry, material);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
 
     object3d.add(mesh);
 
+    object3d.visible = wall.visible;
+
     entity.add(WallMesh, { value: mesh });
+  }
+
+  remove(entity) {
+    const mesh = entity.get(WallMesh).value;
+    if (mesh) {
+      const object3d = entity.get(Object3D).value;
+      object3d.remove(mesh);
+      mesh.geometry.dispose();
+      mesh.material.dispose();
+
+      entity.remove(WallMesh);
+    }
   }
 
   removeCollider(entity) {

@@ -1,4 +1,4 @@
-import { BufferGeometry, Color, Mesh, MeshStandardMaterial } from "three";
+import { BufferGeometry, Mesh } from "three";
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import {
   RigidBody,
@@ -8,6 +8,7 @@ import {
   ColliderVisible,
 } from "../components";
 import { Object3D, Transform, WorldTransform } from "~/ecs/plugins/core";
+import { colliderMaterial } from '~/ecs/shared/colliderMaterial'
 import { ColliderDesc as RapierColliderDesc } from "@dimforge/rapier3d";
 import { getGeometry } from "~/ecs/plugins/shape/ShapeCache";
 import { get } from "svelte/store";
@@ -172,15 +173,7 @@ export class ColliderSystem extends System {
     const shapeSpec = colliderToShape(collider);
     const geometry: BufferGeometry = getGeometry(shapeSpec);
 
-    const material = new MeshStandardMaterial({
-      color: new Color("#333333"),
-      roughness: 0.5,
-      metalness: 0.5,
-      emissive: new Color("#333333"),
-      transparent: true,
-      opacity: 0.5,
-    });
-    const mesh = new Mesh(geometry, material);
+    const mesh = new Mesh(geometry, colliderMaterial);
     mesh.scale.multiplyScalar(0.99);
 
     object3d.add(mesh);

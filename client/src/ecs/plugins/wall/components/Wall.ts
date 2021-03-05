@@ -1,4 +1,4 @@
-import { Component, StringType, NumberType } from "~/ecs/base";
+import { Component, StringType, NumberType, BooleanType } from "~/ecs/base";
 import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
@@ -10,6 +10,13 @@ export class Wall extends Component {
       editor: {
         label: "Size",
       },
+    },
+    visible: {
+      type: BooleanType,
+      default: true,
+      editor: {
+        label: "Visible"
+      }
     },
     convexity: {
       type: NumberType,
