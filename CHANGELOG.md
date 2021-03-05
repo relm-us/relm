@@ -1,4 +1,34 @@
+2021-03-04
+- NEW: Named Entryways! A subrelm can now have a "default" start position (entryway) other than (0,0,0) and can additionally have other entryways. An entryway's name is used as an optional 2nd component of the name of the subrelm; for example the "fairy" entryway of the "town" subrelm would look like this: staging.relm.us/town/fairy.
+  - In Build Mode: Add or remove entryways via the "Settings" panel. Create an entryway named "default" at your avatar's current position to make that the default entryway for the subrelm.
+  - In Play Mode: Your avatar will automatically show up at the default entryway when you load the subrelm, or another entryway if your URL includes it.
+- NEW: Escape key: (a) if anything is selected, it will first deselect the selection; (b) if chat window is open, it will close chat; (c) if in build mode, it will enter play mode.
+
+2021-03-03
+- NEW: (Build Mode) You can now use rectangle selections to select a whole "area" of the screen. Note: there is currently no visible rectangle drawn, so it's hard to tell that it's actually happening. Also note: the drag currently MUST start with nothing selected.
+- CHANGED: Going through a local portal puts participant on the other side of the destination. In other words, depending on the participant's direction when entering the portal, they will be placed 1 unit away from the destination in that same direction.
+- FIXED: No more jank when moving through a local portal.
+
+2021-02-25
+- NEW: Head movements are shown over the network
+- CHANGED: Avatars no longer collide (In future, they will push away from each other, which will feel like colliding a bit). This fixes the issue where avatars would get launched randomly into the sky or ground when touching each other.
+- REMOVED: "Pile of Boxes" button.
+- CODE NOTES: The collider interaction group bits changed from 2 groups (object, ground) to 4 groups (object, ground, avatar, avatar in build mode). This required re-assigning collider interaction group bitmasks on all existing objects.
+
+2021-02-24
+- NEW: You can edit your avatar's name (click to edit)
+- NEW: Labels can be edited when "Editable" flag is set.
+- FIXED: Avatars should disappear when someone disconnects/leaves.
+- FIXED: Editor still said "Label" in one place that should have said "Billboard"
+
+
 2021-02-23
+- NEW: (Play Mode) Labels can be dragged around. Notes:
+  a) Drag the text itself (not the little sphere)
+  b) Existing labels will need to have their "Draggable" property switched to "On". New labels will be draggable by default.
+- NEW: Performance panel now has a "Shadow" toggle to locally configure whether shadows are cast.
+- CHANGED: Speech bubbles close when chat box closes.
+- FIXED: Label size on hover in combination with being zoomed out should be better.
 - FIXED: Avatar was drifting.
 
 2021-02-22
