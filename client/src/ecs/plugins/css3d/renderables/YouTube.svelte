@@ -55,6 +55,31 @@
   }
 </script>
 
+<svelte:window on:message={onMessage} on:blur={onWindowBlur} />
+
+<iframe
+  class:invisible={state !== "LOADED"}
+  bind:this={iframe}
+  on:load={onFrameLoaded}
+  on:mouseover={onFrameMouseover}
+  on:mouseout={onFrameMouseout}
+  {title}
+  {width}
+  {height}
+  {src}
+  frameborder="0"
+  allowfullscreen
+/>
+
+{#if state !== "LOADED" || $mode === "build"}
+  <overlay>
+    {#if state !== "LOADED"}
+      <div>Loading...</div>
+      {#if state === "INIT"}(1/3){:else if state === "LOADING"}(2/3){/if}
+    {/if}
+  </overlay>
+{/if}
+
 <style>
   iframe {
     position: absolute;
@@ -85,27 +110,3 @@
     visibility: hidden;
   }
 </style>
-
-<svelte:window on:message={onMessage} on:blur={onWindowBlur} />
-
-<iframe
-  class:invisible={state !== 'LOADED'}
-  bind:this={iframe}
-  on:load={onFrameLoaded}
-  on:mouseover={onFrameMouseover}
-  on:mouseout={onFrameMouseout}
-  {title}
-  {width}
-  {height}
-  {src}
-  frameborder="0"
-  allowfullscreen />
-
-{#if state !== 'LOADED' || $mode === 'build'}
-  <overlay>
-    {#if state !== 'LOADED'}
-      <div>Loading...</div>
-      {#if state === 'INIT'}(1/3){:else if state === 'LOADING'}(2/3){/if}
-    {/if}
-  </overlay>
-{/if}
