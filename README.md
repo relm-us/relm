@@ -42,7 +42,11 @@ These are some rough notes on getting Relm running on your own hosted server:
 - you can proxy the backend server through nginx as well (see scripts/nginx/snippets)
 - you can serve files with brotli compression to get better load times
 - currently, the relm.us domain name is hard-coded, but you can easily change it
+- for website screenshots to work: if installing the server on linux, you may need to manually install puppeteer's Chromium prereqs:
 
+```
+apt install ca-certificates fonts-liberation libappindicator3-1 libasound2 libatk-bridge2.0-0 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgbm1 libgcc1 libglib2.0-0 libgtk-3-0 libnspr4 libnss3 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 lsb-release wget xdg-utils
+```
 ## Visit Us?
 
 We're building a community around personal growth and spiritual-lite practices in an online space that gives us virtual locality. Interested? Check out https://www.relm.us and maybe join us on Discord.
