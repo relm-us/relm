@@ -12,7 +12,7 @@
   // We need to do this in Firefox, because we can't just detect a blur event
   // and set focus on the document immediately afterward.
   function forceRestoreFocus(msec = 10) {
-    iframe.blur();
+    iframe?.blur();
     setTimeout(() => {
       if (document.activeElement === iframe) {
         forceRestoreFocus(msec);
@@ -36,7 +36,7 @@
   function onOverlayMousedown() {
     if ($mode === "play") {
       highlighted = true;
-      iframe.focus();
+      iframe?.focus();
     }
   }
 
