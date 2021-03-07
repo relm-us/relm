@@ -1,5 +1,6 @@
 <script lang="ts">
   import { mode } from "~/stores/mode";
+  import { config } from "~/config";
 
   export let width: number;
   export let height: number;
@@ -39,6 +40,13 @@
     }
   }
 
+  function screenshot(url, width = 800, height = 600) {
+    return (
+      config.serverUrl +
+      `/screenshot/${width}x${height}/${encodeURIComponent(url)}`
+    );
+  }
+
   $: if ($mode === "build") highlighted = false;
 
   // ignore warning about missing props
@@ -47,17 +55,21 @@
 
 <svelte:window on:blur={onWindowBlur} />
 
-<iframe
-  bind:this={iframe}
-  on:mouseout={onFrameMouseout}
-  title="Web Page"
-  {width}
-  {height}
-  src={url}
-  frameborder="0"
-  allowfullscreen
-  allow="camera;microphone"
-/>
+{#if highlighted}
+  <iframe
+    bind:this={iframe}
+    on:mouseout={onFrameMouseout}
+    title="Web Page"
+    {width}
+    {height}
+    src={url}
+    frameborder="0"
+    allowfullscreen
+    allow="camera;microphone"
+  />
+{:else}
+  <img src={screenshot(url, width, height)} alt="screenshot" />
+{/if}
 
 <overlay
   class:build-mode={$mode === "build"}
@@ -97,5 +109,9 @@
   }
   overlay.build-mode {
     background-color: rgb(240, 240, 240, 0.7);
+  }
+
+  img {
+    width: 100%;
   }
 </style>

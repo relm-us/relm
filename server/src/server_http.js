@@ -1,9 +1,12 @@
 const path = require("path");
+const fs = require("fs");
 const express = require("express");
 const bodyParser = require("body-parser");
 const fileupload = require("express-fileupload");
 const cors = require("cors");
 const sharp = require("sharp");
+const capture = require("capture-website");
+const crypto = require("crypto");
 
 const conversion = require("./conversion.js");
 const util = require("./util.js");
@@ -92,6 +95,29 @@ app.get(
 );
 
 app.use("/relm/:relmName", middleware.relmName(), relmRouter);
+
+app.use(express.static(config.SCREENSHOTS_DIR)).get(
+  /^\/screenshot\/([\dx]+)\/(http.+)$/,
+  wrapAsync(async (req, res) => {
+    const { 0: size, 1: url } = req.params;
+    const [width, height] = (size || "800x600")
+      .split("x")
+      .map((n) => parseInt(n, 10));
+
+    const hash = crypto.createHash("md5").update(url).digest("hex");
+    const filename = hash + ".jpg";
+
+    const filepath = path.resolve(path.join(config.SCREENSHOTS_DIR, filename));
+    if (!fs.existsSync(filepath)) {
+      // Website screen capture hasn't been taken yet
+      await capture.file(url, filepath, { type: "jpeg", width, height });
+    }
+
+    // jpeg
+    console.log("filepath", filepath);
+    res.sendFile(filepath);
+  })
+);
 
 // Serve uploaded files
 app.use(
