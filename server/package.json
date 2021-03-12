@@ -5,7 +5,7 @@
   "author": "Duane Johnson",
   "license": "GPL-3.0-only",
   "scripts": {
-    "start": "cross-env TMP_DIR=data/tmp ASSETS_DIR=data/assets DATABASE_HOST=localhost node --inspect src/server.js",
+    "start": "cross-env TMP_DIR=data/tmp ASSETS_DIR=data/assets JWTSECRET=jwt-secret-key DATABASE_HOST=localhost node --inspect src/server.js",
     "test": "cross-env NODE_ENV=test DATABASE_NAME=relm-test DATABASE_HOST=localhost jest",
     "sandbox": "node sandbox.js",
     "pretest": "dropdb relm-test; createdb relm-test"

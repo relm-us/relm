@@ -24,6 +24,8 @@ const DATABASE_HOST = process.env.DATABASE_HOST || "/var/run/postgresql";
 // NOTE: Password should not be set if using postgres peer authentication
 const DATABASE_PASSWORD = process.env.DATABASE_PASSWORD;
 
+const JWTSECRET = process.env.JWTSECRET;
+
 module.exports = {
   SECURITY_CONFIG,
   MAX_TOKEN_LENGTH,
@@ -42,4 +44,6 @@ module.exports = {
   DATABASE_NAME,
   DATABASE_HOST,
   DATABASE_PASSWORD,
+  
+  JWTSECRET,
 };
