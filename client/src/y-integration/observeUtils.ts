@@ -52,6 +52,7 @@ export function withMapEdits<T>(
     const change: YMapChange = event.changes.keys.get(key);
     if (!change) {
       console.warn(`change key not found`, key, event.changes);
+      return;
     }
     switch (change.action) {
       case "add":

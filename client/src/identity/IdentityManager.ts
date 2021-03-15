@@ -17,6 +17,7 @@ import {
 import { defaultIdentity } from "./defaultIdentity";
 import { Identity } from "./Identity";
 import { ChatMessage } from "~/world/ChatManager";
+import { localstorageSharedFields } from "./localstorageSharedFields";
 
 export class IdentityManager extends EventEmitter {
   wdoc: WorldDoc;
@@ -32,8 +33,6 @@ export class IdentityManager extends EventEmitter {
   // Fast transform cache
   setTransformFns: Map<YClientID, Function>;
 
-  isSynced: boolean;
-
   me: Identity;
 
   constructor(wdoc: WorldDoc, myData: IdentityData = defaultIdentity) {
@@ -44,7 +43,6 @@ export class IdentityManager extends EventEmitter {
     this.identities = new Map();
     this.lookupPlayerId = new Map();
     this.setTransformFns = new Map();
-    this.isSynced = false;
 
     this.registerMe(myData, this.wdoc.ydoc.clientID);
 
@@ -55,24 +53,32 @@ export class IdentityManager extends EventEmitter {
   registerMe(myData: IdentityData, clientId: YClientID) {
     myData.shared.clientId = clientId;
 
-    this.updateLocalFields(myData.playerId, myData.local);
-    this.updateSharedFields(myData.playerId, myData.shared);
-
-    const identity = this.identities.get(myData.playerId);
-    identity.sharedFields.subscribe(($sharedFields) => {
-      if (this.isSynced) {
-        this.yfields.set(myData.playerId, $sharedFields);
-      }
+    const identity = new Identity(this, myData.playerId, {
+      // Swap out the regular store for a localstorage store
+      sharedFieldsStore: localstorageSharedFields,
+      localFields: myData.local
     });
+
+    this.yfields.set(myData.playerId, myData.shared);
 
     /**
      * After getting 'sync' signal, yjs doc is synced and can accept
      * more up to date values, such as the clientId of this connection.
      */
     this.wdoc.on("sync", () => {
-      this.isSynced = true;
+      const $localstorageSharedFields: SharedIdentityFields = get(
+        localstorageSharedFields
+      );
       identity.sharedFields.update(($fields) => {
-        return { ...$fields, clientId: clientId };
+        return { ...$fields, ...$localstorageSharedFields, clientId: clientId };
+      });
+
+      /**
+       * Whenever the sharedFields svelte store is updated, also set the
+       * yjs document corresponding to the playerId.
+       */
+      identity.sharedFields.subscribe(($sharedFields) => {
+        this.yfields.set(myData.playerId, $sharedFields);
       });
     });
 
@@ -82,15 +88,7 @@ export class IdentityManager extends EventEmitter {
   updateSharedFields(playerId: PlayerID, sharedFields: SharedIdentityFields) {
     let identity = this.identities.get(playerId);
     if (!identity) {
-      identity = new Identity(this.wdoc.world, playerId, { sharedFields });
-      this.identities.set(playerId, identity);
-
-      identity.sharedFields.subscribe(($sharedFields) => {
-        // If clientId changes, we need to map it
-        if ($sharedFields.clientId) {
-          this.lookupPlayerId.set($sharedFields.clientId, playerId);
-        }
-      });
+      identity = new Identity(this, playerId, { sharedFields });
     } else {
       identity.sharedFields.set(sharedFields);
     }
@@ -100,8 +98,7 @@ export class IdentityManager extends EventEmitter {
   updateLocalFields(playerId: PlayerID, localFields: LocalIdentityFields) {
     let identity = this.identities.get(playerId);
     if (!identity) {
-      identity = new Identity(this.wdoc.world, playerId, { localFields });
-      this.identities.set(playerId, identity);
+      identity = new Identity(this, playerId, { localFields });
     } else {
       const existingLocalFields = get(identity.localFields);
       identity.localFields.set(

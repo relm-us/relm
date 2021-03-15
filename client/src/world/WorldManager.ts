@@ -69,15 +69,10 @@ export default class WorldManager {
     this.populate();
 
     // Move avatar to named entryway once world has loaded
-    let enteredOnce = false;
     this.wdoc.on("sync", () => {
-      this.enter(get(entryway));
-      enteredOnce = true;
-    });
-    entryway.subscribe(($entryway) => {
-      if (enteredOnce) {
+      entryway.subscribe(($entryway) => {
         this.enter($entryway);
-      }
+      });
     });
 
     shadowsEnabled.subscribe(($enabled) => {
@@ -205,10 +200,10 @@ export default class WorldManager {
 
     this.wdoc.connect(this.connectOpts, handleLoading.bind(this));
 
-    this.sendLocalStateInterval = setInterval(
-      this.setLocalStateFromAvatar.bind(this),
-      20
-    );
+    this.sendLocalStateInterval = setInterval(() => {
+      const data = this.identities.me.avatar.getTransformData();
+      this.setLocalStateField("m", data);
+    }, 20);
 
     this.wdoc.provider.awareness.on("change", (changes) => {
       for (let id of changes.removed) {
@@ -245,10 +240,6 @@ export default class WorldManager {
     if (this.wdoc.provider) {
       this.wdoc.provider.awareness.setLocalStateField(field, state);
     }
-  }
-
-  setLocalStateFromAvatar() {
-    this.setLocalStateField("m", this.identities.me.avatar.getTransformData());
   }
 
   get avatar(): Entity {
