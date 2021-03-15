@@ -9,6 +9,9 @@ import {
   PlayerID,
 } from "./types";
 
+import { Relm } from "~/stores/Relm";
+import { get } from "svelte/store";
+
 /**
  * A participant's Identity is created from Shared fields such as
  * name and color, as well as Local fields, such as a temporary clientId.
@@ -98,5 +101,12 @@ export class Identity implements Readable<IdentityData> {
 
   subscribe(handler) {
     return this.derivedIdentity.subscribe(handler);
+  }
+  
+  setName(username) {
+    const $Relm = get(Relm);
+    $Relm.identities.me.sharedFields.update(($fields) => {
+      return { ...$fields, name: username };
+    });
   }
 }
