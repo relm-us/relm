@@ -147,6 +147,11 @@ export default class WorldManager {
   connect(connectOpts: ConnectOptions) {
     this.connectOpts = connectOpts;
 
+    // set name from server, if available (overrides localstorage)
+    if (connectOpts.username) {
+      // this.identities.me.setName(connectOpts.username)
+    }
+
     // Init loading
     let assetsLoaded = 0;
     let assetsTotal = this.loading.getMaximum() / 2;

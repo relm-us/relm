@@ -22,6 +22,7 @@ export type ConnectOptions = {
   state: "connected";
   url: string;
   room: string;
+  username?: string;
   params: {
     s: string;
     x: string;
@@ -51,11 +52,11 @@ async function playerPermit(params, serverUrl, room) {
     },
   });
   if (res.data.status === "success") {
-    if (res.data.relm.authmode=='public') {
-      console.log('public authmode enabled');
+    if (res.data.relm.authmode == "public") {
+      console.log("public authmode enabled");
     } else {
-      console.log('jwt authmode enabled');
-      console.log('username from JWT',res.data.relm.username );
+      console.log("jwt authmode enabled");
+      console.log("username from JWT", res.data.relm.username);
     }
     return res.data.relm;
   } else {
@@ -75,6 +76,7 @@ export const connection: Readable<ConnectStatus> = derived(
               state: "connected",
               url: config.serverYjsUrl,
               room: relm.permanentDocId,
+              username: relm.username,
               params,
             });
           })
