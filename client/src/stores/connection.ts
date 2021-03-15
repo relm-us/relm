@@ -55,7 +55,6 @@ async function playerPermit(params, serverUrl, room) {
       console.log('public authmode enabled');
     } else {
       console.log('jwt authmode enabled');
-      console.log('avatar from JWT',res.data.relm.avatar);
       console.log('username from JWT',res.data.relm.username );
     }
     return res.data.relm;

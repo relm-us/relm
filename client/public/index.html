@@ -9,45 +9,7 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
 
     <link rel="stylesheet" href="/build/bundle.css" />
-    
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/hmac-sha256.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/enc-base64-min.js"></script>
-    <script>
-      
-      window.jwt=generateJWT("jwt-secret-key");
-
-      function generateJWT(secret) {
-        // use this example payload for jwt based authentication and permission
-        // Warning: for secured third party authentication, the jwt must be generated server side
-        body = { "authmode": "jwt", "username": "Jerome", "avatar": "mal-D-armature", "allowedrelm": "default", "iat": Math.floor(new Date().getTime() / 1000) }
-        // the payload below is for the standalone and browser based Relm authentication
-        body = { "authmode": "public", "iat": Math.floor(new Date().getTime() / 1000) }
-        var token = []
-        token[0] = base64url(JSON.stringify({ "typ": "JWT", "alg": "HS256", }))
-        token[1] = base64url(JSON.stringify(body))
-        token[2] = genTokenSign(token, secret)
-        return token.join(".");
-      }
-
-      function genTokenSign(token, secret) {
-        var hash = CryptoJS.HmacSHA256(token.join("."), secret);  // generate the hash of (token[0] + "." + token[1])
-        var base64Hash = CryptoJS.enc.Base64.stringify(hash);  // convert the hash to base64
-        return urlConvertBase64(base64Hash);  // convert the base64 string into an url safe string
-      }
-
-      function base64url(input) {
-        return urlConvertBase64(btoa(input));
-      }
-
-      function urlConvertBase64(input) {
-        var output = input.replace(/=+$/, '');  // Remove padding equal characters
-        output = output.replace(/\+/g, '-');  // Replace characters according to base64url specifications
-        output = output.replace(/\//g, '_');  // Replace characters according to base64url specifications
-        return output;
-      }
-      
-    </script>
-    
+    <script> window.jwt='' // for third party integration, populate window.jwt with server-side generated jwt token </script>
     <script defer src="/build/bundle.js"></script>
   </head>
   <body>

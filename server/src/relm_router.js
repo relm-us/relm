@@ -210,19 +210,18 @@ relmRouter.get(
     const auth = middleware.authorized(req.params.permission)
     await auth(req, res, (err) => {
       if (!err) {
-        const jwtresult=JWT_is_valid(req.headers[`x-relm-jwt`],config.JWTSECRET.toString())
-        if (jwtresult.isValid) {
-          if (jwtresult.decoded.authmode=='public') {
-            req.relm.authmode='public'
-            util.respond(res, 200, {
-              status: 'success',
-              action: 'permit',
-              relm: req.relm,
-            })
-          } else if ((jwtresult.decoded.authmode=='jwt') && (req.relmName == jwtresult.decoded.allowedrelm)) {  // if jwt check that the jwt token payload matches the relmName
+        if (config.JWTSECRET === undefined) {
+          req.relm.authmode='public'
+          util.respond(res, 200, {
+            status: 'success',
+            action: 'permit',
+            relm: req.relm,
+          })
+        } else {
+          const jwtresult=JWT_is_valid(req.headers[`x-relm-jwt`],config.JWTSECRET.toString())
+          if ((jwtresult.isValid) && (req.relmName == jwtresult.decoded.allowedrelm)) {  // if jwt check that the jwt token payload matches the relmName
             req.relm.authmode='jwt'
             req.relm.username=jwtresult.decoded.username
-            req.relm.avatar=jwtresult.decoded.avatar
             util.respond(res, 200, {
               status: 'success',
               action: 'permit',
@@ -231,8 +230,6 @@ relmRouter.get(
           } else {
             throw createError(401, 'access denied')
           }
-        } else {
-          throw createError(401, 'access denied')
         }
       } else {
         console.warn('permission err', err)
