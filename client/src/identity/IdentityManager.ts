@@ -56,7 +56,7 @@ export class IdentityManager extends EventEmitter {
     const identity = new Identity(this, myData.playerId, {
       // Swap out the regular store for a localstorage store
       sharedFieldsStore: localstorageSharedFields,
-      localFields: myData.local
+      localFields: myData.local,
     });
 
     this.yfields.set(myData.playerId, myData.shared);
@@ -69,9 +69,7 @@ export class IdentityManager extends EventEmitter {
       const $localstorageSharedFields: SharedIdentityFields = get(
         localstorageSharedFields
       );
-      identity.sharedFields.update(($fields) => {
-        return { ...$fields, ...$localstorageSharedFields, clientId: clientId };
-      });
+      identity.sharedFields.set({ ...$localstorageSharedFields, clientId });
 
       /**
        * Whenever the sharedFields svelte store is updated, also set the
