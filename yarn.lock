@@ -1429,7 +1429,7 @@
     "@uppy/utils" "^3.4.0"
     preact "8.2.9"
 
-"@uppy/utils@^3.3.0", "@uppy/utils@^3.4.0":
+"@uppy/utils@3.4.0", "@uppy/utils@^3.3.0", "@uppy/utils@^3.4.0":
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/@uppy/utils/-/utils-3.4.0.tgz#4afcf8c26dec13ee54676bd1f7958fc1063b68df"
   integrity sha512-XcT4UgUm1NhWAeQjMrr5LCE7Uookg12FTwQw/QwXBuGABoVilfk56i6h8ecf1bVX0D74zdpSnUiB1h+8a7ollw==
@@ -2143,7 +2143,7 @@ bindings@^1.5.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
-bl@4.0.3, bl@^4.0.3:
+bl@^4.0.3:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/bl/-/bl-4.0.3.tgz#12d6287adc29080e22a705e5764b2a9522cdc489"
   integrity sha512-fs4G6/Hu4/EE+F75J8DuN/0IpQqNjAdC7aEQv7Qt8MHGUH7Ckv2MwTEEeN9QehD0pfIDkMI1bkHYkKy7xHyKIg==
@@ -4562,6 +4562,13 @@ har-validator@~5.1.3:
     ajv "^6.12.3"
     har-schema "^2.0.0"
 
+hark@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/hark/-/hark-1.2.3.tgz#959981400f561be5580ecd4321a9f55b16bacbd0"
+  integrity sha512-u68vz9SCa38ESiFJSDjqK8XbXqWzyot7Cj6Y2b6jk2NJ+II3MY2dIrLMg/kjtIAun4Y1DHF/20hfx4rq1G5GMg==
+  dependencies:
+    wildemitter "^1.2.0"
+
 has-flag@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/has-flag/-/has-flag-3.0.0.tgz#b5d454dc2199ae225699f3467e5a07f3b955bafd"
@@ -6211,6 +6218,11 @@ mdn-data@2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/mdn-data/-/mdn-data-2.0.4.tgz#699b3c38ac6f1d728091a64650b65d388502fd5b"
   integrity sha512-iV3XNKw06j5Q7mi6h+9vbx23Tv7JkjEVgKHW4pimwyDGWm0OIQntJJ+u1C6mg6mK1EaTv42XQ7w76yuzH7M2cA==
+
+media-devices@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/media-devices/-/media-devices-0.2.0.tgz#4304dd1f57c501f999b754cda8bd6025eed30c3a"
+  integrity sha512-9IIlWjqcSgjVO4KY4LPgbcdEzdnzBH6/xvvwypRUxRwQt2wI68eOMKUVv+M21WvF3b4IsAukgVy2wITwxXzUUg==
 
 media-typer@0.3.0:
   version "0.3.0"
@@ -9977,6 +9989,14 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
+video-mirror@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/video-mirror/-/video-mirror-0.1.0.tgz#e576f01cf19d42fcdeb37dd4bb63525a1d11f078"
+  integrity sha512-pnwZkdOJAcGkqoqQ9IKLAHNQDnLLqWWd855ZvujLzpqfYL1UinTSdtWG7BpkvnkLDe7BLJxUy+ylr57Ksl/z6g==
+  dependencies:
+    hark "^1.2.3"
+    media-devices "^0.2.0"
+
 vm-browserify@^1.0.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.2.tgz#78641c488b8e6ca91a75f511e7a3b32a86e5dda0"
@@ -10238,6 +10258,11 @@ wildcard@^1.1.0:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/wildcard/-/wildcard-1.1.2.tgz#a7020453084d8cd2efe70ba9d3696263de1710a5"
   integrity sha1-pwIEUwhNjNLv5wup02liY94XEKU=
+
+wildemitter@^1.2.0:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/wildemitter/-/wildemitter-1.2.1.tgz#9da3b5ca498e4378628d1783145493c70a10b774"
+  integrity sha512-UMmSUoIQSir+XbBpTxOTS53uJ8s/lVhADCkEbhfRjUGFDPme/XGOb0sBWLx5sTz7Wx/2+TlAw1eK9O5lw5PiEw==
 
 word-wrap@~1.2.3:
   version "1.2.3"

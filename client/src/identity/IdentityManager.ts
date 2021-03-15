@@ -1,10 +1,12 @@
 import * as Y from "yjs";
 import EventEmitter from "eventemitter3";
 import { get } from "svelte/store";
+import { Vector3 } from "three";
 
 import { withArrayEdits, withMapEdits } from "~/y-integration/observeUtils";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
+import { videoRequested } from "video-mirror";
 
 import {
   IdentityData,
@@ -18,6 +20,7 @@ import { defaultIdentity } from "./defaultIdentity";
 import { Identity } from "./Identity";
 import { ChatMessage } from "~/world/ChatManager";
 import { localstorageSharedFields } from "./localstorageSharedFields";
+import { Oculus } from "~/ecs/plugins/html2d";
 
 export class IdentityManager extends EventEmitter {
   wdoc: WorldDoc;
@@ -57,6 +60,17 @@ export class IdentityManager extends EventEmitter {
       // Swap out the regular store for a localstorage store
       sharedFieldsStore: localstorageSharedFields,
       localFields: myData.local,
+    });
+
+    videoRequested.subscribe(($requested) => {
+      if ($requested) {
+        console.log("video requested");
+        identity.avatar.entity.add(Oculus, {
+          hanchor: 0,
+          vanchor: 2,
+          offset: new Vector3(0, 1.35, 0),
+        });
+      }
     });
 
     this.yfields.set(myData.playerId, myData.shared);
