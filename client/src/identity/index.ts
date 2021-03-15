@@ -10,6 +10,7 @@ export type SecureParams = {
   s: string;
   x: string;
   y: string;
+  jwt: string;
   t?: string;
 };
 
@@ -32,6 +33,7 @@ export async function getSecureParams(href?: string): Promise<SecureParams> {
     s: signature,
     x: pubkey.x,
     y: pubkey.y,
+    jwt: (window as any).jwt,
   };
   if (href) {
     const url = new URL(href);

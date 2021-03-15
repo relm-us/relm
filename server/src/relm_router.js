@@ -2,6 +2,8 @@ const express = require('express')
 const cors = require('cors')
 const createError = require('http-errors')
 const Y = require('yjs')
+const crypto = require('crypto')
+const config = require('./config.js')
 
 const util = require('./util.js')
 const models = require('./db/models.js')
@@ -13,6 +15,20 @@ const { Invitation, Permission, Relm, Doc } = models
 const { wrapAsync, uuidv4 } = util
 
 const relmRouter = (module.exports = express.Router())
+
+function JWT_is_valid(jwt,secretkey) {
+  const jwtHeader = jwt.split('.')[0];
+  const jwtPayload = jwt.split('.')[1];
+  const jwtSignature = jwt.split('.')[2];
+  const signature=crypto.createHmac('RSA-SHA256',secretkey).update(jwtHeader + '.' + jwtPayload).digest('base64')
+  var isValid = (jwtSignature==signature.replace(/\+/g, '-').replace(/=/g, '').replace(/\//g, '_'))
+  var decoded
+  try {
+    decoded = JSON.parse(new Buffer(jwtPayload, 'base64').toString('utf8'))
+  } catch(e) { return {"isValid":false,"decoded":{}} }
+  if (Math.abs(decoded.iat-(new Date()/1000))>60) isValid=false // chek jwt "issued at" time is less than 1 minute
+  return {"isValid":isValid,"decoded":decoded}
+}
 
 // Create a new relm
 relmRouter.post(
@@ -194,11 +210,27 @@ relmRouter.get(
     const auth = middleware.authorized(req.params.permission)
     await auth(req, res, (err) => {
       if (!err) {
-        util.respond(res, 200, {
-          status: 'success',
-          action: 'permit',
-          relm: req.relm,
-        })
+        if (config.JWTSECRET === undefined) {
+          req.relm.authmode='public'
+          util.respond(res, 200, {
+            status: 'success',
+            action: 'permit',
+            relm: req.relm,
+          })
+        } else {
+          const jwtresult=JWT_is_valid(req.headers[`x-relm-jwt`],config.JWTSECRET.toString())
+          if ((jwtresult.isValid) && (req.relmName == jwtresult.decoded.allowedrelm)) {  // if jwt check that the jwt token payload matches the relmName
+            req.relm.authmode='jwt'
+            req.relm.username=jwtresult.decoded.username
+            util.respond(res, 200, {
+              status: 'success',
+              action: 'permit',
+              relm: req.relm,
+            })
+          } else {
+            throw createError(401, 'access denied')
+          }
+        }
       } else {
         console.warn('permission err', err)
         throw err

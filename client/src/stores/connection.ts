@@ -27,6 +27,7 @@ export type ConnectOptions = {
     x: string;
     y: string;
     id: string;
+    jwt: string;
   };
 };
 export type ConnectError = {
@@ -46,9 +47,16 @@ async function playerPermit(params, serverUrl, room) {
       "x-relm-s": params.s,
       "x-relm-x": params.x,
       "x-relm-y": params.y,
+      "x-relm-jwt": params.jwt,
     },
   });
   if (res.data.status === "success") {
+    if (res.data.relm.authmode=='public') {
+      console.log('public authmode enabled');
+    } else {
+      console.log('jwt authmode enabled');
+      console.log('username from JWT',res.data.relm.username );
+    }
     return res.data.relm;
   } else {
     console.error(`Unable to get permission`, res);

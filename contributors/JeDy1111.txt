@@ -1,0 +1,3 @@
+The code I’m contributing is mine, and I have the right to license it.
+I’m granting Relm.US Inc. a license to distribute said code under the terms of this agreement, under the GPL 3 license or as Relm.US Inc. see fit.
+Jérôme Danquigny
