@@ -214,7 +214,6 @@ export class Presentation {
   update() {
     if (!this.viewport) return;
     if (this.skipUpdate > 0) {
-      console.log('Skipping render', this.skipUpdate)
       this.scene.updateMatrixWorld();
       this.camera.updateMatrixWorld();
       this.skipUpdate--;

@@ -1,22 +1,26 @@
 import { PerspectiveCamera, Plane, Raycaster, Vector3 } from "three";
 import { System, Groups, Not, Entity, Modified } from "~/ecs/base";
-import { Html2d, Html2dRef } from "../components";
+import { Oculus, OculusRef } from "../components";
 import { Presentation, WorldTransform } from "~/ecs/plugins/core";
-import { getHtmlComponent } from "../html";
 import { HtmlPresentation } from "../HtmlPresentation";
+import HtmlOculus from "../HtmlOculus.svelte";
 
 const v1 = new Vector3();
-export class Html2dSystem extends System {
+/**
+ * An Oculus is a "round window" in architectural design. Similarly, this Oculus
+ * refers to the circular video feeds above participants' heads.
+ */
+export class OculusSystem extends System {
   presentation: Presentation;
   htmlPresentation: HtmlPresentation;
 
-  order = Groups.Presentation + 250;
+  order = Groups.Presentation + 251;
 
   static queries = {
-    new: [Html2d, Not(Html2dRef)],
-    modified: [Modified(Html2d), Html2dRef],
-    active: [Html2d, Html2dRef, WorldTransform],
-    removed: [Not(Html2d), Html2dRef],
+    new: [Oculus, Not(OculusRef)],
+    modified: [Modified(Oculus), OculusRef],
+    active: [Oculus, OculusRef, WorldTransform],
+    removed: [Not(Oculus), OculusRef],
   };
 
   init({ presentation, htmlPresentation }) {
@@ -45,55 +49,40 @@ export class Html2dSystem extends System {
   }
 
   build(entity: Entity) {
-    const spec = entity.get(Html2d);
+    const spec = entity.get(Oculus);
 
-    const isOverflowing = ({
-      clientWidth,
-      clientHeight,
-      scrollWidth,
-      scrollHeight,
-    }) => {
-      return scrollHeight > clientHeight || scrollWidth > clientWidth;
-    };
     // Prepare a container for Svelte
     const container = this.htmlPresentation.createContainer(
       spec.hanchor,
       spec.vanchor
     );
-
-    // When hovering over the container and we're zoomed out, we still want
-    // the HTML label (for example) to have plenty of width so it can be read.
-    container.addEventListener("mouseenter", () => {
-      if (isOverflowing(container)) container.style.minWidth = "300px";
-    });
-    container.addEventListener("mouseleave", () => {
-      container.style.minWidth = "";
-    });
-
     this.htmlPresentation.domElement.appendChild(container);
 
     // Create whatever Svelte component is specified by the type
-    const Component = getHtmlComponent(spec.kind);
-    const component = new Component({
+    const component = new HtmlOculus({
       target: container,
       props: { ...spec, entity },
     });
 
-    entity.add(Html2dRef, { container, component });
+    entity.add(OculusRef, { container, component });
   }
 
   remove(entity: Entity) {
-    const container = entity.get(Html2dRef).container;
+    const container = entity.get(OculusRef).value;
     container.remove();
 
-    entity.remove(Html2dRef);
+    entity.remove(OculusRef);
   }
 
   updatePosition(entity: Entity, boundsWidth: number) {
     if (this.presentation.skipUpdate > 0) return;
 
     const world = entity.get(WorldTransform);
-    const spec = entity.get(Html2d);
+    const spec = entity.get(Oculus);
+    const dist = this.presentation.camera.parent.position.distanceTo(
+      entity.get(WorldTransform).position
+    );
+    // console.log("dist", dist);
 
     // calculate left, top
     v1.copy(world.position);
@@ -101,13 +90,13 @@ export class Html2dSystem extends System {
 
     this.htmlPresentation.project(v1);
 
-    const container = entity.get(Html2dRef).container;
+    const container = entity.get(OculusRef).container;
     container.style.left = v1.x + "px";
     container.style.top = v1.y + "px";
     container.style.pointerEvents = "auto";
 
     // calculate width
-    let width = (35 / boundsWidth) * spec.width * 60;
-    container.style.maxWidth = Math.floor(width) + "px";
+    container.style.width = `${1500 / dist}px`;
+    container.style.height = `${1500 / dist}px`;
   }
 }

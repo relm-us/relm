@@ -20,6 +20,7 @@
   import Chat from "~/ui/Chat";
 
   import LoadingScreen from "~/ui/LoadingScreen";
+  import VideoSetup from "~/ui/VideoSetup";
 
   import { runCommand } from "~/commands";
   import { globalEvents } from "~/events";
@@ -41,7 +42,14 @@
       }
     }
   };
+
+  const onDoneVideoSetup = ({ detail }) => {
+    const { devices, audio, video, stream } = detail;
+    console.log("done video setup", detail);
+  };
 </script>
+
+<VideoSetup on:done={onDoneVideoSetup} />
 
 <LoadingScreen />
 
