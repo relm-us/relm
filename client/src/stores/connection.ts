@@ -37,8 +37,8 @@ export type ConnectError = {
 };
 export type ConnectStatus = ConnectInitial | ConnectOptions | ConnectError;
 
-async function playerPermit(params, serverUrl, room) {
-  let url = `${serverUrl}/relm/${room}/can/access`;
+async function playerPermit(params, serverUrl, subrelm) {
+  let url = `${serverUrl}/relm/${subrelm}/can/access`;
   if (params.t) {
     url += `?t=${params.t}`;
   }
@@ -52,13 +52,13 @@ async function playerPermit(params, serverUrl, room) {
     },
   });
   if (res.data.status === "success") {
-    if (res.data.relm.authmode == "public") {
+    if (res.data.authmode == "public") {
       console.log("public authmode enabled");
     } else {
       console.log("jwt authmode enabled");
-      console.log("username from JWT", res.data.relm.username);
+      console.log("username from JWT", res.data.user?.name);
     }
-    return res.data.relm;
+    return res.data;
   } else {
     console.error(`Unable to get permission`, res);
     throw Error(`Unable to get permission`);
@@ -71,12 +71,12 @@ export const connection: Readable<ConnectStatus> = derived(
     getSecureParams(window.location.href)
       .then((params) => {
         playerPermit(params, config.serverUrl, $subrelm)
-          .then((relm) => {
+          .then(({ relm, user }) => {
             set({
               state: "connected",
               url: config.serverYjsUrl,
               room: relm.permanentDocId,
-              username: relm.username,
+              username: user?.name,
               params,
             });
           })
