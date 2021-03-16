@@ -92,6 +92,12 @@ export class Avatar {
     label.content = message;
     label.modified();
   }
+  
+  disableEditingLabel() {
+    const label = this.entity.get(Html2d);
+    label.editable = false;
+    label.modified();
+  }
 
   syncLabel(identity: IdentityData) {
     if (identity.shared.name && !this.entity.has(Html2d)) {
