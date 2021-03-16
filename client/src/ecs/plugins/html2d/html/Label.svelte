@@ -5,6 +5,7 @@
   import { Html2d } from "../components";
   import { Relm } from "~/stores/Relm";
   import { mode } from "~/stores/mode";
+  import { Identity } from "~/identity/Identity";
   import { DRAG_DISTANCE_THRESHOLD } from "~/config/constants";
 
   export let content;
@@ -36,9 +37,7 @@
     if ($Relm.avatar === entity) {
       // TODO: make a way for Avatar to subscribe to ECS component
       // changes instead of this hack:
-      $Relm.identities.me.sharedFields.update(($fields) => {
-        return { ...$fields, name: text };
-      });
+      $Relm.identities.me.setName(text);
     } else {
       // Broadcast changes
       $Relm.wdoc.syncFrom(entity);

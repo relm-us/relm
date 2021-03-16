@@ -12,14 +12,14 @@ import {
 /**
  * A participant's Identity is created from Shared fields such as
  * name and color, as well as Local fields, such as a temporary clientId.
- * 
+ *
  * There are two types of identities: local & remote. A `local` identity
  * is assembled from 2 "layers", with each subsequent layer taking higher
  * precedence:
- * 
+ *
  * 1. defaultIdentity - this provides a random name and color
  * 2. localstorageSharedFields - provides name and color, stored in localstorage
- * 
+ *
  * A `remote` identity is created based on SharedIdentityFields that are sent
  * via yjs.
  */
@@ -98,5 +98,9 @@ export class Identity implements Readable<IdentityData> {
 
   subscribe(handler) {
     return this.derivedIdentity.subscribe(handler);
+  }
+
+  setName(name) {
+    this.sharedFields.update(($fields) => ({ ...$fields, name }));
   }
 }
