@@ -38,6 +38,8 @@ export class IdentityManager extends EventEmitter {
 
   me: Identity;
 
+  isSynced: boolean;
+
   constructor(wdoc: WorldDoc, myData: IdentityData = defaultIdentity) {
     super();
     this.wdoc = wdoc;
@@ -46,6 +48,7 @@ export class IdentityManager extends EventEmitter {
     this.identities = new Map();
     this.lookupPlayerId = new Map();
     this.setTransformFns = new Map();
+    this.isSynced = false;
 
     this.registerMe(myData, this.wdoc.ydoc.clientID);
 
@@ -64,7 +67,6 @@ export class IdentityManager extends EventEmitter {
 
     videoRequested.subscribe(($requested) => {
       if ($requested) {
-        console.log("video requested");
         identity.avatar.entity.add(Oculus, {
           hanchor: 0,
           vanchor: 2,
@@ -73,31 +75,30 @@ export class IdentityManager extends EventEmitter {
       }
     });
 
-    this.yfields.set(myData.playerId, myData.shared);
+    /**
+     * Whenever the sharedFields svelte store is updated, also set the
+     * yjs document corresponding to the playerId.
+     */
+    identity.sharedFields.subscribe(($sharedFields) => {
+      this.yfields.set(myData.playerId, $sharedFields);
+    });
 
     /**
      * After getting 'sync' signal, yjs doc is synced and can accept
      * more up to date values, such as the clientId of this connection.
      */
     this.wdoc.on("sync", () => {
-      const $localstorageSharedFields: SharedIdentityFields = get(
-        localstorageSharedFields
-      );
-      identity.sharedFields.set({ ...$localstorageSharedFields, clientId });
-
-      /**
-       * Whenever the sharedFields svelte store is updated, also set the
-       * yjs document corresponding to the playerId.
-       */
-      identity.sharedFields.subscribe(($sharedFields) => {
-        this.yfields.set(myData.playerId, $sharedFields);
-      });
+      identity.sharedFields.update($fields => ({ ...$fields, clientId }));
+      this.isSynced = true;
     });
 
     this.me = identity;
   }
 
   updateSharedFields(playerId: PlayerID, sharedFields: SharedIdentityFields) {
+    // Don't allow the network to override my own shared fields
+    if (playerId === this.me.playerId && !this.isSynced) return;
+
     let identity = this.identities.get(playerId);
     if (!identity) {
       identity = new Identity(this, playerId, { sharedFields });
