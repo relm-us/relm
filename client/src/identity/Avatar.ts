@@ -131,6 +131,11 @@ export class Avatar {
     label.modified();
   }
 
+  disableLabel() {
+    const label = this.entity.get(Html2d);
+    label.editable = false;
+  }
+
   moveTo(coords: Vector3) {
     const presentation = (this.world as any).presentation;
     moveAvatarTo(coords, presentation, this.entity);

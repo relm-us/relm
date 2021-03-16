@@ -150,6 +150,7 @@ export default class WorldManager {
     // set name from server, if available (overrides localstorage)
     if (connectOpts.username) {
       this.identities.me.setName(connectOpts.username)
+      this.identities.me.avatar.disableLabel()
     }
 
     // Init loading
