@@ -211,31 +211,38 @@ relmRouter.get(
     await auth(req, res, (err) => {
       if (!err) {
         if (config.JWTSECRET === undefined) {
-          req.relm.authmode='public'
           util.respond(res, 200, {
-            status: 'success',
-            action: 'permit',
+            status: "success",
+            action: "permit",
+            authmode: "public",
             relm: req.relm,
-          })
+          });
         } else {
-          const jwtresult=JWT_is_valid(req.headers[`x-relm-jwt`],config.JWTSECRET.toString())
-          if ((jwtresult.isValid) && (req.relmName == jwtresult.decoded.allowedrelm)) {  // if jwt check that the jwt token payload matches the relmName
-            req.relm.authmode='jwt'
-            req.relm.username=jwtresult.decoded.username
+          const jwtresult = JWT_is_valid(
+            req.headers[`x-relm-jwt`],
+            config.JWTSECRET.toString()
+          );
+          if (
+            jwtresult.isValid &&
+            req.relmName === jwtresult.decoded.allowedrelm
+          ) {
+            // if jwt check that the jwt token payload matches the relmName
             util.respond(res, 200, {
-              status: 'success',
-              action: 'permit',
+              status: "success",
+              action: "permit",
+              authmode: "jwt",
               relm: req.relm,
-            })
+              user: { name: jwtresult.decoded.username },
+            });
           } else {
-            throw createError(401, 'access denied')
+            throw createError(401, "access denied");
           }
         }
       } else {
-        console.warn('permission err', err)
-        throw err
+        console.warn("permission err", err);
+        throw err;
       }
-    })
+    });
   })
 )
 

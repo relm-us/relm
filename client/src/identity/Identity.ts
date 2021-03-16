@@ -9,20 +9,17 @@ import {
   PlayerID,
 } from "./types";
 
-import { Relm } from "~/stores/Relm";
-import { get } from "svelte/store";
-
 /**
  * A participant's Identity is created from Shared fields such as
  * name and color, as well as Local fields, such as a temporary clientId.
- * 
+ *
  * There are two types of identities: local & remote. A `local` identity
  * is assembled from 2 "layers", with each subsequent layer taking higher
  * precedence:
- * 
+ *
  * 1. defaultIdentity - this provides a random name and color
  * 2. localstorageSharedFields - provides name and color, stored in localstorage
- * 
+ *
  * A `remote` identity is created based on SharedIdentityFields that are sent
  * via yjs.
  */
@@ -102,11 +99,8 @@ export class Identity implements Readable<IdentityData> {
   subscribe(handler) {
     return this.derivedIdentity.subscribe(handler);
   }
-  
-  setName(username) {
-    const $Relm = get(Relm);
-    $Relm.identities.me.sharedFields.update(($fields) => {
-      return { ...$fields, name: username };
-    });
+
+  setName(name) {
+    this.sharedFields.update(($fields) => ({ ...$fields, name }));
   }
 }
