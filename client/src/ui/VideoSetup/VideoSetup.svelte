@@ -1,5 +1,6 @@
 <script>
   import { VideoMirror } from "video-mirror";
+  import relmLogo from './relm-logo.png'
 
   let videoSetup = true;
 
@@ -15,7 +16,7 @@
 
 {#if videoSetup}
   <setup>
-    <logo />
+    <logo style="--relm-logo: url({relmLogo})" />
     <message>
       You're about to join a social experience with audio & video.
     </message>
@@ -46,7 +47,7 @@
 
     width: 299px;
     height: 116px;
-    background-image: url(/relm-logo.png);
+    background-image: var(--relm-logo);
     background-size: 299px 116px;
 
     margin-top: 48px;
