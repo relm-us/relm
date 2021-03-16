@@ -149,8 +149,12 @@ export default class WorldManager {
 
     // set name from server, if available (overrides localstorage)
     if (connectOpts.username) {
+<<<<<<< HEAD
       this.identities.me.setName(connectOpts.username)
       this.identities.me.avatar.disableLabel()
+=======
+      // this.identities.me.setName(connectOpts.username)
+>>>>>>> parent of 73c9b88... Enforce username when using jwt (attempt)
     }
 
     // Init loading

@@ -99,8 +99,11 @@ export class Identity implements Readable<IdentityData> {
   subscribe(handler) {
     return this.derivedIdentity.subscribe(handler);
   }
+<<<<<<< HEAD
 
   setName(name) {
     this.sharedFields.update(($fields) => ({ ...$fields, name }));
   }
+=======
+>>>>>>> parent of 73c9b88... Enforce username when using jwt (attempt)
 }
