@@ -65,6 +65,21 @@ export class Avatar {
     this.syncSpeech(identity);
     this.syncOculus(identity.playerId);
   }
+  
+  syncLabel(identity: IdentityData) {
+    if (identity.shared.name && !this.entity.has(Html2d)) {
+      this.addLabel(
+        identity.shared.name,
+        identity.local.isLocal,
+        identity.shared.color
+      );
+    } else if (identity.shared.name && this.entity.has(Html2d)) {
+      this.changeLabel(identity.shared.name, identity.shared.color);
+    } else if (!identity.shared.name && this.entity.has(Html2d)) {
+      this.entity.remove(Html2d);
+    }
+  }
+
 
   syncSpeech(identity: IdentityData) {
     const visible = !!identity.local.message && identity.shared.speaking;
@@ -74,6 +89,17 @@ export class Avatar {
       this.changeSpeech(identity.local.message);
     } else if (!visible && this.head.has(Html2d)) {
       this.head.remove(Html2d);
+    }
+  }
+
+  syncOculus(playerId: string) {
+    if (!this.entity.has(Oculus)) {
+      this.entity.add(Oculus, {
+        playerId,
+        hanchor: 0,
+        vanchor: 2,
+        offset: new Vector3(0, 1.35, 0),
+      });
     }
   }
 
@@ -88,16 +114,6 @@ export class Avatar {
     this.head.add(Html2d, speech);
   }
 
-  syncOculus(playerId: string) {
-    if (!this.entity.has(Oculus)) {
-      this.entity.add(Oculus, {
-        playerId,
-        hanchor: 0,
-        vanchor: 2,
-        offset: new Vector3(0, 1.35, 0),
-      });
-    }
-  }
 
   changeSpeech(message: string) {
     const label = this.head.get(Html2d);
@@ -109,20 +125,6 @@ export class Avatar {
     const label = this.entity.get(Html2d);
     label.editable = false;
     label.modified();
-  }
-
-  syncLabel(identity: IdentityData) {
-    if (identity.shared.name && !this.entity.has(Html2d)) {
-      this.addLabel(
-        identity.shared.name,
-        identity.local.isLocal,
-        identity.shared.color
-      );
-    } else if (identity.shared.name && this.entity.has(Html2d)) {
-      this.changeLabel(identity.shared.name, identity.shared.color);
-    } else if (!identity.shared.name && this.entity.has(Html2d)) {
-      this.entity.remove(Html2d);
-    }
   }
 
   addLabel(name: string, editable: boolean, color?: string) {

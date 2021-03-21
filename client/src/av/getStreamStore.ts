@@ -14,19 +14,29 @@ function findConsumer(
   consumers: Array<{ track: MediaStreamTrack }>,
   kind: string
 ) {
-  return consumers.find((consumer) => consumer.track.kind === kind);
+  let found;
+  try {
+    found = consumers.find((consumer) => consumer.track.kind === kind);
+  } catch (err) {
+    console.error("error in findConsumer", consumers, kind);
+    return null;
+  }
+  return found;
 }
 
 derived([peers, consumers], ([$peers, $consumers], set) => {
   for (let [peerId, peer] of Object.entries($peers)) {
     const consumersStore = getConsumersStore(peerId);
     const existingConsumers = new Set(get(consumersStore));
-    const incomingConsumers = peer.consumers.map((consumerId) => {
-      return $consumers[consumerId];
+    const incomingConsumers: Set<types.Consumer> = new Set();
+
+    peer.consumers.forEach((consumerId) => {
+      const consumer = $consumers[consumerId];
+      if (consumer) incomingConsumers.add(consumer);
     });
 
     if (!equals(existingConsumers, incomingConsumers)) {
-      consumersStore.set(incomingConsumers);
+      consumersStore.set([...incomingConsumers]);
     }
   }
 }).subscribe((_) => {});

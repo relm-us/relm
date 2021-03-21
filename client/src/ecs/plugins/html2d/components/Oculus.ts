@@ -1,8 +1,8 @@
-import { StateComponent, NumberType, StringType } from "~/ecs/base";
+import { LocalComponent, NumberType, StringType } from "~/ecs/base";
 import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
-export class Oculus extends StateComponent {
+export class Oculus extends LocalComponent {
   static props = {
     offset: {
       type: Vector3Type,
@@ -53,9 +53,5 @@ export class Oculus extends StateComponent {
       type: StringType,
       default: null,
     },
-  };
-
-  static editor = {
-    label: "Oculus",
   };
 }

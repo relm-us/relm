@@ -78,8 +78,10 @@ export class OculusSystem extends System {
   }
 
   remove(entity: Entity) {
-    const container = entity.get(OculusRef).value;
-    container.remove();
+    const ref = entity.get(OculusRef);
+    const container: HTMLElement = ref.container;
+
+    if (container) container.remove();
 
     entity.remove(OculusRef);
   }
