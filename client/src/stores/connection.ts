@@ -1,7 +1,7 @@
 import { derived, writable, Readable, Writable } from "svelte/store";
 import axios from "axios";
 
-import { config } from "~/config/store";
+import { config } from "~/config";
 import { getSecureParams } from "~/identity";
 import { subrelm } from "./subrelm";
 
