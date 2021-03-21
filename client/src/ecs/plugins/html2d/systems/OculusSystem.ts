@@ -71,7 +71,7 @@ export class OculusSystem extends System {
     // Create whatever Svelte component is specified by the type
     const component = new HtmlOculus({
       target: container,
-      props: { ...spec, stream, mirror: isLocal, entity },
+      props: { ...spec, stream, mirror: isLocal, muted: isLocal, entity },
     });
 
     entity.add(OculusRef, { container, component });

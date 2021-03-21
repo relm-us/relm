@@ -1,17 +1,19 @@
 <script>
-  import { Video } from "video-mirror";
+  import { Audio, Video } from "video-mirror";
 
-  export let stream
-  export let mirror
+  export let stream;
+  export let mirror;
+  export let muted;
 
   // ignore warning about missing props
   $$props;
 </script>
 
 {#if $stream}
-<oculus>
-  <Video stream={$stream} {mirror} round={true} />
-</oculus>
+  <oculus>
+    <Video stream={$stream} {mirror} muted={true} round={true} />
+    <Audio stream={$stream} {muted} />
+  </oculus>
 {/if}
 
 <style lang="scss">
