@@ -2,6 +2,7 @@
   import { Video } from "video-mirror";
 
   export let stream
+  export let mirror
 
   // ignore warning about missing props
   $$props;
@@ -9,7 +10,7 @@
 
 {#if $stream}
 <oculus>
-  <Video stream={$stream} mirror={true} round={true} />
+  <Video stream={$stream} {mirror} round={true} />
 </oculus>
 {/if}
 
