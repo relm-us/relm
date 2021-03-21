@@ -1,8 +1,8 @@
-import { Component, NumberType } from "~/ecs/base";
+import { StateComponent, NumberType, StringType } from "~/ecs/base";
 import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
-export class Oculus extends Component {
+export class Oculus extends StateComponent {
   static props = {
     offset: {
       type: Vector3Type,
@@ -46,6 +46,12 @@ export class Oculus extends Component {
           { label: "Right", value: 2 },
         ],
       },
+    },
+
+    // Set automatically. If equal to local playerId, Oculus will show own video stream.
+    playerId: {
+      type: StringType,
+      default: null,
     },
   };
 

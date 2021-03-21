@@ -29,6 +29,8 @@
   import { mode } from "~/stores/mode";
   import { openPanel } from "~/stores/openPanel";
 
+  import { roomClient } from "~/av";
+
   const playMode = () => {
     globalEvents.emit("switch-mode", "play");
   };
@@ -44,8 +46,9 @@
   };
 
   const onDoneVideoSetup = ({ detail }) => {
-    const { devices, audio, video, stream } = detail;
-    console.log("done video setup", detail);
+    // const { devices, audio, video, stream } = detail;
+    // console.log("done video setup", detail);
+    roomClient.join();
   };
 </script>
 

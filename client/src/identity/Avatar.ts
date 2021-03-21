@@ -7,7 +7,7 @@ import { makeAvatarAndActivate } from "~/prefab/makeAvatarAndActivate";
 
 import { World, Entity } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
-import { Html2d } from "~/ecs/plugins/html2d";
+import { Html2d, Oculus } from "~/ecs/plugins/html2d";
 
 const LAST_SEEN_TIMEOUT = 15000;
 const e1 = new Euler(0, 0, 0, "YXZ");
@@ -63,6 +63,7 @@ export class Avatar {
   syncEntity(identity: IdentityData) {
     this.syncLabel(identity);
     this.syncSpeech(identity);
+    this.syncOculus(identity.playerId);
   }
 
   syncSpeech(identity: IdentityData) {
@@ -87,12 +88,23 @@ export class Avatar {
     this.head.add(Html2d, speech);
   }
 
+  syncOculus(playerId: string) {
+    if (!this.entity.has(Oculus)) {
+      this.entity.add(Oculus, {
+        playerId,
+        hanchor: 0,
+        vanchor: 2,
+        offset: new Vector3(0, 1.35, 0),
+      });
+    }
+  }
+
   changeSpeech(message: string) {
     const label = this.head.get(Html2d);
     label.content = message;
     label.modified();
   }
-  
+
   disableEditingLabel() {
     const label = this.entity.get(Html2d);
     label.editable = false;

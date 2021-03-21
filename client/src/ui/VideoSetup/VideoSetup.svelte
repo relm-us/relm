@@ -1,11 +1,15 @@
 <script>
+  import { createEventDispatcher } from "svelte";
   import { VideoMirror } from "video-mirror";
-  import relmLogo from './relm-logo.png'
+  import relmLogo from "./relm-logo.png";
 
   let videoSetup = true;
 
+  const dispatch = createEventDispatcher();
+
   function joinWith({ detail }) {
-    console.log("join", detail);
+    // console.log("join", detail);
+    dispatch("done", detail);
     videoSetup = false;
   }
 

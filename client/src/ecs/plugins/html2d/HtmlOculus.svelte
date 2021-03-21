@@ -1,13 +1,17 @@
 <script>
-  import { Video, localStream } from "video-mirror";
+  import { Video } from "video-mirror";
+
+  export let stream
 
   // ignore warning about missing props
   $$props;
 </script>
 
+{#if $stream}
 <oculus>
-  <Video stream={$localStream} mirror={true} round={true} />
+  <Video stream={$stream} mirror={true} round={true} />
 </oculus>
+{/if}
 
 <style lang="scss">
   oculus {

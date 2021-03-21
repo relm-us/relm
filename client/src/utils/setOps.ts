@@ -54,3 +54,15 @@ export function intersection<T>(setA: Set<T>, setB: Set<T>): Set<T> {
   }
   return _intersection;
 }
+
+/**
+ * Set equality - taken from https://stackoverflow.com/posts/31129384/revisions
+ *
+ * @param {Set} setA
+ * @param {Set} setB
+ */
+export function equals<T>(setA: Set<T>, setB: Set<T>): boolean {
+  if (setA.size !== setB.size) return false;
+  for (var a of setA) if (!setB.has(a)) return false;
+  return true;
+}
