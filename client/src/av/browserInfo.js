@@ -1,6 +1,6 @@
 import bowser from "bowser";
 
-export default function () {
+function browserInfo() {
   const ua = navigator.userAgent;
   const browser = bowser.getParser(ua);
   let flag;
@@ -18,3 +18,5 @@ export default function () {
     version: browser.getBrowserVersion(),
   };
 }
+
+export const browser = browserInfo();

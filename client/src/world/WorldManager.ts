@@ -29,6 +29,10 @@ import {
   AVATAR_INTERACTION,
 } from "~/config/colliderInteractions";
 
+import { avPermission } from "~/stores/avPermission";
+import RoomClient from "~/av/RoomClient";
+import { browser } from "~/av/browserInfo";
+
 export default class WorldManager {
   world: World & {
     physics: any;
@@ -47,6 +51,8 @@ export default class WorldManager {
   selection: SelectionManager;
   identities: IdentityManager;
   chat: ChatManager;
+
+  roomClient: any;
 
   previousLoopTime: number = 0;
   sendLocalStateInterval: any; // Timeout
@@ -144,6 +150,30 @@ export default class WorldManager {
     world.presentation.setViewport(null);
   }
 
+  connectAV(roomId, displayName) {
+    if (this.roomClient) return;
+
+    this.roomClient = new RoomClient({
+      roomId,
+      displayName: displayName || get(this.identities.me.sharedFields).name,
+      peerId: this.identities.me.playerId,
+      device: browser,
+      // handlerName: handler,
+      // useSimulcast,
+      // useSharingSimulcast,
+      // forceTcp,
+      produce: true,
+      consume: true,
+      // forceH264,
+      // forceVP9,
+      // svc,
+      // datachannel,
+      // externalVideo,
+    });
+
+    this.roomClient.join();
+  }
+
   connect(connectOpts: ConnectOptions) {
     this.connectOpts = connectOpts;
 
@@ -152,6 +182,13 @@ export default class WorldManager {
       this.identities.me.setName(connectOpts.username);
       this.identities.me.avatar.disableEditingLabel();
     }
+
+    avPermission.subscribe(($permission) => {
+      if ($permission.done) {
+        console.log("connecting av to", connectOpts);
+        this.connectAV(connectOpts.room, connectOpts.username);
+      }
+    });
 
     // Init loading
     let assetsLoaded = 0;

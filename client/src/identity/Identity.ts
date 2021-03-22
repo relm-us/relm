@@ -9,6 +9,10 @@ import {
   PlayerID,
 } from "./types";
 
+import { setMe } from "~/av/redux/stateActions";
+import { store as avStore } from "~/av";
+import { browser } from "~/av/browserInfo";
+
 /**
  * A participant's Identity is created from Shared fields such as
  * name and color, as well as Local fields, such as a temporary clientId.
@@ -87,6 +91,7 @@ export class Identity implements Readable<IdentityData> {
     return derived(
       [this.sharedFields, this.localFields],
       ([$shared, $local], set) => {
+        this.setAvName($shared.name)
         set({
           playerId: this.playerId,
           shared: $shared,
@@ -102,5 +107,17 @@ export class Identity implements Readable<IdentityData> {
 
   setName(name) {
     this.sharedFields.update(($fields) => ({ ...$fields, name }));
+  }
+
+  setAvName(name) {
+    avStore.dispatch(
+      setMe({
+        peerId: this.playerId,
+        displayName: name,
+        displayNameSet: false,
+        device: browser,
+      })
+    );
+
   }
 }

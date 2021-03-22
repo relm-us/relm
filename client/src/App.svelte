@@ -21,6 +21,7 @@
 
   import LoadingScreen from "~/ui/LoadingScreen";
   import VideoSetup from "~/ui/VideoSetup";
+  import { avPermission } from "~/stores/avPermission";
 
   import { runCommand } from "~/commands";
   import { globalEvents } from "~/events";
@@ -28,8 +29,6 @@
   import { world } from "~/stores/world";
   import { mode } from "~/stores/mode";
   import { openPanel } from "~/stores/openPanel";
-
-  import { roomClient } from "~/av";
 
   const playMode = () => {
     globalEvents.emit("switch-mode", "play");
@@ -46,9 +45,11 @@
   };
 
   const onDoneVideoSetup = ({ detail }) => {
-    // const { devices, audio, video, stream } = detail;
-    // console.log("done video setup", detail);
-    roomClient.join();
+    avPermission.set({
+      done: true,
+      audio: !!detail.audio,
+      video: !!detail.video,
+    });
   };
 </script>
 
