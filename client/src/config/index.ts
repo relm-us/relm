@@ -1,11 +1,12 @@
 import { DEFAULT_RELM_ID, DEFAULT_ENTRYWAY } from "./constants";
+import { canonicalIdentifier } from "~/utils/canonicalIdentifier";
 
 export type Config = {
   serverUrl: string;
   serverYjsUrl: string;
   serverUploadUrl: string;
   mediasoupUrl: string;
-  subrelm: string;
+  initialSubrelm: string;
   entryway: string;
 };
 
@@ -15,17 +16,9 @@ export const config: Config = {
   mediasoupUrl: "wss://media.relm.us:4443",
 };
 
-/**
- * Helper functions
- */
-
-function canonicalIdentifier(id: string) {
-  return id.toLowerCase().replace(/[^a-z0-9\-]+/, "-");
-}
-
 function getSubrelmAndEntryway(
   location: Location
-): { subrelm: string; entryway: string } {
+): { initialSubrelm: string; entryway: string } {
   const params = new URLSearchParams(location.search.substring(1));
 
   const pathParts = location.pathname
@@ -38,7 +31,7 @@ function getSubrelmAndEntryway(
   const entryway = params.get("entryway") || pathParts[2] || DEFAULT_ENTRYWAY;
 
   return {
-    subrelm: canonicalIdentifier(subrelm),
+    initialSubrelm: canonicalIdentifier(subrelm),
     entryway: canonicalIdentifier(entryway),
   };
 }
