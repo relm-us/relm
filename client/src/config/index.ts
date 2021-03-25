@@ -13,7 +13,7 @@ export type Config = {
 export const config: Config = {
   ...getServerConfig(window.location),
   ...getSubrelmAndEntryway(window.location),
-  mediasoupUrl: "wss://media.relm.us:4443",
+  mediasoupUrl: "wss://media2.relm.us:4443",
 };
 
 function getSubrelmAndEntryway(
