@@ -48,6 +48,15 @@ export class Oculus extends LocalComponent {
       },
     },
 
+    color: {
+      type: StringType,
+      default: '#ffffff',
+      editor: {
+        label: "Color",
+        input: "Color"
+      }
+    },
+
     // Set automatically. If equal to local playerId, Oculus will show own video stream.
     playerId: {
       type: StringType,

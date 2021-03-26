@@ -63,7 +63,7 @@ export class Avatar {
   syncEntity(identity: IdentityData) {
     this.syncLabel(identity);
     this.syncSpeech(identity);
-    this.syncOculus(identity.playerId);
+    this.syncOculus(identity);
   }
   
   syncLabel(identity: IdentityData) {
@@ -92,12 +92,13 @@ export class Avatar {
     }
   }
 
-  syncOculus(playerId: string) {
+  syncOculus(identity: IdentityData) {
     if (!this.entity.has(Oculus)) {
       this.entity.add(Oculus, {
-        playerId,
+        playerId: identity.playerId,
         hanchor: 0,
         vanchor: 2,
+        color: identity.shared.color,
         offset: new Vector3(0, 1.35, 0),
       });
     }
@@ -131,14 +132,11 @@ export class Avatar {
     const label = {
       kind: "LABEL",
       content: name,
-      underlineColor: null,
+      underlineColor: color ? color : null,
       offset: new Vector3(0, -0.75, 0),
       vanchor: 1,
       editable,
     };
-    if (color) {
-      label.underlineColor = color;
-    }
     this.entity.add(Html2d, label);
   }
 
