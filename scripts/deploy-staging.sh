@@ -8,5 +8,5 @@ cd $DIR/../client
 
 yarn build && \
 rsync -azvP -e ssh public/* \
-  deploy@relm.us:/var/www/html/relm-staging/ \
+  deploy@relm.us:/var/www/staging.relm.us/ \
   --delete
