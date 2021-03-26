@@ -65,7 +65,7 @@ export default class WorldManager {
     this.state = worldState;
     this.loading = new LoadingState();
 
-    this.wdoc = new WorldDoc("relm", world);
+    this.wdoc = new WorldDoc(world);
 
     this.selection = new SelectionManager(this.wdoc);
     this.identities = new IdentityManager(this.wdoc);

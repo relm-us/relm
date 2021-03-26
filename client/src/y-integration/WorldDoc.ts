@@ -34,11 +34,6 @@ type LoadingCallbackStatus = "loading" | "loaded" | "error";
 type LoadingCallback = (status: LoadingCallbackStatus, bytes?: number) => void;
 
 export class WorldDoc extends EventEmitter {
-  static index: Map<string, WorldDoc> = new Map();
-
-  // Unique identifier for the world
-  name: string;
-
   // The Hecs world that this document will synchronize with
   world: World;
 
@@ -71,10 +66,9 @@ export class WorldDoc extends EventEmitter {
   // An UndoManager allowing users to undo/redo edits on `entities`
   undoManager: Y.UndoManager;
 
-  constructor(name: string, world: World) {
+  constructor(world: World) {
     super();
 
-    this.name = name;
     this.world = world;
 
     this.ydoc = new Y.Doc();
@@ -91,8 +85,6 @@ export class WorldDoc extends EventEmitter {
     this.undoManager = new Y.UndoManager([this.entities], {
       captureTimeout: UNDO_CAPTURE_TIMEOUT,
     });
-
-    WorldDoc.index.set(name, this);
   }
 
   connect(connection: ConnectOptions, onLoading?: LoadingCallback) {

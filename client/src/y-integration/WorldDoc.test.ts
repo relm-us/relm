@@ -18,14 +18,14 @@ describe("WorldDoc", () => {
   let wdoc2: WorldDoc;
 
   beforeEach(() => {
-    wdoc1 = new WorldDoc("test-world-1", new World({ plugins: [CorePlugin] }));
-    wdoc2 = new WorldDoc("test-world-2", new World({ plugins: [CorePlugin] }));
+    wdoc1 = new WorldDoc(new World({ plugins: [CorePlugin] }));
+    wdoc2 = new WorldDoc(new World({ plugins: [CorePlugin] }));
 
     keepYDocsInSync(wdoc1.ydoc, wdoc2.ydoc);
   });
 
   test("initializes", () => {
-    expect(wdoc1.name).toEqual("test-world-1");
+    expect(wdoc1.world).toBeDefined();
   });
 
   test("add Entity", () => {
