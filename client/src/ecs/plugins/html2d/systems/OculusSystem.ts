@@ -103,12 +103,12 @@ export class OculusSystem extends System {
     this.htmlPresentation.project(v1);
 
     const container = entity.get(OculusRef).container;
-    container.style.left = Math.floor(v1.x) + "px";
-    container.style.top = Math.floor(v1.y) + "px";
+    container.style.left = Math.round(v1.x) + "px";
+    container.style.top = Math.round(v1.y) + "px";
     container.style.pointerEvents = "auto";
 
     // calculate width
-    container.style.width = `${Math.floor(1500 / dist)}px`;
-    container.style.height = `${Math.floor(1500 / dist)}px`;
+    container.style.width = `${Math.round(1500 / dist)}px`;
+    container.style.height = `${Math.round(1500 / dist)}px`;
   }
 }
