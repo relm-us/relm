@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Box2, Vector2, Vector3 } from "three";
+  import { Box2, PerspectiveCamera, Vector2, Vector3 } from "three";
   import { difference } from "~/utils/setOps";
   import { hasAncestor } from "~/utils/hasAncestor";
   import { globalEvents } from "~/events";
@@ -23,6 +23,10 @@
 
   const mousePosition = new Vector2();
   const mouseStartPosition = new Vector2();
+  const dragPosition = new Vector3();
+  const dragStartPosition = new Vector3();
+  const dragStartCamera = new PerspectiveCamera();
+  const cameraStartOffset = new Vector3();
   let mouseMode: "initial" | "click" | "drag" | "drag-select" = "initial";
   let pointerPlaneEntity;
   let dragOffset;
@@ -66,67 +70,99 @@
     // console.log("mouse.set", finder._normalizedCoords);
     mouse.set(finder._normalizedCoords);
 
-    {
-      // Keep svelte `hovered` store up to date based on mouse movements
-      const foundSet: Set<string> = new Set(found);
+    if ($mode === "build") {
+      {
+        // Keep svelte `hovered` store up to date based on mouse movements
+        const foundSet: Set<string> = new Set(found);
 
-      const added = difference(foundSet, $hovered);
-      const deleted = difference($hovered, foundSet);
+        const added = difference(foundSet, $hovered);
+        const deleted = difference($hovered, foundSet);
 
-      for (const entityId of added) hovered.add(entityId);
-      for (const entityId of deleted) hovered.delete(entityId);
-    }
+        for (const entityId of added) hovered.add(entityId);
+        for (const entityId of deleted) hovered.delete(entityId);
+      }
 
-    if (
-      mouseMode === "click" &&
-      mousePosition.distanceTo(mouseStartPosition) > DRAG_DISTANCE_THRESHOLD
-    ) {
-      // drag  mode start
-      if ($Relm.selection.length > 0) {
+      if (
+        mouseMode === "click" &&
+        mousePosition.distanceTo(mouseStartPosition) > DRAG_DISTANCE_THRESHOLD
+      ) {
+        // drag  mode start
+        if ($Relm.selection.length > 0) {
+          mouseMode = "drag";
+          dragPlane = shiftKey ? "XY" : "XZ";
+        } else {
+          mouseMode = "drag-select";
+          dragPlane = "XZ";
+        }
+
+        dragOffset = null;
+        const position = $Relm.selection.centroid;
+
+        pointerPlaneEntity = world.entities
+          .create("MouseDragPointerPlane", uuidv4())
+          .add(Transform, { position })
+          .add(PointerPlane, { visible: dragPlane })
+          .activate();
+      } else if (mouseMode === "drag") {
+        // drag mode
+        const ref = pointerPlaneEntity.get(PointerPlaneRef);
+        if (ref) {
+          if (dragOffset) {
+            const position = new Vector3().copy(ref[dragPlane]);
+            position.sub(dragOffset);
+            $Relm.selection.moveRelativeToSavedPositions(position);
+          } else if (ref.updateCount > 1) {
+            $Relm.selection.savePositions();
+            dragOffset = new Vector3().copy(ref[dragPlane]);
+          }
+        }
+      } else if (mouseMode === "drag-select") {
+        selectionLogic.getSelectionBox(
+          $Relm.world,
+          mouseStartPosition,
+          mousePosition,
+          selectionRectangle
+        );
+        const p = new Vector2();
+        for (let entity of $Relm.world.entities.entities.values()) {
+          const position = entity.getByName("Transform")?.position;
+          if (!position) continue;
+          p.x = position.x;
+          p.y = position.z; // note: switching from 3D XZ plane to 2D XY plane
+          if (selectionRectangle.containsPoint(p)) {
+            $Relm.selection.addEntityId(entity.id);
+          }
+        }
+      }
+    } else if ($mode === "play") {
+      const lookAt = $Relm.camera.getByName("LookAt");
+      if (!lookAt) return;
+
+      if (
+        mouseMode === "click" &&
+        mousePosition.distanceTo(mouseStartPosition) > DRAG_DISTANCE_THRESHOLD
+      ) {
+        cameraStartOffset.copy(lookAt.offset);
+        // drag  mode start
         mouseMode = "drag";
-        dragPlane = shiftKey ? "XY" : "XZ";
-      } else {
-        mouseMode = "drag-select";
-        dragPlane = "XZ";
-      }
-
-      dragOffset = null;
-      const position = $Relm.selection.centroid;
-
-      pointerPlaneEntity = world.entities
-        .create("MouseDragPointerPlane", uuidv4())
-        .add(Transform, { position })
-        .add(PointerPlane, { visible: dragPlane })
-        .activate();
-    } else if (mouseMode === "drag") {
-      // drag mode
-      const ref = pointerPlaneEntity.get(PointerPlaneRef);
-      if (ref) {
-        if (dragOffset) {
-          const position = new Vector3().copy(ref[dragPlane]);
-          position.sub(dragOffset);
-          $Relm.selection.moveRelativeToSavedPositions(position);
-        } else if (ref.updateCount > 1) {
-          $Relm.selection.savePositions();
-          dragOffset = new Vector3().copy(ref[dragPlane]);
-        }
-      }
-    } else if (mouseMode === "drag-select") {
-      selectionLogic.getSelectionBox(
-        $Relm.world,
-        mouseStartPosition,
-        mousePosition,
-        selectionRectangle
-      );
-      const p = new Vector2();
-      for (let entity of $Relm.world.entities.entities.values()) {
-        const position = entity.getByName("Transform")?.position;
-        if (!position) continue;
-        p.x = position.x;
-        p.y = position.z; // note: switching from 3D XZ plane to 2D XY plane
-        if (selectionRectangle.containsPoint(p)) {
-          $Relm.selection.addEntityId(entity.id);
-        }
+        dragOffset = new Vector3();
+        dragStartCamera.copy($Relm.world.presentation.camera);
+        $Relm.world.presentation.getWorldFromScreenCoords(
+          event.clientX,
+          event.clientY,
+          dragStartPosition
+        );
+      } else if (mouseMode === "drag") {
+        $Relm.world.presentation.getWorldFromScreenCoords(
+          event.clientX,
+          event.clientY,
+          dragPosition,
+          false,
+          dragStartCamera
+        );
+        dragOffset.copy(dragPosition).sub(dragStartPosition);
+        const v1 = new Vector3().copy(cameraStartOffset).add(dragOffset);
+        lookAt.offset.copy(v1);
       }
     }
   }
@@ -152,6 +188,9 @@
     } else if ($mode === "play") {
       if (found.includes($Relm.avatar.id)) {
         $Relm.avatar.add(TouchController);
+      } else {
+        // At this point, at least a 'click' has started. TBD if it's a drag.
+        mouseMode = "click";
       }
     }
   }

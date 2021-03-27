@@ -227,14 +227,15 @@ export class Presentation {
     x: number,
     y: number,
     target: Vector3 = _intersect,
-    alreadyNormalized = false
+    alreadyNormalized = false,
+    camera: PerspectiveCamera = this.camera
   ): Vector3 {
     if (!alreadyNormalized) {
       x = (x * 2) / window.innerWidth - 1;
       y = (-y * 2) / window.innerHeight + 1;
     }
     _v2.set(x, y);
-    _raycaster.setFromCamera(_v2, this.camera);
+    _raycaster.setFromCamera(_v2, camera);
     _raycaster.ray.intersectPlane(_plane, target);
     return target;
   }
