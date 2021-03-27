@@ -7,8 +7,9 @@ import { makeAvatarAndActivate } from "~/prefab/makeAvatarAndActivate";
 
 import { World, Entity } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
-import { Html2d, Oculus } from "~/ecs/plugins/html2d";
+import { Html2d, Oculus, OculusRef } from "~/ecs/plugins/html2d";
 
+const OCULUS_HEIGHT = 1.45;
 const LAST_SEEN_TIMEOUT = 15000;
 const e1 = new Euler(0, 0, 0, "YXZ");
 
@@ -65,7 +66,7 @@ export class Avatar {
     this.syncSpeech(identity);
     this.syncOculus(identity);
   }
-  
+
   syncLabel(identity: IdentityData) {
     if (identity.shared.name && !this.entity.has(Html2d)) {
       this.addLabel(
@@ -79,7 +80,6 @@ export class Avatar {
       this.entity.remove(Html2d);
     }
   }
-
 
   syncSpeech(identity: IdentityData) {
     const visible = !!identity.local.message && identity.shared.speaking;
@@ -98,9 +98,21 @@ export class Avatar {
         playerId: identity.playerId,
         hanchor: 0,
         vanchor: 2,
+        showAudio: identity.shared.showAudio,
+        showVideo: identity.shared.showVideo,
         color: identity.shared.color,
-        offset: new Vector3(0, 1.35, 0),
+        offset: new Vector3(0, OCULUS_HEIGHT, 0),
       });
+    } else {
+      const component = this.entity.get(OculusRef)?.component;
+
+      if (component) {
+        component.$set({
+          showAudio: identity.shared.showAudio,
+          showVideo: identity.shared.showVideo,
+          color: identity.shared.color,
+        });
+      }
     }
   }
 
@@ -114,7 +126,6 @@ export class Avatar {
     };
     this.head.add(Html2d, speech);
   }
-
 
   changeSpeech(message: string) {
     const label = this.head.get(Html2d);

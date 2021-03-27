@@ -13,6 +13,9 @@ export type SharedIdentityFields = {
 
   // Show the speech bubble?
   speaking?: boolean;
+
+  showVideo?: boolean;
+  showAudio?: boolean;
 };
 
 export type LocalIdentityFields = {

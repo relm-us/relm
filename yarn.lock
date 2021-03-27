@@ -1439,7 +1439,7 @@
     "@uppy/utils" "^3.4.0"
     preact "8.2.9"
 
-"@uppy/utils@3.4.0", "@uppy/utils@^3.3.0", "@uppy/utils@^3.4.0":
+"@uppy/utils@^3.3.0", "@uppy/utils@^3.4.0":
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/@uppy/utils/-/utils-3.4.0.tgz#4afcf8c26dec13ee54676bd1f7958fc1063b68df"
   integrity sha512-XcT4UgUm1NhWAeQjMrr5LCE7Uookg12FTwQw/QwXBuGABoVilfk56i6h8ecf1bVX0D74zdpSnUiB1h+8a7ollw==
@@ -10158,10 +10158,10 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-video-mirror@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/video-mirror/-/video-mirror-0.2.0.tgz#c11a5027c5cc7fc25ca51d43a6f45de63577d528"
-  integrity sha512-E8w0aQRrvzNT/bVxH/RmRK0TZ48QbEpYnHY0eGKhF9PNGjbqyWaDnFJatOF38fdmrJihobYxKjyNYCGT52dbgQ==
+video-mirror@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/video-mirror/-/video-mirror-0.3.1.tgz#47415eecffd00ba8a46ff6c51bde032c3ed204cf"
+  integrity sha512-W3SB+EpNGccuS3dxwdkG/EllFL/XNFVlLgD56k5C8CcsJPuD8XrNtCTpgq4cpiF5pFTRgd7BUreujBtwDGUZvA==
   dependencies:
     hark "^1.2.3"
     media-devices "^0.2.0"

@@ -68,7 +68,7 @@ export default class WorldManager {
     this.wdoc = new WorldDoc(world);
 
     this.selection = new SelectionManager(this.wdoc);
-    this.identities = new IdentityManager(this.wdoc);
+    this.identities = new IdentityManager(this);
     this.chat = new ChatManager(this.identities, this.wdoc.messages);
 
     this.mount();

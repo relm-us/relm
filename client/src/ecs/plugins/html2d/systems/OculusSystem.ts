@@ -3,13 +3,9 @@ import { System, Groups, Not, Entity, Modified } from "~/ecs/base";
 import { Oculus, OculusRef } from "../components";
 import { Presentation, WorldTransform } from "~/ecs/plugins/core";
 import { HtmlPresentation } from "../HtmlPresentation";
-import { localStream } from "video-mirror";
 import { playerId } from "~/identity/playerId";
-import { get } from "svelte/store";
 import { getStreamStore, getLocalStreamStore } from "~/av/getStreamStore";
 import HtmlOculus from "../HtmlOculus.svelte";
-import { videoRequested } from "video-mirror";
-import { roomConnectState } from "~/av/stores/roomConnectState";
 
 const v1 = new Vector3();
 /**
@@ -71,7 +67,7 @@ export class OculusSystem extends System {
     // Create whatever Svelte component is specified by the type
     const component = new HtmlOculus({
       target: container,
-      props: { ...spec, stream, mirror: isLocal, muted: isLocal, entity },
+      props: { ...spec, stream, isLocal },
     });
 
     entity.add(OculusRef, { container, component });

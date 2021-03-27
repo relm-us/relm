@@ -1,4 +1,4 @@
-import { LocalComponent, NumberType, StringType } from "~/ecs/base";
+import { BooleanType, LocalComponent, NumberType, StringType } from "~/ecs/base";
 import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
@@ -46,6 +46,22 @@ export class Oculus extends LocalComponent {
           { label: "Right", value: 2 },
         ],
       },
+    },
+
+    showAudio: {
+      type: BooleanType,
+      default: true,
+      editor: {
+        label: "Show Audio?"
+      }
+    },
+
+    showVideo: {
+      type: BooleanType,
+      default: true,
+      editor: {
+        label: "Show Video?"
+      }
     },
 
     color: {

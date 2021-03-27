@@ -2,9 +2,11 @@ import * as Y from "yjs";
 import EventEmitter from "eventemitter3";
 import { get } from "svelte/store";
 
+import { audioRequested, videoRequested } from "video-mirror";
 import { withArrayEdits, withMapEdits } from "~/y-integration/observeUtils";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
+import type WorldManager from "~/world/WorldManager";
 
 import {
   IdentityData,
@@ -18,9 +20,9 @@ import { defaultIdentity } from "./defaultIdentity";
 import { Identity } from "./Identity";
 import { ChatMessage } from "~/world/ChatManager";
 import { localstorageSharedFields } from "./localstorageSharedFields";
-import { Oculus } from "~/ecs/plugins/html2d";
 
 export class IdentityManager extends EventEmitter {
+  relm: WorldManager;
   wdoc: WorldDoc;
 
   yfields: Y.Map<SharedIdentityFields>;
@@ -38,17 +40,17 @@ export class IdentityManager extends EventEmitter {
 
   isSynced: boolean;
 
-  constructor(wdoc: WorldDoc, myData: IdentityData = defaultIdentity) {
+  constructor(relm: WorldManager, myData: IdentityData = defaultIdentity) {
     super();
-    this.wdoc = wdoc;
-    this.yfields = wdoc.ydoc.getMap("identities");
-    this.ymessages = wdoc.ydoc.getArray("messages");
+    this.relm = relm;
+    this.yfields = relm.wdoc.ydoc.getMap("identities");
+    this.ymessages = relm.wdoc.ydoc.getArray("messages");
     this.identities = new Map();
     this.lookupPlayerId = new Map();
     this.setTransformFns = new Map();
     this.isSynced = false;
 
-    this.registerMe(myData, this.wdoc.ydoc.clientID);
+    this.registerMe(myData, relm.wdoc.ydoc.clientID);
 
     this.observeFields();
     this.observeChat();
@@ -63,6 +65,18 @@ export class IdentityManager extends EventEmitter {
       localFields: myData.local,
     });
 
+    audioRequested.subscribe((showAudio) => {
+      identity.sharedFields.update(($fields) =>
+        Object.assign($fields, { showAudio })
+      );
+    });
+
+    videoRequested.subscribe((showVideo) => {
+      identity.sharedFields.update(($fields) =>
+        Object.assign($fields, { showVideo })
+      );
+    });
+
     /**
      * Whenever the sharedFields svelte store is updated, also set the
      * yjs document corresponding to the playerId.
@@ -75,8 +89,10 @@ export class IdentityManager extends EventEmitter {
      * After getting 'sync' signal, yjs doc is synced and can accept
      * more up to date values, such as the clientId of this connection.
      */
-    this.wdoc.on("sync", () => {
-      identity.sharedFields.update($fields => ({ ...$fields, clientId }));
+    this.relm.wdoc.on("sync", () => {
+      identity.sharedFields.update(($fields) => {
+        return { ...$fields, clientId };
+      });
       this.isSynced = true;
     });
 

@@ -84,14 +84,14 @@ export class Identity implements Readable<IdentityData> {
     });
 
     // Create an avatar to go with the identity
-    this.avatar = new Avatar(this.derivedIdentity, this.manager.wdoc.world);
+    this.avatar = new Avatar(this.derivedIdentity, this.manager.relm.wdoc.world);
   }
 
   deriveIdentityStore(): Readable<IdentityData> {
     return derived(
       [this.sharedFields, this.localFields],
       ([$shared, $local], set) => {
-        this.setAvName($shared.name)
+        this.setAvName($shared.name);
         set({
           playerId: this.playerId,
           shared: $shared,
@@ -109,6 +109,22 @@ export class Identity implements Readable<IdentityData> {
     this.sharedFields.update(($fields) => ({ ...$fields, name }));
   }
 
+  toggleShowAudio() {
+    this.sharedFields.update(($fields) => {
+      const showAudio = !$fields.showAudio;
+      console.log("toggleShowAudio new state", showAudio);
+      if (showAudio) {
+        this.manager.relm.roomClient.unmuteMic();
+      } else {
+        this.manager.relm.roomClient.muteMic();
+      }
+      return {
+        ...$fields,
+        showAudio,
+      };
+    });
+  }
+
   setAvName(name) {
     avStore.dispatch(
       setMe({
@@ -118,6 +134,5 @@ export class Identity implements Readable<IdentityData> {
         device: browser,
       })
     );
-
   }
 }
