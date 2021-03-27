@@ -1,3 +1,35 @@
+2021-03-26
+- NEW: There is a microphone at the bottom of the avatar's video oculus. The mic shows audio volume in the background.
+- NEW: You can mute/unmute yourself by clicking the microphone.
+- NEW: You can mute/unmute others by clicking their microphones.
+- CHANGED: Video Setup screen shows gentle fade-in effect.
+- CHANGED: The avatar's oculus is now colored the same as the avatar's underline color.
+- CHANGED: Shadows are turned off by default. This significantly boosts render speed on low-end hardware.
+- FIXED: Oculus position is stabilized to integer values (no longer makes very tiny movements that cause jitter)
+- FIXED: Video & audio quality has been significantly improved by using a better back-end server (DigitalOcean w/ 2 dedicated vCPUs).
+
+2021-03-22
+- NEW: The participants' names are sent to the Mediasoup server so video participants not in Relm can see each others' names.
+- FIXED: Video & audio is now separate for each subrelm (a mediasoup room is created for each subrelm).
+
+2021-03-21
+- NEW: Shared Video & Audio! Participants entering a subrelm will see & hear each other via our dedicated mediasoup server. NOTE: Currently there is only one media room shared across all subrelms, so this will cause some strange effects if more than one subrelm is being used at a given time.
+
+2021-03-15
+- NEW: Video setup screen! You can set up your camera and microphone before entering Relm.
+- NEW: Local Oculus (video circle) above your avatar. NOTE: video/audio is not yet connected to anyone else and you won't see an Oculus above other participants.
+- FIXED: Your avatar's name (and underline color) should be preserved across subrelms now.
+- CODE NOTES: The IdentityManager went through some refactoring so that there is now a localstorageSharedFields store. This store both reads and writes to localstorage, and can be used to override the avatar name (e.g. in server-controlled username scenarios).
+
+2021-03-07
+- NEW: WebPage components automatically use a screenshot of the website in place of their iframe, significantly speeding up CSS3D rendering of the "web page". When the user clicks on the web page screenshot, it turns into an interactive website iframe.
+- NEW: YouTube components show a preview image in place of their iframe, also significantly speeding up CSS3D rendering of the "video" placeholder. When the user clicks on the youtube video preview, it loads the youtube video in an interactive iframe.
+- CODE NOTES: The screenshot service is now integrated into the backend server, and uses puppeteer and chromium under the hood. This may require some setup to get working correctly on your server. See README.md.
+
+2021-03-05
+- NEW: (Build Mode) Walls have a new "Visible" setting. This allows you to create wall-shaped colliders without a visible wall.
+- CHANGED: Renderer is back to "High performance" mode by default (may affect speed on some hardware)
+
 2021-03-04
 - NEW: Named Entryways! A subrelm can now have a "default" start position (entryway) other than (0,0,0) and can additionally have other entryways. An entryway's name is used as an optional 2nd component of the name of the subrelm; for example the "fairy" entryway of the "town" subrelm would look like this: staging.relm.us/town/fairy.
   - In Build Mode: Add or remove entryways via the "Settings" panel. Create an entryway named "default" at your avatar's current position to make that the default entryway for the subrelm.
