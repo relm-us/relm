@@ -13,7 +13,7 @@
   $: identity = $Relm.identities.identities.get(playerId);
 
   function toggleMute() {
-    if (identity) {
+    if (identity && isLocal) {
       identity.toggleShowAudio();
     }
   }
@@ -33,7 +33,7 @@
       {/if}
     </oculus>
     <button class:muted={!showAudio} class="mic" on:click={toggleMute}>
-      {#if showAudio}
+      {#if showAudio && isLocal}
         <AudioLevelIndicator class="oculus-audio-level-indicator" />
       {/if}
       <AudioIcon enabled={showAudio} class="oculus-audio-icon" />

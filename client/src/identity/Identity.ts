@@ -84,7 +84,10 @@ export class Identity implements Readable<IdentityData> {
     });
 
     // Create an avatar to go with the identity
-    this.avatar = new Avatar(this.derivedIdentity, this.manager.relm.wdoc.world);
+    this.avatar = new Avatar(
+      this.derivedIdentity,
+      this.manager.relm.wdoc.world
+    );
   }
 
   deriveIdentityStore(): Readable<IdentityData> {
@@ -112,12 +115,6 @@ export class Identity implements Readable<IdentityData> {
   toggleShowAudio() {
     this.sharedFields.update(($fields) => {
       const showAudio = !$fields.showAudio;
-      console.log("toggleShowAudio new state", showAudio);
-      if (showAudio) {
-        this.manager.relm.roomClient.unmuteMic();
-      } else {
-        this.manager.relm.roomClient.muteMic();
-      }
       return {
         ...$fields,
         showAudio,

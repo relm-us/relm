@@ -83,6 +83,17 @@ export class IdentityManager extends EventEmitter {
      */
     identity.sharedFields.subscribe(($sharedFields) => {
       this.yfields.set(myData.playerId, $sharedFields);
+
+      /**
+       * Only "I" can set my audio mute state
+       */
+      if (this.relm.roomClient && this.relm.roomClient._micProducer) {
+        if ($sharedFields.showAudio) {
+          this.relm.roomClient.unmuteMic();
+        } else {
+          this.relm.roomClient.muteMic();
+        }
+      }
     });
 
     /**
@@ -100,16 +111,18 @@ export class IdentityManager extends EventEmitter {
   }
 
   updateSharedFields(playerId: PlayerID, sharedFields: SharedIdentityFields) {
-    // Don't allow the network to override my own shared fields
-    if (playerId === this.me.playerId && !this.isSynced) return;
+    // Don't allow the network to override my own shared fields prior to sync
+    const allowUpdate = playerId !== this.me.playerId || this.isSynced;
 
-    let identity = this.identities.get(playerId);
-    if (!identity) {
-      identity = new Identity(this, playerId, { sharedFields });
-    } else {
-      identity.sharedFields.set(sharedFields);
+    if (allowUpdate) {
+      let identity = this.identities.get(playerId);
+      if (!identity) {
+        identity = new Identity(this, playerId, { sharedFields });
+      } else {
+        identity.sharedFields.set(sharedFields);
+      }
+      return identity;
     }
-    return identity;
   }
 
   updateLocalFields(playerId: PlayerID, localFields: LocalIdentityFields) {
