@@ -5,7 +5,6 @@
   import { Html2d } from "../components";
   import { Relm } from "~/stores/Relm";
   import { mode } from "~/stores/mode";
-  import { Identity } from "~/identity/Identity";
   import { DRAG_DISTANCE_THRESHOLD } from "~/config/constants";
 
   export let content;
@@ -88,6 +87,8 @@
 
   function onMousemove(event) {
     if (!editing) event.preventDefault();
+
+    if (!event.target.parentElement) return;
 
     var rect = event.target.parentElement.getBoundingClientRect();
     mousePos.set(event.clientX - rect.left, event.clientY - rect.top);
