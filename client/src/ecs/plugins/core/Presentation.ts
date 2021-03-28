@@ -19,6 +19,8 @@ import {
   Raycaster,
   Plane,
   Box3,
+  Frustum,
+  Matrix4,
 } from "three";
 import isFirefox from "@braintree/browser-detection/is-firefox";
 import isIosSafari from "@braintree/browser-detection/is-ios-safari";
@@ -238,6 +240,21 @@ export class Presentation {
     _raycaster.setFromCamera(_v2, camera);
     _raycaster.ray.intersectPlane(_plane, target);
     return target;
+  }
+
+  getFrustum(camera: PerspectiveCamera = this.camera) {
+    const frustum = new Frustum();
+    const cameraViewProjectionMatrix = new Matrix4();
+
+    camera.updateMatrixWorld();
+    camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
+    cameraViewProjectionMatrix.multiplyMatrices(
+      camera.projectionMatrix,
+      camera.matrixWorldInverse
+    );
+    frustum.setFromProjectionMatrix(cameraViewProjectionMatrix);
+
+    return frustum;
   }
 
   updateVisibleBounds() {

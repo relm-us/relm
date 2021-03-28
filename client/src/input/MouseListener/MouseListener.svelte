@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Box2, PerspectiveCamera, Vector2, Vector3 } from "three";
+  import { Box2, Frustum, PerspectiveCamera, Vector2, Vector3 } from "three";
   import { difference } from "~/utils/setOps";
   import { hasAncestor } from "~/utils/hasAncestor";
   import { globalEvents } from "~/events";
@@ -165,9 +165,18 @@
           false,
           dragStartCamera
         );
+
+        const frustum: Frustum = $Relm.world.presentation.getFrustum();
+        const avatarPos = $Relm.avatar.getByName("Transform").position;
+        if (!frustum.containsPoint(avatarPos)) {
+          // TODO: Make this less jerky when out of bounds
+          dragStartPosition.lerp(avatarPos, 0.1);
+        }
+
         dragOffset.copy(dragPosition).sub(dragStartPosition);
 
         v1.copy(dragStartFollowOffset).sub(dragOffset);
+
         follow.offset.x = v1.x;
         follow.offset.z = v1.z;
       }
