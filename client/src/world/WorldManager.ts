@@ -96,6 +96,7 @@ export default class WorldManager {
           break;
         case "paused":
           this.world.presentation.setLoop(null);
+          // TODO: Make it so window resize events "step" a frame
           break;
       }
     });
@@ -362,7 +363,7 @@ export default class WorldManager {
 
   start() {
     worldState.set("running");
-    playState.set("playing")
+    playState.set("playing");
   }
 
   stop() {

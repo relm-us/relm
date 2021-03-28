@@ -102,7 +102,6 @@ export class Avatar {
         vanchor: 2,
         showAudio: identity.shared.showAudio,
         showVideo: identity.shared.showVideo,
-        color: identity.shared.color,
         offset: new Vector3(0, OCULUS_HEIGHT, 0),
       });
     } else {
@@ -112,7 +111,6 @@ export class Avatar {
         component.$set({
           showAudio: identity.shared.showAudio,
           showVideo: identity.shared.showVideo,
-          color: identity.shared.color,
         });
       }
     }

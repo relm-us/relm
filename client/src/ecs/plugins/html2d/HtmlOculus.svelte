@@ -6,7 +6,6 @@
   export let isLocal;
   export let showAudio;
   export let showVideo;
-  export let color;
   export let playerId;
 
   let identity;
@@ -23,7 +22,7 @@
 </script>
 
 {#if $stream}
-  <container style="--color:{color}">
+  <container>
     <oculus>
       {#if showVideo}
         <Video stream={$stream} mirror={isLocal} />
@@ -65,10 +64,10 @@
     height: 100%;
     overflow: hidden;
 
-    border: 2px solid var(--color, #ccc);
+    border: 2px solid #cccccc;
     border-radius: 100%;
-    box-shadow: 0 0 5px var(--color, #ccc);
-    background-color: #a99;
+    box-shadow: 0 0 5px #cccccc;
+    background-color: #959595;
   }
 
   button.mic {
@@ -80,9 +79,9 @@
     height: 24px;
 
     transform: translate(-50%);
-    background-color: #333;
-    color: #ccc;
-    border: 2px solid #ccc;
+    background-color: #333333;
+    color: #cccccc;
+    border: 2px solid #cccccc;
     border-radius: 100%;
     overflow: hidden;
   }
