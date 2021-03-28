@@ -1,6 +1,6 @@
 import { Transform } from "~/ecs/plugins/core";
 import { LookAt, Camera } from "~/ecs/plugins/core";
-import { Vector3 } from "three";
+import { Vector3, Quaternion, Euler } from "three";
 
 import { Follow } from "~/ecs/plugins/follow";
 import { DirectionalLight } from "~/ecs/plugins/lighting";
@@ -13,9 +13,7 @@ export function makeStageAndActivate(world, avatar) {
   const camera = makeEntity(world, "Camera")
     .add(Transform, {
       position: cameraPosition,
-    })
-    .add(LookAt, {
-      target: avatar.id,
+      rotation: new Quaternion().setFromEuler(new Euler(-Math.PI / 4.5, 0, 0)),
     })
     .add(Follow, {
       entity: avatar.id,

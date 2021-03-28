@@ -26,7 +26,9 @@
   const dragPosition = new Vector3();
   const dragStartPosition = new Vector3();
   const dragStartCamera = new PerspectiveCamera();
-  const cameraStartOffset = new Vector3();
+  const dragStartFollowOffset = new Vector3();
+  const dragStartTransformPosition = new Vector3();
+  const v1 = new Vector3();
   let mouseMode: "initial" | "click" | "drag" | "drag-select" = "initial";
   let pointerPlaneEntity;
   let dragOffset;
@@ -135,14 +137,17 @@
         }
       }
     } else if ($mode === "play") {
-      const lookAt = $Relm.camera.getByName("LookAt");
-      if (!lookAt) return;
+      const follow = $Relm.camera.getByName("Follow");
+      const transform = $Relm.camera.getByName("Transform");
+      if (!follow || !transform) return;
 
       if (
         mouseMode === "click" &&
         mousePosition.distanceTo(mouseStartPosition) > DRAG_DISTANCE_THRESHOLD
       ) {
-        cameraStartOffset.copy(lookAt.offset);
+        dragStartFollowOffset.copy(follow.offset);
+        dragStartTransformPosition.copy(transform.position);
+
         // drag  mode start
         mouseMode = "drag";
         dragOffset = new Vector3();
@@ -161,8 +166,10 @@
           dragStartCamera
         );
         dragOffset.copy(dragPosition).sub(dragStartPosition);
-        const v1 = new Vector3().copy(cameraStartOffset).add(dragOffset);
-        lookAt.offset.copy(v1);
+
+        v1.copy(dragStartFollowOffset).sub(dragOffset);
+        follow.offset.x = v1.x;
+        follow.offset.z = v1.z;
       }
     }
   }
