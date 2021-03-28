@@ -9,6 +9,8 @@ import { World, Entity } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
 import { Html2d, Oculus, OculusRef } from "~/ecs/plugins/html2d";
 
+import { chatOpen } from "~/stores/chatOpen";
+
 const OCULUS_HEIGHT = 1.45;
 const LAST_SEEN_TIMEOUT = 15000;
 const e1 = new Euler(0, 0, 0, "YXZ");
@@ -84,7 +86,7 @@ export class Avatar {
   syncSpeech(identity: IdentityData) {
     const visible = !!identity.local.message && identity.shared.speaking;
     if (visible && !this.head.has(Html2d)) {
-      this.addSpeech(identity.local.message);
+      this.addSpeech(identity.local.message, identity.local.isLocal);
     } else if (visible && this.head.has(Html2d)) {
       this.changeSpeech(identity.local.message);
     } else if (!visible && this.head.has(Html2d)) {
@@ -116,13 +118,15 @@ export class Avatar {
     }
   }
 
-  addSpeech(message: string) {
+  addSpeech(message: string, isLocal: boolean = false) {
+    const onClose = isLocal ? () => chatOpen.set(false) : null;
     const speech = {
       kind: "SPEECH",
       content: message,
       offset: new Vector3(0.5, 0, 0),
       hanchor: 1,
       vanchor: 2,
+      onClose,
     };
     this.head.add(Html2d, speech);
   }

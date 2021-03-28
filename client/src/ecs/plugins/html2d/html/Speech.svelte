@@ -11,6 +11,7 @@
 
   export let content;
   export let hanchor;
+  export let onClose;
 
   let visible = true;
   let controlsVisible = false;
@@ -25,6 +26,7 @@
 
   function close() {
     visible = false;
+    if (onClose) onClose();
   }
 
   function materializeLabel() {

@@ -1,5 +1,4 @@
 <script>
-  import { afterUpdate } from "svelte";
   import ChatButton from "./ChatButton.svelte";
   import ChatBar from "./ChatBar.svelte";
   import ChatHistory from "./ChatHistory.svelte";
