@@ -8,6 +8,7 @@ import { exportRelm, importRelm } from "./Export";
 
 import { deltaTime, fpsTime } from "~/stores/stats";
 import { worldState, WorldState } from "~/stores/worldState";
+import { playState } from "~/stores/playState";
 import { ConnectOptions } from "~/stores/connection";
 import { scale } from "~/stores/viewport";
 import { shadowsEnabled } from "~/stores/settings";
@@ -88,9 +89,9 @@ export default class WorldManager {
       light.castShadow = $enabled;
     });
 
-    worldState.subscribe(($state) => {
+    playState.subscribe(($state) => {
       switch ($state) {
-        case "running":
+        case "playing":
           this.world.presentation.setLoop(this.loop.bind(this));
           break;
         case "paused":
@@ -361,14 +362,15 @@ export default class WorldManager {
 
   start() {
     worldState.set("running");
+    playState.set("playing")
   }
 
   stop() {
-    worldState.set("paused");
+    playState.set("paused");
   }
 
   step() {
-    if (get(worldState) === "running") {
+    if (get(playState) === "playing") {
       this.stop();
     }
     requestAnimationFrame(this.loop.bind(this));
@@ -376,7 +378,7 @@ export default class WorldManager {
 
   worldStep(delta?: number) {
     if (this.world) {
-      const isRunning = get(worldState) === "running";
+      const isRunning = get(playState) === "playing";
       this.world.update(isRunning && delta !== undefined ? delta : 1000 / 60);
     }
   }

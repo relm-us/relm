@@ -3,6 +3,7 @@ import { derived, Readable } from "svelte/store";
 import { world } from "./world";
 import { viewport } from "./viewport";
 import { connection } from "./connection";
+import { worldState } from './worldState'
 
 import WorldManager from "~/world/WorldManager";
 
@@ -32,7 +33,7 @@ derived([Relm, connection], ([$Relm, $connection], set) => {
     // Initial connect
     $Relm.connect($connection);
   } else if ($connection.state === "error") {
-    $Relm.state.set("error");
+    worldState.set("error");
   }
   return () => $Relm.disconnect();
 }).subscribe(() => {});

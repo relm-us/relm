@@ -1,6 +1,6 @@
 <script lang="ts">
   import Button from "../Button";
-  import { worldState } from "~/stores/worldState";
+  import { playState } from "~/stores/playState";
   import PausedMessage from "./PausedMessage.svelte";
   import PauseAutomatically from "./PauseAutomatically.svelte";
 
@@ -23,13 +23,14 @@
     if (isDoubleClick()) {
       neverPauseAutomatically = !neverPauseAutomatically;
     }
-    worldState.update(($state) => {
+    playState.update(($state) => {
       switch ($state) {
-        case "running":
+        case "playing":
           return "paused";
         case "paused":
-          return "running";
+          return "playing";
         default:
+          console.warn("Unknown playState", $state);
           return $state;
       }
     });
@@ -39,9 +40,9 @@
 <Button on:click={onClick}>
   <div>
     <icon>
-      {#if $worldState === "running"}
+      {#if $playState === "playing"}
         <IoIosPause />
-      {:else if $worldState === "paused"}
+      {:else if $playState === "paused"}
         <IoIosPlay />
       {/if}
     </icon>

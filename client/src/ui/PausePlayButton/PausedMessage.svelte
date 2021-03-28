@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { worldState } from "~/stores/worldState";
+  import { playState } from "~/stores/playState";
 </script>
 
-{#if $worldState === "paused"}
+{#if $playState === "paused"}
   <message>Paused</message>
 {/if}
 

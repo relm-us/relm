@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { worldState } from "~/stores/worldState";
+  import { playState } from "~/stores/playState";
 
   let pausedAutomatically = false;
 
   function onChangeFocus(event) {
     const hasFocus = document.hasFocus();
-    if ($worldState === "running" && !hasFocus) {
+    if ($playState === "playing" && !hasFocus) {
       pausedAutomatically = true;
-      $worldState = "paused";
-    } else if ($worldState === "paused" && hasFocus && pausedAutomatically) {
+      $playState = "paused";
+    } else if ($playState === "paused" && hasFocus && pausedAutomatically) {
       pausedAutomatically = false;
-      $worldState = "running";
+      $playState = "playing";
     }
   }
 </script>
