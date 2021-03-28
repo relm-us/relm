@@ -43,8 +43,8 @@ function getServerConfig(
   let serverYjsUrl: string;
   let serverUploadUrl: string;
   if (location.origin === "https://relm.us") {
-    serverUrl = "https://y.relm.us";
-    serverYjsUrl = "wss://y.relm.us";
+    serverUrl = "https://y-prod.relm.us";
+    serverYjsUrl = "wss://y-prod.relm.us";
   } else if (location.origin === "https://staging.relm.us") {
     serverUrl = "https://y-staging.relm.us";
     serverYjsUrl = "wss://y-staging.relm.us";
