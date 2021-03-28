@@ -60,7 +60,8 @@ export class OculusSystem extends System {
     // Prepare a container for Svelte
     const container = this.htmlPresentation.createContainer(
       spec.hanchor,
-      spec.vanchor
+      spec.vanchor,
+      2
     );
     this.htmlPresentation.domElement.appendChild(container);
 

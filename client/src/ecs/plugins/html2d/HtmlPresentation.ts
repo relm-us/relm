@@ -41,11 +41,11 @@ export class HtmlPresentation {
       }
   }
 
-  createContainer(hanchor, vanchor) {
+  createContainer(hanchor, vanchor, zIndex = 1) {
     const container = document.createElement("div");
 
     // just above the 3d world, but below the editor panel
-    container.style.zIndex = "1";
+    container.style.zIndex = zIndex.toString();
     // when an Html2d object touches the edge of the page, we don't want it to resize
     container.style.width = "fit-content";
     // position the element where we need it, "on top of" the 3d world
