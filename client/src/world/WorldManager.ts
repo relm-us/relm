@@ -106,7 +106,8 @@ export default class WorldManager {
       if (!follow) return;
 
       const distance = 5 + (20 * $scale) / 100;
-      follow.offset.set(0, distance, distance);
+      follow.offset.y = distance;
+      follow.offset.z = distance;
     });
 
     globalEvents.on("mouseActivity", () => {
