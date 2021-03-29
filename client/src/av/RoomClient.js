@@ -853,6 +853,11 @@ export default class RoomClient {
   async unmuteMic() {
     logger.debug("unmuteMic()");
 
+    if (!this._micProducer) {
+      await this.enableMic();
+      return;
+    }
+
     this._micProducer.resume();
 
     try {

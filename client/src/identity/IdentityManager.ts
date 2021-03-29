@@ -87,7 +87,7 @@ export class IdentityManager extends EventEmitter {
       /**
        * Only "I" can set my audio mute state
        */
-      if (this.relm.roomClient && this.relm.roomClient._micProducer) {
+      if (this.relm.roomClient) {
         if ($sharedFields.showAudio) {
           this.relm.roomClient.unmuteMic();
         } else {
