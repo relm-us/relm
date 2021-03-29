@@ -58,7 +58,8 @@ export default class RoomClient {
     useSimulcast,
     useSharingSimulcast,
     forceTcp,
-    produce,
+    produceAudio,
+    produceVideo,
     consume,
     forceH264,
     forceVP9,
@@ -92,7 +93,8 @@ export default class RoomClient {
 
     // Whether we want to produce audio/video.
     // @type {Boolean}
-    this._produce = produce;
+    this._produceAudio = produceAudio;
+    this._produceVideo = produceVideo;
 
     // Whether we should consume.
     // @type {Boolean}
@@ -1333,7 +1335,7 @@ export default class RoomClient {
 
     if (
       !this._webcamProducer &&
-      this._produce
+      this._produceVideo
       // TODO: && webcamEnabled
     ) {
       this.enableWebcam();
@@ -1953,7 +1955,7 @@ export default class RoomClient {
         setTimeout(() => audioTrack.stop(), 120000);
       }
       // Create mediasoup Transport for sending (unless we don't want to produce).
-      if (this._produce) {
+      if (this._produceAudio || this._produceVideo) {
         const transportInfo = await this._protoo.request(
           "createWebRtcTransport",
           {
@@ -2133,7 +2135,7 @@ export default class RoomClient {
       }
 
       // Enable mic/webcam.
-      if (this._produce) {
+      if (this._produceAudio || this._produceVideo) {
         // Set our media capabilities.
         store.dispatch(
           stateActions.setMediaCapabilities({
@@ -2142,11 +2144,9 @@ export default class RoomClient {
           })
         );
 
-        this.enableMic();
+        if (this._produceAudio) this.enableMic();
 
-        // TODO: tie in to webcamEnabled
-        // if (devicesCookie.webcamEnabled)
-        this.enableWebcam();
+        if (this._produceVideo) this.enableWebcam();
 
         this._sendTransport.on("connectionstatechange", (connectionState) => {
           if (connectionState === "connected") {
