@@ -1,3 +1,5 @@
+import { producers as producersStore } from "../../stores/producers";
+
 const initialState = {};
 
 const producers = (state = initialState, action) => {
@@ -12,7 +14,10 @@ const producers = (state = initialState, action) => {
     case "ADD_PRODUCER": {
       const { producer } = action.payload;
 
-      return { ...state, [producer.id]: producer };
+      const newState = { ...state, [producer.id]: producer };
+      producersStore.set(newState);
+
+      return newState;
     }
 
     case "REMOVE_PRODUCER": {
@@ -20,6 +25,7 @@ const producers = (state = initialState, action) => {
       const newState = { ...state };
 
       delete newState[producerId];
+      producersStore.set(newState);
 
       return newState;
     }
