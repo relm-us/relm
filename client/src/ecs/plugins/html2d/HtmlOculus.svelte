@@ -1,6 +1,7 @@
 <script>
   import { Audio, Video, AudioIcon, AudioLevelIndicator } from "video-mirror";
   import { Relm } from "~/stores/Relm";
+  import HtmlOculusMic from "./HtmlOculusMic.svelte";
 
   export let stream;
   export let isLocal;
@@ -23,7 +24,7 @@
 
 {#if $stream}
   <container>
-    <oculus>
+    <oculus class="round">
       {#if showVideo}
         <Video stream={$stream} mirror={isLocal} />
       {/if}
@@ -31,12 +32,12 @@
         <Audio stream={$stream} />
       {/if}
     </oculus>
-    <button class:muted={!showAudio} class="mic" on:click={toggleMute}>
+    <HtmlOculusMic muted={!showAudio} on:click={toggleMute}>
       {#if showAudio && isLocal}
         <AudioLevelIndicator class="oculus-audio-level-indicator" />
       {/if}
       <AudioIcon enabled={showAudio} class="oculus-audio-icon" />
-    </button>
+    </HtmlOculusMic>
   </container>
 {/if}
 
@@ -62,32 +63,11 @@
 
     width: 100%;
     height: 100%;
-    overflow: hidden;
-
-    border: 2px solid #cccccc;
-    border-radius: 100%;
     box-shadow: 0 0 5px #cccccc;
     background-color: #959595;
-  }
 
-  button.mic {
-    all: unset;
-    position: absolute;
-    bottom: -15px;
-    left: 50%;
-    width: 24px;
-    height: 24px;
-
-    transform: translate(-50%);
-    background-color: #333333;
-    color: #cccccc;
+    overflow: hidden;
     border: 2px solid #cccccc;
     border-radius: 100%;
-    overflow: hidden;
-  }
-
-  button.mic.muted {
-    color: var(--selected-red, red);
-    border-color: var(--selected-red, red);
   }
 </style>
