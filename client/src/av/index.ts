@@ -73,7 +73,7 @@ export function connectAV({ roomId, displayName, peerId }) {
     displayName,
     peerId,
     device: browser,
-    produce: true,
+    produce: get(audioRequested) || get(videoRequested),
     consume: true,
   });
 
