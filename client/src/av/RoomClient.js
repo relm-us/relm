@@ -830,6 +830,11 @@ export default class RoomClient {
   async muteMic() {
     logger.debug("muteMic()");
 
+    if (!this._micProducer) {
+      // Already "muted" if no producer
+      return;
+    }
+
     this._micProducer.pause();
 
     try {
