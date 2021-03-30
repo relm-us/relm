@@ -1,3 +1,17 @@
+2021-03-30
+- NEW: Video can be turned off during video setup & it will carry forward into the world.
+- NEW: You can toggle video on/off by clicking the Oculus above the avatar's head.
+
+2021-03-28
+- CHANGED: Oculus perimeter is now gray for all players (to maintain stylistic consistency).
+- FIXED: Oculus video feed is now on top of other HTML such as 2d labels.
+- FIXED: "Relm - Staging" HTML page title was incorrectly used in production environment.
+- FIXED: When you close your own speech bubble, it closes for others also.
+- CODE NOTES: Several nginx configuration, deploy, and run scripts have been updated. We use these in our environment, and they can be used as a reference to show how a similar production environment can be set up.
+
+2021-03-27
+- NEW: Click & drag the ground in Play mode to pan the camera on XZ axis.
+
 2021-03-26
 - NEW: There is a microphone at the bottom of the avatar's video oculus. The mic shows audio volume in the background.
 - NEW: You can mute/unmute yourself by clicking the microphone.
