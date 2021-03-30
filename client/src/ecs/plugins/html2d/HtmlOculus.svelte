@@ -1,5 +1,5 @@
 <script>
-  import { Audio, Video, AudioIcon, AudioLevelIndicator } from "video-mirror";
+  import { Audio, Video, AudioIcon, AudioLevelIndicator, VideoIcon } from "video-mirror";
   import { Relm } from "~/stores/Relm";
   import HtmlOculusMic from "./HtmlOculusMic.svelte";
 
@@ -33,6 +33,8 @@
     <oculus class="round" on:click={toggleVideo}>
       {#if showVideo}
         <Video stream={$stream} mirror={isLocal} />
+      {:else}
+        <icon><VideoIcon /></icon>
       {/if}
       {#if showAudio && !isLocal}
         <Audio stream={$stream} />
@@ -75,5 +77,28 @@
     overflow: hidden;
     border: 2px solid #cccccc;
     border-radius: 100%;
+  }
+
+  icon {
+    display: block;
+    width: 48px;
+    height: 48px;
+
+    box-shadow: 0 0 10px rgba(0, 0, 0, 15%);
+    border-radius: 100%;
+    padding: 5px;
+  }
+
+  @keyframes white {
+    from {
+      color: #959595;
+    }
+    to {
+      color: white;
+    }
+  }
+
+  oculus:hover icon {
+    animation: both 0.15s white;
   }
 </style>
