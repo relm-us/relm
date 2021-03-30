@@ -113,13 +113,11 @@ export class Identity implements Readable<IdentityData> {
   }
 
   toggleShowAudio() {
-    this.sharedFields.update(($fields) => {
-      const showAudio = !$fields.showAudio;
-      return {
-        ...$fields,
-        showAudio,
-      };
-    });
+    this.sharedFields.update(($f) => ({ ...$f, showAudio: !$f.showAudio }));
+  }
+
+  toggleShowVideo() {
+    this.sharedFields.update(($f) => ({ ...$f, showVideo: !$f.showVideo }));
   }
 
   setAvName(name) {

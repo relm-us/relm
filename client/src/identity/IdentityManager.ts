@@ -93,6 +93,12 @@ export class IdentityManager extends EventEmitter {
         } else {
           this.relm.roomClient.muteMic();
         }
+
+        if ($sharedFields.showVideo) {
+          this.relm.roomClient.enableWebcam();
+        } else {
+          this.relm.roomClient.disableWebcam();
+        }
       }
     });
 

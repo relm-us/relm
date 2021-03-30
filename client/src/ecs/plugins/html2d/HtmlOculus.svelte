@@ -18,13 +18,19 @@
     }
   }
 
+  function toggleVideo() {
+    if (identity && isLocal) {
+      identity.toggleShowVideo();
+    }
+  }
+
   // ignore warning about missing props
   $$props;
 </script>
 
 {#if $stream}
   <container>
-    <oculus class="round">
+    <oculus class="round" on:click={toggleVideo}>
       {#if showVideo}
         <Video stream={$stream} mirror={isLocal} />
       {/if}
