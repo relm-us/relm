@@ -4,7 +4,7 @@ import { World } from "~/ecs/base";
 
 import { createWorld } from "../world/creation";
 
-const rapier = readable(null, (set) => {
+export const rapier = readable(null, (set) => {
   import("@dimforge/rapier3d")
     .then((rapier) => {
       set(rapier);

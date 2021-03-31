@@ -1,30 +1,14 @@
 <script lang="ts">
-  import { writable } from "svelte/store";
   import { fade } from "svelte/transition";
   import { worldState } from "~/stores/worldState";
-  import { Relm } from "~/stores/Relm";
-
-  let loading, low, high;
-  $: if ($Relm) {
-    loading = $Relm.loading.state;
-    low = $Relm.loading.loaded;
-    high = $Relm.loading.max;
-  } else {
-    low = writable(0);
-    high = writable(1);
-  }
-
-  let m = 0,
-    n = 1;
-  $: m = $low || 0;
-  $: n = $high || 1;
+  import { loaded, maximum } from "~/stores/loading";
 </script>
 
 {#if $worldState === "loading"}
   <loading transition:fade>
     <container>
       <img src="/loading.png" alt="Loading" />
-      <progress-bar style="--percent:{(m / n) * 140}%" />
+      <progress-bar style="--percent:{($loaded / $maximum) * 140}%" />
     </container>
   </loading>
 {:else if $worldState === "error"}

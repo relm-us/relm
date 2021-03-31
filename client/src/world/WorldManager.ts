@@ -13,6 +13,13 @@ import { ConnectOptions } from "~/stores/connection";
 import { scale } from "~/stores/viewport";
 import { shadowsEnabled } from "~/stores/settings";
 import { entryway } from "~/stores/subrelm";
+import {
+  loading,
+  loaded,
+  maximum,
+  resetLoading,
+  setLoading,
+} from "~/stores/loading";
 
 import { makeStageAndActivate, makeInitialCollider } from "~/prefab";
 import { Entity, World } from "~/ecs/base";
@@ -22,7 +29,6 @@ import { Collider } from "~/ecs/plugins/rapier";
 import { Transform } from "~/ecs/plugins/core";
 
 import { SelectionManager } from "./SelectionManager";
-import { LoadingState } from "./LoadingState";
 import { IdentityManager } from "~/identity/IdentityManager";
 import { ChatManager } from "./ChatManager";
 import {
@@ -41,7 +47,6 @@ export default class WorldManager {
     htmlPresentation: any;
   };
   viewport: HTMLElement;
-  loading: LoadingState;
   state: Writable<WorldState>;
   camera: Entity;
   light: Entity;
@@ -63,7 +68,6 @@ export default class WorldManager {
     this.world = world;
     this.viewport = viewport;
     this.state = worldState;
-    this.loading = new LoadingState();
 
     this.wdoc = new WorldDoc(world);
 
@@ -174,27 +178,33 @@ export default class WorldManager {
     });
 
     // Init loading
+    const max = get(maximum);
     let assetsLoaded = 0;
-    let assetsTotal = this.loading.getMaximum() / 2;
+    let assetsTotal = max / 2;
     let metadataLoaded = 0;
-    let metadataTotal = this.loading.getMaximum() / 2;
-    this.loading.setStateOnce("init");
+    let metadataTotal = max / 2;
+
+    const updateProgress = () => {
+      loaded.set(assetsLoaded + metadataLoaded);
+    };
+
+    resetLoading();
 
     const handleLoading = (state) => {
       if (state === "loading") {
-        this.loading.setStateOnce("loading-metadata");
+        setLoading("loading-metadata");
         // fake progress, because we can't see inside websocket data transfer rate
         if (metadataLoaded < metadataTotal) {
           metadataLoaded++;
         }
-        this.loading.setProgress(assetsLoaded + metadataLoaded);
+        updateProgress();
         // Continue
         this.worldStep();
       } else if (state === "loaded") {
         metadataLoaded = metadataTotal;
-        this.loading.setProgress(assetsLoaded + metadataLoaded);
+        updateProgress();
 
-        this.loading.setStateOnce("loading-assets");
+        setLoading("loading-assets");
 
         let waitCycle = 500; // 10 seconds max
         const progress = () => {
@@ -205,12 +215,12 @@ export default class WorldManager {
             assetsTotal = remaining;
           }
           assetsLoaded = assetsTotal - remaining;
-          this.loading.setProgress(assetsLoaded + metadataLoaded);
+          updateProgress();
 
           if (remaining === 0 || waitCycle === 0) {
-            this.loading.setProgress(assetsTotal + metadataTotal);
+            updateProgress();
             setTimeout(() => {
-              this.loading.state.set("done");
+              setLoading("done");
               // optimization: send textures to GPU
               this.world.presentation.compile();
               this.start();

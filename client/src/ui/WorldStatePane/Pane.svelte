@@ -13,6 +13,43 @@
   const dispatch = createEventDispatcher();
 </script>
 
+<pane>
+  <header>
+    <titles>
+      {#if title}
+        <title1>{title}</title1>
+      {/if}
+      {#if subtitle}
+        <title2>{subtitle}</title2>
+      {/if}
+    </titles>
+
+    <controls>
+      {#if showMinimize}
+        <icon
+          class="minimize"
+          on:mousedown|preventDefault={() => {
+            minimized = !minimized;
+            dispatch("minimize", minimized);
+          }}
+        >
+          {#if minimized}
+            <IoIosArrowDown />
+          {:else}
+            <IoIosArrowUp />
+          {/if}
+        </icon>
+      {/if}
+    </controls>
+  </header>
+
+  {#if !minimized}
+    <content>
+      <slot />
+    </content>
+  {/if}
+</pane>
+
 <style>
   pane {
     min-width: var(--pane-width, 32px);
@@ -63,6 +100,7 @@
     top: 6px;
     width: 16px;
     height: 16px;
+    color: black;
   }
   content {
     display: block;
@@ -70,39 +108,3 @@
     border-top: 1px solid rgba(48, 48, 48, 1);
   }
 </style>
-
-<pane>
-  <header>
-    <titles>
-      {#if title}
-        <title1>{title}</title1>
-      {/if}
-      {#if subtitle}
-        <title2>{subtitle}</title2>
-      {/if}
-    </titles>
-
-    <controls>
-      {#if showMinimize}
-        <icon
-          class="minimize"
-          on:mousedown|preventDefault={() => {
-            minimized = !minimized;
-            dispatch('minimize', minimized);
-          }}>
-          {#if minimized}
-            <IoIosArrowDown />
-          {:else}
-            <IoIosArrowUp />
-          {/if}
-        </icon>
-      {/if}
-    </controls>
-  </header>
-
-  {#if !minimized}
-    <content>
-      <slot />
-    </content>
-  {/if}
-</pane>

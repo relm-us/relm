@@ -15,7 +15,7 @@
   import PausePlayButton from "~/ui/PausePlayButton";
   import StepFrameButton from "~/ui/StepFrameButton";
   import UploadButton from "~/ui/UploadButton";
-  import ConnectButton from "~/ui/ConnectButton";
+  import WorldStatePane from "~/ui/WorldStatePane";
   import ResetWorldButton from "~/ui/ResetWorldButton";
   import Chat from "~/ui/Chat";
 
@@ -131,7 +131,7 @@
     </overlay-center>
 
     <overlay-right>
-      <ConnectButton />
+      <WorldStatePane />
     </overlay-right>
   </overlay-content>
 </overlay>
