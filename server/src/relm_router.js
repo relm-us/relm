@@ -2,15 +2,14 @@ const express = require('express')
 const cors = require('cors')
 const createError = require('http-errors')
 const Y = require('yjs')
+const yws = require('y-websocket/bin/utils.js')
 const crypto = require('crypto')
-const config = require('./config.js')
 
+const config = require('./config.js')
 const util = require('./util.js')
 const models = require('./db/models.js')
 const middleware = require('./middleware.js')
-// const docs = require('y-websocket/bin/utils.js').docs
-const yws = require('./yws.js')
-const { persistence, findOrCreateDoc } = yws
+
 const { Invitation, Permission, Relm, Doc } = models
 const { wrapAsync, uuidv4 } = util
 
@@ -85,7 +84,7 @@ relmRouter.get(
   middleware.authenticated(),
   middleware.authorized(Permission.ACCESS),
   wrapAsync(async (req, res) => {
-    const permanentDoc = await persistence.getYDoc(req.relm.permanentDocId)
+    const permanentDoc = await yws.getYDoc(req.relm.permanentDocId)
     req.relm.permanentDocSize = Y.encodeStateAsUpdate(permanentDoc).byteLength
 
     return util.respond(res, 200, {
@@ -104,7 +103,7 @@ relmRouter.get(
   middleware.authenticated(),
   middleware.authorized(Permission.ACCESS),
   wrapAsync(async (req, res) => {
-    const permanentDoc = await persistence.getYDoc(req.relm.permanentDocId)
+    const permanentDoc = await yws.getYDoc(req.relm.permanentDocId)
     const objects = permanentDoc.getMap('objects')
     req.relm.permanentDoc = objects.toJSON()
 
@@ -125,7 +124,7 @@ relmRouter.post(
   wrapAsync(async (req, res) => {
     const relm = req.relm
 
-    const permanentDoc = await persistence.getYDoc(req.relm.permanentDocId)
+    const permanentDoc = await yws.getYDoc(req.relm.permanentDocId)
 
     const newDocName = uuidv4()
     console.log('newDocName', newDocName)

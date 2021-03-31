@@ -16,6 +16,8 @@ const SCREENSHOTS_DIR = process.env.SCREENSHOTS_DIR || ASSETS_DIR;
 const TMP_DIR = process.env.TMP_DIR || ASSETS_DIR;
 const PASSWORD_LENGTH_MINIMUM = 6;
 const PORT = process.env.PORT || 3000;
+const YGARBAGE_COLLECTION = process.env.GC !== "0";
+const YPERSISTENCE = process.env.YPERSISTENCE;
 
 const DATABASE_URL = process.env.DATABASE_URL;
 // --- OR ---
@@ -40,11 +42,13 @@ module.exports = {
   TMP_DIR,
   PASSWORD_LENGTH_MINIMUM,
   PORT,
+  YGARBAGE_COLLECTION,
+  YPERSISTENCE,
 
   DATABASE_URL,
   DATABASE_NAME,
   DATABASE_HOST,
   DATABASE_PASSWORD,
-  
+
   JWTSECRET,
 };

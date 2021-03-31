@@ -1,16 +1,16 @@
 const WSServer = require("ws").Server;
 const server = require("http").createServer();
+const yws = require('y-websocket/bin/utils.js')
+
 const app = require("./server_http");
 const util = require("./util.js");
 const models = require("./db/models.js");
-// const setupWSConnection = require('y-websocket/bin/utils.js').setupWSConnection
-const setupWSConnection = require("./yws.js").setupWSConnection;
 
 const { Player, Permission, Doc } = models;
 
 let wss = new WSServer({ noServer: true });
 
-wss.on("connection", setupWSConnection);
+wss.on("connection", yws.setupWSConnection);
 
 server.on("request", app);
 
@@ -26,7 +26,7 @@ server.on("upgrade", async (req, socket, head) => {
   const sig = params.get("s");
   let x = params.get("x");
   let y = params.get("y");
-  console.log("upgrade", { playerId, sig, x, y });
+  console.log('participant connected:', playerId);
 
   let verifiedPubKey;
   try {
