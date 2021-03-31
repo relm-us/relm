@@ -1,6 +1,6 @@
 import { World, Entity, EntityId } from "~/ecs/base";
 import { DeepDiff } from "deep-diff";
-import { readableMap, YReadableMap } from 'svelt-yjs'
+import { readableMap, YReadableMap } from "svelt-yjs";
 
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
@@ -87,7 +87,7 @@ export class WorldDoc extends EventEmitter {
     });
   }
 
-  connect(connection: ConnectOptions, onLoading?: LoadingCallback) {
+  connect(connection: ConnectOptions, setState?: LoadingCallback) {
     this.provider = new WebsocketProvider(
       connection.url,
       connection.room,
@@ -95,24 +95,17 @@ export class WorldDoc extends EventEmitter {
       { params: connection.params } as { params: any }
     );
 
-    let interval = null;
-    if (onLoading) {
-      onLoading("loading");
-      interval = setInterval(() => {
-        onLoading("loading");
-      }, 100);
-      this.provider.on("sync", () => {
-        clearInterval(interval);
-        interval = null;
-        onLoading("loaded");
-        this.emit("sync");
-      });
-    }
+    setState("loading");
+
+    this.provider.on("sync", () => {
+      setState("loaded");
+      this.emit("sync");
+    });
 
     this.provider.on("status", ({ status }: { status: YConnectionStatus }) => {
-      if (status === "error" && interval !== null) {
-        clearInterval(interval);
-        onLoading("error");
+      if (status === "error") {
+        console.warn("error connecting to y-websocket");
+        setState("error");
       }
       yConnectStatus.set(status);
     });

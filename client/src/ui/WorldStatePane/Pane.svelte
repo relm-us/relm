@@ -95,12 +95,13 @@
 
     cursor: pointer;
     pointer-events: all;
+
+    color: var(--title-color, rgba(240, 240, 240, 1));
   }
   icon.minimize {
     top: 6px;
     width: 16px;
     height: 16px;
-    color: black;
   }
   content {
     display: block;

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Button from "../Button";
   import Pane from "./Pane.svelte";
 
   import { subrelm } from "~/stores/subrelm";
@@ -7,7 +6,14 @@
   import { viewport, size, scale } from "~/stores/viewport";
   import { world } from "~/stores/world";
   import { worldState } from "~/stores/worldState";
-  import { loading, loaded, maximum } from "~/stores/loading";
+  import {
+    loaded,
+    maximum,
+    entitiesLoaded,
+    entitiesMaximum,
+    assetsLoaded,
+    assetsMaximum,
+  } from "~/stores/loading";
 
   let subtitle;
   let minimized = true;
@@ -23,15 +29,17 @@
 
   $: subtitle = getSubtitle($yConnectStatus, $subrelm);
 
-  let vw
-  $: vw = $size ? `(${$size.width},${$size.height})` : ''
+  let vw;
+  $: vw = $size ? `(${$size.width},${$size.height})` : "";
 </script>
 
 <div class:connected={$yConnectStatus === "connected"}>
   <Pane title="Status" {subtitle} showMinimize={true} bind:minimized>
     <table>
       <tr><th>world:</th><td>{$worldState}</td></tr>
-      <tr><th>loading:</th><td>{$loading} ({$loaded}/{$maximum})</td></tr>
+      <tr><th>loading:</th><td>{$loaded}/{$maximum}</td></tr>
+      <tr><th>(assets):</th><td>{$assetsLoaded}/{$assetsMaximum}</td></tr>
+      <tr><th>(entities):</th><td>{$entitiesLoaded}/{$entitiesMaximum}</td></tr>
       <tr><th>connection:</th><td>{$connection.state}</td></tr>
       <tr><th>physics:</th><td>{$world !== null}</td></tr>
       <tr><th>viewport:</th><td>{$viewport !== null} {vw})</td></tr>

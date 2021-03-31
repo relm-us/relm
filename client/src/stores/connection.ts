@@ -22,6 +22,8 @@ export type ConnectOptions = {
   state: "connected";
   url: string;
   room: string;
+  entitiesCount: number,
+  assetsCount: number,
   username?: string;
   params: {
     s: string;
@@ -76,6 +78,8 @@ export const connection: Readable<ConnectStatus> = derived(
               state: "connected",
               url: config.serverYjsUrl,
               room: relm.permanentDocId,
+              entitiesCount: relm.entitiesCount,
+              assetsCount: relm.assetsCount,
               username: user?.name,
               params,
             });

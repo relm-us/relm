@@ -1,26 +1,100 @@
-import { get, writable, Writable } from "svelte/store";
+import { get, writable, derived, Readable, Writable } from "svelte/store";
+import { worldState } from "./worldState";
+import { World } from "~/ecs/base";
+import { WorldDoc } from "~/y-integration/WorldDoc";
+import { MathUtils } from "three";
 
-type State = "init" | "loading-metadata" | "loading-assets" | "done";
-
+// Why 0.95? Allow loading state to finish even if there is a small handful of broken assets.
+const MAX_THRESHOLD = 0.95;
 /**
  * loading is a sub-state of worldState, i.e. when worldState is 'loading'
  * we have more detail here in these stores that can be used to show a progress
  * bar.
  */
 
-export const loading: Writable<State> = writable("init");
-export const loaded: Writable<number> = writable(0);
-export const maximum: Writable<number> = writable(100);
+export const entitiesMaximum: Writable<number> = writable(50);
+export const assetsMaximum: Writable<number> = writable(50);
+export const maximum: Readable<number> = derived(
+  [entitiesMaximum, assetsMaximum],
+  ([$entities, $assets], set) => {
+    const newValue = $entities + $assets;
+    set(newValue > 0 ? newValue : 1);
+  },
+  0
+);
 
-export function resetLoading() {
-  loading.set("init");
-  loaded.set(0);
-  maximum.set(100);
+export const entitiesLoaded: Writable<number> = writable(0);
+export const assetsLoaded: Writable<number> = writable(0);
+export const loaded: Readable<number> = derived(
+  [entitiesLoaded, assetsLoaded, maximum],
+  ([$entities, $assets, $maximum], set) => {
+    const newValue = $entities + $assets;
+    set(newValue <= $maximum ? newValue : $maximum);
+  },
+  0
+);
+
+function countAssetsNotLoadedYet(world: World) {
+  let count = 0;
+  world.entities.entities.forEach((e) => {
+    if (e.getByName("ImageLoader") || e.getByName("ModelLoading")) count++;
+  });
+  return count;
 }
 
-export function setLoading(newState: State) {
-  const $loading = get(loading);
-  if ($loading !== newState) {
-    loading.set(newState);
+export function resetLoading(assetsCount, entitiesCount) {
+  assetsMaximum.set(assetsCount);
+  entitiesMaximum.set(entitiesCount);
+
+  assetsLoaded.set(0);
+  entitiesLoaded.set(0);
+}
+
+function countEntities(wdoc: WorldDoc) {
+  entitiesLoaded.set(wdoc.entities.length);
+}
+
+function countAssets(wdoc: WorldDoc) {
+  const remaining = countAssetsNotLoadedYet(wdoc.world);
+  const maximum = get(assetsMaximum);
+  assetsLoaded.set(maximum - remaining);
+}
+
+export const handleLoading = (startFn, wdoc) => (
+  state: "loading" | "loaded" | "error"
+) => {
+  const intervals = [];
+  let syntheticStep = 0;
+  switch (state) {
+    case "loading":
+      intervals.push(setInterval(() => countAssets(wdoc), 100));
+      intervals.push(setInterval(() => countEntities(wdoc), 100));
+      intervals.push(
+        setInterval(() => {
+          const loaded = get(entitiesLoaded);
+          const maximum = get(entitiesMaximum);
+          const syntheticLoaded = MathUtils.clamp(
+            (maximum / 10) * syntheticStep++,
+            0,
+            maximum * 0.9
+          );
+          if (loaded < syntheticLoaded) entitiesLoaded.set(syntheticLoaded);
+        }, 500)
+      );
+      const unsub = loaded.subscribe(($loaded) => {
+        if ($loaded > get(maximum) * MAX_THRESHOLD) {
+          intervals.forEach(clearInterval);
+          startFn();
+          unsub();
+        }
+      });
+      break;
+    case "loaded":
+      entitiesLoaded.set(get(entitiesMaximum));
+      break;
+    case "error":
+      intervals.forEach(clearInterval);
+      worldState.set("error");
+      break;
   }
-}
+};
