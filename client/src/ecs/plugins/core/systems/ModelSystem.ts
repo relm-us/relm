@@ -85,37 +85,33 @@ export class ModelSystem extends System {
     const id = ++ids;
     entity.add(ModelLoading, { id });
     // console.log(`ModelSystem: loading id:${id}`)
-    let mesh;
+    let scene, clips;
     try {
-      mesh = await this.presentation.load(asset.url);
-      this.applyMeshSettings(mesh);
+      const loaded = await this.presentation.loadGltf(asset.url);
+      scene = loaded.scene;
+      clips = loaded.clips;
+      this.applyMeshSettings(scene);
     } catch (error) {
       console.error(error);
       return;
     }
     const loadingId = entity.get(ModelLoading)?.id;
-    // console.log(`ModelSystem: post-loading id:${loadingId}`)
-    // if the id was changed/removed, exit
-    if (loadingId !== id) {
-      // console.log(`ModelSystem: cancelled id:${id} (id was removed/changed)`)
-      return;
-    }
-    const object3d = entity.get(Object3D)?.value;
-    // if there is no longer an Object3D to attach the mesh to, exit
-    if (!object3d) {
-      // console.log('ModelSystem: entity no longer has Object3D, reverting')
-      entity.remove(ModelLoading);
-      return;
-    }
-    // otherwise, all good to continue
     entity.remove(ModelLoading);
-    object3d.add(mesh);
-    entity.add(ModelMesh, { value: mesh });
+
+    if (loadingId === id) {
+      const object3d = entity.get(Object3D)?.value;
+      if (object3d) {
+        object3d.add(scene);
+        entity.add(ModelMesh, { value: scene, clips });
+      }
+    } else {
+      console.log(`ModelSystem: cancelled id:${id} (id was removed/changed)`);
+    }
   }
 
-  applyMeshSettings(mesh) {
+  applyMeshSettings(scene) {
     const encoding = THREE.sRGBEncoding;
-    traverseMaterials(mesh, (material) => {
+    traverseMaterials(scene, (material) => {
       if (material.map) material.map.encoding = encoding;
       if (material.emissiveMap) material.emissiveMap.encoding = encoding;
       if (material.map || material.emissiveMap) material.needsUpdate = true;

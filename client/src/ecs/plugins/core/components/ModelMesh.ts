@@ -5,5 +5,9 @@ export class ModelMesh extends StateComponent {
     value: {
       type: RefType,
     },
+
+    clips: {
+      type: RefType,
+    },
   };
 }

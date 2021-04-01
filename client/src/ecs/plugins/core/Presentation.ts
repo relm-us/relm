@@ -25,7 +25,7 @@ import {
 import isFirefox from "@braintree/browser-detection/is-firefox";
 import isIosSafari from "@braintree/browser-detection/is-ios-safari";
 
-let loader;
+let gltfLoader;
 let textureLoader;
 let imageBitmapLoader;
 
@@ -73,7 +73,7 @@ export class Presentation {
     this.resizeObserver = new ResizeObserver(this.resize.bind(this));
     this.visibleBounds = new Box3();
     this.skipUpdate = 0;
-    if (!loader) loader = new Loader();
+    if (!gltfLoader) gltfLoader = new Loader();
 
     if (!textureLoader) textureLoader = new TextureLoader();
     this.loadTexture = this.loadTexture_TextureLoader;
@@ -112,8 +112,8 @@ export class Presentation {
     this.renderer.setAnimationLoop(fn);
   }
 
-  load(url) {
-    return loader.load(url);
+  loadGltf(url) {
+    return gltfLoader.load(url);
   }
 
   async loadTexture_TextureLoader(url: string): Promise<Texture> {
