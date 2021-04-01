@@ -1,5 +1,11 @@
 <script>
-  import { Audio, Video, AudioIcon, AudioLevelIndicator, VideoIcon } from "video-mirror";
+  import {
+    Audio,
+    Video,
+    AudioIcon,
+    AudioLevelIndicator,
+    VideoIcon,
+  } from "video-mirror";
   import { Relm } from "~/stores/Relm";
   import HtmlOculusMic from "./HtmlOculusMic.svelte";
 
@@ -100,5 +106,15 @@
 
   oculus:hover icon {
     animation: both 0.15s white;
+  }
+
+  oculus::after {
+    content: " ";
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-image: url(/shine.svg);
+    position: absolute;
+    background-size: 100%;
   }
 </style>
