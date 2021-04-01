@@ -34,10 +34,11 @@ export const loaded: Readable<number> = derived(
   0
 );
 
-function countAssetsNotLoadedYet(world: World) {
+function countAssetsLoaded(world: World) {
   let count = 0;
   world.entities.entities.forEach((e) => {
-    if (e.getByName("ImageLoader") || e.getByName("ModelLoading")) count++;
+    if (e.getByName("Model") && e.getByName("ModelMesh")) count++;
+    else if (e.getByName("Image") || e.getByName("ImageMesh")) count++;
   });
   return count;
 }
@@ -55,9 +56,8 @@ function countEntities(wdoc: WorldDoc) {
 }
 
 function countAssets(wdoc: WorldDoc) {
-  const remaining = countAssetsNotLoadedYet(wdoc.world);
-  const maximum = get(assetsMaximum);
-  assetsLoaded.set(maximum - remaining);
+  const loaded = countAssetsLoaded(wdoc.world);
+  assetsLoaded.update(($loaded) => Math.max($loaded, loaded));
 }
 
 export const handleLoading = (startFn, wdoc) => (
@@ -71,14 +71,11 @@ export const handleLoading = (startFn, wdoc) => (
       intervals.push(setInterval(() => countEntities(wdoc), 100));
       intervals.push(
         setInterval(() => {
-          const loaded = get(entitiesLoaded);
           const maximum = get(entitiesMaximum);
-          const syntheticLoaded = MathUtils.clamp(
-            (maximum / 10) * syntheticStep++,
-            0,
-            maximum * 0.9
+          const syntheticLoaded = Math.ceil(
+            MathUtils.clamp((maximum / 10) * syntheticStep++, 0, maximum * 0.9)
           );
-          if (loaded < syntheticLoaded) entitiesLoaded.set(syntheticLoaded);
+          assetsLoaded.update(($loaded) => Math.max($loaded, syntheticLoaded));
         }, 500)
       );
       const unsub = loaded.subscribe(($loaded) => {
