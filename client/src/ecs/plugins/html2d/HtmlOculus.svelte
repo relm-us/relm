@@ -8,6 +8,7 @@
   } from "video-mirror";
   import { Relm } from "~/stores/Relm";
   import HtmlOculusMic from "./HtmlOculusMic.svelte";
+  import shineImg from "./shine.svg";
 
   export let stream;
   export let isLocal;
@@ -35,10 +36,10 @@
 </script>
 
 {#if $stream}
-  <container>
+  <container style="--background-image:url({shineImg})">
     <oculus class="round" on:click={toggleVideo}>
       {#if showVideo}
-        <Video stream={$stream} mirror={isLocal} />
+        <Video stream={$stream} mirror={isLocal} class="oculus-video" />
       {:else}
         <icon><VideoIcon /></icon>
       {/if}
@@ -69,6 +70,9 @@
   :global(.oculus-audio-icon) {
     position: absolute;
     top: 0;
+  }
+  :global(.oculus-video) {
+    filter: brightness(1.2) saturate(1.1);
   }
   oculus {
     display: flex;
@@ -113,8 +117,9 @@
     display: block;
     width: 100%;
     height: 100%;
-    background-image: url(/shine.svg);
+    background-image: var(--background-image);
     position: absolute;
     background-size: 100%;
+    opacity: 0.45;
   }
 </style>
