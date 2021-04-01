@@ -28,7 +28,7 @@ function JWT_is_valid(jwt, secretkey) {
     signature.replace(/\+/g, "-").replace(/=/g, "").replace(/\//g, "_");
   var decoded;
   try {
-    decoded = JSON.parse(new Buffer(jwtPayload, "base64").toString("utf8"));
+    decoded = JSON.parse(Buffer.from(jwtPayload, "base64").toString("utf8"));
   } catch (e) {
     return { isValid: false, decoded: {} };
   }

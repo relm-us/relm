@@ -50,6 +50,8 @@ async function addLatestDocs(relm) {
   }
   if (docs.permanent) {
     relm.permanentDocId = docs.permanent.docId;
+    relm.entitiesCount = docs.permanent.entitiesCount;
+    relm.assetsCount = docs.permanent.assetsCount;
   }
 
   return relm;

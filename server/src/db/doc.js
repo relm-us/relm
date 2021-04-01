@@ -1,13 +1,16 @@
-const { db, sql } = require('./db.js')
-const { INSERT, UPDATE } = require('pg-sql-helpers')
+const { sql: pgSql } = require("pg-sql");
+const { db, sql } = require("./db.js");
+const { INSERT, UPDATE } = require("pg-sql-helpers");
 
-const { req, nullOr } = require('../util.js')
+const { req, getDefinedKeys, nullOr } = require("../util.js");
 
 const mkDoc = nullOr(
   ({
     doc_id = req`doc_id`,
     doc_type = req`doc_type`,
     relm_id = req`relm_id`,
+    entities_count = req`entities_count`,
+    assets_count = req`assets_count`,
     created_at = req`created_at`,
     updated_at = req`updated_at`,
   }) => {
@@ -15,11 +18,13 @@ const mkDoc = nullOr(
       docId: doc_id,
       docType: doc_type,
       relmId: relm_id,
+      entitiesCount: entities_count,
+      assetsCount: assets_count,
       createdAt: created_at,
       updatedAt: updated_at,
-    }
+    };
   }
-)
+);
 
 /**
  * Metadata about a yjs document. Stores the datetime it was created so we can
@@ -33,26 +38,50 @@ const Doc = (module.exports = {
    * @param {string} docType - the type of the Doc, e.g. `permanent`, or `transient`
    * @param {UUID} relmId - the UUID of the relm to which the Doc belongs
    */
-  setDoc: async ({ docId, docType = 'permanent', relmId = req`relmId` }) => {
+  setDoc: async ({ docId, docType = "permanent", relmId = req`relmId` }) => {
     const attrs = {
       relm_id: relmId,
-    }
+    };
     if (docId) {
-      attrs.doc_id = docId
+      attrs.doc_id = docId;
     }
     if (docType) {
-      attrs.doc_type = docType
+      attrs.doc_type = docType;
     }
     return mkDoc(
       await db.one(sql`
-      ${INSERT('docs', attrs)}
+      ${INSERT("docs", attrs)}
       ON CONFLICT(doc_id)
       DO UPDATE SET
         updated_at = CURRENT_TIMESTAMP,
         relm_id = ${relmId}
       RETURNING *
     `)
-    )
+    );
+  },
+
+  updateStats: async ({ docId, entitiesCount, assetsCount }) => {
+    const attrs = {
+      entities_count: entitiesCount,
+      assets_count: assetsCount,
+      updated_at: pgSql.raw("CURRENT_TIMESTAMP"),
+    };
+    if (entitiesCount !== undefined) attrs.entities_count = entitiesCount;
+    if (assetsCount !== undefined) attrs.assets_count = assetsCount;
+
+    if (getDefinedKeys(attrs).length > 0) {
+      const row = await db.oneOrNone(sql`
+        ${UPDATE("docs", attrs)}
+        WHERE doc_id = ${docId}
+        RETURNING *
+      `);
+
+      if (row !== null) {
+        return mkDoc(row);
+      } else {
+        return null;
+      }
+    }
   },
 
   getDoc: async ({ docId }) => {
@@ -62,22 +91,22 @@ const Doc = (module.exports = {
       FROM docs
       WHERE doc_id = ${docId}
     `)
-    )
+    );
   },
 
   getLatestDocs: async ({ relmId = req`relmId` }) => {
-    const docs = {}
+    const docs = {};
     const rows = await db.manyOrNone(sql`
       SELECT DISTINCT ON (doc_type) *
       FROM docs
       WHERE relm_id = ${relmId}
       ORDER BY doc_type, updated_at DESC
-    `)
+    `);
     rows.forEach((row) => {
-      const doc = mkDoc(row)
-      docs[doc.docType] = doc
-    })
-    return docs
+      const doc = mkDoc(row);
+      docs[doc.docType] = doc;
+    });
+    return docs;
   },
 
   /**
@@ -86,10 +115,10 @@ const Doc = (module.exports = {
   setUpdatedAt: async ({ docId = req`docId`, updatedAt = req`updatedAt` }) => {
     return mkDoc(
       await db.oneOrNone(sql`
-      ${UPDATE('docs', { updated_at: updatedAt })}
+      ${UPDATE("docs", { updated_at: updatedAt })}
       WHERE doc_id = ${docId}
       RETURNING *
     `)
-    )
+    );
   },
-})
+});

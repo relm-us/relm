@@ -1,8 +1,8 @@
 const fs = require("fs");
 
+const config = require("./config.js");
 const server = require("./server_ws.js");
 const db = require("./db/db.js");
-const config = require("./config.js");
 
 if (!fs.existsSync(config.ASSETS_DIR)) {
   throw Error(`Asset upload directory doesn't exist: ${config.ASSETS_DIR}`);

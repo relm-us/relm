@@ -7403,13 +7403,15 @@ pg-protocol@^1.4.0:
   resolved "https://registry.yarnpkg.com/pg-protocol/-/pg-protocol-1.4.0.tgz#43a71a92f6fe3ac559952555aa3335c8cb4908be"
   integrity sha512-El+aXWcwG/8wuFICMQjM5ZSAm6OWiJicFdNYo+VY3QP+8vI4SvLIWVe51PppTzMhikUJR+PsyIFKqfdXPz/yxA==
 
-pg-sql-helpers@canadaduane/pg-sql-helpers#release:
-  version "0.3.1"
-  resolved "https://codeload.github.com/canadaduane/pg-sql-helpers/tar.gz/8105604f28137d5dd4263e045ee57c8b083f5e70"
+pg-sql-helpers@0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/pg-sql-helpers/-/pg-sql-helpers-0.3.3.tgz#577a78b6757302047afa5b3246f61bc28e30bb2d"
+  integrity sha512-ZeBMbGqpb79JrLAGBKBzsVtV1N/sghcbpYD0xMH5OPsXnn1vv04tcxMHF1h5P/tLusdZZIliOWOts+APlwVJYg==
   dependencies:
     is "^3.2.1"
     is-plain-object "^2.0.4"
     pg-sql "^1.1.0"
+    prettier "^2.2.1"
 
 pg-sql@^1.1.0:
   version "1.1.0"
@@ -7950,6 +7952,11 @@ prepend-http@^1.0.0:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/prepend-http/-/prepend-http-1.0.4.tgz#d4f4562b0ce3696e41ac52d0e002e57a635dc6dc"
   integrity sha1-1PRWKwzjaW5BrFLQ4ALlemNdxtw=
+
+prettier@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.2.1.tgz#795a1a78dd52f073da0cd42b21f9c91381923ff5"
+  integrity sha512-PqyhM2yCjg/oKkFPtTGUojv7gnZAoG80ttl45O6x2Ug/rMJw4wcc9k6aaf2hibP7BGVCCM33gZoGjyvt9mm16Q==
 
 pretty-format@^26.0.0, pretty-format@^26.6.2:
   version "26.6.2"
@@ -10546,7 +10553,14 @@ y-protocols@^1.0.3:
   dependencies:
     lib0 "^0.2.35"
 
-y-websocket@1.3.11, y-websocket@^1.3.7:
+y-protocols@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/y-protocols/-/y-protocols-1.0.4.tgz#810978c6172474be87457c3bcd669e529c5ba3a1"
+  integrity sha512-5/Hd6DJ5Y2SlbqLIKq86BictdOS0iAcWJZCVop8MKqx0XWwA+BbMn4538n4Z0CGjFMUGnG1kGzagk3BKGz5SvQ==
+  dependencies:
+    lib0 "^0.2.35"
+
+y-websocket@^1.3.7:
   version "1.3.11"
   resolved "https://registry.yarnpkg.com/y-websocket/-/y-websocket-1.3.11.tgz#b6e1357a2f63fe8d74ab8999991f85af88ed4221"
   integrity sha512-Cvf85SE1mwFxrMRCokr4Rj16febCtfJziQWGn/F74h2W37SGPPpPNQjYZR9PFG7ryMAskoMF3ge7ZR1IEnL5CQ==
@@ -10554,6 +10568,17 @@ y-websocket@1.3.11, y-websocket@^1.3.7:
     lib0 "^0.2.35"
     lodash.debounce "^4.0.8"
     y-protocols "^1.0.3"
+  optionalDependencies:
+    ws "^6.2.1"
+    y-leveldb "^0.1.0"
+
+y-websocket@canadaduane/y-websocket#custom-callbacks:
+  version "1.3.11"
+  resolved "https://codeload.github.com/canadaduane/y-websocket/tar.gz/c94a81c1f1cce9571f4ab6b6738d4a32746d9ba2"
+  dependencies:
+    lib0 "^0.2.35"
+    lodash.debounce "^4.0.8"
+    y-protocols "^1.0.4"
   optionalDependencies:
     ws "^6.2.1"
     y-leveldb "^0.1.0"

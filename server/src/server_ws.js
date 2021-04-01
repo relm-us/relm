@@ -1,6 +1,6 @@
 const WSServer = require("ws").Server;
 const server = require("http").createServer();
-const yws = require('y-websocket/bin/utils.js')
+const yws = require("y-websocket/bin/utils.js");
 
 const app = require("./server_http");
 const util = require("./util.js");
@@ -10,7 +10,25 @@ const { Player, Permission, Doc } = models;
 
 let wss = new WSServer({ noServer: true });
 
-wss.on("connection", yws.setupWSConnection);
+wss.on("connection", (conn, req) => {
+  yws.setupWSConnection(conn, req, {
+    callbackHandler: async (update, origin, doc) => {
+      const entities = doc.getArray("entities");
+      let assetsCount = 0;
+      entities.forEach((entity) => {
+        const components = entity.get("components").toArray();
+        if (components.some((component) => component.get("name") === "Model"))
+          assetsCount++;
+      });
+      const entitiesCount = entities.length;
+      await Doc.updateStats({
+        docId: doc.name,
+        entitiesCount,
+        assetsCount,
+      });
+    },
+  });
+});
 
 server.on("request", app);
 
@@ -26,7 +44,7 @@ server.on("upgrade", async (req, socket, head) => {
   const sig = params.get("s");
   let x = params.get("x");
   let y = params.get("y");
-  console.log('participant connected:', playerId);
+  console.log("participant connected:", playerId);
 
   let verifiedPubKey;
   try {
