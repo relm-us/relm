@@ -87,6 +87,9 @@
     overflow: hidden;
     border: 2px solid #cccccc;
     border-radius: 100%;
+
+    /* Safari needs this in order to clip the video as a circle */
+    transform: translate3d(0, 0, 0);
   }
 
   icon {
