@@ -10,3 +10,11 @@ yarn build && \
 rsync -azvP -e ssh public/* \
   deploy@relm.us:/var/www/staging.relm.us/ \
   --delete
+
+cd $DIR/..
+
+rsync -azvP -e ssh server/* \
+  deploy@relm.us:~/relm-server/ \
+  --exclude node_modules \
+  --exclude data \
+  --delete
