@@ -15,7 +15,6 @@ export class ColorationSystem extends System {
   update() {
     this.queries.new.forEach((entity) => {
       this.build(entity);
-      this.setFaceMapColors(entity);
     });
     this.queries.modified.forEach((entity) => {
       this.setFaceMapColors(entity);

@@ -27,6 +27,7 @@ import FirePlugin from "~/ecs/plugins/fire";
 import FollowPlugin from "~/ecs/plugins/follow";
 import Html2dPlugin from "~/ecs/plugins/html2d";
 import LightingPlugin from "~/ecs/plugins/lighting";
+import MorphPlugin from "~/ecs/plugins/morph";
 import NormalizePlugin from "~/ecs/plugins/normalize";
 import OutlinePlugin from "~/ecs/plugins/outline";
 import PlayerControlPlugin from "~/ecs/plugins/player-control";
@@ -123,6 +124,7 @@ export function createWorld(rapier) {
       FollowPlugin,
       Html2dPlugin,
       LightingPlugin,
+      MorphPlugin,
       NormalizePlugin,
       OutlinePlugin,
       PlayerControlPlugin,

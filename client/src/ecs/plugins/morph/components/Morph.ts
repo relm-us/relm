@@ -1,17 +1,17 @@
 import { Component, JSONType } from "~/ecs/base";
 
-export class FaceMapColors extends Component {
+export class Morph extends Component {
   static props = {
-    colors: {
+    influences: {
       type: JSONType,
       default: null,
       editor: {
-        label: "Color Targets & Weights",
+        label: "Influence Weights",
       },
     },
   };
 
   static editor = {
-    label: "Face Map Colors",
+    label: "Morph Targets",
   };
 }
