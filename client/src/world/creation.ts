@@ -21,6 +21,7 @@ import WallPlugin from "~/ecs/plugins/wall";
 import ImagePlugin from "~/ecs/plugins/image";
 
 import AnimationPlugin from "~/ecs/plugins/animation";
+import ColorationPlugin from "~/ecs/plugins/coloration";
 import Css3DPlugin from "~/ecs/plugins/css3d";
 import FirePlugin from "~/ecs/plugins/fire";
 import FollowPlugin from "~/ecs/plugins/follow";
@@ -117,6 +118,7 @@ export function createWorld(rapier) {
       ImagePlugin,
       /* others */
       AnimationPlugin,
+      ColorationPlugin,
       Css3DPlugin,
       FollowPlugin,
       Html2dPlugin,

@@ -1,0 +1,1 @@
+export { ColorationSystem } from "./ColorationSystem";

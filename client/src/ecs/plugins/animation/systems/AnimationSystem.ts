@@ -1,12 +1,10 @@
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
-import { Presentation, Object3D, ModelMesh } from "~/ecs/plugins/core";
+import { ModelMesh } from "~/ecs/plugins/core";
 import { Animation, MixerRef } from "../components";
 import { AnimationMixer } from "three";
 
 export class AnimationSystem extends System {
   order = Groups.Simulation + 1;
-
-  presentation: Presentation;
 
   static queries = {
     new: [Animation, ModelMesh, Not(MixerRef)],
@@ -14,10 +12,6 @@ export class AnimationSystem extends System {
     active: [Animation, MixerRef],
     removed: [Not(Animation), MixerRef],
   };
-
-  init({ presentation }) {
-    this.presentation = presentation;
-  }
 
   update(delta) {
     const dt = 1 / (1000 / delta);
