@@ -4,8 +4,8 @@ import { World } from "~/ecs/base";
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import { MathUtils } from "three";
 
-// Why 0.95? Allow loading state to finish even if there is a small handful of broken assets.
-const MAX_THRESHOLD = 0.95;
+const MAX_THRESHOLD = 1.0;
+
 /**
  * loading is a sub-state of worldState, i.e. when worldState is 'loading'
  * we have more detail here in these stores that can be used to show a progress
@@ -52,12 +52,13 @@ export function resetLoading(assetsCount, entitiesCount) {
 }
 
 function countEntities(wdoc: WorldDoc) {
-  entitiesLoaded.set(wdoc.entities.length);
+  const count = wdoc.entities.length
+  entitiesLoaded.update(($loaded) => Math.max($loaded, count));
 }
 
 function countAssets(wdoc: WorldDoc) {
-  const loaded = countAssetsLoaded(wdoc.world);
-  assetsLoaded.update(($loaded) => Math.max($loaded, loaded));
+  const count = countAssetsLoaded(wdoc.world);
+  assetsLoaded.update(($loaded) => Math.max($loaded, count));
 }
 
 export const handleLoading = (startFn, wdoc) => (
@@ -73,13 +74,13 @@ export const handleLoading = (startFn, wdoc) => (
         setInterval(() => {
           const maximum = get(entitiesMaximum);
           const syntheticLoaded = Math.ceil(
-            MathUtils.clamp((maximum / 10) * syntheticStep++, 0, maximum * 0.9)
+            MathUtils.clamp((maximum / 20) * syntheticStep++, 0, maximum * 0.9)
           );
-          assetsLoaded.update(($loaded) => Math.max($loaded, syntheticLoaded));
+          entitiesLoaded.update(($loaded) => Math.max($loaded, syntheticLoaded));
         }, 500)
       );
       const unsub = loaded.subscribe(($loaded) => {
-        if ($loaded > get(maximum) * MAX_THRESHOLD) {
+        if ($loaded >= get(maximum) * MAX_THRESHOLD) {
           intervals.forEach(clearInterval);
           startFn();
           unsub();
