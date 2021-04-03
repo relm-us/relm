@@ -120,6 +120,7 @@ export default class WorldManager {
 
   enter(entryway: string) {
     const entryways = this.wdoc.entryways.y.toJSON();
+    console.log(`enter through ${entryway}`, entryways);
     const coords = new Vector3(0, 0, 0);
     if (entryway in entryways) {
       coords.fromArray(entryways[entryway]);
@@ -173,7 +174,10 @@ export default class WorldManager {
 
     // Connect & show loading progress
     resetLoading(connectOpts.assetsCount, connectOpts.entitiesCount);
-    this.wdoc.connect(this.connectOpts, handleLoading(this.start.bind(this), this.wdoc));
+    this.wdoc.connect(
+      this.connectOpts,
+      handleLoading(this.start.bind(this), this.wdoc)
+    );
 
     this.sendLocalStateInterval = setInterval(() => {
       const data = this.identities.me.avatar.getTransformData();

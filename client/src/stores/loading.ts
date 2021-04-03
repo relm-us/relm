@@ -52,7 +52,7 @@ export function resetLoading(assetsCount, entitiesCount) {
 }
 
 function countEntities(wdoc: WorldDoc) {
-  const count = wdoc.entities.length
+  const count = wdoc.entities.length;
   entitiesLoaded.update(($loaded) => Math.max($loaded, count));
 }
 
@@ -64,6 +64,7 @@ function countAssets(wdoc: WorldDoc) {
 export const handleLoading = (startFn, wdoc) => (
   state: "loading" | "loaded" | "error"
 ) => {
+  console.log("handleLoading", state);
   const intervals = [];
   let syntheticStep = 0;
   switch (state) {
@@ -76,7 +77,9 @@ export const handleLoading = (startFn, wdoc) => (
           const syntheticLoaded = Math.ceil(
             MathUtils.clamp((maximum / 20) * syntheticStep++, 0, maximum * 0.9)
           );
-          entitiesLoaded.update(($loaded) => Math.max($loaded, syntheticLoaded));
+          entitiesLoaded.update(($loaded) =>
+            Math.max($loaded, syntheticLoaded)
+          );
         }, 500)
       );
       const unsub = loaded.subscribe(($loaded) => {

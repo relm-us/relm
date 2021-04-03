@@ -97,10 +97,25 @@ export class WorldDoc extends EventEmitter {
 
     setState("loading");
 
-    this.provider.on("sync", () => {
-      setState("loaded");
-      this.emit("sync");
-    });
+    let interval = setInterval(() => {
+      if (this.ydoc.store.clients.size > 1) {
+        console.log(
+          "loaded",
+          this.ydoc.store.clients.size,
+          this.entities.length
+        );
+        setState("loaded");
+        this.emit("sync");
+        clearInterval(interval);
+      }
+    }, 50);
+
+    // this.provider.on("sync", (isSynced) => {
+    //   if (isSynced) {
+    //     setState("loaded");
+    //     this.emit("sync");
+    //   }
+    // });
 
     this.provider.on("status", ({ status }: { status: YConnectionStatus }) => {
       if (status === "error") {

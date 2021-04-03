@@ -60,6 +60,9 @@
       active = true;
     }
   }
+
+  // ignore warning about missing props
+  $$props;
 </script>
 
 <svelte:window on:message={onMessage} on:blur={onWindowBlur} />
