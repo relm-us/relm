@@ -2,7 +2,7 @@
   import { createEventDispatcher } from "svelte";
   import Select from "svelte-select";
 
-  import { RigidBodyRef } from "~/ecs/plugins/rapier";
+  import { RigidBodyRef } from "~/ecs/plugins/physics";
 
   import Capsule from "~/ui/Capsule";
   import Button from "~/ui/Button";

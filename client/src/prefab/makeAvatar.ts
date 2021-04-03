@@ -12,7 +12,7 @@ import {
   BallJoint,
   Collider,
   Impactable,
-} from "~/ecs/plugins/rapier";
+} from "~/ecs/plugins/physics";
 
 import { makeEntity, makeBall } from "./index";
 import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";

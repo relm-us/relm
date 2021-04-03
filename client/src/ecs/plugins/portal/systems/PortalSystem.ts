@@ -1,7 +1,7 @@
 import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
 import { Portal } from "../components";
-import { Impact, Impactable } from "~/ecs/plugins/rapier";
+import { Impact, Impactable } from "~/ecs/plugins/physics";
 import { ThrustController } from "~/ecs/plugins/player-control";
 import { Vector3 } from "three";
 import { subrelm } from "~/stores/subrelm";

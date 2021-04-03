@@ -11,7 +11,7 @@ export { Components };
 
 export default function ConfigurablePlugin(options) {
   return createPlugin({
-    name: "rapier",
+    name: "physics",
     plugins: [CorePlugin],
     systems: Object.values(Systems),
     components: Object.values(Components),

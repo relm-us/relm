@@ -1,7 +1,7 @@
 import { Vector3 } from "three";
 
 import { Transform } from "~/ecs/plugins/core";
-import { RigidBody, Collider } from "~/ecs/plugins/rapier";
+import { RigidBody, Collider } from "~/ecs/plugins/physics";
 import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
 
 import { GROUND_INTERACTION } from "~/config/colliderInteractions";

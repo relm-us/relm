@@ -2,7 +2,7 @@ import { Transform } from "~/ecs/plugins/core";
 import { Color, Vector3 } from "three";
 
 import { Shape } from "~/ecs/plugins/shape";
-import { RigidBody, Collider } from "~/ecs/plugins/rapier";
+import { RigidBody, Collider } from "~/ecs/plugins/physics";
 
 import { makeEntity } from "./makeEntity";
 import { OBJECT_INTERACTION } from "~/config/colliderInteractions";

@@ -4,7 +4,7 @@ import { get } from "svelte/store";
 
 import { keyUp, keyDown, keyLeft, keyRight, keySpace } from "~/input";
 import { ThrustController, HeadController } from "../components";
-import { RigidBodyRef } from "~/ecs/plugins/rapier/components/RigidBodyRef";
+import { RigidBodyRef } from "~/ecs/plugins/physics/components/RigidBodyRef";
 import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
 import { Vector3, Euler, Quaternion } from "three";
 import { RigidBody } from "@dimforge/rapier3d";

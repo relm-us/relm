@@ -4,7 +4,7 @@ import { get } from "svelte/store";
 
 import { HandController } from "../components";
 import { PointerPlaneRef } from "~/ecs/plugins/pointer-plane";
-import { RigidBodyRef } from "~/ecs/plugins/rapier/components/RigidBodyRef";
+import { RigidBodyRef } from "~/ecs/plugins/physics/components/RigidBodyRef";
 
 const thrust = new Vector3();
 

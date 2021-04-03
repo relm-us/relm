@@ -19,7 +19,7 @@ import { makeStageAndActivate, makeInitialCollider } from "~/prefab";
 import { Entity, World } from "~/ecs/base";
 import { Follow } from "~/ecs/plugins/follow";
 import { HeadController } from "~/ecs/plugins/player-control";
-import { Collider } from "~/ecs/plugins/rapier";
+import { Collider } from "~/ecs/plugins/physics";
 import { Transform } from "~/ecs/plugins/core";
 
 import { SelectionManager } from "./SelectionManager";

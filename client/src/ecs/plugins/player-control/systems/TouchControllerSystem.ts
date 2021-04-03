@@ -7,7 +7,7 @@ import { keyUp, keyDown, keyLeft, keyRight } from "~/input";
 import { TouchController, ThrustController } from "../components";
 import { PointerPlaneRef } from "~/ecs/plugins/pointer-plane";
 import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
-import { RigidBodyRef } from "~/ecs/plugins/rapier";
+import { RigidBodyRef } from "~/ecs/plugins/physics";
 
 const MAX_VELOCITY = 5.0;
 const thrust = new Vector3();

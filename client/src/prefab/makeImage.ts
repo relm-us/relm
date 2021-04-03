@@ -2,7 +2,7 @@ import { Transform, Asset } from "~/ecs/plugins/core";
 
 import { Vector3, Quaternion, Euler } from "three";
 
-import { RigidBody, Collider } from "~/ecs/plugins/rapier";
+import { RigidBody, Collider } from "~/ecs/plugins/physics";
 import { TransformEffects } from "~/ecs/plugins/transform-effects";
 import { Image } from "~/ecs/plugins/image";
 

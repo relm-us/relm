@@ -33,7 +33,7 @@ import OutlinePlugin from "~/ecs/plugins/outline";
 import PlayerControlPlugin from "~/ecs/plugins/player-control";
 import PointerPlanePlugin from "~/ecs/plugins/pointer-plane";
 import PortalPlugin from "~/ecs/plugins/portal";
-import RapierPlugin from "~/ecs/plugins/rapier";
+import PhysicsPlugin from "~/ecs/plugins/physics";
 import SkyboxPlugin from "~/ecs/plugins/skybox";
 import TransformEffectsPlugin from "~/ecs/plugins/transform-effects";
 
@@ -109,7 +109,7 @@ export function createWorld(rapier) {
         scene: createScene(),
         camera: createCamera(false),
       }),
-      RapierPlugin({
+      PhysicsPlugin({
         // Pass the physics engine in to the plugin
         rapier,
       }),
