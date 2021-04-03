@@ -14,12 +14,13 @@ const scale = new Vector3(1, 1, 1);
 export class PhysicsSystem extends System {
   order = Groups.Presentation + 300;
 
-  // Dynamically create the `default` query, since we don't necessarily know
-  // which Transform component to use at static compile time.
+  static queries = {
+    default: [RigidBodyRef, Transform, WorldTransform],
+  };
+
   init() {
-    this.createQueries({
-      default: [RigidBodyRef, Transform, WorldTransform],
-    });
+    // Create a regular, fixed physics time-step, regardless of rendering framerate
+    // (this as any).update = createFixedTimestep(TIMESTEP, this.fixedUpdate.bind(this));
   }
 
   // TODO: remove this if https://github.com/gohyperr/hecs/pull/22 accepted
