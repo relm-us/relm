@@ -97,6 +97,14 @@ export class Collider extends Component {
      * General Properties
      */
 
+    offset: {
+      type: Vector3Type,
+      default: new Vector3(0, 0, 0),
+      editor: {
+        label: "Offset",
+      },
+    },
+
     density: {
       type: NumberType,
       default: 0.4,

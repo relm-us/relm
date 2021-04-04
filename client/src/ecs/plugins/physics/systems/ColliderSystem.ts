@@ -8,7 +8,7 @@ import {
   ColliderVisible,
 } from "../components";
 import { Object3D, Transform, WorldTransform } from "~/ecs/plugins/core";
-import { colliderMaterial } from '~/ecs/shared/colliderMaterial'
+import { colliderMaterial } from "~/ecs/shared/colliderMaterial";
 import { ColliderDesc as RapierColliderDesc } from "@dimforge/rapier3d";
 import { getGeometry } from "~/ecs/plugins/shape/ShapeCache";
 import { get } from "svelte/store";
@@ -135,6 +135,11 @@ export class ColliderSystem extends System {
         throw new Error(`Unknown collider shape: ${spec.shape}`);
     }
 
+    colliderDesc.setTranslation(
+      spec.offset.x * scale.x,
+      spec.offset.y * scale.y,
+      spec.offset.z * scale.z
+    );
     colliderDesc.setDensity(spec.density);
     colliderDesc.setCollisionGroups(spec.interaction);
 
@@ -175,6 +180,7 @@ export class ColliderSystem extends System {
 
     const mesh = new Mesh(geometry, colliderMaterial);
     mesh.scale.multiplyScalar(0.99);
+    mesh.position.copy(collider.offset);
 
     object3d.add(mesh);
     entity.add(ColliderVisible, { value: mesh });
