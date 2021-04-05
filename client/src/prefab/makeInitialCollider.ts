@@ -2,7 +2,7 @@ import { Vector3 } from "three";
 
 import { Transform } from "~/ecs/plugins/core";
 import { RigidBody, Collider } from "~/ecs/plugins/physics";
-import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
+import { Interactive } from "~/ecs/plugins/interactive";
 
 import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 
@@ -20,5 +20,5 @@ export function makeInitialCollider(world) {
       cylinderHeight: 1,
       interaction: GROUND_INTERACTION,
     })
-    .add(InvisibleToMouse);
+    .add(Interactive, { mouse: false });
 }

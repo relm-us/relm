@@ -26,6 +26,7 @@ import Css3DPlugin from "~/ecs/plugins/css3d";
 import FirePlugin from "~/ecs/plugins/fire";
 import FollowPlugin from "~/ecs/plugins/follow";
 import Html2dPlugin from "~/ecs/plugins/html2d";
+import InteractivePlugin from "~/ecs/plugins/interactive";
 import LightingPlugin from "~/ecs/plugins/lighting";
 import MorphPlugin from "~/ecs/plugins/morph";
 import NormalizePlugin from "~/ecs/plugins/normalize";
@@ -37,10 +38,7 @@ import PhysicsPlugin from "~/ecs/plugins/physics";
 import SkyboxPlugin from "~/ecs/plugins/skybox";
 import TransformEffectsPlugin from "~/ecs/plugins/transform-effects";
 
-import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
-
 import { PerformanceStatsSystem } from "~/ecs/systems/PerformanceStatsSystem";
-import { InvisibleToMouseSystem } from "~/ecs/systems/InvisibleToMouseSystem";
 
 import { shadowMapConfig } from "~/config/constants";
 
@@ -123,6 +121,7 @@ export function createWorld(rapier) {
       Css3DPlugin,
       FollowPlugin,
       Html2dPlugin,
+      InteractivePlugin,
       LightingPlugin,
       MorphPlugin,
       NormalizePlugin,
@@ -133,8 +132,7 @@ export function createWorld(rapier) {
       SkyboxPlugin,
       TransformEffectsPlugin,
     ],
-    components: [InvisibleToMouse],
-    systems: [PerformanceStatsSystem, InvisibleToMouseSystem],
+    systems: [PerformanceStatsSystem],
   });
   return world;
 }
