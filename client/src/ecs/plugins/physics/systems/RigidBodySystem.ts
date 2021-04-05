@@ -1,5 +1,5 @@
 import { System, Groups, Not, Modified } from "~/ecs/base";
-import { WorldTransform, Transform } from "~/ecs/plugins/core";
+import { Transform } from "~/ecs/plugins/core";
 import { RigidBody, RigidBodyRef } from "../components";
 import type { RigidBodyDesc as RapierRigidBodyDesc } from "@dimforge/rapier3d";
 

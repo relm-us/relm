@@ -7,7 +7,7 @@ import { ThrustController, HeadController } from "../components";
 import { RigidBodyRef } from "~/ecs/plugins/physics/components/RigidBodyRef";
 import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
 import { Vector3, Euler, Quaternion } from "three";
-import { RigidBody } from "@dimforge/rapier3d";
+import { Animation } from "~/ecs/plugins/animation";
 
 const bodyFacing = new Vector3();
 const thrust = new Vector3();
@@ -40,7 +40,7 @@ export class ThrustControllerSystem extends System {
 
   applyThrust(directions, entity) {
     const controller = entity.get(ThrustController);
-    const bodyRef = entity.get(RigidBodyRef);
+    const rigidBody = entity.get(RigidBodyRef).value;
     const transform = entity.get(Transform);
 
     bodyFacing.copy(vOut);
@@ -54,14 +54,27 @@ export class ThrustControllerSystem extends System {
       )
       .normalize();
 
+    const anim = entity.get(Animation);
+    if (thrust.length() < 0.1) {
+      if (anim.clipName !== "breathing idle") {
+        anim.clipName = "breathing idle";
+        anim.modified();
+      }
+    } else {
+      if (anim.clipName !== "walking") {
+        anim.clipName = "walking";
+        anim.modified();
+      }
+    }
+
     const angle = signedAngleBetweenVectors(bodyFacing, thrust, vUp);
     if (angle < -Math.PI / 12 || angle > Math.PI / 12) {
       // turn toward direction
       torque.set(0, Math.sign(angle) * controller.torque, 0);
-      bodyRef.value.applyTorque(torque, true);
+      rigidBody.applyTorque(torque, true);
     }
 
-    v1.copy(bodyRef.value.linvel());
+    v1.copy(rigidBody.linvel());
     v1.y = 0;
     let velocity = v1.length();
 
@@ -69,13 +82,13 @@ export class ThrustControllerSystem extends System {
     thrust.multiplyScalar(-controller.thrust);
     v1.multiplyScalar(-1);
     v1.sub(thrust);
-    bodyRef.value.applyForce(v1, true);
+    rigidBody.applyForce(v1, true);
 
     // jump/fly
     // simple hack: y is up, so don't let thrust be more than positive max velocity
-    if (bodyRef.value.linvel().y < MAX_VELOCITY) {
+    if (rigidBody.linvel().y < MAX_VELOCITY) {
       thrust.set(0, directions.jump ? controller.thrust : 0, 0);
-      bodyRef.value.applyForce(thrust, true);
+      rigidBody.applyForce(thrust, true);
     }
   }
 }

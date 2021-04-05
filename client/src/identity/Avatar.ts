@@ -11,7 +11,7 @@ import { Html2d, Oculus, OculusRef } from "~/ecs/plugins/html2d";
 
 import { chatOpen } from "~/stores/chatOpen";
 
-const OCULUS_HEIGHT = 1.45;
+const OCULUS_HEIGHT = 2.1;
 const LAST_SEEN_TIMEOUT = 15000;
 const e1 = new Euler(0, 0, 0, "YXZ");
 
@@ -41,11 +41,6 @@ export class Avatar {
         this.syncEntity($id);
       }
     });
-  }
-
-  // TODO: more configurable avatars; for now, we cheat a bit and return the head.
-  get head() {
-    return this.entity?.getChildren()[0];
   }
 
   makeLocalAvatar() {
@@ -85,12 +80,12 @@ export class Avatar {
 
   syncSpeech(identity: IdentityData) {
     const visible = !!identity.local.message && identity.shared.speaking;
-    if (visible && !this.head.has(Html2d)) {
+    if (visible && !this.entity.has(Html2d)) {
       this.addSpeech(identity.local.message, identity.local.isLocal);
-    } else if (visible && this.head.has(Html2d)) {
+    } else if (visible && this.entity.has(Html2d)) {
       this.changeSpeech(identity.local.message);
-    } else if (!visible && this.head.has(Html2d)) {
-      this.head.remove(Html2d);
+    } else if (!visible && this.entity.has(Html2d)) {
+      this.entity.remove(Html2d);
     }
   }
 
@@ -126,11 +121,11 @@ export class Avatar {
       vanchor: 2,
       onClose,
     };
-    this.head.add(Html2d, speech);
+    this.entity.add(Html2d, speech);
   }
 
   changeSpeech(message: string) {
-    const label = this.head.get(Html2d);
+    const label = this.entity.get(Html2d);
     label.content = message;
     label.modified();
   }
@@ -179,9 +174,9 @@ export class Avatar {
     transformData[3] = e1.y;
 
     // Get angle of head
-    const transformHead = this.head.get(Transform);
-    e1.setFromQuaternion(transformHead.rotation);
-    transformData[4] = e1.y;
+    // const transformHead = this.entity.get(Transform);
+    // e1.setFromQuaternion(transformHead.rotation);
+    transformData[4] = 0;
 
     return transformData;
   }
@@ -198,10 +193,10 @@ export class Avatar {
     transform.rotation.setFromEuler(e1);
 
     // Set angle of head
-    const transformHead = this.head.get(Transform);
-    e1.setFromQuaternion(transform.rotation);
-    e1.y = headTheta;
-    transformHead.rotation.setFromEuler(e1);
+    // const transformHead = this.head.get(Transform);
+    // e1.setFromQuaternion(transform.rotation);
+    // e1.y = headTheta;
+    // transformHead.rotation.setFromEuler(e1);
   }
 }
 

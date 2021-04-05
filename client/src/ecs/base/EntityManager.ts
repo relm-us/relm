@@ -22,10 +22,10 @@ export class EntityManager {
     return this.entities.get(id);
   }
 
-  getByComponentName(componentName) {
+  getAllByComponent(component) {
     const entities = [];
     this.entities.forEach((entity, _id) => {
-      if (entity.hasByName(componentName)) {
+      if (entity.has(component)) {
         entities.push(entity);
       }
     });

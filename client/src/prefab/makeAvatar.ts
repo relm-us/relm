@@ -2,26 +2,18 @@ import { Vector3 } from "three";
 
 import { Asset, Transform } from "~/ecs/plugins/core";
 import { Model } from "~/ecs/plugins/core";
-
-// Components from ECS plugins (organized alphabetically by plugin name)
-import { Renderable, CssPlane } from "~/ecs/plugins/css3d";
 import { NormalizeMesh } from "~/ecs/plugins/normalize";
 import { PointerPlane } from "~/ecs/plugins/pointer-plane";
-import {
-  RigidBody,
-  BallJoint,
-  Collider,
-  Impactable,
-} from "~/ecs/plugins/physics";
+import { RigidBody, Collider, Impactable } from "~/ecs/plugins/physics";
+import { Interactive } from "~/ecs/plugins/interactive";
+import { Animation } from "~/ecs/plugins/animation";
+import { FaceMapColors } from "~/ecs/plugins/coloration";
 
-import { makeEntity, makeBall } from "./index";
-import { InvisibleToMouse } from "~/ecs/components/InvisibleToMouse";
-
-import { AVATAR_INTERACTION } from "~/config/colliderInteractions";
+import { makeEntity } from "./index";
 
 export function makeAvatar(
   world,
-  { x = 0, y = 0.75, z = 0, kinematic = false } = {},
+  { x = 0, y = 0, z = 0, kinematic = false } = {},
   id?
 ) {
   // Create the avatar's torso, which we connect everything else to
@@ -30,86 +22,51 @@ export function makeAvatar(
     .add(Impactable)
     .add(Transform, {
       position: new Vector3(x, y, z),
+      scale: new Vector3(0.25, 0.25, 0.25),
     })
     .add(Model, {
-      asset: new Asset("/avatar.glb"),
+      asset: new Asset("/humanoid.glb"),
     })
     .add(NormalizeMesh)
+    .add(Animation, {
+      clipName: "breathing idle",
+    })
+    .add(FaceMapColors, {
+      colors: {
+        shoes: ["#ffffff", 0.9],
+        skin: ["#ffcd94", 0.9],
+        hair: ["#aa8833", 0.9],
+        arms: ["#ffcd94", 0.9],
+        cuffs: ["#ffcd94", 0.9],
+        beard: ["#ffcd94", 0.9],
+        belt: ["#ffffff", 0.9],
+        pelvis: ["#a0a0ff", 0.9],
+        shorts: ["#a0a0ff", 0.9],
+        capris: ["#a0a0ff", 0.9],
+        socks: ["#a0a0ff", 0.9],
+        collar: ["#ffffff", 0.9],
+        top: ["#ffffff", 0.9],
+      },
+    })
     .add(RigidBody, {
       kind: kinematic ? "KINEMATIC" : "DYNAMIC",
-      linearDamping: 0.1,
-      angularDamping: 12.5,
-      mass: 0.5,
+      linearDamping: 20,
+      angularDamping: 25,
+      mass: 0.0,
     })
     .add(Collider, {
       shape: "CAPSULE",
-      capsuleHeight: 0.8,
-      capsuleRadius: 0.36,
-      interaction: AVATAR_INTERACTION,
+      // capsuleHeight: 0.8,
+      // capsuleRadius: 0.36,
+      capsuleHeight: 5.5,
+      capsuleRadius: 1,
+      offset: new Vector3(0, 3.5, 0),
+      // interaction: AVATAR_INTERACTION,
     })
-    .add(InvisibleToMouse);
-
-  const head = makeEntity(world, "Head")
-    .add(PointerPlane)
-    .add(Transform, {
-      position: new Vector3(0, 0.85, 0),
-      scale: new Vector3(0.6, 0.6, 0.6),
-    })
-    .add(Model, {
-      asset: new Asset("/head.glb"),
-    })
-    .add(NormalizeMesh)
-    .add(InvisibleToMouse);
-  head.setParent(avatar);
-
-  const face = makeEntity(world, "Face")
-    .add(Transform, {
-      position: new Vector3(0, 0, 0.4),
-    })
-    .add(Renderable, {
-      kind: "AVATAR_HEAD",
-      width: 70,
-      height: 70,
-      scale: 0.7 / 70,
-    })
-    .add(CssPlane, {
-      kind: "CIRCLE",
-      circleRadius: 0.35,
-    });
-  face.setParent(head);
-
-  // Left Hand (from avatar's point of view)
-  const leftHand = makeBall(world, {
-    ...{ x: x + 0.6, y: y + 0.0, z: z + 0.1 },
-    r: 0.12,
-    density: 0.2,
-    color: "#59a4d8",
-    name: "LeftHand",
-    linearDamping: 4,
-  })
-    .add(BallJoint, {
-      entity: avatar.id,
-      position: new Vector3(0.6, 0.5, 0.1),
-    })
-    .add(InvisibleToMouse);
-
-  // Right Hand (from avatar's point of view)
-  const rightHand = makeBall(world, {
-    ...{ x: x - 0.6, y: y + 0, z: z + 0.1 },
-    r: 0.12,
-    density: 0.2,
-    color: "#59a4d8",
-    name: "RightHand",
-    linearDamping: 4,
-  })
-    .add(BallJoint, {
-      entity: avatar.id,
-      position: new Vector3(-0.6, 0.5, 0.1),
-    })
-    .add(InvisibleToMouse);
+    .add(Interactive, { mouse: false });
 
   // Move these things as a unit on portal
-  avatar.subgroup = [leftHand, rightHand];
+  avatar.subgroup = [];
 
-  return { avatar, head, face, leftHand, rightHand };
+  return { avatar };
 }

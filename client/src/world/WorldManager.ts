@@ -6,6 +6,7 @@ import { WorldDoc } from "~/y-integration/WorldDoc";
 import { globalEvents } from "~/events";
 import { exportRelm, importRelm } from "./Export";
 
+import { mode } from "~/stores/mode";
 import { deltaTime, fpsTime } from "~/stores/stats";
 import { worldState, WorldState } from "~/stores/worldState";
 import { playState } from "~/stores/playState";
@@ -16,11 +17,13 @@ import { entryway } from "~/stores/subrelm";
 import { resetLoading, handleLoading } from "~/stores/loading";
 
 import { makeStageAndActivate, makeInitialCollider } from "~/prefab";
+
 import { Entity, World } from "~/ecs/base";
+import { Transform } from "~/ecs/plugins/core";
 import { Follow } from "~/ecs/plugins/follow";
 import { HeadController } from "~/ecs/plugins/player-control";
-import { Collider } from "~/ecs/plugins/physics";
-import { Transform } from "~/ecs/plugins/core";
+import { Collider, ColliderVisible } from "~/ecs/plugins/physics";
+import { Interactive } from "~/ecs/plugins/interactive";
 import { Translucent } from "~/ecs/plugins/translucent";
 
 import { SelectionManager } from "./SelectionManager";
@@ -87,6 +90,21 @@ export default class WorldManager {
       light.castShadow = $enabled;
     });
 
+    // Make colliders visible in build mode
+    mode.subscribe(($mode) => {
+      const entities = this.world.entities.getAllByComponent(Collider);
+      for (const entity of entities) {
+        const interactive = entity.get(Interactive);
+        if (interactive && interactive.mouse === false) continue;
+
+        if ($mode == "play") {
+          entity.remove(ColliderVisible);
+        } else if ($mode === "build") {
+          entity.add(ColliderVisible);
+        }
+      }
+    });
+
     playState.subscribe(($state) => {
       switch ($state) {
         case "playing":
@@ -110,13 +128,13 @@ export default class WorldManager {
       follow.offset.z = distance;
     });
 
-    globalEvents.on("mouseActivity", () => {
-      if (this.avatar) {
-        const head = this.avatar.getChildren()[0];
-        const controller = head.get(HeadController);
-        if (controller) controller.enabled = true;
-      }
-    });
+    // globalEvents.on("mouseActivity", () => {
+    //   if (this.avatar) {
+    //     const head = this.avatar.getChildren()[0];
+    //     const controller = head.get(HeadController);
+    //     if (controller) controller.enabled = true;
+    //   }
+    // });
   }
 
   enter(entryway: string) {
@@ -254,7 +272,7 @@ export default class WorldManager {
 
       // prettier-ignore
       (collider as any).interaction =
-        enabled ? AVATAR_INTERACTION: // interact with normal things
+        enabled ? AVATAR_INTERACTION : // interact with normal things
                   AVATAR_BUILDER_INTERACTION ; // interact only with ground
 
       collider.modified();

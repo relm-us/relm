@@ -35,7 +35,7 @@ export class RigidBody extends Component {
 
     mass: {
       type: NumberType,
-      default: 0,
+      default: 1,
       editor: {
         label: "Mass",
         requires: [{ prop: "kind", value: "DYNAMIC" }],

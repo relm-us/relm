@@ -27,7 +27,7 @@
     const imageUrl = assetUrl(result.types.webp);
 
     // Delete any previous Skybox object
-    const entities = $Relm.world.entities.getByComponentName("Skybox");
+    const entities = $Relm.world.entities.getAllByComponent(Skybox);
     for (let entity of entities) {
       $Relm.wdoc.deleteById(entity.id);
     }
