@@ -6,14 +6,6 @@ import { Mesh, Group, DoubleSide, MeshLambertMaterial } from "three";
 import { Object3D } from "~/ecs/plugins/core";
 import { Outline, OutlineApplied } from "../components";
 
-function dashes(n) {
-  return Array.apply(null, { length: n })
-    .map(function () {
-      return "=";
-    })
-    .join("");
-}
-
 export class OutlineSystem extends System {
   order = Groups.Initialization + 50;
 
