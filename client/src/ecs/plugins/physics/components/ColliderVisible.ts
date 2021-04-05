@@ -1,9 +1,3 @@
-import { StateComponent, RefType } from "~/ecs/base";
+import { LocalComponent } from "~/ecs/base";
 
-export class ColliderVisible extends StateComponent {
-  static props = {
-    value: {
-      type: RefType,
-    },
-  };
-}
+export class ColliderVisible extends LocalComponent {}
