@@ -90,7 +90,7 @@ export class ModelSystem extends System {
       const loaded = await this.presentation.loadGltf(asset.url);
       scene = loaded.scene;
       clips = loaded.clips;
-      this.applyMeshSettings(scene);
+      this.applyMaterialSettings(scene);
     } catch (error) {
       console.error(error);
       return;
@@ -109,7 +109,7 @@ export class ModelSystem extends System {
     }
   }
 
-  applyMeshSettings(scene) {
+  applyMaterialSettings(scene) {
     const encoding = THREE.sRGBEncoding;
     traverseMaterials(scene, (material) => {
       if (material.map) material.map.encoding = encoding;
