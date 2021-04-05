@@ -37,6 +37,7 @@ import PortalPlugin from "~/ecs/plugins/portal";
 import PhysicsPlugin from "~/ecs/plugins/physics";
 import SkyboxPlugin from "~/ecs/plugins/skybox";
 import TransformEffectsPlugin from "~/ecs/plugins/transform-effects";
+import TranslucentPlugin from "~/ecs/plugins/translucent";
 
 import { PerformanceStatsSystem } from "~/ecs/systems/PerformanceStatsSystem";
 
@@ -131,6 +132,7 @@ export function createWorld(rapier) {
       PortalPlugin,
       SkyboxPlugin,
       TransformEffectsPlugin,
+      TranslucentPlugin,
     ],
     systems: [PerformanceStatsSystem],
   });

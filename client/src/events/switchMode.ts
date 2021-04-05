@@ -15,11 +15,11 @@ export function onSwitchMode(switchTo) {
     mode.set("play");
     $Relm.selection.clear();
     $Relm.enableAvatarPhysics(true);
-    $Relm.ghost(false);
+    $Relm.enableAvatarTranslucency(false);
   } else if (switchTo === "build") {
     mode.set("build");
     $Relm.enableAvatarPhysics(false);
-    $Relm.ghost(true);
+    $Relm.enableAvatarTranslucency(true);
   } else {
     throw new Error(`Unknown mode to switch to: ${switchTo}`);
   }

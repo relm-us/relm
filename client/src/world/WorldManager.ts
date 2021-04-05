@@ -21,6 +21,7 @@ import { Follow } from "~/ecs/plugins/follow";
 import { HeadController } from "~/ecs/plugins/player-control";
 import { Collider } from "~/ecs/plugins/physics";
 import { Transform } from "~/ecs/plugins/core";
+import { Translucent } from "~/ecs/plugins/translucent";
 
 import { SelectionManager } from "./SelectionManager";
 import { IdentityManager } from "~/identity/IdentityManager";
@@ -260,29 +261,11 @@ export default class WorldManager {
     });
   }
 
-  // Make the avatar translucent or opaque
-  ghost(enabled = true, opacity = 0.5) {
-    const entities = [this.avatar, ...this.avatar.subgroup];
-
-    for (const entity of entities) {
-      const parent = entity.getByName("Object3D").value;
-
-      parent.traverse((child) => {
-        if (child.isMesh) {
-          if (enabled) {
-            child.userData.ghost = { opacity: child.material.opacity };
-          }
-
-          child.material.transparent = enabled;
-          child.material.opacity = enabled
-            ? opacity
-            : child.userData.ghost.opacity;
-
-          if (!enabled) {
-            delete child.userData.ghost;
-          }
-        }
-      });
+  enableAvatarTranslucency(enabled = true) {
+    if (enabled) {
+      this.avatar.add(Translucent, { opacity: 0.5 });
+    } else {
+      this.avatar.remove(Translucent);
     }
   }
 
