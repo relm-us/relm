@@ -880,10 +880,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@dimforge/rapier3d@0.5.1":
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/@dimforge/rapier3d/-/rapier3d-0.5.1.tgz#de67c2588f1d6171890153778b777e96da724004"
-  integrity sha512-HOM0BOlE0REE0iHKU0rcI8e0sMYQrR1dp8n2NHSsSQ+UePApaVGmTulQqgboR0TByZVRcMt9pmfsh8L9dt8fwA==
+"@dimforge/rapier3d@0.5.3":
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/@dimforge/rapier3d/-/rapier3d-0.5.3.tgz#443c5c457cb71ea301fe9d9e591b10bebc122084"
+  integrity sha512-QyL88DsGGS1PorCbuXiG1GAvdVzKeVqrKefOkivyoDaKDtMS80GDIu7a99PA+MTzHC5GNq0p/CAn9s5Pp/EGBA==
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"

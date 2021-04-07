@@ -155,6 +155,8 @@ module.exports = {
      * class names. See https://github.com/gohyperr/hecs/issues/31
      */
     concatenateModules: false,
+    // checkWasmTypes: false,
+    // mangleWasmImports: false,
   },
   devtool: prod && !sourceMapsInProduction ? false : "source-map",
 };
