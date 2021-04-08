@@ -31,6 +31,7 @@ import LightingPlugin from "~/ecs/plugins/lighting";
 import MorphPlugin from "~/ecs/plugins/morph";
 import NormalizePlugin from "~/ecs/plugins/normalize";
 import OutlinePlugin from "~/ecs/plugins/outline";
+import ParticlesPlugin from "~/ecs/plugins/particles";
 import PlayerControlPlugin from "~/ecs/plugins/player-control";
 import PointerPlanePlugin from "~/ecs/plugins/pointer-plane";
 import PortalPlugin from "~/ecs/plugins/portal";
@@ -127,6 +128,7 @@ export function createWorld(rapier) {
       MorphPlugin,
       NormalizePlugin,
       OutlinePlugin,
+      ParticlesPlugin,
       PlayerControlPlugin,
       PointerPlanePlugin,
       PortalPlugin,
