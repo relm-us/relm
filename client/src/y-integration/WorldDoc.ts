@@ -87,35 +87,28 @@ export class WorldDoc extends EventEmitter {
     });
   }
 
-  connect(connection: ConnectOptions, setState?: LoadingCallback) {
+  connect(connectOpts: ConnectOptions, setState?: LoadingCallback) {
     this.provider = new WebsocketProvider(
-      connection.url,
-      connection.room,
+      connectOpts.url,
+      connectOpts.room,
       this.ydoc,
-      { params: connection.params } as { params: any }
+      { params: connectOpts.params } as { params: any }
     );
 
     setState("loading");
 
-    let interval = setInterval(() => {
-      if (this.ydoc.store.clients.size > 1) {
-        console.log(
-          "loaded",
-          this.ydoc.store.clients.size,
-          this.entities.length
-        );
-        setState("loaded");
-        this.emit("sync");
-        clearInterval(interval);
-      }
-    }, 50);
-
-    // this.provider.on("sync", (isSynced) => {
-    //   if (isSynced) {
-    //     setState("loaded");
-    //     this.emit("sync");
-    //   }
-    // });
+    if (connectOpts.entitiesCount === 0) {
+      setState("loaded");
+      this.emit("sync");
+    } else {
+      let interval = setInterval(() => {
+        if (this.ydoc.store.clients.size > 1) {
+          setState("loaded");
+          this.emit("sync");
+          clearInterval(interval);
+        }
+      }, 50);
+    }
 
     this.provider.on("status", ({ status }: { status: YConnectionStatus }) => {
       if (status === "error") {
