@@ -4,7 +4,7 @@
  * @param {Set} setA 
  * @param {Set} setB 
  */
-function union(setA, setB) {
+export function union(setA, setB) {
   let _union = new Set(setA)
   for (let elem of setB) {
       _union.add(elem)
@@ -18,7 +18,7 @@ function union(setA, setB) {
  * @param {Set} setA 
  * @param {Set} setB 
  */
-function difference(setA, setB) {
+export function difference(setA, setB) {
   let _difference = new Set(setA)
   for (let elem of setB) {
       _difference.delete(elem)
@@ -32,7 +32,7 @@ function difference(setA, setB) {
  * @param {Set} setA 
  * @param {Set} setB 
  */
-function intersection(setA, setB) {
+export function intersection(setA, setB) {
   let _intersection = new Set()
   for (let elem of setB) {
       if (setA.has(elem)) {
@@ -40,10 +40,4 @@ function intersection(setA, setB) {
       }
   }
   return _intersection
-}
-
-module.exports = {
-  union,
-  difference,
-  intersection,
 }

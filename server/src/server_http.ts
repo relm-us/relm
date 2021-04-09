@@ -1,21 +1,27 @@
-const path = require("path");
-const fs = require("fs");
-const express = require("express");
-const bodyParser = require("body-parser");
-const fileupload = require("express-fileupload");
-const cors = require("cors");
-const sharp = require("sharp");
+import path from "path";
+import fs from "fs";
+import express from "express";
+import bodyParser from "body-parser";
+import fileupload from "express-fileupload";
+import cors from "cors";
+import sharp from "sharp";
+import crypto from "crypto";
+
+import * as conversion from "./conversion";
+import { respond, fail, uuidv4, wrapAsync, getRemoteIP } from "./util";
+import * as middleware from "./middleware";
+import { relmRouter } from "./relm_router";
+import { Relm, Permission } from "./db";
+
+import {
+  SCREENSHOTS_DIR,
+  TMP_DIR,
+  ASSETS_DIR,
+  MAX_FILE_EXTENSION_LENGTH,
+  MAX_FILE_SIZE,
+} from "./config";
+
 const capture = require("capture-website");
-const crypto = require("crypto");
-
-const conversion = require("./conversion.js");
-const util = require("./util");
-const config = require("./config");
-const middleware = require("./middleware");
-const relmRouter = require("./relm_router");
-const { Relm, Permission } = require("./db");
-
-const { wrapAsync, getRemoteIP } = util;
 
 export const app = express();
 
@@ -37,7 +43,7 @@ app.post(
   middleware.authenticated(),
   middleware.acceptToken(),
   wrapAsync(async (req, res) => {
-    util.respond(res, 200, {
+    respond(res, 200, {
       status: "success",
       action: "authenticate",
     });
@@ -50,17 +56,17 @@ app.post(
   middleware.authenticated(),
   middleware.authorized("admin"),
   wrapAsync(async (req, res) => {
-    const permits = [
-      Permission.ADMIN,
-      Permission.ACCESS,
-      Permission.INVITE,
-      Permission.EDIT,
+    const permits: Array<Permission.Permission> = [
+      "admin",
+      "access",
+      "invite",
+      "edit",
     ];
     await Permission.setPermissions({
       playerId: req.body.playerId,
       permits,
     });
-    util.respond(res, 200, {
+    respond(res, 200, {
       status: "success",
       action: "mkadmin",
       permits: permits,
@@ -75,7 +81,7 @@ app.get(
   middleware.authorized("admin"),
   wrapAsync(async (req, res) => {
     const relms = await Relm.getAllRelms({});
-    util.respond(res, 200, {
+    respond(res, 200, {
       status: "success",
       relms,
     });
@@ -87,7 +93,7 @@ app.get(
   cors(),
   wrapAsync(async (req, res) => {
     const relms = await Relm.getAllRelms({ isPublic: true });
-    util.respond(res, 200, {
+    respond(res, 200, {
       status: "success",
       relms,
     });
@@ -96,9 +102,12 @@ app.get(
 
 app.use("/relm/:relmName", middleware.relmName(), relmRouter);
 
-app.use(express.static(config.SCREENSHOTS_DIR)).get(
+app.use(express.static(SCREENSHOTS_DIR)).get(
   /^\/screenshot\/([\dx]+)\/(http.+)$/,
   wrapAsync(async (req, res) => {
+    if (!capture) {
+      return fail(res, "capture-website not installed on server");
+    }
     const { 0: size, 1: url } = req.params;
     const [width, height] = (size || "800x600")
       .split("x")
@@ -107,7 +116,7 @@ app.use(express.static(config.SCREENSHOTS_DIR)).get(
     const hash = crypto.createHash("md5").update(url).digest("hex");
     const filename = hash + ".jpg";
 
-    const filepath = path.resolve(path.join(config.SCREENSHOTS_DIR, filename));
+    const filepath = path.resolve(path.join(SCREENSHOTS_DIR, filename));
     if (!fs.existsSync(filepath)) {
       // Website screen capture hasn't been taken yet
       await capture.file(url, filepath, { type: "jpeg", width, height });
@@ -122,7 +131,7 @@ app.use(express.static(config.SCREENSHOTS_DIR)).get(
 // Serve uploaded files
 app.use(
   "/asset",
-  express.static(config.ASSETS_DIR, {
+  express.static(ASSETS_DIR, {
     setHeaders: (res, path, stat) => {
       res.header("Access-Control-Allow-Origin", "*");
       res.header("Access-Control-Allow-Methods", "GET");
@@ -136,8 +145,8 @@ app.use(
 app.use(
   fileupload({
     useTempFiles: true,
-    tempFileDir: config.TMP_DIR,
-  })
+    tempFileDir: TMP_DIR,
+  }) as any
 );
 
 // Upload images and 3D assets
@@ -146,13 +155,13 @@ app.post(
   cors(),
   wrapAsync(async (req, res) => {
     const asset = req.files["files[]"];
-    if (asset.size > config.MAX_FILE_SIZE) {
-      return util.fail(res, "file too large");
+    if (asset.size > MAX_FILE_SIZE) {
+      return fail(res, "file too large");
     }
 
     const extension = path.extname(asset.name).toLowerCase();
-    if (extension.length > config.MAX_FILE_EXTENSION_LENGTH) {
-      return util.fail(res, "file extension too long");
+    if (extension.length > MAX_FILE_EXTENSION_LENGTH) {
+      return fail(res, "file extension too long");
     }
 
     try {
@@ -200,7 +209,7 @@ app.post(
           });
       }
     } catch (err) {
-      return util.fail(res, err);
+      return fail(res, err);
     }
   })
 );
@@ -208,7 +217,7 @@ app.post(
 // Error handling: catch-all for 404s
 app.use((req, res) => {
   const code = 404;
-  util.respond(res, code, {
+  respond(res, code, {
     status: "error",
     code: code,
     reason: `Not found`,
@@ -219,17 +228,16 @@ app.use((req, res) => {
 // see http://expressjs.com/en/guide/error-handling.html
 // see https://thecodebarbarian.com/80-20-guide-to-express-error-handling
 app.use((error, req, res, next) => {
-  const errorId = util.uuidv4().split("-")[0];
+  const errorId = uuidv4().split("-")[0];
   const code = error.status || 400;
   console.log(
     `[${getRemoteIP(req)}] ${code} (${errorId}): ${error.message}\n${
       error.stack
     }`
   );
-  util.respond(res, code, {
+  respond(res, code, {
     status: "error",
     code: code,
     reason: `${error.message} (${errorId})`,
   });
 });
-

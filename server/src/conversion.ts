@@ -1,10 +1,13 @@
-const fs = require("fs");
-const path = require("path");
-const md5File = require("md5-file");
+import fs from "fs";
+import path from "path";
+import md5File from "md5-file";
 
-const config = require("./config");
+import { ASSETS_DIR, CONTENT_TYPE_JSON } from "./config";
 
-async function getContentAddressableName(filepath, fallbackExtension = null) {
+export async function getContentAddressableName(
+  filepath,
+  fallbackExtension = null
+) {
   const hash = await md5File(filepath);
   const fileSize = getFileSizeInBytes(filepath);
   let extension = path.extname(filepath);
@@ -20,12 +23,15 @@ async function getContentAddressableName(filepath, fallbackExtension = null) {
   return `${hash}-${fileSize}${extension}`;
 }
 
-async function moveAndRenameContentAddressable(filepath, extension = null) {
+export async function moveAndRenameContentAddressable(
+  filepath,
+  extension = null
+) {
   const contentAddressableName = await getContentAddressableName(
     filepath,
     extension
   );
-  const destination = path.join(config.ASSETS_DIR, contentAddressableName);
+  const destination = path.join(ASSETS_DIR, contentAddressableName);
 
   try {
     // Check if destination already exists. If content-addressable file exists,
@@ -46,19 +52,19 @@ async function moveAndRenameContentAddressable(filepath, extension = null) {
 
       return path.basename(destination);
     } else {
-      throw err;
+      throw accessError;
     }
   }
 }
 
-function getFileSizeInBytes(filename) {
+export function getFileSizeInBytes(filename) {
   const stats = fs.statSync(filename);
   const fileSizeInBytes = stats.size;
   return fileSizeInBytes;
 }
 
-function fileUploadSuccess(res, files = {}) {
-  res.writeHead(200, config.CONTENT_TYPE_JSON);
+export function fileUploadSuccess(res, files = {}) {
+  res.writeHead(200, CONTENT_TYPE_JSON);
   res.end(
     JSON.stringify({
       status: "success",
@@ -66,10 +72,3 @@ function fileUploadSuccess(res, files = {}) {
     })
   );
 }
-
-module.exports = {
-  getContentAddressableName,
-  moveAndRenameContentAddressable,
-  getFileSizeInBytes,
-  fileUploadSuccess,
-};

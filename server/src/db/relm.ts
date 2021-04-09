@@ -85,8 +85,8 @@ export async function getAllRelms({
   prefix,
   isPublic = true,
 }: {
-  prefix: string;
-  isPublic: boolean;
+  prefix?: string;
+  isPublic?: boolean;
 }) {
   const filter: any = {
     is_public: isPublic,

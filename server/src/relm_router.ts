@@ -12,7 +12,7 @@ import * as middleware from "./middleware";
 
 const { wrapAsync, uuidv4 } = util;
 
-const relmRouter = (module.exports = express.Router());
+export const relmRouter = express.Router();
 
 function JWT_is_valid(jwt, secretkey) {
   const jwtHeader = jwt.split(".")[0];

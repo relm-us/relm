@@ -1,5 +1,5 @@
 import { db, sql, INSERT } from "./db";
-import set from "../set";
+import * as set from "../set";
 
 export type Permission = "admin" | "access" | "invite" | "edit";
 
@@ -19,7 +19,7 @@ export async function setPermissions({
   permits = ["access"],
 }: {
   playerId: string;
-  relmId: string;
+  relmId?: string;
   permits?: Array<Permission>;
 }) {
   const attrs = {
