@@ -27,7 +27,7 @@ export class ParticlesSystem extends System {
       this.build(entity);
     });
     this.queries.active.forEach((entity) => {
-      const spec = entity.get(Particles)
+      const spec = entity.get(Particles);
       const system = entity.get(ParticlesRef).value;
 
       if (spec.follows) {
@@ -41,15 +41,32 @@ export class ParticlesSystem extends System {
     });
   }
 
+  onStart(entity: Entity) {
+    console.log("started particles", entity);
+  }
+
+  onEnd(entity: Entity) {
+    console.log("ended", entity);
+    // const system = entity.get(ParticlesRef).value;
+    // system.destroy();
+    // entity.remove(ParticlesRef);
+  }
+
   build(entity: Entity) {
     entity.add(ParticlesLoading);
 
-    Nebula.fromJSONAsync(blueFire, THREE).then((loaded) => {
-      const renderer = new SpriteRenderer(this.presentation.scene, THREE);
-      const system = loaded.addRenderer(renderer);
+    Nebula.fromJSONAsync(blueFire, THREE, { shouldAutoEmit: false }).then(
+      (loaded) => {
+        const renderer = new SpriteRenderer(this.presentation.scene, THREE);
+        const system = loaded.addRenderer(renderer);
+        system.emit({
+          onStart: () => this.onStart(entity),
+          // onEnd: () => this.onEnd(entity),
+        });
 
-      entity.remove(ParticlesLoading);
-      entity.add(ParticlesRef, { value: system });
-    });
+        entity.remove(ParticlesLoading);
+        entity.add(ParticlesRef, { value: system });
+      }
+    );
   }
 }
