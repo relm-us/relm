@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "target": "es2019",
+    "moduleResolution": "node",
+    "declaration": true,
+    "sourceMap": true,
+    "allowJs": true,
+    "outDir": "dist",
+    "rootDirs": [
+      "src",
+      "tests"
+    ]
+  }
+}

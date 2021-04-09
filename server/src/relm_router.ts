@@ -1,16 +1,15 @@
-const express = require("express");
-const cors = require("cors");
-const createError = require("http-errors");
-const Y = require("yjs");
-const yws = require("y-websocket/bin/utils.js");
-const crypto = require("crypto");
+import * as express from "express";
+import cors from "cors";
+import createError from "http-errors";
+import * as Y from "yjs";
+import * as yws from "y-websocket/bin/utils";
+import * as crypto from "crypto";
 
-const config = require("./config.js");
-const util = require("./util.js");
-const models = require("./db/models.js");
-const middleware = require("./middleware.js");
+import * as config from "./config";
+import * as util from "./util";
+import { Invitation, Permission, Relm, Doc } from "./db";
+import * as middleware from "./middleware";
 
-const { Invitation, Permission, Relm, Doc } = models;
 const { wrapAsync, uuidv4 } = util;
 
 const relmRouter = (module.exports = express.Router());
@@ -32,7 +31,7 @@ function JWT_is_valid(jwt, secretkey) {
   } catch (e) {
     return { isValid: false, decoded: {} };
   }
-  if (Math.abs(decoded.iat - new Date() / 1000) > 60) isValid = false; // chek jwt "issued at" time is less than 1 minute
+  if (Math.abs(decoded.iat - new Date().getTime() / 1000) > 60) isValid = false; // chek jwt "issued at" time is less than 1 minute
   return { isValid: isValid, decoded: decoded };
 }
 
@@ -41,7 +40,7 @@ relmRouter.post(
   "/create",
   cors(),
   middleware.authenticated(),
-  middleware.authorized(Permission.ADMIN),
+  middleware.authorized("admin"),
   wrapAsync(async (req, res) => {
     const relm = await Relm.getRelm({ relmName: req.relmName });
     if (relm !== null) {
@@ -72,13 +71,13 @@ relmRouter.delete(
   cors(),
   middleware.relmExists(),
   middleware.authenticated(),
-  middleware.authorized(Permission.ADMIN),
+  middleware.authorized("admin"),
   wrapAsync(async (req, res) => {
     await Relm.deleteRelm({ relmId: req.relm.relmId });
     return util.respond(res, 200, {
       status: "success",
       action: "delete",
-      relm,
+      relmId: req.relm.relmId,
     });
   })
 );
@@ -89,7 +88,7 @@ relmRouter.get(
   cors(),
   middleware.relmExists(),
   middleware.authenticated(),
-  middleware.authorized(Permission.ACCESS),
+  middleware.authorized("access"),
   wrapAsync(async (req, res) => {
     const permanentDoc = await yws.getYDoc(req.relm.permanentDocId);
     req.relm.permanentDocSize = Y.encodeStateAsUpdate(permanentDoc).byteLength;
@@ -108,7 +107,7 @@ relmRouter.get(
   cors(),
   middleware.relmExists(),
   middleware.authenticated(),
-  middleware.authorized(Permission.ACCESS),
+  middleware.authorized("access"),
   wrapAsync(async (req, res) => {
     const permanentDoc = await yws.getYDoc(req.relm.permanentDocId);
     const objects = permanentDoc.getMap("objects");
@@ -127,7 +126,7 @@ relmRouter.post(
   cors(),
   middleware.relmExists(),
   middleware.authenticated(),
-  middleware.authorized(Permission.EDIT),
+  middleware.authorized("edit"),
   wrapAsync(async (req, res) => {
     const relm = req.relm;
 
@@ -171,7 +170,7 @@ function relmCopyObjects(src, dest) {
 }
 
 function truncateYDoc(ydoc, newDocName) {
-  const truncatedYDoc = findOrCreateDoc(newDocName);
+  const truncatedYDoc = yws.getYDoc(newDocName);
 
   const objects = ydoc.getMap("objects");
 
@@ -188,7 +187,7 @@ relmRouter.put(
   cors(),
   middleware.relmExists(),
   middleware.authenticated(),
-  middleware.authorized(Permission.EDIT),
+  middleware.authorized("edit"),
   wrapAsync(async (req, res) => {
     const attrs = {
       relmId: req.relm.relmId,
@@ -260,10 +259,10 @@ relmRouter.post(
   middleware.authenticated(),
   middleware.authorized("invite"),
   wrapAsync(async (req, res) => {
-    const attrs = {
+    const attrs: any = {
       relmId: req.relm.relmId,
       createdBy: req.authenticatedPlayerId,
-      permits: [Permission.ACCESS],
+      permits: ["access"],
     };
 
     if (req.body) {

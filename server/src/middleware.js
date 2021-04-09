@@ -1,5 +1,5 @@
-const util = require("./util.js");
-const models = require("./db/models.js");
+const util = require("./util");
+const models = require("./db");
 const createError = require("http-errors");
 
 const { normalizeRelmName, respond, joinError } = util;

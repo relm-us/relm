@@ -1,14 +1,14 @@
-const WSServer = require("ws").Server;
-const server = require("http").createServer();
-const yws = require("y-websocket/bin/utils.js");
+import WebSocket from "ws";
+import { createServer } from "http";
+import * as yws from "y-websocket/bin/utils";
 
-const app = require("./server_http");
-const util = require("./util.js");
-const models = require("./db/models.js");
+import { app } from "./server_http";
+import { getUrlParams } from "./util";
+import { Player, Permission, Doc } from "./db";
 
-const { Player, Permission, Doc } = models;
+export const server = createServer();
 
-let wss = new WSServer({ noServer: true });
+let wss = new WebSocket.Server({ noServer: true });
 
 wss.on("connection", (conn, req) => {
   yws.setupWSConnection(conn, req, {
@@ -38,7 +38,7 @@ function getRelmDocFromRequest(req) {
 
 server.on("upgrade", async (req, socket, head) => {
   const docId = getRelmDocFromRequest(req);
-  const params = util.getUrlParams(req.url);
+  const params = getUrlParams(req.url);
 
   const playerId = params.get("id");
   const sig = params.get("s");
@@ -76,7 +76,7 @@ server.on("upgrade", async (req, socket, head) => {
         relmId: doc.relmId,
       });
 
-      const permitted = permissions.has(Permission.ACCESS);
+      const permitted = permissions.has("access");
 
       if (permitted) {
         wss.handleUpgrade(req, socket, head, (conn) => {
@@ -93,5 +93,3 @@ server.on("upgrade", async (req, socket, head) => {
     }
   }
 });
-
-module.exports = server;

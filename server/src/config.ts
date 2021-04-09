@@ -28,7 +28,7 @@ const DATABASE_PASSWORD = process.env.DATABASE_PASSWORD;
 
 const JWTSECRET = process.env.JWTSECRET;
 
-module.exports = {
+export {
   SECURITY_CONFIG,
   MAX_TOKEN_LENGTH,
   MAX_UUID_LENGTH,

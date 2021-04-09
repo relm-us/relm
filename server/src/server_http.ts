@@ -9,15 +9,15 @@ const capture = require("capture-website");
 const crypto = require("crypto");
 
 const conversion = require("./conversion.js");
-const util = require("./util.js");
-const config = require("./config.js");
-const middleware = require("./middleware.js");
-const relmRouter = require("./relm_router.js");
-const { Relm, Permission } = require("./db/models.js");
+const util = require("./util");
+const config = require("./config");
+const middleware = require("./middleware");
+const relmRouter = require("./relm_router");
+const { Relm, Permission } = require("./db");
 
 const { wrapAsync, getRemoteIP } = util;
 
-const app = express();
+export const app = express();
 
 // Automatically parse JSON body when received in REST requests
 app.use(bodyParser.json());
@@ -233,4 +233,3 @@ app.use((error, req, res, next) => {
   });
 });
 
-module.exports = app;

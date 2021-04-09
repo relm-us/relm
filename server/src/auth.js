@@ -2,8 +2,8 @@ const { Crypto } = require('@peculiar/webcrypto')
 const base64 = require('base64-arraybuffer')
 const { encode } = require('fastestsmallesttextencoderdecoder')
 
-const util = require('./util.js')
-const config = require('./config.js')
+const util = require('./util')
+const config = require('./config')
 
 const crypto = new Crypto()
 
