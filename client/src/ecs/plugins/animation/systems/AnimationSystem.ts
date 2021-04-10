@@ -50,13 +50,30 @@ export class AnimationSystem extends System {
     const mixer = entity.get(MixerRef).value;
     const { clips } = entity.get(ModelMesh);
 
-    mixer.stopAllAction();
-    mixer.uncacheRoot(mixer.getRoot());
+    if (spec.transition === 0) {
+      mixer.stopAllAction();
+      mixer.uncacheRoot(mixer.getRoot());
 
-    mixer.timeScale = spec.timeScale;
-    const clip = clips.find((c) => c.name === spec.clipName);
-    if (clip) {
-      mixer.clipAction(clip).reset().play();
+      mixer.timeScale = spec.timeScale;
+      const clip = clips.find((c) => c.name === spec.clipName);
+      if (clip) {
+        mixer.activeAction = mixer.clipAction(clip).reset().play();
+      }
+    } else {
+      mixer.previousAction = mixer.activeAction;
+      const clip = clips.find((c) => c.name === spec.clipName);
+      mixer.activeAction = mixer.clipAction(clip);
+
+      if (mixer.previousAction && mixer.previousAction !== mixer.activeAction) {
+        mixer.previousAction.fadeOut(spec.transition);
+      }
+
+      mixer.activeAction
+        .reset()
+        .setEffectiveTimeScale(1)
+        .setEffectiveWeight(1)
+        .fadeIn(spec.transition)
+        .play();
     }
   }
 

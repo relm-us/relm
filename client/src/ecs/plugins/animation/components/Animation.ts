@@ -10,6 +10,14 @@ export class Animation extends Component {
       },
     },
 
+    transition: {
+      type: NumberType,
+      default: 0.2,
+      editor: {
+        label: "Transition Time"
+      }
+    },
+
     timeScale: {
       type: NumberType,
       default: 1,
