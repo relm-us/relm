@@ -41,6 +41,8 @@
 
   onMount(() => {
     const interval = setInterval(() => {
+      if (!$Relm) return;
+
       if ($Relm.identities.isSynced !== synced)
         synced = $Relm.identities.isSynced;
 
