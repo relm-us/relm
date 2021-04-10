@@ -30,7 +30,9 @@ export class ColorationSystem extends System {
   }
 
   resetFaceMapColors(entity: Entity) {
-    const scene = entity.get(ModelMesh).value;
+    const scene = entity.get(ModelMesh)?.value;
+    if (!scene) return;
+    
     scene.traverse((node) => {
       if (node.isMesh && hasFacemaps(node)) {
         const facemapNames: Array<any> = getFacemapNames(node);

@@ -47,7 +47,9 @@ export class AnimationSystem extends System {
 
   setAnimation(entity: Entity) {
     const spec = entity.get(Animation);
-    const mixer = entity.get(MixerRef).value;
+    const mixer = entity.get(MixerRef)?.value;
+    if (!mixer) return;
+
     const { clips } = entity.get(ModelMesh);
 
     if (spec.transition === 0) {

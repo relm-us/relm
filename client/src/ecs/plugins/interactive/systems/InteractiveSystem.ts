@@ -33,7 +33,7 @@ export class InteractiveSystem extends System {
 
   remove(entity: Entity) {
     const object3d = entity.get(Object3D);
-    delete object3d.value.userData.invisibleToMouse;
+    if (object3d) delete object3d.value.userData.invisibleToMouse;
     entity.remove(InteractiveApplied);
   }
 }

@@ -29,7 +29,8 @@ export class MorphSystem extends System {
   }
 
   resetInfluences(entity: Entity) {
-    const scene = entity.get(ModelMesh).value;
+    const scene = entity.get(ModelMesh)?.value;
+    if (!scene) return;
 
     scene.traverse((node) => {
       const influences = node.morphTargetInfluences;
