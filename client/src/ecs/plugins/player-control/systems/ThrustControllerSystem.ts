@@ -9,6 +9,8 @@ import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
 import { Vector3, Euler, Quaternion } from "three";
 import { Animation } from "~/ecs/plugins/animation";
 
+import { IDLE, WALKING } from "../constants";
+
 const bodyFacing = new Vector3();
 const thrust = new Vector3();
 const torque = new Vector3();
@@ -56,13 +58,13 @@ export class ThrustControllerSystem extends System {
 
     const anim = entity.get(Animation);
     if (thrust.length() < 0.1) {
-      if (anim.clipName !== "breathing idle") {
-        anim.clipName = "breathing idle";
+      if (anim.clipName !== IDLE) {
+        anim.clipName = IDLE;
         anim.modified();
       }
     } else {
-      if (anim.clipName !== "walking") {
-        anim.clipName = "walking";
+      if (anim.clipName !== WALKING) {
+        anim.clipName = WALKING;
         anim.modified();
       }
     }

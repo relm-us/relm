@@ -11,6 +11,8 @@ import {
   PCFShadowMap,
   BasicShadowMap,
   PerspectiveCamera,
+  LinearToneMapping,
+  LinearEncoding,
 } from "three";
 
 import { World } from "~/ecs/base";
@@ -53,8 +55,11 @@ export function createRenderer() {
   });
 
   renderer.setClearColor(0x000000, 1.0);
+  renderer.toneMapping = LinearToneMapping;
+  renderer.toneMappingExposure = 1.1;
   renderer.physicallyCorrectLights = true;
-  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.enabled = false;
+  renderer.outputEncoding = LinearEncoding;
   switch (shadowMapConfig) {
     case "BASIC":
       renderer.shadowMap.type = BasicShadowMap;

@@ -10,6 +10,8 @@ import { Animation } from "~/ecs/plugins/animation";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
 
 import { makeEntity } from "./index";
+import { Morph } from "~/ecs/plugins/morph";
+import { IDLE } from "~/ecs/plugins/player-control/constants";
 
 export function makeAvatar(
   world,
@@ -17,6 +19,7 @@ export function makeAvatar(
   id?
 ) {
   // Create the avatar's torso, which we connect everything else to
+  const skin = "#ffcd94";
   const avatar = makeEntity(world, "Avatar", id)
     .add(PointerPlane)
     .add(Impactable)
@@ -25,27 +28,34 @@ export function makeAvatar(
       scale: new Vector3(0.25, 0.25, 0.25),
     })
     .add(Model, {
-      asset: new Asset("/humanoid.glb"),
+      asset: new Asset("/humanoid-001.glb"),
     })
     .add(NormalizeMesh)
     .add(Animation, {
-      clipName: "breathing idle",
+      clipName: IDLE,
+    })
+    .add(Morph, {
+      influences: {
+        "gender": 0.8,
+        "wide": 0.1,
+        "hair": 0.1,
+        "hair-02": 0,
+      },
     })
     .add(FaceMapColors, {
       colors: {
-        shoes: ["#ffffff", 0.9],
-        skin: ["#ffcd94", 0.9],
-        hair: ["#aa8833", 0.9],
-        arms: ["#ffcd94", 0.9],
-        cuffs: ["#ffcd94", 0.9],
-        beard: ["#ffcd94", 0.9],
-        belt: ["#ffffff", 0.9],
-        pelvis: ["#a0a0ff", 0.9],
-        shorts: ["#a0a0ff", 0.9],
-        capris: ["#a0a0ff", 0.9],
-        socks: ["#a0a0ff", 0.9],
-        collar: ["#ffffff", 0.9],
-        top: ["#ffffff", 0.9],
+        "hair": ["#aa8833", 0.9],
+        "beard": [skin, 0.9],
+        "skin": [skin, 0.9],
+        "top-01": ["#ffc0cb", 0.9],
+        "top-02": ["#ffc0cb", 0.9],
+        "top-03": ["#ffc0cb", 0.9],
+        "belt": ["#ffc0cb", 0.9],
+        "pants-01": ["#ffffff", 0.9],
+        "pants-02": ["#ffffff", 0.9],
+        "pants-03": ["#ffffff", 0.9],
+        "pants-04": [skin, 0.9],
+        "shoes": ["#cccccc", 0.9],
       },
     })
     .add(RigidBody, {
@@ -56,8 +66,6 @@ export function makeAvatar(
     })
     .add(Collider, {
       shape: "CAPSULE",
-      // capsuleHeight: 0.8,
-      // capsuleRadius: 0.36,
       capsuleHeight: 5.5,
       capsuleRadius: 1,
       offset: new Vector3(0, 3.5, 0),
