@@ -80,6 +80,7 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "regenerator-runtime": "^0.13.7",
+    "relm-common": "1.0.0",
     "sanitize-html": "^2.3.2",
     "serve": "^11.3.2",
     "simplex-noise": "^2.4.0",
@@ -97,7 +98,7 @@
     "yjs": "^13.5.4"
   },
   "resolutions": {
-    "@uppy/utils": "3.4.0"
+    "@uppy/utils": "3.5.0"
   },
   "browserslist": [
     "defaults"

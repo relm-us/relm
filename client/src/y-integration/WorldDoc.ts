@@ -5,18 +5,25 @@ import { readableMap, YReadableMap } from "svelt-yjs";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 
-import { findInYArray, isEntityAttribute, yIdToString } from "./utils";
-import { withArrayEdits, withMapEdits } from "./observeUtils";
+import {
+  findInYArray,
+  isEntityAttribute,
+  yIdToString,
+  withArrayEdits,
+  withMapEdits,
+  yEntityToJSON,
+  yComponentToJSON,
+  jsonToYEntity,
+} from "relm-common/yjs";
+
 import {
   YEntities,
   YEntity,
-  YComponent,
-  YIDSTR,
-  YValues,
   YComponents,
-} from "./types";
-import { yEntityToJSON, yComponentToJSON } from "./yToJson";
-import { jsonToYEntity } from "./jsonToY";
+  YComponent,
+  YValues,
+  YIDSTR,
+} from "relm-common/yjs/types";
 
 import EventEmitter from "eventemitter3";
 import { applyDiffToYEntity } from "./applyDiff";

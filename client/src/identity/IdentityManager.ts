@@ -3,7 +3,7 @@ import EventEmitter from "eventemitter3";
 import { get } from "svelte/store";
 
 import { audioRequested, videoRequested } from "video-mirror";
-import { withArrayEdits, withMapEdits } from "~/y-integration/observeUtils";
+import { withArrayEdits, withMapEdits } from "relm-common/yjs/observeUtils";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import type WorldManager from "~/world/WorldManager";

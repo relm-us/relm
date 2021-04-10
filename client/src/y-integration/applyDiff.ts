@@ -1,10 +1,17 @@
 import * as Y from "yjs";
 import { applyChange } from "deep-diff";
 import { ChangeKind, Change, Diff } from "./diffTypes";
-import { jsonToYComponent } from "./jsonToY";
-import { YEntity, YMeta, YChildren, YComponents, YValues } from "./types";
-
-import { isEntityAttribute, findInYArray } from "./utils";
+import {
+  YEntity,
+  YChildren,
+  YComponents,
+  YValues,
+} from "relm-common/yjs/types";
+import {
+  jsonToYComponent,
+  isEntityAttribute,
+  findInYArray,
+} from "relm-common/yjs";
 
 export function applyChangeToYEntity(change: Change, yentity: YEntity) {
   const key: number | string = change.path[0];

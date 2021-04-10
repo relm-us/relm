@@ -3,7 +3,8 @@
   "workspaces": {
     "packages": [
       "client",
-      "server"
+      "server",
+      "common"
     ],
     "nohoist": []
   },

@@ -1,0 +1,25 @@
+{
+  "include": [ "src/**/*" ],
+  "exclude": [ "node_modules/*", ],
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "target": "es2017",
+    "module": "es2020",
+    "importsNotUsedAsValues": "remove",
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": "./src",
+    "paths": {
+      "~*": [ ".*" ]
+    },
+    "typeRoots": [
+      "types"
+    ],
+    "types": [
+      "jest",
+      "@types/jest",
+    ]
+  }
+}

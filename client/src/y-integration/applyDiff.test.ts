@@ -1,22 +1,11 @@
 import * as Y from "yjs";
 
-import { ChangeKind, Change } from "./diffTypes";
+import { Change } from "./diffTypes";
 
-import { yComponentsToJSON } from "./yToJson";
-
-import {
-  YEntities,
-  YEntity,
-  YMeta,
-  YChildren,
-  YComponents,
-  YComponent,
-  YValues,
-  YValue,
-} from "./types";
+import { YEntities, YEntity, YComponents } from "relm-common/yjs/types";
+import { jsonToYComponents, yComponentsToJSON } from "relm-common/yjs";
 
 import { applyChangeToYEntity } from "./applyDiff";
-import { jsonToYComponent, jsonToYComponents } from "./jsonToY";
 
 describe("applyChangeToYEntity", () => {
   let ydoc: Y.Doc, yentity: YEntity;
