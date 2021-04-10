@@ -43,6 +43,10 @@ export class Avatar {
     });
   }
 
+  get head() {
+    return this.entity?.getChildren()[0];
+  }
+
   makeLocalAvatar() {
     return makeAvatarAndActivate(this.world);
   }
@@ -80,12 +84,12 @@ export class Avatar {
 
   syncSpeech(identity: IdentityData) {
     const visible = !!identity.local.message && identity.shared.speaking;
-    if (visible && !this.entity.has(Html2d)) {
+    if (visible && !this.head.has(Html2d)) {
       this.addSpeech(identity.local.message, identity.local.isLocal);
-    } else if (visible && this.entity.has(Html2d)) {
+    } else if (visible && this.head.has(Html2d)) {
       this.changeSpeech(identity.local.message);
-    } else if (!visible && this.entity.has(Html2d)) {
-      this.entity.remove(Html2d);
+    } else if (!visible && this.head.has(Html2d)) {
+      this.head.remove(Html2d);
     }
   }
 
@@ -121,11 +125,11 @@ export class Avatar {
       vanchor: 2,
       onClose,
     };
-    this.entity.add(Html2d, speech);
+    this.head.add(Html2d, speech);
   }
 
   changeSpeech(message: string) {
-    const label = this.entity.get(Html2d);
+    const label = this.head.get(Html2d);
     label.content = message;
     label.modified();
   }
@@ -141,7 +145,7 @@ export class Avatar {
       kind: "LABEL",
       content: name,
       underlineColor: color ? color : null,
-      offset: new Vector3(0, -0.75, 0),
+      offset: new Vector3(0, -0.2, 0),
       vanchor: 1,
       editable,
     };

@@ -12,6 +12,11 @@ import { FaceMapColors } from "~/ecs/plugins/coloration";
 import { makeEntity } from "./index";
 import { Morph } from "~/ecs/plugins/morph";
 import { IDLE } from "~/ecs/plugins/player-control/constants";
+import { Entity } from "~/ecs/base";
+
+import { AVATAR_INTERACTION } from "~/config/colliderInteractions";
+
+const UNSCALED_CHARACTER_HEIGHT = 7;
 
 export function makeAvatar(
   world,
@@ -20,7 +25,7 @@ export function makeAvatar(
 ) {
   // Create the avatar's torso, which we connect everything else to
   const skin = "#ffcd94";
-  const avatar = makeEntity(world, "Avatar", id)
+  const avatar: Entity = makeEntity(world, "Avatar", id)
     .add(PointerPlane)
     .add(Impactable)
     .add(Transform, {
@@ -68,13 +73,18 @@ export function makeAvatar(
       shape: "CAPSULE",
       capsuleHeight: 5.5,
       capsuleRadius: 1,
-      offset: new Vector3(0, 3.5, 0),
-      // interaction: AVATAR_INTERACTION,
+      offset: new Vector3(0, UNSCALED_CHARACTER_HEIGHT / 2, 0),
+      interaction: AVATAR_INTERACTION,
     })
     .add(Interactive, { mouse: false });
+
+  const head = makeEntity(world, "AvatarHead").add(Transform, {
+    position: new Vector3(0, UNSCALED_CHARACTER_HEIGHT, 0),
+  });
+  head.setParent(avatar);
 
   // Move these things as a unit on portal
   avatar.subgroup = [];
 
-  return { avatar };
+  return { avatar, head };
 }

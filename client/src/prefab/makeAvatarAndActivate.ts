@@ -1,19 +1,9 @@
 import { makeAvatar } from "./makeAvatar";
 
-import {
-  HandController,
-  HeadController,
-  ThrustController,
-} from "~/ecs/plugins/player-control";
-
-import { keyE, keyQ } from "~/input";
+import { ThrustController } from "~/ecs/plugins/player-control";
 
 export function makeAvatarAndActivate(world, { x = 0, y = 0.75, z = 0 } = {}) {
-  const { avatar, } = makeAvatar(world, {
-    x,
-    y,
-    z,
-  });
+  const { avatar, head } = makeAvatar(world, { x, y, z });
 
   avatar
     .add(ThrustController, {
@@ -21,6 +11,8 @@ export function makeAvatarAndActivate(world, { x = 0, y = 0.75, z = 0 } = {}) {
       torque: 5,
     })
     .activate();
+
+  head.activate();
 
   return avatar;
 }
