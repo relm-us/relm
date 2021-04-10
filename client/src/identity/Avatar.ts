@@ -12,9 +12,10 @@ import { Animation } from "~/ecs/plugins/animation";
 
 import { chatOpen } from "~/stores/chatOpen";
 
-const OCULUS_HEIGHT = 2.1;
+const OCULUS_HEIGHT = 2.4;
 const LAST_SEEN_TIMEOUT = 15000;
 const e1 = new Euler(0, 0, 0, "YXZ");
+const v1 = new Vector3();
 
 export class Avatar {
   world: World;
@@ -197,7 +198,9 @@ export class Avatar {
     const transform = this.entity.get(Transform);
 
     // Set position of body
-    transform.position.set(x, y, z);
+    // transform.position.set(x, y, z);
+    v1.set(x, y, z);
+    (transform.position as Vector3).lerp(v1, 0.3333);
 
     // Set angle of body
     e1.setFromQuaternion(transform.rotation);
