@@ -28,12 +28,16 @@ export class Loader {
       promise = this.cache[path] = new Promise(async (resolve, reject) => {
         const response = await fetch(path);
         const buffer = await response.arrayBuffer();
-        this.loader.parse(
-          buffer,
-          null,
-          (gltf) => resolve({ scene: gltf.scene, clips: gltf.animations }),
-          (error) => reject(error)
-        );
+        try {
+          this.loader.parse(
+            buffer,
+            null,
+            (gltf) => resolve({ scene: gltf.scene, clips: gltf.animations }),
+            (error) => reject(error)
+          );
+        } catch (err) {
+          reject(err);
+        }
       });
     }
     const loaded = await promise;
