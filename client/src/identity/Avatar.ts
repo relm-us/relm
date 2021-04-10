@@ -1,13 +1,14 @@
 import { Readable } from "svelte/store";
-import { Vector3, Euler } from "three";
+import { Vector3, Euler, AnimationClip } from "three";
 
 import { IdentityData } from "./types";
 import { makeAvatar } from "~/prefab/makeAvatar";
 import { makeAvatarAndActivate } from "~/prefab/makeAvatarAndActivate";
 
 import { World, Entity } from "~/ecs/base";
-import { Presentation, Transform } from "~/ecs/plugins/core";
+import { Presentation, Transform, ModelMesh } from "~/ecs/plugins/core";
 import { Html2d, Oculus, OculusRef } from "~/ecs/plugins/html2d";
+import { Animation } from "~/ecs/plugins/animation";
 
 import { chatOpen } from "~/stores/chatOpen";
 
@@ -182,10 +183,17 @@ export class Avatar {
     // e1.setFromQuaternion(transformHead.rotation);
     transformData[4] = 0;
 
+    const clips: AnimationClip[] = this.entity.get(ModelMesh)?.clips;
+    const clipName: string = this.entity.get(Animation)?.clipName;
+    if (clips && clipName) {
+      const index = clips.findIndex((c) => c.name === clipName);
+      transformData[5] = index;
+    }
+
     return transformData;
   }
 
-  setTransformData([x, y, z, theta, headTheta]) {
+  setTransformData([x, y, z, theta, headTheta, clipIndex]) {
     const transform = this.entity.get(Transform);
 
     // Set position of body
@@ -201,6 +209,16 @@ export class Avatar {
     // e1.setFromQuaternion(transform.rotation);
     // e1.y = headTheta;
     // transformHead.rotation.setFromEuler(e1);
+
+    const clips = this.entity.get(ModelMesh)?.clips;
+    const animation = this.entity.get(Animation);
+    if (clips && clipIndex >= 0 && clipIndex < clips.length) {
+      const newClipName = clips[clipIndex].name;
+      if (animation.clipName !== newClipName) {
+        animation.clipName = newClipName;
+        animation.modified();
+      }
+    }
   }
 }
 
