@@ -21,6 +21,8 @@ import { Identity } from "./Identity";
 import { ChatMessage } from "~/world/ChatManager";
 import { localstorageSharedFields } from "./localstorageSharedFields";
 
+const ACTIVE_TIMEOUT = 30000;
+
 export class IdentityManager extends EventEmitter {
   relm: WorldManager;
   wdoc: WorldDoc;
@@ -187,6 +189,19 @@ export class IdentityManager extends EventEmitter {
     }
 
     fn(transform);
+  }
+
+  get active() {
+    let count = 0;
+    for (const identity of this.identities.values()) {
+      const lastSeen = get(identity.localFields).lastSeen;
+      if (lastSeen && lastSeen > performance.now() - ACTIVE_TIMEOUT) count++;
+    }
+    return count;
+  }
+
+  get total() {
+    return this.identities.size;
   }
 
   observeFields() {

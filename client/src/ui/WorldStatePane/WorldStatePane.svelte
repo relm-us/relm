@@ -37,7 +37,8 @@
   $: vw = $size ? `(${$size.width},${$size.height})` : "";
 
   let synced = false;
-  let identities = 0;
+  let idActive = 0;
+  let idTotal = 0;
 
   onMount(() => {
     const interval = setInterval(() => {
@@ -46,9 +47,11 @@
       if ($Relm.identities.isSynced !== synced)
         synced = $Relm.identities.isSynced;
 
-      if ($Relm.identities.identities.size !== identities)
-        identities = $Relm.identities.identities.size;
-    }, 100);
+      if ($Relm.identities.active !== idActive)
+        idActive = $Relm.identities.active;
+
+      if ($Relm.identities.total !== idTotal) idTotal = $Relm.identities.total;
+    }, 1000);
     return () => clearInterval(interval);
   });
 </script>
@@ -81,8 +84,10 @@
       </tr>
       <tr><th>physics:</th><td>{$world !== null}</td></tr>
       <tr><th>viewport:</th><td>{$viewport !== null} {vw}</td></tr>
-      <tr><th>identities:</th><td>{identities} {synced ? "synced" : ""}</td></tr
-      >
+      <tr>
+        <th>identities:</th>
+        <td>{idActive} / {idTotal} ({synced ? "sync" : ""})</td>
+      </tr>
     </table>
   </Pane>
 </container>
