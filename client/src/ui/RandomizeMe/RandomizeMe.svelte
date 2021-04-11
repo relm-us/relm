@@ -5,14 +5,20 @@
   import { randomMorphInfluences } from "~/identity/morphs";
   import { Relm } from "~/stores/Relm";
 
+  const BEARD_POPULARITY = 0.7;
+
   const onClick = () => {
     const avatar = $Relm.identities.me;
-    avatar.sharedFields.update((fields) =>
-      Object.assign(fields, {
-        charColors: getCharacterFacemaps(),
-        charMorphs: randomMorphInfluences(),
-      })
-    );
+    avatar.sharedFields.update((fields) => {
+      const hasHair = true; // TODO: Math.random() >= 0.1; // most people have hair
+      const charMorphs = randomMorphInfluences();
+      if (!hasHair) Object.assign(charMorphs, { "hair": 0, "hair-02": 0 });
+      const charColors = getCharacterFacemaps({
+        beard: charMorphs.gender < 0.5 && Math.random() >= BEARD_POPULARITY,
+        hair: hasHair,
+      });
+      return Object.assign(fields, { charColors, charMorphs });
+    });
   };
 </script>
 

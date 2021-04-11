@@ -34,8 +34,8 @@ export function getCharacterFacemaps({
   beard = false,
   shoes = true,
   belt = false,
-  top = pickOne([1, 2, 3]),
-  bottom = pickOne([1, 2, 3, 4]),
+  top = pickOne([1, 1, 2, 3, 3]),
+  bottom = pickOne([1, 2, 3, 3, 4, 4, 4]),
 }: {
   skintone?: string;
   hairColor?: string;
