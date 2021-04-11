@@ -25,6 +25,7 @@ export class ColorationSystem extends System {
   }
 
   build(entity: Entity) {
+    this.cloneGeometry(entity);
     this.setFaceMapColors(entity);
     entity.add(ColorApplied);
   }
@@ -32,7 +33,7 @@ export class ColorationSystem extends System {
   resetFaceMapColors(entity: Entity) {
     const scene = entity.get(ModelMesh)?.value;
     if (!scene) return;
-    
+
     scene.traverse((node) => {
       if (node.isMesh && hasFacemaps(node)) {
         const facemapNames: Array<any> = getFacemapNames(node);
@@ -44,7 +45,9 @@ export class ColorationSystem extends System {
   }
 
   setFaceMapColors(entity: Entity) {
-    const scene = entity.get(ModelMesh).value;
+    const scene = entity.get(ModelMesh)?.value;
+    if (!scene) return;
+
     const spec = entity.get(FaceMapColors);
 
     if (!spec.colors) return;
@@ -69,6 +72,16 @@ export class ColorationSystem extends System {
   remove(entity: Entity) {
     this.resetFaceMapColors(entity);
     entity.remove(ColorApplied);
+  }
+
+  cloneGeometry(entity: Entity) {
+    const scene = entity.get(ModelMesh).value;
+
+    scene.traverse((node) => {
+      if (node.isMesh) {
+        node.geometry = node.geometry.clone();
+      }
+    });
   }
 }
 

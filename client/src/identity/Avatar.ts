@@ -9,6 +9,8 @@ import { World, Entity } from "~/ecs/base";
 import { Presentation, Transform, ModelMesh } from "~/ecs/plugins/core";
 import { Html2d, Oculus, OculusRef } from "~/ecs/plugins/html2d";
 import { Animation } from "~/ecs/plugins/animation";
+import { FaceMapColors } from "~/ecs/plugins/coloration";
+import { Morph } from "~/ecs/plugins/morph";
 
 import { chatOpen } from "~/stores/chatOpen";
 
@@ -68,6 +70,7 @@ export class Avatar {
     this.syncLabel(identity);
     this.syncSpeech(identity);
     this.syncOculus(identity);
+    this.syncCharacter(identity);
   }
 
   syncLabel(identity: IdentityData) {
@@ -113,6 +116,31 @@ export class Avatar {
           showAudio: identity.shared.showAudio,
           showVideo: identity.shared.showVideo,
         });
+      }
+    }
+  }
+
+  syncCharacter(identity: IdentityData) {
+    const influences = identity.shared.charMorphs;
+
+    if (influences) {
+      if (!this.entity.has(Morph)) {
+        this.entity.add(Morph, { influences });
+      } else {
+        const morph = this.entity.get(Morph);
+        morph.influences = influences;
+        morph.modified();
+      }
+    }
+
+    const colors = identity.shared.charColors;
+    if (colors) {
+      if (!this.entity.has(FaceMapColors)) {
+        this.entity.add(FaceMapColors, { colors });
+      } else {
+        const facemap = this.entity.get(FaceMapColors);
+        facemap.colors = colors;
+        facemap.modified();
       }
     }
   }

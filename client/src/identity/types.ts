@@ -14,8 +14,17 @@ export type SharedIdentityFields = {
   // Show the speech bubble?
   speaking?: boolean;
 
+  // Participant has video enabled?
   showVideo?: boolean;
+
+  // Participant has mic enabled?
   showAudio?: boolean;
+
+  // Character colors
+  charColors?: object;
+
+  // Character morph influences
+  charMorphs?: object;
 };
 
 export type LocalIdentityFields = {

@@ -7,10 +7,8 @@ import { PointerPlane } from "~/ecs/plugins/pointer-plane";
 import { RigidBody, Collider, Impactable } from "~/ecs/plugins/physics";
 import { Interactive } from "~/ecs/plugins/interactive";
 import { Animation } from "~/ecs/plugins/animation";
-import { FaceMapColors } from "~/ecs/plugins/coloration";
 
 import { makeEntity } from "./index";
-import { Morph } from "~/ecs/plugins/morph";
 import { IDLE } from "~/ecs/plugins/player-control/constants";
 import { Entity } from "~/ecs/base";
 
@@ -24,7 +22,6 @@ export function makeAvatar(
   id?
 ) {
   // Create the avatar's torso, which we connect everything else to
-  const skin = "#ffcd94";
   const avatar: Entity = makeEntity(world, "Avatar", id)
     .add(PointerPlane)
     .add(Impactable)
@@ -38,30 +35,6 @@ export function makeAvatar(
     .add(NormalizeMesh)
     .add(Animation, {
       clipName: IDLE,
-    })
-    .add(Morph, {
-      influences: {
-        "gender": 0.8,
-        "wide": 0.1,
-        "hair": 0.1,
-        "hair-02": 0,
-      },
-    })
-    .add(FaceMapColors, {
-      colors: {
-        "hair": ["#aa8833", 0.9],
-        "beard": [skin, 0.9],
-        "skin": [skin, 0.9],
-        "top-01": ["#ffc0cb", 0.9],
-        "top-02": ["#ffc0cb", 0.9],
-        "top-03": ["#ffc0cb", 0.9],
-        "belt": ["#ffc0cb", 0.9],
-        "pants-01": ["#ffffff", 0.9],
-        "pants-02": ["#ffffff", 0.9],
-        "pants-03": ["#ffffff", 0.9],
-        "pants-04": [skin, 0.9],
-        "shoes": ["#cccccc", 0.9],
-      },
     })
     .add(RigidBody, {
       kind: kinematic ? "KINEMATIC" : "DYNAMIC",

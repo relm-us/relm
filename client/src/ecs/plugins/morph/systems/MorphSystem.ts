@@ -43,7 +43,9 @@ export class MorphSystem extends System {
   }
 
   setInfluences(entity: Entity) {
-    const scene = entity.get(ModelMesh).value;
+    const scene = entity.get(ModelMesh)?.value;
+    if (!scene) return;
+    
     const spec = entity.get(Morph);
 
     if (!spec.influences) return;
