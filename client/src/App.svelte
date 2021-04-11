@@ -15,6 +15,7 @@
   import PausePlayButton from "~/ui/PausePlayButton";
   import StepFrameButton from "~/ui/StepFrameButton";
   import UploadButton from "~/ui/UploadButton";
+  import RandomizeMe from '~/ui/RandomizeMe'
   import WorldStatePane from "~/ui/WorldStatePane";
   import ResetWorldButton from "~/ui/ResetWorldButton";
   import Chat from "~/ui/Chat";
@@ -119,6 +120,7 @@
         <PausePlayButton />
         <StepFrameButton />
         <UploadButton on:uploaded={onUpload} />
+        <RandomizeMe />
       </play-buttons>
       {#if $mode === "build"}
         <GroupUngroupButton />
