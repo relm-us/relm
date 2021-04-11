@@ -194,8 +194,7 @@ export class IdentityManager extends EventEmitter {
   get active() {
     let count = 0;
     for (const identity of this.identities.values()) {
-      const lastSeen = get(identity.localFields).lastSeen;
-      if (lastSeen && lastSeen > performance.now() - ACTIVE_TIMEOUT) count++;
+      if (identity.avatar.entity) count++
     }
     return count;
   }
