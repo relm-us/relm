@@ -1,5 +1,5 @@
 import { Readable } from "svelte/store";
-import { Vector3, Euler, AnimationClip } from "three";
+import { Vector3, Euler, AnimationClip, MathUtils } from "three";
 
 import { IdentityData } from "./types";
 import { makeAvatar } from "~/prefab/makeAvatar";
@@ -121,7 +121,7 @@ export class Avatar {
   }
 
   syncCharacter(identity: IdentityData) {
-    const influences = identity.shared.charMorphs;
+    const influences = validInfluences(identity.shared.charMorphs);
 
     if (influences) {
       if (!this.entity.has(Morph)) {
@@ -267,4 +267,13 @@ export function moveAvatarTo(
   // Don't render the next 3 frames so that everything has
   // a chance to "catch up" to the participant's new position
   presentation.skipUpdate = 3;
+}
+
+function validInfluences(influences) {
+  return {
+    "gender": MathUtils.clamp(influences["gender"] ?? 0, 0, 1),
+    "wide": MathUtils.clamp(influences["wide"] ?? 0, 0, 1),
+    "hair": MathUtils.clamp(influences["hair"] ?? 0, 0, 1),
+    "hair-02": MathUtils.clamp(influences["hair-02"] ?? 0, 0, 1),
+  };
 }
