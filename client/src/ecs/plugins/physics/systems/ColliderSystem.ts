@@ -3,8 +3,11 @@ import { RigidBody, RigidBodyRef, Collider, ColliderRef } from "../components";
 import { Transform, WorldTransform } from "~/ecs/plugins/core";
 import { ColliderDesc as RapierColliderDesc } from "@dimforge/rapier3d";
 import { createColliderShape } from "../createColliderShape";
+import { Physics } from "../Physics";
 
 export class ColliderSystem extends System {
+  physics: Physics;
+
   order = Groups.Presentation + 250; // After WorldTransform
 
   static queries = {
@@ -14,6 +17,10 @@ export class ColliderSystem extends System {
     modified: [Modified(Collider), RigidBodyRef],
     removed: [Not(Collider), ColliderRef],
   };
+
+  init({ physics }) {
+    this.physics = physics;
+  }
 
   update() {
     // create new ColliderRef
@@ -60,6 +67,7 @@ export class ColliderSystem extends System {
 
     if (colliderRef) {
       world.removeCollider(colliderRef.value);
+      this.physics.handleToEntity.delete(colliderRef.value.handle);
     }
 
     let collider = world.createCollider(
@@ -68,6 +76,8 @@ export class ColliderSystem extends System {
     );
     if (collider.handle === undefined) {
       console.error("Collider handle undefined", collider, rigidBodyRef.value);
+    } else {
+      this.physics.handleToEntity.set(collider.handle, entity);
     }
 
     entity.add(ColliderRef, { value: collider });
@@ -78,6 +88,7 @@ export class ColliderSystem extends System {
     const colliderRef = entity.get(ColliderRef);
 
     world.removeCollider(colliderRef.value);
+    this.physics.handleToEntity.delete(colliderRef.value.handle);
     entity.remove(ColliderRef);
   }
 }

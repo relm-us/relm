@@ -1,44 +1,25 @@
-import { System, Groups, Not } from "~/ecs/base";
-import {
-  ColliderRef,
-  ColliderMapped,
-  Impact,
-  Impactable,
-  RigidBodyRef,
-} from "../components";
+import { System, Groups} from "~/ecs/base";
+import { Impact, RigidBodyRef } from "../components";
+import { Physics } from "../Physics";
 
 type Entity = any;
 type Magnitude = number;
 type OtherContacts = Map<Entity, Magnitude>;
 
 export class ImpactSystem extends System {
-  order = Groups.Simulation;
+  physics: Physics;
 
-  handleToEntity: Map<number, Entity> = new Map();
+  order = Groups.Simulation;
 
   static queries = {
     impacts: [Impact],
-    added: [Impactable, ColliderRef, Not(ColliderMapped)],
-    removed: [Impactable, Not(ColliderRef), ColliderMapped],
   };
 
+  init({ physics }) {
+    this.physics = physics;
+  }
+
   update() {
-    // We need to manually map Rapier physics collider's handles to
-    // ECS entities' IDs
-    this.queries.added.forEach((entity) => {
-      const ref = entity.get(ColliderRef);
-      this.handleToEntity.set(ref.value.handle, entity);
-      entity.add(ColliderMapped, { handle: ref.value.handle });
-    });
-
-    // Don't keep manual map around for entities that no longer have
-    // ColliderRef on them
-    this.queries.removed.forEach((entity) => {
-      const map = entity.get(ColliderMapped);
-      this.handleToEntity.delete(map.handle);
-      entity.remove(ColliderMapped);
-    });
-
     // Impact components last just one cycle; clean up old ones
     this.queries.impacts.forEach((entity) => {
       entity.remove(Impact);
@@ -52,7 +33,7 @@ export class ImpactSystem extends System {
   }
 
   getContacts(): Map<Entity, OtherContacts> {
-    const { eventQueue } = (this.world as any).physics;
+    const { eventQueue } = this.physics;
 
     const contacts: Map<Entity, OtherContacts> = new Map();
 
@@ -72,8 +53,8 @@ export class ImpactSystem extends System {
       (handle1: number, handle2: number, contactStarted: boolean) => {
         if (!contactStarted) return;
 
-        const entity1 = this.handleToEntity.get(handle1);
-        const entity2 = this.handleToEntity.get(handle2);
+        const entity1 = this.physics.handleToEntity.get(handle1);
+        const entity2 = this.physics.handleToEntity.get(handle2);
 
         // Only `Impactable` entities participate
         if (entity1 && entity2) {
