@@ -15,7 +15,7 @@ import { keyUp, keyDown, keyLeft, keyRight, keySpace } from "~/input";
 import { mode } from "~/stores/mode";
 
 import { ThrustController, HeadController } from "../components";
-import { IDLE, WALKING } from "../constants";
+import { IDLE, WALKING, WAVING } from "../constants";
 
 const bodyFacing = new Vector3();
 const thrust = new Vector3();
@@ -53,7 +53,8 @@ export class ThrustControllerSystem extends System {
       down: get(keyDown),
       left: get(keyLeft),
       right: get(keyRight),
-      fly: get(keySpace) && get(mode) === "build",
+      action: get(keySpace),
+      mode: get(mode),
     };
 
     this.queries.default.forEach((entity) => {
@@ -88,7 +89,13 @@ export class ThrustControllerSystem extends System {
       .normalize();
 
     const anim = entity.get(Animation);
-    if (thrust.length() < 0.1 || !contactBelow) {
+    if (directions.action && directions.mode === "play") {
+      if (anim.clipName !== WAVING) {
+        anim.clipName = WAVING;
+        anim.modified();
+      }
+      return;
+    } else if (thrust.length() < 0.1 || !contactBelow) {
       if (anim.clipName !== IDLE) {
         anim.clipName = IDLE;
         anim.modified();
@@ -119,8 +126,8 @@ export class ThrustControllerSystem extends System {
 
     // fly
     // simple hack: y is up, so don't let thrust be more than positive max velocity
-    if (rigidBody.linvel().y < MAX_VELOCITY) {
-      thrust.set(0, directions.fly ? controller.thrust : 0, 0);
+    if (rigidBody.linvel().y < MAX_VELOCITY && directions.mode === "build") {
+      thrust.set(0, directions.action ? controller.thrust : 0, 0);
       rigidBody.applyForce(thrust, true);
     }
   }
