@@ -122,7 +122,6 @@ export class Avatar {
 
   syncCharacter(identity: IdentityData) {
     const influences = validInfluences(identity.shared.charMorphs);
-
     if (influences) {
       if (!this.entity.has(Morph)) {
         this.entity.add(Morph, { influences });
@@ -270,10 +269,13 @@ export function moveAvatarTo(
 }
 
 function validInfluences(influences) {
-  return {
-    "gender": MathUtils.clamp(influences["gender"] ?? 0, 0, 1),
-    "wide": MathUtils.clamp(influences["wide"] ?? 0, 0, 1),
-    "hair": MathUtils.clamp(influences["hair"] ?? 0, 0, 1),
-    "hair-02": MathUtils.clamp(influences["hair-02"] ?? 0, 0, 1),
-  };
+  if (!influences) return influences;
+  else {
+    return {
+      "gender": MathUtils.clamp(influences["gender"] ?? 0, 0, 1),
+      "wide": MathUtils.clamp(influences["wide"] ?? 0, 0, 1),
+      "hair": MathUtils.clamp(influences["hair"] ?? 0, 0, 1),
+      "hair-02": MathUtils.clamp(influences["hair-02"] ?? 0, 0, 1),
+    };
+  }
 }
