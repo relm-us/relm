@@ -1,31 +1,51 @@
+import { get } from "svelte/store";
+import { Vector3 } from "three";
+import type { Ray, RigidBody } from "@dimforge/rapier3d";
+
+import { AVATAR_INTERACTION } from "~/config/colliderInteractions";
+import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
+
+import { RigidBodyRef } from "~/ecs/plugins/physics/components/RigidBodyRef";
+import { Animation } from "~/ecs/plugins/animation";
 import { System, Groups } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
-import { get } from "svelte/store";
+import { Physics } from "~/ecs/plugins/physics/Physics";
 
 import { keyUp, keyDown, keyLeft, keyRight, keySpace } from "~/input";
-import { ThrustController, HeadController } from "../components";
-import { RigidBodyRef } from "~/ecs/plugins/physics/components/RigidBodyRef";
-import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
-import { Vector3, Euler, Quaternion } from "three";
-import { Animation } from "~/ecs/plugins/animation";
+import { mode } from "~/stores/mode";
 
+import { ThrustController, HeadController } from "../components";
 import { IDLE, WALKING } from "../constants";
 
 const bodyFacing = new Vector3();
 const thrust = new Vector3();
 const torque = new Vector3();
 const vUp = new Vector3(0, 1, 0);
+const vDown = new Vector3(0, -1, 0);
 const vOut = new Vector3(0, 0, 1);
 const v1 = new Vector3();
+let rayDown: Ray;
 
 const MAX_VELOCITY = 5.0;
+const MAX_GROUND_TOI = 1000000;
+const CONTACT_TOI = 0.25;
 
 export class ThrustControllerSystem extends System {
+  physics: Physics;
+  rapier: any;
+  count: number;
+
   order = Groups.Simulation;
 
   static queries = {
     default: [ThrustController, RigidBodyRef],
   };
+
+  init({ physics }) {
+    this.physics = physics;
+    rayDown = new this.physics.rapier.Ray(new Vector3(), vDown);
+    this.count = 0;
+  }
 
   update() {
     const directions = {
@@ -33,8 +53,9 @@ export class ThrustControllerSystem extends System {
       down: get(keyDown),
       left: get(keyLeft),
       right: get(keyRight),
-      jump: get(keySpace),
+      fly: get(keySpace) && get(mode) === "build",
     };
+
     this.queries.default.forEach((entity) => {
       this.applyThrust(directions, entity);
     });
@@ -42,8 +63,18 @@ export class ThrustControllerSystem extends System {
 
   applyThrust(directions, entity) {
     const controller = entity.get(ThrustController);
-    const rigidBody = entity.get(RigidBodyRef).value;
+    const rigidBody: RigidBody = entity.get(RigidBodyRef).value;
     const transform = entity.get(Transform);
+
+    const contactBelow = this.isMakingContactBelow(transform.position);
+
+    if (contactBelow) {
+      rigidBody.setLinearDamping(20);
+      rigidBody.setAngularDamping(25);
+    } else {
+      rigidBody.setLinearDamping(0);
+    }
+    // const height;
 
     bodyFacing.copy(vOut);
     bodyFacing.applyQuaternion(transform.rotation);
@@ -57,7 +88,7 @@ export class ThrustControllerSystem extends System {
       .normalize();
 
     const anim = entity.get(Animation);
-    if (thrust.length() < 0.1) {
+    if (thrust.length() < 0.1 || !contactBelow) {
       if (anim.clipName !== IDLE) {
         anim.clipName = IDLE;
         anim.modified();
@@ -76,7 +107,7 @@ export class ThrustControllerSystem extends System {
       rigidBody.applyTorque(torque, true);
     }
 
-    v1.copy(rigidBody.linvel());
+    v1.copy(rigidBody.linvel() as Vector3);
     v1.y = 0;
     let velocity = v1.length();
 
@@ -86,11 +117,37 @@ export class ThrustControllerSystem extends System {
     v1.sub(thrust);
     rigidBody.applyForce(v1, true);
 
-    // jump/fly
+    // fly
     // simple hack: y is up, so don't let thrust be more than positive max velocity
     if (rigidBody.linvel().y < MAX_VELOCITY) {
-      thrust.set(0, directions.jump ? controller.thrust : 0, 0);
+      thrust.set(0, directions.fly ? controller.thrust : 0, 0);
       rigidBody.applyForce(thrust, true);
     }
+  }
+
+  isMakingContactBelow(position) {
+    rayDown.origin.x = position.x;
+    rayDown.origin.y = position.y;
+    rayDown.origin.z = position.z;
+
+    const colliders = this.physics.world.colliders;
+    let contactBelow = false;
+    if (colliders.len() > 0) {
+      this.physics.world.intersectionsWithRay(
+        colliders,
+        rayDown,
+        MAX_GROUND_TOI,
+        true,
+        AVATAR_INTERACTION,
+        (isect) => {
+          // entityBelow = this.physics.handleToEntity.get(isect.colliderHandle);
+          contactBelow = isect.toi < CONTACT_TOI;
+          // Don't keep looking for more intersections
+          return false;
+        }
+      );
+    }
+
+    return contactBelow;
   }
 }

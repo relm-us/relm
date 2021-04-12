@@ -8,8 +8,7 @@ export class Physics {
   eventQueue: EventQueue;
   handleToEntity: Map<number, Entity>;
 
-  hecsWorld: any;
-  Transform: any;
+  hecsWorld: World;
 
   constructor(world: World, rapier) {
     this.hecsWorld = world;
