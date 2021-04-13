@@ -8,13 +8,17 @@
   } from "video-mirror";
   import { Relm } from "~/stores/Relm";
   import HtmlOculusMic from "./HtmlOculusMic.svelte";
+  import Fullscreen from "./Fullscreen.svelte";
   import shineImg from "./shine.svg";
 
   export let stream;
+  export let localStream;
   export let isLocal;
   export let showAudio;
   export let showVideo;
   export let playerId;
+
+  let fullscreen = false;
 
   let identity;
   $: identity = $Relm.identities.identities.get(playerId);
@@ -26,9 +30,16 @@
   }
 
   function toggleVideo() {
-    if (identity && isLocal) {
-      identity.toggleShowVideo();
+    if (identity) {
+      if (isLocal) identity.toggleShowVideo();
+      else if (showVideo && document.fullscreenEnabled) {
+        fullscreen = true;
+      }
     }
+  }
+
+  function exitFullscreen() {
+    fullscreen = false;
   }
 
   // ignore warning about missing props
@@ -39,7 +50,16 @@
   <container style="--background-image:url({shineImg})">
     <oculus class="round" on:click={toggleVideo}>
       {#if showVideo}
-        <Video stream={$stream} mirror={isLocal} class="oculus-video" />
+        {#if fullscreen}
+          <Fullscreen on:close={exitFullscreen}>
+            <Video stream={$stream} mirror={false} class="oculus-video" />
+            <picture-in-picture>
+              <Video stream={$localStream} mirror={true} class="oculus-video" />
+            </picture-in-picture>
+          </Fullscreen>
+        {:else}
+          <Video stream={$stream} mirror={isLocal} class="oculus-video" />
+        {/if}
       {:else}
         <icon><VideoIcon /></icon>
       {/if}
@@ -124,5 +144,15 @@
     position: absolute;
     background-size: 100%;
     opacity: 0.45;
+  }
+
+  picture-in-picture {
+    display: block;
+    position: absolute;
+    width: 15%;
+    height: 15%;
+    right: 24px;
+    bottom: 24px;
+    border: 2px solid white;
   }
 </style>

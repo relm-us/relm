@@ -53,9 +53,8 @@ export class OculusSystem extends System {
   build(entity: Entity) {
     const spec = entity.get(Oculus);
     const isLocal = spec.playerId === playerId;
-    const stream = isLocal
-      ? getLocalStreamStore()
-      : getStreamStore(spec.playerId);
+    const localStream = getLocalStreamStore();
+    const stream = isLocal ? localStream : getStreamStore(spec.playerId);
 
     // Prepare a container for Svelte
     const container = this.htmlPresentation.createContainer(
@@ -68,7 +67,7 @@ export class OculusSystem extends System {
     // Create whatever Svelte component is specified by the type
     const component = new HtmlOculus({
       target: container,
-      props: { ...spec, stream, isLocal },
+      props: { ...spec, stream, localStream, isLocal },
     });
 
     entity.add(OculusRef, { container, component });
