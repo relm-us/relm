@@ -18,6 +18,7 @@
   import { mouse } from "~/stores/mouse";
 
   import { DRAG_DISTANCE_THRESHOLD } from "~/config/constants";
+  import { isInputEvent } from "../isInputEvent";
 
   export let world;
 
@@ -52,6 +53,10 @@
   }
 
   function eventTargetsWorld(event) {
+    // Allow dragging Html2d objects, as well as selecting text
+    if (isInputEvent(event)) return false;
+
+    // An HTML element whose ancestor is the viewport is in the "world" (i.e. not part of the UI)
     return hasAncestor(event.target, world.presentation.viewport);
   }
 
