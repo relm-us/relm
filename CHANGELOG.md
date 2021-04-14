@@ -1,3 +1,43 @@
+2021-04-13
+- NEW: A surprise when you fly in build mode
+- FIXED: dragging Html2d labels works again
+- FIXED: gravity when falling in play mode
+- FIXED: player not walking on ground in some cases
+
+2021-04-11 (v1.0.0)
+- NEW: (Play Mode) Holding spacebar waves the right hand back and forth.
+- NEW: (Build Mode) Holding spacebar flies swiftly around.
+- NEW: Choose a random avatar! Click the smiley-face button to choose a new you.
+- NEW: Particle component & system. Uses Nebula (i.e. getnebula.app). Note that configuring particles through Nebula is not yet supported.
+- FIXED: No more "air walking" when flying around.
+- FIXED: Morph targets outside of [0, 1] are clamped.
+- FIXED: Participant count in Stats panel is (probably) accurate.
+- CHANGED: Status box (upper right-hand corner) shows more state: entryway, world status, media connect status, yjs connect status, yjs room, audio/video permissions, loading state counts, identities.
+- FIXED: You can see other participant's animations (e.g. walking).
+- FIXED: Oculus has a little more distance between circle & avatar's head.
+- FIXED: Better presence detection (sometimes connecting would not show the other people).
+- FIXED: Speech bubble shows up by avatar's head.
+- FIXED: Avatar name was overwritten by chat messages.
+- FIXED: Animations have a cross-fade, so stopping & starting walking is less jerky.
+- CODE NOTES: A lot of refactoring going on in the background: the server is now written in Typescript; Updated Rapier Physics to 0.5.3 (might help with iOS). The server now needs to be compiled, and the file to run is in server/dist/src/server.js
+
+2021-04-05
+- NEW: Humanoid avatar! NOTE: your avatar's clothes, hair, & gender cannot yet be customized.
+- CODE NOTES: Several things have been refactored into ECS plugins. We now have a TranslucentPlugin (replacing "ghost" toggle), an InteractionPlugin (replacing "InvisibleToMouse" component), and a ColliderVisibleSystem (replacing the hacky way we were making colliders visible in Build Mode).
+
+2021-04-02
+- NEW: (Build Mode) The "Animation" component allows you to animate 3D models. The name of the animation clip that you enter must match the exported name (e.g. in Blender)
+- NEW: (Build Mode) The "Coloration" component allows you to choose colors for named face maps. As above, the face map names must match what was exported (e.g. in Blender). The format for specifying what colors to use is {"name":["#color", weight]} where "name" is the face map name, "#color" is a hex color such as "#ffffff" and "weight" is a number from 0 to 1, e.g. 0.9.
+- NEW: (Build Mode) The "Morph" component allows you to modify a mesh based on a morph target built in to a 3D model. The morph target names must match what was exported (e.g. in Blender). The format for specifying what morph targets to use is {"name": weight} where "name" is the name of the morph target, and "weight" is a number from 0 to 1 (the influence).
+- FIXED: Loading screen should be timed correctly now, and participants should always enter at the entryway location
+
+2021-04-01
+- NEW: Oculus has a "shine" to it, simulating a transparent glass ball
+- CHANGED: Brightness/saturation has been adjusted
+- FIXED: Better loading progress bar, due to improved estimation of number of assets to load
+- FIXED: Sometimes the loading screen would incorrectly end before the world had loaded. NOTE: This MAY happen one more time, per subrelm, as the server collects stats on how big each world is.
+- FIXED: Server shouldn't crash due to memory leak any more.
+
 2021-03-30
 - NEW: Video can be turned off during video setup & it will carry forward into the world.
 - NEW: You can toggle video on/off by clicking the Oculus above the avatar's head.
