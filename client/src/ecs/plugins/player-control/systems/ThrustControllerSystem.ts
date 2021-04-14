@@ -66,14 +66,22 @@ export class ThrustControllerSystem extends System {
     const controller = entity.get(ThrustController);
     const rigidBody: RigidBody = entity.get(RigidBodyRef).value;
     const transform = entity.get(Transform);
+    const anim = entity.get(Animation);
 
     const contactBelow = this.isMakingContactBelow(transform.position);
 
     if (contactBelow) {
       rigidBody.setLinearDamping(20);
       rigidBody.setAngularDamping(25);
+      rigidBody.setGravityScale(1, false);
     } else {
-      rigidBody.setLinearDamping(0);
+      if (directions.mode === "play") {
+        rigidBody.setLinearDamping(10);
+        rigidBody.setGravityScale(5, false);
+      } else if (directions.mode === "build") {
+        rigidBody.setLinearDamping(0);
+        rigidBody.setGravityScale(1, false);
+      }
     }
     // const height;
 
@@ -88,14 +96,21 @@ export class ThrustControllerSystem extends System {
       )
       .normalize();
 
-    const anim = entity.get(Animation);
     if (directions.action && directions.mode === "play") {
       if (anim.clipName !== WAVING) {
         anim.clipName = WAVING;
         anim.modified();
       }
       return;
-    } else if (thrust.length() < 0.1 || !contactBelow) {
+    } else if (!contactBelow && directions.mode === "build") {
+      if (anim.clipName !== "relaxing-ground") {
+        anim.clipName = "relaxing-ground";
+        anim.modified();
+      }
+    } else if (
+      thrust.length() < 0.1 ||
+      (!contactBelow && directions.mode === "play")
+    ) {
       if (anim.clipName !== IDLE) {
         anim.clipName = IDLE;
         anim.modified();
