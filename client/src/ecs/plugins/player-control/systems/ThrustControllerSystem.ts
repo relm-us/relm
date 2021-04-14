@@ -147,10 +147,14 @@ export class ThrustControllerSystem extends System {
         true,
         AVATAR_INTERACTION,
         (isect) => {
-          // entityBelow = this.physics.handleToEntity.get(isect.colliderHandle);
-          contactBelow = isect.toi < CONTACT_TOI;
-          // Don't keep looking for more intersections
-          return false;
+          if (isect.toi < CONTACT_TOI) {
+            contactBelow = true;
+            // Don't keep looking for more intersections
+            return false;
+          } else {
+            // Keep looking for ground
+            return true;
+          }
         }
       );
     }
