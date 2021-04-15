@@ -67,6 +67,9 @@ export class Presentation {
   visibleBounds: Box3;
   skipUpdate: number;
   planes: Record<PlaneDim, Plane>;
+  mouse: Record<PlaneDim, Vector3>;
+  mouse2d: Vector2;
+  mouseMoveListener: (event: MouseEvent) => void;
   loadTexture: (url) => Promise<Texture>;
 
   constructor(world: World, options: PresentationOptions) {
@@ -85,6 +88,12 @@ export class Presentation {
       xz: new Plane(_up, -0.01),
       xy: new Plane(_in, -0.01),
     };
+    this.mouse = {
+      xz: new Vector3(),
+      xy: new Vector3(),
+    };
+    this.mouse2d = new Vector2();
+    this.mouseMoveListener = this.handleMouseMove.bind(this);
 
     if (!gltfLoader) gltfLoader = new Loader();
 
@@ -104,12 +113,18 @@ export class Presentation {
     // }
   }
 
+  handleMouseMove(event: MouseEvent) {
+    this.mouse2d.x = event.clientX;
+    this.mouse2d.y = event.clientY;
+  }
+
   setViewport(viewport) {
     if (this.viewport === viewport) {
       return;
     }
     if (this.viewport) {
       this.resizeObserver.unobserve(this.viewport);
+      this.viewport.removeEventListener("mousemove", this.mouseMoveListener);
       this.viewport.removeChild(this.renderer.domElement);
       this.viewport = null;
     }
@@ -117,6 +132,7 @@ export class Presentation {
     this.resize();
     if (this.viewport) {
       this.viewport.appendChild(this.renderer.domElement);
+      this.viewport.addEventListener("mousemove", this.mouseMoveListener);
       this.resizeObserver.observe(this.viewport);
     }
   }
@@ -243,6 +259,10 @@ export class Presentation {
     if (!this.cameraTarget) return;
     this.planes.xz.constant = -this.cameraTarget.y;
     this.planes.xy.constant = -this.cameraTarget.z;
+
+    const { x, y } = this.mouse2d;
+    this.getWorldFromScreen(x, y, this.mouse.xz, { plane: "xz" });
+    this.getWorldFromScreen(x, y, this.mouse.xy, { plane: "xy" });
   }
 
   updateVisibleBounds() {

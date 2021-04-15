@@ -144,6 +144,7 @@
     } else if ($mode === "play") {
       const follow = $Relm.camera.getByName("Follow");
       const transform = $Relm.camera.getByName("Transform");
+      const presentation = $Relm.world.presentation;
       if (!follow || !transform) return;
 
       if (
@@ -156,14 +157,12 @@
         // drag  mode start
         mouseMode = "drag";
         dragOffset = new Vector3();
-        dragStartCamera.copy($Relm.world.presentation.camera);
-        $Relm.world.presentation.getWorldFromScreen(
-          event.clientX,
-          event.clientY,
-          dragStartPosition
-        );
+        dragStartCamera.copy(presentation.camera);
+        dragStartPosition.copy(presentation.mouse.xz);
       } else if (mouseMode === "drag") {
-        $Relm.world.presentation.getWorldFromScreen(
+        // We can't copy presentation.mouse.xz here, because the camera itself
+        // may be following the drag, so we need to use the previous projection
+        presentation.getWorldFromScreen(
           event.clientX,
           event.clientY,
           dragPosition,
