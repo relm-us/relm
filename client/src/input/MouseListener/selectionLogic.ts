@@ -14,8 +14,8 @@ let shiftKey: boolean;
 let mp = new Vector3();
 let msp = new Vector3();
 export function getSelectionBox(world, p1: Vector2, p2: Vector2, target: Box2) {
-  world.presentation.getWorldFromScreenCoords(p1.x, p1.y, mp);
-  world.presentation.getWorldFromScreenCoords(p2.x, p2.y, msp);
+  world.presentation.getWorldFromScreen(p1.x, p1.y, mp);
+  world.presentation.getWorldFromScreen(p2.x, p2.y, msp);
   // note: switching from 3D XZ plane to 2D XY plane
   target.min.x = Math.min(mp.x, msp.x);
   target.min.y = Math.min(mp.z, msp.z);

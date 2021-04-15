@@ -104,7 +104,7 @@
 
     if (!dragging) return;
 
-    const drag = $Relm.world.presentation.getWorldFromScreenCoords(
+    const drag = $Relm.world.presentation.getWorldFromScreen(
       event.clientX - initialMousePos.x,
       event.clientY - initialMousePos.y
     );

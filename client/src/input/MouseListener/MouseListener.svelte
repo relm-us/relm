@@ -157,18 +157,17 @@
         mouseMode = "drag";
         dragOffset = new Vector3();
         dragStartCamera.copy($Relm.world.presentation.camera);
-        $Relm.world.presentation.getWorldFromScreenCoords(
+        $Relm.world.presentation.getWorldFromScreen(
           event.clientX,
           event.clientY,
           dragStartPosition
         );
       } else if (mouseMode === "drag") {
-        $Relm.world.presentation.getWorldFromScreenCoords(
+        $Relm.world.presentation.getWorldFromScreen(
           event.clientX,
           event.clientY,
           dragPosition,
-          false,
-          dragStartCamera
+          { camera: dragStartCamera }
         );
 
         const frustum: Frustum = $Relm.world.presentation.getFrustum();

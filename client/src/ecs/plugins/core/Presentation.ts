@@ -44,8 +44,15 @@ export type PresentationOptions = {
 const _raycaster = new Raycaster();
 const _intersect = new Vector3();
 const _up = new Vector3(0, 1, 0);
-const _plane = new Plane(_up, -0.01);
+const _in = new Vector3(0, 0, 1);
 const _v2 = new Vector2();
+
+type PlaneDim = "xz" | "xy";
+
+type GetWorldFromScreenOpts = {
+  plane?: PlaneDim;
+  camera?: PerspectiveCamera;
+};
 
 export class Presentation {
   world: World;
@@ -59,6 +66,7 @@ export class Presentation {
   resizeObserver: ResizeObserver;
   visibleBounds: Box3;
   skipUpdate: number;
+  planes: Record<PlaneDim, Plane>;
   loadTexture: (url) => Promise<Texture>;
 
   constructor(world: World, options: PresentationOptions) {
@@ -73,6 +81,11 @@ export class Presentation {
     this.resizeObserver = new ResizeObserver(this.resize.bind(this));
     this.visibleBounds = new Box3();
     this.skipUpdate = 0;
+    this.planes = {
+      xz: new Plane(_up, -0.01),
+      xy: new Plane(_in, -0.01),
+    };
+
     if (!gltfLoader) gltfLoader = new Loader();
 
     if (!textureLoader) textureLoader = new TextureLoader();
@@ -221,24 +234,47 @@ export class Presentation {
       this.skipUpdate--;
       return;
     }
+    this.updatePlanes();
     this.renderer.render(this.scene, this.camera);
     this.updateVisibleBounds();
   }
 
-  getWorldFromScreenCoords(
+  updatePlanes() {
+    if (!this.cameraTarget) return;
+    this.planes.xz.constant = -this.cameraTarget.y;
+    this.planes.xy.constant = -this.cameraTarget.z;
+  }
+
+  updateVisibleBounds() {
+    this.visibleBounds = new Box3();
+    for (let x = -1; x <= 1; x += 2) {
+      for (let y = -1; y <= 1; y += 2) {
+        const point = this.getWorldFromNormalizedScreen(x, y, _intersect);
+        this.visibleBounds.expandByPoint(point);
+      }
+    }
+  }
+
+  getWorldFromScreen(
     x: number,
     y: number,
     target: Vector3 = _intersect,
-    alreadyNormalized = false,
-    camera: PerspectiveCamera = this.camera
+    { plane = "xz", camera = this.camera }: GetWorldFromScreenOpts = {}
   ): Vector3 {
-    if (!alreadyNormalized) {
-      x = (x * 2) / window.innerWidth - 1;
-      y = (-y * 2) / window.innerHeight + 1;
-    }
+    const nx = (x * 2) / this.size.width - 1;
+    const ny = (-y * 2) / this.size.height + 1;
+    return this.getWorldFromNormalizedScreen(nx, ny, target, { plane, camera });
+  }
+
+  getWorldFromNormalizedScreen(
+    x: number,
+    y: number,
+    target: Vector3 = _intersect,
+    { plane = "xz", camera = this.camera }: GetWorldFromScreenOpts = {}
+  ): Vector3 {
     _v2.set(x, y);
     _raycaster.setFromCamera(_v2, camera);
-    _raycaster.ray.intersectPlane(_plane, target);
+    _raycaster.ray.intersectPlane(this.planes[plane], target);
     return target;
   }
 
@@ -255,18 +291,5 @@ export class Presentation {
     frustum.setFromProjectionMatrix(cameraViewProjectionMatrix);
 
     return frustum;
-  }
-
-  updateVisibleBounds() {
-    if (this.cameraTarget) {
-      _plane.set(_up, -this.cameraTarget.y);
-    }
-    this.visibleBounds = new Box3();
-    for (let x = -1; x <= 1; x += 2) {
-      for (let y = -1; y <= 1; y += 2) {
-        const point = this.getWorldFromScreenCoords(x, y, _intersect, true);
-        this.visibleBounds.expandByPoint(point);
-      }
-    }
   }
 }
