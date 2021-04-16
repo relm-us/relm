@@ -31,6 +31,7 @@ import FollowPlugin from "~/ecs/plugins/follow";
 import Html2dPlugin from "~/ecs/plugins/html2d";
 import InteractivePlugin from "~/ecs/plugins/interactive";
 import LightingPlugin from "~/ecs/plugins/lighting";
+import LineHelperPlugin from "~/ecs/plugins/line-helper";
 import MorphPlugin from "~/ecs/plugins/morph";
 import NormalizePlugin from "~/ecs/plugins/normalize";
 import OutlinePlugin from "~/ecs/plugins/outline";
@@ -132,6 +133,7 @@ export function createWorld(rapier) {
       Html2dPlugin,
       InteractivePlugin,
       LightingPlugin,
+      LineHelperPlugin,
       MorphPlugin,
       NormalizePlugin,
       OutlinePlugin,

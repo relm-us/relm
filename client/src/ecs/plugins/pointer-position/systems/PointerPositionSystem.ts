@@ -25,6 +25,7 @@ export class PointerPositionSystem extends System {
     this.queries.added.forEach((entity) => {
       this.build(entity);
     });
+
     this.queries.active.forEach((entity) => {
       const ref = entity.get(PointerPositionRef);
       if (!ref) return;
@@ -34,6 +35,7 @@ export class PointerPositionSystem extends System {
 
       ref.updateCount++;
     });
+    
     this.queries.removed.forEach((entity) => {
       this.release(entity);
     });
