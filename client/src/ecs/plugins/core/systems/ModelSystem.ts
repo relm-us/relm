@@ -6,6 +6,7 @@ import { Object3D, Model, ModelLoading, ModelMesh } from "../components";
 import { Presentation } from "../Presentation";
 import { Queries } from "~/ecs/base/Query";
 import { traverseMaterials } from "~/utils/traverseMaterials";
+import { FrontSide } from "three";
 
 let ids = 0;
 
@@ -112,6 +113,7 @@ export class ModelSystem extends System {
   applyMaterialSettings(scene) {
     const encoding = THREE.sRGBEncoding;
     traverseMaterials(scene, (material) => {
+      material.side = FrontSide;
       if (material.map) material.map.encoding = encoding;
       if (material.emissiveMap) material.emissiveMap.encoding = encoding;
       if (material.map || material.emissiveMap) material.needsUpdate = true;

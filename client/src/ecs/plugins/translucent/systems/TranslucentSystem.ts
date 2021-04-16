@@ -1,3 +1,4 @@
+import { DoubleSide, FrontSide } from "three";
 import { System, Groups, Entity, Not, Modified } from "~/ecs/base";
 import { Object3D } from "~/ecs/plugins/core";
 import { Translucent, TranslucentApplied } from "../components";
@@ -44,9 +45,9 @@ export class TranslucentSystem extends System {
 
     object3d.value.traverse((node) => {
       if (node.isMesh) {
-        node.material.transparent = false;
         if (node.userData.translucent)
           node.material.opacity = node.userData.translucent.opacity;
+        node.material.transparent = false;
         delete node.userData.translucent;
       }
     });
