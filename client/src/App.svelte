@@ -4,7 +4,7 @@
   import CollectionsPanel from "~/ui/CollectionsPanel";
   import EditorPanel from "~/ui/EditorPanel";
   import ExportPanel from "~/ui/ExportPanel";
-  import RelmSettingsPanel from "~/ui/RelmSettingsPanel";
+  import SettingsPanel from "~/ui/SettingsPanel";
   import PerformancePanel from "~/ui/PerformancePanel";
 
   import Input from "~/input";
@@ -86,7 +86,7 @@
       {/if}
 
       {#if $openPanel === "settings"}
-        <RelmSettingsPanel on:minimize={playMode} />
+        <SettingsPanel on:minimize={playMode} />
       {/if}
 
       <panel-tabs>
