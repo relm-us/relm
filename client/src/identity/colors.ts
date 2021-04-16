@@ -70,6 +70,5 @@ export function getCharacterFacemaps({
     "pants-04": [bottom > 3 ? bottomColor : skintone, opacity],
     "shoes": [shoes ? shoeColor : skintone, opacity],
   };
-  console.log("colors", colors);
   return colors;
 }

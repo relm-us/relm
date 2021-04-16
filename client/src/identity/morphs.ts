@@ -12,6 +12,5 @@ export function randomMorphInfluences() {
     "hair": hair1,
     "hair-02": hair2,
   };
-  console.log("influences", influences);
   return influences;
 }

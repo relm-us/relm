@@ -64,7 +64,6 @@ function countAssets(wdoc: WorldDoc) {
 export const handleLoading = (startFn, wdoc) => (
   state: "loading" | "loaded" | "error"
 ) => {
-  console.log("handleLoading", state);
   const intervals = [];
   let syntheticStep = 0;
   switch (state) {
