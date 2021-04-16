@@ -8,6 +8,7 @@
 
   export let Component;
   export let component;
+  export let entity;
 
   let toolbarVisible = false;
 
@@ -26,9 +27,11 @@
   };
 
   const debugComponent = () => {
-    console.log(component);
     (window as any).component = component;
+    (window as any).entity = entity;
+    console.log(`'window.component' and 'window.entity' available`)
   };
+  
   const modifyComponent = () => {
     component.modified();
     dispatch("modified");
