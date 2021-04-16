@@ -27,6 +27,9 @@ export class Query {
 
     for (let i = 0; i < Components.length; i++) {
       const maybePredicate = Components[i] as Predicate;
+      if (!maybePredicate) {
+        console.error("Query predicate undefined", i, Components, this);
+      }
       if (maybePredicate.isModified) {
         this.Modified.push(maybePredicate.Component);
       }
