@@ -113,7 +113,6 @@ export class ModelSystem extends System {
   applyMaterialSettings(scene) {
     const encoding = THREE.sRGBEncoding;
     traverseMaterials(scene, (material) => {
-      material.side = FrontSide;
       if (material.map) material.map.encoding = encoding;
       if (material.emissiveMap) material.emissiveMap.encoding = encoding;
       if (material.map || material.emissiveMap) material.needsUpdate = true;
