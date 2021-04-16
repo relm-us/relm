@@ -13,6 +13,8 @@
     PointerPositionRef,
   } from "~/ecs/plugins/pointer-position";
   import { Transform } from "~/ecs/plugins/core";
+  import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
+  import type { PlaneOrientation } from "~/ecs/shared/WorldPlanes";
   import { uuidv4 } from "~/utils/uuid";
 
   import { Relm } from "~/stores/Relm";
@@ -33,10 +35,11 @@
   const dragStartFollowOffset = new Vector3();
   const dragStartTransformPosition = new Vector3();
   const v1 = new Vector3();
+
   let mouseMode: "initial" | "click" | "drag" | "drag-select" = "initial";
-  let pointerPlaneEntity;
+  let pointerPosEntity;
   let dragOffset;
-  let dragPlane: "XZ" | "XY" = "XZ";
+  let dragPlane: PlaneOrientation = "xz";
   let shiftKey = false;
   let selectionRectangle = new Box2();
 
@@ -99,19 +102,19 @@
         // drag  mode start
         if ($Relm.selection.length > 0) {
           mouseMode = "drag";
-          dragPlane = shiftKey ? "XY" : "XZ";
+          dragPlane = shiftKey ? "xy" : "xz";
         } else {
           mouseMode = "drag-select";
-          dragPlane = "XZ";
+          dragPlane = "xz";
         }
 
         dragOffset = null;
         const position = $Relm.selection.centroid;
 
-        pointerPlaneEntity = world.entities
+        pointerPosEntity = world.entities
           .create("MouseDragPointerPlane", uuidv4())
           .add(Transform, { position })
-          .add(PointerPlane, { visible: dragPlane })
+          .add(PointerPosition)
           .activate();
       } else if (mouseMode === "drag") {
         // drag mode
@@ -147,7 +150,7 @@
     } else if ($mode === "play") {
       const follow = $Relm.camera.getByName("Follow");
       const transform = $Relm.camera.getByName("Transform");
-      const presentation = $Relm.world.presentation;
+      const planes: WorldPlanes = $Relm.world.perspective.getAvatarPlanes();
       if (!follow || !transform) return;
 
       if (
@@ -160,17 +163,14 @@
         // drag  mode start
         mouseMode = "drag";
         dragOffset = new Vector3();
-        dragStartCamera.copy(presentation.camera);
-        dragStartPosition.copy(presentation.mouse.xz);
+        dragStartCamera.copy(planes.camera);
+        dragStartPosition.copy(planes.points.xz);
       } else if (mouseMode === "drag") {
-        // We can't copy presentation.mouse.xz here, because the camera itself
+        // We can't copy planes.points.xz coords here, because the camera itself
         // may be following the drag, so we need to use the previous projection
-        presentation.getWorldFromScreen(
-          event.clientX,
-          event.clientY,
-          dragPosition,
-          { camera: dragStartCamera }
-        );
+        planes.getWorldFromScreen(mousePosition, dragPosition, {
+          camera: dragStartCamera,
+        });
 
         const frustum: Frustum = $Relm.world.presentation.getFrustum();
         const avatarPos = $Relm.avatar.getByName("Transform").position;
@@ -230,9 +230,9 @@
       removeTouchController();
     }
 
-    if (pointerPlaneEntity) {
-      pointerPlaneEntity.destroy();
-      pointerPlaneEntity = null;
+    if (pointerPosEntity) {
+      pointerPosEntity.destroy();
+      pointerPosEntity = null;
     }
 
     // reset mouse mode

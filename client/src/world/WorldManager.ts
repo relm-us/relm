@@ -19,9 +19,7 @@ import { resetLoading, handleLoading } from "~/stores/loading";
 import { makeStageAndActivate, makeInitialCollider } from "~/prefab";
 
 import { Entity, World } from "~/ecs/base";
-import { Transform } from "~/ecs/plugins/core";
 import { Follow } from "~/ecs/plugins/follow";
-import { HeadController } from "~/ecs/plugins/player-control";
 import { Collider, ColliderVisible } from "~/ecs/plugins/physics";
 import { Interactive } from "~/ecs/plugins/interactive";
 import { Translucent } from "~/ecs/plugins/translucent";
@@ -135,7 +133,6 @@ export default class WorldManager {
 
   enter(entryway: string) {
     const entryways = this.wdoc.entryways.y.toJSON();
-    console.log(`enter through ${entryway}`, entryways);
     const coords = new Vector3(0, 0, 0);
     if (entryway in entryways) {
       coords.fromArray(entryways[entryway]);
@@ -150,15 +147,15 @@ export default class WorldManager {
 
     // CSS3D elements go "behind" the WebGL canvas
     world.cssPresentation.setViewport(this.viewport);
-    world.cssPresentation.renderer.domElement.style.zIndex = 0;
+    world.cssPresentation.renderer.domElement.style.zIndex = "0";
 
     // WebGL canvas goes "on top" of CSS3D HTML elements
     world.presentation.setViewport(this.viewport);
-    world.presentation.renderer.domElement.style.zIndex = 1;
+    world.presentation.renderer.domElement.style.zIndex = "1";
 
     // HTML2D elements go "above" the WebGL canvas
     world.htmlPresentation.setViewport(this.viewport);
-    world.htmlPresentation.domElement.style.zIndex = 2;
+    world.htmlPresentation.domElement.style.zIndex = "2";
   }
 
   unmount() {
@@ -249,11 +246,6 @@ export default class WorldManager {
       throw new Error(`Can't populate when world is null`);
     }
 
-    // TODO: this.avatar = ?
-
-    this.world.presentation.setCameraTarget(
-      this.avatar.get(Transform).position
-    );
     const { camera, light } = makeStageAndActivate(this.world, this.avatar);
     this.camera = camera;
     this.light = light;
