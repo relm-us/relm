@@ -21,6 +21,7 @@ import CorePlugin from "~/ecs/plugins/core";
 import ShapePlugin from "~/ecs/plugins/shape";
 import WallPlugin from "~/ecs/plugins/wall";
 import ImagePlugin from "~/ecs/plugins/image";
+import PerspectivePlugin from "~/ecs/plugins/perspective";
 
 import AnimationPlugin from "~/ecs/plugins/animation";
 import ColorationPlugin from "~/ecs/plugins/coloration";
@@ -122,6 +123,7 @@ export function createWorld(rapier) {
       WallPlugin,
       FirePlugin,
       ImagePlugin,
+      PerspectivePlugin,
       /* others */
       AnimationPlugin,
       ColorationPlugin,

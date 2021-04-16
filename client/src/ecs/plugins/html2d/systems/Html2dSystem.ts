@@ -1,7 +1,10 @@
-import { PerspectiveCamera, Plane, Raycaster, Vector3 } from "three";
+import { Vector3 } from "three";
+
 import { System, Groups, Not, Entity, Modified } from "~/ecs/base";
+import { WorldTransform, Presentation } from "~/ecs/plugins/core";
+import { Perspective } from '~/ecs/plugins/perspective'
+
 import { Html2d, Html2dRef } from "../components";
-import { Presentation, WorldTransform } from "~/ecs/plugins/core";
 import { getHtmlComponent } from "../html";
 import { HtmlPresentation } from "../HtmlPresentation";
 
@@ -9,6 +12,7 @@ const v1 = new Vector3();
 export class Html2dSystem extends System {
   presentation: Presentation;
   htmlPresentation: HtmlPresentation;
+  perspective: Perspective;
 
   order = Groups.Presentation + 250;
 
@@ -19,15 +23,15 @@ export class Html2dSystem extends System {
     removed: [Not(Html2d), Html2dRef],
   };
 
-  init({ presentation, htmlPresentation }) {
+  init({ presentation, htmlPresentation, perspective }) {
     this.presentation = presentation;
     this.htmlPresentation = htmlPresentation;
+    this.perspective = perspective;
   }
 
   update() {
-    const boundsWidth =
-      this.presentation.visibleBounds.max.x -
-      this.presentation.visibleBounds.min.x;
+    const vb = this.perspective.visibleBounds;
+    const boundsWidth = vb.max.x - vb.min.x;
 
     this.queries.new.forEach((entity) => {
       this.build(entity);

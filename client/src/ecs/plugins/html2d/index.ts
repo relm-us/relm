@@ -2,6 +2,7 @@ import { DecoratedWorld } from "~/types/DecoratedWorld";
 
 import { createPlugin } from "~/ecs/base";
 import CorePlugin from "~/ecs/plugins/core";
+import PerspectivePlugin from "~/ecs/plugins/perspective";
 
 import { HtmlPresentation } from "./HtmlPresentation";
 
@@ -14,7 +15,7 @@ export { Components };
 
 export default createPlugin({
   name: "html2d",
-  plugins: [CorePlugin],
+  plugins: [CorePlugin, PerspectivePlugin],
   systems: Object.values(Systems),
   components: Object.values(Components),
   decorate(world: DecoratedWorld) {

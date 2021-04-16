@@ -1,15 +1,16 @@
 import * as THREE from "three";
+
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import { Object3D } from "~/ecs/plugins/core";
+import { Perspective } from "~/ecs/plugins/perspective";
 
 import { DirectionalLight, DirectionalLightRef } from "../components";
 
 import { shadowMapConfig } from "~/config/constants";
-import { Presentation } from "~/ecs/plugins/core/Presentation";
 
 let helper;
 export class DirectionalLightSystem extends System {
-  presentation: Presentation;
+  perspective: Perspective;
 
   order = Groups.Initialization;
 
@@ -20,8 +21,8 @@ export class DirectionalLightSystem extends System {
     removed: [Not(DirectionalLight), DirectionalLightRef],
   };
 
-  init({ presentation }) {
-    this.presentation = presentation;
+  init({ perspective }) {
+    this.perspective = perspective;
   }
 
   update() {
@@ -53,20 +54,14 @@ export class DirectionalLightSystem extends System {
 
     this.queries.active.forEach((entity) => {
       const light = entity.get(DirectionalLightRef).value;
-      const size = Math.max(
-        this.presentation.visibleBounds.max.x -
-          this.presentation.visibleBounds.min.x,
-        this.presentation.visibleBounds.max.y -
-          this.presentation.visibleBounds.min.y
-      );
+      const vb = this.perspective.visibleBounds;
+      const size = Math.max(vb.max.x - vb.min.x, vb.max.y - vb.min.y);
+
       // size ranges from about 10 to 60
       // zoom ranges from about 1 to 0.30
       light.shadow.camera.zoom = (1 - (size - 10) / 50) * 0.5 + 0.2;
       light.shadow.camera.updateProjectionMatrix();
     });
-
-    // this.queries.modified.forEach((entity) => {});
-    // this.queries.removed.forEach((entity) => {});
   }
 
   buildLight(

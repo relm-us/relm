@@ -146,6 +146,8 @@ export default class WorldManager {
   mount() {
     const world = this.world;
 
+    world.perspective.setAvatar(this.avatar);
+
     // CSS3D elements go "behind" the WebGL canvas
     world.cssPresentation.setViewport(this.viewport);
     world.cssPresentation.renderer.domElement.style.zIndex = 0;
