@@ -48,6 +48,16 @@
     world.presentation.scene
   );
 
+  function addTouchController() {
+    $Relm.avatar.add(TouchController);
+  }
+
+  function removeTouchController() {
+    if ($Relm.avatar.has(TouchController)) {
+      $Relm.avatar.remove(TouchController);
+    }
+  }
+
   function setMousePositionFromEvent(event, isStart = false) {
     mousePosition.set(event.clientX, event.clientY);
     if (isStart) mouseStartPosition.copy(mousePosition);
@@ -64,12 +74,6 @@
 
     // An HTML element whose ancestor is the viewport is in the "world" (i.e. not part of the UI)
     return hasAncestor(event.target, world.presentation.viewport);
-  }
-
-  function removeTouchController() {
-    if ($Relm.avatar.has(TouchController)) {
-      $Relm.avatar.remove(TouchController);
-    }
   }
 
   function onMousemove(event: MouseEvent) {
@@ -209,7 +213,7 @@
       selectionLogic.mousedown(found, event.shiftKey);
     } else if ($mode === "play") {
       if (found.includes($Relm.avatar.id)) {
-        $Relm.avatar.add(TouchController);
+        addTouchController();
       } else {
         // At this point, at least a 'click' has started. TBD if it's a drag.
         mouseMode = "click";
@@ -251,7 +255,7 @@
       selectionLogic.mousedown(found, false);
     } else if ($mode === "play") {
       if (found.includes($Relm.avatar.id)) {
-        $Relm.avatar.add(TouchController);
+        addTouchController();
       }
     }
   }
