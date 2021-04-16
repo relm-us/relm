@@ -35,7 +35,7 @@
 - NEW: Oculus has a "shine" to it, simulating a transparent glass ball
 - CHANGED: Brightness/saturation has been adjusted
 - FIXED: Better loading progress bar, due to improved estimation of number of assets to load
-- FIXED: Sometimes the loading screen would incorrectly end before the world had loaded. NOTE: This MAY happen one more time, per subrelm, as the server collects stats on how big each world is.
+- FIXED: Sometimes the loading screen would incorrectly end before the world had loaded. NOTE: This MAY happen one more time, per world, as the server collects stats on how big each world is.
 - FIXED: Server shouldn't crash due to memory leak any more.
 
 2021-03-30
@@ -45,7 +45,7 @@
 2021-03-28
 - CHANGED: Oculus perimeter is now gray for all players (to maintain stylistic consistency).
 - FIXED: Oculus video feed is now on top of other HTML such as 2d labels.
-- FIXED: "Relm - Staging" HTML page title was incorrectly used in production environment.
+- FIXED: HTML page title was incorrectly used in production environment.
 - FIXED: When you close your own speech bubble, it closes for others also.
 - CODE NOTES: Several nginx configuration, deploy, and run scripts have been updated. We use these in our environment, and they can be used as a reference to show how a similar production environment can be set up.
 
@@ -63,16 +63,16 @@
 - FIXED: Video & audio quality has been significantly improved by using a better back-end server (DigitalOcean w/ 2 dedicated vCPUs).
 
 2021-03-22
-- NEW: The participants' names are sent to the Mediasoup server so video participants not in Relm can see each others' names.
-- FIXED: Video & audio is now separate for each subrelm (a mediasoup room is created for each subrelm).
+- NEW: The participants' names are sent to the Mediasoup server so video participants not in GatherEngine can see each others' names.
+- FIXED: Video & audio is now separate for each world (a mediasoup room is created for each world).
 
 2021-03-21
-- NEW: Shared Video & Audio! Participants entering a subrelm will see & hear each other via our dedicated mediasoup server. NOTE: Currently there is only one media room shared across all subrelms, so this will cause some strange effects if more than one subrelm is being used at a given time.
+- NEW: Shared Video & Audio! Participants entering a world will see & hear each other via our dedicated mediasoup server. NOTE: Currently there is only one media room shared across all worlds, so this will cause some strange effects if more than one world is being used at a given time.
 
 2021-03-15
-- NEW: Video setup screen! You can set up your camera and microphone before entering Relm.
+- NEW: Video setup screen! You can set up your camera and microphone before entering GatherEngine.
 - NEW: Local Oculus (video circle) above your avatar. NOTE: video/audio is not yet connected to anyone else and you won't see an Oculus above other participants.
-- FIXED: Your avatar's name (and underline color) should be preserved across subrelms now.
+- FIXED: Your avatar's name (and underline color) should be preserved across worlds now.
 - CODE NOTES: The IdentityManager went through some refactoring so that there is now a localstorageSharedFields store. This store both reads and writes to localstorage, and can be used to override the avatar name (e.g. in server-controlled username scenarios).
 
 2021-03-07
@@ -85,9 +85,9 @@
 - CHANGED: Renderer is back to "High performance" mode by default (may affect speed on some hardware)
 
 2021-03-04
-- NEW: Named Entryways! A subrelm can now have a "default" start position (entryway) other than (0,0,0) and can additionally have other entryways. An entryway's name is used as an optional 2nd component of the name of the subrelm; for example the "fairy" entryway of the "town" subrelm would look like this: staging.relm.us/town/fairy.
-  - In Build Mode: Add or remove entryways via the "Settings" panel. Create an entryway named "default" at your avatar's current position to make that the default entryway for the subrelm.
-  - In Play Mode: Your avatar will automatically show up at the default entryway when you load the subrelm, or another entryway if your URL includes it.
+- NEW: Named Entryways! A world can now have a "default" start position (entryway) other than (0,0,0) and can additionally have other entryways. An entryway's name is used as an optional 2nd component of the name of the world; for example the "fairy" entryway of the "town" world would look like this: staging.gatherengine.org/town/fairy.
+  - In Build Mode: Add or remove entryways via the "Settings" panel. Create an entryway named "default" at your avatar's current position to make that the default entryway for the world.
+  - In Play Mode: Your avatar will automatically show up at the default entryway when you load the world, or another entryway if your URL includes it.
 - NEW: Escape key: (a) if anything is selected, it will first deselect the selection; (b) if chat window is open, it will close chat; (c) if in build mode, it will enter play mode.
 
 2021-03-03
@@ -136,7 +136,7 @@
 - NEW: Labels shrink when zoomed out so they don't overlap as much
 - NEW: (Build Mode) There is now a "Settings" tab on the side panel
 - NEW: (Build Mode) Inside the Settings tab, a Skybox image can be uploaded
-- CHANGED: Relms no longer have a very large default rectangular ground. Instead, there is a small collider that prevents the character from falling, and a "Ground" button in the editor prefabs that you can use to add ground (circle, square).
+- CHANGED: Worlds no longer have a very large default rectangular ground. Instead, there is a small collider that prevents the character from falling, and a "Ground" button in the editor prefabs that you can use to add ground (circle, square).
 - CHANGED: Labels only show one line of text (also avoids an odd rendering bug that smudges parts of text onto world canvas).
 - CHANGED: Width of labels relative to screen size and "Max. Width" parameter updated to reflect actual world size.
 - CHANGED: Hovering over a label makes its width grow temporarily so it looks reasonable when zoomed out.
@@ -155,7 +155,7 @@
 - FIXED: Invalid wall sizes now warn instead of throwing an error.
 
 2021-02-16
-- NEW: Chat icon in the lower right opens to text box that currently allows you to create a Label. NOTE: In future, this will be an actual chat box; for now, it is a shortcut to creating labels, similar to Relm v4.
+- NEW: Chat icon in the lower right opens to text box that currently allows you to create a Label. NOTE: In future, this will be an actual chat box; for now, it is a shortcut to creating labels, similar to previous version.
 - NEW: Pressing "Enter" or "Return" is a shortcut key that opens the Chat box.
 
 2021-02-15
@@ -169,7 +169,7 @@
 2021-02-14
 - CHANGED: Brighter lighting.
 - FIXED: (Build Mode) High-precision numbers are kept when using text entry. (e.g. Rotation & Scale values of Transform component).
-- FIXED: (Build Mode) Can't enter non-numeric values where you shouldn't. Fixes issue that could make entire relm crash.
+- FIXED: (Build Mode) Can't enter non-numeric values where you shouldn't. Fixes issue that could make entire world crash.
 - FIXED: (Build Mode) Long text in Asset type will now wrap, e.g. URLs.
 - FIXED: (Build Mode) Capsule-shaped Colliders weren't showing their radius/height parameters in the Collider component.
 
@@ -212,12 +212,12 @@
 - CODE NOTES: The ECS is now built-in (no longer a dependency)--this means we can experiment more, e.g. with optimizing the ECS. Added yarn workspaces, readme.
 
 2021-02-07
-- NEW: Relm now shows a progress bar while loading.
+- NEW: GatherEngine now shows a progress bar while loading.
 - NEW: Local portals! Add a "Portal" component to anything with a collider, and that thing will become a portal. Currently "Local" mode is supported; "Remote" portals are probably buggy.
-- NEW: (Build Mode) Clicking on an item in a collection will now add it to the relm (same as drag-drop)
+- NEW: (Build Mode) Clicking on an item in a collection will now add it to the world (same as drag-drop)
 - CHANGED: (Build Mode) Components in Editor are now sorted alphabetically (except "Transform" which stays at the top).
-- FIXED: When an error occurs while loading a relm, an error message will be shown.
-- FIXED: ImpactSystem was unnecessarily slowing things down (should see slight improvement in speed for relms with many objects)
+- FIXED: When an error occurs while loading a world, an error message will be shown.
+- FIXED: ImpactSystem was unnecessarily slowing things down (should see slight improvement in speed for worlds with many objects)
 - CODE NOTES: Removed some unused code (TransferControlSystem). LibraryPanel renamed to CollectionsPanel. Other refactorings.
 
 2021-02-06
@@ -252,42 +252,42 @@
 
 2021-01-30
 - NEW: (Build Mode) You can drag selected objects and move them around on the XZ plane! (Should work with multiple objects)
-- NEW: (Build Mode) When importing objects into a relm, they become selected after import.
+- NEW: (Build Mode) When importing objects into a world, they become selected after import.
 
 2021-01-29
 - NEW: (Build Mode) Delete/Backspace key will delete selected objects
-- NEW: There is now an import/export panel that can be used to get the raw JSON encoding the state of a given relm
+- NEW: There is now an import/export panel that can be used to get the raw JSON encoding the state of a given world
 - FIXED: Using scroll wheel inside the side panel would also zoom in/out of the game.
 - FIXED: Shadows are now cast on image objects. Note that we had to use a slightly more pixelated-looking shadow algorithm to accomplish this, but it looks decent.
 - FIXED: Keypresses inside text inputs should behave more consistently.
 - FIXED: When entering 'play' mode, all objects are deselected
 
 2021-01-26
-- NEW: Images that have been uploaded to Collections can now be dragged into the relm (Note: collections still "forget" what you uploaded after refreshing the page).
+- NEW: Images that have been uploaded to Collections can now be dragged into the world (Note: collections still "forget" what you uploaded after refreshing the page).
 
 2021-01-24
-- NEW: Upload images works! You can upload in image directly into a relm by pressing the "upload to cloud" button
+- NEW: Upload images works! You can upload in image directly into a world by pressing the "upload to cloud" button
 
 2021-01-17
-- NEW: "My Favorites" section of Collections tab--you can upload images to your favorites (coming soon: relm will remember what you've uploaded when you refresh)
+- NEW: "My Favorites" section of Collections tab--you can upload images to your favorites (coming soon: GatherEngine will remember what you've uploaded when you refresh)
 
 2020-12-29
 - NEW: The server now accepts asset uploads.
-- NEW: The server is permissioned (i.e. previously anyone could create new relms, update them; now, however, only people with admin permission can create new relms, and private relms will prevent just anyone from entering).
+- NEW: The server is permissioned (i.e. previously anyone could create new worlds, update them; now, however, only people with admin permission can create new worlds, and private worlds will prevent just anyone from entering).
 - NEW: There is now an "Upload" button in the UI. Currently, this only uploads assets, it does NOT make them show up as objects in the world. Accepts jpg, png, webp, gltf, glb.
 - NEW: The "Upload" dialog box allows you to crop/flip images (after selecting a file, click the "Edit file" pen icon, then click the "Edit file" button in upper-right corner).
 - CHANGED: Faces default to white, rather than Chris.
 - CHANGED: Default zoom level is set to 25% of zoom out.
 - FIXED: Accept files with capitalized extensions (e.g. .JPG is valid)
 - FIXED: CSS3D rendering issue on Firefox (incorrectly offset youtube, faces, etc.)
-- FIXED: When granting admin permissions via /mkadmin API, the admin will have all permissions instead of just "create new relm" permission.
+- FIXED: When granting admin permissions via /mkadmin API, the admin will have all permissions instead of just "create new world" permission.
 
 2020-12-17
 - NEW: Mouse or trackpad scrolling now zooms in/out
 - CHANGED: Lighting and shadows are a bit more optimized--only one shadow map, and the shadow map tries to grow/shrink based on camera distance
 
 2020-12-14
-- CHANGED: Camera angle mimics relm v4 angle
+- CHANGED: Camera angle mimics previous version's angle
 
 2020-12-02
 - FIXED: Some properties (such as position) can now be undone/redone. NOTE: There are still some remaining issues with undo/redo.
@@ -297,7 +297,7 @@
 - NEW: "Tab" key switches between Build mode and Play mode.
 - NEW: Double-click the "pause/unpause" button to enter "never automatically pause" mode. (Useful for debugging; normally, the virtual world pauses automatically when it is not the focused window).
 - CHANGED: Participants must now click on a WebPage to give it mouse focus. This keeps mouse movement information inside the virtual world even when hovering over web pages. It also fixes a bug where some web pages were unable to load properly (e.g. Google Docs).
-- FIXED: Deleting anything in a relm would open that relm up to a subtle bug in which new things would overwrite old things. New entities are now created using a random ID to prevent collisions.
+- FIXED: Deleting anything in a world would open that area up to a subtle bug in which new things would overwrite old things. New entities are now created using a random ID to prevent collisions.
 - FIXED: Updated to rapier 0.2.11 which should fix missing/changed collider issues we've had.
 
 2020-11-29
@@ -311,8 +311,8 @@
 - CHANGED: "Deactivate" button is now "Delete", and deletes entities in Entity Editor.
 
 2020-11-27
-- NEW: URL can now specify the relm, e.g. https://staging.relm.us/demo
-- NEW: Connection Pane in upper-right corner allows you to connect/disconnect AND change relms without reloading the HTML page.
+- NEW: URL can now specify the world, e.g. https://staging.gatherengine.org/demo
+- NEW: Connection Pane in upper-right corner allows you to connect/disconnect AND change worlds without reloading the HTML page.
 - NEW: Added a Reset World button in Build Mode
 - NEW: Asset URLs can be edited.
 - NEW: When you edit coordinates (& other values in the Entity Editor), those values are now saved & synced to the server.
@@ -460,10 +460,10 @@ lol Chris, you have a dry sense of humor
 - FIXED: CSS3D is no longer "behind" by 1 frame
 
 2020-11-04
-- NEW: Mixed HTML/WebGL mode. We can embed html, iframes, etc. in Relm's 3D world. Demo shows a youtube video.
+- NEW: Mixed HTML/WebGL mode. We can embed html, iframes, etc. in GatherEngine's 3D world. Demo shows a youtube video.
 - FIXED: Sometimes the box would lose the ability to be controlled.
 
 2020-10-29
-Demo is up: https://staging.relm.us/
+Demo is up: https://staging.gatherengine.org/
 There isn't much to look at, but it shows the progress I'm making with three.js and our new Entity-Component-System called HECS.
 
