@@ -45,7 +45,8 @@ export class TranslucentSystem extends System {
     object3d.value.traverse((node) => {
       if (node.isMesh) {
         node.material.transparent = false;
-        node.material.opacity = node.userData.translucent.opacity;
+        if (node.userData.translucent)
+          node.material.opacity = node.userData.translucent.opacity;
         delete node.userData.translucent;
       }
     });

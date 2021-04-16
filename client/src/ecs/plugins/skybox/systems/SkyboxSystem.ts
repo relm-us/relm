@@ -1,4 +1,4 @@
-import { Presentation } from "ecs/plugins/core";
+import { Presentation } from "~/ecs/plugins/core";
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import { Skybox, SkyboxRef } from "../components";
 
