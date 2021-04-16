@@ -1,9 +1,10 @@
 import { Vector3, DirectionalLight } from "three";
-import { get, Writable } from "svelte/store";
+import { derived, get, Writable } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
 import { globalEvents } from "~/events";
+import { keyShift } from "~/input/store";
 import { exportRelm, importRelm } from "./Export";
 
 import { mode } from "~/stores/mode";
@@ -23,6 +24,7 @@ import { Follow } from "~/ecs/plugins/follow";
 import { Collider, ColliderVisible } from "~/ecs/plugins/physics";
 import { Interactive } from "~/ecs/plugins/interactive";
 import { Translucent } from "~/ecs/plugins/translucent";
+import { BoundingHelper } from "~/ecs/plugins/bounding-helper";
 
 import { SelectionManager } from "./SelectionManager";
 import { IdentityManager } from "~/identity/IdentityManager";
@@ -86,17 +88,17 @@ export default class WorldManager {
 
     // Make colliders visible in build mode
     mode.subscribe(($mode) => {
-      const entities = this.world.entities.getAllByComponent(Collider);
-      for (const entity of entities) {
-        const interactive = entity.get(Interactive);
-        if (interactive && interactive.mouse === false) continue;
+      this.enableCollidersVisible($mode === "build");
+    });
 
-        if ($mode == "play") {
-          entity.remove(ColliderVisible);
-        } else if ($mode === "build") {
-          entity.add(ColliderVisible);
-        }
+    derived([mode, keyShift], ([$mode, $keyShift], set) => {
+      if ($mode === "build" && $keyShift) {
+        set(true);
+      } else {
+        set(false);
       }
+    }).subscribe((showBounds: boolean) => {
+      this.enableBoundingVisible(showBounds);
     });
 
     playState.subscribe(($state) => {
@@ -121,14 +123,6 @@ export default class WorldManager {
       follow.offset.y = distance;
       follow.offset.z = distance;
     });
-
-    // globalEvents.on("mouseActivity", () => {
-    //   if (this.avatar) {
-    //     const head = this.avatar.getChildren()[0];
-    //     const controller = head.get(HeadController);
-    //     if (controller) controller.enabled = true;
-    //   }
-    // });
   }
 
   enter(entryway: string) {
@@ -276,6 +270,22 @@ export default class WorldManager {
       this.avatar.add(Translucent, { opacity: 0.5 });
     } else {
       this.avatar.remove(Translucent);
+    }
+  }
+
+  enableCollidersVisible(enabled = true) {
+    const entities = this.world.entities.getAllByComponent(Collider);
+    for (const entity of entities) {
+      const interactive = entity.get(Interactive);
+      if (interactive && interactive.mouse === false) continue;
+      entity[enabled ? "add" : "remove"](ColliderVisible);
+    }
+  }
+
+  enableBoundingVisible(enabled = true) {
+    const entities = this.world.entities.getAllBy((entity) => !entity.parent);
+    for (const entity of entities) {
+      entity[enabled ? "add" : "remove"](BoundingHelper);
     }
   }
 

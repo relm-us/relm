@@ -31,6 +31,10 @@ export class Perspective {
     return this.avatar?.get(PointerPositionRef)?.value;
   }
 
+  getWorldFromScreen(...args) {
+    return this.getAvatarPlanes()?.getWorldFromScreen(...args);
+  }
+
   updateVisibleBounds() {
     const planes = this.getAvatarPlanes();
     if (!planes) return;
