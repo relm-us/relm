@@ -9,3 +9,4 @@ export const keyQ = writable(false);
 export const keyE = writable(false);
 
 export const keySpace = writable(false);
+export const keyShift = writable(false);

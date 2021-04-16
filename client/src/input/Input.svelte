@@ -2,6 +2,7 @@
   import ArrowKeyListener from "./ArrowKeyListener";
   import CopyPasteKeyListener from "./CopyPasteKeyListener";
   import SpaceKeyListener from "./SpaceKeyListener";
+  import ShiftKeyListener from "./ShiftKeyListener";
   import DeleteKeyListener from "./DeleteKeyListener";
   import EscapeKeyListener from "./EscapeKeyListener";
   import SwitchModeKeyListener from "./SwitchModeKeyListener";
@@ -17,6 +18,7 @@
 <ArrowKeyListener />
 <CopyPasteKeyListener />
 <SpaceKeyListener />
+<ShiftKeyListener />
 <DeleteKeyListener />
 <EscapeKeyListener />
 <SwitchModeKeyListener />
