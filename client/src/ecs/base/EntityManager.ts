@@ -22,14 +22,12 @@ export class EntityManager {
     return this.entities.get(id);
   }
 
+  getAllBy(predicate) {
+    return [...this.entities.values()].filter(predicate);
+  }
+
   getAllByComponent(component) {
-    const entities = [];
-    this.entities.forEach((entity, _id) => {
-      if (entity.has(component)) {
-        entities.push(entity);
-      }
-    });
-    return entities;
+    return this.getAllBy((entity) => entity.has(component));
   }
 
   onEntityActive(entity) {
