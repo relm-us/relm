@@ -8,7 +8,10 @@
   import { IntersectionFinder } from "./IntersectionFinder";
 
   import { TouchController } from "~/ecs/plugins/player-control";
-  import { PointerPlane, PointerPlaneRef } from "~/ecs/plugins/pointer-plane";
+  import {
+    PointerPosition,
+    PointerPositionRef,
+  } from "~/ecs/plugins/pointer-position";
   import { Transform } from "~/ecs/plugins/core";
   import { uuidv4 } from "~/utils/uuid";
 
@@ -112,15 +115,15 @@
           .activate();
       } else if (mouseMode === "drag") {
         // drag mode
-        const ref = pointerPlaneEntity.get(PointerPlaneRef);
+        const ref = pointerPosEntity.get(PointerPositionRef);
         if (ref) {
           if (dragOffset) {
-            const position = new Vector3().copy(ref[dragPlane]);
+            const position = new Vector3().copy(ref.value.points[dragPlane]);
             position.sub(dragOffset);
             $Relm.selection.moveRelativeToSavedPositions(position);
           } else if (ref.updateCount > 1) {
             $Relm.selection.savePositions();
-            dragOffset = new Vector3().copy(ref[dragPlane]);
+            dragOffset = new Vector3().copy(ref.value.points[dragPlane]);
           }
         }
       } else if (mouseMode === "drag-select") {

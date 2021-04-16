@@ -5,7 +5,7 @@ import { get } from "svelte/store";
 
 import { keyUp, keyDown, keyLeft, keyRight } from "~/input";
 import { HeadController } from "../components";
-import { PointerPlaneRef } from "~/ecs/plugins/pointer-plane";
+import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
 import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
 
 const vUp = new Vector3(0, 1, 0);
@@ -19,7 +19,7 @@ export class HeadControllerSystem extends System {
   order = Groups.Simulation;
 
   static queries = {
-    default: [HeadController, PointerPlaneRef],
+    default: [HeadController, PointerPositionRef],
   };
 
   update() {
@@ -30,7 +30,7 @@ export class HeadControllerSystem extends System {
 
   rotateTowardPointer(entity) {
     const controller = entity.get(HeadController);
-    const pointer = entity.get(PointerPlaneRef);
+    const pointer = entity.get(PointerPositionRef);
     vPointer.copy(pointer.XZ);
 
     const world = entity.getByName("WorldTransform");

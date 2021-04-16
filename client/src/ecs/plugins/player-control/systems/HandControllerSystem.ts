@@ -3,7 +3,7 @@ import { Vector3 } from "three";
 import { get } from "svelte/store";
 
 import { HandController } from "../components";
-import { PointerPlaneRef } from "~/ecs/plugins/pointer-plane";
+import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
 import { RigidBodyRef } from "~/ecs/plugins/physics/components/RigidBodyRef";
 
 const thrust = new Vector3();
@@ -27,7 +27,7 @@ export class HandControllerSystem extends System {
     const ppEntity = this.world.entities.getById(controller.pointerPlaneEntity);
     if (!ppEntity) return;
 
-    const pointerPlane = ppEntity.get(PointerPlaneRef);
+    const pointerPlane = ppEntity.get(PointerPositionRef);
     const bodyRef = entity.get(RigidBodyRef);
 
     if (pointerPlane) {

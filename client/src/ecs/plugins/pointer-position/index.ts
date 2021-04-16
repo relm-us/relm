@@ -9,7 +9,7 @@ export * from "./components";
 export { Components };
 
 export default createPlugin({
-  name: "pointer-plane",
+  name: "pointer-position",
   plugins: [CorePlugin],
   systems: Object.values(Systems),
   components: Object.values(Components),

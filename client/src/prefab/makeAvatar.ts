@@ -3,7 +3,7 @@ import { Vector3 } from "three";
 import { Asset, Transform } from "~/ecs/plugins/core";
 import { Model } from "~/ecs/plugins/core";
 import { NormalizeMesh } from "~/ecs/plugins/normalize";
-import { PointerPlane } from "~/ecs/plugins/pointer-plane";
+import { PointerPosition } from "~/ecs/plugins/pointer-position";
 import { RigidBody, Collider, Impactable } from "~/ecs/plugins/physics";
 import { Interactive } from "~/ecs/plugins/interactive";
 import { Animation } from "~/ecs/plugins/animation";
@@ -23,7 +23,7 @@ export function makeAvatar(
 ) {
   // Create the avatar's torso, which we connect everything else to
   const avatar: Entity = makeEntity(world, "Avatar", id)
-    .add(PointerPlane)
+    .add(PointerPosition)
     .add(Impactable)
     .add(Transform, {
       position: new Vector3(x, y, z),

@@ -5,7 +5,7 @@ import { get } from "svelte/store";
 
 import { keyUp, keyDown, keyLeft, keyRight } from "~/input";
 import { TouchController, ThrustController } from "../components";
-import { PointerPlaneRef } from "~/ecs/plugins/pointer-plane";
+import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
 import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
 import { RigidBodyRef } from "~/ecs/plugins/physics";
 
@@ -36,8 +36,8 @@ export class TouchControllerSystem extends System {
   }
 
   rotateTowardPointer(entity) {
-    const pointer = entity.get(PointerPlaneRef);
-    vPointer.copy(pointer.XZ);
+    const pointer = entity.get(PointerPositionRef);
+    vPointer.copy(pointer.XZ); // FIXME
 
     // If it's a very small number, it isn't real pointer position yet
     if (vPointer.lengthSq() < 0.001) return;
