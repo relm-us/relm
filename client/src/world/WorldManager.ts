@@ -36,14 +36,10 @@ import {
 
 import { avPermission } from "~/stores/avPermission";
 import { connectAV } from "~/av";
+import type { DecoratedWorld } from "~/types/DecoratedWorld";
 
 export default class WorldManager {
-  world: World & {
-    physics: any;
-    presentation: any;
-    cssPresentation: any;
-    htmlPresentation: any;
-  };
+  world: DecoratedWorld;
   viewport: HTMLElement;
   state: Writable<WorldState>;
   camera: Entity;

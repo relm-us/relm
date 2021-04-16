@@ -1,3 +1,5 @@
+import { DecoratedWorld } from "~/types/DecoratedWorld";
+
 import { createPlugin } from "~/ecs/base";
 import CorePlugin from "~/ecs/plugins/core";
 
@@ -15,10 +17,7 @@ export default createPlugin({
   plugins: [CorePlugin],
   systems: Object.values(Systems),
   components: Object.values(Components),
-  decorate(world) {
-    if (!(world as any).presentation) {
-      throw new Error("html2d plugin reguires plugins/core");
-    }
-    (world as any).htmlPresentation = new HtmlPresentation(world);
+  decorate(world: DecoratedWorld) {
+    world.htmlPresentation = new HtmlPresentation(world);
   },
 });
