@@ -61,7 +61,7 @@
 </script>
 
 <Pane
-  title={Component.name}
+  title={Component.editor ? Component.editor.label : Component.name}
   showClose={canDestroy()}
   showMinimize={true}
   showSettings={true}

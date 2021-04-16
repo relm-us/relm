@@ -60,6 +60,6 @@ export class RigidBody extends Component {
   };
 
   static editor = {
-    label: "RigidBody",
+    label: "Rigid Body",
   };
 }

@@ -37,6 +37,6 @@ export class CssPlane extends Component {
   };
 
   static editor = {
-    label: "CssPlane",
+    label: "CSS Plane",
   };
 }
