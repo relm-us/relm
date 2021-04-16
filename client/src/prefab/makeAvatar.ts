@@ -1,20 +1,28 @@
 import { Vector3 } from "three";
 
-import { Asset, Transform } from "~/ecs/plugins/core";
-import { Model } from "~/ecs/plugins/core";
+import { Entity } from "~/ecs/base";
+import { Asset, Model, Transform } from "~/ecs/plugins/core";
 import { NormalizeMesh } from "~/ecs/plugins/normalize";
-import { PointerPosition } from "~/ecs/plugins/pointer-position";
+import {
+  PointerPosition,
+  PointerPositionRef,
+} from "~/ecs/plugins/pointer-position";
 import { RigidBody, Collider, Impactable } from "~/ecs/plugins/physics";
 import { Interactive } from "~/ecs/plugins/interactive";
 import { Animation } from "~/ecs/plugins/animation";
+import { IDLE } from "~/ecs/plugins/player-control/constants";
+import { LineHelper } from "~/ecs/plugins/line-helper";
 
 import { makeEntity } from "./index";
-import { IDLE } from "~/ecs/plugins/player-control/constants";
-import { Entity } from "~/ecs/base";
 
 import { AVATAR_INTERACTION } from "~/config/colliderInteractions";
 
 const UNSCALED_CHARACTER_HEIGHT = 7;
+
+function getPointerPosition(entity) {
+  const pointer = entity.get(PointerPositionRef)?.value;
+  return pointer?.points.xz;
+}
 
 export function makeAvatar(
   world,
@@ -23,6 +31,7 @@ export function makeAvatar(
 ) {
   // Create the avatar's torso, which we connect everything else to
   const avatar: Entity = makeEntity(world, "Avatar", id)
+    // .add(LineHelper, { function: getPointerPosition })
     .add(PointerPosition)
     .add(Impactable)
     .add(Transform, {
