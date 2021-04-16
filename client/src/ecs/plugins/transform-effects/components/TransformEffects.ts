@@ -19,6 +19,6 @@ export class TransformEffects extends Component {
   };
 
   static editor = {
-    label: "TransformEffects",
+    label: "Transform Effects",
   };
 }

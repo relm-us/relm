@@ -95,7 +95,8 @@ export class DirectionalLight extends Component {
       },
     },
   };
+
   static editor = {
-    label: "Follow",
+    label: "Directional Light",
   };
 }

@@ -37,6 +37,7 @@ export class Image extends Component {
       },
     },
   };
+  
   static editor = {
     label: "Image",
   };

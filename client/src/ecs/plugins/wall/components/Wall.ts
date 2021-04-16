@@ -63,6 +63,7 @@ export class Wall extends Component {
       },
     },
   };
+  
   static editor = {
     label: "Wall",
   };

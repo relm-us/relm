@@ -126,6 +126,6 @@ export class Html2d extends Component {
   };
 
   static editor = {
-    label: "Label",
+    label: "Html2d",
   };
 }

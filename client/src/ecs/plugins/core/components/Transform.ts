@@ -24,6 +24,7 @@ export class Transform extends Component {
       },
     },
   };
+  
   static editor = {
     label: "Transform",
   };

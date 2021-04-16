@@ -18,4 +18,8 @@ export class NormalizeMesh extends Component {
       },
     },
   };
+
+  editor: {
+    label: "Normalize Mesh";
+  };
 }

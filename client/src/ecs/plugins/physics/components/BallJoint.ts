@@ -19,6 +19,7 @@ export class BallJoint extends Component {
       },
     },
   };
+  
   static editor = {
     label: "Fixed Joint",
   };

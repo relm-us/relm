@@ -18,6 +18,10 @@ export class LineHelper extends LocalComponent {
       default: "#ffffff",
     },
   };
+
+  static editor = {
+    label: "Line Helper",
+  };
 }
 
 export class LineHelperRef extends StateComponent {

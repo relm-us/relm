@@ -20,20 +20,19 @@
 
   const getComponents = (worldManager, entity) => {
     const entityComponentNames = entity.Components.map((c) => c.name);
-    const components = Object.entries(
+    const components = Object.values(
       worldManager.world.components.componentsByName
     )
-      .filter(([componentName, fn]) => {
-        const Component = fn as any;
+      .filter((Component: any) => {
         return (
-          !Component.isLocalComponent &&
+          Component.editor &&
           !Component.isStateComponent &&
-          !entityComponentNames.includes(componentName)
+          !entityComponentNames.includes(Component.name)
         );
       })
-      .map(([componentName, fn]) => ({
-        label: componentName,
-        value: (fn as any).name,
+      .map((Component: any) => ({
+        label: Component.editor?.label || Component.name,
+        value: Component.name,
       }));
     sortAlphabetically(components, (c) => c.label);
     return components;

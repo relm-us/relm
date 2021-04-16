@@ -7,6 +7,8 @@ export class Translucent extends LocalComponent {
       default: 0.5,
     },
   };
+
+  // Not an editor component for now, because we use Translucent to indicate build mode
 }
 
 export class TranslucentApplied extends StateComponent {}

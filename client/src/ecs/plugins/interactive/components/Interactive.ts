@@ -7,6 +7,10 @@ export class Interactive extends LocalComponent {
       default: false,
     },
   };
+
+  editor: {
+    label: "Interactive"
+  }
 }
 
 export class InteractiveApplied extends StateComponent {}

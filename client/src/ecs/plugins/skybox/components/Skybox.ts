@@ -11,4 +11,6 @@ export class Skybox extends Component {
       },
     },
   };
+
+  // Doesn't show up in Editor because Skybox is a singleton entity
 }

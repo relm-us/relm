@@ -39,6 +39,7 @@ export class Follow extends Component {
       },
     },
   };
+  
   static editor = {
     label: "Follow",
   };
