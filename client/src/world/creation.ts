@@ -24,6 +24,7 @@ import ImagePlugin from "~/ecs/plugins/image";
 import PerspectivePlugin from "~/ecs/plugins/perspective";
 
 import AnimationPlugin from "~/ecs/plugins/animation";
+import BoundingHelperPlugin from "~/ecs/plugins/bounding-helper";
 import ColorationPlugin from "~/ecs/plugins/coloration";
 import Css3DPlugin from "~/ecs/plugins/css3d";
 import FirePlugin from "~/ecs/plugins/fire";
@@ -127,6 +128,7 @@ export function createWorld(rapier) {
       PerspectivePlugin,
       /* others */
       AnimationPlugin,
+      BoundingHelperPlugin,
       ColorationPlugin,
       Css3DPlugin,
       FollowPlugin,

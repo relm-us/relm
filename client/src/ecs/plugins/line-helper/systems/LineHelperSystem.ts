@@ -11,7 +11,7 @@ export class LineHelperSystem extends System {
   order = Groups.Simulation - 1;
 
   static queries = {
-    added: [LineHelper, Not(LineHelperRef)],
+    added: [LineHelper, Not(LineHelperRef), Transform],
     active: [LineHelper, LineHelperRef],
     removed: [Not(LineHelper), LineHelperRef],
   };
@@ -42,7 +42,7 @@ export class LineHelperSystem extends System {
       return;
     }
 
-    const origin = entity.get(Transform)?.position;
+    const origin = entity.get(Transform).position;
     const endpoint = spec.function(entity);
     if (!endpoint) return;
 
