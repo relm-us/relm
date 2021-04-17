@@ -1,12 +1,18 @@
-import { System, Not, Modified, Groups } from "~/ecs/base";
-import * as THREE from "three";
+import {
+  BufferGeometry,
+  Mesh,
+  sRGBEncoding,
+  Object3D as ThreeObject3D,
+} from "three";
 
 import { IS_BROWSER } from "../utils";
+import { traverseMaterials } from "~/utils/traverseMaterials";
+
+import { System, Not, Modified, Groups } from "~/ecs/base";
+import { Queries } from "~/ecs/base/Query";
+
 import { Object3D, Model, ModelLoading, ModelMesh } from "../components";
 import { Presentation } from "../Presentation";
-import { Queries } from "~/ecs/base/Query";
-import { traverseMaterials } from "~/utils/traverseMaterials";
-import { FrontSide } from "three";
 
 let ids = 0;
 
@@ -73,29 +79,25 @@ export class ModelSystem extends System {
 
   async build(entity) {
     const asset = entity.get(Model).asset;
-    if (!asset.url) {
-      // attach a blank Object3D to move this entity to
-      // a query that won't spam this build function repeatedly
-      const mesh = new THREE.Object3D();
-      const object3d = entity.get(Object3D).value;
-      object3d.add(mesh);
-      entity.add(ModelMesh, { value: mesh });
-      // console.log(`ModelSystem: ${entity.name} has no asset, using placeholder`)
-      return;
-    }
+    if (!asset.url) return this.loadingError(entity, "asset.url empty");
+
     const id = ++ids;
     entity.add(ModelLoading, { id });
-    // console.log(`ModelSystem: loading id:${id}`)
+
     let scene, clips;
     try {
       const loaded = await this.presentation.loadGltf(asset.url);
       scene = loaded.scene;
       clips = loaded.clips;
+
+      const invalidModel = this.invalidModel(scene);
+      if (invalidModel) return this.loadingError(entity, invalidModel);
+
       this.applyMaterialSettings(scene);
     } catch (error) {
-      console.error(error);
-      return;
+      return this.loadingError(entity, error.toString());
     }
+
     const loadingId = entity.get(ModelLoading)?.id;
     entity.remove(ModelLoading);
 
@@ -106,12 +108,34 @@ export class ModelSystem extends System {
         entity.add(ModelMesh, { value: scene, clips });
       }
     } else {
-      console.log(`ModelSystem: cancelled id:${id} (id was removed/changed)`);
+      return this.loadingError(entity, `${id} was cancelled`);
     }
   }
 
+  loadingError(entity, msg) {
+    entity.maybeRemove(Model);
+    entity.maybeRemove(ModelLoading);
+    console.warn(`ModelSystem: ${msg}`, entity);
+  }
+
+  invalidModel(scene: ThreeObject3D): any {
+    let maybeInvalid = undefined;
+    scene.traverse((node) => {
+      const geometry: BufferGeometry = (node as Mesh).geometry;
+      if (geometry) {
+        const attrs = Object.entries(geometry.attributes);
+        for (const [attrName, attrVal] of attrs) {
+          if (!attrVal) {
+            maybeInvalid = `Invalid model--attribute '${attrName}' is null`;
+          }
+        }
+      }
+    });
+    return maybeInvalid;
+  }
+
   applyMaterialSettings(scene) {
-    const encoding = THREE.sRGBEncoding;
+    const encoding = sRGBEncoding;
     traverseMaterials(scene, (material) => {
       if (material.map) material.map.encoding = encoding;
       if (material.emissiveMap) material.emissiveMap.encoding = encoding;
