@@ -53,9 +53,7 @@
   }
 
   function removeTouchController() {
-    if ($Relm.avatar.has(TouchController)) {
-      $Relm.avatar.remove(TouchController);
-    }
+    $Relm.avatar.maybeRemove(TouchController);
   }
 
   function setMousePositionFromEvent(event, isStart = false) {

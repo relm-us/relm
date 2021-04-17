@@ -276,16 +276,16 @@ export default class WorldManager {
   enableCollidersVisible(enabled = true) {
     const entities = this.world.entities.getAllByComponent(Collider);
     for (const entity of entities) {
-      entity[enabled ? "add" : "remove"](ColliderVisible);
       const interactive = !entity.get(NonInteractive);
       if (interactive)
+      entity[enabled ? "add" : "maybeRemove"](ColliderVisible);
     }
   }
 
   enableBoundingVisible(enabled = true) {
     const entities = this.world.entities.getAllBy((entity) => !entity.parent);
     for (const entity of entities) {
-      entity[enabled ? "add" : "remove"](BoundingHelper);
+      entity[enabled ? "add" : "maybeRemove"](BoundingHelper);
     }
   }
 

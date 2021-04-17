@@ -83,6 +83,11 @@ export class Entity {
     return this.has(Component);
   }
 
+  maybeRemove(Component: TypeOfComponent): Entity {
+    if (this.has(Component)) this.remove(Component);
+    return this;
+  }
+
   remove(Component: TypeOfComponent): Entity {
     if (!this.components.has(Component)) {
       console.warn("Entity: cannot remove component as it doesnt have one");
