@@ -55,7 +55,7 @@ export class IntersectionFinder {
         if (object !== null) {
           // outlines and other "things" should be invisible to
           // IntersectionFinder
-          if (!object.userData.invisibleToMouse) {
+          if (!object.userData.nonInteractive) {
             acc.add(object);
           }
         }

@@ -8,7 +8,7 @@ import {
   PointerPositionRef,
 } from "~/ecs/plugins/pointer-position";
 import { RigidBody, Collider, Impactable } from "~/ecs/plugins/physics";
-import { Interactive } from "~/ecs/plugins/interactive";
+import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { Animation } from "~/ecs/plugins/animation";
 import { IDLE } from "~/ecs/plugins/player-control/constants";
 import { LineHelper } from "~/ecs/plugins/line-helper";
@@ -58,7 +58,7 @@ export function makeAvatar(
       offset: new Vector3(0, UNSCALED_CHARACTER_HEIGHT / 2, 0),
       interaction: AVATAR_INTERACTION,
     })
-    .add(Interactive, { mouse: false });
+    .add(NonInteractive);
 
   const head = makeEntity(world, "AvatarHead").add(Transform, {
     position: new Vector3(0, UNSCALED_CHARACTER_HEIGHT, 0),

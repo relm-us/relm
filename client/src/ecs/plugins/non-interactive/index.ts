@@ -9,7 +9,7 @@ export * from "./components";
 export { Components };
 
 export default createPlugin({
-  name: "interactive",
+  name: "non-interactive",
   plugins: [CorePlugin],
   systems: Object.values(Systems),
   components: Object.values(Components),

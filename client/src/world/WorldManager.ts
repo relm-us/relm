@@ -22,7 +22,7 @@ import { makeStageAndActivate, makeInitialCollider } from "~/prefab";
 import { Entity, World } from "~/ecs/base";
 import { Follow } from "~/ecs/plugins/follow";
 import { Collider, ColliderVisible } from "~/ecs/plugins/physics";
-import { Interactive } from "~/ecs/plugins/interactive";
+import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { Translucent } from "~/ecs/plugins/translucent";
 import { BoundingHelper } from "~/ecs/plugins/bounding-helper";
 
@@ -276,9 +276,9 @@ export default class WorldManager {
   enableCollidersVisible(enabled = true) {
     const entities = this.world.entities.getAllByComponent(Collider);
     for (const entity of entities) {
-      const interactive = entity.get(Interactive);
-      if (interactive && interactive.mouse === false) continue;
       entity[enabled ? "add" : "remove"](ColliderVisible);
+      const interactive = !entity.get(NonInteractive);
+      if (interactive)
     }
   }
 

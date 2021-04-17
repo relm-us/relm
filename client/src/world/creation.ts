@@ -30,10 +30,10 @@ import Css3DPlugin from "~/ecs/plugins/css3d";
 import FirePlugin from "~/ecs/plugins/fire";
 import FollowPlugin from "~/ecs/plugins/follow";
 import Html2dPlugin from "~/ecs/plugins/html2d";
-import InteractivePlugin from "~/ecs/plugins/interactive";
 import LightingPlugin from "~/ecs/plugins/lighting";
 import LineHelperPlugin from "~/ecs/plugins/line-helper";
 import MorphPlugin from "~/ecs/plugins/morph";
+import NonInteractivePlugin from "~/ecs/plugins/non-interactive";
 import NormalizePlugin from "~/ecs/plugins/normalize";
 import OutlinePlugin from "~/ecs/plugins/outline";
 import ParticlesPlugin from "~/ecs/plugins/particles";
@@ -133,10 +133,10 @@ export function createWorld(rapier) {
       Css3DPlugin,
       FollowPlugin,
       Html2dPlugin,
-      InteractivePlugin,
       LightingPlugin,
       LineHelperPlugin,
       MorphPlugin,
+      NonInteractivePlugin,
       NormalizePlugin,
       OutlinePlugin,
       ParticlesPlugin,

@@ -36,7 +36,7 @@ export class OutlineSystem extends System {
       clonedObject3d.position.set(0, 0, 0);
       clonedObject3d.rotation.set(0, 0, 0);
       clonedObject3d.scale.set(1, 1, 1);
-      clonedObject3d.userData.invisibleToMouse = true;
+      clonedObject3d.userData.nonInteractive = true;
       const outlineObject3d = this.outlinify(
         clonedObject3d,
         outline.color,
