@@ -37,11 +37,11 @@ export class AnimationSystem extends System {
     const mixer = new AnimationMixer(scene);
     entity.add(MixerRef, { value: mixer });
 
-    // Flag Skinned Meshes as non-frustum-cullable
+    // Flag Skinned Meshes as non-frustum-cullable, except avatar,
+    // which we handle as a special case in NormalizeMeshSystem.normalize
+    if (scene.parent.name === "Avatar") return;
     scene.traverse((node) => {
-      if (node.isSkinnedMesh) {
-        node.frustumCulled = false;
-      }
+      if (node.isSkinnedMesh) node.frustumCulled = false;
     });
   }
 

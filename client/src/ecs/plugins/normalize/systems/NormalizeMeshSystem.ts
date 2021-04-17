@@ -1,7 +1,9 @@
+import { Box3, Vector3, Matrix4, MathUtils } from "three";
+
 import { System, Groups, Not } from "~/ecs/base";
 import { Object3D } from "~/ecs/plugins/core";
 import { ModelMesh } from "~/ecs/plugins/core";
-import { Box3, Vector3 } from "three";
+
 import { NormalizeMesh, NormalizedMesh } from "../components";
 
 export class NormalizeMeshSystem extends System {
@@ -57,6 +59,15 @@ export class NormalizeMeshSystem extends System {
         obj.castShadow = true;
         obj.receiveShadow = true;
         obj.geometry.scale(scale, scale, scale);
+      }
+
+      // TODO: Find a better way to fix bounding box for skinned mesh general case
+      if (obj.isSkinnedMesh && first.parent.name === "Avatar") {
+        let m = new Matrix4()
+        m.makeRotationX(MathUtils.degToRad(-90))
+        m.scale(new Vector3(100, 100, 100))
+        obj.geometry.boundingBox.applyMatrix4(m)
+        obj.geometry.boundingSphere.applyMatrix4(m)
       }
     });
   }
