@@ -7,7 +7,8 @@
 
   import { IntersectionFinder } from "./IntersectionFinder";
 
-  import { TouchController } from "~/ecs/plugins/player-control";
+  import { Entity } from "~/ecs/base";
+  import { Controller } from "~/ecs/plugins/player-control";
   import {
     PointerPosition,
     PointerPositionRef,
@@ -48,12 +49,16 @@
     world.presentation.scene
   );
 
-  function addTouchController() {
-    $Relm.avatar.add(TouchController);
+  function addTouchController(entity: Entity) {
+    const controller = entity.get(Controller);
+    controller.touchEnabled = true;
+    console.log("add touch controller");
   }
 
-  function removeTouchController() {
-    $Relm.avatar.maybeRemove(TouchController);
+  function removeTouchController(entity: Entity) {
+    const controller = entity.get(Controller);
+    controller.touchEnabled = false;
+    console.log("remove touch controller");
   }
 
   function setMousePositionFromEvent(event, isStart = false) {
@@ -63,7 +68,8 @@
 
   function findIntersectionsAtMousePosition() {
     finder.castRay(mousePosition);
-    return [...finder.find()].map((object) => object.userData.entityId);
+    const findings = [...finder.find()];
+    return findings.map((object) => object.userData.entityId);
   }
 
   function eventTargetsWorld(event) {
@@ -211,7 +217,7 @@
       selectionLogic.mousedown(found, event.shiftKey);
     } else if ($mode === "play") {
       if (found.includes($Relm.avatar.id)) {
-        addTouchController();
+        addTouchController($Relm.avatar);
       } else {
         // At this point, at least a 'click' has started. TBD if it's a drag.
         mouseMode = "click";
@@ -229,7 +235,7 @@
         $Relm.selection.syncEntities();
       }
     } else if ($mode === "play") {
-      removeTouchController();
+      removeTouchController($Relm.avatar);
     }
 
     if (pointerPosEntity) {
@@ -253,7 +259,10 @@
       selectionLogic.mousedown(found, false);
     } else if ($mode === "play") {
       if (found.includes($Relm.avatar.id)) {
-        addTouchController();
+        addTouchController($Relm.avatar);
+      } else {
+        // At this point, at least a 'click' has started. TBD if it's a drag.
+        mouseMode = "click";
       }
     }
   }
@@ -275,7 +284,7 @@
     if ($mode === "build") {
       // TODO?
     } else if ($mode === "play") {
-      removeTouchController();
+      removeTouchController($Relm.avatar);
     }
   }
 </script>

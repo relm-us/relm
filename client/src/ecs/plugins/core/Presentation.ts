@@ -51,6 +51,7 @@ export class Presentation {
   skipUpdate: number;
   mouse2d: Vector2;
   mouseMoveListener: (event: MouseEvent) => void;
+  touchMoveListener: (event: TouchEvent) => void;
 
   constructor(world: World, options: PresentationOptions) {
     this.world = world;
@@ -65,6 +66,7 @@ export class Presentation {
     this.skipUpdate = 0;
     this.mouse2d = new Vector2();
     this.mouseMoveListener = this.handleMouseMove.bind(this);
+    this.touchMoveListener = this.handleTouchMove.bind(this);
 
     if (!gltfLoader) gltfLoader = new Loader();
 
@@ -76,6 +78,12 @@ export class Presentation {
     this.mouse2d.y = event.clientY;
   }
 
+  handleTouchMove(event: TouchEvent) {
+    var touches = event.changedTouches;
+    this.mouse2d.x = touches[0].clientX;
+    this.mouse2d.y = touches[0].clientY;
+  }
+
   setViewport(viewport) {
     if (this.viewport === viewport) {
       return;
@@ -83,6 +91,8 @@ export class Presentation {
     if (this.viewport) {
       this.resizeObserver.unobserve(this.viewport);
       this.viewport.removeEventListener("mousemove", this.mouseMoveListener);
+      this.viewport.removeEventListener("touchmove", this.touchMoveListener);
+      this.viewport.removeEventListener("touchstart", this.touchMoveListener);
       this.viewport.removeChild(this.renderer.domElement);
       this.viewport = null;
     }
@@ -90,6 +100,8 @@ export class Presentation {
     this.resize();
     if (this.viewport) {
       this.viewport.appendChild(this.renderer.domElement);
+      this.viewport.addEventListener("touchstart", this.touchMoveListener);
+      this.viewport.addEventListener("touchmove", this.touchMoveListener);
       this.viewport.addEventListener("mousemove", this.mouseMoveListener);
       this.resizeObserver.observe(this.viewport);
     }

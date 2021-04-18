@@ -2,7 +2,7 @@ import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
 import { Portal } from "../components";
 import { Impact, Impactable } from "~/ecs/plugins/physics";
-import { ThrustController } from "~/ecs/plugins/player-control";
+import { Controller } from "~/ecs/plugins/player-control";
 import { Vector3 } from "three";
 import { subrelm } from "~/stores/subrelm";
 import { moveAvatarTo } from "~/identity/Avatar";
@@ -32,7 +32,7 @@ export class PortalSystem extends System {
       const portal = entity.get(Portal);
       const others: Map<Entity, number> = entity.get(Impact).others;
       for (const [otherEntity, magnitude] of others) {
-        if (otherEntity.has(ThrustController)) {
+        if (otherEntity.has(Controller)) {
           if (portal.kind === "LOCAL") {
             const transform = otherEntity.get(Transform);
             const newCoords = new Vector3().copy(portal.coords);

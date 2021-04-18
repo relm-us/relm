@@ -57,8 +57,7 @@ export function makeAvatar(
       capsuleRadius: 1,
       offset: new Vector3(0, UNSCALED_CHARACTER_HEIGHT / 2, 0),
       interaction: AVATAR_INTERACTION,
-    })
-    .add(NonInteractive);
+    });
 
   const head = makeEntity(world, "AvatarHead").add(Transform, {
     position: new Vector3(0, UNSCALED_CHARACTER_HEIGHT, 0),
