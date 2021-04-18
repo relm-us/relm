@@ -32,6 +32,7 @@ import { ChatManager } from "./ChatManager";
 import {
   AVATAR_BUILDER_INTERACTION,
   AVATAR_INTERACTION,
+  GROUND_INTERACTION,
 } from "~/config/colliderInteractions";
 
 import { avPermission } from "~/stores/avPermission";
@@ -88,6 +89,7 @@ export default class WorldManager {
 
     // Make colliders visible in build mode
     mode.subscribe(($mode) => {
+      this.enableNonInteractiveGround($mode === "build");
       this.enableCollidersVisible($mode === "build");
     });
 
@@ -97,8 +99,9 @@ export default class WorldManager {
       } else {
         set(false);
       }
-    }).subscribe((showBounds: boolean) => {
-      this.enableBoundingVisible(showBounds);
+    }).subscribe((buildModeShift: boolean) => {
+      this.enableNonInteractiveGround(!buildModeShift);
+      this.enableBoundingVisible(buildModeShift);
     });
 
     playState.subscribe(($state) => {
@@ -273,19 +276,31 @@ export default class WorldManager {
     }
   }
 
+  enableNonInteractiveGround(enabled = true) {
+    const action = enabled ? "add" : "maybeRemove";
+    const entities = this.world.entities.getAllByComponent(Collider);
+    for (const entity of entities) {
+      const collider = entity.get(Collider);
+      if (collider.interaction === GROUND_INTERACTION) {
+        entity[action](NonInteractive);
+      }
+    }
+  }
+
   enableCollidersVisible(enabled = true) {
+    const action = enabled ? "add" : "maybeRemove";
     const entities = this.world.entities.getAllByComponent(Collider);
     for (const entity of entities) {
       const interactive = !entity.get(NonInteractive);
-      if (interactive)
-      entity[enabled ? "add" : "maybeRemove"](ColliderVisible);
+      if (interactive) entity[action](ColliderVisible);
     }
   }
 
   enableBoundingVisible(enabled = true) {
+    const action = enabled ? "add" : "maybeRemove";
     const entities = this.world.entities.getAllBy((entity) => !entity.parent);
     for (const entity of entities) {
-      entity[enabled ? "add" : "maybeRemove"](BoundingHelper);
+      entity[action](BoundingHelper);
     }
   }
 

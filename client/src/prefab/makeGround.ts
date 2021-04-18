@@ -3,6 +3,7 @@ import { Color, Vector3 } from "three";
 import { Transform } from "~/ecs/plugins/core";
 import { RigidBody, Collider } from "~/ecs/plugins/physics";
 import { Shape } from "~/ecs/plugins/shape";
+import { NonInteractive } from "~/ecs/plugins/non-interactive";
 
 import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 
@@ -31,5 +32,6 @@ export function makeGround(world, { x = 0, y = 0, z = 0, yOffset = -0.5 }) {
       cylinderRadius: 15,
       cylinderHeight: 1,
       interaction: GROUND_INTERACTION,
-    });
+    })
+    .add(NonInteractive);
 }
