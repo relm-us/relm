@@ -741,7 +741,15 @@ export default class RoomClient {
         logger.debug("enableMic() | calling getUserMedia()");
 
         const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
+          audio: {
+            autoGainControl: false,
+            echoCancellation: true,
+            noiseSuppression: true,
+            channelCount: 2,
+            sampleRate: 48000,
+            sampleSize: 16,
+            volume: 1.0,
+          },
         });
 
         track = stream.getAudioTracks()[0];
