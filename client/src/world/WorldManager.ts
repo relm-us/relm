@@ -89,8 +89,10 @@ export default class WorldManager {
 
     // Make colliders visible in build mode
     mode.subscribe(($mode) => {
-      this.enableNonInteractiveGround($mode === "build");
-      this.enableCollidersVisible($mode === "build");
+      const enabled = $mode === "build";
+      this.enableAvatarNonInteractive(enabled);
+      this.enableNonInteractiveGround(enabled);
+      this.enableCollidersVisible(enabled);
     });
 
     derived([mode, keyShift], ([$mode, $keyShift], set) => {
@@ -273,6 +275,14 @@ export default class WorldManager {
       this.avatar.add(Translucent, { opacity: 0.5 });
     } else {
       this.avatar.remove(Translucent);
+    }
+  }
+
+  enableAvatarNonInteractive(enabled = true) {
+    if (enabled) {
+      this.avatar.add(NonInteractive);
+    } else {
+      this.avatar.remove(NonInteractive);
     }
   }
 

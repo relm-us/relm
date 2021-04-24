@@ -4,7 +4,7 @@ import { Object3D } from "~/ecs/plugins/core";
 import { Translucent, TranslucentApplied } from "../components";
 
 export class TranslucentSystem extends System {
-  order = Groups.Initialization;
+  order = Groups.Initialization + 1;
 
   static queries = {
     new: [Object3D, Translucent, Not(TranslucentApplied)],
