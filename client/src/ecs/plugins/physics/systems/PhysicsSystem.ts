@@ -11,7 +11,20 @@ const m4_2 = new Matrix4();
 const m4_3 = new Matrix4();
 const scale = new Vector3(1, 1, 1);
 
+const TIMESTEP = 1 / 60;
+
+function createFixedTimestep(timestep, callback) {
+  let accumulator = 0;
+  return (delta) => {
+    accumulator += delta;
+    while (accumulator >= timestep) {
+      callback(accumulator);
+      accumulator -= timestep;
+    }
+  };
+}
 export class PhysicsSystem extends System {
+  fixedUpdate: Function;
   order = Groups.Presentation + 300;
 
   static queries = {
@@ -20,18 +33,18 @@ export class PhysicsSystem extends System {
 
   init() {
     // Create a regular, fixed physics time-step, regardless of rendering framerate
-    // (this as any).update = createFixedTimestep(TIMESTEP, this.fixedUpdate.bind(this));
+    this.fixedUpdate = createFixedTimestep(
+      TIMESTEP,
+      this.onFixedUpdate.bind(this)
+    );
   }
 
-  // TODO: remove this if https://github.com/gohyperr/hecs/pull/22 accepted
-  createQueries(queries) {
-    for (const queryName in queries) {
-      const Components = queries[queryName];
-      this.queries[queryName] = this.world.queries.create(Components);
-    }
+  update(delta) {
+    const dt = 1 / (1000 / delta);
+    this.fixedUpdate(dt);
   }
 
-  update() {
+  onFixedUpdate() {
     const { world, eventQueue } = (this.world as any).physics;
 
     this.queries.default.forEach((entity) => {
