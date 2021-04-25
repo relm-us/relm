@@ -20,7 +20,9 @@
 
 {#if videoSetup}
   <setup>
-    <logo style="--relm-logo: url({relmLogo})" />
+    <logo>
+      <img src={relmLogo} alt="logo" />
+    </logo>
     <message>
       You're about to join a social experience with audio & video.
     </message>
@@ -38,6 +40,7 @@
     align-items: center;
 
     position: fixed;
+    overflow-y: auto;
     width: 100%;
     height: 100%;
     z-index: 4;
@@ -49,17 +52,22 @@
   logo {
     display: block;
 
-    width: 299px;
-    height: 116px;
-    background-image: var(--relm-logo);
-    background-size: 299px 116px;
+    width: 50vw;
+    height: 150px;
+    max-width: 300px;
+    max-height: 150px;
 
-    margin-top: 48px;
+    margin-top: 5vh;
+  }
+
+  logo img {
+    width: 100%;
   }
 
   message {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    margin: 32px 0px;
+    text-align: center;
+    margin: 8px 8px 3vh 8px;
   }
 
   or {
