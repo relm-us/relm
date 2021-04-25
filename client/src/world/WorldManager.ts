@@ -194,7 +194,7 @@ export default class WorldManager {
 
     this.sendLocalStateInterval = setInterval(() => {
       const data = this.identities.me.avatar.getTransformData();
-      this.setLocalStateField("m", data);
+      if (data) this.setLocalStateField("m", data);
     }, 20);
 
     this.wdoc.provider.awareness.on("change", (changes) => {

@@ -198,6 +198,7 @@ export class Avatar {
   getTransformData() {
     const transformData = [];
     const transform = this.entity.get(Transform);
+    if (!transform) return;
 
     // Get position of body
     transform.position.toArray(transformData, 0);
