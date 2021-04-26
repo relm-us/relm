@@ -1,6 +1,7 @@
 import { World, Entity, EntityId } from "~/ecs/base";
 import { DeepDiff } from "deep-diff";
 import { readableMap, YReadableMap } from "svelt-yjs";
+import { loadingState } from "~/stores/loading";
 
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
@@ -37,15 +38,9 @@ import { selectedEntities } from "~/stores/selection";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
 
-type LoadingCallbackStatus = "loading" | "loaded" | "error";
-type LoadingCallback = (status: LoadingCallbackStatus, bytes?: number) => void;
-
 export class WorldDoc extends EventEmitter {
   // The Hecs world that this document will synchronize with
   world: World;
-
-  // Callback that receives current byte count and isLoaded flag
-  onLoading: LoadingCallback;
 
   // The "root node" (document) containing all specification data for the world
   ydoc: Y.Doc;
@@ -94,7 +89,7 @@ export class WorldDoc extends EventEmitter {
     });
   }
 
-  connect(connectOpts: ConnectOptions, setState?: LoadingCallback) {
+  connect(connectOpts: ConnectOptions) {
     this.provider = new WebsocketProvider(
       connectOpts.url,
       connectOpts.room,
@@ -102,16 +97,14 @@ export class WorldDoc extends EventEmitter {
       { params: connectOpts.params } as { params: any }
     );
 
-    setState("loading");
+    loadingState.set("loading");
 
     if (connectOpts.entitiesCount === 0) {
-      setState("loaded");
-      this.emit("sync");
+      loadingState.set("loaded");
     } else {
       let interval = setInterval(() => {
         if (this.ydoc.store.clients.size > 1) {
-          setState("loaded");
-          this.emit("sync");
+          loadingState.set("loaded");
           clearInterval(interval);
         }
       }, 50);
@@ -120,7 +113,7 @@ export class WorldDoc extends EventEmitter {
     this.provider.on("status", ({ status }: { status: YConnectionStatus }) => {
       if (status === "error") {
         console.warn("error connecting to y-websocket");
-        setState("error");
+        loadingState.set("error");
       }
       yConnectStatus.set(status);
     });
@@ -168,7 +161,6 @@ export class WorldDoc extends EventEmitter {
       applyDiffToYEntity(diff, yentity, this.ydoc);
     } else {
       /* This entity is new to WorldDoc */
-
       this._add(entity);
     }
   }

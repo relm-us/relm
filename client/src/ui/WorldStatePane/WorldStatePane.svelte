@@ -11,6 +11,7 @@
   import { avPermission } from "~/stores/avPermission";
   import { roomConnectState } from "~/av/stores/roomConnectState";
   import {
+    loadingState,
     loaded,
     maximum,
     entitiesLoaded,
@@ -36,16 +37,12 @@
   let vw;
   $: vw = $size ? `(${$size.width},${$size.height})` : "";
 
-  let synced = false;
   let idActive = 0;
   let idTotal = 0;
 
   onMount(() => {
     const interval = setInterval(() => {
       if (!$Relm) return;
-
-      if ($Relm.identities.isSynced !== synced)
-        synced = $Relm.identities.isSynced;
 
       if ($Relm.identities.active !== idActive)
         idActive = $Relm.identities.active;
@@ -78,6 +75,7 @@
       <tr>
         <th>loading:</th>
         <td>
+          {$loadingState}
           {$loaded}/{$maximum}
           (Ent: {$entitiesLoaded}/{$entitiesMaximum}) (Ast: {$assetsLoaded}/{$assetsMaximum})
         </td>
@@ -86,7 +84,7 @@
       <tr><th>viewport:</th><td>{$viewport !== null} {vw}</td></tr>
       <tr>
         <th>identities:</th>
-        <td>{idActive} / {idTotal} ({synced ? "sync" : ""})</td>
+        <td>{idActive} / {idTotal}</td>
       </tr>
     </table>
   </Pane>

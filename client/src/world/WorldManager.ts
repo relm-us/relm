@@ -15,7 +15,7 @@ import { ConnectOptions } from "~/stores/connection";
 import { scale } from "~/stores/viewport";
 import { shadowsEnabled } from "~/stores/settings";
 import { entryway } from "~/stores/subrelm";
-import { resetLoading, handleLoading } from "~/stores/loading";
+import { loadingState, resetLoading, handleLoading } from "~/stores/loading";
 
 import { makeStageAndActivate, makeInitialCollider } from "~/prefab";
 
@@ -73,13 +73,6 @@ export default class WorldManager {
     this.mount();
     this.populate();
 
-    // Move avatar to named entryway once world has loaded
-    this.wdoc.on("sync", () => {
-      entryway.subscribe(($entryway) => {
-        this.enter($entryway);
-      });
-    });
-
     shadowsEnabled.subscribe(($enabled) => {
       const ref = this.light.getByName("DirectionalLightRef");
       if (!ref) return;
@@ -93,6 +86,10 @@ export default class WorldManager {
       this.enableAvatarNonInteractive(enabled);
       this.enableNonInteractiveGround(enabled);
       this.enableCollidersVisible(enabled);
+    });
+
+    loadingState.subscribe(($state) => {
+      handleLoading(this.start.bind(this), this.wdoc, $state);
     });
 
     derived([mode, keyShift], ([$mode, $keyShift], set) => {
@@ -187,10 +184,7 @@ export default class WorldManager {
 
     // Connect & show loading progress
     resetLoading(connectOpts.assetsCount, connectOpts.entitiesCount);
-    this.wdoc.connect(
-      this.connectOpts,
-      handleLoading(this.start.bind(this), this.wdoc)
-    );
+    this.wdoc.connect(this.connectOpts);
 
     this.sendLocalStateInterval = setInterval(() => {
       const data = this.identities.me.avatar.getTransformData();
@@ -316,6 +310,12 @@ export default class WorldManager {
 
   start() {
     this.world.presentation.compile();
+
+    // Move avatar to named entryway once world has loaded
+    entryway.subscribe(($entryway) => {
+      this.enter($entryway);
+    });
+
     worldState.set("running");
     playState.set("playing");
   }

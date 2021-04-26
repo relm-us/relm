@@ -16,6 +16,7 @@ import {
   YClientID,
 } from "./types";
 
+import { loadingState } from "~/stores/loading";
 import { defaultIdentity } from "./defaultIdentity";
 import { Identity } from "./Identity";
 import { ChatMessage } from "~/world/ChatManager";
@@ -108,11 +109,13 @@ export class IdentityManager extends EventEmitter {
      * After getting 'sync' signal, yjs doc is synced and can accept
      * more up to date values, such as the clientId of this connection.
      */
-    this.relm.wdoc.on("sync", () => {
-      identity.sharedFields.update(($fields) => {
-        return { ...$fields, clientId };
-      });
-      this.isSynced = true;
+    loadingState.subscribe(($state) => {
+      if ($state === "loaded") {
+        identity.sharedFields.update(($fields) => {
+          return { ...$fields, clientId };
+        });
+        this.isSynced = true;
+      }
     });
 
     this.me = identity;
@@ -194,7 +197,7 @@ export class IdentityManager extends EventEmitter {
   get active() {
     let count = 0;
     for (const identity of this.identities.values()) {
-      if (identity.avatar.entity) count++
+      if (identity.avatar.entity) count++;
     }
     return count;
   }
