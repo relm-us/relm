@@ -25,6 +25,7 @@ import { Collider, ColliderVisible } from "~/ecs/plugins/physics";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { Translucent } from "~/ecs/plugins/translucent";
 import { BoundingHelper } from "~/ecs/plugins/bounding-helper";
+import { Controller } from "~/ecs/plugins/player-control";
 
 import { SelectionManager } from "./SelectionManager";
 import { IdentityManager } from "~/identity/IdentityManager";
@@ -83,6 +84,7 @@ export default class WorldManager {
     // Make colliders visible in build mode
     mode.subscribe(($mode) => {
       const enabled = $mode === "build";
+      this.enableAvatarCanFly(enabled);
       this.enableAvatarNonInteractive(enabled);
       this.enableNonInteractiveGround(enabled);
       this.enableCollidersVisible(enabled);
@@ -248,6 +250,12 @@ export default class WorldManager {
 
   depopulate() {
     this.world.reset();
+  }
+
+  enableAvatarCanFly(enabled = true) {
+    const controller = this.avatar.get(Controller);
+    controller.canFly = enabled;
+    controller.modified();
   }
 
   enableAvatarPhysics(enabled = true) {

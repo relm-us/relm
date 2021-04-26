@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
 import { Vector3 } from "three";
-import type { RigidBody } from "@dimforge/rapier3d";
+import type { RigidBody as RapierRigidBody } from "@dimforge/rapier3d";
 
 import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
 
@@ -23,12 +23,17 @@ import {
   KPR,
 } from "../KeyState";
 
+const FLYING_SPEED = 3;
+const FALL_NORMAL = 1;
+const FALL_FAST = 8;
+
 const keysState = {
   left: newKeyState(),
   right: newKeyState(),
   up: newKeyState(),
   down: newKeyState(),
 };
+const spaceState = newKeyState();
 
 function getSpeedFromKeysState() {
   let speed = 0;
@@ -86,6 +91,7 @@ export class ControllerSystem extends System {
     transition(keysState.right, get(keyRight));
     transition(keysState.up, get(keyUp));
     transition(keysState.down, get(keyDown));
+    transition(spaceState, get(keySpace));
 
     // Make "DoublePressed" key state "sticky" so avatars stay running
     const states = Object.values(keysState);
@@ -111,11 +117,24 @@ export class ControllerSystem extends System {
         this.useKeys(state);
       }
 
+      // Override speed if flying
+      if (spec.canFly) {
+        this.considerFlying(entity, state, spec.thrusts[FLYING_SPEED]);
+      }
+
+      const rigidBody: RapierRigidBody = entity.get(RigidBodyRef)?.value;
+      if (rigidBody) {
+        rigidBody.setGravityScale(state.grounded || spec.canFly ? FALL_NORMAL : FALL_FAST, false);
+        rigidBody.setAngularDamping(spec.angDamps[state.speed]);
+        rigidBody.setLinearDamping(spec.linDamps[state.speed]);
+      }
+
       this.torqueTowards(entity, state.direction, spec.torques[state.speed]);
       this.thrustTowards(entity, state.direction, spec.thrusts[state.speed]);
 
       const anim = entity.get(Animation);
       if (anim) {
+        if (!state.grounded && !spec.canFly) state.speed = 0;
         const targetAnim = spec.animations[state.speed];
         if (anim.clipName !== targetAnim) {
           anim.clipName = targetAnim;
@@ -167,8 +186,26 @@ export class ControllerSystem extends System {
     }
   }
 
+  considerFlying(
+    entity: Entity,
+    state: ControllerState,
+    thrustMagnitude: number
+  ) {
+    const ref: RigidBodyRef = entity.get(RigidBodyRef);
+
+    if (isKeyActive(spaceState)) {
+      vDir.copy(vUp).multiplyScalar(thrustMagnitude);
+      ref.applyForce(vDir, true);
+    }
+
+    // Call on alternate damping values & flying animation
+    if (!state.grounded) {
+      state.speed = FLYING_SPEED;
+    }
+  }
+
   torqueTowards(entity: Entity, direction: Vector3, torqueMagnitude: number) {
-    const rigidBody: RigidBody = entity.get(RigidBodyRef);
+    const ref: RigidBodyRef = entity.get(RigidBodyRef);
     const rotation = entity.get(Transform).rotation;
 
     bodyFacing.copy(vOut);
@@ -178,15 +215,15 @@ export class ControllerSystem extends System {
     if (angle < -Math.PI / 12 || angle > Math.PI / 12) {
       // turn toward direction
       torque.set(0, Math.sign(angle) * torqueMagnitude, 0);
-      rigidBody.applyTorque(torque, true);
+      ref.applyTorque(torque, true);
     }
   }
 
   thrustTowards(entity: Entity, direction: Vector3, thrustMagnitude: number) {
-    const rigidBody: RigidBody = entity.get(RigidBodyRef);
+    const ref: RigidBodyRef = entity.get(RigidBodyRef);
 
     thrust.copy(direction);
     thrust.multiplyScalar(thrustMagnitude);
-    rigidBody.applyForce(thrust, true);
+    ref.applyForce(thrust, true);
   }
 }
