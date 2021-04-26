@@ -1,3 +1,5 @@
+import { Vector3 } from "three";
+
 import { System, Groups, Not } from "~/ecs/base";
 import { WorldTransform } from "~/ecs/plugins/core";
 
@@ -35,18 +37,21 @@ export class PointerPositionSystem extends System {
 
       ref.updateCount++;
     });
-    
+
     this.queries.removed.forEach((entity) => {
       this.release(entity);
     });
   }
 
   build(entity) {
+    const spec = entity.get(PointerPosition);
     const world = entity.get(WorldTransform);
+
     const value = new WorldPlanes(
       this.presentation.camera,
+      this.presentation.size,
       world.position,
-      this.presentation.size
+      spec.offset
     );
     entity.add(PointerPositionRef, { value });
   }

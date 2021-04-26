@@ -61,6 +61,8 @@ export class PhysicsSystem extends System {
   update(delta: number) {
     const dt = 1 / (1000 / delta);
     this.fixedUpdate(dt);
+
+    // Clear the actions list, so that it can be re-filled during next ECS world step
     RigidBodyRef.actions.length = 0;
   }
 
@@ -70,6 +72,10 @@ export class PhysicsSystem extends System {
       eventQueue,
     }: { world: World; eventQueue: EventQueue } = this.physics;
 
+    /**
+     * We re-apply forces and torques during each fixedUpdate, so that
+     * avatars move at a constant rate even when render framerate changes.
+     */
     RigidBodyRef.actions.forEach(({ ref, name, args }) => {
       ref.value[name].apply(ref.value, args);
     });

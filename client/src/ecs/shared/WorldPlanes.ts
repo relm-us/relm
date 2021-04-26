@@ -18,7 +18,7 @@ const inward = new Vector3(0, 0, 1);
  * Converts 2d screen coordinates to 3d world coordinates, on two planes:
  *   xz: a plane pointing "up"
  *   xy: a plane pointing "in"
- * 
+ *
  * This class is optimized to re-calculate world coordinates quickly in a
  * loop, e.g. to get an up-to-date mouse position in world space.
  */
@@ -29,14 +29,19 @@ export class WorldPlanes {
   camera: PerspectiveCamera;
 
   /**
+   * The 2d screen size, in pixels
+   */
+  screenSize: Vector2;
+
+  /**
    * The "origin" of the planes; e.g. the participant's avatar
    */
   origin: Vector3;
 
   /**
-   * The 2d screen size, in pixels
+   * The "offset" from the origin to add when calculating the center of the planes
    */
-  screenSize: Vector2;
+  offset: Vector3;
 
   /**
    * The planes we'll keep updated at the origin point, so we can calculate (mouse) world coords
@@ -54,10 +59,16 @@ export class WorldPlanes {
     xy: new Vector3(),
   };
 
-  constructor(camera: PerspectiveCamera, origin: Vector3, screenSize: Vector2) {
+  constructor(
+    camera: PerspectiveCamera,
+    screenSize: Vector2,
+    origin: Vector3,
+    offset?: Vector3
+  ) {
     this.camera = camera;
-    this.origin = origin;
     this.screenSize = screenSize;
+    this.origin = origin;
+    this.offset = offset || new Vector3();
   }
 
   getWorldFromScreen(
@@ -89,8 +100,8 @@ export class WorldPlanes {
     if (!this.origin) return;
 
     // Set both planes to origin
-    this.planes.xz.constant = -this.origin.y;
-    this.planes.xy.constant = -this.origin.z;
+    this.planes.xz.constant = -this.origin.y - this.offset.y;
+    this.planes.xy.constant = -this.origin.z - this.offset.z;
 
     // If a 2d point on the screen is given, calculate its 3d world coords on both planes
     if (point) {

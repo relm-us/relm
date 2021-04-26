@@ -32,7 +32,9 @@ export function makeAvatar(
   // Create the avatar's torso, which we connect everything else to
   const avatar: Entity = makeEntity(world, "Avatar", id)
     // .add(LineHelper, { function: getPointerPosition })
-    .add(PointerPosition)
+    .add(PointerPosition, {
+      offset: new Vector3(0, 1, 0),
+    })
     .add(Impactable)
     .add(Transform, {
       position: new Vector3(x, y, z),

@@ -52,13 +52,11 @@
   function addTouchController(entity: Entity) {
     const controller = entity.get(Controller);
     controller.touchEnabled = true;
-    console.log("add touch controller");
   }
 
   function removeTouchController(entity: Entity) {
     const controller = entity.get(Controller);
     controller.touchEnabled = false;
-    console.log("remove touch controller");
   }
 
   function setMousePositionFromEvent(event, isStart = false) {
