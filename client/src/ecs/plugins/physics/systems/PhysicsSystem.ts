@@ -13,13 +13,21 @@ const scale = new Vector3(1, 1, 1);
 
 const TIMESTEP = 1 / 60;
 
-function createFixedTimestep(timestep, callback) {
+function createFixedTimestep(
+  timestep: number,
+  callback: (delta: number) => void
+) {
   let accumulator = 0;
-  return (delta) => {
+  return (delta: number) => {
     accumulator += delta;
     while (accumulator >= timestep) {
       callback(accumulator);
-      accumulator -= timestep;
+      if (accumulator >= 1) {
+        // give up, too slow to catch up
+        accumulator = 0;
+      } else {
+        accumulator -= timestep;
+      }
     }
   };
 }
@@ -39,12 +47,13 @@ export class PhysicsSystem extends System {
     );
   }
 
-  update(delta) {
+  // delta is number if milliseconds since last frame, e.g. 16.6ms if framerate is 60fps
+  update(delta: number) {
     const dt = 1 / (1000 / delta);
     this.fixedUpdate(dt);
   }
 
-  onFixedUpdate() {
+  onFixedUpdate(accum) {
     const { world, eventQueue } = (this.world as any).physics;
 
     this.queries.default.forEach((entity) => {
