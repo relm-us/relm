@@ -1,8 +1,13 @@
 import { System, Groups } from "~/ecs/base";
-import type { RigidBody as RapierRigidBody } from "@dimforge/rapier3d";
+import type {
+  EventQueue,
+  RigidBody as RapierRigidBody,
+  World,
+} from "@dimforge/rapier3d";
 import { RigidBody, RigidBodyRef } from "../components";
 import { Transform, WorldTransform } from "~/ecs/plugins/core";
 import { Matrix4, Vector3, Quaternion } from "three";
+import { Physics } from "..";
 
 const v3_1 = new Vector3();
 const q_1 = new Quaternion();
@@ -31,15 +36,20 @@ function createFixedTimestep(
     }
   };
 }
+
 export class PhysicsSystem extends System {
   fixedUpdate: Function;
+  physics: Physics;
+
   order = Groups.Presentation + 300;
 
   static queries = {
     default: [RigidBodyRef, Transform, WorldTransform],
   };
 
-  init() {
+  init({ physics }) {
+    this.physics = physics;
+
     // Create a regular, fixed physics time-step, regardless of rendering framerate
     this.fixedUpdate = createFixedTimestep(
       TIMESTEP,
@@ -51,10 +61,18 @@ export class PhysicsSystem extends System {
   update(delta: number) {
     const dt = 1 / (1000 / delta);
     this.fixedUpdate(dt);
+    RigidBodyRef.actions.length = 0;
   }
 
   onFixedUpdate(accum) {
-    const { world, eventQueue } = (this.world as any).physics;
+    const {
+      world,
+      eventQueue,
+    }: { world: World; eventQueue: EventQueue } = this.physics;
+
+    RigidBodyRef.actions.forEach(({ ref, name, args }) => {
+      ref.value[name].apply(ref.value, args);
+    });
 
     this.queries.default.forEach((entity) => {
       const world = entity.get(WorldTransform);
@@ -90,7 +108,9 @@ export class PhysicsSystem extends System {
       if (spec.kind === "DYNAMIC") {
         if (!parent) {
           local.position.copy(body.translation());
+          world.position.copy(body.translation());
           local.rotation.copy(body.rotation());
+          world.rotation.copy(body.rotation());
         } else {
           v3_1.copy(body.translation());
           q_1.copy(body.rotation());

@@ -168,7 +168,7 @@ export class ControllerSystem extends System {
   }
 
   torqueTowards(entity: Entity, direction: Vector3, torqueMagnitude: number) {
-    const rigidBody: RigidBody = entity.get(RigidBodyRef).value;
+    const rigidBody: RigidBody = entity.get(RigidBodyRef);
     const rotation = entity.get(Transform).rotation;
 
     bodyFacing.copy(vOut);
@@ -183,7 +183,7 @@ export class ControllerSystem extends System {
   }
 
   thrustTowards(entity: Entity, direction: Vector3, thrustMagnitude: number) {
-    const rigidBody: RigidBody = entity.get(RigidBodyRef).value;
+    const rigidBody: RigidBody = entity.get(RigidBodyRef);
 
     thrust.copy(direction);
     thrust.multiplyScalar(thrustMagnitude);
