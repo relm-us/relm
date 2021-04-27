@@ -19,7 +19,7 @@ import {
 import { loadingState } from "~/stores/loading";
 import { defaultIdentity } from "./defaultIdentity";
 import { Identity } from "./Identity";
-import { ChatMessage } from "~/world/ChatManager";
+import { ChatMessage, getEmojiFromMessage } from "~/world/ChatManager";
 import { localstorageSharedFields } from "./localstorageSharedFields";
 
 const ACTIVE_TIMEOUT = 30000;
@@ -69,11 +69,18 @@ export class IdentityManager extends EventEmitter {
   registerMe(myData: IdentityData, clientId: YClientID) {
     myData.shared.clientId = clientId;
 
+    localstorageSharedFields.update(($fields) => {
+      const fields = Object.assign({}, $fields);
+      delete fields.emoji;
+      return $fields;
+    });
+
     const identity = new Identity(this, myData.playerId, {
       // Swap out the regular store for a localstorage store
       sharedFieldsStore: localstorageSharedFields,
       localFields: myData.local,
     });
+    this.identities.set(myData.playerId, identity);
 
     audioRequested.subscribe((showAudio) => {
       identity.sharedFields.update(($fields) =>
@@ -153,7 +160,6 @@ export class IdentityManager extends EventEmitter {
   updateSharedFields(playerId: PlayerID, sharedFields: SharedIdentityFields) {
     // Don't allow the network to override my own shared fields prior to sync
     const allowUpdate = playerId !== this.me.playerId || this.isSynced;
-
     if (allowUpdate) {
       const peer = this.getOrCreatePeer(sharedFields.clientId);
       peer.playerId = playerId;
@@ -167,7 +173,8 @@ export class IdentityManager extends EventEmitter {
   updateLocalFields(playerId: PlayerID, localFields: LocalIdentityFields) {
     const identity = this.getOrCreateIdentity(playerId);
     identity.localFields.update(($fields) => {
-      return { ...$fields, ...localFields };
+      const newFields = { ...$fields, ...localFields };
+      return newFields;
     });
     return identity;
   }
@@ -246,13 +253,25 @@ export class IdentityManager extends EventEmitter {
     );
   }
 
+  /**
+   * This observes both local and remote changes to the chat log ('append' operations).
+   */
   observeChat() {
     this.ymessages.observe(
       (event: Y.YArrayEvent<ChatMessage>, transaction: Y.Transaction) => {
         withArrayEdits(event, {
           onAdd: (msg: ChatMessage) => {
             const playerId = msg.u;
-            this.updateLocalFields(playerId, { message: msg.c });
+            const localFields: LocalIdentityFields = {};
+
+            const emoji = getEmojiFromMessage(msg);
+            if (emoji) {
+              localFields.emoji = emoji;
+            } else {
+              localFields.message = msg.c;
+            }
+
+            this.updateLocalFields(playerId, localFields);
           },
         });
       }

@@ -19,6 +19,7 @@ export class Html2d extends Component {
         options: [
           { label: "Label", value: "LABEL" },
           { label: "Speech", value: "SPEECH" },
+          { label: "Emoji", value: "EMOJI" },
         ],
       },
     },

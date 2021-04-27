@@ -5,9 +5,17 @@ import { chatOpen } from "~/stores/chatOpen";
 import { IdentityManager } from "~/identity/IdentityManager";
 
 export type ChatMessage = {
+  // Message ("C"ontent)
   c: string;
+  // Author ("U"ser)
   u: string;
 };
+
+export function getEmojiFromMessage(msg) {
+  const match = msg.c.toUpperCase().match(/^:([A-Z]+):$/);
+  if (match) return match[1];
+  else return null;
+}
 
 export class ChatManager {
   identities: IdentityManager;
@@ -60,14 +68,14 @@ export class ChatManager {
 
       // Broadcast speech state to all players
       if (!$open) {
-        this.setSpeakingState(false);
+        this.setActingState("speaking", false);
       }
     });
   }
 
-  setSpeakingState(value: boolean) {
+  setActingState(key: string, value: boolean) {
     this.identities.me.sharedFields.update(($fields) => {
-      return { ...$fields, speaking: value };
+      return { ...$fields, [key]: value };
     });
   }
 
@@ -78,6 +86,14 @@ export class ChatManager {
     });
     // Broadcast via yjs
     this.messages.y.push([msg]);
-    this.setSpeakingState(true);
+
+    if (getEmojiFromMessage(msg)) {
+      this.setActingState("emoting", true);
+      setTimeout(() => {
+        this.setActingState("emoting", false);
+      }, 6000);
+    } else {
+      this.setActingState("speaking", true);
+    }
   }
 }

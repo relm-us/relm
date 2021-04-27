@@ -101,7 +101,7 @@ export class Identity implements Readable<IdentityData> {
     return this.derivedIdentity.subscribe(handler);
   }
 
-  setName(name) {
+  setName(name: string) {
     this.sharedFields.update(($fields) => ({ ...$fields, name }));
   }
 

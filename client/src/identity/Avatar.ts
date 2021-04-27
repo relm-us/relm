@@ -30,20 +30,24 @@ export class Avatar {
     this.world = world;
   }
 
-  wasRecentlySeen() {
-    const lastSeen = this.identity.local.lastSeen;
-    const seenAgoMillis = performance.now() - (lastSeen ?? -LAST_SEEN_TIMEOUT);
-    return seenAgoMillis < LAST_SEEN_TIMEOUT;
-  }
-
   updateIdentityData(identity: IdentityData) {
     this.identity = identity;
     this.maybeMakeAvatar();
     if (this.entity) this.syncEntity();
   }
 
+  wasRecentlySeen() {
+    const lastSeen = this.identity.local.lastSeen;
+    const seenAgoMillis = performance.now() - (lastSeen ?? -LAST_SEEN_TIMEOUT);
+    return seenAgoMillis < LAST_SEEN_TIMEOUT;
+  }
+
   get head() {
     return this.entity?.getChildren()[0];
+  }
+
+  get emojiHolder() {
+    return this.entity?.getChildren()[1];
   }
 
   maybeMakeAvatar() {
@@ -73,6 +77,7 @@ export class Avatar {
   syncEntity() {
     this.syncLabel();
     this.syncSpeech();
+    this.syncEmoji();
     this.syncOculus();
     this.syncCharacter();
   }
@@ -101,6 +106,18 @@ export class Avatar {
       this.changeSpeech(identity.local.message);
     } else if (!visible && this.head.has(Html2d)) {
       this.head.remove(Html2d);
+    }
+  }
+
+  syncEmoji() {
+    const identity = this.identity;
+    const visible = identity.local.emoji && identity.shared.emoting;
+    if (visible && !this.emojiHolder.has(Html2d)) {
+      this.addEmote(identity.local.emoji);
+    } else if (visible && this.emojiHolder.has(Html2d)) {
+      this.changeEmote(identity.local.emoji);
+    } else if (!visible && this.emojiHolder.has(Html2d)) {
+      this.emojiHolder.remove(Html2d);
     }
   }
 
@@ -152,17 +169,35 @@ export class Avatar {
     }
   }
 
+  addEmote(content: string) {
+    this.emojiHolder.add(Html2d, {
+      kind: "EMOJI",
+      content,
+      hanchor: 2,
+      offset: new Vector3(-0.25, 0, 0),
+    });
+  }
+
+  changeEmote(content: string) {
+    const html2d = this.emojiHolder.get(Html2d);
+    html2d.content = content;
+    html2d.modified();
+  }
+
+  removeEmote() {
+    this.emojiHolder.maybeRemove(Html2d);
+  }
+
   addSpeech(message: string, isLocal: boolean = false) {
     const onClose = isLocal ? () => chatOpen.set(false) : null;
-    const speech = {
+    this.head.add(Html2d, {
       kind: "SPEECH",
       content: message,
       offset: new Vector3(0.5, 0, 0),
       hanchor: 1,
       vanchor: 2,
       onClose,
-    };
-    this.head.add(Html2d, speech);
+    });
   }
 
   changeSpeech(message: string) {

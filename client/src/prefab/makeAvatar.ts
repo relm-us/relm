@@ -12,6 +12,7 @@ import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { Animation } from "~/ecs/plugins/animation";
 import { IDLE } from "~/ecs/plugins/player-control/constants";
 import { LineHelper } from "~/ecs/plugins/line-helper";
+import { Html2d } from "~/ecs/plugins/html2d";
 
 import { makeEntity } from "./index";
 
@@ -66,8 +67,13 @@ export function makeAvatar(
   });
   head.setParent(avatar);
 
+  const emoji = makeEntity(world, "AvatarEmoji").add(Transform, {
+    position: new Vector3(0, UNSCALED_CHARACTER_HEIGHT, 0),
+  });
+  emoji.setParent(avatar);
+
   // Move these things as a unit on portal
   avatar.subgroup = [];
 
-  return { avatar, head };
+  return { avatar, head, emoji };
 }

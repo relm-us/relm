@@ -14,6 +14,9 @@ export type SharedIdentityFields = {
   // Show the speech bubble?
   speaking?: boolean;
 
+  // Show current emoji?
+  emoting?: boolean;
+
   // Participant has video enabled?
   showVideo?: boolean;
 
@@ -36,6 +39,9 @@ export type LocalIdentityFields = {
 
   // Most recent chat message (used for chat bubble)
   message?: string;
+  
+  // Most recent emoji (used for emote)
+  emoji?: string;
 
   /**
    * Whether this avatar is
