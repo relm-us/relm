@@ -24,6 +24,17 @@ import { localstorageSharedFields } from "./localstorageSharedFields";
 
 const ACTIVE_TIMEOUT = 30000;
 
+type PeerData = {
+  // Moment the peer was last seen, in milliseconds from start of window
+  lastSeen?: number;
+
+  // Unique UUID of player
+  playerId?: string;
+
+  // Fast transform cache
+  transform?: Function;
+};
+
 export class IdentityManager extends EventEmitter {
   relm: WorldManager;
   wdoc: WorldDoc;
@@ -34,10 +45,7 @@ export class IdentityManager extends EventEmitter {
 
   identities: Map<PlayerID, Identity>;
 
-  lookupPlayerId: Map<YClientID, PlayerID>;
-
-  // Fast transform cache
-  setTransformFns: Map<YClientID, Function>;
+  peers: Map<YClientID, PeerData>;
 
   me: Identity;
 
@@ -49,8 +57,7 @@ export class IdentityManager extends EventEmitter {
     this.yfields = relm.wdoc.ydoc.getMap("identities");
     this.ymessages = relm.wdoc.ydoc.getArray("messages");
     this.identities = new Map();
-    this.lookupPlayerId = new Map();
-    this.setTransformFns = new Map();
+    this.peers = new Map();
     this.isSynced = false;
 
     this.registerMe(myData, relm.wdoc.ydoc.clientID);
@@ -121,31 +128,47 @@ export class IdentityManager extends EventEmitter {
     this.me = identity;
   }
 
+  getOrCreatePeer(clientId: YClientID) {
+    if (!clientId) console.warn("missing clientId");
+
+    let peer = this.peers.get(clientId);
+
+    if (!peer) {
+      peer = { lastSeen: performance.now() };
+      this.peers.set(clientId, peer);
+    }
+    return peer;
+  }
+
+  getOrCreateIdentity(playerId) {
+    let identity = this.identities.get(playerId);
+    if (!identity) {
+      identity = new Identity(this, playerId);
+      this.identities.set(playerId, identity);
+    }
+
+    return identity;
+  }
+
   updateSharedFields(playerId: PlayerID, sharedFields: SharedIdentityFields) {
     // Don't allow the network to override my own shared fields prior to sync
     const allowUpdate = playerId !== this.me.playerId || this.isSynced;
 
     if (allowUpdate) {
-      let identity = this.identities.get(playerId);
-      if (!identity) {
-        identity = new Identity(this, playerId, { sharedFields });
-      } else {
-        identity.sharedFields.set(sharedFields);
-      }
+      const peer = this.getOrCreatePeer(sharedFields.clientId);
+      peer.playerId = playerId;
+
+      const identity = this.getOrCreateIdentity(playerId);
+      identity.sharedFields.set(sharedFields);
       return identity;
     }
   }
 
   updateLocalFields(playerId: PlayerID, localFields: LocalIdentityFields) {
-    let identity = this.identities.get(playerId);
-    if (!identity) {
-      identity = new Identity(this, playerId, { localFields });
-    } else {
-      const existingLocalFields = get(identity.localFields);
-      identity.localFields.set(
-        Object.assign({}, existingLocalFields, localFields)
-      );
-    }
+    const identity = this.getOrCreateIdentity(playerId);
+    identity.localFields.update(($fields) => {
+      return { ...$fields, ...localFields };
+    });
     return identity;
   }
 
@@ -160,38 +183,35 @@ export class IdentityManager extends EventEmitter {
   }
 
   removeByClientId(clientId: YClientID) {
-    const playerId = this.lookupPlayerId.get(clientId);
+    const playerId = this.peers.get(clientId)?.playerId;
     if (playerId) this.remove(playerId);
-    this.lookupPlayerId.delete(clientId);
-    this.setTransformFns.delete(clientId);
+    this.peers.delete(clientId);
   }
 
-  setTransformData(clientId: YClientID, transform: Array<number>) {
-    let fn = this.setTransformFns.get(clientId);
-
-    if (!fn) {
-      // optimize by keeping this out of the fast-path
-      const playerId = this.lookupPlayerId.get(clientId);
-      if (!playerId) {
-        /**
-         * We can't set the remote player's transform yet, because
-         * we don't know the playerId. We'll assume that whoever
-         * it is will soon broadcast their playerId/clientId pair
-         * so we can map clientId to playerId. In the meantime, just
-         * wait until next time.
-         */
-        return;
-      }
-
-      const identity = this.updateLocalFields(playerId, {
+  setTransformData(clientId: YClientID, transformData: Array<number>) {
+    let peer = this.peers.get(clientId);
+    if (!peer) {
+      peer = {
         lastSeen: performance.now(),
-      });
-
-      fn = identity.avatar.setTransformData.bind(identity.avatar);
-      this.setTransformFns.set(clientId, fn);
+      };
     }
 
-    fn(transform);
+    /**
+     * If we don't know the peer's playerId yet, wait until they broadcast it
+     * and we can pair it up with their clientId. In the meantime, wait.
+     */
+    if (!peer.playerId) return;
+
+    if (!peer.transform) {
+      // Copy our clientId 'lastSeen' to the playerId 'lastSeen'
+      const identity = this.updateLocalFields(peer.playerId, {
+        lastSeen: peer.lastSeen,
+      });
+
+      peer.transform = identity.avatar.setTransformData.bind(identity.avatar);
+    }
+
+    peer.transform(transformData);
   }
 
   get active() {
@@ -217,7 +237,8 @@ export class IdentityManager extends EventEmitter {
           onAdd: this.updateSharedFields.bind(this),
           onUpdate: this.updateSharedFields.bind(this),
           onDelete: (playerId, fields) => {
-            this.lookupPlayerId.delete(fields.clientId);
+            console.log("delete playerId", playerId, fields.clientId);
+            this.peers.delete(fields.clientId);
             this.identities.delete(playerId);
           },
         });

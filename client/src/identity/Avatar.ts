@@ -22,58 +22,64 @@ const v1 = new Vector3();
 export class Avatar {
   world: World;
 
-  identity: Readable<IdentityData>;
+  identity: IdentityData;
 
   entity: Entity;
 
-  constructor(identity: Readable<IdentityData>, world: World) {
+  constructor(world: World) {
     this.world = world;
+  }
+
+  wasRecentlySeen() {
+    const lastSeen = this.identity.local.lastSeen;
+    const seenAgoMillis = performance.now() - (lastSeen ?? -LAST_SEEN_TIMEOUT);
+    return seenAgoMillis < LAST_SEEN_TIMEOUT;
+  }
+
+  updateIdentityData(identity: IdentityData) {
     this.identity = identity;
-
-    this.identity.subscribe(($id) => {
-      const seenAgoMillis =
-        performance.now() - ($id.local.lastSeen ?? -LAST_SEEN_TIMEOUT);
-      if (!this.entity && $id.local.isLocal) {
-        this.entity = this.makeLocalAvatar();
-      } else if (!this.entity && !$id.local.isLocal) {
-        if (seenAgoMillis < LAST_SEEN_TIMEOUT) {
-          this.entity = this.makeRemoteAvatar($id.playerId);
-        }
-      }
-
-      if (this.entity) {
-        this.syncEntity($id);
-      }
-    });
+    this.maybeMakeAvatar();
+    if (this.entity) this.syncEntity();
   }
 
   get head() {
     return this.entity?.getChildren()[0];
   }
 
-  makeLocalAvatar() {
-    return makeAvatarAndActivate(this.world);
+  maybeMakeAvatar() {
+    if (this.entity) return;
+    if (this.identity.local.isLocal) {
+      this.makeLocalAvatar();
+    } else if (this.wasRecentlySeen()) {
+      this.makeRemoteAvatar();
+    }
   }
 
-  makeRemoteAvatar(playerId) {
+  makeLocalAvatar() {
+    this.entity = makeAvatarAndActivate(this.world);
+  }
+
+  makeRemoteAvatar() {
     const opts = { kinematic: true };
-    const { avatar } = makeAvatar(this.world, opts, playerId);
+    const { avatar } = makeAvatar(this.world, opts, this.identity.playerId);
     avatar.traverse((entity) => entity.activate());
-    return avatar;
+    this.entity = avatar;
   }
 
   destroy() {
     this.entity?.destroy();
   }
 
-  syncEntity(identity: IdentityData) {
-    this.syncLabel(identity);
-    this.syncSpeech(identity);
-    this.syncOculus(identity);
-    this.syncCharacter(identity);
+  syncEntity() {
+    this.syncEmoji();
+    this.syncLabel();
+    this.syncSpeech();
+    this.syncOculus();
+    this.syncCharacter();
   }
 
-  syncLabel(identity: IdentityData) {
+  syncLabel() {
+    const identity = this.identity;
     if (identity.shared.name && !this.entity.has(Html2d)) {
       this.addLabel(
         identity.shared.name,
@@ -87,7 +93,8 @@ export class Avatar {
     }
   }
 
-  syncSpeech(identity: IdentityData) {
+  syncSpeech() {
+    const identity = this.identity;
     const visible = !!identity.local.message && identity.shared.speaking;
     if (visible && !this.head.has(Html2d)) {
       this.addSpeech(identity.local.message, identity.local.isLocal);
@@ -98,7 +105,8 @@ export class Avatar {
     }
   }
 
-  syncOculus(identity: IdentityData) {
+  syncOculus() {
+    const identity = this.identity;
     if (!this.entity.has(Oculus)) {
       this.entity.add(Oculus, {
         playerId: identity.playerId,
@@ -120,7 +128,8 @@ export class Avatar {
     }
   }
 
-  syncCharacter(identity: IdentityData) {
+  syncCharacter() {
+    const identity = this.identity;
     const influences = validInfluences(identity.shared.charMorphs);
     if (influences) {
       if (!this.entity.has(Morph)) {

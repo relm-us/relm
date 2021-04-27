@@ -47,32 +47,14 @@ export function withMapEdits<T>(
     onDelete?: (key: string, content: T, oldContent: T) => void;
   }
 ) {
-  for (const key of event.keysChanged) {
+  for (const [key, change] of event.changes.keys.entries()) {
     const value: T = (event.target as Y.Map<T>).get(key);
-    const change: YMapChange = event.changes.keys.get(key);
-    if (!change) {
-      console.warn(`change key not found`, { key, value, event });
-      if (callbacks.onAdd) {
-        callbacks.onAdd(key, value);
-      }
-      return;
-    }
-    switch (change.action) {
-      case "add":
-        if (callbacks.onAdd) {
-          callbacks.onAdd(key, value);
-        }
-        break;
-      case "update":
-        if (callbacks.onUpdate) {
-          callbacks.onUpdate(key, value, change.oldValue);
-        }
-        break;
-      case "delete":
-        if (callbacks.onDelete) {
-          callbacks.onDelete(key, value, change.oldValue);
-        }
-        break;
+    if (change.action === "add" && callbacks.onAdd) {
+      callbacks.onAdd(key, value);
+    } else if (change.action === "update" && callbacks.onUpdate) {
+      callbacks.onUpdate(key, value, change.oldValue);
+    } else if (change.action === "delete" && callbacks.onDelete) {
+      callbacks.onDelete(key, value, change.oldValue);
     }
   }
 }

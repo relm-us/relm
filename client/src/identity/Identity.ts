@@ -65,7 +65,7 @@ export class Identity implements Readable<IdentityData> {
       sharedFields?: SharedIdentityFields;
       localFieldsStore?: Writable<LocalIdentityFields>;
       localFields?: LocalIdentityFields;
-    }
+    } = {}
   ) {
     this.manager = manager;
     this.playerId = playerId;
@@ -73,21 +73,14 @@ export class Identity implements Readable<IdentityData> {
     this.localFields = localFieldsStore || writable(localFields);
     this.derivedIdentity = this.deriveIdentityStore();
 
-    // Give IdentityManager a way to look this identity up
-    this.manager.identities.set(playerId, this);
-
-    this.sharedFields.subscribe(($sharedFields) => {
-      // If clientId changes, we need to map it
-      if ($sharedFields.clientId) {
-        this.manager.lookupPlayerId.set($sharedFields.clientId, this.playerId);
-      }
-    });
+    // TODO: What if clientId changes?
 
     // Create an avatar to go with the identity
-    this.avatar = new Avatar(
-      this.derivedIdentity,
-      this.manager.relm.wdoc.world
-    );
+    this.avatar = new Avatar(this.manager.relm.wdoc.world);
+
+    this.derivedIdentity.subscribe(($identity) => {
+      this.avatar.updateIdentityData($identity);
+    });
   }
 
   deriveIdentityStore(): Readable<IdentityData> {
