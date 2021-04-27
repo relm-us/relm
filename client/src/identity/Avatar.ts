@@ -71,7 +71,6 @@ export class Avatar {
   }
 
   syncEntity() {
-    this.syncEmoji();
     this.syncLabel();
     this.syncSpeech();
     this.syncOculus();
