@@ -3,7 +3,7 @@ import { Relm } from "~/stores/Relm";
 import { selectedEntities } from "~/stores/selection";
 import { chatOpen } from "~/stores/chatOpen";
 import { mode } from "~/stores/mode";
-import { onSwitchMode } from "./switchMode";
+import { onSwitchMode } from "./onSwitchMode";
 
 export function onEscape() {
   const $Relm = get(Relm);
