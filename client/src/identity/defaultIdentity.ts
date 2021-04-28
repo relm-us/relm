@@ -12,7 +12,7 @@ export const defaultIdentity: IdentityData = {
   shared: {
     name: `Guest-${playerId.slice(0, 3)}`,
     color: randomColor(),
-    status: "present",
+    status: "initial", // 'initial' means don't show avatar yet
     charColors: getCharacterFacemaps(),
     charMorphs: randomMorphInfluences(),
   },

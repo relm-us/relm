@@ -54,7 +54,10 @@ export class Avatar {
     if (this.entity) return;
     if (this.identity.local.isLocal) {
       this.makeLocalAvatar();
-    } else if (this.wasRecentlySeen()) {
+    } else if (
+      this.wasRecentlySeen() &&
+      this.identity.shared.status !== "initial"
+    ) {
       this.makeRemoteAvatar();
     }
   }
@@ -266,6 +269,8 @@ export class Avatar {
   }
 
   setTransformData([x, y, z, theta, headTheta, clipIndex]) {
+    if (!this.entity) return;
+    
     const transform = this.entity.get(Transform);
 
     // Set position of body

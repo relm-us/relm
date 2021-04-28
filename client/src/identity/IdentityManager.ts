@@ -1,8 +1,6 @@
 import * as Y from "yjs";
 import EventEmitter from "eventemitter3";
-import { get } from "svelte/store";
 
-import { audioRequested, videoRequested } from "video-mirror";
 import { withArrayEdits, withMapEdits } from "relm-common/yjs/observeUtils";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
@@ -17,6 +15,7 @@ import {
 } from "./types";
 
 import { loadingState } from "~/stores/loading";
+import { avPermission } from "~/stores/avPermission";
 import { defaultIdentity } from "./defaultIdentity";
 import { Identity } from "./Identity";
 import { ChatMessage, getEmojiFromMessage } from "~/world/ChatManager";
@@ -70,9 +69,7 @@ export class IdentityManager extends EventEmitter {
     myData.shared.clientId = clientId;
 
     localstorageSharedFields.update(($fields) => {
-      const fields = Object.assign({}, $fields);
-      delete fields.emoji;
-      return $fields;
+      return { ...$fields, emoting: false, status: "initial" };
     });
 
     const identity = new Identity(this, myData.playerId, {
@@ -82,16 +79,14 @@ export class IdentityManager extends EventEmitter {
     });
     this.identities.set(myData.playerId, identity);
 
-    audioRequested.subscribe((showAudio) => {
-      identity.sharedFields.update(($fields) =>
-        Object.assign($fields, { showAudio })
-      );
-    });
-
-    videoRequested.subscribe((showVideo) => {
-      identity.sharedFields.update(($fields) =>
-        Object.assign($fields, { showVideo })
-      );
+    avPermission.subscribe(($avPermission) => {
+      identity.sharedFields.update(($fields) => {
+        return {
+          ...$fields,
+          showAudio: $avPermission.audio,
+          showVideo: $avPermission.video,
+        };
+      });
     });
 
     /**

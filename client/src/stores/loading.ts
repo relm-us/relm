@@ -67,7 +67,7 @@ function countAssets(wdoc: WorldDoc) {
   assetsLoaded.update(($loaded) => Math.max($loaded, count));
 }
 
-export const handleLoading = (startFn, wdoc, state: LoadingState) => {
+export const handleLoading = (wdoc, state: LoadingState) => {
   const intervals = [];
   let syntheticStep = 0;
   switch (state) {
@@ -88,7 +88,7 @@ export const handleLoading = (startFn, wdoc, state: LoadingState) => {
       const unsub = loaded.subscribe(($loaded) => {
         if ($loaded >= get(maximum) * MAX_THRESHOLD) {
           intervals.forEach(clearInterval);
-          startFn();
+          // Done!
           unsub();
         }
       });

@@ -57,6 +57,6 @@ export type IdentityData = {
   local: LocalIdentityFields;
 };
 
-export type PlayerStatus = "present" | "away";
+export type PlayerStatus = "initial" | "present" | "away";
 export type YClientID = number;
 export type PlayerID = string;

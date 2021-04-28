@@ -8,12 +8,12 @@
   const dispatch = createEventDispatcher();
 
   function joinWith({ detail }) {
-    // console.log("join", detail);
     dispatch("done", detail);
     videoSetup = false;
   }
 
   function joinWithout() {
+    dispatch("done", { audio: null, video: null });
     videoSetup = false;
   }
 </script>

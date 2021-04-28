@@ -91,7 +91,19 @@ export default class WorldManager {
     });
 
     loadingState.subscribe(($state) => {
-      handleLoading(this.start.bind(this), this.wdoc, $state);
+      handleLoading(this.wdoc, $state);
+    });
+
+    /**
+     * Start when both loading is done and audio/video screen is complete
+     */
+    derived(
+      [loadingState, avPermission],
+      ([$loadingState, $avPermission], set) => {
+        set($loadingState === "loaded" && $avPermission.done);
+      }
+    ).subscribe((ready) => {
+      if (ready) this.start();
     });
 
     derived([mode, keyShift], ([$mode, $keyShift], set) => {
@@ -317,6 +329,10 @@ export default class WorldManager {
   }
 
   start() {
+    // Signal to all participants we are "present" and our avatar can be shown
+    this.identities.me.setStatus("present");
+
+    // Pre-compile assets to prevent some jank while exploring the world
     this.world.presentation.compile();
 
     // Move avatar to named entryway once world has loaded

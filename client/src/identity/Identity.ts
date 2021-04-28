@@ -7,6 +7,7 @@ import {
   SharedIdentityFields,
   LocalIdentityFields,
   PlayerID,
+  PlayerStatus,
 } from "./types";
 
 import { setMe } from "~/av/redux/stateActions";
@@ -103,6 +104,10 @@ export class Identity implements Readable<IdentityData> {
 
   setName(name: string) {
     this.sharedFields.update(($fields) => ({ ...$fields, name }));
+  }
+  
+  setStatus(status: PlayerStatus) {
+    this.sharedFields.update(($fields) => ({ ...$fields, status }));
   }
 
   toggleShowAudio() {
