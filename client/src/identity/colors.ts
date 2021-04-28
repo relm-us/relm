@@ -32,10 +32,10 @@ export function getCharacterFacemaps({
   beltColor = "#000000",
   hair = true,
   beard = false,
-  shoes = true,
   belt = false,
-  top = pickOne([1, 1, 2, 3, 3]),
+  top = pickOne([1, 1, 2, 3, 3, 4, 4, 4]),
   bottom = pickOne([1, 2, 3, 3, 4, 4, 4]),
+  shoes = pickOne([1, 2, 3]),
 }: {
   skintone?: string;
   hairColor?: string;
@@ -45,10 +45,10 @@ export function getCharacterFacemaps({
   beltColor?: string;
   hair?: boolean;
   beard?: boolean;
-  shoes?: boolean;
   belt?: boolean;
   top?: number;
   bottom?: number;
+  shoes?: number;
 } = {}) {
   const season = pickOne(["spring", "fall", "summer"]);
   if (topColor === null) topColor = randomClothingColor(season);
@@ -63,12 +63,15 @@ export function getCharacterFacemaps({
     "top-01": [top > 0 ? topColor : skintone, opacity],
     "top-02": [top > 1 ? topColor : skintone, opacity],
     "top-03": [top > 2 ? topColor : skintone, opacity],
+    "top-04": [top > 3 ? topColor : skintone, opacity],
     "belt": [belt ? beltColor : topColor, opacity],
     "pants-01": [bottom > 0 ? bottomColor : skintone, opacity],
     "pants-02": [bottom > 1 ? bottomColor : skintone, opacity],
     "pants-03": [bottom > 2 ? bottomColor : skintone, opacity],
     "pants-04": [bottom > 3 ? bottomColor : skintone, opacity],
-    "shoes": [shoes ? shoeColor : skintone, opacity],
+    "shoes-01": [shoes > 0 ? shoeColor : skintone, opacity],
+    "shoes-02": [shoes > 1 ? shoeColor : skintone, opacity],
+    "shoes-03": [shoes > 2 ? shoeColor : skintone, opacity],
   };
   return colors;
 }

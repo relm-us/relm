@@ -42,7 +42,7 @@ export function makeAvatar(
       scale: new Vector3(0.25, 0.25, 0.25),
     })
     .add(Model, {
-      asset: new Asset("/humanoid-001.glb"),
+      asset: new Asset("/humanoid-002.glb"),
     })
     .add(NormalizeMesh)
     .add(Animation, {

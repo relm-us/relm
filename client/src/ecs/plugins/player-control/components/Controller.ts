@@ -7,7 +7,7 @@ import {
 } from "~/ecs/base";
 import { Vector3 } from "three";
 import { Vector3Type } from "~/ecs/plugins/core";
-import { IDLE, WALKING, RUNNING, RELAXING } from "../constants";
+import { IDLE, WALKING, RUNNING, FLYING } from "../constants";
 
 export class Controller extends LocalComponent {
   keysEnabled: boolean;
@@ -55,7 +55,7 @@ export class Controller extends LocalComponent {
     animations: {
       type: JSONType,
       // One animation clipName per avatar speed
-      default: [IDLE, WALKING, RUNNING, /* flying */ RELAXING],
+      default: [IDLE, WALKING, RUNNING, /* flying */ FLYING],
     },
   };
 }
