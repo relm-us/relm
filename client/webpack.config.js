@@ -150,6 +150,21 @@ module.exports = {
   ],
   optimization: {
     minimizer: [],
+
+    /**
+     * We need a separate chunk for @dimforge/rapier3d so that TerserPlugin can
+     * exclude it from optimization, so that the physics engine wasm bundle will
+     * work on iOS devices. See https://stackoverflow.com/a/58133835/159344.
+     */
+    splitChunks: {
+      cacheGroups: {
+        dimforge: {
+          test: /[\\/]node_modules[\\/](@dimforge)[\\/]/,
+          name: "dimforge",
+          chunks: "all",
+        },
+      },
+    },
     /**
      * For HECS to work, we need to prevent module concatenation from mangling
      * class names. See https://github.com/gohyperr/hecs/issues/31
@@ -232,6 +247,8 @@ if (prod) {
     new TerserPlugin({
       sourceMap: sourceMapsInProduction,
       extractComments: false,
+      // Exclude physics engine glue javascript (necessary for iOS devices)
+      exclude: "dimforge",
       terserOptions: {
         keep_classnames: true,
         keep_fnames: true,
