@@ -1,3 +1,32 @@
+2021-04-27
+- NEW: Emojis! You can type :heart:, :happy:, :sad: or :laughing: for now and the corresponding emoji will float up from your avatar.
+- FIXED: Presence issues where some people can't see each other should be fixed now (attempt #3)
+
+2021-04-26
+- FIXED: Removed a race condition that may have solved the "participant disappears" issue (fingers crossed)
+- FIXED: (Build Mode) Flying is back.
+
+2021-04-25
+- FIXED: Participant's avatar speed remains constant, even if render framerate changes. NOTE: This helps slower devices, but can't help in case device is "too slow" to handle 3D world at all.
+- FIXED: Video setup screen can scroll, fits better on small/mobile screens.
+- CHANGED: The origin of the touch control is now the center of the avatar (rather than the feet)
+
+2021-04-24
+- NEW: Touch controls! Mobile device users can now touch the avatar and drag to walk or run.
+- NEW: Avatar can run! Use double-tap on keyboard, or when using touch controls, just drag farther away from the avatar.
+
+2021-04-18
+- NEW: (Build Mode) When clicking on ground, the ground cannot be selected unless Shift key is pressed.
+- FIXED: If GLTF models have a null BufferGeometry attribute, it won't crash the world. Shows warning in Javascript console.
+- CODE NOTES: The avatar's skinnedMesh now has a proper bounding box (created manually) so we can do regular frustum culling and detect mouse clicks on the avatar now.
+
+2021-04-16
+- NEW: BoundingHelper component allows you to see bounding box around an object.
+- NEW: LineHelper component allows you to see a line from an object's origin to the world origin.
+- NEW: (Build Mode) When "Shift" key is pressed, bounding boxes will be shown around all objects.
+- NEW: (Build Mode) When the "Debug" button is pressed on a component, the component's entity will now be available in the javascript console (window.entity).
+- FIXED: (Build Mode) The component names in the dropdown & in the panes now reflect the component's descriptive label (instead of its code class).
+
 2021-04-13
 - NEW: A surprise when you fly in build mode
 - FIXED: dragging Html2d labels works again
