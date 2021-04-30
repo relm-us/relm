@@ -29,7 +29,7 @@ export class Object3DSystem extends System {
       object3d.userData.entityId = entity.id;
       let parentObject3D;
       if (entity.parent) {
-        const component = entity.getParent().get(Object3D);
+        const component = entity.getParent()?.get(Object3D);
         if (component && component.value) {
           parentObject3D = component.value;
         } else {
