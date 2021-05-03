@@ -728,6 +728,9 @@ export default class RoomClient {
 
     if (this._micProducer) return;
 
+    if (!this._mediasoupDevice)
+      logger.warn("enableMic() | no _mediasoupDevice yet");
+
     if (!this._mediasoupDevice.canProduce("audio")) {
       logger.error("enableMic() | cannot produce audio");
 
@@ -893,6 +896,9 @@ export default class RoomClient {
 
   async enableWebcam() {
     logger.debug("enableWebcam()");
+
+    if (!this._mediasoupDevice)
+      logger.warn("enableWebcam() | no _mediasoupDevice yet");
 
     if (this._webcamProducer) return;
     else if (this._shareProducer) await this.disableShare();
