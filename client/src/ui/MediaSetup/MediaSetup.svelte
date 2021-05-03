@@ -1,36 +1,32 @@
 <script>
   import { createEventDispatcher } from "svelte";
-  import { VideoMirror } from "video-mirror";
+  import { VideoMirror, audioRequested, videoRequested } from "video-mirror";
   import relmLogo from "./relm-logo.png";
-
-  let videoSetup = true;
 
   const dispatch = createEventDispatcher();
 
   function joinWith({ detail }) {
     dispatch("done", detail);
-    videoSetup = false;
   }
 
   function joinWithout() {
+    $audioRequested = false;
+    $videoRequested = false;
     dispatch("done", { audio: null, video: null });
-    videoSetup = false;
   }
 </script>
 
-{#if videoSetup}
-  <setup>
-    <logo>
-      <img src={relmLogo} alt="logo" />
-    </logo>
-    <message>
-      You're about to join a social experience with audio & video.
-    </message>
-    <VideoMirror on:done={joinWith} />
-    <or>or</or>
-    <button on:click={joinWithout}> Join without audio / video </button>
-  </setup>
-{/if}
+<setup>
+  <logo>
+    <img src={relmLogo} alt="logo" />
+  </logo>
+  <message>
+    You're about to join a social experience with audio & video.
+  </message>
+  <VideoMirror on:done={joinWith} />
+  <or>or</or>
+  <button on:click={joinWithout}> Join without audio / video </button>
+</setup>
 
 <style>
   setup {

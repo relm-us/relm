@@ -15,14 +15,13 @@
   import PausePlayButton from "~/ui/PausePlayButton";
   import StepFrameButton from "~/ui/StepFrameButton";
   import UploadButton from "~/ui/UploadButton";
-  import RandomizeMe from '~/ui/RandomizeMe'
+  import RandomizeMe from "~/ui/RandomizeMe";
   import WorldStatePane from "~/ui/WorldStatePane";
   import ResetWorldButton from "~/ui/ResetWorldButton";
   import Chat from "~/ui/Chat";
 
   import LoadingScreen from "~/ui/LoadingScreen";
-  import VideoSetup from "~/ui/VideoSetup";
-  import { avPermission } from "~/stores/avPermission";
+  import MediaSetup from "~/ui/MediaSetup";
 
   import { runCommand } from "~/commands";
   import { globalEvents } from "~/events";
@@ -30,6 +29,7 @@
   import { world } from "~/stores/world";
   import { mode } from "~/stores/mode";
   import { openPanel } from "~/stores/openPanel";
+  import { mediaSetupState } from "~/stores/mediaSetupState";
 
   const playMode = () => {
     globalEvents.emit("switch-mode", "play");
@@ -45,16 +45,14 @@
     }
   };
 
-  const onDoneVideoSetup = ({ detail }) => {
-    avPermission.set({
-      done: true,
-      audio: !!detail.audio,
-      video: !!detail.video,
-    });
+  const onDoneMediaSetup = ({ detail }) => {
+    $mediaSetupState = "done";
   };
 </script>
 
-<VideoSetup on:done={onDoneVideoSetup} />
+{#if $mediaSetupState !== "done"}
+  <MediaSetup on:done={onDoneMediaSetup} />
+{/if}
 
 <LoadingScreen />
 

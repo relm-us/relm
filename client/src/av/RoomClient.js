@@ -65,7 +65,6 @@ export default class RoomClient {
     forceVP9,
     svc,
     datachannel,
-    externalVideo,
   }) {
     logger.debug(
       'constructor() [roomId:"%s", peerId:"%s", displayName:"%s", device:%s]',
@@ -110,31 +109,9 @@ export default class RoomClient {
     // Force VP9 codec for sending.
     this._forceVP9 = Boolean(forceVP9);
 
-    // External video.
-    // @type {HTMLVideoElement}
-    this._externalVideo = null;
-
-    // MediaStream of the external video.
-    // @type {MediaStream}
-    this._externalVideoStream = null;
-
     // Next expected dataChannel test number.
     // @type {Number}
     this._nextDataChannelTestNumber = 0;
-
-    if (externalVideo) {
-      this._externalVideo = document.createElement("video");
-
-      this._externalVideo.controls = true;
-      this._externalVideo.muted = true;
-      this._externalVideo.loop = true;
-      this._externalVideo.setAttribute("playsinline", "");
-      this._externalVideo.src = EXTERNAL_VIDEO_SRC;
-
-      this._externalVideo
-        .play()
-        .catch((error) => logger.warn("externalVideo.play() failed:%o", error));
-    }
 
     // Custom mediasoup-client handler name (to override default browser
     // detection if desired).
@@ -740,27 +717,21 @@ export default class RoomClient {
     let track;
 
     try {
-      if (!this._externalVideo) {
-        logger.debug("enableMic() | calling getUserMedia()");
+      logger.debug("enableMic() | calling getUserMedia()");
 
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: {
-            autoGainControl: false,
-            echoCancellation: true,
-            noiseSuppression: true,
-            channelCount: 2,
-            sampleRate: 48000,
-            sampleSize: 16,
-            volume: 1.0,
-          },
-        });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          autoGainControl: false,
+          echoCancellation: true,
+          noiseSuppression: true,
+          channelCount: 2,
+          sampleRate: 48000,
+          sampleSize: 16,
+          volume: 1.0,
+        },
+      });
 
-        track = stream.getAudioTracks()[0];
-      } else {
-        const stream = await this._getExternalVideoStream();
-
-        track = stream.getAudioTracks()[0].clone();
-      }
+      track = stream.getAudioTracks()[0];
 
       this._micProducer = await this._sendTransport.produce({
         track,
@@ -915,31 +886,23 @@ export default class RoomClient {
     store.dispatch(stateActions.setWebcamInProgress(true));
 
     try {
-      if (!this._externalVideo) {
-        await this._updateWebcams();
-        device = this._webcam.device;
+      await this._updateWebcams();
+      device = this._webcam.device;
 
-        const { resolution } = this._webcam;
+      const { resolution } = this._webcam;
 
-        if (!device) throw new Error("no webcam devices");
+      if (!device) throw new Error("no webcam devices");
 
-        logger.debug("enableWebcam() | calling getUserMedia()");
+      logger.debug("enableWebcam() | calling getUserMedia()");
 
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            deviceId: { ideal: device.deviceId },
-            ...VIDEO_CONSTRAINTS[resolution],
-          },
-        });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          deviceId: { ideal: device.deviceId },
+          ...VIDEO_CONSTRAINTS[resolution],
+        },
+      });
 
-        track = stream.getVideoTracks()[0];
-      } else {
-        device = { label: "external video" };
-
-        const stream = await this._getExternalVideoStream();
-
-        track = stream.getVideoTracks()[0].clone();
-      }
+      track = stream.getVideoTracks()[0];
 
       let encodings;
       let codec;
@@ -1968,16 +1931,17 @@ export default class RoomClient {
       //
       // Just get access to the mic and DO NOT close the mic track for a while.
       // Super hack!
-      {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        });
-        const audioTrack = stream.getAudioTracks()[0];
+      // {
+      //   const stream = await navigator.mediaDevices.getUserMedia({
+      //     audio: true,
+      //   });
+      //   const audioTrack = stream.getAudioTracks()[0];
 
-        audioTrack.enabled = false;
+      //   audioTrack.enabled = false;
 
-        setTimeout(() => audioTrack.stop(), 120000);
-      }
+      //   setTimeout(() => audioTrack.stop(), 120000);
+      // }
+      
       // Create mediasoup Transport for sending (unless we don't want to produce).
       if (this._produceAudio || this._produceVideo) {
         const transportInfo = await this._protoo.request(
@@ -2283,23 +2247,5 @@ export default class RoomClient {
         })
       );
     }
-  }
-
-  async _getExternalVideoStream() {
-    if (this._externalVideoStream) return this._externalVideoStream;
-
-    if (this._externalVideo.readyState < 3) {
-      await new Promise((resolve) =>
-        this._externalVideo.addEventListener("canplay", resolve)
-      );
-    }
-
-    if (this._externalVideo.captureStream)
-      this._externalVideoStream = this._externalVideo.captureStream();
-    else if (this._externalVideo.mozCaptureStream)
-      this._externalVideoStream = this._externalVideo.mozCaptureStream();
-    else throw new Error("video.captureStream() not supported");
-
-    return this._externalVideoStream;
   }
 }

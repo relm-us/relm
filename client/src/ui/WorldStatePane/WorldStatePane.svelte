@@ -2,13 +2,15 @@
   import { onMount } from "svelte";
   import Pane from "./Pane.svelte";
 
+  import { audioRequested, videoRequested } from "video-mirror";
+  import { mediaSetupState } from "~/stores/mediaSetupState";
+
   import { Relm } from "~/stores/Relm";
   import { subrelm, entryway } from "~/stores/subrelm";
   import { connection, yConnectStatus } from "~/stores/connection";
   import { viewport, size, scale } from "~/stores/viewport";
   import { world } from "~/stores/world";
   import { worldState } from "~/stores/worldState";
-  import { avPermission } from "~/stores/avPermission";
   import { roomConnectState } from "~/av/stores/roomConnectState";
   import {
     loadingState,
@@ -63,12 +65,12 @@
     <table>
       <tr><th>subrelm:</th><td>{$subrelm}</td></tr>
       <tr><th>entryway:</th><td>{$entryway}</td></tr>
-      <tr><th>world-status:</th><td>{$worldState}</td></tr>
-      <tr><th>media-status:</th><td>{$roomConnectState}</td></tr>
-      <tr><th>yjs-status:</th><td>{$connection.state}</td></tr>
+      <tr><th>world state:</th><td>{$worldState}</td></tr>
+      <tr><th>conference state:</th><td>{$roomConnectState}</td></tr>
+      <tr><th>yjs state:</th><td>{$connection.state}</td></tr>
       {#if $connection.state === "connected"}
         <tr>
-          <th>yjs-room:</th>
+          <th>yjs room:</th>
           <td>
             {#if showAbbreviatedRoom}
               <button on:click={toggleRoom}>
@@ -81,12 +83,16 @@
         </tr>
       {/if}
       <tr>
+        <th>media setup</th>
+        <td> {$mediaSetupState} </td>
+      </tr>
+      <tr>
         <th>audio</th>
-        <td> {$avPermission.audio} </td>
+        <td> {$audioRequested} </td>
       </tr>
       <tr>
         <th>video</th>
-        <td> {$avPermission.video} </td>
+        <td> {$videoRequested} </td>
       </tr>
       <tr>
         <th>loading:</th>

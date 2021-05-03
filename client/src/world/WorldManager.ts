@@ -36,9 +36,9 @@ import {
   GROUND_INTERACTION,
 } from "~/config/colliderInteractions";
 
-import { avPermission } from "~/stores/avPermission";
 import { connectAV } from "~/av";
 import type { DecoratedWorld } from "~/types/DecoratedWorld";
+import { mediaSetupState } from "~/stores/mediaSetupState";
 
 export default class WorldManager {
   world: DecoratedWorld;
@@ -98,9 +98,9 @@ export default class WorldManager {
      * Start when both loading is done and audio/video screen is complete
      */
     derived(
-      [loadingState, avPermission],
-      ([$loadingState, $avPermission], set) => {
-        set($loadingState === "loaded" && $avPermission.done);
+      [loadingState, mediaSetupState],
+      ([$loadingState, $mediaSetupState], set) => {
+        set($loadingState === "loaded" && $mediaSetupState === "done");
       }
     ).subscribe((ready) => {
       if (ready) this.start();
@@ -184,8 +184,8 @@ export default class WorldManager {
       this.identities.me.avatar.disableEditingLabel();
     }
 
-    avPermission.subscribe(($permission) => {
-      if ($permission.done) {
+    mediaSetupState.subscribe(($mediaSetupState) => {
+      if ($mediaSetupState === "done") {
         console.log("connecting av to", connectOpts);
         this.roomClient = connectAV({
           roomId: connectOpts.room,

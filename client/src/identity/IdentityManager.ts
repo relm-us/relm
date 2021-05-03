@@ -15,11 +15,11 @@ import {
 } from "./types";
 
 import { loadingState } from "~/stores/loading";
-import { avPermission } from "~/stores/avPermission";
 import { defaultIdentity } from "./defaultIdentity";
 import { Identity } from "./Identity";
 import { ChatMessage, getEmojiFromMessage } from "~/world/ChatManager";
 import { localstorageSharedFields } from "./localstorageSharedFields";
+import { audioRequested, videoRequested } from "video-mirror";
 
 const ACTIVE_TIMEOUT = 30000;
 
@@ -79,14 +79,12 @@ export class IdentityManager extends EventEmitter {
     });
     this.identities.set(myData.playerId, identity);
 
-    avPermission.subscribe(($avPermission) => {
-      identity.sharedFields.update(($fields) => {
-        return {
-          ...$fields,
-          showAudio: $avPermission.audio,
-          showVideo: $avPermission.video,
-        };
-      });
+    audioRequested.subscribe((showAudio) => {
+      identity.sharedFields.update(($fields) => ({ ...$fields, showAudio }));
+    });
+
+    videoRequested.subscribe((showVideo) => {
+      identity.sharedFields.update(($fields) => ({ ...$fields, showVideo }));
     });
 
     /**
