@@ -37,6 +37,11 @@
   let vw;
   $: vw = $size ? `(${$size.width},${$size.height})` : "";
 
+  let showAbbreviatedRoom = true;
+  function toggleRoom() {
+    showAbbreviatedRoom = !showAbbreviatedRoom;
+  }
+
   let idActive = 0;
   let idTotal = 0;
 
@@ -62,22 +67,34 @@
       <tr><th>media-status:</th><td>{$roomConnectState}</td></tr>
       <tr><th>yjs-status:</th><td>{$connection.state}</td></tr>
       {#if $connection.state === "connected"}
-        <tr><th>yjs-room:</th><td>{$connection.room}</td></tr>
+        <tr>
+          <th>yjs-room:</th>
+          <td>
+            {#if showAbbreviatedRoom}
+              <button on:click={toggleRoom}>
+                {$connection.room.split("-")[0]}...
+              </button>
+            {:else}
+              {$connection.room}
+            {/if}
+          </td>
+        </tr>
       {/if}
       <tr>
-        <th>audio/video:</th>
-        <td>
-          A: {$avPermission.audio}, V: {$avPermission.video}, {$avPermission.done
-            ? "DONE"
-            : "none"}
-        </td>
+        <th>audio</th>
+        <td> {$avPermission.audio} </td>
+      </tr>
+      <tr>
+        <th>video</th>
+        <td> {$avPermission.video} </td>
       </tr>
       <tr>
         <th>loading:</th>
         <td>
           {$loadingState}
           {$loaded}/{$maximum}
-          (Ent: {$entitiesLoaded}/{$entitiesMaximum}) (Ast: {$assetsLoaded}/{$assetsMaximum})
+          <div>(Ent: {$entitiesLoaded}/{$entitiesMaximum})</div>
+          <div>(Ast: {$assetsLoaded}/{$assetsMaximum})</div>
         </td>
       </tr>
       <tr><th>physics:</th><td>{$world !== null}</td></tr>
@@ -102,14 +119,19 @@
   table {
     color: white;
     margin: 8px;
+    width: 240px;
   }
   th {
     text-align: right;
     padding-right: 4px;
     vertical-align: top;
+    width: 50%;
   }
   td {
-    max-width: 240px;
-    vertical-align: top;
+    vertical-align: middle;
+    width: 50%;
+    font-family: monospace;
+    color: gold;
+    padding-top: 1px;
   }
 </style>
