@@ -12,8 +12,7 @@
 
   import BuildPlayModeButton from "~/ui/BuildPlayModeButton";
   import GroupUngroupButton from "~/ui/GroupUngroupButton";
-  import PausePlayButton from "~/ui/PausePlayButton";
-  import StepFrameButton from "~/ui/StepFrameButton";
+  import MediaSetupButton from "~/ui/MediaSetupButton";
   import UploadButton from "~/ui/UploadButton";
   import RandomizeMe from "~/ui/RandomizeMe";
   import WorldStatePane from "~/ui/WorldStatePane";
@@ -115,8 +114,7 @@
   <overlay-content>
     <overlay-left>
       <play-buttons>
-        <PausePlayButton />
-        <StepFrameButton />
+        <MediaSetupButton />
         <UploadButton on:uploaded={onUpload} />
         <RandomizeMe />
       </play-buttons>
