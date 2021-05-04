@@ -75,7 +75,6 @@
     "eventemitter3": "^4.0.7",
     "mediasoup-client": "github:versatica/mediasoup-client#v3",
     "nanoid": "^3.1.20",
-    "partykals": "github:QuickMick/partykals#6396fc545258522b1f43765b1fdfd58851d47c3d",
     "protoo-client": "^4.0.6",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",

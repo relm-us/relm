@@ -7739,10 +7739,6 @@ parseurl@~1.3.2, parseurl@~1.3.3:
   resolved "https://registry.yarnpkg.com/parseurl/-/parseurl-1.3.3.tgz#9da19e7bee8d12dff0513ed5b76957793bc2e8d4"
   integrity sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==
 
-"partykals@github:QuickMick/partykals#6396fc545258522b1f43765b1fdfd58851d47c3d":
-  version "1.0.3"
-  resolved "https://codeload.github.com/QuickMick/partykals/tar.gz/6396fc545258522b1f43765b1fdfd58851d47c3d"
-
 pascalcase@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/pascalcase/-/pascalcase-0.1.1.tgz#b363e55e8006ca6fe21784d2db22bd15d7917f14"
@@ -10816,10 +10812,10 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-video-mirror@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/video-mirror/-/video-mirror-0.4.0.tgz#ad041dc1e2eaab52f76a49b9d53564432c69b2f5"
-  integrity sha512-+t4N0hvXwRWlf7q0XkkYhg6EZHFcoQJMxVld6iGiROTj+bkVPPfYbO+5OlgRAZnaKUKsH/xkeXkIaxXamnJPFg==
+video-mirror@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/video-mirror/-/video-mirror-0.4.1.tgz#035599b1b828c82c9389d95fbc048f66f12f3f99"
+  integrity sha512-3m4pl6G0kTzGwURmQB715q+7qgxzsC62aHtXMTT/RFwBAun36JVTEV4cp9XBqs4S0Z3NKYaYFVGcQG/1/QD9tw==
   dependencies:
     hark "^1.2.3"
     media-devices "^0.2.0"
