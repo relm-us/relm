@@ -705,12 +705,13 @@ export default class RoomClient {
 
     if (this._micProducer) return;
 
-    if (!this._mediasoupDevice)
+    if (!this._mediasoupDevice) {
       logger.warn("enableMic() | no _mediasoupDevice yet");
+      return;
+    }
 
     if (!this._mediasoupDevice.canProduce("audio")) {
       logger.error("enableMic() | cannot produce audio");
-
       return;
     }
 
@@ -868,15 +869,16 @@ export default class RoomClient {
   async enableWebcam() {
     logger.debug("enableWebcam()");
 
-    if (!this._mediasoupDevice)
+    if (!this._mediasoupDevice) {
       logger.warn("enableWebcam() | no _mediasoupDevice yet");
+      return;
+    }
 
     if (this._webcamProducer) return;
     else if (this._shareProducer) await this.disableShare();
 
     if (!this._mediasoupDevice.canProduce("video")) {
       logger.error("enableWebcam() | cannot produce video");
-
       return;
     }
 
@@ -1941,7 +1943,7 @@ export default class RoomClient {
 
       //   setTimeout(() => audioTrack.stop(), 120000);
       // }
-      
+
       // Create mediasoup Transport for sending (unless we don't want to produce).
       if (this._produceAudio || this._produceVideo) {
         const transportInfo = await this._protoo.request(
