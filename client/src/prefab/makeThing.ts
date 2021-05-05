@@ -3,9 +3,7 @@ import { Transform, Asset } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
 import { RigidBody, Collider } from "~/ecs/plugins/physics";
-import { NormalizeMesh } from "~/ecs/plugins/normalize";
-import { TransformEffects } from "~/ecs/plugins/transform-effects";
-import { Model } from "~/ecs/plugins/core";
+import { Model } from "~/ecs/plugins/model";
 
 import { makeEntity } from "./makeEntity";
 
@@ -14,7 +12,6 @@ export function makeThing(
   { x, y = 0.5, z, w = 1, h = 1, d = 1, yOffset = 0, dynamic = false, url }
 ) {
   const thing = makeEntity(world, "Thing")
-    .add(NormalizeMesh)
     .add(Transform, {
       // Put it in the corner
       position: new Vector3(x, y + yOffset, z),

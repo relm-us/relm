@@ -1,16 +1,16 @@
-import { createPlugin } from "~/ecs/base";
-import CorePlugin from "~/ecs/plugins/core";
+import { createPlugin, Entity } from "~/ecs/base";
+import CorePlugin, { Object3D } from "~/ecs/plugins/core";
 
 import * as Components from "./components";
 import * as Systems from "./systems";
 
 export * from "./components";
 
-// export { Components };
+export { Components };
 
 export default createPlugin({
-  name: "normalize",
+  name: "model",
   plugins: [CorePlugin],
-  systems: Object.values(Systems),
+  systems: Object.values(Systems) as any,
   components: Object.values(Components),
 });

@@ -20,21 +20,22 @@ import { World } from "~/ecs/base";
 import CorePlugin from "~/ecs/plugins/core";
 import ShapePlugin from "~/ecs/plugins/shape";
 import WallPlugin from "~/ecs/plugins/wall";
-import ImagePlugin from "~/ecs/plugins/image";
 import PerspectivePlugin from "~/ecs/plugins/perspective";
 
 import AnimationPlugin from "~/ecs/plugins/animation";
+import AssetPlugin from "~/ecs/plugins/asset";
 import BoundingHelperPlugin from "~/ecs/plugins/bounding-helper";
 import ColorationPlugin from "~/ecs/plugins/coloration";
 import Css3DPlugin from "~/ecs/plugins/css3d";
 import FirePlugin from "~/ecs/plugins/fire";
 import FollowPlugin from "~/ecs/plugins/follow";
 import Html2dPlugin from "~/ecs/plugins/html2d";
+import ImagePlugin from "~/ecs/plugins/image";
 import LightingPlugin from "~/ecs/plugins/lighting";
 import LineHelperPlugin from "~/ecs/plugins/line-helper";
+import ModelPlugin from "~/ecs/plugins/model";
 import MorphPlugin from "~/ecs/plugins/morph";
 import NonInteractivePlugin from "~/ecs/plugins/non-interactive";
-import NormalizePlugin from "~/ecs/plugins/normalize";
 import OutlinePlugin from "~/ecs/plugins/outline";
 import ParticlesPlugin from "~/ecs/plugins/particles";
 import PlayerControlPlugin from "~/ecs/plugins/player-control";
@@ -124,20 +125,21 @@ export function createWorld(rapier) {
       ShapePlugin,
       WallPlugin,
       FirePlugin,
-      ImagePlugin,
       PerspectivePlugin,
       /* others */
       AnimationPlugin,
+      AssetPlugin,
       BoundingHelperPlugin,
       ColorationPlugin,
       Css3DPlugin,
       FollowPlugin,
       Html2dPlugin,
+      ImagePlugin,
       LightingPlugin,
       LineHelperPlugin,
+      ModelPlugin,
       MorphPlugin,
       NonInteractivePlugin,
-      NormalizePlugin,
       OutlinePlugin,
       ParticlesPlugin,
       PlayerControlPlugin,

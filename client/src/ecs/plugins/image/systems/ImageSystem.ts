@@ -1,141 +1,193 @@
-import { System, Not, Modified, Groups } from "~/ecs/base";
-import * as THREE from "three";
+import {
+  PlaneBufferGeometry,
+  MeshStandardMaterial,
+  Mesh,
+  DoubleSide,
+} from "three";
 
-import { Image, ImageLoader, ImageMesh } from "../components";
-import { Object3D } from "~/ecs/plugins/core";
+import { System, Not, Modified, Groups, Entity } from "~/ecs/base";
 import { Queries } from "~/ecs/base/Query";
 
-let loaderIds = 0;
+import { Image, ImageRef, ImageAttached } from "../components";
+import { Presentation, Object3D } from "~/ecs/plugins/core";
+import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 
+type Size = {
+  width: number;
+  height: number;
+};
+
+/**
+ * ImageSystem represents a 3D model, and is responsible for attaching it
+ * to a threejs Object3D, contained by an ECS Object3D component (note:
+ * they share the same class name but are different--an ECS Object3D is
+ * a component that holds a reference to a threejs Object3D).
+ *
+ * ImageSystem relies on AssetSystem to load the 3d model asset and present
+ * it as an `AssetLoaded` component.
+ *
+ * When an entity has a Image, it need not have an Asset component right
+ * away--the ImageSystem will add an Asset component as needed to load the
+ * 3D model asset.
+ */
 export class ImageSystem extends System {
+  presentation: Presentation;
+
   order = Groups.Initialization;
 
+  /**
+   * AssetLoaded <-> ImageRef
+   * Object3D <-> ImageAttached
+   */
   static queries: Queries = {
-    added: [Object3D, Image, Not(ImageLoader), Not(ImageMesh)],
-    unbuilt: [Object3D, Image, ImageLoader],
-    modified: [Object3D, Modified(Image)],
-    removedObj: [Not(Object3D), ImageMesh],
-    removed: [Not(Image), ImageMesh],
+    missingAsset: [Image, Not(Asset)],
+
+    added: [Image, AssetLoaded, Not(ImageRef)],
+    modified: [Modified(Image), AssetLoaded],
+    removed: [Not(Image), ImageRef],
+
+    detached: [Object3D, ImageRef, Not(ImageAttached)],
+    attached: [Not(ImageRef), ImageAttached],
+    dangling: [Not(Object3D), ImageRef],
   };
 
+  init({ presentation }) {
+    this.presentation = presentation;
+  }
+
   update() {
-    this.queries.added.forEach((entity) => {
-      this.load(entity);
+    this.queries.missingAsset.forEach((entity) => {
+      const model = entity.get(Image);
+      entity.add(Asset, { texture: model.asset });
     });
-    this.queries.unbuilt.forEach((entity) => {
-      const loader = entity.get(ImageLoader);
-      if (!loader.texture) return;
-      this.build(entity);
-    });
-    this.queries.modified.forEach((entity) => {
-      this.load(entity);
-    });
-    this.queries.removedObj.forEach((entity) => {
-      this.cleanup(entity);
-    });
-    this.queries.removed.forEach((entity) => {
-      this.cleanup(entity);
-    });
+
+    this.queries.added.forEach((entity) => this.build(entity));
+
+    // once ImageRef is removed, Asset & Image will be built again
+    this.queries.modified.forEach((entity) => this.remove(entity));
+
+    // since Image is already gone, remove ImageRef and clean up (it won't be built again)
+    this.queries.removed.forEach((entity) => this.remove(entity));
+
+    this.queries.detached.forEach((entity) => this.attach(entity));
+    this.queries.attached.forEach((entity) => this.detach(entity));
+    this.queries.dangling.forEach((entity) => this.remove(entity));
   }
 
-  async load(entity) {
-    const { loadTexture } = (this.world as any).presentation;
-    const url = entity.get(Image).asset.url;
-    if (!url) {
-      this.cleanup(entity);
-      return;
-    }
-    const loader =
-      entity.get(ImageLoader) || entity.add(ImageLoader, undefined, true);
-    loader.id = ++loaderIds;
-    try {
-      loader.texture = await loadTexture(url);
-    } catch (err) {
-      console.warn("Unable to load asset for Image:", url, entity.id);
-      if (entity.has(ImageLoader)) {
-        entity.remove(Image);
-        entity.remove(ImageLoader);
-      }
-    }
-  }
+  build(entity: Entity) {
+    const spec: Image = entity.get(Image);
+    const texture = entity.get(AssetLoaded).value;
 
-  build(entity) {
-    const spec = entity.get(Image);
-    const object3d = entity.get(Object3D).value;
-    const texture = entity.get(ImageLoader).texture;
-    let planeWidth = spec.width;
-    let planeHeight = spec.height;
+    const plane = { width: spec.width, height: spec.height };
+    const image = { width: texture.image.width, height: texture.image.height };
 
-    const imageWidth = texture.image.width;
-    const imageHeight = texture.image.height;
-
-    const planeAspect = planeWidth / planeHeight;
-    const imageAspect = imageWidth / imageHeight;
-
-    // Cover: the image will expand to ensure it fits exactly
-    // the size specified. When the aspect ratio of the plane
-    // and the image are different, this results in some of the
-    // image being cropped off the vertical/horizontal edges.
     if (spec.fit === "COVER") {
-      let yScale = 1;
-      let xScale = planeAspect / imageAspect;
-      if (xScale > yScale) {
-        xScale = 1;
-        yScale = imageAspect / planeAspect;
-      }
-      texture.repeat.set(xScale, yScale);
-      texture.offset.set((1 - xScale) / 2, (1 - yScale) / 2);
+      const cover = this.getCover(plane, image);
+      texture.repeat.set(cover.width, cover.height);
+      texture.offset.set(cover.x, cover.y);
+    } else if (spec.fit === "CONTAIN") {
+      const contain = this.getContain(plane, image);
+      plane.width = contain.width;
+      plane.height = contain.height;
     }
 
-    // Contain: the image will fit inside the size specified.
-    // If the specified ratio and image ratio are different, the
-    // plane will be shrunk horizontally or vertically to match
-    // the image.
-    if (spec.fit === "CONTAIN") {
-      if (planeAspect > imageAspect) {
-        // plane is too wide, shrink to fit
-        planeWidth = planeHeight * imageAspect;
-      }
-      if (planeAspect < imageAspect) {
-        // plane is too high, shrink to fit
-        planeHeight = (imageHeight / imageWidth) * planeWidth;
-      }
-    }
+    const mesh = this.makeMesh(plane, texture);
 
-    const geometry = new THREE.PlaneBufferGeometry(planeWidth, planeHeight);
-    const material = new THREE.MeshStandardMaterial({
+    entity.add(ImageRef, { value: mesh });
+  }
+
+  remove(entity: Entity) {
+    const mesh = entity.get(ImageRef).value;
+
+    mesh.geometry?.dispose();
+    mesh.material?.dispose();
+    mesh.dispose?.();
+
+    entity.remove(ImageRef);
+    entity.maybeRemove(Asset);
+  }
+
+  attach(entity: Entity) {
+    const parent = entity.get(Object3D).value;
+    const child = entity.get(ImageRef).value;
+    parent.add(child);
+    entity.add(ImageAttached, { parent, child });
+  }
+
+  detach(entity: Entity) {
+    const { parent, child } = entity.get(ImageAttached);
+    parent.remove(child);
+    entity.remove(ImageAttached);
+  }
+
+  makeMesh(plane, texture) {
+    const geometry = new PlaneBufferGeometry(plane.width, plane.height);
+    const material = new MeshStandardMaterial({
       roughness: 0.8,
       metalness: 0,
       transparent: true, // supports png transparency
       map: texture,
-      side: THREE.DoubleSide,
+      side: DoubleSide,
     });
-    const mesh = new THREE.Mesh(geometry, material);
+    const mesh = new Mesh(geometry, material);
     mesh.receiveShadow = true;
-    // mesh.castShadow = false;
-    object3d.add(mesh);
-    if (entity.has(ImageMesh)) {
-      const component = entity.get(ImageMesh);
-      component.value.parent.remove(component.value);
-      component.value.geometry.dispose();
-      component.value.material.map?.dispose();
-      component.value.material.dispose();
-      component.value = mesh;
-      component.modified();
-    } else {
-      entity.add(ImageMesh, { value: mesh });
-    }
-    entity.remove(ImageLoader);
+
+    return mesh;
   }
 
-  cleanup(entity) {
-    if (entity.has(ImageMesh)) {
-      const mesh = entity.get(ImageMesh).value;
-      mesh.parent.remove(mesh);
-      mesh.geometry.dispose();
-      mesh.material.map?.dispose();
-      mesh.material.dispose();
-      entity.remove(ImageMesh);
+  /**
+   * COVER: the image will expand to ensure it fits exactly
+   * the size specified. When the aspect ratio of the plane
+   * and the image are different, this results in some of the
+   * image being cropped off the vertical/horizontal edges.
+   */
+  getCover(plane: Size, image: Size): Size & { x: number; y: number } {
+    const planeAspect = plane.width / plane.height;
+    const imageAspect = image.width / image.height;
+
+    let yScale = 1;
+    let xScale = planeAspect / imageAspect;
+    if (xScale > yScale) {
+      xScale = 1;
+      yScale = imageAspect / planeAspect;
     }
+
+    return {
+      width: xScale,
+      height: yScale,
+      x: (1 - xScale) / 2,
+      y: (1 - yScale) / 2,
+    };
+  }
+
+  /**
+   * CONTAIN: the image will fit inside the size specified.
+   * If the specified ratio and image ratio are different, the
+   * plane will be shrunk horizontally or vertically to match
+   * the image.
+   */
+  getContain(plane: Size, image: Size): Size {
+    const contain = {
+      width: plane.width,
+      height: plane.height,
+    };
+
+    const planeAspect = plane.width / plane.height;
+    const imageAspect = image.width / image.height;
+
+    // plane is too wide, shrink to fit
+    if (planeAspect > imageAspect) plane.width = plane.height * imageAspect;
+
+    // plane is too high, shrink to fit
+    if (planeAspect < imageAspect)
+      plane.height = (image.height / image.width) * plane.width;
+
+    return contain;
+  }
+
+  error(entity, msg) {
+    entity.maybeRemove(Image);
+    entity.maybeRemove(ImageRef);
+    console.warn(`ImageSystem: ${msg}`, entity);
   }
 }

@@ -29,7 +29,9 @@ export class SelectionManager {
   }
 
   get entities() {
-    return this.ids.map((id) => this.wdoc.world.entities.getById(id));
+    return this.ids
+      .map((id) => this.wdoc.world.entities.getById(id))
+      .filter((entity) => entity && entity.has(Transform));
   }
 
   hasEntityId(entityId: EntityId) {

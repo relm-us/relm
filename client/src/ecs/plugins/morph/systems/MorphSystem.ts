@@ -1,13 +1,13 @@
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
-import { ModelMesh } from "~/ecs/plugins/core";
+import { ModelRef } from "~/ecs/plugins/model";
 import { Morph, MorphApplied } from "../components";
 
 export class MorphSystem extends System {
   order = Groups.Simulation + 1;
 
   static queries = {
-    new: [Morph, ModelMesh, Not(MorphApplied)],
-    modified: [Modified(Morph)],
+    new: [Morph, ModelRef, Not(MorphApplied)],
+    modified: [Modified(Morph), ModelRef],
     removed: [Not(Morph), MorphApplied],
   };
 
@@ -29,7 +29,7 @@ export class MorphSystem extends System {
   }
 
   resetInfluences(entity: Entity) {
-    const scene = entity.get(ModelMesh)?.value;
+    const { scene } = entity.get(ModelRef);
     if (!scene) return;
 
     scene.traverse((node) => {
@@ -43,9 +43,9 @@ export class MorphSystem extends System {
   }
 
   setInfluences(entity: Entity) {
-    const scene = entity.get(ModelMesh)?.value;
+    const { scene } = entity.get(ModelRef);
     if (!scene) return;
-    
+
     const spec = entity.get(Morph);
 
     if (!spec.influences) return;

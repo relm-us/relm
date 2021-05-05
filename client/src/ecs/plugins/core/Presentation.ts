@@ -13,18 +13,16 @@ import {
   Texture,
   Vector3,
   Vector2,
-  Box3,
   Frustum,
   Matrix4,
 } from "three";
 
 import { World } from "~/ecs/base";
-import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
 
 export type PlaneOrientation = "xz" | "xy";
 
-let gltfLoader;
-let textureLoader;
+let gltfLoader: Loader;
+let textureLoader: TextureLoader;
 
 declare class ResizeObserver {
   constructor(fn: () => void);

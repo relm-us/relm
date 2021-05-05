@@ -1,5 +1,4 @@
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 
 /**
  * GLTFLoader isn't quite supported in node.js so this
@@ -32,7 +31,7 @@ export class Loader {
           this.loader.parse(
             buffer,
             null,
-            (gltf) => resolve({ scene: gltf.scene, clips: gltf.animations }),
+            (gltf) => resolve(gltf),
             (error) => reject(error)
           );
         } catch (err) {
@@ -40,7 +39,6 @@ export class Loader {
         }
       });
     }
-    const loaded = await promise;
-    return { scene: SkeletonUtils.clone(loaded.scene), clips: loaded.clips };
+    return await promise;
   }
 }

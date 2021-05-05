@@ -6,7 +6,8 @@ import { makeAvatar } from "~/prefab/makeAvatar";
 import { makeAvatarAndActivate } from "~/prefab/makeAvatarAndActivate";
 
 import { World, Entity } from "~/ecs/base";
-import { Presentation, Transform, ModelMesh } from "~/ecs/plugins/core";
+import { Presentation, Transform } from "~/ecs/plugins/core";
+import { ModelRef } from "~/ecs/plugins/model";
 import { Html2d, Oculus, OculusRef } from "~/ecs/plugins/html2d";
 import { Animation } from "~/ecs/plugins/animation";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
@@ -258,7 +259,7 @@ export class Avatar {
     // e1.setFromQuaternion(transformHead.rotation);
     transformData[4] = 0;
 
-    const clips: AnimationClip[] = this.entity.get(ModelMesh)?.clips;
+    const clips: AnimationClip[] = this.entity.get(ModelRef)?.animations;
     const clipName: string = this.entity.get(Animation)?.clipName;
     if (clips && clipName) {
       const index = clips.findIndex((c) => c.name === clipName);
@@ -270,7 +271,7 @@ export class Avatar {
 
   setTransformData([x, y, z, theta, headTheta, clipIndex]) {
     if (!this.entity) return;
-    
+
     const transform = this.entity.get(Transform);
 
     // Set position of body
@@ -289,7 +290,7 @@ export class Avatar {
     // e1.y = headTheta;
     // transformHead.rotation.setFromEuler(e1);
 
-    const clips = this.entity.get(ModelMesh)?.clips;
+    const clips = this.entity.get(ModelRef)?.animations;
     const animation = this.entity.get(Animation);
     if (clips && clipIndex >= 0 && clipIndex < clips.length) {
       const newClipName = clips[clipIndex].name;

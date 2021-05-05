@@ -1,5 +1,5 @@
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
-import { ModelMesh } from "~/ecs/plugins/core";
+import { ModelRef } from "~/ecs/plugins/model";
 import { Animation, MixerRef } from "../components";
 import { AnimationMixer } from "three";
 
@@ -7,7 +7,7 @@ export class AnimationSystem extends System {
   order = Groups.Simulation + 1;
 
   static queries = {
-    new: [Animation, ModelMesh, Not(MixerRef)],
+    new: [Animation, ModelRef, Not(MixerRef)],
     modified: [Modified(Animation)],
     active: [Animation, MixerRef],
     removed: [Not(Animation), MixerRef],
@@ -33,12 +33,12 @@ export class AnimationSystem extends System {
 
   build(entity: Entity) {
     // Create Mixer
-    const scene = entity.get(ModelMesh).value;
+    const { scene } = entity.get(ModelRef);
     const mixer = new AnimationMixer(scene);
     entity.add(MixerRef, { value: mixer });
 
     // Flag Skinned Meshes as non-frustum-cullable, except avatar,
-    // which we handle as a special case in NormalizeMeshSystem.normalize
+    // which we handle as a special case in ModelSystem normalize
     if (scene.parent.name === "Avatar") return;
     scene.traverse((node) => {
       if (node.isSkinnedMesh) node.frustumCulled = false;
@@ -50,20 +50,20 @@ export class AnimationSystem extends System {
     const mixer = entity.get(MixerRef)?.value;
     if (!mixer) return;
 
-    const { clips } = entity.get(ModelMesh);
+    const { animations } = entity.get(ModelRef);
 
     if (spec.transition === 0) {
       mixer.stopAllAction();
       mixer.uncacheRoot(mixer.getRoot());
 
       mixer.timeScale = spec.timeScale;
-      const clip = clips.find((c) => c.name === spec.clipName);
+      const clip = animations.find((c) => c.name === spec.clipName);
       if (clip) {
         mixer.activeAction = mixer.clipAction(clip).reset().play();
       }
     } else {
       mixer.previousAction = mixer.activeAction;
-      const clip = clips.find((c) => c.name === spec.clipName);
+      const clip = animations.find((c) => c.name === spec.clipName);
       mixer.activeAction = mixer.clipAction(clip);
 
       if (mixer.previousAction && mixer.previousAction !== mixer.activeAction) {
