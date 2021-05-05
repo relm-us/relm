@@ -29,7 +29,7 @@ export class MorphSystem extends System {
   }
 
   resetInfluences(entity: Entity) {
-    const { scene } = entity.get(ModelRef);
+    const scene = entity.get(ModelRef)?.scene;
     if (!scene) return;
 
     scene.traverse((node) => {
