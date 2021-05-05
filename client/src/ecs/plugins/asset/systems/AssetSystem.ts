@@ -1,6 +1,6 @@
 import { System, Not, Modified, Groups } from "~/ecs/base";
 
-import { Asset, AssetLoading, AssetLoaded } from "../components";
+import { Asset, AssetLoading, AssetLoaded, AssetError } from "../components";
 import { Presentation } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
 
@@ -12,8 +12,8 @@ export class AssetSystem extends System {
   order = Groups.Initialization;
 
   static queries: Queries = {
-    added: [Asset, Not(AssetLoading), Not(AssetLoaded)],
-    modified: [Modified(Asset), Not(AssetLoading), Not(AssetLoaded)],
+    added: [Asset, Not(AssetLoading), Not(AssetLoaded), Not(AssetError)],
+    modified: [Modified(Asset)],
     removed: [Not(Asset), AssetLoaded],
     removedWhileLoading: [Not(Asset), AssetLoading],
   };
@@ -27,13 +27,14 @@ export class AssetSystem extends System {
       this.load(entity);
     });
     this.queries.modified.forEach((entity) => {
+      this.remove(entity);
       this.load(entity);
     });
     this.queries.removed.forEach((entity) => {
-      this.cleanup(entity);
+      this.remove(entity);
     });
     this.queries.removedWhileLoading.forEach((entity) => {
-      this.cleanup(entity);
+      this.remove(entity);
     });
   }
 
@@ -66,14 +67,15 @@ export class AssetSystem extends System {
   }
 
   loadingError(entity, msg) {
-    this.cleanup(entity);
+    this.remove(entity);
+    entity.add(AssetError, { error: msg });
     console.warn(`AssetSystem: ${msg}`, entity);
   }
 
-  cleanup(entity) {
-    entity.maybeRemove(Asset);
+  remove(entity) {
     entity.maybeRemove(AssetLoading);
     entity.maybeRemove(AssetLoaded);
+    entity.maybeRemove(AssetError);
   }
 
   getAssetType(entity) {

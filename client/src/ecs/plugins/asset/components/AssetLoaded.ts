@@ -1,4 +1,4 @@
-import { StateComponent, RefType } from "~/ecs/base";
+import { StateComponent, RefType, StringType } from "~/ecs/base";
 
 export class AssetLoaded extends StateComponent {
   static props = {
