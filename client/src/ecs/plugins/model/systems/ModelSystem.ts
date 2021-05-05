@@ -1,4 +1,11 @@
-import { BufferGeometry, Mesh, sRGBEncoding, Group } from "three";
+import {
+  BufferGeometry,
+  Mesh,
+  sRGBEncoding,
+  Group,
+  Matrix4,
+  MathUtils,
+} from "three";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 
 import { traverseMaterials } from "~/utils/traverseMaterials";
@@ -76,8 +83,14 @@ export class ModelSystem extends System {
     if (invalidModel) return this.error(entity, "invalid model");
 
     const clonedScene = SkeletonUtils.clone(scene);
+
+    // TODO: Find a better way to fix bounding box for skinned mesh general case
+    if (entity.name === "Avatar")
+      clonedScene.traverse(rotateSkinnedMeshBoundingBox);
+
     // TODO: Optimization: move `normalize` to Loader?
-    normalize(clonedScene, entity.name);
+    normalize(clonedScene);
+
     this.applyMaterialSettings(clonedScene);
 
     entity.add(ModelRef, { scene: clonedScene, animations });
@@ -136,5 +149,14 @@ export class ModelSystem extends System {
     entity.maybeRemove(Model);
     entity.maybeRemove(ModelRef);
     console.warn(`ModelSystem: ${msg}`, entity);
+  }
+}
+
+function rotateSkinnedMeshBoundingBox(obj) {
+  if (obj.isSkinnedMesh) {
+    let m = new Matrix4();
+    m.makeRotationX(MathUtils.degToRad(-90));
+    obj.geometry.boundingBox.applyMatrix4(m);
+    obj.geometry.boundingSphere.applyMatrix4(m);
   }
 }

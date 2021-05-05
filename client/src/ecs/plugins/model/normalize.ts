@@ -1,6 +1,6 @@
 import { Box3, Vector3, Matrix4, MathUtils, Object3D } from "three";
 
-export function normalize(object3d: Object3D, name: string) {
+export function normalize(object3d: Object3D) {
   const first = getFirstMeshOrGroup(object3d);
 
   if (first === object3d) {
@@ -31,16 +31,9 @@ export function normalize(object3d: Object3D, name: string) {
       obj.receiveShadow = true;
       obj.geometry.scale(scale, scale, scale);
     }
-
-    // TODO: Find a better way to fix bounding box for skinned mesh general case
-    if (obj.isSkinnedMesh && first.parent?.name === "Avatar") {
-      let m = new Matrix4();
-      m.makeRotationX(MathUtils.degToRad(-90));
-      m.scale(new Vector3(100, 100, 100));
-      obj.geometry.boundingBox.applyMatrix4(m);
-      obj.geometry.boundingSphere.applyMatrix4(m);
-    }
   });
+
+  return first;
 }
 
 function getFirstMeshOrGroup(object3d) {
