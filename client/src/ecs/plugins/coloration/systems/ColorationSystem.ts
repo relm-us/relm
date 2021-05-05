@@ -31,7 +31,7 @@ export class ColorationSystem extends System {
   }
 
   resetFaceMapColors(entity: Entity) {
-    const { scene } = entity.get(ModelRef);
+    const scene = entity.get(ModelRef)?.scene;
     if (!scene) return;
 
     scene.traverse((node) => {
