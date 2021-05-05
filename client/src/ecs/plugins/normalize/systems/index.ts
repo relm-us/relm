@@ -1,1 +1,0 @@
-export { NormalizeMeshSystem } from "./NormalizeMeshSystem";

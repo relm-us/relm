@@ -1,6 +1,6 @@
 import { StateComponent, RefType } from "~/ecs/base";
 
-export class ImageMesh extends StateComponent {
+export class ImageRef extends StateComponent {
   static props = {
     value: {
       type: RefType,

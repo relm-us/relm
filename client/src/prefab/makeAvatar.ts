@@ -1,8 +1,8 @@
 import { Vector3 } from "three";
 
 import { Entity } from "~/ecs/base";
-import { Asset, Model, Transform } from "~/ecs/plugins/core";
-import { NormalizeMesh } from "~/ecs/plugins/normalize";
+import { Asset, Transform } from "~/ecs/plugins/core";
+import { Model} from '~/ecs/plugins/model'
 import {
   PointerPosition,
   PointerPositionRef,
@@ -44,7 +44,6 @@ export function makeAvatar(
     .add(Model, {
       asset: new Asset("/humanoid-002.glb"),
     })
-    .add(NormalizeMesh)
     .add(Animation, {
       clipName: IDLE,
     })

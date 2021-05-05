@@ -5,6 +5,3 @@ export { WorldTransform } from "./WorldTransform";
 export { Camera } from "../../core/components/Camera";
 export { CameraAttached } from "./CameraAttached";
 export { LookAt } from "./LookAt";
-export { Model } from "./Model";
-export { ModelLoading } from "./ModelLoading";
-export { ModelMesh } from "./ModelMesh";

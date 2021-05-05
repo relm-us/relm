@@ -1,12 +1,8 @@
 import { StateComponent, RefType } from "~/ecs/base";
 
-export class ModelMesh extends StateComponent {
+export class AssetLoaded extends StateComponent {
   static props = {
     value: {
-      type: RefType,
-    },
-
-    clips: {
       type: RefType,
     },
   };

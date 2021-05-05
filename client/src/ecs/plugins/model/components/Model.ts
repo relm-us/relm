@@ -1,5 +1,5 @@
 import { Component } from "~/ecs/base";
-import { AssetType } from "../types/AssetType";
+import { AssetType } from "~/ecs/plugins/core";
 
 export class Model extends Component {
   static props = {
@@ -11,6 +11,7 @@ export class Model extends Component {
       },
     },
   };
+  
   static editor = {
     label: "Model",
   };
