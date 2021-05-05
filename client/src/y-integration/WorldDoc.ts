@@ -30,9 +30,10 @@ import EventEmitter from "eventemitter3";
 import { applyDiffToYEntity } from "./applyDiff";
 
 import {
-  yConnectStatus,
+  yConnectState,
+  yLoadingState,
   ConnectOptions,
-  YConnectionStatus,
+  YConnectState,
 } from "~/stores/connection";
 import { selectedEntities } from "~/stores/selection";
 
@@ -97,25 +98,24 @@ export class WorldDoc extends EventEmitter {
       { params: connectOpts.params } as { params: any }
     );
 
-    loadingState.set("loading");
+    yLoadingState.set("loading");
 
     if (connectOpts.entitiesCount === 0) {
-      loadingState.set("loaded");
+      yLoadingState.set("loaded");
     } else {
       let interval = setInterval(() => {
         if (this.ydoc.store.clients.size > 1) {
-          loadingState.set("loaded");
+          yLoadingState.set("loaded");
           clearInterval(interval);
         }
       }, 50);
     }
 
-    this.provider.on("status", ({ status }: { status: YConnectionStatus }) => {
+    this.provider.on("status", ({ status }: { status: YConnectState }) => {
       if (status === "error") {
         console.warn("error connecting to y-websocket");
-        loadingState.set("error");
       }
-      yConnectStatus.set(status);
+      yConnectState.set(status);
     });
   }
 

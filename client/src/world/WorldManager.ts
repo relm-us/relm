@@ -3,7 +3,6 @@ import { derived, get, Writable } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
-import { globalEvents } from "~/events";
 import { keyShift } from "~/input/store";
 import { exportRelm, importRelm } from "./Export";
 
@@ -11,11 +10,15 @@ import { mode } from "~/stores/mode";
 import { deltaTime, fpsTime } from "~/stores/stats";
 import { worldState, WorldState } from "~/stores/worldState";
 import { playState } from "~/stores/playState";
-import { ConnectOptions } from "~/stores/connection";
+import { yLoadingState, ConnectOptions } from "~/stores/connection";
 import { scale } from "~/stores/viewport";
 import { shadowsEnabled } from "~/stores/settings";
 import { entryway } from "~/stores/subrelm";
-import { loadingState, resetLoading, handleLoading } from "~/stores/loading";
+import {
+  loadingState,
+  resetLoading,
+  startPollingLoadingState,
+} from "~/stores/loading";
 
 import { makeStageAndActivate, makeInitialCollider } from "~/prefab";
 
@@ -88,10 +91,6 @@ export default class WorldManager {
       this.enableAvatarNonInteractive(enabled);
       this.enableNonInteractiveGround(enabled);
       this.enableCollidersVisible(enabled);
-    });
-
-    loadingState.subscribe(($state) => {
-      handleLoading(this.wdoc, $state);
     });
 
     /**
@@ -194,6 +193,12 @@ export default class WorldManager {
           peerId: this.identities.me.playerId,
         });
       }
+    });
+
+    // Poll for loading state info such as entities and assets loaded
+    loadingState.set("loading");
+    startPollingLoadingState(this.wdoc, () => {
+      loadingState.set("loaded");
     });
 
     // Connect & show loading progress

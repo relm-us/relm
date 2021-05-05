@@ -1,8 +1,11 @@
-import { get, writable, derived, Readable, Writable } from "svelte/store";
-import { worldState } from "./worldState";
-import { World } from "~/ecs/base";
-import { WorldDoc } from "~/y-integration/WorldDoc";
 import { MathUtils } from "three";
+import { get, writable, derived, Readable, Writable } from "svelte/store";
+
+import { WorldDoc } from "~/y-integration/WorldDoc";
+
+import { ImageRef } from "~/ecs/plugins/image";
+import { ModelRef } from "~/ecs/plugins/model";
+import { World } from "~/ecs/base";
 
 const MAX_THRESHOLD = 1.0;
 
@@ -43,8 +46,8 @@ export const loaded: Readable<number> = derived(
 function countAssetsLoaded(world: World) {
   let count = 0;
   world.entities.entities.forEach((e) => {
-    if (e.getByName("Model") && e.getByName("ModelMesh")) count++;
-    else if (e.getByName("Image") || e.getByName("ImageMesh")) count++;
+    if (e.get(ModelRef)) count++;
+    else if (e.get(ImageRef)) count++;
   });
   return count;
 }
@@ -67,38 +70,35 @@ function countAssets(wdoc: WorldDoc) {
   assetsLoaded.update(($loaded) => Math.max($loaded, count));
 }
 
-export const handleLoading = (wdoc, state: LoadingState) => {
-  const intervals = [];
-  let syntheticStep = 0;
-  switch (state) {
-    case "loading":
-      intervals.push(setInterval(() => countAssets(wdoc), 100));
-      intervals.push(setInterval(() => countEntities(wdoc), 100));
-      intervals.push(
-        setInterval(() => {
-          const maximum = get(entitiesMaximum);
-          const syntheticLoaded = Math.ceil(
-            MathUtils.clamp((maximum / 20) * syntheticStep++, 0, maximum * 0.9)
-          );
-          entitiesLoaded.update(($loaded) =>
-            Math.max($loaded, syntheticLoaded)
-          );
-        }, 500)
+const intervals = [];
+let syntheticStep = 0;
+
+export function startPollingLoadingState(wdoc, onDone?: Function) {
+  if (intervals.length > 0) stopPollingLoadingState();
+
+  intervals.length = 0;
+  syntheticStep = 0;
+
+  intervals.push(setInterval(() => countAssets(wdoc), 100));
+  intervals.push(setInterval(() => countEntities(wdoc), 100));
+  intervals.push(
+    setInterval(() => {
+      const maximum = get(entitiesMaximum);
+      const syntheticLoaded = Math.ceil(
+        MathUtils.clamp((maximum / 20) * syntheticStep++, 0, maximum * 0.9)
       );
-      const unsub = loaded.subscribe(($loaded) => {
-        if ($loaded >= get(maximum) * MAX_THRESHOLD) {
-          intervals.forEach(clearInterval);
-          // Done!
-          unsub();
-        }
-      });
-      break;
-    case "loaded":
-      entitiesLoaded.set(get(entitiesMaximum));
-      break;
-    case "error":
-      intervals.forEach(clearInterval);
-      worldState.set("error");
-      break;
-  }
-};
+      entitiesLoaded.update(($loaded) => Math.max($loaded, syntheticLoaded));
+    }, 500)
+  );
+  const unsub = loaded.subscribe(($loaded) => {
+    if ($loaded >= get(maximum) * MAX_THRESHOLD) {
+      stopPollingLoadingState();
+      unsub();
+      onDone?.();
+    }
+  });
+}
+
+export function stopPollingLoadingState() {
+  intervals.forEach(clearInterval);
+}

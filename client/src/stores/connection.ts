@@ -5,15 +5,17 @@ import { config } from "~/config";
 import { getSecureParams } from "~/identity";
 import { subrelm } from "./subrelm";
 
-export type YConnectionStatus =
-  | "error"
+export type YConnectState =
+  | "disconnected"
   | "connecting"
   | "connected"
-  | "disconnected";
+  | "error";
 
-export const yConnectStatus: Writable<YConnectionStatus> = writable(
-  "disconnected"
-);
+export const yConnectState: Writable<YConnectState> = writable("disconnected");
+
+export type YLoadingState = "initial" | "loading" | "loaded";
+
+export const yLoadingState: Writable<YLoadingState> = writable("initial");
 
 export type ConnectInitial = {
   state: "initial";
@@ -22,8 +24,8 @@ export type ConnectOptions = {
   state: "connected";
   url: string;
   room: string;
-  entitiesCount: number,
-  assetsCount: number,
+  entitiesCount: number;
+  assetsCount: number;
   username?: string;
   params: {
     s: string;

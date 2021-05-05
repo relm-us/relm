@@ -7,7 +7,11 @@
 
   import { Relm } from "~/stores/Relm";
   import { subrelm, entryway } from "~/stores/subrelm";
-  import { connection, yConnectStatus } from "~/stores/connection";
+  import {
+    connection,
+    yConnectState,
+    yLoadingState,
+  } from "~/stores/connection";
   import { viewport, size, scale } from "~/stores/viewport";
   import { world } from "~/stores/world";
   import { worldState } from "~/stores/worldState";
@@ -22,19 +26,7 @@
     assetsMaximum,
   } from "~/stores/loading";
 
-  let subtitle;
   let minimized = true;
-
-  const getSubtitle = (status) => {
-    // prettier-ignore
-    switch (status) {
-      case 'connected':    return `connected`
-      case 'connecting':   return `connecting...`
-      case 'disconnected': return `disconnected`
-    }
-  };
-
-  $: subtitle = getSubtitle($yConnectStatus);
 
   let vw;
   $: vw = $size ? `(${$size.width},${$size.height})` : "";
@@ -60,14 +52,19 @@
   });
 </script>
 
-<container class:connected={$yConnectStatus === "connected"}>
-  <Pane title="Status" {subtitle} showMinimize={true} bind:minimized>
+<container class:connected={$yConnectState === "connected"}>
+  <Pane
+    title="Status"
+    subtitle={$yConnectState}
+    showMinimize={true}
+    bind:minimized
+  >
     <table>
       <tr><th>subrelm:</th><td>{$subrelm}</td></tr>
       <tr><th>entryway:</th><td>{$entryway}</td></tr>
       <tr><th>world state:</th><td>{$worldState}</td></tr>
-      <tr><th>conference state:</th><td>{$roomConnectState}</td></tr>
-      <tr><th>yjs state:</th><td>{$connection.state}</td></tr>
+      <tr><th>conference:</th><td>{$roomConnectState}</td></tr>
+      <tr><th>yjs:</th><td>{$connection.state}<br />{$yLoadingState}</td></tr>
       {#if $connection.state === "connected"}
         <tr>
           <th>yjs room:</th>
