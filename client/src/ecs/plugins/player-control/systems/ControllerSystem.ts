@@ -124,7 +124,10 @@ export class ControllerSystem extends System {
 
       const rigidBody: RapierRigidBody = entity.get(RigidBodyRef)?.value;
       if (rigidBody) {
-        rigidBody.setGravityScale(state.grounded || spec.canFly ? FALL_NORMAL : FALL_FAST, false);
+        rigidBody.setGravityScale(
+          state.grounded || spec.canFly ? FALL_NORMAL : FALL_FAST,
+          false
+        );
         rigidBody.setAngularDamping(spec.angDamps[state.speed]);
         rigidBody.setLinearDamping(spec.linDamps[state.speed]);
       }
@@ -212,11 +215,8 @@ export class ControllerSystem extends System {
     bodyFacing.applyQuaternion(rotation);
 
     const angle = signedAngleBetweenVectors(bodyFacing, direction, vUp);
-    if (angle < -Math.PI / 12 || angle > Math.PI / 12) {
-      // turn toward direction
-      torque.set(0, Math.sign(angle) * torqueMagnitude, 0);
-      ref.applyTorque(torque, true);
-    }
+    torque.set(0, angle * torqueMagnitude, 0);
+    ref.applyTorque(torque, true);
   }
 
   thrustTowards(entity: Entity, direction: Vector3, thrustMagnitude: number) {

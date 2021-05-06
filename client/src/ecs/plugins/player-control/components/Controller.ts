@@ -35,7 +35,7 @@ export class Controller extends LocalComponent {
     torques: {
       type: JSONType,
       // One torque magnitude per avatar speed, plus flying
-      default: [5, 5, 8, /* flying */ 5],
+      default: [3, 3, 4, /* flying */ 3],
     },
     thrusts: {
       type: JSONType,
