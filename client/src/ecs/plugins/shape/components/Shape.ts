@@ -1,5 +1,5 @@
-import { Component, StringType, NumberType } from "~/ecs/base";
-import { Vector3Type } from "~/ecs/plugins/core";
+import { Component, StringType, NumberType, BooleanType } from "~/ecs/base";
+import { AssetType, Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
 export class Shape extends Component {
@@ -160,8 +160,23 @@ export class Shape extends Component {
         label: "Metalness",
       },
     },
+
+    texture: {
+      type: AssetType,
+      default: null,
+      editor: {
+        label: "Texture",
+      },
+    },
+    textureScale: {
+      type: NumberType,
+      default: 1.0,
+      editor: {
+        label: "Texture Scale",
+      },
+    },
   };
-  
+
   static editor = {
     label: "Shape",
   };

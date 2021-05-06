@@ -109,14 +109,14 @@ export class ModelSystem extends System {
 
   attach(entity: Entity) {
     const parent = entity.get(Object3D).value;
-    const scene = entity.get(ModelRef).scene;
-    parent.add(scene);
-    entity.add(ModelAttached, { parent, scene });
+    const child = entity.get(ModelRef).scene;
+    parent.add(child);
+    entity.add(ModelAttached, { parent, child });
   }
 
   detach(entity: Entity) {
-    const { parent, scene } = entity.get(ModelAttached);
-    parent.remove(scene);
+    const { parent, child } = entity.get(ModelAttached);
+    parent.remove(child);
     entity.remove(ModelAttached);
   }
 

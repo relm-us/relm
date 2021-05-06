@@ -1,7 +1,7 @@
 import { Object3D, Group } from "three";
 import { StateComponent, RefType } from "~/ecs/base";
 
-export class ModelAttached extends StateComponent {
+export class ShapeAttached extends StateComponent {
   parent: Object3D;
   child: Group;
 

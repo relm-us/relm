@@ -1,76 +1,167 @@
-import * as THREE from "three";
-
-import { System, Not, Modified, Groups } from "~/ecs/base";
-import { Object3D } from "~/ecs/plugins/core";
+import { Mesh, MeshStandardMaterial, RepeatWrapping } from "three";
 
 import { isBrowser } from "~/utils/isBrowser";
-import { Shape, ShapeMesh } from "../components";
+
+import {
+  Entity,
+  System,
+  Not,
+  Modified,
+  Groups,
+  StateComponent,
+} from "~/ecs/base";
+import { Object3D } from "~/ecs/plugins/core";
+import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
+
+import { Shape, ShapeMesh, ShapeAttached } from "../components";
+
 import { getGeometry } from "../ShapeCache";
 
+class ShapeWithTexture extends StateComponent {}
+class ShapeWithoutTexture extends StateComponent {}
+
+function blank(str: string) {
+  return str === undefined || str === null || str === "";
+}
 export class ShapeSystem extends System {
   active = isBrowser();
   order = Groups.Initialization;
 
   static queries = {
-    added: [Object3D, Shape, Not(ShapeMesh)],
-    modified: [Object3D, Modified(Shape), ShapeMesh],
-    removedObj: [Not(Object3D), ShapeMesh],
-    removed: [Object3D, Not(Shape), ShapeMesh],
+    added: [Shape, Not(ShapeWithTexture), Not(ShapeWithoutTexture)],
+    addedWithTexture: [Shape, ShapeWithTexture, AssetLoaded],
+    addedWithoutTexture: [Shape, ShapeWithoutTexture],
+    modified: [Modified(Shape)],
+    removed: [Not(Shape), ShapeMesh],
+
+    attachable: [Object3D, ShapeMesh, Not(ShapeAttached)],
+    detachable: [Not(ShapeMesh), ShapeAttached],
   };
 
   update() {
     this.queries.added.forEach((entity) => {
       this.build(entity);
     });
+    this.queries.addedWithTexture.forEach((entity) => {
+      this.buildWithTexture(entity);
+    });
+    this.queries.addedWithoutTexture.forEach((entity) => {
+      this.buildWithoutTexture(entity);
+    });
     this.queries.modified.forEach((entity) => {
-      this.remove(entity);
-      this.build(entity);
+      if (entity.has(ShapeWithoutTexture)) {
+        this.remove(entity);
+        this.build(entity);
+      } else if (entity.has(ShapeWithTexture)) {
+        const shape = entity.get(Shape);
+        if (blank(shape.texture.url)) {
+          // Transition to having no texture
+          entity.remove(ShapeWithTexture);
+          entity.remove(ShapeMesh);
+        }
+      }
 
       // Notify outline to rebuild if necessary
       entity.getByName("Outline")?.modified();
     });
-    this.queries.removedObj.forEach((entity) => {
-      const mesh = entity.get(ShapeMesh).value;
-      mesh.parent.remove(mesh);
-      mesh.geometry.dispose();
-      mesh.material.dispose();
-      entity.remove(ShapeMesh);
-    });
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
-      entity.remove(ShapeMesh);
+    });
+
+    this.queries.attachable.forEach((entity) => this.attach(entity));
+    this.queries.detachable.forEach((entity) => {
+      this.detach(entity);
     });
   }
 
-  build(entity) {
+  build(entity: Entity) {
     const shape = entity.get(Shape);
-    const object3d = entity.get(Object3D).value;
-    const geometry = getGeometry(shape);
+    console.log("build shape", shape);
+    if (!blank(shape.texture.url)) {
+      console.log("build ShapeWithTexture", shape.texture.url);
+      entity.add(ShapeWithTexture);
 
-    const material = new THREE.MeshStandardMaterial({
+      let asset = entity.get(Asset);
+      if (asset) {
+        asset.texture = shape.texture;
+        asset.modified();
+      } else {
+        entity.add(Asset, { texture: shape.texture });
+      }
+    } else {
+      console.log("build ShapeWithoutTexture", entity.has(Asset));
+      entity.maybeRemove(Asset);
+      entity.add(ShapeWithoutTexture);
+    }
+  }
+
+  buildWithTexture(entity: Entity) {
+    const shape = entity.get(Shape);
+    const texture = entity.get(AssetLoaded).value;
+
+    texture.repeat.set(shape.textureScale, shape.textureScale);
+    texture.wrapS = RepeatWrapping;
+    texture.wrapT = RepeatWrapping;
+
+    const material = new MeshStandardMaterial({
+      roughness: 0.8,
+      metalness: 0,
+      map: texture,
+    });
+
+    const mesh = this.makeMesh(shape, material);
+    entity.add(ShapeMesh, { value: mesh });
+  }
+
+  buildWithoutTexture(entity: Entity) {
+    const shape = entity.get(Shape);
+
+    const material = new MeshStandardMaterial({
       color: shape.color,
       roughness: shape.roughness,
       metalness: shape.metalness,
       emissive: shape.emissive,
     });
-    if (shape.kind === "CYLINDER" && shape.cylinderSegments <= 6) {
-      material.flatShading = true;
-    }
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
 
-    object3d.add(mesh);
+    const mesh = this.makeMesh(shape, material);
     entity.add(ShapeMesh, { value: mesh });
   }
 
-  remove(entity) {
-    const object3d = entity.get(Object3D).value;
+  remove(entity: Entity) {
     const mesh = entity.get(ShapeMesh).value;
-    object3d.remove(mesh);
-    mesh.geometry.dispose();
-    mesh.material.dispose();
+
+    mesh.geometry?.dispose();
+    mesh.material?.dispose();
+    mesh.dispose?.();
 
     entity.remove(ShapeMesh);
+    entity.maybeRemove(ShapeWithTexture);
+    entity.maybeRemove(ShapeWithoutTexture);
+  }
+
+  attach(entity: Entity) {
+    const parent = entity.get(Object3D).value;
+    const child = entity.get(ShapeMesh).value;
+    parent.add(child);
+    entity.add(ShapeAttached, { parent, child });
+  }
+
+  detach(entity: Entity) {
+    const { parent, child } = entity.get(ShapeAttached);
+    parent.remove(child);
+    entity.remove(ShapeAttached);
+  }
+
+  makeMesh(shape, material) {
+    const geometry = getGeometry(shape);
+
+    if (shape.kind === "CYLINDER" && shape.cylinderSegments <= 6) {
+      material.flatShading = true;
+    }
+    const mesh = new Mesh(geometry, material);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+
+    return mesh;
   }
 }
