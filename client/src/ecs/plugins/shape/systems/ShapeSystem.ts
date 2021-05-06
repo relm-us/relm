@@ -49,7 +49,19 @@ export class ShapeSystem extends System {
       this.buildWithoutTexture(entity);
     });
     this.queries.modified.forEach((entity) => {
-      entity.maybeRemove(ShapeMesh);
+      const shape = entity.get(Shape);
+
+      const textureAdded =
+        entity.has(ShapeWithoutTexture) && !blank(shape.texture.url);
+      const textureRemoved =
+        entity.has(ShapeWithTexture) && blank(shape.texture.url);
+
+      if (textureAdded || textureRemoved) {
+        this.remove(entity);
+        this.build(entity);
+      } else {
+        entity.maybeRemove(ShapeMesh);
+      }
 
       // Notify outline to rebuild if necessary
       entity.getByName("Outline")?.modified();
