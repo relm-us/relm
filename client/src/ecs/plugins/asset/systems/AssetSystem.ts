@@ -80,7 +80,7 @@ export class AssetSystem extends System {
 
   getAssetType(entity) {
     const asset = entity.get(Asset);
-    if (asset.texture?.url) return "texture";
-    if (asset.model?.url) return "model";
+    if (asset.texture && asset.texture.url !== "") return "texture";
+    if (asset.model && asset.model.url !== "") return "model";
   }
 }
