@@ -13,6 +13,7 @@ import {
 } from "~/ecs/plugins/pointer-position";
 import { RigidBody, Collider, Impactable } from "~/ecs/plugins/physics";
 import { Animation } from "~/ecs/plugins/animation";
+import { Repulsive } from "~/ecs/plugins/player-control";
 import { IDLE } from "~/ecs/plugins/player-control/constants";
 
 const UNSCALED_CHARACTER_HEIGHT = 7;
@@ -33,6 +34,7 @@ export function makeAvatar(
     .add(PointerPosition, {
       offset: new Vector3(0, 1, 0),
     })
+    .add(Repulsive)
     .add(Impactable)
     .add(Transform, {
       position: new Vector3(x, y, z),

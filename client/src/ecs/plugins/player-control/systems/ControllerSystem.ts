@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { Vector3 } from "three";
+import { Vector3, MathUtils } from "three";
 import type { RigidBody as RapierRigidBody } from "@dimforge/rapier3d";
 
 import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
@@ -13,7 +13,7 @@ import { isMakingContactWithGround } from "~/ecs/shared/isMakingContactWithGroun
 
 import { keyUp, keyDown, keyLeft, keyRight, keySpace } from "~/input";
 
-import { Controller, ControllerState } from "../components";
+import { Controller, ControllerState, Repulsive } from "../components";
 
 import {
   transition,
@@ -65,6 +65,8 @@ const torque = new Vector3();
 const vUp = new Vector3(0, 1, 0);
 const vOut = new Vector3(0, 0, 1);
 const vDir = new Vector3();
+const p1 = new Vector3();
+const p2 = new Vector3();
 
 const vectorFromKeys = new Vector3();
 
@@ -76,6 +78,7 @@ export class ControllerSystem extends System {
   static queries = {
     added: [Controller, Not(ControllerState)],
     active: [Controller, ControllerState, Transform, RigidBodyRef],
+    repulsive: [Repulsive, Transform],
   };
 
   init({ physics }) {
@@ -135,6 +138,8 @@ export class ControllerSystem extends System {
       this.torqueTowards(entity, state.direction, spec.torques[state.speed]);
       if (!state.animOverride)
         this.thrustTowards(entity, state.direction, spec.thrusts[state.speed]);
+
+      this.repelFromOthers(entity);
 
       const anim = entity.get(Animation);
       if (anim) {
@@ -227,5 +232,28 @@ export class ControllerSystem extends System {
     thrust.copy(direction);
     thrust.multiplyScalar(thrustMagnitude);
     ref.applyForce(thrust, true);
+  }
+
+  repelFromOthers(entity: Entity) {
+    const ref: RigidBodyRef = entity.get(RigidBodyRef);
+    p1.copy(entity.get(Transform).position);
+    // Add a little noise so that if entities are exactly on
+    // top of each other, they can still move apart.
+    p1.x += (Math.random() - 0.5) / 100;
+    p1.z += (Math.random() - 0.5) / 100;
+
+    this.queries.repulsive.forEach((repelEntity) => {
+      if (repelEntity === entity) return;
+      p2.copy(repelEntity.get(Transform).position);
+      const distance = Math.max(0.05, p1.distanceTo(p2));
+      if (distance <= 2) {
+        vDir
+          .copy(p1)
+          .sub(p2)
+          .normalize()
+          .divideScalar(distance * distance);
+        ref.applyForce(vDir, true);
+      }
+    });
   }
 }
