@@ -49,17 +49,7 @@ export class ShapeSystem extends System {
       this.buildWithoutTexture(entity);
     });
     this.queries.modified.forEach((entity) => {
-      if (entity.has(ShapeWithoutTexture)) {
-        this.remove(entity);
-        this.build(entity);
-      } else if (entity.has(ShapeWithTexture)) {
-        const shape = entity.get(Shape);
-        if (blank(shape.texture.url)) {
-          // Transition to having no texture
-          entity.remove(ShapeWithTexture);
-          entity.remove(ShapeMesh);
-        }
-      }
+      entity.maybeRemove(ShapeMesh);
 
       // Notify outline to rebuild if necessary
       entity.getByName("Outline")?.modified();
@@ -77,7 +67,7 @@ export class ShapeSystem extends System {
   build(entity: Entity) {
     const shape = entity.get(Shape);
     console.log("build shape", shape);
-    if (!blank(shape.texture.url)) {
+    if (!blank(shape.texture.url) && !entity.has(ShapeWithTexture)) {
       console.log("build ShapeWithTexture", shape.texture.url);
       entity.add(ShapeWithTexture);
 
@@ -88,7 +78,7 @@ export class ShapeSystem extends System {
       } else {
         entity.add(Asset, { texture: shape.texture });
       }
-    } else {
+    } else if (!entity.has(ShapeWithoutTexture)) {
       console.log("build ShapeWithoutTexture", entity.has(Asset));
       entity.maybeRemove(Asset);
       entity.add(ShapeWithoutTexture);
@@ -128,13 +118,15 @@ export class ShapeSystem extends System {
   }
 
   remove(entity: Entity) {
-    const mesh = entity.get(ShapeMesh).value;
+    const mesh = entity.get(ShapeMesh)?.value;
 
-    mesh.geometry?.dispose();
-    mesh.material?.dispose();
-    mesh.dispose?.();
+    if (mesh) {
+      mesh.geometry?.dispose();
+      mesh.material?.dispose();
+      mesh.dispose?.();
 
-    entity.remove(ShapeMesh);
+      entity.remove(ShapeMesh);
+    }
     entity.maybeRemove(ShapeWithTexture);
     entity.maybeRemove(ShapeWithoutTexture);
   }
