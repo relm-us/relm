@@ -58,6 +58,7 @@
       on:change={onInputChange}
       on:cancel={onInputCancel}
       value={formatNumber(value, editing, 3)}
+      type="number"
     />
   </div>
 </container>

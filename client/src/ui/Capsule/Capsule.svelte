@@ -3,6 +3,7 @@
 
   export let label: string = null;
   export let value: any;
+  export let type: "text" | "number" = "text";
   export let editable: boolean = true;
   export let editing: boolean = false;
   export let cursor = "default";
@@ -44,7 +45,7 @@
       <input
         bind:this={inputElement}
         {value}
-        type={typeof value === "string" ? "text" : "number"}
+        {type}
         on:change
         on:blur={onBlur}
       />

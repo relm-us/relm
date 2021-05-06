@@ -1,10 +1,13 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
   import Capsule from "~/ui/Capsule";
   import byteSize from "byte-size";
 
   export let key: string;
   export let component;
   export let prop;
+
+  const dispatch = createEventDispatcher();
 
   const FILENAME_WITH_SIZE_RE = /^.+-([^\.]+)\..{1,5}$/;
 
@@ -14,8 +17,18 @@
   $: value = component[key].url;
 
   const onInputChange = (event) => {
-    component[key].url = event.target.value;
+    const value = event.target.value.match(/^\s*$/)
+      ? undefined
+      : event.target.value;
+    Object.assign(component[key], {
+      name: "",
+      filename: "",
+      url: value,
+    });
+    component[key].url = value;
+    console.log("modified", value);
     component.modified();
+    dispatch("modified");
     editing = false;
   };
 

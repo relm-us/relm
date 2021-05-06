@@ -80,6 +80,7 @@
       on:cancel={onInputCancel(dim)}
       label={dim.toUpperCase()}
       value={formatNumber(value[dim], editing[dim])}
+      type="number"
     />
   {/each}
 </div>
