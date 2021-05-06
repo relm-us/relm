@@ -133,15 +133,17 @@ export class ControllerSystem extends System {
       }
 
       this.torqueTowards(entity, state.direction, spec.torques[state.speed]);
-      this.thrustTowards(entity, state.direction, spec.thrusts[state.speed]);
+      if (!state.animOverride)
+        this.thrustTowards(entity, state.direction, spec.thrusts[state.speed]);
 
       const anim = entity.get(Animation);
       if (anim) {
-        if (!state.grounded && !spec.canFly) state.speed = 0;
-        const targetAnim = spec.animations[state.speed];
-        if (anim.clipName !== targetAnim) {
-          anim.clipName = targetAnim;
-          anim.modified();
+        if (state.animOverride) {
+          anim.maybeChangeClip(state.animOverride);
+        } else {
+          if (!state.grounded && !spec.canFly) state.speed = 0;
+          const targetAnim = spec.animations[state.speed];
+          anim.maybeChangeClip(targetAnim);
         }
       }
     });

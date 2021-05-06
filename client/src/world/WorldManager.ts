@@ -3,14 +3,14 @@ import { derived, get, Writable } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
-import { keyShift } from "~/input/store";
+import { keyShift, keySpace } from "~/input/store";
 import { exportRelm, importRelm } from "./Export";
 
 import { mode } from "~/stores/mode";
 import { deltaTime, fpsTime } from "~/stores/stats";
 import { worldState, WorldState } from "~/stores/worldState";
 import { playState } from "~/stores/playState";
-import { yLoadingState, ConnectOptions } from "~/stores/connection";
+import { ConnectOptions } from "~/stores/connection";
 import { scale } from "~/stores/viewport";
 import { shadowsEnabled } from "~/stores/settings";
 import { entryway } from "~/stores/subrelm";
@@ -22,13 +22,14 @@ import {
 
 import { makeStageAndActivate, makeInitialCollider } from "~/prefab";
 
-import { Entity, World } from "~/ecs/base";
+import { Entity } from "~/ecs/base";
 import { Follow } from "~/ecs/plugins/follow";
 import { Collider, ColliderVisible } from "~/ecs/plugins/physics";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { Translucent } from "~/ecs/plugins/translucent";
 import { BoundingHelper } from "~/ecs/plugins/bounding-helper";
-import { Controller } from "~/ecs/plugins/player-control";
+import { Controller, ControllerState } from "~/ecs/plugins/player-control";
+import { WAVING } from "~/ecs/plugins/player-control/constants";
 
 import { SelectionManager } from "./SelectionManager";
 import { IdentityManager } from "~/identity/IdentityManager";
@@ -114,6 +115,13 @@ export default class WorldManager {
     }).subscribe((buildModeShift: boolean) => {
       this.enableNonInteractiveGround(!buildModeShift);
       this.enableBoundingVisible(buildModeShift);
+    });
+
+    // Temporary hack: spacebar makes avatar wave
+    keySpace.subscribe(($keySpace) => {
+      const state = this.avatar.get(ControllerState);
+      if (!state) return;
+      state.animOverride = $keySpace ? WAVING : null;
     });
 
     playState.subscribe(($state) => {

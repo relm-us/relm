@@ -4,6 +4,7 @@ import {
   NumberType,
   StateComponent,
   JSONType,
+  StringType,
 } from "~/ecs/base";
 import { Vector3 } from "three";
 import { Vector3Type } from "~/ecs/plugins/core";
@@ -64,6 +65,7 @@ export class ControllerState extends StateComponent {
   speed: number;
   grounded: boolean;
   direction: Vector3;
+  animOverride: string;
 
   static props = {
     speed: {
@@ -77,6 +79,10 @@ export class ControllerState extends StateComponent {
     direction: {
       type: Vector3Type,
       default: new Vector3(0, 0, 0),
+    },
+    animOverride: {
+      type: StringType,
+      default: null,
     },
   };
 }

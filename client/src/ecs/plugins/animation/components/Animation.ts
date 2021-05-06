@@ -1,6 +1,10 @@
 import { Component, NumberType, StringType } from "~/ecs/base";
 
 export class Animation extends Component {
+  clipName: string;
+  transition: number;
+  timeScale: number;
+
   static props = {
     clipName: {
       type: StringType,
@@ -14,8 +18,8 @@ export class Animation extends Component {
       type: NumberType,
       default: 0.2,
       editor: {
-        label: "Transition Time"
-      }
+        label: "Transition Time",
+      },
     },
 
     timeScale: {
@@ -30,4 +34,11 @@ export class Animation extends Component {
   static editor = {
     label: "Animation",
   };
+
+  maybeChangeClip(newClip) {
+    if (this.clipName !== newClip) {
+      this.clipName = newClip;
+      this.modified();
+    }
+  }
 }
