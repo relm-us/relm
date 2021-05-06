@@ -1,22 +1,19 @@
 import { Vector3 } from "three";
 
+import { AVATAR_INTERACTION } from "~/config/colliderInteractions";
+
+import { makeEntity } from "./index";
+
 import { Entity } from "~/ecs/base";
 import { Asset, Transform } from "~/ecs/plugins/core";
-import { Model} from '~/ecs/plugins/model'
+import { Model } from "~/ecs/plugins/model";
 import {
   PointerPosition,
   PointerPositionRef,
 } from "~/ecs/plugins/pointer-position";
 import { RigidBody, Collider, Impactable } from "~/ecs/plugins/physics";
-import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { Animation } from "~/ecs/plugins/animation";
 import { IDLE } from "~/ecs/plugins/player-control/constants";
-import { LineHelper } from "~/ecs/plugins/line-helper";
-import { Html2d } from "~/ecs/plugins/html2d";
-
-import { makeEntity } from "./index";
-
-import { AVATAR_INTERACTION } from "~/config/colliderInteractions";
 
 const UNSCALED_CHARACTER_HEIGHT = 7;
 

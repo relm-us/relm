@@ -1,1 +1,2 @@
-export { Controller, ControllerState } from "./Controller";
+export { Controller } from "./Controller";
+export { ControllerState } from "./ControllerState";

@@ -1,13 +1,4 @@
-import {
-  LocalComponent,
-  BooleanType,
-  NumberType,
-  StateComponent,
-  JSONType,
-  StringType,
-} from "~/ecs/base";
-import { Vector3 } from "three";
-import { Vector3Type } from "~/ecs/plugins/core";
+import { LocalComponent, BooleanType, JSONType } from "~/ecs/base";
 import { IDLE, WALKING, RUNNING, FLYING } from "../constants";
 
 export class Controller extends LocalComponent {
@@ -57,32 +48,6 @@ export class Controller extends LocalComponent {
       type: JSONType,
       // One animation clipName per avatar speed
       default: [IDLE, WALKING, RUNNING, /* flying */ FLYING],
-    },
-  };
-}
-
-export class ControllerState extends StateComponent {
-  speed: number;
-  grounded: boolean;
-  direction: Vector3;
-  animOverride: string;
-
-  static props = {
-    speed: {
-      type: NumberType,
-      default: 0,
-    },
-    grounded: {
-      type: BooleanType,
-      default: true,
-    },
-    direction: {
-      type: Vector3Type,
-      default: new Vector3(0, 0, 0),
-    },
-    animOverride: {
-      type: StringType,
-      default: null,
     },
   };
 }
