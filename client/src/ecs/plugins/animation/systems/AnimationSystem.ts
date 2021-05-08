@@ -65,7 +65,7 @@ export class AnimationSystem extends System {
       mixer.previousAction = mixer.activeAction;
       const clip = animations.find((c) => c.name === spec.clipName);
       if (!clip) return;
-      
+
       mixer.activeAction = mixer.clipAction(clip);
 
       if (mixer.previousAction && mixer.previousAction !== mixer.activeAction) {
