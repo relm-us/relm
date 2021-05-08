@@ -78,9 +78,7 @@ export class ShapeSystem extends System {
 
   build(entity: Entity) {
     const shape = entity.get(Shape);
-    console.log("build shape", shape);
     if (!blank(shape.texture.url) && !entity.has(ShapeWithTexture)) {
-      console.log("build ShapeWithTexture", shape.texture.url);
       entity.add(ShapeWithTexture);
 
       let asset = entity.get(Asset);
@@ -91,7 +89,6 @@ export class ShapeSystem extends System {
         entity.add(Asset, { texture: shape.texture });
       }
     } else if (!entity.has(ShapeWithoutTexture)) {
-      console.log("build ShapeWithoutTexture", entity.has(Asset));
       entity.maybeRemove(Asset);
       entity.add(ShapeWithoutTexture);
     }
