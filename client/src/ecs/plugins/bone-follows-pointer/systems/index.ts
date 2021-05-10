@@ -1,1 +1,0 @@
-export { BoneFollowsPointerSystem } from "./BoneFollowsPointerSystem";

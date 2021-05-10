@@ -24,7 +24,6 @@ import PerspectivePlugin from "~/ecs/plugins/perspective";
 
 import AnimationPlugin from "~/ecs/plugins/animation";
 import AssetPlugin from "~/ecs/plugins/asset";
-import BoneFollowsPointerPlugin from "~/ecs/plugins/bone-follows-pointer";
 import BoundingHelperPlugin from "~/ecs/plugins/bounding-helper";
 import ColorationPlugin from "~/ecs/plugins/coloration";
 import Css3DPlugin from "~/ecs/plugins/css3d";
@@ -46,6 +45,7 @@ import PhysicsPlugin from "~/ecs/plugins/physics";
 import SkyboxPlugin from "~/ecs/plugins/skybox";
 import TransformEffectsPlugin from "~/ecs/plugins/transform-effects";
 import TranslucentPlugin from "~/ecs/plugins/translucent";
+import TwistBonePlugin from "~/ecs/plugins/twist-bone";
 
 import { PerformanceStatsSystem } from "~/ecs/systems/PerformanceStatsSystem";
 
@@ -130,7 +130,6 @@ export function createWorld(rapier) {
       /* others */
       AnimationPlugin,
       AssetPlugin,
-      BoneFollowsPointerPlugin,
       BoundingHelperPlugin,
       ColorationPlugin,
       Css3DPlugin,
@@ -150,6 +149,7 @@ export function createWorld(rapier) {
       SkyboxPlugin,
       TransformEffectsPlugin,
       TranslucentPlugin,
+      TwistBonePlugin,
     ],
     systems: [PerformanceStatsSystem],
   });

@@ -114,15 +114,10 @@ export class ControllerSystem extends System {
       const state: ControllerState = entity.get(ControllerState);
       state.grounded = this.isGrounded(entity);
 
-      const bfp = entity.getByName("BoneFollowsPointer");
-      if (bfp) bfp.enabled = true;
-
       if (spec.touchEnabled) {
         this.useTouch(entity, state);
       } else if (spec.keysEnabled) {
         this.useKeys(state);
-        // When using keys to control avatar, head should point in same direction as avatar
-        if (state.speed > 0 && bfp) bfp.enabled = false;
       }
 
       // Override speed if flying
