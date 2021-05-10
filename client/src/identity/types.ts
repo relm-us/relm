@@ -39,7 +39,7 @@ export type LocalIdentityFields = {
 
   // Most recent chat message (used for chat bubble)
   message?: string;
-  
+
   // Most recent emoji (used for emote)
   emoji?: string;
 
@@ -49,6 +49,9 @@ export type LocalIdentityFields = {
    *  b) remote (controlled by the network)
    */
   isLocal?: boolean;
+
+  // Distance in world units from the participant
+  distance?: number;
 };
 
 export type IdentityData = {

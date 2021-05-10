@@ -234,7 +234,7 @@ export default class WorldManager {
         // Ignore updates about ourselves
         if (clientId === this.wdoc.ydoc.clientID) return;
 
-        this.identities.setTransformData(clientId, m);
+        this.identities.updatePeer(clientId, m);
       });
     });
   }
@@ -372,6 +372,7 @@ export default class WorldManager {
     if (this.world) {
       const isRunning = get(playState) === "playing";
       this.world.update(isRunning && delta !== undefined ? delta : 1000 / 60);
+      this.identities.update();
     }
   }
 

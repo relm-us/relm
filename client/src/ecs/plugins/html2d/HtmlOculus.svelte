@@ -16,6 +16,7 @@
   export let isLocal;
   export let showAudio;
   export let showVideo;
+  export let volume;
   export let playerId;
 
   let fullscreen = false;
@@ -64,7 +65,7 @@
         <icon><VideoIcon /></icon>
       {/if}
       {#if showAudio && !isLocal}
-        <Audio stream={$stream} />
+        <Audio stream={$stream} volume={parseInt(volume, 10) / 100} />
       {/if}
     </oculus>
     <HtmlOculusMic muted={!showAudio} on:click={toggleMute}>

@@ -95,7 +95,6 @@ export class OculusSystem extends System {
     const dist = this.presentation.camera.parent.position.distanceTo(
       entity.get(WorldTransform).position
     );
-    // console.log("dist", dist);
 
     // calculate left, top
     v1.copy(world.position);
