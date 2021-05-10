@@ -8,6 +8,7 @@ import * as Systems from "./systems";
 export * from "./components";
 
 export { Components };
+export { headFollowsPointer } from "./headFollowsPointer";
 
 export default createPlugin({
   name: "twist-bone",

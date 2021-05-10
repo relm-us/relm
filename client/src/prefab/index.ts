@@ -31,7 +31,6 @@ export {
 };
 
 // Special construction set
-export { makeAvatarAndActivate } from "./makeAvatarAndActivate";
 export { makeStageAndActivate } from "./makeStageAndActivate";
 
 export const directory = [

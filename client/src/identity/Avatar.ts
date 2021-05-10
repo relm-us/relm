@@ -1,9 +1,7 @@
-import { Readable } from "svelte/store";
 import { Vector3, Euler, AnimationClip, MathUtils } from "three";
 
 import { IdentityData } from "./types";
 import { makeAvatar } from "~/prefab/makeAvatar";
-import { makeAvatarAndActivate } from "~/prefab/makeAvatarAndActivate";
 
 import { World, Entity } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
@@ -12,6 +10,8 @@ import { Html2d, Oculus, OculusRef } from "~/ecs/plugins/html2d";
 import { Animation } from "~/ecs/plugins/animation";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
 import { Morph } from "~/ecs/plugins/morph";
+import { Controller } from "~/ecs/plugins/player-control";
+import { TwistBone, headFollowsPointer } from "~/ecs/plugins/twist-bone";
 
 import { chatOpen } from "~/stores/chatOpen";
 
@@ -26,6 +26,8 @@ export class Avatar {
   identity: IdentityData;
 
   entity: Entity;
+  headEntity: Entity;
+  emojiEntity: Entity;
 
   constructor(world: World) {
     this.world = world;
@@ -43,14 +45,6 @@ export class Avatar {
     return seenAgoMillis < LAST_SEEN_TIMEOUT;
   }
 
-  get head() {
-    return this.entity?.getChildren()[0];
-  }
-
-  get emojiHolder() {
-    return this.entity?.getChildren()[1];
-  }
-
   maybeMakeAvatar() {
     if (this.entity) return;
     if (this.identity.local.isLocal) {
@@ -63,15 +57,32 @@ export class Avatar {
     }
   }
 
+  makeAvatar(kinematic: boolean, callback?: (entity: Entity) => void) {
+    const opts = { kinematic };
+    const { avatar, head, emoji } = makeAvatar(
+      this.world,
+      opts,
+      this.identity.playerId
+    );
+    this.entity = avatar;
+    this.headEntity = head;
+    this.emojiEntity = emoji;
+    callback?.(avatar);
+    avatar.traverse((entity) => entity.activate());
+    return avatar;
+  }
+
   makeLocalAvatar() {
-    this.entity = makeAvatarAndActivate(this.world);
+    this.makeAvatar(false, (avatar) => {
+      avatar.add(Controller).add(TwistBone, {
+        boneName: "mixamorigHead",
+        function: headFollowsPointer,
+      });
+    });
   }
 
   makeRemoteAvatar() {
-    const opts = { kinematic: true };
-    const { avatar } = makeAvatar(this.world, opts, this.identity.playerId);
-    avatar.traverse((entity) => entity.activate());
-    this.entity = avatar;
+    this.makeAvatar(true);
   }
 
   destroy() {
@@ -104,24 +115,24 @@ export class Avatar {
   syncSpeech() {
     const identity = this.identity;
     const visible = !!identity.local.message && identity.shared.speaking;
-    if (visible && !this.head.has(Html2d)) {
+    if (visible && !this.headEntity.has(Html2d)) {
       this.addSpeech(identity.local.message, identity.local.isLocal);
-    } else if (visible && this.head.has(Html2d)) {
+    } else if (visible && this.headEntity.has(Html2d)) {
       this.changeSpeech(identity.local.message);
-    } else if (!visible && this.head.has(Html2d)) {
-      this.head.remove(Html2d);
+    } else if (!visible && this.headEntity.has(Html2d)) {
+      this.headEntity.remove(Html2d);
     }
   }
 
   syncEmoji() {
     const identity = this.identity;
     const visible = identity.local.emoji && identity.shared.emoting;
-    if (visible && !this.emojiHolder.has(Html2d)) {
+    if (visible && !this.emojiEntity.has(Html2d)) {
       this.addEmote(identity.local.emoji);
-    } else if (visible && this.emojiHolder.has(Html2d)) {
+    } else if (visible && this.emojiEntity.has(Html2d)) {
       this.changeEmote(identity.local.emoji);
-    } else if (!visible && this.emojiHolder.has(Html2d)) {
-      this.emojiHolder.remove(Html2d);
+    } else if (!visible && this.emojiEntity.has(Html2d)) {
+      this.emojiEntity.remove(Html2d);
     }
   }
 
@@ -174,7 +185,7 @@ export class Avatar {
   }
 
   addEmote(content: string) {
-    this.emojiHolder.add(Html2d, {
+    this.emojiEntity.add(Html2d, {
       kind: "EMOJI",
       content,
       hanchor: 2,
@@ -183,18 +194,18 @@ export class Avatar {
   }
 
   changeEmote(content: string) {
-    const html2d = this.emojiHolder.get(Html2d);
+    const html2d = this.emojiEntity.get(Html2d);
     html2d.content = content;
     html2d.modified();
   }
 
   removeEmote() {
-    this.emojiHolder.maybeRemove(Html2d);
+    this.emojiEntity.maybeRemove(Html2d);
   }
 
   addSpeech(message: string, isLocal: boolean = false) {
     const onClose = isLocal ? () => chatOpen.set(false) : null;
-    this.head.add(Html2d, {
+    this.headEntity.add(Html2d, {
       kind: "SPEECH",
       content: message,
       offset: new Vector3(0.5, 0, 0),
@@ -205,7 +216,7 @@ export class Avatar {
   }
 
   changeSpeech(message: string) {
-    const label = this.head.get(Html2d);
+    const label = this.headEntity.get(Html2d);
     label.content = message;
     label.modified();
   }
