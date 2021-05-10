@@ -15,7 +15,9 @@ const qParent = new Quaternion();
 const vParent = new Vector3();
 const vLookAt = new Vector3();
 
-export function headFollowsPointer(entity: Entity) {
+export const headFollowsPointer = (setAngle?: (angle: number) => void) => (
+  entity: Entity
+) => {
   const state: ControllerState = entity.get(ControllerState);
   const pointer = entity.get(PointerPositionRef).value;
   const parent = entity.get(TwistBoneRef).parent;
@@ -60,9 +62,35 @@ export function headFollowsPointer(entity: Entity) {
     -Math.PI * 0.49,
     Math.PI * 0.49
   );
+  setAngle?.(angle);
 
   vLookAt.copy(vBodyFacing);
   vLookAt.applyAxisAngle(vUp, angle);
 
   return vLookAt;
-}
+};
+
+export const headFollowsAngle = (getAngle: () => number) => (
+  entity: Entity
+) => {
+  const angle = getAngle();
+  if (angle === null || angle === undefined || Number.isNaN(angle)) return;
+
+  const pointer = entity.get(PointerPositionRef).value;
+  const parent = entity.get(TwistBoneRef).parent;
+
+  parent.getWorldQuaternion(qParent);
+  parent.getWorldPosition(vParent);
+
+  vPointerPos.copy(pointer.points.xz).sub(vParent);
+  vPointerPos.y = 0;
+
+  vBodyFacing.copy(vOut);
+  vBodyFacing.applyQuaternion(qParent);
+  vBodyFacing.y = 0;
+
+  vLookAt.copy(vBodyFacing);
+  vLookAt.applyAxisAngle(vUp, angle);
+
+  return vLookAt;
+};

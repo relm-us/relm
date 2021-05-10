@@ -11,7 +11,11 @@ import { Animation } from "~/ecs/plugins/animation";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
 import { Morph } from "~/ecs/plugins/morph";
 import { Controller } from "~/ecs/plugins/player-control";
-import { TwistBone, headFollowsPointer } from "~/ecs/plugins/twist-bone";
+import {
+  TwistBone,
+  headFollowsPointer,
+  headFollowsAngle,
+} from "~/ecs/plugins/twist-bone";
 
 import { chatOpen } from "~/stores/chatOpen";
 
@@ -28,6 +32,8 @@ export class Avatar {
   entity: Entity;
   headEntity: Entity;
   emojiEntity: Entity;
+
+  headAngle: number;
 
   constructor(world: World) {
     this.world = world;
@@ -76,13 +82,18 @@ export class Avatar {
     this.makeAvatar(false, (avatar) => {
       avatar.add(Controller).add(TwistBone, {
         boneName: "mixamorigHead",
-        function: headFollowsPointer,
+        function: headFollowsPointer((angle) => (this.headAngle = angle)),
       });
     });
   }
 
   makeRemoteAvatar() {
-    this.makeAvatar(true);
+    this.makeAvatar(true, (avatar) => {
+      avatar.add(TwistBone, {
+        boneName: "mixamorigHead",
+        function: headFollowsAngle(() => this.headAngle),
+      });
+    });
   }
 
   destroy() {
@@ -266,9 +277,7 @@ export class Avatar {
     transformData[3] = e1.y;
 
     // Get angle of head
-    // const transformHead = this.entity.get(Transform);
-    // e1.setFromQuaternion(transformHead.rotation);
-    transformData[4] = 0;
+    transformData[4] = this.headAngle;
 
     const clips: AnimationClip[] = this.entity.get(ModelRef)?.animations;
     const clipName: string = this.entity.get(Animation)?.clipName;
@@ -296,10 +305,7 @@ export class Avatar {
     transform.rotation.setFromEuler(e1);
 
     // Set angle of head
-    // const transformHead = this.head.get(Transform);
-    // e1.setFromQuaternion(transform.rotation);
-    // e1.y = headTheta;
-    // transformHead.rotation.setFromEuler(e1);
+    this.headAngle = headTheta;
 
     const clips = this.entity.get(ModelRef)?.animations;
     const animation = this.entity.get(Animation);
