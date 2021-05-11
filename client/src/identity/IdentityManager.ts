@@ -21,6 +21,8 @@ import { ChatMessage, getEmojiFromMessage } from "~/world/ChatManager";
 import { localstorageSharedFields } from "./localstorageSharedFields";
 import { audioRequested, videoRequested } from "video-mirror";
 
+const ACTIVE_TIMEOUT = 30000;
+
 type PeerData = {
   // Moment the peer was last seen, in milliseconds from start of window
   lastSeen?: number;
@@ -28,8 +30,8 @@ type PeerData = {
   // Unique UUID of player
   playerId?: string;
 
-  // Fast update function; Avatar gets most recent data over the wire
-  update?: Function;
+  // Fast transform cache
+  transform?: Function;
 };
 
 export class IdentityManager extends EventEmitter {
@@ -116,7 +118,7 @@ export class IdentityManager extends EventEmitter {
      */
     loadingState.subscribe(($state) => {
       if ($state === "loaded") {
-        identity.sharedFields.update(($fields: SharedIdentityFields) => {
+        identity.sharedFields.update(($fields) => {
           return { ...$fields, clientId };
         });
         this.isSynced = true;
@@ -138,7 +140,7 @@ export class IdentityManager extends EventEmitter {
     return peer;
   }
 
-  getOrCreateIdentity(playerId: PlayerID) {
+  getOrCreateIdentity(playerId) {
     let identity = this.identities.get(playerId);
     if (!identity) {
       identity = new Identity(this, playerId);
@@ -150,14 +152,15 @@ export class IdentityManager extends EventEmitter {
 
   updateSharedFields(playerId: PlayerID, sharedFields: SharedIdentityFields) {
     // Don't allow the network to override my own shared fields prior to sync
-    if (playerId === this.me.playerId && !this.isSynced) return;
+    const allowUpdate = playerId !== this.me.playerId || this.isSynced;
+    if (allowUpdate) {
+      const peer = this.getOrCreatePeer(sharedFields.clientId);
+      peer.playerId = playerId;
 
-    const peer = this.getOrCreatePeer(sharedFields.clientId);
-    peer.playerId = playerId;
-
-    const identity = this.getOrCreateIdentity(playerId);
-    identity.sharedFields.set(sharedFields);
-    return identity;
+      const identity = this.getOrCreateIdentity(playerId);
+      identity.sharedFields.set(sharedFields);
+      return identity;
+    }
   }
 
   updateLocalFields(playerId: PlayerID, localFields: LocalIdentityFields) {
@@ -185,37 +188,13 @@ export class IdentityManager extends EventEmitter {
     this.peers.delete(clientId);
   }
 
-  /**
-   * Called once per world loop.
-   */
-  update() {
-    const myPos = this.me?.avatar?.entity?.getByName("Transform")?.position;
-    if (!myPos) return;
-
-    for (const peer of this.peers.values()) {
-      if (peer.playerId) {
-        const other: Identity = this.identities.get(peer.playerId);
-        const otherPos = other.avatar?.entity?.getByName("Transform")?.position;
-        if (otherPos) {
-          other.setDistance(myPos.distanceTo(otherPos));
-        }
-      }
-    }
-  }
-
-  /**
-   * Called once per peer, whenever new data is available on the network for that peer.
-   *
-   * @param clientId The client being updated
-   * @param transformData The data packet sent over the wire
-   * @returns
-   */
-  updatePeer(clientId: YClientID, data: Array<number>) {
-    if (!clientId || !this.peers.has(clientId)) return;
-
+  setTransformData(clientId: YClientID, transformData: Array<number>) {
     let peer = this.peers.get(clientId);
-    const now = performance.now();
-    peer.lastSeen = now;
+    if (!peer) {
+      peer = {
+        lastSeen: performance.now(),
+      };
+    }
 
     /**
      * If we don't know the peer's playerId yet, wait until they broadcast it
@@ -223,16 +202,16 @@ export class IdentityManager extends EventEmitter {
      */
     if (!peer.playerId) return;
 
-    // Copy our clientId 'lastSeen' to the playerId 'lastSeen'
-    const identity = this.updateLocalFields(peer.playerId, {
-      lastSeen: now,
-    });
+    if (!peer.transform) {
+      // Copy our clientId 'lastSeen' to the playerId 'lastSeen'
+      const identity = this.updateLocalFields(peer.playerId, {
+        lastSeen: peer.lastSeen,
+      });
 
-    if (!peer.update) {
-      peer.update = identity.avatar.update.bind(identity.avatar);
+      peer.transform = identity.avatar.setTransformData.bind(identity.avatar);
     }
 
-    peer.update(data);
+    peer.transform(transformData);
   }
 
   get active() {

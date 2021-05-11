@@ -118,10 +118,6 @@ export class Identity implements Readable<IdentityData> {
     this.sharedFields.update(($f) => ({ ...$f, showVideo: !$f.showVideo }));
   }
 
-  setDistance(distance: number) {
-    this.localFields.update(($fields) => ({ ...$fields, distance }));
-  }
-
   setAvName(name) {
     avStore.dispatch(
       setMe({

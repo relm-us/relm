@@ -149,17 +149,14 @@ export class Avatar {
 
   syncOculus() {
     const identity = this.identity;
-    const dist = identity.local.distance;
-    const volume = dist < 3 ? 100 : dist < 5 ? (dist - 3) * 50 : 0;
     if (!this.entity.has(Oculus)) {
       this.entity.add(Oculus, {
         playerId: identity.playerId,
         hanchor: 0,
         vanchor: 2,
-        offset: new Vector3(0, OCULUS_HEIGHT, 0),
         showAudio: identity.shared.showAudio,
         showVideo: identity.shared.showVideo,
-        volume,
+        offset: new Vector3(0, OCULUS_HEIGHT, 0),
       });
     } else {
       const component = this.entity.get(OculusRef)?.component;
@@ -168,7 +165,6 @@ export class Avatar {
         component.$set({
           showAudio: identity.shared.showAudio,
           showVideo: identity.shared.showVideo,
-          volume,
         });
       }
     }
@@ -293,13 +289,7 @@ export class Avatar {
     return transformData;
   }
 
-  /**
-   * Updates this avatar with most recent data from the network
-   *
-   * @param param0 Data sent over the wire
-   * @returns
-   */
-  update([x, y, z, theta, headTheta, clipIndex]) {
+  setTransformData([x, y, z, theta, headTheta, clipIndex]) {
     if (!this.entity) return;
 
     const transform = this.entity.get(Transform);

@@ -64,14 +64,6 @@ export class Oculus extends LocalComponent {
       }
     },
 
-    volume: {
-      type: NumberType,
-      default: 100,
-      editor: {
-        label: "Audio Volume (%)"
-      }
-    },
-
     // Set automatically. If equal to local playerId, Oculus will show own video stream.
     playerId: {
       type: StringType,
