@@ -36,7 +36,10 @@ export class TwistBoneSystem extends System {
     });
 
     this.queries.active.forEach((entity) => {
-      this.follow(entity);
+      const spec = entity.get(TwistBone);
+      if (spec.enabled) {
+        this.follow(entity);
+      }
     });
 
     this.queries.removed.forEach((entity) => {

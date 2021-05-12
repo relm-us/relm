@@ -1,5 +1,11 @@
 import { Vector3 } from "three";
-import { LocalComponent, StringType, NumberType, RefType } from "~/ecs/base";
+import {
+  LocalComponent,
+  StringType,
+  NumberType,
+  RefType,
+  BooleanType,
+} from "~/ecs/base";
 
 export class TwistBone extends LocalComponent {
   boneName: string;
@@ -39,6 +45,14 @@ export class TwistBone extends LocalComponent {
       default: 0.15,
       editor: {
         label: "Twist Speed",
+      },
+    },
+
+    enabled: {
+      type: BooleanType,
+      default: true,
+      editor: {
+        label: "Enabled",
       },
     },
   };
