@@ -27,6 +27,7 @@ import AssetPlugin from "~/ecs/plugins/asset";
 import BoundingHelperPlugin from "~/ecs/plugins/bounding-helper";
 import ColorationPlugin from "~/ecs/plugins/coloration";
 import Css3DPlugin from "~/ecs/plugins/css3d";
+import DistancePlugin from "~/ecs/plugins/distance";
 import FirePlugin from "~/ecs/plugins/fire";
 import FollowPlugin from "~/ecs/plugins/follow";
 import Html2dPlugin from "~/ecs/plugins/html2d";
@@ -133,6 +134,7 @@ export function createWorld(rapier) {
       BoundingHelperPlugin,
       ColorationPlugin,
       Css3DPlugin,
+      DistancePlugin,
       FollowPlugin,
       Html2dPlugin,
       ImagePlugin,

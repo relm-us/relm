@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from "svelte";
   import {
     Audio,
     Video,
@@ -10,6 +11,7 @@
   import HtmlOculusMic from "./HtmlOculusMic.svelte";
   import Fullscreen from "./Fullscreen.svelte";
   import shineImg from "./shine.svg";
+  import { DistanceRef } from "~/ecs/plugins/distance";
 
   export let stream;
   export let localStream;
@@ -17,8 +19,10 @@
   export let showAudio;
   export let showVideo;
   export let playerId;
+  export let entity;
 
   let fullscreen = false;
+  let volume = 0;
 
   let identity;
   $: identity = $Relm.identities.identities.get(playerId);
@@ -42,6 +46,25 @@
     fullscreen = false;
   }
 
+  onMount(() => {
+    const interval = setInterval(() => {
+      const ref = entity.get(DistanceRef);
+      if (ref && ref.value !== null) {
+        const distance = ref.value;
+        if (distance < 3) {
+          volume = 1;
+        } else if (distance < 5) {
+          volume = (2 - (distance - 3)) * 0.5;
+        } else {
+          volume = 0;
+        }
+      }
+    }, 100);
+    return () => {
+      clearInterval(interval);
+    };
+  });
+
   // ignore warning about missing props
   $$props;
 </script>
@@ -64,7 +87,7 @@
         <icon><VideoIcon /></icon>
       {/if}
       {#if showAudio && !isLocal}
-        <Audio stream={$stream} />
+        <Audio stream={$stream} {volume} />
       {/if}
     </oculus>
     <HtmlOculusMic muted={!showAudio} on:click={toggleMute}>

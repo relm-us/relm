@@ -69,10 +69,10 @@ export class OculusSystem extends System {
     );
     this.htmlPresentation.domElement.appendChild(container);
 
-    // Create whatever Svelte component is specified by the type
+    // Create the Svelte component
     const component = new HtmlOculus({
       target: container,
-      props: { ...spec, stream, localStream, isLocal },
+      props: { ...spec, stream, localStream, isLocal, entity },
     });
 
     entity.add(OculusRef, { container, component });

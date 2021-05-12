@@ -2,6 +2,7 @@ import { Vector3, Euler, AnimationClip, MathUtils } from "three";
 
 import { IdentityData } from "./types";
 import { makeAvatar } from "~/prefab/makeAvatar";
+import { playerId } from "~/identity/playerId";
 
 import { World, Entity } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
@@ -9,6 +10,7 @@ import { ModelRef } from "~/ecs/plugins/model";
 import { Html2d, Oculus, OculusRef } from "~/ecs/plugins/html2d";
 import { Animation } from "~/ecs/plugins/animation";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
+import { Distance } from "~/ecs/plugins/distance";
 import { Morph } from "~/ecs/plugins/morph";
 import { Controller } from "~/ecs/plugins/player-control";
 import {
@@ -89,10 +91,14 @@ export class Avatar {
 
   makeRemoteAvatar() {
     this.makeAvatar(true, (avatar) => {
-      avatar.add(TwistBone, {
-        boneName: "mixamorigHead",
-        function: headFollowsAngle(() => this.headAngle),
-      });
+      avatar
+        .add(TwistBone, {
+          boneName: "mixamorigHead",
+          function: headFollowsAngle(() => this.headAngle),
+        })
+        .add(Distance, {
+          target: playerId,
+        });
     });
   }
 
