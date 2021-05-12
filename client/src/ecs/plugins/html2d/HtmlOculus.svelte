@@ -22,6 +22,7 @@
   export let entity;
 
   let fullscreen = false;
+  let translucent = false;
   let volume = 0;
 
   let identity;
@@ -53,10 +54,13 @@
         const distance = ref.value;
         if (distance < 3) {
           volume = 1;
+          translucent = false;
         } else if (distance < 5) {
           volume = (2 - (distance - 3)) * 0.5;
+          translucent = false;
         } else {
           volume = 0;
+          translucent = true;
         }
       }
     }, 100);
@@ -70,7 +74,7 @@
 </script>
 
 {#if $stream}
-  <container style="--background-image:url({shineImg})">
+  <container class:translucent style="--background-image:url({shineImg})">
     <oculus class="round" on:click={toggleVideo}>
       {#if showVideo}
         {#if fullscreen}
@@ -90,12 +94,14 @@
         <Audio stream={$stream} {volume} />
       {/if}
     </oculus>
-    <HtmlOculusMic muted={!showAudio} on:click={toggleMute}>
-      {#if showAudio && isLocal}
-        <AudioLevelIndicator class="oculus-audio-level-indicator" />
-      {/if}
-      <AudioIcon enabled={showAudio} class="oculus-audio-icon" />
-    </HtmlOculusMic>
+    {#if !translucent}
+      <HtmlOculusMic muted={!showAudio} on:click={toggleMute}>
+        {#if showAudio && isLocal}
+          <AudioLevelIndicator class="oculus-audio-level-indicator" />
+        {/if}
+        <AudioIcon enabled={showAudio} class="oculus-audio-icon" />
+      </HtmlOculusMic>
+    {/if}
   </container>
 {/if}
 
@@ -105,6 +111,9 @@
     position: relative;
     width: 100%;
     height: 100%;
+  }
+  container.translucent {
+    opacity: 0.4;
   }
   :global(.oculus-audio-level-indicator) {
     width: 24px;
