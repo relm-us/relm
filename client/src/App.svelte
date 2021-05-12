@@ -10,7 +10,6 @@
   import Input from "~/input";
   import Button from "~/ui/Button";
 
-  import BuildPlayModeButton from "~/ui/BuildPlayModeButton";
   import GroupUngroupButton from "~/ui/GroupUngroupButton";
   import MediaSetupButton from "~/ui/MediaSetupButton";
   import UploadButton from "~/ui/UploadButton";
@@ -124,10 +123,6 @@
       {/if}
     </overlay-left>
 
-    <overlay-center>
-      <BuildPlayModeButton />
-    </overlay-center>
-
     <overlay-right>
       <WorldStatePane />
     </overlay-right>
@@ -181,11 +176,6 @@
     flex-direction: column;
     margin-top: 8px;
     margin-left: 50px;
-  }
-  overlay-center {
-    display: flex;
-    flex-direction: row;
-    z-index: 1;
   }
   overlay-right {
     display: flex;
