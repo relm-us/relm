@@ -36,7 +36,7 @@
     if ($Relm.avatar === entity) {
       // TODO: make a way for Avatar to subscribe to ECS component
       // changes instead of this hack:
-      $Relm.identities.me.setName(text);
+      $Relm.identities.me.set({ name: text });
     } else {
       // Broadcast changes
       $Relm.wdoc.syncFrom(entity);
@@ -116,6 +116,7 @@
 
   // ignore warning about missing props
   $$props;
+
 </script>
 
 <div
@@ -174,4 +175,5 @@
 
     white-space: normal;
   }
+
 </style>

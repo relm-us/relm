@@ -187,7 +187,7 @@ export default class WorldManager {
 
     // set name from server, if available (overrides localstorage)
     if (connectOpts.username) {
-      this.identities.me.setName(connectOpts.username);
+      this.identities.me.set({ name: connectOpts.username });
       this.identities.me.avatar.disableEditingLabel();
     }
 
@@ -196,8 +196,7 @@ export default class WorldManager {
         console.log("connecting av to", connectOpts);
         this.roomClient = connectAV({
           roomId: connectOpts.room,
-          displayName:
-            connectOpts.username || get(this.identities.me.sharedFields).name,
+          displayName: connectOpts.username || this.identities.me.get("name"),
           peerId: this.identities.me.playerId,
         });
       }
@@ -212,11 +211,6 @@ export default class WorldManager {
     // Connect & show loading progress
     resetLoading(connectOpts.assetsCount, connectOpts.entitiesCount);
     this.wdoc.connect(this.connectOpts);
-
-    this.sendLocalStateInterval = setInterval(() => {
-      const data = this.identities.me.avatar.getTransformData();
-      if (data) this.setLocalStateField("m", data);
-    }, 20);
 
     this.wdoc.provider.awareness.on("change", (changes) => {
       for (let id of changes.removed) {
@@ -251,12 +245,6 @@ export default class WorldManager {
     this.world.reset();
   }
 
-  setLocalStateField(field, state) {
-    if (this.wdoc.provider) {
-      this.wdoc.provider.awareness.setLocalStateField(field, state);
-    }
-  }
-
   get avatar(): Entity {
     return this.identities.me.avatar.entity;
   }
@@ -264,6 +252,9 @@ export default class WorldManager {
   populate() {
     if (!this.world) {
       throw new Error(`Can't populate when world is null`);
+    }
+    if (!this.avatar) {
+      throw new Error(`Can't populate when avatar entity is null`);
     }
 
     const { camera, light } = makeStageAndActivate(this.world, this.avatar);
@@ -343,7 +334,7 @@ export default class WorldManager {
 
   start() {
     // Signal to all participants we are "present" and our avatar can be shown
-    this.identities.me.setStatus("present");
+    this.identities.me.set({ status: "present" });
 
     // Pre-compile assets to prevent some jank while exploring the world
     this.world.presentation.compile();
@@ -381,8 +372,15 @@ export default class WorldManager {
     fpsTime.addData(1000 / delta);
 
     this.worldStep(delta);
+    this.identities.sync();
+    this.sendTransformData();
 
     this.previousLoopTime = time;
+  }
+
+  sendTransformData() {
+    const data = this.identities.getTransformData();
+    if (data) this.wdoc.provider?.awareness.setLocalStateField("m", data);
   }
 
   toJSON() {

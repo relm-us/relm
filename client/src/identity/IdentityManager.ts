@@ -6,174 +6,102 @@ import { withArrayEdits, withMapEdits } from "relm-common/yjs/observeUtils";
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import type WorldManager from "~/world/WorldManager";
 
-import {
-  IdentityData,
-  SharedIdentityFields,
-  LocalIdentityFields,
-  PlayerID,
-  YClientID,
-} from "./types";
+import { IdentityData, PlayerID, YClientID } from "./types";
 
-import { loadingState } from "~/stores/loading";
-import { defaultIdentity } from "./defaultIdentity";
+import { playerId } from "./playerId";
 import { Identity } from "./Identity";
+import { getLocalIdentityData } from "./identityData";
 import { ChatMessage, getEmojiFromMessage } from "~/world/ChatManager";
-import { localstorageSharedFields } from "./localstorageSharedFields";
 import { audioRequested, videoRequested } from "video-mirror";
 
-const ACTIVE_TIMEOUT = 30000;
-
-type PeerData = {
-  // Moment the peer was last seen, in milliseconds from start of window
-  lastSeen?: number;
-
-  // Unique UUID of player
-  playerId?: string;
-
-  // Fast transform cache
-  transform?: Function;
-};
+type ClientUpdateFunction = (data: any[]) => void;
 
 export class IdentityManager extends EventEmitter {
   relm: WorldManager;
   wdoc: WorldDoc;
 
-  yfields: Y.Map<SharedIdentityFields>;
+  yfields: Y.Map<IdentityData>;
 
   ymessages: Y.Array<ChatMessage>;
 
   identities: Map<PlayerID, Identity>;
 
-  peers: Map<YClientID, PeerData>;
+  clientLastSeen: Map<YClientID, number>;
+  clientUpdateFns: Map<YClientID, ClientUpdateFunction>;
 
   me: Identity;
 
-  isSynced: boolean;
-
-  constructor(relm: WorldManager, myData: IdentityData = defaultIdentity) {
+  constructor(relm: WorldManager) {
     super();
-    this.relm = relm;
-    this.yfields = relm.wdoc.ydoc.getMap("identities");
-    this.ymessages = relm.wdoc.ydoc.getArray("messages");
-    this.identities = new Map();
-    this.peers = new Map();
-    this.isSynced = false;
 
-    this.registerMe(myData, relm.wdoc.ydoc.clientID);
+    const ydoc = relm.wdoc.ydoc;
+    this.relm = relm;
+    this.yfields = ydoc.getMap("identities");
+    this.ymessages = ydoc.getArray("messages");
+    this.identities = new Map();
+    this.clientLastSeen = new Map();
+    this.clientUpdateFns = new Map();
+
+    this.registerMe(ydoc.clientID);
 
     this.observeFields();
     this.observeChat();
   }
 
-  registerMe(myData: IdentityData, clientId: YClientID) {
-    myData.shared.clientId = clientId;
+  registerMe(clientId: YClientID) {
+    const identity = this.getOrCreateIdentity(playerId, true);
 
-    localstorageSharedFields.update(($fields) => {
-      return { ...$fields, emoting: false, status: "initial" };
-    });
-
-    const identity = new Identity(this, myData.playerId, {
-      // Swap out the regular store for a localstorage store
-      sharedFieldsStore: localstorageSharedFields,
-      localFields: myData.local,
-    });
-    this.identities.set(myData.playerId, identity);
+    const data = {
+      ...getLocalIdentityData(),
+      clientId,
+      emoting: false,
+      status: "initial",
+    };
+    identity.set(data);
 
     audioRequested.subscribe((showAudio) => {
-      identity.sharedFields.update(($fields) => ({ ...$fields, showAudio }));
+      identity.set({ showAudio });
     });
 
     videoRequested.subscribe((showVideo) => {
-      identity.sharedFields.update(($fields) => ({ ...$fields, showVideo }));
-    });
-
-    /**
-     * Whenever the sharedFields svelte store is updated, also set the
-     * yjs document corresponding to the playerId.
-     */
-    identity.sharedFields.subscribe(($sharedFields) => {
-      this.yfields.set(myData.playerId, $sharedFields);
-
-      /**
-       * Only "I" can set my audio mute state
-       */
-      if (this.relm.roomClient) {
-        if ($sharedFields.showAudio) {
-          this.relm.roomClient.unmuteMic();
-        } else {
-          this.relm.roomClient.muteMic();
-        }
-
-        if ($sharedFields.showVideo) {
-          this.relm.roomClient.enableWebcam();
-        } else {
-          this.relm.roomClient.disableWebcam();
-        }
-      }
-    });
-
-    /**
-     * After getting 'sync' signal, yjs doc is synced and can accept
-     * more up to date values, such as the clientId of this connection.
-     */
-    loadingState.subscribe(($state) => {
-      if ($state === "loaded") {
-        identity.sharedFields.update(($fields) => {
-          return { ...$fields, clientId };
-        });
-        this.isSynced = true;
-      }
+      identity.set({ showVideo });
     });
 
     this.me = identity;
   }
 
-  getOrCreatePeer(clientId: YClientID) {
-    if (!clientId) console.warn("missing clientId");
-
-    let peer = this.peers.get(clientId);
-
-    if (!peer) {
-      peer = { lastSeen: performance.now() };
-      this.peers.set(clientId, peer);
-    }
-    return peer;
-  }
-
-  getOrCreateIdentity(playerId) {
+  getOrCreateIdentity(playerId: PlayerID, isLocal: boolean = false) {
     let identity = this.identities.get(playerId);
+
     if (!identity) {
-      identity = new Identity(this, playerId);
+      identity = new Identity(this, playerId, isLocal);
       this.identities.set(playerId, identity);
     }
 
     return identity;
   }
 
-  updateSharedFields(playerId: PlayerID, sharedFields: SharedIdentityFields) {
+  updateSharedFields(playerId: PlayerID, sharedFields: IdentityData) {
     // Don't allow the network to override my own shared fields prior to sync
-    const allowUpdate = playerId !== this.me.playerId || this.isSynced;
-    if (allowUpdate) {
-      const peer = this.getOrCreatePeer(sharedFields.clientId);
-      peer.playerId = playerId;
+    if (playerId === this.me.playerId) return;
 
-      const identity = this.getOrCreateIdentity(playerId);
-      identity.sharedFields.set(sharedFields);
-      return identity;
-    }
-  }
-
-  updateLocalFields(playerId: PlayerID, localFields: LocalIdentityFields) {
     const identity = this.getOrCreateIdentity(playerId);
-    identity.localFields.update(($fields) => {
-      const newFields = { ...$fields, ...localFields };
-      return newFields;
-    });
+    identity.set(sharedFields, false);
     return identity;
   }
 
   get(playerId: PlayerID): Identity {
     return this.identities.get(playerId);
+  }
+
+  // Find Identity by YClientID; may be undefined if peer hasn't announced its clientId yet
+  getByClientId(clientId: YClientID): Identity {
+    if (!clientId) return;
+    for (const identity of this.identities.values()) {
+      if (identity.sharedFields.clientId === clientId) {
+        return identity;
+      }
+    }
   }
 
   remove(playerId: PlayerID) {
@@ -183,35 +111,35 @@ export class IdentityManager extends EventEmitter {
   }
 
   removeByClientId(clientId: YClientID) {
-    const playerId = this.peers.get(clientId)?.playerId;
-    if (playerId) this.remove(playerId);
-    this.peers.delete(clientId);
+    const identity = this.getByClientId(clientId);
+    if (identity) this.remove(identity.playerId);
+  }
+
+  getTransformData() {
+    return this.me.avatar.getTransformData();
   }
 
   setTransformData(clientId: YClientID, transformData: Array<number>) {
-    let peer = this.peers.get(clientId);
-    if (!peer) {
-      peer = {
-        lastSeen: performance.now(),
-      };
+    this.clientLastSeen.set(clientId, performance.now());
+    let update = this.clientUpdateFns.get(clientId);
+
+    if (!update) {
+      const identity = this.getByClientId(clientId);
+
+      //  If we can't find the identity from a clientId yet, wait until we can
+      if (!identity) return;
+
+      update = identity.avatar.setTransformData.bind(identity.avatar);
+      this.clientUpdateFns.set(clientId, update);
     }
 
-    /**
-     * If we don't know the peer's playerId yet, wait until they broadcast it
-     * and we can pair it up with their clientId. In the meantime, wait.
-     */
-    if (!peer.playerId) return;
+    update(transformData);
+  }
 
-    if (!peer.transform) {
-      // Copy our clientId 'lastSeen' to the playerId 'lastSeen'
-      const identity = this.updateLocalFields(peer.playerId, {
-        lastSeen: peer.lastSeen,
-      });
-
-      peer.transform = identity.avatar.setTransformData.bind(identity.avatar);
+  sync() {
+    for (const identity of this.identities.values()) {
+      identity.avatar.syncFromIdentityState();
     }
-
-    peer.transform(transformData);
   }
 
   get active() {
@@ -228,18 +156,14 @@ export class IdentityManager extends EventEmitter {
 
   observeFields() {
     this.yfields.observe(
-      (
-        event: Y.YMapEvent<SharedIdentityFields>,
-        transaction: Y.Transaction
-      ) => {
+      (event: Y.YMapEvent<IdentityData>, transaction: Y.Transaction) => {
         if (transaction.local) return;
         withMapEdits(event, {
           onAdd: this.updateSharedFields.bind(this),
           onUpdate: this.updateSharedFields.bind(this),
           onDelete: (playerId, fields) => {
-            console.log("delete playerId", playerId, fields.clientId);
-            this.peers.delete(fields.clientId);
             this.identities.delete(playerId);
+            console.log("identity removed:", playerId, fields.clientId);
           },
         });
       }
@@ -255,16 +179,14 @@ export class IdentityManager extends EventEmitter {
         withArrayEdits(event, {
           onAdd: (msg: ChatMessage) => {
             const playerId = msg.u;
-            const localFields: LocalIdentityFields = {};
+            const identity = this.getOrCreateIdentity(playerId);
 
             const emoji = getEmojiFromMessage(msg);
             if (emoji) {
-              localFields.emoji = emoji;
+              identity.set({ emoji: emoji }, false);
             } else {
-              localFields.message = msg.c;
+              identity.set({ message: msg.c }, false);
             }
-
-            this.updateLocalFields(playerId, localFields);
           },
         });
       }

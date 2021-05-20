@@ -1,6 +1,6 @@
 import { Vector3, Euler, AnimationClip, MathUtils } from "three";
 
-import { IdentityData } from "./types";
+import type { Identity } from "./Identity";
 import { makeAvatar } from "~/prefab/makeAvatar";
 import { playerId } from "~/identity/playerId";
 
@@ -27,9 +27,8 @@ const e1 = new Euler(0, 0, 0, "YXZ");
 const v1 = new Vector3();
 
 export class Avatar {
+  identity: Identity;
   world: World;
-
-  identity: IdentityData;
 
   entity: Entity;
   headEntity: Entity;
@@ -37,29 +36,35 @@ export class Avatar {
 
   headAngle: number;
 
-  constructor(world: World) {
+  constructor(identity: Identity, world: World) {
+    this.identity = identity;
     this.world = world;
+    this.maybeMakeAvatar();
   }
 
-  updateIdentityData(identity: IdentityData) {
-    this.identity = identity;
-    this.maybeMakeAvatar();
-    if (this.entity) this.syncEntity();
+  // This function is called regularly (each loop) and brings the ECS state
+  // up to date with the Identity state, as needed.
+  syncFromIdentityState() {
+    if (this.identity.sharedFieldsUpdated) {
+      this.maybeMakeAvatar();
+      this.syncEntity();
+      this.identity.sharedFieldsUpdated = false;
+    }
   }
 
   wasRecentlySeen() {
-    const lastSeen = this.identity.local.lastSeen;
+    const lastSeen = this.identity.lastSeen;
     const seenAgoMillis = performance.now() - (lastSeen ?? -LAST_SEEN_TIMEOUT);
     return seenAgoMillis < LAST_SEEN_TIMEOUT;
   }
 
   maybeMakeAvatar() {
     if (this.entity) return;
-    if (this.identity.local.isLocal) {
+    if (this.identity.isLocal) {
       this.makeLocalAvatar();
     } else if (
       this.wasRecentlySeen() &&
-      this.identity.shared.status !== "initial"
+      this.identity.get("status") !== "initial"
     ) {
       this.makeRemoteAvatar();
     }
@@ -107,6 +112,7 @@ export class Avatar {
   }
 
   syncEntity() {
+    if (!this.entity) return;
     this.syncLabel();
     this.syncSpeech();
     this.syncEmoji();
@@ -116,26 +122,24 @@ export class Avatar {
 
   syncLabel() {
     const identity = this.identity;
-    if (identity.shared.name && !this.entity.has(Html2d)) {
-      this.addLabel(
-        identity.shared.name,
-        identity.local.isLocal,
-        identity.shared.color
-      );
-    } else if (identity.shared.name && this.entity.has(Html2d)) {
-      this.changeLabel(identity.shared.name, identity.shared.color);
-    } else if (!identity.shared.name && this.entity.has(Html2d)) {
+    const name = identity.get("name");
+    if (name && !this.entity.has(Html2d)) {
+      this.addLabel(name, identity.isLocal, identity.get("color"));
+    } else if (name && this.entity.has(Html2d)) {
+      this.changeLabel(name, identity.get("color"));
+    } else if (!name && this.entity.has(Html2d)) {
       this.entity.remove(Html2d);
     }
   }
 
   syncSpeech() {
     const identity = this.identity;
-    const visible = !!identity.local.message && identity.shared.speaking;
+    const message = identity.get("message");
+    const visible = !!message && identity.get("speaking");
     if (visible && !this.headEntity.has(Html2d)) {
-      this.addSpeech(identity.local.message, identity.local.isLocal);
+      this.addSpeech(message, identity.isLocal);
     } else if (visible && this.headEntity.has(Html2d)) {
-      this.changeSpeech(identity.local.message);
+      this.changeSpeech(message);
     } else if (!visible && this.headEntity.has(Html2d)) {
       this.headEntity.remove(Html2d);
     }
@@ -143,11 +147,12 @@ export class Avatar {
 
   syncEmoji() {
     const identity = this.identity;
-    const visible = identity.local.emoji && identity.shared.emoting;
+    const emoji = identity.get("emoji");
+    const visible = emoji && identity.get("emoting");
     if (visible && !this.emojiEntity.has(Html2d)) {
-      this.addEmote(identity.local.emoji);
+      this.addEmote(emoji);
     } else if (visible && this.emojiEntity.has(Html2d)) {
-      this.changeEmote(identity.local.emoji);
+      this.changeEmote(emoji);
     } else if (!visible && this.emojiEntity.has(Html2d)) {
       this.emojiEntity.remove(Html2d);
     }
@@ -160,8 +165,8 @@ export class Avatar {
         playerId: identity.playerId,
         hanchor: 0,
         vanchor: 2,
-        showAudio: identity.shared.showAudio,
-        showVideo: identity.shared.showVideo,
+        showAudio: identity.get("showAudio"),
+        showVideo: identity.get("showVideo"),
         offset: new Vector3(0, OCULUS_HEIGHT, 0),
       });
     } else {
@@ -169,8 +174,8 @@ export class Avatar {
 
       if (component) {
         component.$set({
-          showAudio: identity.shared.showAudio,
-          showVideo: identity.shared.showVideo,
+          showAudio: identity.get("showAudio"),
+          showVideo: identity.get("showVideo"),
         });
       }
     }
@@ -178,7 +183,7 @@ export class Avatar {
 
   syncCharacter() {
     const identity = this.identity;
-    const influences = validInfluences(identity.shared.charMorphs);
+    const influences = validInfluences(identity.get("charMorphs"));
     if (influences) {
       if (!this.entity.has(Morph)) {
         this.entity.add(Morph, { influences });
@@ -189,7 +194,7 @@ export class Avatar {
       }
     }
 
-    const colors = identity.shared.charColors;
+    const colors = identity.get("charColors");
     if (colors) {
       if (!this.entity.has(FaceMapColors)) {
         this.entity.add(FaceMapColors, { colors });

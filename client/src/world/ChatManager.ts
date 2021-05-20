@@ -74,9 +74,7 @@ export class ChatManager {
   }
 
   setActingState(key: string, value: boolean) {
-    this.identities.me.sharedFields.update(($fields) => {
-      return { ...$fields, [key]: value };
-    });
+    this.identities.me.set({ [key]: value });
   }
 
   addMessage(msg: ChatMessage) {

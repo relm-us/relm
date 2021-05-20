@@ -1,121 +1,79 @@
 import { Avatar } from "./Avatar";
 
-import { writable, derived, Readable, Writable } from "svelte/store";
 import type { IdentityManager } from "./IdentityManager";
-import {
-  IdentityData,
-  SharedIdentityFields,
-  LocalIdentityFields,
-  PlayerID,
-  PlayerStatus,
-} from "./types";
+import { IdentityData, PlayerID } from "./types";
+import { defaultIdentityData } from "./identityData";
 
 import { setMe } from "~/av/redux/stateActions";
 import { store as avStore } from "~/av";
 import { browser } from "~/av/browserInfo";
 
-/**
- * A participant's Identity is created from Shared fields such as
- * name and color, as well as Local fields, such as a temporary clientId.
- *
- * There are two types of identities: local & remote. A `local` identity
- * is assembled from 2 "layers", with each subsequent layer taking higher
- * precedence:
- *
- * 1. defaultIdentity - this provides a random name and color
- * 2. localstorageSharedFields - provides name and color, stored in localstorage
- *
- * A `remote` identity is created based on SharedIdentityFields that are sent
- * via yjs.
- */
-export class Identity implements Readable<IdentityData> {
+export class Identity {
   manager: IdentityManager;
 
   playerId: PlayerID;
 
-  /**
-   * We store some identity fields, e.g. name & color on the yjs
-   * document so that everyone can get access.
-   */
-  sharedFields: Writable<SharedIdentityFields>;
+  isLocal: boolean;
 
-  /**
-   * Local fields track this player's subjective view of other
-   * player data; e.g. when the other player was last seen
-   */
-  localFields: Writable<LocalIdentityFields>;
+  sharedFields: IdentityData;
+  sharedFieldsUpdated: boolean;
 
-  /**
-   * This is the "full dataset" of players in the relm. Combines
-   * Shared & Local fields.
-   */
-  derivedIdentity: Readable<IdentityData>;
-
+  // Avatar is responsible for all visuals/rendering of this identity
   avatar: Avatar;
 
   constructor(
     manager: IdentityManager,
     playerId: PlayerID,
-    {
-      sharedFieldsStore,
-      sharedFields = {},
-      localFieldsStore,
-      localFields = { isLocal: false },
-    }: {
-      sharedFieldsStore?: Writable<SharedIdentityFields>;
-      sharedFields?: SharedIdentityFields;
-      localFieldsStore?: Writable<LocalIdentityFields>;
-      localFields?: LocalIdentityFields;
-    } = {}
+    isLocal: boolean = false
   ) {
     this.manager = manager;
     this.playerId = playerId;
-    this.sharedFields = sharedFieldsStore || writable(sharedFields);
-    this.localFields = localFieldsStore || writable(localFields);
-    this.derivedIdentity = this.deriveIdentityStore();
+    this.isLocal = isLocal;
 
-    // TODO: What if clientId changes?
+    this.sharedFields = { ...defaultIdentityData };
 
     // Create an avatar to go with the identity
-    this.avatar = new Avatar(this.manager.relm.wdoc.world);
-
-    this.derivedIdentity.subscribe(($identity) => {
-      this.avatar.updateIdentityData($identity);
-    });
+    this.avatar = new Avatar(this, this.manager.relm.wdoc.world);
   }
 
-  deriveIdentityStore(): Readable<IdentityData> {
-    return derived(
-      [this.sharedFields, this.localFields],
-      ([$shared, $local], set) => {
-        this.setAvName($shared.name);
-        set({
-          playerId: this.playerId,
-          shared: $shared,
-          local: $local,
-        });
+  get lastSeen() {
+    return this.manager.clientLastSeen.get(this.sharedFields.clientId);
+  }
+
+  set(fields: object, propagate: boolean = true) {
+    Object.assign(this.sharedFields, fields);
+    if (this.manager.relm.roomClient) {
+      if ("showAudio" in fields && this.isLocal) {
+        if (this.sharedFields.showAudio) {
+          this.manager.relm.roomClient.unmuteMic();
+        } else {
+          this.manager.relm.roomClient.muteMic();
+        }
       }
-    );
+      if ("showVideo" in fields && this.isLocal) {
+        if (this.sharedFields.showVideo) {
+          this.manager.relm.roomClient.enableWebcam();
+        } else {
+          this.manager.relm.roomClient.disableWebcam();
+        }
+      }
+    }
+    this.sharedFieldsUpdated = true;
+    if (propagate) {
+      this.manager.yfields.set(this.playerId, this.sharedFields);
+    }
   }
 
-  subscribe(handler) {
-    return this.derivedIdentity.subscribe(handler);
-  }
-
-  setName(name: string) {
-    this.sharedFields.update(($fields) => ({ ...$fields, name }));
-  }
-  
-  setStatus(status: PlayerStatus) {
-    this.sharedFields.update(($fields) => ({ ...$fields, status }));
+  get(key: string) {
+    return this.sharedFields[key];
   }
 
   toggleShowAudio() {
-    this.sharedFields.update(($f) => ({ ...$f, showAudio: !$f.showAudio }));
+    this.set({ showAudio: !this.sharedFields.showAudio });
   }
 
   toggleShowVideo() {
-    this.sharedFields.update(($f) => ({ ...$f, showVideo: !$f.showVideo }));
+    this.set({ showVideo: !this.sharedFields.showVideo });
   }
 
   setAvName(name) {
