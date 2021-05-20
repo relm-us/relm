@@ -1,17 +1,17 @@
 <script lang="ts">
-  import type { Readable } from "svelte/store";
-  import type { IdentityData } from "~/identity/types";
+  import type { Identity } from "~/identity/Identity";
   import { cleanHtml } from "~/utils/cleanHtml";
 
-  export let who: Readable<IdentityData>;
+  export let identity: Identity;
   export let content: string;
+
 </script>
 
-{#if $who}
+{#if identity}
   <message>
-    <id-circle style="background-color:{$who.shared.color}" />
+    <id-circle style="background-color:{identity.get('color')}" />
     <container>
-      <who>{$who.shared.name}</who>
+      <who>{identity.get("name")}</who>
       <content>{@html cleanHtml(content)}</content>
     </container>
   </message>
@@ -53,4 +53,5 @@
     margin-left: 0px;
     margin-right: 8px;
   }
+
 </style>

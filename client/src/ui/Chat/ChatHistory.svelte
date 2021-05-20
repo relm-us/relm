@@ -10,9 +10,8 @@
   let div;
   let autoscroll;
 
-  function sharedStore(playerId) {
-    const store = $Relm.identities.get(playerId);
-    return store;
+  function getIdentity(playerId) {
+    return $Relm.identities.get(playerId);
   }
 
   beforeUpdate(() => {
@@ -25,6 +24,7 @@
       div.scrollTo(0, div.scrollHeight);
     }
   });
+
 </script>
 
 <container bind:this={div}>
@@ -36,7 +36,7 @@
         {#if message.u === myID}
           <message class:mine={true}>{@html cleanHtml(message.c)}</message>
         {:else}
-          <Message who={sharedStore(message.u)} content={message.c} />
+          <Message identity={getIdentity(message.u)} content={message.c} />
         {/if}
       {/each}
     </scroll-container>
@@ -88,4 +88,5 @@
     padding: 6px 10px;
     margin: 3px;
   }
+
 </style>
