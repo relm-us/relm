@@ -8,6 +8,8 @@ import { setMe } from "~/av/redux/stateActions";
 import { store as avStore } from "~/av";
 import { browser } from "~/av/browserInfo";
 
+const LONG_TIME_AGO = 600000; // 5 minutes ago
+
 export class Identity {
   manager: IdentityManager;
 
@@ -41,7 +43,8 @@ export class Identity {
   }
 
   get seenAgo() {
-    return performance.now() - (this.lastSeen ?? 0);
+    const lastSeen = this.lastSeen
+    return lastSeen === undefined ? LONG_TIME_AGO : performance.now() - this.lastSeen;
   }
 
   set(fields: object, propagate: boolean = true) {

@@ -133,6 +133,9 @@
               {identity.isLocal
                 ? "(local)"
                 : Math.floor(identity.seenAgo / 1000) + "s"}
+              {identity.lastSeen === undefined
+                ? undefined
+                : Math.floor(identity.lastSeen)}
               [{identity.get("clientId")}]
               {identity.playerId}
             </td>
