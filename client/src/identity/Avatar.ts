@@ -30,7 +30,7 @@ export class Avatar {
   identity: Identity;
   world: World;
 
-  entity: Entity;
+  entity: Entity = null;
   headEntity: Entity;
   emojiEntity: Entity;
 
@@ -107,7 +107,7 @@ export class Avatar {
 
   destroy() {
     this.entity?.destroy();
-    this.entity = undefined;
+    this.entity = null;
   }
 
   syncEntity() {
