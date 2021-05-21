@@ -36,20 +36,29 @@
     showAbbreviatedRoom = !showAbbreviatedRoom;
   }
 
+  let showAbbreviatedIdentities = true;
+  function toggleIdentities() {
+    showAbbreviatedIdentities = !showAbbreviatedIdentities;
+  }
+
   let idActive = 0;
   let idTotal = 0;
+  let identities = [];
 
   onMount(() => {
     const interval = setInterval(() => {
-      if (!$Relm) return;
+      if (!$Relm || minimized) return;
 
       if ($Relm.identities.active !== idActive)
         idActive = $Relm.identities.active;
 
       if ($Relm.identities.total !== idTotal) idTotal = $Relm.identities.total;
+
+      identities = [...$Relm.identities.identities.values()];
     }, 1000);
     return () => clearInterval(interval);
   });
+
 </script>
 
 <container class:connected={$yConnectState === "connected"}>
@@ -102,10 +111,34 @@
       </tr>
       <tr><th>physics:</th><td>{$world !== null}</td></tr>
       <tr><th>viewport:</th><td>{$viewport !== null} {vw}</td></tr>
-      <tr>
-        <th>identities:</th>
-        <td>{idActive} / {idTotal}</td>
-      </tr>
+
+      {#if showAbbreviatedIdentities}
+        <tr>
+          <th>identities:</th>
+          <td>
+            <button on:click={toggleIdentities}>
+              {idActive} / {idTotal}
+            </button>
+          </td>
+        </tr>
+      {:else}
+        <tr>
+          <th>identities:</th>
+          <td />
+        </tr>
+        {#each identities as identity}
+          <tr class="identity-row">
+            <th>{identity.get("name")}</th>
+            <td>
+              {identity.isLocal
+                ? "(local)"
+                : Math.floor(identity.seenAgo / 1000) + "s"}
+              [{identity.get("clientId")}]
+              {identity.playerId}
+            </td>
+          </tr>
+        {/each}
+      {/if}
     </table>
   </Pane>
 </container>
@@ -137,4 +170,9 @@
     color: gold;
     padding-top: 1px;
   }
+  .identity-row th,
+  .identity-row td {
+    font-size: 10px;
+  }
+
 </style>

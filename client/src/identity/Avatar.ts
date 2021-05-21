@@ -53,9 +53,7 @@ export class Avatar {
   }
 
   wasRecentlySeen() {
-    const lastSeen = this.identity.lastSeen;
-    const seenAgoMillis = performance.now() - (lastSeen ?? -LAST_SEEN_TIMEOUT);
-    return seenAgoMillis < LAST_SEEN_TIMEOUT;
+    return this.identity.seenAgo < LAST_SEEN_TIMEOUT;
   }
 
   maybeMakeAvatar() {

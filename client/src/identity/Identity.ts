@@ -40,6 +40,10 @@ export class Identity {
     return this.manager.clientLastSeen.get(this.sharedFields.clientId);
   }
 
+  get seenAgo() {
+    return performance.now() - (this.lastSeen ?? 0);
+  }
+
   set(fields: object, propagate: boolean = true) {
     Object.assign(this.sharedFields, fields);
     if (this.manager.relm.roomClient) {
