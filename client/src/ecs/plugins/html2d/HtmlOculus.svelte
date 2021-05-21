@@ -31,7 +31,8 @@
 
   function toggleMute() {
     if (identity && isLocal) {
-      identity.toggleShowAudio();
+      if (!$stream) $mediaSetupState = "setting";
+      else identity.toggleShowAudio();
     }
   }
 
