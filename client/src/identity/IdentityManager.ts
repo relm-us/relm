@@ -105,9 +105,7 @@ export class IdentityManager extends EventEmitter {
   }
 
   remove(playerId: PlayerID) {
-    const identity = this.get(playerId);
-    identity?.avatar.destroy();
-    this.identities.delete(playerId);
+    this.get(playerId)?.avatar.destroy();
   }
 
   removeByClientId(clientId: YClientID) {
