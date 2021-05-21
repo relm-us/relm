@@ -61,6 +61,7 @@ export default class WorldManager {
 
   previousLoopTime: number = 0;
   sendLocalStateInterval: any; // Timeout
+  started: boolean = false;
 
   constructor({ world, viewport }) {
     if (!world) throw new Error(`world is required`);
@@ -336,6 +337,8 @@ export default class WorldManager {
     // Signal to all participants we are "present" and our avatar can be shown
     this.identities.me.set({ status: "present" });
 
+    if (this.started) return;
+
     // Pre-compile assets to prevent some jank while exploring the world
     this.world.presentation.compile();
 
@@ -346,6 +349,8 @@ export default class WorldManager {
 
     worldState.set("running");
     playState.set("playing");
+
+    this.started = true;
   }
 
   stop() {
