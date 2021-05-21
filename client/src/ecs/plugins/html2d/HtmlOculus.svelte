@@ -7,6 +7,7 @@
     AudioLevelIndicator,
     VideoIcon,
   } from "video-mirror";
+  import { mediaSetupState } from "~/stores/mediaSetupState";
   import { Relm } from "~/stores/Relm";
   import HtmlOculusMic from "./HtmlOculusMic.svelte";
   import Fullscreen from "./Fullscreen.svelte";
@@ -36,8 +37,10 @@
 
   function toggleVideo() {
     if (identity) {
-      if (isLocal) identity.toggleShowVideo();
-      else if (showVideo && document.fullscreenEnabled) {
+      if (isLocal) {
+        if (!$stream) $mediaSetupState = "setting";
+        else identity.toggleShowVideo();
+      } else if (showVideo && document.fullscreenEnabled) {
         fullscreen = true;
       }
     }
@@ -71,39 +74,38 @@
 
   // ignore warning about missing props
   $$props;
+
 </script>
 
-{#if $stream}
-  <container class:translucent style="--background-image:url({shineImg})">
-    <oculus class="round" on:click={toggleVideo}>
-      {#if showVideo}
-        {#if fullscreen}
-          <Fullscreen on:close={exitFullscreen}>
-            <Video stream={$stream} mirror={false} class="oculus-video" />
-            <picture-in-picture>
-              <Video stream={$localStream} mirror={true} class="oculus-video" />
-            </picture-in-picture>
-          </Fullscreen>
-        {:else}
-          <Video stream={$stream} mirror={isLocal} class="oculus-video" />
-        {/if}
+<container class:translucent style="--background-image:url({shineImg})">
+  <oculus class="round" on:click={toggleVideo}>
+    {#if showVideo}
+      {#if fullscreen}
+        <Fullscreen on:close={exitFullscreen}>
+          <Video stream={$stream} mirror={false} class="oculus-video" />
+          <picture-in-picture>
+            <Video stream={$localStream} mirror={true} class="oculus-video" />
+          </picture-in-picture>
+        </Fullscreen>
       {:else}
-        <icon><VideoIcon /></icon>
+        <Video stream={$stream} mirror={isLocal} class="oculus-video" />
       {/if}
-      {#if showAudio && !isLocal}
-        <Audio stream={$stream} {volume} />
-      {/if}
-    </oculus>
-    {#if !translucent}
-      <HtmlOculusMic muted={!showAudio} on:click={toggleMute}>
-        {#if showAudio && isLocal}
-          <AudioLevelIndicator class="oculus-audio-level-indicator" />
-        {/if}
-        <AudioIcon enabled={showAudio} class="oculus-audio-icon" />
-      </HtmlOculusMic>
+    {:else}
+      <icon><VideoIcon /></icon>
     {/if}
-  </container>
-{/if}
+    {#if showAudio && !isLocal}
+      <Audio stream={$stream} {volume} />
+    {/if}
+  </oculus>
+  {#if !translucent}
+    <HtmlOculusMic muted={!showAudio} on:click={toggleMute}>
+      {#if showAudio && isLocal}
+        <AudioLevelIndicator class="oculus-audio-level-indicator" />
+      {/if}
+      <AudioIcon enabled={showAudio} class="oculus-audio-icon" />
+    </HtmlOculusMic>
+  {/if}
+</container>
 
 <style lang="scss">
   container {
@@ -187,4 +189,5 @@
     bottom: 24px;
     border: 2px solid white;
   }
+
 </style>
