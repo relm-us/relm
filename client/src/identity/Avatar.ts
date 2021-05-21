@@ -107,6 +107,7 @@ export class Avatar {
 
   destroy() {
     this.entity?.destroy();
+    this.entity = undefined;
   }
 
   syncEntity() {
