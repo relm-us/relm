@@ -6,6 +6,8 @@
     AudioIcon,
     AudioLevelIndicator,
     VideoIcon,
+    audioRequested,
+    videoRequested,
   } from "video-mirror";
   import { mediaSetupState } from "~/stores/mediaSetupState";
   import { Relm } from "~/stores/Relm";
@@ -31,7 +33,7 @@
 
   function toggleMute() {
     if (identity && isLocal) {
-      if (!$stream) $mediaSetupState = "setting";
+      if (!$audioRequested) $mediaSetupState = "setting";
       else identity.toggleShowAudio();
     }
   }
@@ -39,7 +41,7 @@
   function toggleVideo() {
     if (identity) {
       if (isLocal) {
-        if (!$stream) $mediaSetupState = "setting";
+        if (!$videoRequested) $mediaSetupState = "setting";
         else identity.toggleShowVideo();
       } else if (showVideo && document.fullscreenEnabled) {
         fullscreen = true;
