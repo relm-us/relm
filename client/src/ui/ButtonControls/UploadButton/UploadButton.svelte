@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Button from "../Button";
+  import Button from "~/ui/Button";
   import IoIosCloudUpload from "svelte-icons/io/IoIosCloudUpload.svelte";
 
-  import Uploader from "../Uploader";
+  import Uploader from "./Uploader";
 
   let uploader;
 

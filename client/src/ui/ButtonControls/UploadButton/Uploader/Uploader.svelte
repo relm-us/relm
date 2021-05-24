@@ -1,6 +1,6 @@
 <script lang="ts">
   import { config } from "~/config";
-  import Uppy from "~/ui/Uploader/Uppy.svelte";
+  import Uppy from "./Uppy.svelte";
 
   let visible = false;
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Button from "../Button";
+  import Button from "~/ui/Button";
   import IoIosHappy from "svelte-icons/io/IoIosHappy.svelte";
   import { getCharacterFacemaps } from "~/identity/colors";
   import { randomMorphInfluences } from "~/identity/morphs";

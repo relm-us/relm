@@ -10,10 +10,11 @@
   import Input from "~/input";
   import Button from "~/ui/Button";
 
+  import MediaSetupButton from "~/ui/ButtonControls/MediaSetupButton";
+  import UploadButton from "~/ui/ButtonControls/UploadButton";
+  import RandomizeMe from "~/ui/ButtonControls/RandomizeMe";
+
   import GroupUngroupButton from "~/ui/GroupUngroupButton";
-  import MediaSetupButton from "~/ui/MediaSetupButton";
-  import UploadButton from "~/ui/UploadButton";
-  import RandomizeMe from "~/ui/RandomizeMe";
   import WorldStatePane from "~/ui/WorldStatePane";
   import ResetWorldButton from "~/ui/ResetWorldButton";
   import Chat from "~/ui/Chat";

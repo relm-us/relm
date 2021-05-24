@@ -1,6 +1,6 @@
 <script lang="ts">
   import LeftPanel, { Header } from "~/ui/LeftPanel";
-  import UploadButton from "~/ui/UploadButton";
+  import UploadButton from "~/ui/ButtonControls/UploadButton";
   import Capsule from "~/ui/Capsule";
   import { Skybox } from "~/ecs/plugins/skybox";
   import { nanoid } from "nanoid";

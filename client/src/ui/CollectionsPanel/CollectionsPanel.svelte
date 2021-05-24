@@ -4,7 +4,7 @@
   import LeftPanel, { Header } from "~/ui/LeftPanel";
   import type { Collection } from "./types";
   import { uuidv4 } from "~/utils/uuid";
-  import UploadButton from "~/ui/UploadButton";
+  // import UploadButton from "~/ui/UploadButton";
 
   import IoIosTrash from "svelte-icons/io/IoIosTrash.svelte";
 
@@ -414,9 +414,9 @@
     <div class="items">
       <div class="list-header">{currentList.name}</div>
       <div class="upload">
-        <UploadButton on:uploaded={onUploaded}>
+        <!-- <UploadButton on:uploaded={onUploaded}>
           <lbl>Upload</lbl>
-        </UploadButton>
+        </UploadButton> -->
       </div>
       <SortableList bind:items={currentList.items} list={currentList} />
     </div>
@@ -458,7 +458,7 @@
     --margin: 4px;
     margin-bottom: 4px;
   }
-  .upload lbl {
+  /* .upload lbl {
     margin-left: 8px;
-  }
+  } */
 </style>

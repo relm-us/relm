@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Button from "../Button";
+  import Button from "~/ui/Button";
   import { VideoIcon } from "video-mirror";
   import { mediaSetupState } from "~/stores/mediaSetupState";
 
