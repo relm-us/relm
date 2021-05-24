@@ -1244,6 +1244,7 @@ export default class RoomClient {
 
       this._shareProducer.on("transportclose", () => {
         this._shareProducer = null;
+        this.enableWebcam();
       });
 
       this._shareProducer.on("trackended", () => {
@@ -1255,6 +1256,7 @@ export default class RoomClient {
         );
 
         this.disableShare().catch(() => {});
+        this.enableWebcam();
       });
     } catch (error) {
       logger.error("enableShare() | failed:%o", error);

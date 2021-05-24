@@ -13,6 +13,7 @@
   import MediaSetupButton from "~/ui/ButtonControls/MediaSetupButton";
   import UploadButton from "~/ui/ButtonControls/UploadButton";
   import RandomizeMe from "~/ui/ButtonControls/RandomizeMe";
+  import ShareScreenButton from "~/ui/ButtonControls/ShareScreenButton";
 
   import GroupUngroupButton from "~/ui/GroupUngroupButton";
   import WorldStatePane from "~/ui/WorldStatePane";
@@ -115,6 +116,7 @@
     <overlay-left>
       <play-buttons>
         <MediaSetupButton />
+        <ShareScreenButton />
         <UploadButton on:uploaded={onUpload} />
         <RandomizeMe />
       </play-buttons>
