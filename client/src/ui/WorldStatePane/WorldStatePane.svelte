@@ -4,6 +4,7 @@
 
   import { audioRequested, videoRequested } from "video-mirror";
   import { mediaSetupState } from "~/stores/mediaSetupState";
+  import { Identity } from "~/identity/Identity";
 
   import { Relm } from "~/stores/Relm";
   import { subrelm, entryway } from "~/stores/subrelm";
@@ -55,6 +56,9 @@
       if ($Relm.identities.total !== idTotal) idTotal = $Relm.identities.total;
 
       identities = [...$Relm.identities.identities.values()];
+      identities.sort((a: Identity, b: Identity) => {
+        return a.seenAgo - b.seenAgo;
+      });
     }, 1000);
     return () => clearInterval(interval);
   });
@@ -68,81 +72,83 @@
     showMinimize={true}
     bind:minimized
   >
-    <table>
-      <tr><th>subrelm:</th><td>{$subrelm}</td></tr>
-      <tr><th>entryway:</th><td>{$entryway}</td></tr>
-      <tr><th>world state:</th><td>{$worldState}</td></tr>
-      <tr><th>conference:</th><td>{$roomConnectState}</td></tr>
-      <tr><th>yjs:</th><td>{$connection.state}<br />{$yLoadingState}</td></tr>
-      {#if $connection.state === "connected"}
-        <tr>
-          <th>yjs room:</th>
-          <td>
-            {#if showAbbreviatedRoom}
-              <button on:click={toggleRoom}>
-                {$connection.room.split("-")[0]}...
-              </button>
-            {:else}
-              {$connection.room}
-            {/if}
-          </td>
-        </tr>
-      {/if}
-      <tr>
-        <th>media setup</th>
-        <td> {$mediaSetupState} </td>
-      </tr>
-      <tr>
-        <th>audio</th>
-        <td> {$audioRequested} </td>
-      </tr>
-      <tr>
-        <th>video</th>
-        <td> {$videoRequested} </td>
-      </tr>
-      <tr>
-        <th>loading:</th>
-        <td>
-          {$loadingState}
-          {$loaded}/{$maximum}
-          <div>(Ent: {$entitiesLoaded}/{$entitiesMaximum})</div>
-          <div>(Ast: {$assetsLoaded}/{$assetsMaximum})</div>
-        </td>
-      </tr>
-      <tr><th>physics:</th><td>{$world !== null}</td></tr>
-      <tr><th>viewport:</th><td>{$viewport !== null} {vw}</td></tr>
-
-      {#if showAbbreviatedIdentities}
-        <tr>
-          <th>identities:</th>
-          <td>
-            <button on:click={toggleIdentities}>
-              {idActive} / {idTotal}
-            </button>
-          </td>
-        </tr>
-      {:else}
-        <tr>
-          <th>identities:</th>
-          <td />
-        </tr>
-        {#each identities as identity}
-          <tr class="identity-row">
-            <th>{identity.get("name")}</th>
+    <inner-scroll>
+      <table>
+        <tr><th>subrelm:</th><td>{$subrelm}</td></tr>
+        <tr><th>entryway:</th><td>{$entryway}</td></tr>
+        <tr><th>world state:</th><td>{$worldState}</td></tr>
+        <tr><th>conference:</th><td>{$roomConnectState}</td></tr>
+        <tr><th>yjs:</th><td>{$connection.state}<br />{$yLoadingState}</td></tr>
+        {#if $connection.state === "connected"}
+          <tr>
+            <th>yjs room:</th>
             <td>
-              {identity.isLocal
-                ? "(local)"
-                : Math.floor(identity.seenAgo / 1000) + "s"}
-              {identity.lastSeen === undefined
-                ? undefined
-                : Math.floor(identity.lastSeen)}
-              [{identity.get("clientId")}]
-              {identity.playerId}
+              {#if showAbbreviatedRoom}
+                <button on:click={toggleRoom}>
+                  {$connection.room.split("-")[0]}...
+                </button>
+              {:else}
+                {$connection.room}
+              {/if}
             </td>
           </tr>
-        {/each}
-      {/if}
-    </table>
+        {/if}
+        <tr>
+          <th>media setup</th>
+          <td> {$mediaSetupState} </td>
+        </tr>
+        <tr>
+          <th>audio</th>
+          <td> {$audioRequested} </td>
+        </tr>
+        <tr>
+          <th>video</th>
+          <td> {$videoRequested} </td>
+        </tr>
+        <tr>
+          <th>loading:</th>
+          <td>
+            {$loadingState}
+            {$loaded}/{$maximum}
+            <div>(Ent: {$entitiesLoaded}/{$entitiesMaximum})</div>
+            <div>(Ast: {$assetsLoaded}/{$assetsMaximum})</div>
+          </td>
+        </tr>
+        <tr><th>physics:</th><td>{$world !== null}</td></tr>
+        <tr><th>viewport:</th><td>{$viewport !== null} {vw}</td></tr>
+
+        {#if showAbbreviatedIdentities}
+          <tr>
+            <th>identities:</th>
+            <td>
+              <button on:click={toggleIdentities}>
+                {idActive} / {idTotal}
+              </button>
+            </td>
+          </tr>
+        {:else}
+          <tr>
+            <th>identities:</th>
+            <td />
+          </tr>
+          {#each identities as identity}
+            <tr class="identity-row">
+              <th>{identity.get("name")}</th>
+              <td>
+                {identity.isLocal
+                  ? "(local)"
+                  : Math.floor(identity.seenAgo / 1000) + "s"}
+                {identity.lastSeen === undefined
+                  ? undefined
+                  : Math.floor(identity.lastSeen)}
+                [{identity.get("clientId")}]
+                {identity.playerId}
+              </td>
+            </tr>
+          {/each}
+        {/if}
+      </table>
+    </inner-scroll>
   </Pane>
 </container>
 
@@ -176,6 +182,13 @@
   .identity-row th,
   .identity-row td {
     font-size: 10px;
+  }
+
+  inner-scroll {
+    display: block;
+    overflow: auto;
+    pointer-events: all;
+    max-height: 90vh;
   }
 
 </style>
