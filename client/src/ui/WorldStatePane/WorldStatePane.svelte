@@ -135,13 +135,16 @@
             <tr class="identity-row">
               <th>{identity.get("name")}</th>
               <td>
-                {identity.isLocal
-                  ? "(local)"
-                  : Math.floor(identity.seenAgo / 1000) + "s"}
-                {identity.lastSeen === undefined
-                  ? undefined
-                  : Math.floor(identity.lastSeen)}
-                [{identity.get("clientId")}]
+                {#if identity.isLocal}
+                  (local)
+                {:else if identity.lastSeen === undefined}
+                  (not seen)
+                {:else}
+                  {Math.floor(identity.seenAgo / 1000) + "s"}
+                {/if}
+                {identity.avatar.distance
+                  ? identity.avatar.distance.toFixed(1)
+                  : "?"}' [{identity.get("clientId")}]
                 {identity.playerId}
               </td>
             </tr>

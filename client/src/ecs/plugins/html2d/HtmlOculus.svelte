@@ -14,7 +14,6 @@
   import HtmlOculusMic from "./HtmlOculusMic.svelte";
   import Fullscreen from "./Fullscreen.svelte";
   import shineImg from "./shine.svg";
-  import { DistanceRef } from "~/ecs/plugins/distance";
 
   export let stream;
   export let localStream;
@@ -22,7 +21,6 @@
   export let showAudio;
   export let showVideo;
   export let playerId;
-  export let entity;
 
   let fullscreen = false;
   let translucent = false;
@@ -54,20 +52,18 @@
   }
 
   onMount(() => {
+    if (isLocal) return;
     const interval = setInterval(() => {
-      const ref = entity.get(DistanceRef);
-      if (ref && ref.value !== null) {
-        const distance = ref.value;
-        if (distance < 3) {
-          volume = 1;
-          translucent = false;
-        } else if (distance < 5) {
-          volume = (2 - (distance - 3)) * 0.5;
-          translucent = false;
-        } else {
-          volume = 0;
-          translucent = true;
-        }
+      const distance = identity.avatar.distance;
+      if (distance >= 0 && distance < 3) {
+        volume = 1;
+        translucent = false;
+      } else if (distance < 5) {
+        volume = (2 - (distance - 3)) * 0.5;
+        translucent = false;
+      } else {
+        volume = 0;
+        translucent = true;
       }
     }, 100);
     return () => {

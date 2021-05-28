@@ -10,7 +10,7 @@ import { ModelRef } from "~/ecs/plugins/model";
 import { Html2d, Oculus, OculusRef } from "~/ecs/plugins/html2d";
 import { Animation } from "~/ecs/plugins/animation";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
-import { Distance } from "~/ecs/plugins/distance";
+import { Distance, DistanceRef } from "~/ecs/plugins/distance";
 import { Morph } from "~/ecs/plugins/morph";
 import { Controller } from "~/ecs/plugins/player-control";
 import {
@@ -108,6 +108,10 @@ export class Avatar {
   destroy() {
     this.entity?.destroy();
     this.entity = null;
+  }
+
+  get distance() {
+    return this.entity?.get(DistanceRef)?.value;
   }
 
   syncEntity() {
