@@ -9,6 +9,7 @@ import { store as avStore } from "~/av";
 import { browser } from "~/av/browserInfo";
 
 const LONG_TIME_AGO = 600000; // 5 minutes ago
+const LAST_SEEN_TIMEOUT = 15000;
 
 export class Identity {
   manager: IdentityManager;
@@ -43,8 +44,14 @@ export class Identity {
   }
 
   get seenAgo() {
-    const lastSeen = this.lastSeen
-    return lastSeen === undefined ? LONG_TIME_AGO : performance.now() - this.lastSeen;
+    const lastSeen = this.lastSeen;
+    return lastSeen === undefined
+      ? LONG_TIME_AGO
+      : performance.now() - this.lastSeen;
+  }
+
+  wasRecentlySeen() {
+    return this.seenAgo < LAST_SEEN_TIMEOUT;
   }
 
   set(fields: object, propagate: boolean = true) {

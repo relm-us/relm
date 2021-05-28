@@ -22,7 +22,6 @@ import {
 import { chatOpen } from "~/stores/chatOpen";
 
 const OCULUS_HEIGHT = 2.4;
-const LAST_SEEN_TIMEOUT = 15000;
 const e1 = new Euler(0, 0, 0, "YXZ");
 const v1 = new Vector3();
 
@@ -39,29 +38,26 @@ export class Avatar {
   constructor(identity: Identity, world: World) {
     this.identity = identity;
     this.world = world;
-    this.maybeMakeAvatar();
+    if (this.identity.isLocal) {
+      this.makeLocalAvatar();
+    }
   }
 
   // This function is called regularly (each loop) and brings the ECS state
   // up to date with the Identity state, as needed.
   syncFromIdentityState() {
     if (this.identity.sharedFieldsUpdated) {
-      this.maybeMakeAvatar();
+      this.maybeMakeRemoteAvatar();
       this.syncEntity();
       this.identity.sharedFieldsUpdated = false;
     }
   }
 
-  wasRecentlySeen() {
-    return this.identity.seenAgo < LAST_SEEN_TIMEOUT;
-  }
-
-  maybeMakeAvatar() {
-    if (this.entity) return;
-    if (this.identity.isLocal) {
-      this.makeLocalAvatar();
-    } else if (
-      this.wasRecentlySeen() &&
+  maybeMakeRemoteAvatar() {
+    if (
+      !this.entity &&
+      !this.identity.isLocal &&
+      this.identity.wasRecentlySeen() &&
       this.identity.get("status") !== "initial"
     ) {
       this.makeRemoteAvatar();
