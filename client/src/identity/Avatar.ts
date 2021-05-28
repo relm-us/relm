@@ -22,6 +22,7 @@ import {
 import { chatOpen } from "~/stores/chatOpen";
 
 const OCULUS_HEIGHT = 2.4;
+const DEFAULT_LABEL_COLOR = "#D0D0D0";
 const e1 = new Euler(0, 0, 0, "YXZ");
 const v1 = new Vector3();
 
@@ -34,13 +35,33 @@ export class Avatar {
   emojiEntity: Entity;
 
   headAngle: number;
+  _editableName: boolean;
 
   constructor(identity: Identity, world: World) {
     this.identity = identity;
     this.world = world;
+
+    // By default, the avatar's name is allowed to be edited (but can be changed by JWT)
+    this._editableName = this.identity.isLocal;
+
     if (this.identity.isLocal) {
       this.makeLocalAvatar();
     }
+  }
+
+  get distance() {
+    return this.entity?.get(DistanceRef)?.value;
+  }
+
+  get editableName() {
+    return this._editableName;
+  }
+
+  set editableName(value) {
+    this._editableName = value;
+    const name = this.identity.get("name");
+    const color = this.identity.get("color");
+    this.changeLabel(name, color, this._editableName);
   }
 
   // This function is called regularly (each loop) and brings the ECS state
@@ -106,10 +127,6 @@ export class Avatar {
     this.entity = null;
   }
 
-  get distance() {
-    return this.entity?.get(DistanceRef)?.value;
-  }
-
   syncEntity() {
     if (!this.entity) return;
     this.syncLabel();
@@ -122,10 +139,11 @@ export class Avatar {
   syncLabel() {
     const identity = this.identity;
     const name = identity.get("name");
+    const color = identity.get("color");
     if (name && !this.entity.has(Html2d)) {
-      this.addLabel(name, identity.isLocal, identity.get("color"));
+      this.addLabel(name, color, this.editableName);
     } else if (name && this.entity.has(Html2d)) {
-      this.changeLabel(name, identity.get("color"));
+      this.changeLabel(name, color, this.editableName);
     } else if (!name && this.entity.has(Html2d)) {
       this.entity.remove(Html2d);
     }
@@ -216,8 +234,12 @@ export class Avatar {
 
   changeEmote(content: string) {
     const html2d = this.emojiEntity.get(Html2d);
-    html2d.content = content;
-    html2d.modified();
+    if (!html2d) return;
+    
+    if (html2d.content !== content) {
+      html2d.content = content;
+      html2d.modified();
+    }
   }
 
   removeEmote() {
@@ -238,21 +260,19 @@ export class Avatar {
 
   changeSpeech(message: string) {
     const label = this.headEntity.get(Html2d);
-    label.content = message;
-    label.modified();
+    if (!label) return;
+
+    if (label.content !== message) {
+      label.content = message;
+      label.modified();
+    }
   }
 
-  disableEditingLabel() {
-    const label = this.entity.get(Html2d);
-    label.editable = false;
-    label.modified();
-  }
-
-  addLabel(name: string, editable: boolean, color?: string) {
+  addLabel(name: string, color: string, editable: boolean) {
     const label = {
       kind: "LABEL",
       content: name,
-      underlineColor: color ? color : null,
+      underlineColor: color || DEFAULT_LABEL_COLOR,
       offset: new Vector3(0, -0.2, 0),
       vanchor: 1,
       editable,
@@ -260,13 +280,24 @@ export class Avatar {
     this.entity.add(Html2d, label);
   }
 
-  changeLabel(name: string, color?: string) {
+  changeLabel(name: string, color: string, editable: boolean) {
     const label = this.entity.get(Html2d);
-    label.content = name;
-    if (color) {
-      label.underlineColor = color;
+    if (!label) return;
+
+    if (label.content !== name) {
+      label.content = name;
+      label.modified();
     }
-    label.modified();
+
+    if (label.editable !== editable) {
+      label.editable = editable;
+      label.modified();
+    }
+
+    if (label.underlineColor !== color) {
+      label.underlineColor = color;
+      label.modified();
+    }
   }
 
   moveTo(coords: Vector3) {

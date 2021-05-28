@@ -189,7 +189,7 @@ export default class WorldManager {
     // set name from server, if available (overrides localstorage)
     if (connectOpts.username) {
       this.identities.me.set({ name: connectOpts.username });
-      this.identities.me.avatar.disableEditingLabel();
+      this.identities.me.avatar.editableName = false;
     }
 
     mediaSetupState.subscribe(($mediaSetupState) => {
