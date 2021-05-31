@@ -20,13 +20,14 @@
   import ResetWorldButton from "~/ui/ResetWorldButton";
   import Chat from "~/ui/Chat";
 
-  import LoadingScreen from "~/ui/LoadingScreen";
+  import { LoadingScreen, LoadingFailed } from "~/ui/LoadingScreen";
   import MediaSetup from "~/ui/MediaSetup";
 
   import { runCommand } from "~/commands";
   import { globalEvents } from "~/events";
 
   import { world } from "~/stores/world";
+  import { worldState } from "~/stores/worldState";
   import { mode } from "~/stores/mode";
   import { openPanel } from "~/stores/openPanel";
   import { mediaSetupState } from "~/stores/mediaSetupState";
@@ -48,13 +49,18 @@
   const onDoneMediaSetup = ({ detail }) => {
     $mediaSetupState = "done";
   };
+
 </script>
 
 {#if $mediaSetupState !== "done"}
   <MediaSetup on:done={onDoneMediaSetup} />
 {/if}
 
-<LoadingScreen />
+{#if $worldState === "loading"}
+  <LoadingScreen />
+{:else if $worldState === "error"}
+  <LoadingFailed />
+{/if}
 
 <!-- The virtual world! -->
 {#if $world}
@@ -200,4 +206,5 @@
     left: 300px;
     transform: translate(-50%) rotate(90deg) translate(50%, -50%);
   }
+
 </style>

@@ -1,47 +1,17 @@
 <script lang="ts">
-  import { fade } from "svelte/transition";
-  import { worldState } from "~/stores/worldState";
+  import FullScreen from "../FullScreen";
   import { loaded, maximum } from "~/stores/loading";
+
 </script>
 
-{#if $worldState === "loading"}
-  <loading transition:fade>
-    <container>
-      <img src="/loading.png" alt="Loading" />
-      <progress-bar style="--percent:{($loaded / $maximum) * 140}%" />
-    </container>
-  </loading>
-{:else if $worldState === "error"}
-  <loading transition:fade>
-    <h1>Oh!</h1>
-    <h2>Unable to load this relm.</h2>
-  </loading>
-{/if}
+<FullScreen>
+  <container>
+    <img src="/loading.png" alt="Loading" />
+    <progress-bar style="--percent:{($loaded / $maximum) * 140}%" />
+  </container>
+</FullScreen>
 
 <style>
-  loading {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    z-index: 3;
-
-    background: rgba(45, 45, 45, 1);
-  }
-
-  h1 {
-    font-size: 48px;
-    color: white;
-  }
-  h2 {
-    font-size: 32px;
-    color: rgba(200, 200, 200, 1);
-  }
-
   container {
     display: block;
     position: relative;
@@ -73,4 +43,5 @@
     border-radius: 16px;
     z-index: -1;
   }
+
 </style>
