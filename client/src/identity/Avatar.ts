@@ -122,6 +122,7 @@ export class Avatar {
     });
   }
 
+
   destroy() {
     this.entity?.destroy();
     this.entity = null;
@@ -235,7 +236,7 @@ export class Avatar {
   changeEmote(content: string) {
     const html2d = this.emojiEntity.get(Html2d);
     if (!html2d) return;
-    
+
     if (html2d.content !== content) {
       html2d.content = content;
       html2d.modified();
@@ -306,6 +307,8 @@ export class Avatar {
   }
 
   getTransformData() {
+    if (!this.entity) return;
+    
     const transformData = [];
     const transform = this.entity.get(Transform);
     if (!transform) return;
