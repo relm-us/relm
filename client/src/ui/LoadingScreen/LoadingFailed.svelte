@@ -3,7 +3,7 @@
 
 </script>
 
-<FullScreen>
+<FullScreen zIndex={6}>
   <h1>Oh!</h1>
   <h2>Unable to load this relm.</h2>
 </FullScreen>

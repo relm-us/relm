@@ -4,7 +4,7 @@
 
 </script>
 
-<FullScreen>
+<FullScreen zIndex={3} justify="center">
   <container>
     <img src="/loading.png" alt="Loading" />
     <progress-bar style="--percent:{($loaded / $maximum) * 140}%" />

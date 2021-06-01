@@ -12,7 +12,7 @@
 
   import MediaSetupButton from "~/ui/ButtonControls/MediaSetupButton";
   import UploadButton from "~/ui/ButtonControls/UploadButton";
-  import RandomizeMe from "~/ui/ButtonControls/RandomizeMe";
+  import AvatarSetupButton from "~/ui/ButtonControls/AvatarSetupButton";
   import ShareScreenButton from "~/ui/ButtonControls/ShareScreenButton";
 
   import GroupUngroupButton from "~/ui/GroupUngroupButton";
@@ -21,6 +21,7 @@
   import Chat from "~/ui/Chat";
 
   import { LoadingScreen, LoadingFailed } from "~/ui/LoadingScreen";
+  import { AvatarChooser } from "~/ui/AvatarBuilder";
   import MediaSetup from "~/ui/MediaSetup";
 
   import { runCommand } from "~/commands";
@@ -30,7 +31,8 @@
   import { worldState } from "~/stores/worldState";
   import { mode } from "~/stores/mode";
   import { openPanel } from "~/stores/openPanel";
-  import { mediaSetupState } from "~/stores/mediaSetupState";
+  import { setupState } from "~/stores/setupState";
+  import { askAvatarSetup } from "~/stores/askAvatarSetup";
 
   const playMode = () => {
     globalEvents.emit("switch-mode", "play");
@@ -47,13 +49,20 @@
   };
 
   const onDoneMediaSetup = ({ detail }) => {
-    $mediaSetupState = "done";
+    if ($askAvatarSetup) $setupState = "avatar";
+    else $setupState = "done";
+  };
+
+  const onDoneAvatarSetup = ({ detail }) => {
+    $setupState = "done";
   };
 
 </script>
 
-{#if $mediaSetupState !== "done"}
+{#if $setupState === "media"}
   <MediaSetup on:done={onDoneMediaSetup} />
+{:else if $setupState === "avatar"}
+  <AvatarChooser on:done={onDoneAvatarSetup} />
 {/if}
 
 {#if $worldState === "loading"}
@@ -121,10 +130,10 @@
   <overlay-content>
     <overlay-left>
       <play-buttons>
-        <MediaSetupButton />
         <ShareScreenButton />
+        <MediaSetupButton />
+        <AvatarSetupButton />
         <UploadButton on:uploaded={onUpload} />
-        <RandomizeMe />
       </play-buttons>
       {#if $mode === "build"}
         <GroupUngroupButton />

@@ -1,25 +1,28 @@
 <script>
   import { fade } from "svelte/transition";
 
+  export let zIndex = 3;
+  export let justify = "flex-start";
+
 </script>
 
-<loading transition:fade>
+<fullscreen out:fade style="z-index: {zIndex}; justify-content: {justify}">
   <slot />
-</loading>
+</fullscreen>
 
 <style>
-  loading {
+  fullscreen {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
 
     position: fixed;
+    overflow-y: auto;
     width: 100%;
     height: 100%;
-    z-index: 3;
 
     background: rgba(45, 45, 45, 1);
+    color: white;
   }
 
 </style>

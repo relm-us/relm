@@ -1,16 +1,18 @@
 <script lang="ts">
   import Button from "~/ui/Button";
-  import { VideoIcon } from "video-mirror";
+  import IoIosHappy from "svelte-icons/io/IoIosHappy.svelte";
+  
   import { setupState } from "~/stores/setupState";
 
   const onClick = () => {
-    $setupState = "media";
+    $setupState = "avatar";
   };
+
 </script>
 
 <Button on:click={onClick}>
   <icon>
-    <VideoIcon />
+    <IoIosHappy />
   </icon>
   <slot />
 </Button>
@@ -22,4 +24,5 @@
     height: 32px;
     margin: 0 auto;
   }
+
 </style>

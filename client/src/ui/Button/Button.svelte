@@ -6,7 +6,19 @@
   export let style: string = undefined;
 
   let dispatch = createEventDispatcher();
+
 </script>
+
+<button
+  {style}
+  class:disabled={!enabled}
+  class:active={active === true}
+  on:mousedown|stopPropagation={() => {
+    dispatch("click");
+  }}
+>
+  <slot />
+</button>
 
 <style>
   button {
@@ -17,17 +29,17 @@
 
     margin-left: var(--margin, 16px);
     margin-right: var(--margin, 16px);
-    padding: 8px 12px;
+    padding: var(--padv, 8px) var(--padh, 12px);
 
     cursor: pointer;
 
     background-color: var(--bg-color, rgba(0, 0, 0, 0.4));
-    color: #dddddd;
+    color: var(--fg-color, #dddddd);
 
-    font-size: 14pt;
+    font-size: var(--font-size, 14pt);
     font-weight: bold;
 
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 0;
     border-top-right-radius: var(--right-radius, 8px);
     border-bottom-right-radius: var(--right-radius, 8px);
     border-top-left-radius: var(--left-radius, 8px);
@@ -48,14 +60,5 @@
   button:active {
     transform: translateY(1px);
   }
-</style>
 
-<button
-  {style}
-  class:disabled={!enabled}
-  class:active={active === true}
-  on:mousedown|stopPropagation={() => {
-    dispatch('click');
-  }}>
-  <slot />
-</button>
+</style>

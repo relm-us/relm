@@ -1,50 +1,55 @@
 <script>
   import { createEventDispatcher } from "svelte";
   import { VideoMirror, audioRequested, videoRequested } from "video-mirror";
+  import { askMediaSetup } from "~/stores/askMediaSetup";
+  import ToggleSwitch from "~/ui/ToggleSwitch";
+  import FullScreen from "~/ui/FullScreen";
   import relmLogo from "./relm-logo.png";
 
   const dispatch = createEventDispatcher();
 
+  let showButtonBar = true;
+
   function joinWith({ detail }) {
+    showButtonBar = false;
     dispatch("done", detail);
   }
 
   function joinWithout() {
+    showButtonBar = false;
     $audioRequested = false;
     $videoRequested = false;
     dispatch("done", { audio: null, video: null });
   }
+
 </script>
 
-<setup>
+<FullScreen zIndex={5}>
   <logo>
     <img src={relmLogo} alt="logo" />
   </logo>
   <message>
     You're about to join a social experience with audio & video.
   </message>
-  <VideoMirror on:done={joinWith} />
+  <VideoMirror
+    on:done={joinWith}
+    tr={{ request_perms: "Use Camera & Mic" }}
+    {showButtonBar}
+  />
+
   <or>or</or>
   <button on:click={joinWithout}> Join without audio / video </button>
-</setup>
+
+  <div class="skip">
+    <ToggleSwitch
+      bind:enabled={$askMediaSetup}
+      labelOff="Skip this screen next time"
+      labelOn="Ask me again next time"
+    />
+  </div>
+</FullScreen>
 
 <style>
-  setup {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-
-    position: fixed;
-    overflow-y: auto;
-    width: 100%;
-    height: 100%;
-    z-index: 4;
-
-    background: rgba(45, 45, 45, 1);
-    color: white;
-  }
-
   logo {
     display: block;
 
@@ -82,4 +87,11 @@
     font-size: 18px;
     color: #bbb;
   }
+
+  .skip {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: #b0b0b0;
+    margin: 3vh 8px 3vh 8px;
+  }
+
 </style>

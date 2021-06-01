@@ -3,7 +3,7 @@
   import Pane from "./Pane.svelte";
 
   import { audioRequested, videoRequested } from "video-mirror";
-  import { mediaSetupState } from "~/stores/mediaSetupState";
+  import { setupState } from "~/stores/setupState";
   import { Identity } from "~/identity/Identity";
 
   import { Relm } from "~/stores/Relm";
@@ -77,6 +77,7 @@
         <tr><th>subrelm:</th><td>{$subrelm}</td></tr>
         <tr><th>entryway:</th><td>{$entryway}</td></tr>
         <tr><th>world state:</th><td>{$worldState}</td></tr>
+        <tr><th>setup state:</th><td>{$setupState}</td></tr>
         <tr><th>conference:</th><td>{$roomConnectState}</td></tr>
         <tr><th>yjs:</th><td>{$connection.state}<br />{$yLoadingState}</td></tr>
         {#if $connection.state === "connected"}
@@ -93,10 +94,6 @@
             </td>
           </tr>
         {/if}
-        <tr>
-          <th>media setup</th>
-          <td> {$mediaSetupState} </td>
-        </tr>
         <tr>
           <th>audio</th>
           <td> {$audioRequested} </td>

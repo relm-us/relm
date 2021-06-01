@@ -4,11 +4,14 @@
   const dispatch = createEventDispatcher();
 
   export let enabled = false;
+  export let labelOn = "On";
+  export let labelOff = "Off";
 
   const toggle = () => {
     enabled = !enabled;
     dispatch("change", enabled);
   };
+
 </script>
 
 <container on:mousedown|stopPropagation={toggle}>
@@ -16,8 +19,8 @@
     <knob class:enabled />
   </toggle>
 
-  <lbl>
-    {#if enabled}On{:else}Off{/if}
+  <lbl on:mousedown|preventDefault>
+    {#if enabled}{labelOn}{:else}{labelOff}{/if}
   </lbl>
 </container>
 
@@ -60,5 +63,7 @@
 
   lbl {
     margin-left: 12px;
+    cursor: default;
   }
+
 </style>

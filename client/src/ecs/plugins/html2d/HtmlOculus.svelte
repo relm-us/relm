@@ -9,7 +9,7 @@
     audioRequested,
     videoRequested,
   } from "video-mirror";
-  import { mediaSetupState } from "~/stores/mediaSetupState";
+  import { setupState } from "~/stores/setupState";
   import { Relm } from "~/stores/Relm";
   import HtmlOculusMic from "./HtmlOculusMic.svelte";
   import Fullscreen from "./Fullscreen.svelte";
@@ -31,7 +31,7 @@
 
   function toggleMute() {
     if (identity && isLocal) {
-      if (!$audioRequested) $mediaSetupState = "setting";
+      if (!$audioRequested) $setupState = "media";
       else identity.toggleShowAudio();
     }
   }
@@ -39,7 +39,7 @@
   function toggleVideo() {
     if (identity) {
       if (isLocal) {
-        if (!$videoRequested) $mediaSetupState = "setting";
+        if (!$videoRequested) $setupState = "media";
         else identity.toggleShowVideo();
       } else if (showVideo && document.fullscreenEnabled) {
         fullscreen = true;

@@ -42,7 +42,7 @@ import {
 
 import { connectAV } from "~/av";
 import type { DecoratedWorld } from "~/types/DecoratedWorld";
-import { mediaSetupState } from "~/stores/mediaSetupState";
+import { setupState } from "~/stores/setupState";
 
 export default class WorldManager {
   world: DecoratedWorld;
@@ -98,12 +98,9 @@ export default class WorldManager {
     /**
      * Start when both loading is done and audio/video screen is complete
      */
-    derived(
-      [loadingState, mediaSetupState],
-      ([$loadingState, $mediaSetupState], set) => {
-        set($loadingState === "loaded" && $mediaSetupState === "done");
-      }
-    ).subscribe((ready) => {
+    derived([loadingState, setupState], ([$loadingState, $setupState], set) => {
+      set($loadingState === "loaded" && $setupState === "done");
+    }).subscribe((ready) => {
       if (ready) this.start();
     });
 
@@ -192,8 +189,8 @@ export default class WorldManager {
       this.identities.me.avatar.editableName = false;
     }
 
-    mediaSetupState.subscribe(($mediaSetupState) => {
-      if ($mediaSetupState === "done") {
+    setupState.subscribe(($setupState) => {
+      if ($setupState === "done") {
         console.log("connecting av to", connectOpts);
         this.roomClient = connectAV({
           roomId: connectOpts.room,
