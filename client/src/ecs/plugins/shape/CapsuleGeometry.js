@@ -1,5 +1,5 @@
-import { Vector3, Vector4, Face3 } from "three";
-import { Geometry } from "three/examples/jsm/deprecated/Geometry";
+import { Vector3, Vector4 } from "three";
+import { Geometry, Face3 } from "three/examples/jsm/deprecated/Geometry";
 
 /*
   Implemented from a technique described here:

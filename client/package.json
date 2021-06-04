@@ -89,7 +89,7 @@
     "svelte-icons": "^2.1.0",
     "svelte-local-storage-store": "^0.1.4",
     "svelte-select": "^3.16.1",
-    "three": "0.125.2",
+    "three": "0.129.0",
     "three-nebula": "^10.0.0",
     "video-mirror": "^0.5.1",
     "y-indexeddb": "^9.0.6",

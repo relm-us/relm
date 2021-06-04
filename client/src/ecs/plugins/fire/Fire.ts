@@ -67,9 +67,9 @@ export class Fire extends Mesh {
   update(time) {
     var invModelMatrix = this.material.uniforms.invModelMatrix.value;
 
-    this.updateMatrixWorld();
+    (this as Object3D).updateMatrixWorld();
 
-    invModelMatrix.copy(this.matrixWorld).invert();
+    invModelMatrix.copy((this as Object3D).matrixWorld).invert();
 
     if (time !== undefined) {
       this.material.uniforms.time.value = time;
@@ -77,16 +77,17 @@ export class Fire extends Mesh {
 
     this.material.uniforms.invModelMatrix.value = invModelMatrix;
 
-    this.material.uniforms.scale.value = this.scale;
+    this.material.uniforms.scale.value = (this as Object3D).scale;
   }
 
   clone(recursive?: boolean): Object3D {
-    return new Fire(
+    const fire = new Fire(
       this.fireTex,
       this.color,
       this.colorMix,
       this.blaze,
       this.octaves
-    ).copy(this, recursive);
+    );
+    return (fire as Object3D).copy(this, recursive);
   }
 }

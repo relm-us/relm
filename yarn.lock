@@ -10279,10 +10279,10 @@ three-nebula@^10.0.0:
     potpack "^1.0.1"
     uuid "^3.3.2"
 
-three@0.125.2:
-  version "0.125.2"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.125.2.tgz#dcba12749a2eb41522e15212b919cd3fbf729b12"
-  integrity sha512-7rIRO23jVKWcAPFdW/HREU2NZMGWPBZ4XwEMt0Ak0jwLUKVJhcKM55eCBWyGZq/KiQbeo1IeuAoo/9l2dzhTXA==
+three@0.129.0:
+  version "0.129.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.129.0.tgz#f5e530bbc96eac5d5b4749cb5da886ef0d42f554"
+  integrity sha512-wiWio1yVRg2Oj6WEWsTHQo5eSzYpEwSBtPSi3OofNpvFbf26HFfb9kw4FZJNjII4qxzp0b1xLB11+tKkBGB1ZA==
 
 throat@^5.0.0:
   version "5.0.0"
@@ -10812,10 +10812,10 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-video-mirror@^0.4.1:
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/video-mirror/-/video-mirror-0.4.1.tgz#035599b1b828c82c9389d95fbc048f66f12f3f99"
-  integrity sha512-3m4pl6G0kTzGwURmQB715q+7qgxzsC62aHtXMTT/RFwBAun36JVTEV4cp9XBqs4S0Z3NKYaYFVGcQG/1/QD9tw==
+video-mirror@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/video-mirror/-/video-mirror-0.5.1.tgz#dc6767316913ef75bb44b540dbdaa687cf1b3758"
+  integrity sha512-JCBD8YXhvVbrobKmx9PDW1T5+cEfuFDDDtjJVNPUiULhwPkqnoDSON+qgLoHuIeTh9XZSyk5WT4c+Vgy/0Sm+Q==
   dependencies:
     hark "^1.2.3"
     media-devices "^0.2.0"
