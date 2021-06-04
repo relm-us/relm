@@ -59,8 +59,8 @@
     overflow-y: scroll;
   }
 
-  container :global(a),
-  container :global(a:visited) {
+  message.mine :global(a),
+  message.mine :global(a:visited) {
     color: yellow;
   }
 

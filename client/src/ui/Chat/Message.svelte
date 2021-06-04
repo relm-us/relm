@@ -21,9 +21,6 @@
 
 <style>
   message {
-    display: flex;
-    align-items: flex-start;
-
     color: #333;
     background-color: #eee;
 
@@ -31,6 +28,11 @@
 
     padding: 6px 10px;
     margin: 3px;
+  }
+
+  message :global(a),
+  message :global(a:visited) {
+    color: cornflowerblue;
   }
 
   who {
@@ -45,13 +47,14 @@
   id-circle {
     display: block;
     flex-shrink: 0;
+    float: right;
 
     width: 16px;
     height: 16px;
     border: 2px solid white;
     border-radius: 100%;
     margin-left: 0px;
-    margin-right: 8px;
+    margin-right: 0px;
   }
 
 </style>
