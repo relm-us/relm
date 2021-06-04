@@ -191,7 +191,6 @@ export default class WorldManager {
 
     setupState.subscribe(($setupState) => {
       if ($setupState === "done") {
-        console.log("connecting av to", connectOpts);
         this.roomClient = connectAV({
           roomId: connectOpts.room,
           displayName: connectOpts.username || this.identities.me.get("name"),

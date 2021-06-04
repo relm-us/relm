@@ -27,7 +27,6 @@
       dispatch("close");
     } else if (event.key === "Enter" || event.key === "Return") {
       addMessage(event.target.value);
-      // createLabel(event.target.value);
       event.target.value = "";
     }
   }
@@ -37,7 +36,6 @@
   }
 
   $: if ($chatFocused && inputEl) {
-    console.log("sh focus");
     inputEl.focus();
   }
 </script>
