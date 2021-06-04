@@ -41,7 +41,7 @@
       if (isLocal) {
         if (!$videoRequested) $setupState = "media";
         else identity.toggleShowVideo();
-      } else if (showVideo && document.fullscreenEnabled) {
+      } else if (showVideo) {
         fullscreen = true;
       }
     }

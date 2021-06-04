@@ -1,34 +1,84 @@
 <script>
   import { onMount, createEventDispatcher } from "svelte";
+  import IoIosArrowBack from "svelte-icons/io/IoIosArrowBack.svelte";
+  import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
 
   const dispatch = createEventDispatcher();
 
   let el;
+  let fullwindow = false;
+
+  function handleKeyDown(event) {
+    if (fullwindow && event.key === "Escape") {
+      dispatch("close");
+    }
+  }
+
+  function handleClose() {
+    dispatch("close");
+  }
 
   onMount(async () => {
-    el.addEventListener("fullscreenchange", (event) => {
-      if (!document.fullscreenElement) {
-        // exited full screen
-        dispatch("close");
+    // Move fullscreen element to document.body so that "fullwindow" mode can
+    // escape absolute/relative positioned elements and take up the whole window.
+    document.body.appendChild(el);
+
+    if (document.fullscreenEnabled) {
+      el.addEventListener("fullscreenchange", (event) => {
+        if (!document.fullscreenElement) {
+          // exited full screen
+          dispatch("close");
+        }
+      });
+
+      try {
+        await el.requestFullscreen();
+      } catch (err) {
+        dispatch("close", err);
       }
-    });
-    
-    try {
-      await el.requestFullscreen();
-    } catch (err) {
-      dispatch("close", err);
+    } else {
+      fullwindow = true;
     }
   });
 
-  //Document.exitFullscreen()
 </script>
 
-<fullscreen bind:this={el}>
+<fullscreen bind:this={el} class:fullwindow>
   <slot />
+  <upper-left-corner>
+    <icon on:click={handleClose}><IoIosClose /></icon>
+  </upper-left-corner>
 </fullscreen>
+
+<svelte:window on:keydown={handleKeyDown} />
 
 <style>
   fullscreen {
     display: block;
   }
+
+  .fullwindow {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+  }
+
+  upper-left-corner {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+  }
+
+  icon {
+    display: block;
+    width: 32px;
+    height: 32px;
+    margin: 0 auto;
+
+    color: white;
+  }
+
 </style>
