@@ -4,6 +4,7 @@ import Logger from "./Logger";
 import { getMediasoupUrl } from "./getMediasoupUrl";
 import * as requestActions from "./redux/requestActions";
 import * as stateActions from "./redux/stateActions";
+import { getUserMedia } from "video-mirror";
 
 const VIDEO_CONSTRAINTS = {
   qvga: { width: { ideal: 320 }, height: { ideal: 240 } },
@@ -720,7 +721,7 @@ export default class RoomClient {
     try {
       logger.debug("enableMic() | calling getUserMedia()");
 
-      const stream = await navigator.mediaDevices.getUserMedia({
+      const stream = await getUserMedia({
         audio: {
           autoGainControl: false,
           echoCancellation: true,
@@ -897,7 +898,7 @@ export default class RoomClient {
 
       logger.debug("enableWebcam() | calling getUserMedia()");
 
-      const stream = await navigator.mediaDevices.getUserMedia({
+      const stream = await getUserMedia({
         video: {
           deviceId: { ideal: device.deviceId },
           ...VIDEO_CONSTRAINTS[resolution],
@@ -905,6 +906,7 @@ export default class RoomClient {
       });
 
       track = stream.getVideoTracks()[0];
+      console.log("track", track);
 
       let encodings;
       let codec;
@@ -1058,7 +1060,7 @@ export default class RoomClient {
 
       logger.debug("changeWebcam() | calling getUserMedia()");
 
-      const stream = await navigator.mediaDevices.getUserMedia({
+      const stream = await getUserMedia({
         video: {
           deviceId: { exact: this._webcam.device.deviceId },
           ...VIDEO_CONSTRAINTS[this._webcam.resolution],
@@ -1108,7 +1110,7 @@ export default class RoomClient {
 
       logger.debug("changeWebcamResolution() | calling getUserMedia()");
 
-      const stream = await navigator.mediaDevices.getUserMedia({
+      const stream = await getUserMedia({
         video: {
           deviceId: { exact: this._webcam.device.deviceId },
           ...VIDEO_CONSTRAINTS[this._webcam.resolution],
