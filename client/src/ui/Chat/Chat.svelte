@@ -18,6 +18,7 @@
     $chatOpen = false;
     $chatFocused = false;
   }
+
 </script>
 
 <container class:close={!$chatOpen} class:open={$chatOpen}>
@@ -44,17 +45,16 @@
     flex-direction: column;
     align-items: flex-end;
   }
-
-  bottom {
-    display: flex;
-  }
-
-  .open {
+  container.open {
     transition: 0.2s;
     right: 8px;
   }
-  .close {
+  container.close {
     transition: 0.2s;
     right: -308px;
+  }
+
+  bottom {
+    display: flex;
   }
 </style>

@@ -59,6 +59,7 @@
     border: 2px solid cornflowerblue;
     border-radius: 4px;
     width: 300px;
+    padding: 1px 2px;
     font-size: 20px;
     line-height: 32px;
   }
