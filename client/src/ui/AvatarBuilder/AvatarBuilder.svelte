@@ -2,6 +2,8 @@
   import { Relm } from "~/stores/Relm";
   import Slider from "~/ui/Slider";
   import Color from "./Color.svelte";
+  import ColorPick from "./ColorPick.svelte";
+  import Choice from "./Choice.svelte";
   import type { HairType, TopType, BottomType, ShoeType } from "./appearance";
   import {
     skintones,
@@ -60,41 +62,142 @@
     hairtoneSlider = detail[1];
   }
 
+  const onClickHairStyle = (style: HairType) => () => {
+    hair = style;
+  };
+
+  const onClickTopStyle = (style: TopType) => () => {
+    top = style;
+  };
+
+  const onClickBottomStyle = (style: BottomType) => () => {
+    bottom = style;
+  };
+
+  const onClickShoeStyle = (style: ShoeType) => () => {
+    shoes = style;
+  };
+
+  const onClickBeltStyle = (style: boolean) => () => {
+    belt = style;
+  };
+
+  function onPickTopColor({ detail }) {
+    const cssColor = detail.indexOf("#") === 0 ? detail.slice(0, 7) : detail;
+    console.log("onPickTopColor", cssColor);
+    topColor = cssColor;
+  }
+
+  function onPickBottomColor({ detail }) {
+    const cssColor = detail.indexOf("#") === 0 ? detail.slice(0, 7) : detail;
+    bottomColor = cssColor;
+  }
+
+  function onPickShoeColor({ detail }) {
+    const cssColor = detail.indexOf("#") === 0 ? detail.slice(0, 7) : detail;
+    shoeColor = cssColor;
+  }
+
+  function onPickBeltColor({ detail }) {
+    const cssColor = detail.indexOf("#") === 0 ? detail.slice(0, 7) : detail;
+    beltColor = cssColor;
+  }
+
 </script>
 
 <container>
-  <div class="slider">
+  <div class="section">
     <div class="title center">Gender</div>
     <Slider on:change={onChangeGender} value={[0, genderSlider]} single />
-    <div class="label left">Male</div>
-    <div class="label right">Female</div>
+    <div class="row between">
+      <div class="label">Male</div>
+      <div class="label">Female</div>
+    </div>
   </div>
 
-  <div class="slider">
+  <div class="section">
     <div class="title center">Skintone</div>
     <Slider on:change={onChangeSkintone} value={[0, skintoneSlider]} single />
-    <div class="label r-1-5"><Color value={skintones[0]} /></div>
-    <div class="label r-2-5"><Color value={skintones[3]} /></div>
-    <div class="label r-3-5"><Color value={skintones[6]} /></div>
-    <div class="label r-4-5"><Color value={skintones[9]} /></div>
-    <div class="label r-5-5"><Color value={skintones[11]} /></div>
+    <div class="row">
+      <Color value={skintones[0]} />
+      <Color value={skintones[3]} />
+      <Color value={skintones[6]} />
+      <Color value={skintones[9]} />
+      <Color value={skintones[11]} />
+    </div>
   </div>
 
-  <div class="slider">
+  <div class="section">
     <div class="title center">Width</div>
     <Slider on:change={onChangeWidth} value={[0, widthSlider]} single />
-    <div class="label left">Narrow</div>
-    <div class="label right">Wide</div>
+    <div class="row between">
+      <div class="label">Narrow</div>
+      <div class="label">Wide</div>
+    </div>
   </div>
 
-  <div class="slider">
+  <div class="section">
     <div class="title center">Hair Color</div>
     <Slider on:change={onChangeHairtone} value={[0, hairtoneSlider]} single />
-    <div class="label r-1-5"><Color value={hairtones[0]} /></div>
-    <div class="label r-2-5"><Color value={hairtones[1]} /></div>
-    <div class="label r-3-5"><Color value={hairtones[2]} /></div>
-    <div class="label r-4-5"><Color value={hairtones[3]} /></div>
-    <div class="label r-5-5"><Color value={hairtones[4]} /></div>
+    <div class="row">
+      <Color value={hairtones[0]} />
+      <Color value={hairtones[1]} />
+      <Color value={hairtones[2]} />
+      <Color value={hairtones[3]} />
+      <Color value={hairtones[4]} />
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="title center">Hair Style</div>
+    <div class="row evenly">
+      <Choice src="/icons/hair-01.png" on:click={onClickHairStyle("bald")} />
+      <Choice src="/icons/hair-02.png" on:click={onClickHairStyle("short")} />
+      <Choice src="/icons/hair-03.png" on:click={onClickHairStyle("mid")} />
+      <Choice src="/icons/hair-04.png" on:click={onClickHairStyle("long")} />
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="title center">Shirt</div>
+    <div class="row evenly">
+      <ColorPick on:change={onPickTopColor} />
+      <Choice src="/icons/shirt-01.png" on:click={onClickTopStyle(1)} />
+      <Choice src="/icons/shirt-02.png" on:click={onClickTopStyle(2)} />
+      <Choice src="/icons/shirt-03.png" on:click={onClickTopStyle(3)} />
+      <Choice src="/icons/shirt-04.png" on:click={onClickTopStyle(4)} />
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="title center">Pants</div>
+    <div class="row evenly">
+      <ColorPick on:change={onPickBottomColor} />
+      <Choice src="/icons/shirt-01.png" on:click={onClickBottomStyle(0)} />
+      <Choice src="/icons/shirt-02.png" on:click={onClickBottomStyle(1)} />
+      <Choice src="/icons/shirt-03.png" on:click={onClickBottomStyle(2)} />
+      <Choice src="/icons/shirt-04.png" on:click={onClickBottomStyle(3)} />
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="title center">Shoes</div>
+    <div class="row evenly">
+      <ColorPick on:change={onPickShoeColor} />
+      <Choice src="/icons/shirt-01.png" on:click={onClickShoeStyle(0)} />
+      <Choice src="/icons/shirt-02.png" on:click={onClickShoeStyle(1)} />
+      <Choice src="/icons/shirt-03.png" on:click={onClickShoeStyle(2)} />
+      <Choice src="/icons/shirt-04.png" on:click={onClickShoeStyle(3)} />
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="title center">Belt</div>
+    <div class="row evenly">
+      <ColorPick on:change={onPickBeltColor} />
+      <Choice src="/icons/shirt-01.png" on:click={onClickBeltStyle(false)} />
+      <Choice src="/icons/shirt-02.png" on:click={onClickBeltStyle(true)} />
+    </div>
   </div>
 </container>
 
@@ -104,32 +207,36 @@
     flex-direction: column;
     margin-bottom: 32px;
   }
-  .slider {
+
+  .section {
     width: 100%;
-    position: relative;
-    margin-bottom: 24px;
+  }
+
+  .row {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+  }
+  .row.evenly {
+    justify-content: space-evenly;
+  }
+  .row.between {
+    justify-content: space-between;
   }
 
   .label {
-    position: absolute;
     color: var(--foreground-gray);
     font-size: 12px;
   }
 
   .title {
     color: var(--foreground-white);
+    margin-top: 8px;
+    margin-bottom: 6px;
   }
 
-  // prettier-ignore
-  @if 1 {
-    .left { left: 0; }
-    .right { right: 0; }
-    .center { text-align: center; }
-    .r-1-5 { left: 10%; }
-    .r-2-5 { left: 30%; }
-    .r-3-5 { left: 50%; }
-    .r-4-5 { left: 70%; }
-    .r-5-5 { left: 90%; }
+  .center {
+    text-align: center;
   }
 
 </style>

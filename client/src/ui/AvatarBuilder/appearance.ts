@@ -43,7 +43,7 @@ export const skintones = [
 
 // prettier-ignore
 export const hairtones = [
-    "#aa8866", "#debe99", "#241c11", "#4f1a00", "#9a3300"
+    "#debe99", "#aa8866", "#241c11", "#4f1a00", "#9a3300"
   ];
 
 const skintoneCenterFactor = 1 / skintones.length / 2;
@@ -108,18 +108,23 @@ export function appearanceToCharacterTraits(appearance: Appearance) {
   switch (appearance.hair) {
     case "bald":
       skinGroup.push("hair");
+      hairSlider1 = 0;
+      hairSlider2 = 0;
       break;
     case "short":
       hairGroup.push("hair");
       hairSlider1 = 0;
+      hairSlider2 = 1;
       break;
     case "mid":
       hairGroup.push("hair");
       hairSlider1 = 0.3;
+      hairSlider2 = 1;
       break;
     case "long":
       hairGroup.push("hair");
       hairSlider1 = 0.5;
+      hairSlider2 = 1;
       break;
   }
 

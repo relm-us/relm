@@ -14,7 +14,6 @@
     border-color: var(--border);
     border-width: 2px;
     border-radius: 4px;
-    transform: translateX(-50%);
     margin-top: 4px;
   }
 
