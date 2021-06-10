@@ -52,7 +52,7 @@ const hairtoneCenterFactor = 1 / hairtones.length / 2;
 export type HairType = "bald" | "short" | "mid" | "long";
 export type TopType = 0 | 1 | 2 | 3 | 4;
 export type BottomType = 0 | 1 | 2 | 3;
-export type ShoeType = 0 | 1 | 2 | 3;
+export type ShoeType = 0 | 1 | 2 | 3 | 4;
 
 type Appearance = {
   genderSlider: number;
@@ -135,7 +135,11 @@ export function appearanceToCharacterTraits(appearance: Appearance) {
 
   (appearance.bottom < 1 ? skinGroup : bottomGroup).push("pants-02");
   (appearance.bottom < 2 ? skinGroup : bottomGroup).push("pants-03");
-  (appearance.bottom < 3 ? skinGroup : bottomGroup).push("pants-04");
+  if (appearance.shoes === 4) {
+    shoeGroup.push("pants-04");
+  } else {
+    (appearance.bottom < 3 ? skinGroup : bottomGroup).push("pants-04");
+  }
 
   (appearance.shoes < 1 ? skinGroup : shoeGroup).push("shoes-01");
   (appearance.shoes < 2 ? skinGroup : shoeGroup).push("shoes-02");

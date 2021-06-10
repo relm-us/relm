@@ -151,7 +151,7 @@
   <div class="section">
     <div class="title center">Hair Style</div>
     <div class="row evenly">
-      <Choice src="/icons/hair-01.png" on:click={onClickHairStyle("bald")} />
+      <Choice src="/icons/none.png" on:click={onClickHairStyle("bald")} />
       <Choice src="/icons/hair-02.png" on:click={onClickHairStyle("short")} />
       <Choice src="/icons/hair-03.png" on:click={onClickHairStyle("mid")} />
       <Choice src="/icons/hair-04.png" on:click={onClickHairStyle("long")} />
@@ -184,10 +184,10 @@
     <div class="title center">Shoes</div>
     <div class="row evenly">
       <ColorPick on:change={onPickShoeColor} />
-      <Choice src="/icons/shoes-01.png" on:click={onClickShoeStyle(0)} />
-      <Choice src="/icons/shoes-02.png" on:click={onClickShoeStyle(1)} />
-      <Choice src="/icons/shoes-03.png" on:click={onClickShoeStyle(2)} />
-      <Choice src="/icons/shoes-04.png" on:click={onClickShoeStyle(3)} />
+      <Choice src="/icons/shoes-01.png" on:click={onClickShoeStyle(1)} />
+      <Choice src="/icons/shoes-02.png" on:click={onClickShoeStyle(2)} />
+      <Choice src="/icons/shoes-03.png" on:click={onClickShoeStyle(3)} />
+      <Choice src="/icons/shoes-04.png" on:click={onClickShoeStyle(4)} />
     </div>
   </div>
 
@@ -195,7 +195,7 @@
     <div class="title center">Belt</div>
     <div class="row evenly">
       <ColorPick on:change={onPickBeltColor} />
-      <Choice src="/icons/shirt-01.png" on:click={onClickBeltStyle(false)} />
+      <Choice src="/icons/none.png" on:click={onClickBeltStyle(false)} />
       <Choice src="/icons/shirt-02.png" on:click={onClickBeltStyle(true)} />
     </div>
   </div>
