@@ -11,6 +11,7 @@
     appearanceToCharacterTraits,
   } from "./appearance";
   import ToggleSwitch from "~/ui/ToggleSwitch";
+  import Section from "./Section.svelte";
 
   let genderSlider = 0.5;
   let widthSlider = 0.25;
@@ -89,26 +90,23 @@
 </script>
 
 <container>
-  <div class="section">
-    <div class="title center">Gender:</div>
+  <Section name="Gender" first={true}>
     <Slider on:change={onSlideGender} value={[0, genderSlider]} single />
     <div class="row between">
       <div class="label">Male</div>
       <div class="label">Female</div>
     </div>
-  </div>
+  </Section>
 
-  <div class="section">
-    <div class="title center">Width:</div>
+  <Section name="Width">
     <Slider on:change={onSlideWidth} value={[0, widthSlider]} single />
     <div class="row between">
       <div class="label">Narrow</div>
       <div class="label">Wide</div>
     </div>
-  </div>
+  </Section>
 
-  <div class="section">
-    <div class="title center">Skintone:</div>
+  <Section name="Skintone">
     <div class="row">
       <Color
         value={skinColors[0]}
@@ -136,11 +134,10 @@
         on:click={setSkinColor(skinColors[4])}
       />
     </div>
-  </div>
+  </Section>
 
-  <div class="section">
-    <div class="title center">Hair:</div>
-    <div class="row evenly space-above">
+  <Section name="Hair">
+    <div class="row evenly">
       <Choice
         src="/icons/none.png"
         selected={hair === "bald"}
@@ -189,10 +186,9 @@
         on:click={setHairColor(hairColors[4])}
       />
     </div>
-  </div>
+  </Section>
 
-  <div class="section">
-    <div class="title center">Shirt:</div>
+  <Section name="Shirt">
     <div class="row evenly">
       <Choice
         src="/icons/shirt-01.png"
@@ -216,10 +212,9 @@
       />
       <ColorPick bind:value={topColor} />
     </div>
-  </div>
+  </Section>
 
-  <div class="section">
-    <div class="title center">Pants:</div>
+  <Section name="Pants">
     <div class="row evenly">
       <Choice
         src="/icons/pants-01.png"
@@ -243,10 +238,9 @@
       />
       <ColorPick bind:value={bottomColor} />
     </div>
-  </div>
+  </Section>
 
-  <div class="section">
-    <div class="title center">Shoes:</div>
+  <Section name="Shoes">
     <div class="row evenly">
       <Choice
         src="/icons/shoes-01.png"
@@ -270,10 +264,9 @@
       />
       <ColorPick bind:value={shoeColor} />
     </div>
-  </div>
+  </Section>
 
-  <div class="section">
-    <div class="title center">Belt:</div>
+  <Section name="Belt" last={true}>
     <div class="row evenly">
       <ToggleSwitch bind:enabled={belt} />
       {#if belt}
@@ -282,7 +275,7 @@
         <div style="width:24px;height:24px" />
       {/if}
     </div>
-  </div>
+  </Section>
 </container>
 
 <style lang="scss">
@@ -290,10 +283,7 @@
     display: flex;
     flex-direction: column;
     margin-bottom: 32px;
-  }
-
-  .section {
-    width: 100%;
+    background-color: #1a1e23;
   }
 
   .row {
@@ -314,16 +304,6 @@
   .label {
     color: var(--foreground-gray);
     font-size: 12px;
-  }
-
-  .title {
-    color: var(--foreground-white);
-    margin-top: 8px;
-    margin-bottom: 6px;
-  }
-
-  .center {
-    text-align: center;
   }
 
 </style>
