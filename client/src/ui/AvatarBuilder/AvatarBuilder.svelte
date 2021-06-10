@@ -6,21 +6,22 @@
   import Choice from "./Choice.svelte";
   import type { HairType, TopType, BottomType, ShoeType } from "./appearance";
   import {
-    skintones,
-    hairtones,
+    skinColors,
+    hairColors,
     appearanceToCharacterTraits,
   } from "./appearance";
+  import ToggleSwitch from "~/ui/ToggleSwitch";
 
   let genderSlider = 0.5;
-  let skintoneSlider = 0.5;
-  let widthSlider = 0.5;
-  let hairtoneSlider = 0.5;
+  let widthSlider = 0.25;
   let beard = false;
   let belt = true;
   let hair: HairType = "short";
   let top: TopType = 2;
   let bottom: BottomType = 3;
   let shoes: ShoeType = 2;
+  let skinColor = skinColors[2];
+  let hairColor = hairColors[2];
   let topColor = "#ffffff";
   let bottomColor = "#9999bb";
   let beltColor = "#333333";
@@ -29,37 +30,32 @@
   $: {
     const traits = appearanceToCharacterTraits({
       genderSlider,
-      skintoneSlider,
       widthSlider,
-      hairtoneSlider,
       beard,
       belt,
       hair,
       top,
       bottom,
       shoes,
-      topColor,
-      bottomColor,
-      beltColor,
-      shoeColor,
+      skinColor,
+      hairColor,
+      topColor: topColor.indexOf("#") === 0 ? topColor.slice(0, 7) : topColor,
+      bottomColor:
+        bottomColor.indexOf("#") === 0 ? bottomColor.slice(0, 7) : bottomColor,
+      beltColor:
+        beltColor.indexOf("#") === 0 ? beltColor.slice(0, 7) : beltColor,
+      shoeColor:
+        shoeColor.indexOf("#") === 0 ? shoeColor.slice(0, 7) : shoeColor,
     });
     $Relm.identities.me.set(traits);
   }
 
-  function onChangeGender({ detail }) {
+  function onSlideGender({ detail }) {
     genderSlider = detail[1];
   }
 
-  function onChangeSkintone({ detail }) {
-    skintoneSlider = detail[1];
-  }
-
-  function onChangeWidth({ detail }) {
+  function onSlideWidth({ detail }) {
     widthSlider = detail[1];
-  }
-
-  function onChangeHairtone({ detail }) {
-    hairtoneSlider = detail[1];
   }
 
   const onClickHairStyle = (style: HairType) => () => {
@@ -82,33 +78,20 @@
     belt = style;
   };
 
-  function onPickTopColor({ detail }) {
-    const cssColor = detail.indexOf("#") === 0 ? detail.slice(0, 7) : detail;
-    console.log("onPickTopColor", cssColor);
-    topColor = cssColor;
-  }
+  const setSkinColor = (color: string) => () => {
+    skinColor = color;
+  };
 
-  function onPickBottomColor({ detail }) {
-    const cssColor = detail.indexOf("#") === 0 ? detail.slice(0, 7) : detail;
-    bottomColor = cssColor;
-  }
-
-  function onPickShoeColor({ detail }) {
-    const cssColor = detail.indexOf("#") === 0 ? detail.slice(0, 7) : detail;
-    shoeColor = cssColor;
-  }
-
-  function onPickBeltColor({ detail }) {
-    const cssColor = detail.indexOf("#") === 0 ? detail.slice(0, 7) : detail;
-    beltColor = cssColor;
-  }
+  const setHairColor = (color: string) => () => {
+    hairColor = color;
+  };
 
 </script>
 
 <container>
   <div class="section">
-    <div class="title center">Gender</div>
-    <Slider on:change={onChangeGender} value={[0, genderSlider]} single />
+    <div class="title center">Gender:</div>
+    <Slider on:change={onSlideGender} value={[0, genderSlider]} single />
     <div class="row between">
       <div class="label">Male</div>
       <div class="label">Female</div>
@@ -116,20 +99,8 @@
   </div>
 
   <div class="section">
-    <div class="title center">Skintone</div>
-    <Slider on:change={onChangeSkintone} value={[0, skintoneSlider]} single />
-    <div class="row">
-      <Color value={skintones[0]} />
-      <Color value={skintones[3]} />
-      <Color value={skintones[6]} />
-      <Color value={skintones[9]} />
-      <Color value={skintones[11]} />
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="title center">Width</div>
-    <Slider on:change={onChangeWidth} value={[0, widthSlider]} single />
+    <div class="title center">Width:</div>
+    <Slider on:change={onSlideWidth} value={[0, widthSlider]} single />
     <div class="row between">
       <div class="label">Narrow</div>
       <div class="label">Wide</div>
@@ -137,66 +108,179 @@
   </div>
 
   <div class="section">
-    <div class="title center">Hair Color</div>
-    <Slider on:change={onChangeHairtone} value={[0, hairtoneSlider]} single />
+    <div class="title center">Skintone:</div>
     <div class="row">
-      <Color value={hairtones[0]} />
-      <Color value={hairtones[1]} />
-      <Color value={hairtones[2]} />
-      <Color value={hairtones[3]} />
-      <Color value={hairtones[4]} />
+      <Color
+        value={skinColors[0]}
+        selected={skinColor === skinColors[0]}
+        on:click={setSkinColor(skinColors[0])}
+      />
+      <Color
+        value={skinColors[1]}
+        selected={skinColor === skinColors[1]}
+        on:click={setSkinColor(skinColors[1])}
+      />
+      <Color
+        value={skinColors[2]}
+        selected={skinColor === skinColors[2]}
+        on:click={setSkinColor(skinColors[2])}
+      />
+      <Color
+        value={skinColors[3]}
+        selected={skinColor === skinColors[3]}
+        on:click={setSkinColor(skinColors[3])}
+      />
+      <Color
+        value={skinColors[4]}
+        selected={skinColor === skinColors[4]}
+        on:click={setSkinColor(skinColors[4])}
+      />
     </div>
   </div>
 
   <div class="section">
-    <div class="title center">Hair Style</div>
-    <div class="row evenly">
-      <Choice src="/icons/none.png" on:click={onClickHairStyle("bald")} />
-      <Choice src="/icons/hair-02.png" on:click={onClickHairStyle("short")} />
-      <Choice src="/icons/hair-03.png" on:click={onClickHairStyle("mid")} />
-      <Choice src="/icons/hair-04.png" on:click={onClickHairStyle("long")} />
+    <div class="title center">Hair:</div>
+    <div class="row evenly space-above">
+      <Choice
+        src="/icons/none.png"
+        selected={hair === "bald"}
+        on:click={onClickHairStyle("bald")}
+      />
+      <Choice
+        src="/icons/hair-02.png"
+        selected={hair === "short"}
+        on:click={onClickHairStyle("short")}
+      />
+      <Choice
+        src="/icons/hair-03.png"
+        selected={hair === "mid"}
+        on:click={onClickHairStyle("mid")}
+      />
+      <Choice
+        src="/icons/hair-04.png"
+        selected={hair === "long"}
+        on:click={onClickHairStyle("long")}
+      />
+    </div>
+    <div class="row space-above">
+      <Color
+        value={hairColors[0]}
+        selected={hairColor === hairColors[0]}
+        on:click={setHairColor(hairColors[0])}
+      />
+      <Color
+        value={hairColors[1]}
+        selected={hairColor === hairColors[1]}
+        on:click={setHairColor(hairColors[1])}
+      />
+      <Color
+        value={hairColors[2]}
+        selected={hairColor === hairColors[2]}
+        on:click={setHairColor(hairColors[2])}
+      />
+      <Color
+        value={hairColors[3]}
+        selected={hairColor === hairColors[3]}
+        on:click={setHairColor(hairColors[3])}
+      />
+      <Color
+        value={hairColors[4]}
+        selected={hairColor === hairColors[4]}
+        on:click={setHairColor(hairColors[4])}
+      />
     </div>
   </div>
 
   <div class="section">
-    <div class="title center">Shirt</div>
+    <div class="title center">Shirt:</div>
     <div class="row evenly">
-      <ColorPick on:change={onPickTopColor} />
-      <Choice src="/icons/shirt-01.png" on:click={onClickTopStyle(1)} />
-      <Choice src="/icons/shirt-02.png" on:click={onClickTopStyle(2)} />
-      <Choice src="/icons/shirt-03.png" on:click={onClickTopStyle(3)} />
-      <Choice src="/icons/shirt-04.png" on:click={onClickTopStyle(4)} />
+      <Choice
+        src="/icons/shirt-01.png"
+        selected={top === 1}
+        on:click={onClickTopStyle(1)}
+      />
+      <Choice
+        src="/icons/shirt-02.png"
+        selected={top === 2}
+        on:click={onClickTopStyle(2)}
+      />
+      <Choice
+        src="/icons/shirt-03.png"
+        selected={top === 3}
+        on:click={onClickTopStyle(3)}
+      />
+      <Choice
+        src="/icons/shirt-04.png"
+        selected={top === 4}
+        on:click={onClickTopStyle(4)}
+      />
+      <ColorPick bind:value={topColor} />
     </div>
   </div>
 
   <div class="section">
-    <div class="title center">Pants</div>
+    <div class="title center">Pants:</div>
     <div class="row evenly">
-      <ColorPick on:change={onPickBottomColor} />
-      <Choice src="/icons/pants-01.png" on:click={onClickBottomStyle(0)} />
-      <Choice src="/icons/pants-02.png" on:click={onClickBottomStyle(1)} />
-      <Choice src="/icons/pants-03.png" on:click={onClickBottomStyle(2)} />
-      <Choice src="/icons/pants-04.png" on:click={onClickBottomStyle(3)} />
+      <Choice
+        src="/icons/pants-01.png"
+        selected={bottom === 0}
+        on:click={onClickBottomStyle(0)}
+      />
+      <Choice
+        src="/icons/pants-02.png"
+        selected={bottom === 1}
+        on:click={onClickBottomStyle(1)}
+      />
+      <Choice
+        src="/icons/pants-03.png"
+        selected={bottom === 2}
+        on:click={onClickBottomStyle(2)}
+      />
+      <Choice
+        src="/icons/pants-04.png"
+        selected={bottom === 3}
+        on:click={onClickBottomStyle(3)}
+      />
+      <ColorPick bind:value={bottomColor} />
     </div>
   </div>
 
   <div class="section">
-    <div class="title center">Shoes</div>
+    <div class="title center">Shoes:</div>
     <div class="row evenly">
-      <ColorPick on:change={onPickShoeColor} />
-      <Choice src="/icons/shoes-01.png" on:click={onClickShoeStyle(1)} />
-      <Choice src="/icons/shoes-02.png" on:click={onClickShoeStyle(2)} />
-      <Choice src="/icons/shoes-03.png" on:click={onClickShoeStyle(3)} />
-      <Choice src="/icons/shoes-04.png" on:click={onClickShoeStyle(4)} />
+      <Choice
+        src="/icons/shoes-01.png"
+        selected={shoes === 1}
+        on:click={onClickShoeStyle(1)}
+      />
+      <Choice
+        src="/icons/shoes-02.png"
+        selected={shoes === 2}
+        on:click={onClickShoeStyle(2)}
+      />
+      <Choice
+        src="/icons/shoes-03.png"
+        selected={shoes === 3}
+        on:click={onClickShoeStyle(3)}
+      />
+      <Choice
+        src="/icons/shoes-04.png"
+        selected={shoes === 4}
+        on:click={onClickShoeStyle(4)}
+      />
+      <ColorPick bind:value={shoeColor} />
     </div>
   </div>
 
   <div class="section">
-    <div class="title center">Belt</div>
+    <div class="title center">Belt:</div>
     <div class="row evenly">
-      <ColorPick on:change={onPickBeltColor} />
-      <Choice src="/icons/none.png" on:click={onClickBeltStyle(false)} />
-      <Choice src="/icons/shirt-02.png" on:click={onClickBeltStyle(true)} />
+      <ToggleSwitch bind:enabled={belt} />
+      {#if belt}
+        <ColorPick bind:value={beltColor} />
+      {:else}
+        <div style="width:24px;height:24px" />
+      {/if}
     </div>
   </div>
 </container>
@@ -222,6 +306,9 @@
   }
   .row.between {
     justify-content: space-between;
+  }
+  .space-above {
+    margin-top: 8px;
   }
 
   .label {

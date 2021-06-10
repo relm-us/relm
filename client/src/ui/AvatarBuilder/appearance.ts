@@ -36,18 +36,18 @@
 // shoeColor
 
 // prettier-ignore
-export const skintones = [
-    "#e3d0cf", "#ddbfb4", "#e5b69e", "#d5b9ad", "#d9ad9f", "#d59187",
-    "#d08778", "#c8947a", "#c78164", "#a56049", "#6d3325", "#342723",
+export const skinColors = [
+    "#e3d0cf", "#d5b9ad", "#d08778", "#a56049", "#342723",
   ];
+// export const skinColors = [
+//     "#e3d0cf", "#ddbfb4", "#e5b69e", "#d5b9ad", "#d9ad9f", "#d59187",
+//     "#d08778", "#c8947a", "#c78164", "#a56049", "#6d3325", "#342723",
+//   ];
 
 // prettier-ignore
-export const hairtones = [
+export const hairColors = [
     "#debe99", "#aa8866", "#241c11", "#4f1a00", "#9a3300"
   ];
-
-const skintoneCenterFactor = 1 / skintones.length / 2;
-const hairtoneCenterFactor = 1 / hairtones.length / 2;
 
 export type HairType = "bald" | "short" | "mid" | "long";
 export type TopType = 0 | 1 | 2 | 3 | 4;
@@ -56,9 +56,7 @@ export type ShoeType = 0 | 1 | 2 | 3 | 4;
 
 type Appearance = {
   genderSlider: number;
-  skintoneSlider: number;
   widthSlider: number;
-  hairtoneSlider: number;
 
   beard: boolean;
   belt: boolean;
@@ -67,6 +65,8 @@ type Appearance = {
   bottom: BottomType;
   shoes: ShoeType;
 
+  skinColor: string;
+  hairColor: string;
   topColor: string;
   bottomColor: string;
   beltColor: string;
@@ -146,24 +146,10 @@ export function appearanceToCharacterTraits(appearance: Appearance) {
   (appearance.shoes < 3 ? skinGroup : shoeGroup).push("shoes-03");
 
   const charColors = {};
-  const skinTone =
-    skintones[
-      Math.floor(
-        (appearance.skintoneSlider + skintoneCenterFactor) *
-          (skintones.length - 1)
-      )
-    ];
-  const hairTone =
-    hairtones[
-      Math.floor(
-        (appearance.hairtoneSlider + hairtoneCenterFactor) *
-          (hairtones.length - 1)
-      )
-    ];
   for (const vertexGroup of skinGroup)
-    charColors[vertexGroup] = [skinTone, 0.9];
+    charColors[vertexGroup] = [appearance.skinColor, 0.9];
   for (const vertexGroup of hairGroup)
-    charColors[vertexGroup] = [hairTone, 0.9];
+    charColors[vertexGroup] = [appearance.hairColor, 0.9];
   for (const vertexGroup of topGroup)
     charColors[vertexGroup] = [appearance.topColor, 0.9];
   for (const vertexGroup of bottomGroup)

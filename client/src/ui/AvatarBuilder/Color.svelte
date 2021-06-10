@@ -1,20 +1,29 @@
 <script>
-  export let value = "black";
-  export let border = "white";
+  export let value = "#000000";
+  export let selected = false;
 
 </script>
 
-<div style="--value: {value}; --border: {border}" />
+<div class:selected on:click>
+  <swatch style="--value: {value}" />
+</div>
 
 <style>
   div {
-    width: 16px;
-    height: 16px;
-    background-color: var(--value);
-    border-color: var(--border);
-    border-width: 2px;
-    border-radius: 4px;
     margin-top: 4px;
+    border-radius: 4px;
+  }
+  div.selected {
+    box-shadow: 0px 0px 0px 4px var(--selected-red);
+  }
+  swatch {
+    display: block;
+    background-color: var(--value);
+    width: 24px;
+    height: 24px;
+    border: 2px solid black;
+    border-radius: 4px;
+    /* margin: 2px; */
   }
 
 </style>
