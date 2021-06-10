@@ -173,10 +173,10 @@
     <div class="title center">Pants</div>
     <div class="row evenly">
       <ColorPick on:change={onPickBottomColor} />
-      <Choice src="/icons/shirt-01.png" on:click={onClickBottomStyle(0)} />
-      <Choice src="/icons/shirt-02.png" on:click={onClickBottomStyle(1)} />
-      <Choice src="/icons/shirt-03.png" on:click={onClickBottomStyle(2)} />
-      <Choice src="/icons/shirt-04.png" on:click={onClickBottomStyle(3)} />
+      <Choice src="/icons/pants-01.png" on:click={onClickBottomStyle(0)} />
+      <Choice src="/icons/pants-02.png" on:click={onClickBottomStyle(1)} />
+      <Choice src="/icons/pants-03.png" on:click={onClickBottomStyle(2)} />
+      <Choice src="/icons/pants-04.png" on:click={onClickBottomStyle(3)} />
     </div>
   </div>
 
@@ -184,10 +184,10 @@
     <div class="title center">Shoes</div>
     <div class="row evenly">
       <ColorPick on:change={onPickShoeColor} />
-      <Choice src="/icons/shirt-01.png" on:click={onClickShoeStyle(0)} />
-      <Choice src="/icons/shirt-02.png" on:click={onClickShoeStyle(1)} />
-      <Choice src="/icons/shirt-03.png" on:click={onClickShoeStyle(2)} />
-      <Choice src="/icons/shirt-04.png" on:click={onClickShoeStyle(3)} />
+      <Choice src="/icons/shoes-01.png" on:click={onClickShoeStyle(0)} />
+      <Choice src="/icons/shoes-02.png" on:click={onClickShoeStyle(1)} />
+      <Choice src="/icons/shoes-03.png" on:click={onClickShoeStyle(2)} />
+      <Choice src="/icons/shoes-04.png" on:click={onClickShoeStyle(3)} />
     </div>
   </div>
 
