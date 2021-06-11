@@ -282,8 +282,13 @@
   container {
     display: flex;
     flex-direction: column;
-    margin-bottom: 32px;
-    background-color: #1a1e23;
+    border: 1px solid var(--foreground-dark-gray);
+    
+    padding: 12px 8px;
+    border-radius: 8px;
+    background-color: var(--background-gray);
+    
+    overflow-y: auto;
   }
 
   .row {
@@ -304,6 +309,8 @@
   .label {
     color: var(--foreground-gray);
     font-size: 12px;
+    margin-left: 8px;
+    margin-right: 8px;
   }
 
 </style>

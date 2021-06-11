@@ -34,14 +34,17 @@
 
   .builder {
     position: absolute;
-    top: 100px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 0;
+    right: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
     width: 200px;
-    border-radius: 8px;
-    border: 1px solid var(--foreground-white);
-    background-color: var(--background-transparent-gray);
+    height: 100vh;
+
     pointer-events: all;
-    padding: 8px;
   }
+
 </style>
