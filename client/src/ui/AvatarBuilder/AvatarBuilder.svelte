@@ -5,17 +5,13 @@
   import ColorPick from "./ColorPick.svelte";
   import Choice from "./Choice.svelte";
   import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
+  import { skinColors, hairColors } from "~/identity/appearance";
   import type {
     HairType,
     TopType,
     BottomType,
     ShoeType,
   } from "~/identity/types";
-  import {
-    skinColors,
-    hairColors,
-    appearanceToCharacterTraits,
-  } from "~/identity/appearance";
   import ToggleSwitch from "~/ui/ToggleSwitch";
   import Section from "./Section.svelte";
 
@@ -27,12 +23,12 @@
   export let top: TopType;
   export let bottom: BottomType;
   export let shoes: ShoeType;
-  export let skinColor;
-  export let hairColor;
-  export let topColor;
-  export let bottomColor;
-  export let beltColor;
-  export let shoeColor;
+  export let skinColor: string;
+  export let hairColor: string;
+  export let topColor: string;
+  export let bottomColor: string;
+  export let beltColor: string;
+  export let shoeColor: string;
 
   $: {
     const appearance = {

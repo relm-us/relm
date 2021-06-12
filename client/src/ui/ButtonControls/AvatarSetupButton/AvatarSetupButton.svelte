@@ -3,6 +3,7 @@
   import IoIosHappy from "svelte-icons/io/IoIosHappy.svelte";
   import { Relm } from "~/stores/Relm";
   import { AvatarBuilder } from "~/ui/AvatarBuilder";
+  import { getDefaultAppearance } from "~/identity/appearance";
 
   let showBuilder = false;
 
@@ -23,7 +24,7 @@
   <div class="builder">
     <AvatarBuilder
       on:click={() => (showBuilder = false)}
-      {...$Relm.identities.me.get("appearance")}
+      {...$Relm.identities.me.get("appearance") || getDefaultAppearance("male")}
     />
   </div>
 {/if}
