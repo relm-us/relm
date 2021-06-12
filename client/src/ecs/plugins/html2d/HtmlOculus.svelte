@@ -3,15 +3,11 @@
   import {
     Audio,
     Video,
-    AudioIcon,
-    AudioLevelIndicator,
     VideoIcon,
-    audioRequested,
     videoRequested,
   } from "video-mirror";
   import { setupState } from "~/stores/setupState";
   import { Relm } from "~/stores/Relm";
-  import HtmlOculusMic from "./HtmlOculusMic.svelte";
   import Fullscreen from "./Fullscreen.svelte";
   import shineImg from "./shine.svg";
 
@@ -28,13 +24,6 @@
 
   let identity;
   $: identity = $Relm.identities.identities.get(playerId);
-
-  function toggleMute() {
-    if (identity && isLocal) {
-      if (!$audioRequested) $setupState = "media";
-      else identity.toggleShowAudio();
-    }
-  }
 
   function toggleVideo() {
     if (identity) {
@@ -96,14 +85,6 @@
       <Audio stream={$stream} {volume} />
     {/if}
   </oculus>
-  {#if !translucent}
-    <HtmlOculusMic muted={!showAudio} on:click={toggleMute}>
-      {#if showAudio && isLocal}
-        <AudioLevelIndicator class="oculus-audio-level-indicator" />
-      {/if}
-      <AudioIcon enabled={showAudio} class="oculus-audio-icon" />
-    </HtmlOculusMic>
-  {/if}
 </container>
 
 <style lang="scss">

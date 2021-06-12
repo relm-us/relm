@@ -10,8 +10,9 @@
   import Input from "~/input";
   import Button from "~/ui/Button";
 
-  import MediaSetupButton from "~/ui/ButtonControls/MediaSetupButton";
   import UploadButton from "~/ui/ButtonControls/UploadButton";
+  import MediaSetupButton from "~/ui/ButtonControls/MediaSetupButton";
+  import MicButton from "~/ui/ButtonControls/MicButton";
   import AvatarSetupButton from "~/ui/ButtonControls/AvatarSetupButton";
   import ShareScreenButton from "~/ui/ButtonControls/ShareScreenButton";
 
@@ -129,12 +130,6 @@
 
   <overlay-content>
     <overlay-left>
-      <play-buttons>
-        <ShareScreenButton />
-        <MediaSetupButton />
-        <AvatarSetupButton />
-        <UploadButton on:uploaded={onUpload} />
-      </play-buttons>
       {#if $mode === "build"}
         <GroupUngroupButton />
         <ResetWorldButton />
@@ -146,6 +141,16 @@
     </overlay-right>
   </overlay-content>
 </overlay>
+
+<overlay-center>
+  <play-buttons>
+    <ShareScreenButton />
+    <MediaSetupButton />
+    <MicButton />
+    <AvatarSetupButton />
+    <UploadButton on:uploaded={onUpload} />
+  </play-buttons>
+</overlay-center>
 
 <Chat />
 
@@ -194,6 +199,14 @@
     flex-direction: column;
     margin-top: 8px;
     margin-left: 50px;
+  }
+  overlay-center {
+    position: fixed;
+    z-index: 1;
+    bottom: 8px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
   overlay-right {
     display: flex;
