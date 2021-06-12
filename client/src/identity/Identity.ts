@@ -57,11 +57,13 @@ export class Identity {
   set(fields: object, propagate: boolean = true) {
     Object.assign(this.sharedFields, fields);
     if (this.isLocal) {
-      if ("appearance" in fields) {
-        localIdentityData.update(($data) => ({
-          ...$data,
-          appearance: fields["appearance"],
-        }));
+      for (const key of ["name", "color", "appearance"]) {
+        if (key in fields) {
+          localIdentityData.update(($data) => ({
+            ...$data,
+            [key]: fields[key],
+          }));
+        }
       }
 
       if (this.manager.relm.roomClient) {
