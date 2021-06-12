@@ -28,25 +28,14 @@
 // bottomType: "shorts" | "kneelength" | "capris" | "pants"
 // shoeType: "none" | "slippers" | "shoes" | "boots"
 
-// skinColor
-// hairColor
-// topColor
-// bottomColor
-// beltColor
-// shoeColor
-
 // prettier-ignore
 export const skinColors = [
     "#e3d0cf", "#d5b9ad", "#d08778", "#a56049", "#342723",
   ];
-// export const skinColors = [
-//     "#e3d0cf", "#ddbfb4", "#e5b69e", "#d5b9ad", "#d9ad9f", "#d59187",
-//     "#d08778", "#c8947a", "#c78164", "#a56049", "#6d3325", "#342723",
-//   ];
 
 // prettier-ignore
 export const hairColors = [
-    "#debe99", "#aa8866", "#241c11", "#4f1a00", "#9a3300"
+    "#debe99", "#aa8866", "#241c11", "#0a0a0a", "#9a3300"
   ];
 
 export type HairType = "bald" | "short" | "mid" | "long";
