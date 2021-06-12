@@ -13,7 +13,7 @@
 <style>
   .section {
     margin-top: -5px;
-    padding-bottom: 20px;
+    padding-bottom: 26px;
   }
   .section.first {
     margin-top: 0px;

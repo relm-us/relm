@@ -54,6 +54,7 @@
     left: 0;
     top: 50%;
     border-radius: 50%;
+    border: 2px solid black;
     background: var(--sliderThumb, var(--sliderSecondary));
     touch-action: none;
     transform: translate(-50%, -50%);

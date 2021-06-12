@@ -4,6 +4,7 @@
   import Color from "./Color.svelte";
   import ColorPick from "./ColorPick.svelte";
   import Choice from "./Choice.svelte";
+  import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
   import type { HairType, TopType, BottomType, ShoeType } from "./appearance";
   import {
     skinColors,
@@ -75,10 +76,6 @@
     shoes = style;
   };
 
-  const onClickBeltStyle = (style: boolean) => () => {
-    belt = style;
-  };
-
   const setSkinColor = (color: string) => () => {
     skinColor = color;
   };
@@ -90,7 +87,11 @@
 </script>
 
 <container>
-  <Section name="Gender" first={true}>
+  <h1>
+    <icon class="upper-right" on:click><IoIosClose /></icon>
+    Avatar
+  </h1>
+  <Section name="Gender">
     <Slider on:change={onSlideGender} value={[0, genderSlider]} single />
     <div class="row between">
       <div class="label">Male</div>
@@ -98,7 +99,7 @@
     </div>
   </Section>
 
-  <Section name="Width">
+  <Section name="Body">
     <Slider on:change={onSlideWidth} value={[0, widthSlider]} single />
     <div class="row between">
       <div class="label">Narrow</div>
@@ -272,29 +273,55 @@
       {#if belt}
         <ColorPick bind:value={beltColor} />
       {:else}
-        <div style="width:24px;height:24px" />
+        <div style="width:26px;height:26px" />
       {/if}
     </div>
   </Section>
 </container>
 
 <style lang="scss">
+  h1 {
+    position: relative;
+    font-size: 20px;
+    color: var(--foreground-white);
+    text-align: center;
+    margin: 0px 0 28px 0;
+  }
+
+  icon {
+    display: block;
+    width: 32px;
+    height: 32px;
+
+    color: white;
+  }
+  icon.upper-right {
+    position: absolute;
+    top: -2px;
+    right: 8px;
+  }
   container {
     display: flex;
     flex-direction: column;
     border: 1px solid var(--foreground-dark-gray);
-    
-    padding: 12px 8px;
+
+    padding: 12px 0 0 0;
     border-radius: 8px;
     background-color: var(--background-gray);
-    
+
     overflow-y: auto;
+
+    --sliderPrimary: #8de66a;
+    --sliderSecondary: #8de66a;
   }
 
   .row {
     width: 100%;
     display: flex;
     justify-content: space-around;
+  }
+  .row :global(lbl) {
+    color: var(--foreground-white);
   }
   .row.evenly {
     justify-content: space-evenly;

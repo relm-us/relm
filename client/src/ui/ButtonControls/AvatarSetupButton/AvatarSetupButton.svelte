@@ -20,7 +20,7 @@
 
 {#if showBuilder}
   <div class="builder">
-    <AvatarBuilder />
+    <AvatarBuilder on:click={() => (showBuilder = false)} />
   </div>
 {/if}
 
@@ -35,7 +35,7 @@
   .builder {
     position: absolute;
     top: 0;
-    right: 0;
+    right: 8px;
 
     display: flex;
     flex-direction: column;
