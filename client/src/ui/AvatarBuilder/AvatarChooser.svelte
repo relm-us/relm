@@ -3,59 +3,15 @@
   import { Relm } from "~/stores/Relm";
   import { askAvatarSetup } from "~/stores/askAvatarSetup";
   import FullScreen from "~/ui/FullScreen";
+  import { getDefaultAppearance } from "~/identity/appearance";
+  import type { BinaryGender } from "~/identity/types";
 
   const dispatch = createEventDispatcher();
 
-  let choice;
+  const pick = (gender: BinaryGender) => () => {
+    const appearance = getDefaultAppearance(gender);
 
-  const pick = (value) => () => {
-    let charColors;
-    let charMorphs;
-    if (value === "male") {
-      charColors = {
-        "skin": ["#c58c85", 0.9],
-        "beard": ["#c58c85", 0.9],
-        "hair": ["#6e6057", 0.9],
-        "top-01": ["#fbfbfb", 0.9],
-        "top-02": ["#fbfbfb", 0.9],
-        "top-03": ["#fbfbfb", 0.9],
-        "top-04": ["#fbfbfb", 0.9],
-        "belt": ["#7a6f38", 0.9],
-        "pants-01": ["#2e2b19", 0.9],
-        "pants-02": ["#2e2b19", 0.9],
-        "pants-03": ["#2e2b19", 0.9],
-        "pants-04": ["#2e2b19", 0.9],
-        "shoes-01": ["#080705", 0.9],
-        "shoes-02": ["#080705", 0.9],
-        "shoes-03": ["#080705", 0.9],
-      };
-      charMorphs = { "gender": 0, "wide": 0, "hair": 0, "hair-02": 1 };
-    } else if (value === "female") {
-      charColors = {
-        "skin": ["#c58c85", 0.9],
-        "beard": ["#c58c85", 0.9],
-        "hair": ["#6e6057", 0.9],
-        "top-01": ["#fbfbfb", 0.9],
-        "top-02": ["#fbfbfb", 0.9],
-        "top-03": ["#fbfbfb", 0.9],
-        "top-04": ["#fbfbfb", 0.9],
-        "belt": ["#7a6f38", 0.9],
-        "pants-01": ["#2e2b19", 0.9],
-        "pants-02": ["#2e2b19", 0.9],
-        "pants-03": ["#2e2b19", 0.9],
-        "pants-04": ["#2e2b19", 0.9],
-        "shoes-01": ["#080705", 0.9],
-        "shoes-02": ["#080705", 0.9],
-        "shoes-03": ["#080705", 0.9],
-      };
-      charMorphs = { "gender": 1, "wide": 0, "hair": 0.5, "hair-02": 1 };
-    } else {
-      console.warn("Avatar selection invalid:", value);
-    }
-
-    if (charColors && charMorphs) {
-      $Relm.identities.me.set({ charColors, charMorphs });
-    }
+    $Relm.identities.me.set({ appearance });
 
     $askAvatarSetup = false;
     dispatch("done");

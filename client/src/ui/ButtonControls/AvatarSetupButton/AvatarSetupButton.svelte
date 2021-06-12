@@ -1,6 +1,7 @@
 <script lang="ts">
   import Button from "~/ui/Button";
   import IoIosHappy from "svelte-icons/io/IoIosHappy.svelte";
+  import { Relm } from "~/stores/Relm";
   import { AvatarBuilder } from "~/ui/AvatarBuilder";
 
   let showBuilder = false;
@@ -20,7 +21,10 @@
 
 {#if showBuilder}
   <div class="builder">
-    <AvatarBuilder on:click={() => (showBuilder = false)} />
+    <AvatarBuilder
+      on:click={() => (showBuilder = false)}
+      {...$Relm.identities.me.get("appearance")}
+    />
   </div>
 {/if}
 

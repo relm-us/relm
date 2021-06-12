@@ -3,8 +3,6 @@ import { Avatar } from "./Avatar";
 import type { IdentityManager } from "./IdentityManager";
 import { IdentityData, PlayerID } from "./types";
 import { defaultIdentityData, localIdentityData } from "./identityData";
-import { getCharacterFacemaps } from "./colors";
-import { randomMorphInfluences } from "./morphs";
 
 import { setMe } from "~/av/redux/stateActions";
 import { store as avStore } from "~/av";
@@ -12,7 +10,6 @@ import { browser } from "~/av/browserInfo";
 
 const LONG_TIME_AGO = 600000; // 5 minutes ago
 const LAST_SEEN_TIMEOUT = 15000;
-const BEARD_POPULARITY = 0.7;
 
 export class Identity {
   manager: IdentityManager;
@@ -60,16 +57,10 @@ export class Identity {
   set(fields: object, propagate: boolean = true) {
     Object.assign(this.sharedFields, fields);
     if (this.isLocal) {
-      if ("charColors" in fields) {
+      if ("appearance" in fields) {
         localIdentityData.update(($data) => ({
           ...$data,
-          charColors: fields["charColors"],
-        }));
-      }
-      if ("charMorphs" in fields) {
-        localIdentityData.update(($data) => ({
-          ...$data,
-          charMorphs: fields["charMorphs"],
+          appearance: fields["appearance"],
         }));
       }
 
@@ -99,17 +90,6 @@ export class Identity {
 
   get(key: string) {
     return this.sharedFields[key];
-  }
-
-  randomNewLook() {
-    const hasHair = true; // TODO: Math.random() >= 0.1; // most people have hair
-    const charMorphs = randomMorphInfluences();
-    if (!hasHair) Object.assign(charMorphs, { "hair": 0, "hair-02": 0 });
-    const charColors = getCharacterFacemaps({
-      beard: charMorphs.gender < 0.5 && Math.random() >= BEARD_POPULARITY,
-      hair: hasHair,
-    });
-    this.set({ charColors, charMorphs });
   }
 
   toggleShowAudio() {

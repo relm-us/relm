@@ -3,6 +3,33 @@ export type PlayerStatus = "initial" | "present" | "away";
 export type YClientID = number;
 export type PlayerID = string;
 
+// Used for "simple" AvatarChooser
+export type BinaryGender = "male" | "female";
+
+export type HairType = "bald" | "short" | "mid" | "long";
+export type TopType = 0 | 1 | 2 | 3 | 4;
+export type BottomType = 0 | 1 | 2 | 3;
+export type ShoeType = 0 | 1 | 2 | 3 | 4;
+
+export type Appearance = {
+  genderSlider: number;
+  widthSlider: number;
+
+  beard: boolean;
+  belt: boolean;
+  hair: HairType;
+  top: TopType;
+  bottom: BottomType;
+  shoes: ShoeType;
+
+  skinColor: string;
+  hairColor: string;
+  topColor: string;
+  bottomColor: string;
+  beltColor: string;
+  shoeColor: string;
+};
+
 export type IdentityData = {
   // Participant's name (chosen randomly at first, "Guest-xyz")
   name: string;
@@ -28,11 +55,8 @@ export type IdentityData = {
   // Participant has video enabled?
   showVideo: boolean;
 
-  // Character colors
-  charColors: object;
-
-  // Character morph influences
-  charMorphs: object;
+  // Avatar appearance, based on Avatar Builder settings
+  appearance: Appearance;
 
   // Most recent chat message (used for chat bubble)
   message?: string;

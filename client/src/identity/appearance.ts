@@ -1,32 +1,32 @@
-// *** morph targets:
-// gender
-// wide
-// hair
-// hair-02
+/**
+ * The character settings that make up an Avatar are as follows:
+ *
+ * Morph Targets:
+ * - gender
+ * - wide
+ * - hair
+ * - hair-02
+ *
+ * Facemap Colors:
+ * - beard
+ * - belt
+ * - hair
+ * - pants-01 PANTS
+ * - pants-02 PANTS/SKIN (thighs -> skin if shorts)
+ * - pants-03 PANTS/SKIN (knees -> skin if long shorts)
+ * - pants-04 PANTS/SKIN (bottom of pants -> skin if capris)
+ * - shoes-01 SHOES (shoe sides)
+ * - shoes-02 SHOES/SKIN (shoe tops -> skin if slippers)
+ * - shoes-03 SHOES/SKIN (ankles -> skin if no socks)
+ * - skin
+ * - top-01 SHIRT
+ * - top-02 SHIRT/SKIN (shoulders, neck & midriff -> skin if sports bra)
+ * - top-03 SHIRT/SKIN (elbows -> skin if T-shirt)
+ * - top-04 SHIRT/SKIN (forearm -> skin if half-sleeve)
+ *
+ */
 
-// *** vertex group colors:
-// beard
-// belt
-// hair
-// pants-01 PANTS
-// pants-02 PANTS/SKIN (thighs -> skin if shorts)
-// pants-03 PANTS/SKIN (knees -> skin if long shorts)
-// pants-04 PANTS/SKIN (bottom of pants -> skin if capris)
-// shoes-01 SHOES (shoe sides)
-// shoes-02 SHOES/SKIN (shoe tops -> skin if slippers)
-// shoes-03 SHOES/SKIN (ankles -> skin if no socks)
-// skin
-// top-01 SHIRT
-// top-02 SHIRT/SKIN (shoulders, neck & midriff -> skin if sports bra)
-// top-03 SHIRT/SKIN (elbows -> skin if T-shirt)
-// top-04 SHIRT/SKIN (forearm -> skin if half-sleeve)
-
-// hairType: "none" | "hair"
-// beardType: "none" | "beard"
-// beltType: "none" | "belt"
-// topType: "none" | "crop" | "tshirt" | "midsleeve" | "longsleeve"
-// bottomType: "shorts" | "kneelength" | "capris" | "pants"
-// shoeType: "none" | "slippers" | "shoes" | "boots"
+import { Appearance, BinaryGender } from "./types";
 
 // prettier-ignore
 export const skinColors = [
@@ -38,31 +38,30 @@ export const hairColors = [
     "#debe99", "#aa8866", "#241c11", "#0a0a0a", "#9a3300"
   ];
 
-export type HairType = "bald" | "short" | "mid" | "long";
-export type TopType = 0 | 1 | 2 | 3 | 4;
-export type BottomType = 0 | 1 | 2 | 3;
-export type ShoeType = 0 | 1 | 2 | 3 | 4;
+export function getDefaultAppearance(gender: BinaryGender): Appearance {
+  return {
+    genderSlider: gender === "male" ? 0.15 : 0.85,
+    widthSlider: 0.1,
 
-type Appearance = {
-  genderSlider: number;
-  widthSlider: number;
+    beard: false,
+    belt: true,
+    hair: gender === "male" ? "short" : "mid",
+    top: 4,
+    bottom: 3,
+    shoes: gender === "male" ? 3 : 4,
 
-  beard: boolean;
-  belt: boolean;
-  hair: HairType;
-  top: TopType;
-  bottom: BottomType;
-  shoes: ShoeType;
+    skinColor: skinColors[2],
+    hairColor: hairColors[2],
+    topColor: "#fbfbfb",
+    bottomColor: "#2e2b19",
+    beltColor: "#7a6f38",
+    shoeColor: "#080705",
+  };
+}
 
-  skinColor: string;
-  hairColor: string;
-  topColor: string;
-  bottomColor: string;
-  beltColor: string;
-  shoeColor: string;
-};
-
-export function appearanceToCharacterTraits(appearance: Appearance) {
+export function appearanceToCharacterTraits(
+  appearance: Appearance = getDefaultAppearance("male")
+): { morphs: object; colors: object } {
   let genderSlider = appearance.genderSlider;
   let widthSlider = appearance.widthSlider;
   let hairSlider1 = 0.5;
@@ -134,26 +133,26 @@ export function appearanceToCharacterTraits(appearance: Appearance) {
   (appearance.shoes < 2 ? skinGroup : shoeGroup).push("shoes-02");
   (appearance.shoes < 3 ? skinGroup : shoeGroup).push("shoes-03");
 
-  const charColors = {};
+  const colors = {};
   for (const vertexGroup of skinGroup)
-    charColors[vertexGroup] = [appearance.skinColor, 0.9];
+    colors[vertexGroup] = [appearance.skinColor, 0.9];
   for (const vertexGroup of hairGroup)
-    charColors[vertexGroup] = [appearance.hairColor, 0.9];
+    colors[vertexGroup] = [appearance.hairColor, 0.9];
   for (const vertexGroup of topGroup)
-    charColors[vertexGroup] = [appearance.topColor, 0.9];
+    colors[vertexGroup] = [appearance.topColor, 0.9];
   for (const vertexGroup of bottomGroup)
-    charColors[vertexGroup] = [appearance.bottomColor, 0.9];
+    colors[vertexGroup] = [appearance.bottomColor, 0.9];
   for (const vertexGroup of beltGroup)
-    charColors[vertexGroup] = [appearance.beltColor, 0.9];
+    colors[vertexGroup] = [appearance.beltColor, 0.9];
   for (const vertexGroup of shoeGroup)
-    charColors[vertexGroup] = [appearance.shoeColor, 0.9];
+    colors[vertexGroup] = [appearance.shoeColor, 0.9];
 
-  const charMorphs = {
+  const morphs = {
     "gender": genderSlider,
     "wide": widthSlider,
     "hair": hairSlider1,
     "hair-02": hairSlider2,
   };
 
-  return { charColors, charMorphs };
+  return { morphs, colors };
 }

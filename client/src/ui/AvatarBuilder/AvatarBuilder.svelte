@@ -5,32 +5,37 @@
   import ColorPick from "./ColorPick.svelte";
   import Choice from "./Choice.svelte";
   import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
-  import type { HairType, TopType, BottomType, ShoeType } from "./appearance";
+  import type {
+    HairType,
+    TopType,
+    BottomType,
+    ShoeType,
+  } from "~/identity/types";
   import {
     skinColors,
     hairColors,
     appearanceToCharacterTraits,
-  } from "./appearance";
+  } from "~/identity/appearance";
   import ToggleSwitch from "~/ui/ToggleSwitch";
   import Section from "./Section.svelte";
 
-  let genderSlider = 0.5;
-  let widthSlider = 0.25;
-  let beard = false;
-  let belt = true;
-  let hair: HairType = "short";
-  let top: TopType = 2;
-  let bottom: BottomType = 3;
-  let shoes: ShoeType = 2;
-  let skinColor = skinColors[2];
-  let hairColor = hairColors[2];
-  let topColor = "#ffffff";
-  let bottomColor = "#9999bb";
-  let beltColor = "#333333";
-  let shoeColor = "#ffffff";
+  export let genderSlider: number;
+  export let widthSlider: number;
+  export let beard: boolean;
+  export let belt: boolean;
+  export let hair: HairType;
+  export let top: TopType;
+  export let bottom: BottomType;
+  export let shoes: ShoeType;
+  export let skinColor;
+  export let hairColor;
+  export let topColor;
+  export let bottomColor;
+  export let beltColor;
+  export let shoeColor;
 
   $: {
-    const traits = appearanceToCharacterTraits({
+    const appearance = {
       genderSlider,
       widthSlider,
       beard,
@@ -48,8 +53,9 @@
         beltColor.indexOf("#") === 0 ? beltColor.slice(0, 7) : beltColor,
       shoeColor:
         shoeColor.indexOf("#") === 0 ? shoeColor.slice(0, 7) : shoeColor,
-    });
-    $Relm.identities.me.set(traits);
+    };
+
+    $Relm.identities.me.set({ appearance });
   }
 
   function onSlideGender({ detail }) {

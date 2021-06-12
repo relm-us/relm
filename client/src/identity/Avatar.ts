@@ -20,6 +20,7 @@ import {
 } from "~/ecs/plugins/twist-bone";
 
 import { chatOpen } from "~/stores/chatOpen";
+import { appearanceToCharacterTraits } from "./appearance";
 
 const OCULUS_HEIGHT = 2.4;
 const DEFAULT_LABEL_COLOR = "#D0D0D0";
@@ -122,7 +123,6 @@ export class Avatar {
     });
   }
 
-
   destroy() {
     this.entity?.destroy();
     this.entity = null;
@@ -134,7 +134,7 @@ export class Avatar {
     this.syncSpeech();
     this.syncEmoji();
     this.syncOculus();
-    this.syncCharacter();
+    this.syncAppearance();
   }
 
   syncLabel() {
@@ -199,20 +199,22 @@ export class Avatar {
     }
   }
 
-  syncCharacter() {
+  syncAppearance() {
     const identity = this.identity;
-    const influences = validInfluences(identity.get("charMorphs"));
-    if (influences) {
+    const appearance = identity.get("appearance");
+
+    const { morphs, colors } = appearanceToCharacterTraits(appearance);
+
+    if (morphs) {
       if (!this.entity.has(Morph)) {
-        this.entity.add(Morph, { influences });
+        this.entity.add(Morph, { influences: morphs });
       } else {
         const morph = this.entity.get(Morph);
-        morph.influences = influences;
+        morph.influences = morphs;
         morph.modified();
       }
     }
 
-    const colors = identity.get("charColors");
     if (colors) {
       if (!this.entity.has(FaceMapColors)) {
         this.entity.add(FaceMapColors, { colors });
@@ -308,7 +310,7 @@ export class Avatar {
 
   getTransformData() {
     if (!this.entity) return;
-    
+
     const transformData = [];
     const transform = this.entity.get(Transform);
     if (!transform) return;

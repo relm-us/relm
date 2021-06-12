@@ -14,6 +14,8 @@
   .section {
     margin-top: -5px;
     padding-bottom: 26px;
+    margin-left: 12px;
+    margin-right: 12px;
   }
   .section.first {
     margin-top: 0px;

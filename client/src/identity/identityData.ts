@@ -4,8 +4,6 @@ import { get } from "svelte/store";
 import { playerId } from "./playerId";
 import { randomColor } from "~/utils/colors";
 import { IdentityData } from "./types";
-import { getCharacterFacemaps } from "./colors";
-import { randomMorphInfluences } from "./morphs";
 
 /**
  * Generates a random name and color as default values.
@@ -18,8 +16,7 @@ export const defaultIdentityData: IdentityData = {
   emoting: false,
   showAudio: false,
   showVideo: false,
-  charColors: getCharacterFacemaps(),
-  charMorphs: randomMorphInfluences(),
+  appearance: undefined, // undefined allows to pick up default value later
 };
 
 export const localIdentityData: Writable<IdentityData> = writable(
