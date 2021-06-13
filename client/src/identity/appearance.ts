@@ -85,7 +85,7 @@ export function appearanceToCharacterTraits(
     beltGroup.push("belt");
   } else {
     // no belt
-    if (appearance.top === 0) {
+    if (appearance.top === 0 || appearance.top === 1) {
       // no shirt
       skinGroup.push("belt");
     } else {
