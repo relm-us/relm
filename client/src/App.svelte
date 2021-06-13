@@ -221,6 +221,7 @@
   panel-tabs {
     display: flex;
     --margin: 0px;
+    --bottom-radius: 0px;
 
     position: absolute;
     min-width: 500px;

@@ -5,7 +5,18 @@
   export let style: string | undefined = undefined;
 
   let dispatch = createEventDispatcher();
+
 </script>
+
+<button
+  {style}
+  class:disabled={!enabled}
+  on:mousedown|stopPropagation={() => {
+    dispatch("click");
+  }}
+>
+  <slot />
+</button>
 
 <style>
   button {
@@ -45,13 +56,5 @@
   button:active {
     transform: translateY(1px);
   }
-</style>
 
-<button
-  {style}
-  class:disabled={!enabled}
-  on:mousedown|stopPropagation={() => {
-    dispatch('click');
-  }}>
-  <slot />
-</button>
+</style>
