@@ -66,7 +66,7 @@ export class OculusSystem extends System {
     );
     container.style.display = "flex";
     container.style.justifyContent = "center";
-    container.style.alignItems = "flex-end";
+    container.style.alignItems = "center";
     this.htmlPresentation.domElement.appendChild(container);
 
     // Create the Svelte component
@@ -108,7 +108,7 @@ export class OculusSystem extends System {
     container.style.pointerEvents = "auto";
 
     // calculate width
-    container.style.width = `${Math.round(1500 / dist)}px`;
-    container.style.height = `${Math.round(1500 / dist)}px`;
+    container.style.width = `${Math.round(1200 / dist)}px`;
+    container.style.height = `${Math.round(1200 / dist)}px`;
   }
 }

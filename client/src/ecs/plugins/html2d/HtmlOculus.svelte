@@ -14,7 +14,6 @@
   export let playerId;
 
   let fullscreen = false;
-  let translucent = false;
   let volume = 0;
 
   let identity;
@@ -41,16 +40,16 @@
       return;
     }
     const interval = setInterval(() => {
+      const falloffStart = 3;
+      const falloffEnd = 6;
       const distance = identity.avatar.distance;
-      if (distance >= 0 && distance < 3) {
+      if (distance >= 0 && distance < falloffStart) {
         volume = 1;
-        translucent = false;
-      } else if (distance < 5) {
-        volume = (2 - (distance - 3)) * 0.5;
-        translucent = false;
+      } else if (distance < falloffEnd) {
+        const delta = falloffEnd - falloffStart;
+        volume = (delta - (distance - falloffStart)) / delta;
       } else {
         volume = 0;
-        translucent = true;
       }
     }, 100);
     return () => {
@@ -64,7 +63,6 @@
 </script>
 
 <container
-  class:translucent
   style="--background-image:url({shineImg}); --oculus-size: {(
     volume * 100
   ).toFixed(3)}%"
@@ -96,9 +94,6 @@
     position: relative;
     width: var(--oculus-size, 100%);
     height: var(--oculus-size, 100%);
-  }
-  container.translucent {
-    opacity: 0.4;
   }
   :global(.oculus-video) {
     filter: brightness(1.2) saturate(1.1);
