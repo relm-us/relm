@@ -37,9 +37,6 @@ export class OculusSystem extends System {
   }
 
   update() {
-    const vb = this.perspective.visibleBounds;
-    const boundsWidth = vb.max.x - vb.min.x;
-
     this.queries.new.forEach((entity) => {
       this.build(entity);
     });
@@ -48,7 +45,7 @@ export class OculusSystem extends System {
       this.build(entity);
     });
     this.queries.active.forEach((entity) => {
-      this.updatePosition(entity, boundsWidth);
+      this.updatePosition(entity);
     });
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
@@ -67,6 +64,9 @@ export class OculusSystem extends System {
       spec.vanchor,
       2
     );
+    container.style.display = "flex";
+    container.style.justifyContent = "center";
+    container.style.alignItems = "flex-end";
     this.htmlPresentation.domElement.appendChild(container);
 
     // Create the Svelte component
@@ -87,7 +87,7 @@ export class OculusSystem extends System {
     entity.remove(OculusRef);
   }
 
-  updatePosition(entity: Entity, boundsWidth: number) {
+  updatePosition(entity: Entity) {
     if (this.presentation.skipUpdate > 0) return;
 
     const world = entity.get(WorldTransform);
@@ -95,7 +95,6 @@ export class OculusSystem extends System {
     const dist = this.presentation.camera.parent.position.distanceTo(
       entity.get(WorldTransform).position
     );
-    // console.log("dist", dist);
 
     // calculate left, top
     v1.copy(world.position);

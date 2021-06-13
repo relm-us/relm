@@ -1,11 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import {
-    Audio,
-    Video,
-    VideoIcon,
-    videoRequested,
-  } from "video-mirror";
+  import { Audio, Video, VideoIcon, videoRequested } from "video-mirror";
   import { setupState } from "~/stores/setupState";
   import { Relm } from "~/stores/Relm";
   import Fullscreen from "./Fullscreen.svelte";
@@ -41,7 +36,10 @@
   }
 
   onMount(() => {
-    if (isLocal) return;
+    if (isLocal) {
+      volume = 1;
+      return;
+    }
     const interval = setInterval(() => {
       const distance = identity.avatar.distance;
       if (distance >= 0 && distance < 3) {
@@ -65,7 +63,12 @@
 
 </script>
 
-<container class:translucent style="--background-image:url({shineImg})">
+<container
+  class:translucent
+  style="--background-image:url({shineImg}); --oculus-size: {(
+    volume * 100
+  ).toFixed(3)}%"
+>
   <oculus class="round" on:click={toggleVideo}>
     {#if showVideo}
       {#if fullscreen}
@@ -91,19 +94,11 @@
   container {
     display: block;
     position: relative;
-    width: 100%;
-    height: 100%;
+    width: var(--oculus-size, 100%);
+    height: var(--oculus-size, 100%);
   }
   container.translucent {
     opacity: 0.4;
-  }
-  :global(.oculus-audio-level-indicator) {
-    width: 24px;
-    height: 24px;
-  }
-  :global(.oculus-audio-icon) {
-    position: absolute;
-    top: 0;
   }
   :global(.oculus-video) {
     filter: brightness(1.2) saturate(1.1);
