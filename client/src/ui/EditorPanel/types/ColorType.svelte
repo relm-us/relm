@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import ColorPicker from "@budibase/colorpicker";
+  import ColorPicker from "~/ui/ColorPicker";
   import { Color } from "three";
 
   export let key: string;

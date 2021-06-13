@@ -52,7 +52,6 @@
   },
   "dependencies": {
     "@braintree/browser-detection": "^1.11.0",
-    "@budibase/colorpicker": "1.0.1",
     "@dimforge/rapier3d": "0.5.3",
     "@types/resize-observer-browser": "^0.1.5",
     "@uppy/core": "^1.14.2",

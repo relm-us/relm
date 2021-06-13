@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ColorPicker from "@budibase/colorpicker";
+  import ColorPicker from "~/ui/ColorPicker";
   export let value;
 
 </script>
@@ -7,7 +7,8 @@
 <container>
 <ColorPicker
   bind:value
-  disableSwatches={true}
+  enableSwatches={true}
+  enableAlpha={false}
   open={false}
   width="24px"
   height="24px"
