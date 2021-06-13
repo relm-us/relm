@@ -6,10 +6,14 @@
   import { getDefaultAppearance } from "~/identity/appearance";
 
   let showBuilder = false;
+  let builderEl;
 
   const onClick = () => {
     showBuilder = !showBuilder;
   };
+
+  // escape absolute/relative positioned elements
+  $: if (showBuilder && builderEl) document.body.appendChild(builderEl);
 
 </script>
 
@@ -21,7 +25,7 @@
 </Button>
 
 {#if showBuilder}
-  <div class="builder">
+  <div class="builder" bind:this={builderEl}>
     <AvatarBuilder
       on:click={() => (showBuilder = false)}
       {...$Relm.identities.me.get("appearance") || getDefaultAppearance("male")}
@@ -39,6 +43,7 @@
 
   .builder {
     position: absolute;
+    z-index: 4;
     top: 0;
     right: 8px;
 
