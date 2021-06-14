@@ -1,3 +1,86 @@
+2021-06-13
+- NEW: Oculus diameter now corresponds to proximity volume--when you walk away from someone else, their oculus will grow smaller.
+- CHANGED: Buttons in upper-left corner (Share Screen, Video Setup, Avatar Builder, Upload) have been moved to center-bottom of the page.
+- CHANGED: Audio mute button is now at bottom of screen, along with other buttons.
+
+2021-06-12
+- NEW: Avatar Builder settings are now stored properly and reflect current avatar appearance
+- CHANGED: Video Oculus is now ~15% smaller. This makes the video diameter better correspond to the shoulder diameter of the avatar, so that people can approach each other more intimately.
+- CHANGED: Video Oculus is centered when growing/shrinking, rather than pinned to bottom (near avatar's head)
+- CHANGED: Proximity Audio's range is now slightly larger (6 world units instead of 5).
+- FIXED: Regression where Avatar Builder was not showing on screen.
+- CODE NOTES: We are no longer storing data in charColors and charMorphs; instead, we've unified the traits that affect the Avatar's look in a new "appearance" object.
+
+2021-06-10
+- NEW: Avatar builder has visually separated sections.
+- NEW: Avatar Builder has shirt, pants, shoes, belt style and color pickers
+- IMPROVED: Avatar Builder is full featured (NOTE: settings are still not saved)
+- FIXED: Avatar builder is now on right-hand side & scrollable so mobile users can change avatars when in landscape mode.
+
+2021-06-07
+- FIXED: Participants on iOS devices can now see themselves
+
+2021-06-04
+- FIXED: Fullscreen mode for iOS (shows video in entire window, since fullscreen is not actually available)
+- CODE NOTES: Updated to ThreeJS 0.129.0. This fixes a console error in iOS, among other improvements.
+
+2021-06-03
+- NEW: Avatar Builder lets you customize your avatar. Note: clothing choices not yet available, but coming soon; also note that choices are not yet saved.
+(for now, click smiley icon to open Avatar Builder)
+
+2021-06-01
+- NEW: A "Choose Your Avatar" screen after the Media Setup screen. Options are simple for now: Male or female, with customization possibility mentioned.
+- NEW: The Media Setup screen has a toggle that lets you skip the screen on subsequent visits. Note: still working out some kinks.
+- CHANGED: "Request Permissions" button text changed to "Use Cam & Mic".
+- CHANGED: Avatar randomizer button sends you to the Choose Your Avatar screen. Note: This will soon open an avatar customization panel instead.
+- FIXED: When world fails to load, error message will show even if in Media Setup screen.
+- FIXED: Error possible when getting transform before Avatar entity exists.
+
+2021-05-28
+- NEW: Screen sharing (Note: participant who shares screen can't see that they are sharing their own screen yet)
+- FIXED: Race condition when disabling ability to edit avatar names (see 
+
+2021-05-24
+- NEW: More status information in "connection" panel (click down arrow to see more). If there is too much data to show (e.g. in the case of many participants showing) you can scroll to see more. Also, each participant's "last seen" timestamp is shown, along with their name, clientId, and playerId.
+- FIXED: Media setup screen is shown when toggling video state from never having had video setup, to needing video setup.
+- FIXED: When using the Media setup screen for 2nd+ time, your avatar is no longer placed back at the entryway of the world.
+- FIXED: Several small issues that caused instability in the virtual world.
+
+2021-05-20
+- FIXED: Yet another attempt to fix the issue with presence. This one refactors some of the main code responsible for detecting when other participants are "active".
+
+2021-05-12
+- NEW: When out of audio range, video oculus becomes partially transparent & the mic goes away.
+- FIXED: Audio falloff with distance.
+- REMOVED: Build/Play mode buttons in center top. (Tab still works)
+
+2021-05-09
+- NEW: Avatars' head movements are now shared so that others can see what you're "looking at".
+
+2021-05-07
+- NEW: Avatar's head follows the mouse pointer. NOTE: Currently this is shown locally only (others can't see your head motion).
+
+2021-05-06
+- NEW: Repulsive force between participants. Makes it so you can't walk through each other; also improves "landings" when entering a subrelm--prevents participants from being exactly on top of each other.
+- NEW: (Build Mode) Shape textures! This allows you to add a repeating image pattern to a shape--for example, the ground. Currently the UI is difficult--you must copy/paste an Asset URL from another object into the Shape component's 'Texture' field.
+
+2021-05-05
+- CHANGED: Hold down Spacebar to wave (temporary).
+- FIXED: Foot slippage on walk/run animations. Avatar now more precisely faces the correct direction, making the animation more accurate.
+- FIXED: Loading progress bar regression during last refactor.
+- FIXED: Bounding box around player regression during last refactor.
+- FIXED: Several javascript exceptions that could freeze the world.
+- FIXED: "_mediasoupDevice" error is now a quieter warning
+
+2021-05-03
+- NEW: There is a "video/audio setup" button in the upper-left corner that allows you to go back to the video/audio setup screen once in the virtual world.
+- CHANGED: When entering a relm with your own audio/video disabled, you can still hear/see others.
+- CHANGED: Video setup screen doesn't show view of yourself when video is disabled.
+- REMOVED: The pause/unpause and 'step' buttons have been removed.
+- FIXED: Some conditions in which the world can stop working due to invalid entities.
+- CODE NOTES: The VideoMirror now has i18n support. Pass a "tr" (translation) object in as an argument. Keys can be either short-form or full text, with the value as the text to use in your language of choice (e.g. French).
+- CODE NOTES: avPermission is gone, and in its place we use audioRequested and videoRequested from video-mirror, as well as a new mediaSetupState. This simplifies the state we carry around regarding whether audio or video has been requested by the participant.
+
 2021-04-27
 - NEW: Emojis! You can type :heart:, :happy:, :sad: or :laughing: for now and the corresponding emoji will float up from your avatar.
 - FIXED: Presence issues where some people can't see each other should be fixed now (attempt #3)
