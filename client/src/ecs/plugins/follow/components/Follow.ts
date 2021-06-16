@@ -3,6 +3,11 @@ import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
 export class Follow extends Component {
+  entity: string;
+  limit: string;
+  offset: Vector3;
+  lerpAlpha: number;
+
   static props = {
     entity: {
       type: StringType,

@@ -62,6 +62,7 @@ export default class WorldManager {
   previousLoopTime: number = 0;
   sendLocalStateInterval: any; // Timeout
   started: boolean = false;
+  cameraOffset: Vector3 = new Vector3();
 
   constructor({ world, viewport }) {
     if (!world) throw new Error(`world is required`);
@@ -135,14 +136,11 @@ export default class WorldManager {
     });
 
     scale.subscribe(($scale) => {
-      if (!this.camera) return;
-
-      const follow = this.camera.get(Follow);
+      const follow = this.camera?.get(Follow);
       if (!follow) return;
 
-      const distance = 5 + (20 * $scale) / 100;
-      follow.offset.y = distance;
-      follow.offset.z = distance;
+      this.cameraOffset.y = 5.5 + (20 * $scale) / 100;
+      this.cameraOffset.z = 5 + (20 * $scale) / 100;
     });
   }
 
@@ -375,8 +373,16 @@ export default class WorldManager {
     this.worldStep(delta);
     this.identities.sync();
     this.sendTransformData();
+    this.lerpCamera();
 
     this.previousLoopTime = time;
+  }
+
+  lerpCamera() {
+      const follow: Follow = this.camera?.get(Follow);
+      if (!follow) return;
+
+      follow.offset.lerp(this.cameraOffset, 0.4);
   }
 
   sendTransformData() {
