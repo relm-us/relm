@@ -18,6 +18,23 @@
   import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
   import Section from "./Section.svelte";
 
+  import iconNone from "./icons/none.png";
+  import iconHair02 from "./icons/hair-02.png";
+  import iconHair03 from "./icons/hair-03.png";
+  import iconHair04 from "./icons/hair-04.png";
+  import iconPants01 from "./icons/pants-01.png";
+  import iconPants02 from "./icons/pants-02.png";
+  import iconPants03 from "./icons/pants-03.png";
+  import iconPants04 from "./icons/pants-04.png";
+  import iconShirt01 from "./icons/shirt-01.png";
+  import iconShirt02 from "./icons/shirt-02.png";
+  import iconShirt03 from "./icons/shirt-03.png";
+  import iconShirt04 from "./icons/shirt-04.png";
+  import iconShoes01 from "./icons/shoes-01.png";
+  import iconShoes02 from "./icons/shoes-02.png";
+  import iconShoes03 from "./icons/shoes-03.png";
+  import iconShoes04 from "./icons/shoes-04.png";
+
   export let genderSlider: number;
   export let widthSlider: number;
   export let beard: boolean;
@@ -145,22 +162,22 @@
   <Section name="Hair">
     <div class="row evenly">
       <Choice
-        src="/icons/none.png"
+        src={iconNone}
         selected={hair === "bald"}
         on:click={onClickHairStyle("bald")}
       />
       <Choice
-        src="/icons/hair-02.png"
+        src={iconHair02}
         selected={hair === "short"}
         on:click={onClickHairStyle("short")}
       />
       <Choice
-        src="/icons/hair-03.png"
+        src={iconHair03}
         selected={hair === "mid"}
         on:click={onClickHairStyle("mid")}
       />
       <Choice
-        src="/icons/hair-04.png"
+        src={iconHair04}
         selected={hair === "long"}
         on:click={onClickHairStyle("long")}
       />
@@ -197,22 +214,22 @@
   <Section name="Shirt">
     <div class="row evenly">
       <Choice
-        src="/icons/shirt-01.png"
+        src={iconShirt01}
         selected={top === 1}
         on:click={onClickTopStyle(1)}
       />
       <Choice
-        src="/icons/shirt-02.png"
+        src={iconShirt02}
         selected={top === 2}
         on:click={onClickTopStyle(2)}
       />
       <Choice
-        src="/icons/shirt-03.png"
+        src={iconShirt03}
         selected={top === 3}
         on:click={onClickTopStyle(3)}
       />
       <Choice
-        src="/icons/shirt-04.png"
+        src={iconShirt04}
         selected={top === 4}
         on:click={onClickTopStyle(4)}
       />
@@ -223,22 +240,22 @@
   <Section name="Pants">
     <div class="row evenly">
       <Choice
-        src="/icons/pants-01.png"
+        src={iconPants01}
         selected={bottom === 0}
         on:click={onClickBottomStyle(0)}
       />
       <Choice
-        src="/icons/pants-02.png"
+        src={iconPants02}
         selected={bottom === 1}
         on:click={onClickBottomStyle(1)}
       />
       <Choice
-        src="/icons/pants-03.png"
+        src={iconPants03}
         selected={bottom === 2}
         on:click={onClickBottomStyle(2)}
       />
       <Choice
-        src="/icons/pants-04.png"
+        src={iconPants04}
         selected={bottom === 3}
         on:click={onClickBottomStyle(3)}
       />
@@ -249,22 +266,22 @@
   <Section name="Shoes">
     <div class="row evenly">
       <Choice
-        src="/icons/shoes-01.png"
+        src={iconShoes01}
         selected={shoes === 1}
         on:click={onClickShoeStyle(1)}
       />
       <Choice
-        src="/icons/shoes-02.png"
+        src={iconShoes02}
         selected={shoes === 2}
         on:click={onClickShoeStyle(2)}
       />
       <Choice
-        src="/icons/shoes-03.png"
+        src={iconShoes03}
         selected={shoes === 3}
         on:click={onClickShoeStyle(3)}
       />
       <Choice
-        src="/icons/shoes-04.png"
+        src={iconShoes04}
         selected={shoes === 4}
         on:click={onClickShoeStyle(4)}
       />
