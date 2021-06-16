@@ -51,10 +51,11 @@
   }
   container.close {
     transition: 0.2s;
-    right: -308px;
+    right: -302px;
   }
 
   bottom {
     display: flex;
+    --margin: 2px;
   }
 </style>

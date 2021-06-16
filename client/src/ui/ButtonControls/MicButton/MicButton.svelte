@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import Button from "~/ui/lib/Button";
+  import CircleButton from "~/ui/lib/CircleButton";
   import { AudioIcon, audioRequested } from "video-mirror";
   import { setupState } from "~/stores/setupState";
   import { Relm } from "~/stores/Relm";
@@ -26,11 +26,11 @@
 
 </script>
 
-<Button on:click={toggleMute}>
+<CircleButton on:click={toggleMute}>
   <icon class:muted>
     <AudioIcon />
   </icon>
-</Button>
+</CircleButton>
 
 <style>
   .muted {

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Button from "~/ui/lib/Button";
+  import CircleButton from "~/ui/lib/CircleButton";
   import IoIosCloudUpload from "svelte-icons/io/IoIosCloudUpload.svelte";
 
   import Uploader from "./Uploader";
@@ -20,11 +20,11 @@
   }
 </style>
 
-<Button on:click={onClick}>
+<CircleButton on:click={onClick}>
   <icon>
     <IoIosCloudUpload />
   </icon>
   <slot />
-</Button>
+</CircleButton>
 
 <Uploader on:uploaded bind:this={uploader} />

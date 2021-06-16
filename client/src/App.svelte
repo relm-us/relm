@@ -137,7 +137,9 @@
     </overlay-left>
 
     <overlay-right>
-      <WorldStatePane />
+      <AvatarSetupButton />
+      <UploadButton on:uploaded={onUpload} />
+      <!-- <WorldStatePane /> -->
     </overlay-right>
   </overlay-content>
 </overlay>
@@ -145,10 +147,8 @@
 <overlay-center>
   <play-buttons>
     <ShareScreenButton />
-    <MediaSetupButton />
     <MicButton />
-    <AvatarSetupButton />
-    <UploadButton on:uploaded={onUpload} />
+    <MediaSetupButton />
   </play-buttons>
 </overlay-center>
 
@@ -212,6 +212,8 @@
     display: flex;
     flex-direction: column;
     margin-top: 8px;
+    margin-right: 8px;
+    --margin: 2px;
   }
   overlay-content {
     display: flex;

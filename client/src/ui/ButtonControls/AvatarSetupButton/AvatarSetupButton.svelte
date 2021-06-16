@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Button from "~/ui/lib/Button";
+  import CircleButton from "~/ui/lib/CircleButton";
   import IoIosHappy from "svelte-icons/io/IoIosHappy.svelte";
   import { Relm } from "~/stores/Relm";
   import { AvatarBuilder } from "~/ui/AvatarBuilder";
@@ -17,12 +17,12 @@
 
 </script>
 
-<Button on:click={onClick}>
+<CircleButton on:click={onClick}>
   <icon>
     <IoIosHappy />
   </icon>
   <slot />
-</Button>
+</CircleButton>
 
 {#if showBuilder}
   <div class="builder" bind:this={builderEl}>

@@ -1,32 +1,28 @@
 <script>
-  import IoIosChatbubbles from "svelte-icons/io/IoIosChatbubbles.svelte";
+  import IoIosText from "svelte-icons/io/IoIosText.svelte";
+  import CircleButton from "~/ui/lib/CircleButton";
 
   export let unread;
+
 </script>
 
-<button on:click>
+<CircleButton on:click>
   <icon>
-    <IoIosChatbubbles />
+    <IoIosText />
   </icon>
   {#if $unread > 0}
     <counter>
       {$unread}
     </counter>
   {/if}
-</button>
+</CircleButton>
 
 <style>
-  button {
-    all: unset;
-    cursor: pointer;
-    position: relative;
-  }
-
   icon {
     color: white;
     display: block;
-    width: 48px;
-    height: 48px;
+    width: 32px;
+    height: 32px;
   }
 
   icon:hover {
@@ -48,4 +44,5 @@
     font-weight: bold;
     background-color: var(--selected-red);
   }
+
 </style>
