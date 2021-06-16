@@ -8,7 +8,7 @@
   import PerformancePanel from "~/ui/PerformancePanel";
 
   import Input from "~/input";
-  import Button from "~/ui/Button";
+  import Button from "~/ui/lib/Button";
 
   import UploadButton from "~/ui/ButtonControls/UploadButton";
   import MediaSetupButton from "~/ui/ButtonControls/MediaSetupButton";

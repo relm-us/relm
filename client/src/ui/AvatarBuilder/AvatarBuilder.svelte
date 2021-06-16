@@ -1,10 +1,6 @@
 <script lang="ts">
   import { Relm } from "~/stores/Relm";
-  import Slider from "~/ui/Slider";
-  import Color from "./Color.svelte";
-  import ColorPick from "./ColorPick.svelte";
-  import Choice from "./Choice.svelte";
-  import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
+
   import { skinColors, hairColors } from "~/identity/appearance";
   import type {
     HairType,
@@ -12,7 +8,14 @@
     BottomType,
     ShoeType,
   } from "~/identity/types";
-  import ToggleSwitch from "~/ui/ToggleSwitch";
+
+  import Slider from "~/ui/lib/Slider";
+  import ToggleSwitch from "~/ui/lib/ToggleSwitch";
+
+  import Color from "./Color.svelte";
+  import ColorPick from "./ColorPick.svelte";
+  import Choice from "./Choice.svelte";
+  import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
   import Section from "./Section.svelte";
 
   export let genderSlider: number;

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ColorPicker from "~/ui/ColorPicker";
+  import ColorPicker from "~/ui/lib/ColorPicker";
   export let value;
 
 </script>

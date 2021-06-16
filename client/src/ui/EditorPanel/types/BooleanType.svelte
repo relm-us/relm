@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import ToggleSwitch from "~/ui/ToggleSwitch";
+  import ToggleSwitch from "~/ui/lib/ToggleSwitch";
 
   export let key: string;
   export let component;

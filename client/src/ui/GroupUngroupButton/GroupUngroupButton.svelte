@@ -1,10 +1,11 @@
 <script lang="ts">
-  import Button from "../Button";
   import {
     selectedEntities,
     selectedGroups,
     groupTree,
   } from "~/stores/selection";
+  
+  import Button from "~/ui/lib/Button";
 
   let action = "group";
 

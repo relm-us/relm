@@ -1,12 +1,12 @@
 <script>
-  import FullScreen from "../FullScreen";
+  import PageOverlay from "~/ui/lib/PageOverlay";
 
 </script>
 
-<FullScreen zIndex={6}>
+<PageOverlay zIndex={6}>
   <h1>Oh!</h1>
   <h2>Unable to load this relm.</h2>
-</FullScreen>
+</PageOverlay>
 
 <style>
   h1 {

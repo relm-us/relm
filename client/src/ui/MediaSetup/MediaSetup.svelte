@@ -2,8 +2,8 @@
   import { createEventDispatcher } from "svelte";
   import { VideoMirror, audioRequested, videoRequested } from "video-mirror";
   import { askMediaSetup } from "~/stores/askMediaSetup";
-  import ToggleSwitch from "~/ui/ToggleSwitch";
-  import FullScreen from "~/ui/FullScreen";
+  import ToggleSwitch from "~/ui/lib/ToggleSwitch";
+  import PageOverlay from "~/ui/lib/PageOverlay";
   import relmLogo from "./relm-logo.png";
 
   const dispatch = createEventDispatcher();
@@ -24,7 +24,7 @@
 
 </script>
 
-<FullScreen zIndex={5}>
+<PageOverlay zIndex={5}>
   <logo>
     <img src={relmLogo} alt="logo" />
   </logo>
@@ -47,7 +47,7 @@
       labelOn="Ask me again next time"
     />
   </div>
-</FullScreen>
+</PageOverlay>
 
 <style>
   logo {

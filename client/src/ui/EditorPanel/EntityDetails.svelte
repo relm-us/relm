@@ -4,8 +4,8 @@
 
   import { RigidBodyRef } from "~/ecs/plugins/physics";
 
-  import Capsule from "~/ui/Capsule";
-  import Button from "~/ui/Button";
+  import Capsule from "~/ui/lib/Capsule";
+  import Button from "~/ui/lib/Button";
   import { Relm } from "~/stores/Relm";
   import { sortAlphabetically } from "~/utils/sortAlphabetically";
 

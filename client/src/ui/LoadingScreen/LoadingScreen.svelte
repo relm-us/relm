@@ -1,15 +1,15 @@
 <script lang="ts">
-  import FullScreen from "../FullScreen";
+  import PageOverlay from "~/ui/lib/PageOverlay";
   import { loaded, maximum } from "~/stores/loading";
 
 </script>
 
-<FullScreen zIndex={3} justify="center">
+<PageOverlay zIndex={3} justify="center">
   <container>
     <img src="/loading.png" alt="Loading" />
     <progress-bar style="--percent:{($loaded / $maximum) * 140}%" />
   </container>
-</FullScreen>
+</PageOverlay>
 
 <style>
   container {

@@ -1,13 +1,17 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
-  import Button from "~/ui/Button";
-  import LeftPanel, { Header } from "~/ui/LeftPanel";
-  import { parse } from "~/utils/parse";
+
   import { Relm } from "~/stores/Relm";
+  import { config } from "~/config";
+
   import { exportRelm, jsonFormat } from "~/world/Export";
   import type { FormatOpts } from "~/world/Export";
-  import { config } from "~/config";
+  import { parse } from "~/utils/parse";
+
+  import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
+
+  import Button from "~/ui/lib/Button";
+  import LeftPanel, { Header } from "~/ui/LeftPanel";
 
   let text;
   let errorState = false;
@@ -19,7 +23,8 @@
 
   onMount(() => {
     const meta: FormatOpts = {
-      relm: config.subrelm,
+      // TODO: use whatever is the current relm
+      relm: config.initialSubrelm,
       server: config.serverUrl,
     };
     let exported;

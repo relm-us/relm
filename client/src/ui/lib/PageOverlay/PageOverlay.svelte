@@ -6,12 +6,12 @@
 
 </script>
 
-<fullscreen out:fade style="z-index: {zIndex}; justify-content: {justify}">
+<page-overlay out:fade style="z-index: {zIndex}; justify-content: {justify}">
   <slot />
-</fullscreen>
+</page-overlay>
 
 <style>
-  fullscreen {
+  page-overlay {
     display: flex;
     flex-direction: column;
     align-items: center;

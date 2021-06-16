@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Button from "~/ui/Button";
+  import Button from "~/ui/lib/Button";
   import { Relm } from "~/stores/Relm";
   import { WorldTransform } from "~/ecs/plugins/core";
   import { directory } from "~/prefab";

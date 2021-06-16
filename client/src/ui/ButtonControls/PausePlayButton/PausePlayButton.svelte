@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Button from "~/ui/Button";
+  import Button from "~/ui/lib/Button";
   import { playState } from "~/stores/playState";
   import PausedMessage from "./PausedMessage.svelte";
   import PauseAutomatically from "./PauseAutomatically.svelte";

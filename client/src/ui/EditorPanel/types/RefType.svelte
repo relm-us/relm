@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Capsule from "~/ui/Capsule";
+  import Capsule from "~/ui/lib/Capsule";
 
   export let key: string;
   export let prop;

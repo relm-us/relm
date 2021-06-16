@@ -1,5 +1,5 @@
 <script>
-  import ToggleSwitch from "~/ui/ToggleSwitch";
+  import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import { Relm } from "~/stores/Relm";
 import { onMount } from "svelte";
 

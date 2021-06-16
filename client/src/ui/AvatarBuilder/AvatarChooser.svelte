@@ -2,7 +2,7 @@
   import { createEventDispatcher } from "svelte";
   import { Relm } from "~/stores/Relm";
   import { askAvatarSetup } from "~/stores/askAvatarSetup";
-  import FullScreen from "~/ui/FullScreen";
+  import PageOverlay from "~/ui/lib/PageOverlay";
   import { getDefaultAppearance } from "~/identity/appearance";
   import type { BinaryGender } from "~/identity/types";
 
@@ -19,7 +19,7 @@
 
 </script>
 
-<FullScreen zIndex={4} justify="center">
+<PageOverlay zIndex={4} justify="center">
   <container>
     <h1>Choose Your Avatar</h1>
     <avatars>
@@ -33,7 +33,7 @@
     <div class="spacer" />
     <note>(you can customize this later)</note>
   </container>
-</FullScreen>
+</PageOverlay>
 
 <style>
   h1 {

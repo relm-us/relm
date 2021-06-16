@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  import Button from "~/ui/Button";
+  import Button from "~/ui/lib/Button";
   import ComponentPane from "./ComponentPane.svelte";
   import EntityDetails from "./EntityDetails.svelte";
   import { Relm } from "~/stores/Relm";

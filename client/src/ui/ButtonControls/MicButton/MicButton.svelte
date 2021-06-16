@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import Button from "~/ui/Button";
+  import Button from "~/ui/lib/Button";
   import { AudioIcon, audioRequested } from "video-mirror";
   import { setupState } from "~/stores/setupState";
   import { Relm } from "~/stores/Relm";

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import ColorPicker from "~/ui/ColorPicker";
+  import ColorPicker from "~/ui/lib/ColorPicker";
   import { Color } from "three";
 
   export let key: string;
@@ -17,6 +17,7 @@
 
   // ignore warning about missing props
   $$props;
+
 </script>
 
 <div>
@@ -26,7 +27,9 @@
     <color-value>{value}</color-value>
     <ColorPicker
       {value}
-      disableSwatches={true}
+      enableSwatches={true}
+      enableAlpha={false}
+      enableFormat={false}
       open={false}
       width="20px"
       height="20px"
@@ -63,4 +66,5 @@
       monospace;
     font-size: 12px;
   }
+
 </style>

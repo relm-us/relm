@@ -3,7 +3,7 @@
   import { createEventDispatcher } from "svelte";
 
   import { Pane } from "~/ui/LeftPanel";
-  import Capsule from "~/ui/Capsule";
+  import Capsule from "~/ui/lib/Capsule";
   import Property from "./Property.svelte";
 
   export let Component;

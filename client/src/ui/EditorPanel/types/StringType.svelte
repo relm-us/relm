@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import Capsule from "~/ui/Capsule";
+  import Capsule from "~/ui/lib/Capsule";
 
   export let key: string;
   export let component;

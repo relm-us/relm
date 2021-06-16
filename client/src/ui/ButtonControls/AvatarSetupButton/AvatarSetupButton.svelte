@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Button from "~/ui/Button";
+  import Button from "~/ui/lib/Button";
   import IoIosHappy from "svelte-icons/io/IoIosHappy.svelte";
   import { Relm } from "~/stores/Relm";
   import { AvatarBuilder } from "~/ui/AvatarBuilder";

@@ -1,14 +1,18 @@
 <script lang="ts">
-  import LeftPanel, { Header } from "~/ui/LeftPanel";
-  import UploadButton from "~/ui/ButtonControls/UploadButton";
-  import Capsule from "~/ui/Capsule";
-  import { Skybox } from "~/ecs/plugins/skybox";
   import { nanoid } from "nanoid";
-  import { Asset } from "~/ecs/plugins/core";
+  import { Vector3 } from "three";
+
   import { Relm } from "~/stores/Relm";
   import { assetUrl } from "~/config/assetUrl";
+
+  import { Entity } from '~/ecs/base'
+  import { Asset } from "~/ecs/plugins/core";
+  import { Skybox } from "~/ecs/plugins/skybox";
+  
   import EntrywayMap from "./EntrywayMap.svelte";
-  import { Vector3 } from "three";
+  import LeftPanel, { Header } from "~/ui/LeftPanel";
+  import UploadButton from "~/ui/ButtonControls/UploadButton";
+  import Capsule from "~/ui/lib/Capsule";
 
   let newEntrywayName = "";
 
@@ -27,9 +31,9 @@
     const imageUrl = assetUrl(result.types.webp);
 
     // Delete any previous Skybox object
-    const entities = $Relm.world.entities.getAllByComponent(Skybox);
+    const entities: Entity[] = $Relm.world.entities.getAllByComponent(Skybox);
     for (let entity of entities) {
-      $Relm.wdoc.deleteById(entity.id);
+      $Relm.wdoc.deleteById(entity.id.toString());
     }
 
     // Create a new Skybox

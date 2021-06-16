@@ -1,11 +1,12 @@
 <script>
-  import StatsPane from "./StatsPane.svelte";
-  import ToggleSwitch from "../ToggleSwitch";
-  import SystemToggle from './SystemToggle.svelte'
-
-  import Button from "~/ui/Button";
-  import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
   import { shadowsEnabled } from "~/stores/settings";
+
+  import ToggleSwitch from "~/ui/lib/ToggleSwitch";
+  import Button from "~/ui/lib/Button";
+  import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
+
+  import StatsPane from "./StatsPane.svelte";
+  import SystemToggle from "./SystemToggle.svelte";
 
   import {
     fpsTime,
@@ -31,6 +32,7 @@
   $: secondarySystems = Object.entries($systems).filter(
     ([name, _]) => !name.match(primarySystemsRE)
   );
+
 </script>
 
 <LeftPanel on:minimize>
@@ -145,4 +147,5 @@
   setting b {
     padding-right: 8px;
   }
+
 </style>
