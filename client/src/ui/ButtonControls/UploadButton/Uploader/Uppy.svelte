@@ -20,7 +20,7 @@
       autoProceed: false,
       allowMultipleUploads: false,
       restrictions: {
-        maxFileSize: 1024 * 1024 * 4,
+        maxFileSize: 1024 * 1024 * 16,
         maxNumberOfFiles: 12,
         minNumberOfFiles: 1,
         allowedFileTypes: ["image/*", ".gltf", ".glb"],
