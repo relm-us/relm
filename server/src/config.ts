@@ -6,7 +6,7 @@ const SECURITY_CONFIG = {
 
 const MAX_TOKEN_LENGTH = 100;
 const MAX_UUID_LENGTH = 36;
-const MAX_FILE_SIZE = 2097152 * 2;
+const MAX_FILE_SIZE = 2097152 * 8;
 const MAX_FILE_EXTENSION_LENGTH = 30; // e.g. '.jpeg', '.gltf', '.packed-gltf'
 const SETUP_TOKEN = "setup";
 const SETUP_TOKEN_COUNTER = 1;
