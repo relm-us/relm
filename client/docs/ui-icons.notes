@@ -1,0 +1,51 @@
+profile
+import IoMdPerson from 'svelte-icons/io/IoMdPerson.svelte'
+
+add something to the world
+import IoIosAdd from 'svelte-icons/io/IoIosAdd.svelte'
+
+upload picture
+import IoMdImages from 'svelte-icons/io/IoMdImages.svelte'
+
+start new document
+import IoIosDocument from 'svelte-icons/io/IoIosDocument.svelte'
+
+new art pad
+import IoMdColorPalette from 'svelte-icons/io/IoMdColorPalette.svelte'
+
+editor (insert 3d objects)
+import IoMdCube from 'svelte-icons/io/IoMdCube.svelte'
+
+insert youtube video
+import IoLogoYoutube from 'svelte-icons/io/IoLogoYoutube.svelte'
+
+
+build mode
+import IoIosConstruct from 'svelte-icons/io/IoIosConstruct.svelte'
+
+settings
+import IoIosOptions from 'svelte-icons/io/IoIosOptions.svelte'
+
+more menu toggle
+import IoIosArrowDown from 'svelte-icons/io/IoIosArrowDown.svelte'
+
+
+screenshare
+import IoIosShare from 'svelte-icons/io/IoIosShare.svelte' 
+
+mic
+import IoIosMic from 'svelte-icons/io/IoIosMic.svelte'
+
+video
+import IoIosVideocam from 'svelte-icons/io/IoIosVideocam.svelte'
+
+
+
+inventory
+import IoIosBriefcase from 'svelte-icons/io/IoIosBriefcase.svelte'
+
+map
+import IoMdGlobe from 'svelte-icons/io/IoMdGlobe.svelte'
+
+chat
+import IoIosText from 'svelte-icons/io/IoIosText.svelte'
