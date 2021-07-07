@@ -1,4 +1,22 @@
-2021-06-13
+2021-07-06
+- CHANGED: Updated to latest humanoid character set (Thanks Rey!)
+    - improves 'long' hairstyle
+    - waving animation doesn't alter leg posture
+    - makes various morph targets and animations available (unused):
+      - head size morph target
+      - jumping, raising-hand-pose, screen-sharing, sit-to-stand-chair,
+        sit-to-stand-ground, sitting-chair-pose, sitting-ground-pose,
+        stand-to-sit-chair, stand-to-sit-ground (animations)
+- FIXED: Build mode: No longer starts "waving" animation when flying
+- FIXED: Chat box should be completely off-screen when closed
+- FIXED: Mouse no longer gets "captured" after clicking on a website / CSS3D box
+
+2021-06-15
+- CHANGED: Zoom is smoother, and centers better so that the video oculus and avatar are balanced.
+- CHANGED: User Interface buttons are circular, and organized more closely to the way we're headed with the overall UI design.
+- CHANGED: ColorPicker is simpler.
+
+2021-06-13 (Release v1.5.0)
 - NEW: Oculus diameter now corresponds to proximity volume--when you walk away from someone else, their oculus will grow smaller.
 - CHANGED: Buttons in upper-left corner (Share Screen, Video Setup, Avatar Builder, Upload) have been moved to center-bottom of the page.
 - CHANGED: Audio mute button is now at bottom of screen, along with other buttons.
