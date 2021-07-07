@@ -74,6 +74,10 @@
     // Allow dragging Html2d objects, as well as selecting text
     if (isInputEvent(event)) return false;
 
+    // Prevent Renderable overlays (e.g. over websites) from erroneously
+    // becoming MouseListener click targets. TODO: make this less hacky?
+    if (event.target.tagName === "OVERLAY") return false;
+
     // An HTML element whose ancestor is the viewport is in the "world" (i.e. not part of the UI)
     return hasAncestor(event.target, world.presentation.viewport);
   }
