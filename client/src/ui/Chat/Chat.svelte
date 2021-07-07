@@ -18,20 +18,21 @@
     $chatOpen = false;
     $chatFocused = false;
   }
-
 </script>
 
 <container class:close={!$chatOpen} class:open={$chatOpen}>
-  {#if $Relm}
-    <ChatHistory messages={$Relm.chat.messages} myID={playerId} />
-  {/if}
-  <bottom>
+  <attached>
     <ChatButton
       on:click={toggleChat}
       unread={$Relm && $Relm.chat.unreadCount}
     />
+  </attached>
+  <slide-in>
+    {#if $Relm}
+      <ChatHistory messages={$Relm.chat.messages} myID={playerId} />
+    {/if}
     <ChatBar bind:this={chatBar} on:close={closeChat} />
-  </bottom>
+  </slide-in>
 </container>
 
 <style>
@@ -51,11 +52,12 @@
   }
   container.close {
     transition: 0.2s;
-    right: -302px;
+    right: -312px;
   }
 
-  bottom {
-    display: flex;
-    --margin: 2px;
+  attached {
+    position: absolute;
+    left: -80px;
+    bottom: -10px;
   }
 </style>
