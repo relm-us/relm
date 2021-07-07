@@ -4,7 +4,9 @@ import Logger from "./Logger";
 import { getMediasoupUrl } from "./getMediasoupUrl";
 import * as requestActions from "./redux/requestActions";
 import * as stateActions from "./redux/stateActions";
-import { getUserMedia } from "video-mirror";
+// import { getUserMedia } from "video-mirror";
+import { localStream, audioTrack, videoTrack } from "video-mirror";
+import { get} from 'svelte/store';
 
 const VIDEO_CONSTRAINTS = {
   qvga: { width: { ideal: 320 }, height: { ideal: 240 } },
@@ -721,19 +723,20 @@ export default class RoomClient {
     try {
       logger.debug("enableMic() | calling getUserMedia()");
 
-      const stream = await getUserMedia({
-        audio: {
-          autoGainControl: false,
-          echoCancellation: true,
-          noiseSuppression: true,
-          channelCount: 2,
-          sampleRate: 48000,
-          sampleSize: 16,
-          volume: 1.0,
-        },
-      });
+      // const stream = await getUserMedia({
+      //   audio: {
+      //     autoGainControl: false,
+      //     echoCancellation: true,
+      //     noiseSuppression: true,
+      //     channelCount: 2,
+      //     sampleRate: 48000,
+      //     sampleSize: 16,
+      //     volume: 1.0,
+      //   },
+      // });
 
-      track = stream.getAudioTracks()[0];
+      // track = stream.getAudioTracks()[0];
+      track = get(audioTrack);
 
       this._micProducer = await this._sendTransport.produce({
         track,
@@ -898,15 +901,15 @@ export default class RoomClient {
 
       logger.debug("enableWebcam() | calling getUserMedia()");
 
-      const stream = await getUserMedia({
-        video: {
-          deviceId: { ideal: device.deviceId },
-          ...VIDEO_CONSTRAINTS[resolution],
-        },
-      });
+      // const stream = await getUserMedia({
+      //   video: {
+      //     deviceId: { ideal: device.deviceId },
+      //     ...VIDEO_CONSTRAINTS[resolution],
+      //   },
+      // });
 
-      track = stream.getVideoTracks()[0];
-      console.log("track", track);
+      // track = stream.getVideoTracks()[0];
+      track = get(videoTrack);
 
       let encodings;
       let codec;
@@ -1060,14 +1063,15 @@ export default class RoomClient {
 
       logger.debug("changeWebcam() | calling getUserMedia()");
 
-      const stream = await getUserMedia({
-        video: {
-          deviceId: { exact: this._webcam.device.deviceId },
-          ...VIDEO_CONSTRAINTS[this._webcam.resolution],
-        },
-      });
+      // const stream = await getUserMedia({
+      //   video: {
+      //     deviceId: { exact: this._webcam.device.deviceId },
+      //     ...VIDEO_CONSTRAINTS[this._webcam.resolution],
+      //   },
+      // });
 
-      const track = stream.getVideoTracks()[0];
+      // const track = stream.getVideoTracks()[0];
+      const track = get(videoTrack);
 
       await this._webcamProducer.replaceTrack({ track });
 
@@ -1110,14 +1114,15 @@ export default class RoomClient {
 
       logger.debug("changeWebcamResolution() | calling getUserMedia()");
 
-      const stream = await getUserMedia({
-        video: {
-          deviceId: { exact: this._webcam.device.deviceId },
-          ...VIDEO_CONSTRAINTS[this._webcam.resolution],
-        },
-      });
+      // const stream = await getUserMedia({
+      //   video: {
+      //     deviceId: { exact: this._webcam.device.deviceId },
+      //     ...VIDEO_CONSTRAINTS[this._webcam.resolution],
+      //   },
+      // });
 
-      const track = stream.getVideoTracks()[0];
+      // const track = stream.getVideoTracks()[0];
+      const track = get(videoTrack);
 
       await this._webcamProducer.replaceTrack({ track });
 

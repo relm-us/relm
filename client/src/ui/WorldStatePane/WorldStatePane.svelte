@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import Pane from "./Pane.svelte";
 
-  import { audioRequested, videoRequested } from "video-mirror";
+  import { audioTrack, videoTrack } from "video-mirror";
   import { setupState } from "~/stores/setupState";
   import { Identity } from "~/identity/Identity";
 
@@ -96,11 +96,11 @@
         {/if}
         <tr>
           <th>audio</th>
-          <td> {$audioRequested} </td>
+          <td> {!!$audioTrack} </td>
         </tr>
         <tr>
           <th>video</th>
-          <td> {$videoRequested} </td>
+          <td> {!!$videoTrack} </td>
         </tr>
         <tr>
           <th>loading:</th>

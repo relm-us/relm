@@ -59,13 +59,13 @@ export class IdentityManager extends EventEmitter {
     };
     identity.set(data);
 
-    audioRequested.subscribe((showAudio) => {
-      identity.set({ showAudio });
-    });
+    // audioRequested.subscribe((showAudio) => {
+    //   identity.set({ showAudio });
+    // });
 
-    videoRequested.subscribe((showVideo) => {
-      identity.set({ showVideo });
-    });
+    // videoRequested.subscribe((showVideo) => {
+    //   identity.set({ showVideo });
+    // });
 
     this.me = identity;
   }

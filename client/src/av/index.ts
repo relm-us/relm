@@ -13,7 +13,7 @@ import { roomConnectState } from "~/av/stores/roomConnectState";
 import { producers } from "~/av/stores/producers";
 
 import { get } from "svelte/store";
-import { audioRequested, videoRequested } from "video-mirror";
+import { audioTrack, videoTrack } from "video-mirror";
 
 const reduxMiddlewares = [thunk];
 
@@ -32,8 +32,8 @@ export function connectAV({ roomId, displayName, peerId }) {
     displayName,
     peerId,
     device: browser,
-    produceAudio: get(audioRequested),
-    produceVideo: get(videoRequested),
+    produceAudio: !!get(audioTrack),
+    produceVideo: !!get(videoTrack),
     consume: true,
   });
 

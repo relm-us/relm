@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { Audio, Video, VideoIcon, videoRequested } from "video-mirror";
+  import { Audio, Video, VideoIcon, videoTrack } from "video-mirror";
   import { setupState } from "~/stores/setupState";
   import { Relm } from "~/stores/Relm";
   import Fullscreen from "./Fullscreen.svelte";
@@ -22,7 +22,7 @@
   function toggleVideo() {
     if (identity) {
       if (isLocal) {
-        if (!$videoRequested) $setupState = "media";
+        if (!$videoTrack) $setupState = "media";
         else identity.toggleShowVideo();
       } else if (showVideo) {
         fullscreen = true;

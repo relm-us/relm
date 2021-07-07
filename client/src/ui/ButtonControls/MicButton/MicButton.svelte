@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import CircleButton from "~/ui/lib/CircleButton";
-  import { AudioIcon, audioRequested } from "video-mirror";
+  import { AudioIcon, audioDesired } from "video-mirror";
   import { setupState } from "~/stores/setupState";
   import { Relm } from "~/stores/Relm";
 
@@ -11,7 +11,7 @@
   $: identity = $Relm && $Relm.identities.me;
 
   function toggleMute() {
-    if (!$audioRequested) $setupState = "media";
+    if (!$audioDesired) $setupState = "media";
     else identity.toggleShowAudio();
   }
 

@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher } from "svelte";
-  import { VideoMirror, audioRequested, videoRequested } from "video-mirror";
+  import { VideoMirror, audioDesired, videoDesired } from "video-mirror";
   import { askMediaSetup } from "~/stores/askMediaSetup";
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import PageOverlay from "~/ui/lib/PageOverlay";
@@ -17,8 +17,8 @@
 
   function joinWithout() {
     showButtonBar = false;
-    $audioRequested = false;
-    $videoRequested = false;
+    $audioDesired = false;
+    $videoDesired = false;
     dispatch("done", { audio: null, video: null });
   }
 
