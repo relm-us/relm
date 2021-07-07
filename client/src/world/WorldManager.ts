@@ -117,10 +117,16 @@ export default class WorldManager {
     });
 
     // Temporary hack: spacebar makes avatar wave
-    keySpace.subscribe(($keySpace) => {
+    derived([mode, keySpace], ([$mode, $keySpace], set) => {
+      if ($mode === "play" && $keySpace) {
+        set(true);
+      } else {
+        set(false);
+      }
+    }).subscribe((wave: boolean) => {
       const state = this.avatar.get(ControllerState);
       if (!state) return;
-      state.animOverride = $keySpace ? WAVING : null;
+      state.animOverride = wave ? WAVING : null;
     });
 
     playState.subscribe(($state) => {
@@ -379,10 +385,10 @@ export default class WorldManager {
   }
 
   lerpCamera() {
-      const follow: Follow = this.camera?.get(Follow);
-      if (!follow) return;
+    const follow: Follow = this.camera?.get(Follow);
+    if (!follow) return;
 
-      follow.offset.lerp(this.cameraOffset, 0.4);
+    follow.offset.lerp(this.cameraOffset, 0.4);
   }
 
   sendTransformData() {
