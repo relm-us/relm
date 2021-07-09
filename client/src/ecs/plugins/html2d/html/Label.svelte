@@ -1,5 +1,5 @@
 <script>
-  import { Vector2 } from "three";
+  import { Vector2, Vector3 } from "three";
   import { cleanHtml } from "~/utils/cleanHtml";
 
   import { Html2d } from "../components";
@@ -22,8 +22,8 @@
   let dragging = false;
   let editing = false;
 
+  const initialEntityPos = new Vector3();
   const initialMousePos = new Vector2();
-  const mousePos = new Vector2();
 
   function doneEditing() {
     if (!editing) return;
@@ -68,8 +68,12 @@
         $Relm.selection.addEntityId(entity.id);
       }, 100);
     } else if ($mode === "play") {
-      var rect = event.target.parentElement.getBoundingClientRect();
-      initialMousePos.set(event.clientX - rect.left, event.clientY - rect.top);
+      const mouse2d = $Relm.world.presentation.mouse2d;
+      // Store the original click in 3d world coords
+      $Relm.world.perspective.getWorldFromScreen(mouse2d, initialEntityPos);
+      initialEntityPos.sub(entity.getByName("Transform").position);
+
+      initialMousePos.copy(mouse2d);
       clickStarted = true;
     }
   }
@@ -90,13 +94,12 @@
 
     if (!event.target.parentElement) return;
 
-    var rect = event.target.parentElement.getBoundingClientRect();
-    mousePos.set(event.clientX - rect.left, event.clientY - rect.top);
+    const mouse2d = $Relm.world.presentation.mouse2d;
 
     if (
       draggable &&
       clickStarted &&
-      mousePos.distanceTo(initialMousePos) > DRAG_DISTANCE_THRESHOLD
+      mouse2d.distanceTo(initialMousePos) > DRAG_DISTANCE_THRESHOLD
     ) {
       // this is the start of a drag
       dragging = true;
@@ -104,10 +107,9 @@
 
     if (!dragging) return;
 
-    const drag = $Relm.world.presentation.getWorldFromScreen(
-      event.clientX - initialMousePos.x,
-      event.clientY - initialMousePos.y
-    );
+    const drag = $Relm.world.perspective.getWorldFromScreen(mouse2d);
+    drag.x -= initialEntityPos.x;
+    drag.z -= initialEntityPos.z;
 
     const position = entity.getByName("Transform").position;
     position.x = drag.x;
@@ -116,7 +118,6 @@
 
   // ignore warning about missing props
   $$props;
-
 </script>
 
 <div
@@ -175,5 +176,4 @@
 
     white-space: normal;
   }
-
 </style>
