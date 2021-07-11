@@ -1,9 +1,8 @@
 import { Vector3, Matrix4, Quaternion } from "three";
 import { System, Groups, Entity } from "~/ecs/base";
 
-import { IS_BROWSER } from "../utils";
-import { Transform, WorldTransform, LookAt } from "../components";
-import { Presentation } from "../Presentation";
+import { Transform, WorldTransform, Presentation } from "~/ecs/plugins/core";
+import { LookAt } from "../components";
 
 const m1 = new Matrix4();
 const q1 = new Quaternion();
@@ -16,7 +15,6 @@ export class LookAtSystem extends System {
   presentation: Presentation;
   cameraId: string;
 
-  active = IS_BROWSER;
   order = Groups.Initialization;
 
   static queries = {

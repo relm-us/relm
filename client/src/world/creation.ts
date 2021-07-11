@@ -34,6 +34,7 @@ import Html2dPlugin from "~/ecs/plugins/html2d";
 import ImagePlugin from "~/ecs/plugins/image";
 import LightingPlugin from "~/ecs/plugins/lighting";
 import LineHelperPlugin from "~/ecs/plugins/line-helper";
+import LookAtPlugin from "~/ecs/plugins/look-at";
 import ModelPlugin from "~/ecs/plugins/model";
 import MorphPlugin from "~/ecs/plugins/morph";
 import NonInteractivePlugin from "~/ecs/plugins/non-interactive";
@@ -140,6 +141,7 @@ export function createWorld(rapier) {
       ImagePlugin,
       LightingPlugin,
       LineHelperPlugin,
+      LookAtPlugin,
       ModelPlugin,
       MorphPlugin,
       NonInteractivePlugin,
