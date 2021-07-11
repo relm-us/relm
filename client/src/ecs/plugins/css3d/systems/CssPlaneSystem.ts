@@ -1,4 +1,4 @@
-import { System, Not, Groups } from "~/ecs/base";
+import { System, Not, Modified, Groups } from "~/ecs/base";
 import { Object3D } from "~/ecs/plugins/core";
 import * as THREE from "three";
 
@@ -11,23 +11,24 @@ export class CssPlaneSystem extends System {
 
   static queries = {
     added: [Object3D, CssPlane, Not(CssShapeMesh)],
-    // modified: [Object3D, Modified(CssPlane), ShapeMesh],
+    modified: [Object3D, Modified(CssPlane), CssShapeMesh],
     // removedObj: [Not(Object3D), ShapeMesh],
-    // removed: [Object3D, Not(CssPlane), ShapeMesh],
+    removed: [Object3D, Not(CssPlane), CssShapeMesh],
   };
 
   update() {
     this.queries.added.forEach((entity) => {
       this.build(entity);
     });
-    // this.queries.modified.forEach((entity) => {
-    //   const object3d = entity.get(Object3D).value;
-    //   const mesh = entity.get(ShapeMesh).value;
-    //   object3d.remove(mesh);
-    //   mesh.geometry.dispose();
-    //   mesh.material.dispose();
-    //   this.build(entity);
-    // });
+
+    this.queries.modified.forEach((entity) => {
+      this.remove(entity);
+      this.build(entity);
+      
+      // Notify outline to rebuild if necessary
+      entity.getByName("Outline")?.modified();
+    });
+
     // this.queries.removedObj.forEach((entity) => {
     //   const mesh = entity.get(ShapeMesh).value;
     //   mesh.parent.remove(mesh);
@@ -35,21 +36,15 @@ export class CssPlaneSystem extends System {
     //   mesh.material.dispose();
     //   entity.remove(ShapeMesh);
     // });
-    // this.queries.removed.forEach((entity) => {
-    //   const object3d = entity.get(Object3D).value;
-    //   const mesh = entity.get(ShapeMesh).value;
-    //   object3d.remove(mesh);
-    //   mesh.geometry.dispose();
-    //   mesh.material.dispose();
-    //   entity.remove(ShapeMesh);
-    // });
+
+    this.queries.removed.forEach((entity) => {
+      this.remove(entity);
+    })
   }
 
   build(entity) {
-    // console.log("build", entity);
     const plane = entity.get(CssPlane);
     const object3d = entity.get(Object3D).value;
-    // console.log("css plane object3d", object3d);
 
     let geometry;
     switch (plane.kind) {
@@ -79,5 +74,16 @@ export class CssPlaneSystem extends System {
     object3d.add(mesh);
 
     entity.add(CssShapeMesh, { value: mesh });
+  }
+
+  remove(entity) {
+    const object3d = entity.get(Object3D).value;
+    const mesh = entity.get(CssShapeMesh).value;
+
+    mesh.geometry.dispose();
+    mesh.material.dispose();
+    object3d.remove(mesh);
+    
+    entity.remove(CssShapeMesh);
   }
 }

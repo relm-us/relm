@@ -6,7 +6,7 @@ export function makeWebBox(
   world,
   {
     x = 0,
-    y = 1.6,
+    y = 2.3,
     z = 0,
     w = 3.2,
     h = 3.2,
@@ -31,9 +31,8 @@ export function makeWebBox(
     y: 0.0,
     z: 0.301,
     url,
-    frameWidth: 560,
-    frameHeight: 560,
-    worldWidth: 3,
+    width: w - 0.2,
+    height: h - 0.2,
   });
   page.setParent(box);
 

@@ -1,6 +1,17 @@
 import { Component, StringType, NumberType, BooleanType } from "~/ecs/base";
 
 export class Renderable extends Component {
+  kind: string;
+  embedId: string;
+  url: string;
+  text: string;
+  fontSize: string;
+  fontColor: string;
+  bgColor: string;
+  borderColor: string;
+  scale: number;
+  editable: boolean;
+
   static props = {
     kind: {
       type: StringType,
@@ -73,28 +84,13 @@ export class Renderable extends Component {
       },
     },
 
-    editable: {
-      type: BooleanType,
-      default: false,
+    borderColor: {
+      type: StringType,
+      default: "#8b8b8b",
       editor: {
-        label: "Editable",
+        label: "Border Color",
+        input: "Color",
         requires: [{ prop: "kind", value: "LABEL" }],
-      },
-    },
-
-    width: {
-      type: NumberType,
-      default: 560,
-      editor: {
-        label: "Width",
-      },
-    },
-
-    height: {
-      type: NumberType,
-      default: 315,
-      editor: {
-        label: "Height",
       },
     },
 
@@ -103,6 +99,15 @@ export class Renderable extends Component {
       default: 0.005,
       editor: {
         label: "Scale",
+      },
+    },
+
+    editable: {
+      type: BooleanType,
+      default: false,
+      editor: {
+        label: "Editable",
+        requires: [{ prop: "kind", value: "LABEL" }],
       },
     },
   };

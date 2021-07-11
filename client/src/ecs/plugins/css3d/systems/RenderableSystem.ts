@@ -7,7 +7,7 @@ import {
 
 import { isBrowser } from "~/utils/isBrowser";
 
-import { Renderable, RenderableRef } from "../components";
+import { Renderable, RenderableRef, CssPlane } from "../components";
 
 import { getRenderableComponentByType } from "../renderables";
 import { Queries } from "~/ecs/base/Query";
@@ -26,6 +26,7 @@ export class RenderableSystem extends System {
   static queries: Queries = {
     added: [Renderable, Not(RenderableRef)],
     modified: [Modified(Renderable), RenderableRef],
+    modifiedCssPlane: [Modified(CssPlane), RenderableRef],
     active: [Renderable, RenderableRef],
     removed: [Not(Renderable), RenderableRef],
   };
@@ -47,6 +48,11 @@ export class RenderableSystem extends System {
       this.build(entity);
     });
 
+    this.queries.modifiedCssPlane.forEach((entity) => {
+      this.remove(entity);
+      this.build(entity);
+    });
+
     this.queries.active.forEach((entity) => {
       const spec = entity.get(Renderable);
       const ref = entity.get(RenderableRef);
@@ -64,22 +70,23 @@ export class RenderableSystem extends System {
   build(entity) {
     const spec = entity.get(Renderable);
     const transform = entity.get(WorldTransform);
+    const cssPlane = entity.get(CssPlane);
 
-    if (!transform) return;
+    if (!transform || !cssPlane) return;
 
-    let object;
+    const screenSize = cssPlane.getScreenSize(spec.scale);
 
     // Prepare a container for Svelte
     const containerElement = document.createElement("div");
-    containerElement.style.width = spec.width + "px";
-    containerElement.style.height = spec.height + "px";
-    object = new CSS3DObject(containerElement);
+    containerElement.style.width = screenSize.x + "px";
+    containerElement.style.height = screenSize.y + "px";
+    const object = new CSS3DObject(containerElement);
 
     // Create whatever Svelte component is specified by the type
     const RenderableComponent = getRenderableComponentByType(spec.kind);
     object.userData.renderable = new RenderableComponent({
       target: containerElement,
-      props: { ...spec, entity },
+      props: { ...spec, width: screenSize.x, height: screenSize.y, entity },
     });
 
     this.copyTransform(object, transform, spec.scale);

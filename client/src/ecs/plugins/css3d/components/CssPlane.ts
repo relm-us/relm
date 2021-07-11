@@ -1,8 +1,12 @@
 import { Component, StringType, NumberType } from "~/ecs/base";
-import { Vector3Type } from "~/ecs/plugins/core";
-import { Vector3 } from "three";
+import { Vector2Type } from "~/ecs/plugins/core";
+import { Vector2 } from "three";
 
 export class CssPlane extends Component {
+  kind: string;
+  rectangleSize: Vector2;
+  circleRadius: number;
+
   static props = {
     kind: {
       type: StringType,
@@ -18,8 +22,8 @@ export class CssPlane extends Component {
     },
 
     rectangleSize: {
-      type: Vector3Type,
-      default: new Vector3(1, 1, 1),
+      type: Vector2Type,
+      default: new Vector2(1, 1),
       editor: {
         label: "Size",
         requires: [{ prop: "kind", value: "RECTANGLE" }],
@@ -39,4 +43,20 @@ export class CssPlane extends Component {
   static editor = {
     label: "CSS Plane",
   };
+
+  getSize() {
+    switch (this.kind) {
+      case "RECTANGLE":
+        return this.rectangleSize;
+      case "CIRCLE":
+        return new Vector2(this.circleRadius * 2, this.circleRadius * 2);
+      default:
+        return new Vector2(1, 1);
+    }
+  }
+
+  getScreenSize(scale: number) {
+    const size = this.getSize();
+    return new Vector2(size.x / scale, size.y / scale);
+  }
 }

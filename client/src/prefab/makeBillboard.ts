@@ -1,5 +1,5 @@
 import { Transform } from "~/ecs/plugins/core";
-import { Vector3 } from "three";
+import { Vector2, Vector3 } from "three";
 
 import { Renderable, CssPlane } from "~/ecs/plugins/css3d";
 
@@ -15,30 +15,24 @@ export function makeBillboard(
     text,
     editable = false,
     fontSize,
-    frameWidth = 200,
-    frameHeight = 200,
-    worldWidth = 1,
+    width = 2,
+    height = 1.5,
   }
 ) {
-  const iframeRatio = frameWidth / frameHeight;
-  const rectangleSize = new Vector3(worldWidth, worldWidth / iframeRatio, 0.2);
-  const scale = rectangleSize.x / frameWidth;
   const label = makeEntity(world, "Billboard")
     .add(Transform, {
       position: new Vector3(x, y + yOffset, z),
     })
     .add(Renderable, {
       kind: "LABEL",
-      width: frameWidth,
-      height: frameHeight,
-      scale,
       text,
       editable,
       fontSize,
     })
     .add(CssPlane, {
       kind: "RECTANGLE",
-      rectangleSize,
+      rectangleSize: new Vector2(width, height),
     });
+
   return label;
 }
