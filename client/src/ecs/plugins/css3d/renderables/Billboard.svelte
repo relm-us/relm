@@ -38,9 +38,9 @@
   style="--width:{width}px;--height:{height}px;--size:{fontSize}px;--color:{fontColor};--bgColor:{bgColor};--borderColor:{borderColor};"
 >
   {@html cleanHtml(text)}
-  <resizer-left />
-  <resizer-right />
 </container>
+  <!-- <resizer-left /> -->
+  <!-- <resizer-right /> -->
 
 <style>
   container {
