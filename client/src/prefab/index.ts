@@ -30,9 +30,6 @@ export {
   makeYoutube,
 };
 
-// Special construction set
-export { makeStageAndActivate } from "./makeStageAndActivate";
-
 export const directory = [
   { name: "Ball", prefab: makeBall },
   { name: "Billboard", prefab: makeBillboard },

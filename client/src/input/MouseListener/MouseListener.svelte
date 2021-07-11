@@ -158,8 +158,8 @@
         }
       }
     } else if ($mode === "play") {
-      const follow = $Relm.camera.getByName("Follow");
-      const transform = $Relm.camera.getByName("Transform");
+      const follow = $Relm.camera.entity.getByName("Follow");
+      const transform = $Relm.camera.entity.getByName("Transform");
       const planes: WorldPlanes = $Relm.world.perspective.getAvatarPlanes();
       if (!follow || !transform) return;
 

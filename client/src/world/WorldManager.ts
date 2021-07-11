@@ -11,7 +11,6 @@ import { deltaTime, fpsTime } from "~/stores/stats";
 import { worldState, WorldState } from "~/stores/worldState";
 import { playState } from "~/stores/playState";
 import { ConnectOptions } from "~/stores/connection";
-import { scale } from "~/stores/viewport";
 import { shadowsEnabled } from "~/stores/settings";
 import { entryway } from "~/stores/subrelm";
 import {
@@ -20,10 +19,10 @@ import {
   startPollingLoadingState,
 } from "~/stores/loading";
 
-import { makeStageAndActivate, makeInitialCollider } from "~/prefab";
+import { makeInitialCollider } from "~/prefab";
+import { makeLight } from "~/prefab/makeLight";
 
 import { Entity } from "~/ecs/base";
-import { Follow } from "~/ecs/plugins/follow";
 import { Collider, ColliderVisible } from "~/ecs/plugins/physics";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { Translucent } from "~/ecs/plugins/translucent";
@@ -34,6 +33,8 @@ import { WAVING } from "~/ecs/plugins/player-control/constants";
 import { SelectionManager } from "./SelectionManager";
 import { IdentityManager } from "~/identity/IdentityManager";
 import { ChatManager } from "./ChatManager";
+import { CameraManager } from "./CameraManager";
+
 import {
   AVATAR_BUILDER_INTERACTION,
   AVATAR_INTERACTION,
@@ -41,14 +42,13 @@ import {
 } from "~/config/colliderInteractions";
 
 import { connectAV } from "~/av";
-import type { DecoratedWorld } from "~/types/DecoratedWorld";
 import { setupState } from "~/stores/setupState";
 
+import type { DecoratedWorld } from "~/types/DecoratedWorld";
 export default class WorldManager {
   world: DecoratedWorld;
   viewport: HTMLElement;
   state: Writable<WorldState>;
-  camera: Entity;
   light: Entity;
   connectOpts;
 
@@ -56,13 +56,13 @@ export default class WorldManager {
   selection: SelectionManager;
   identities: IdentityManager;
   chat: ChatManager;
+  camera: CameraManager;
 
   roomClient: any;
 
   previousLoopTime: number = 0;
   sendLocalStateInterval: any; // Timeout
   started: boolean = false;
-  cameraOffset: Vector3 = new Vector3();
 
   constructor({ world, viewport }) {
     if (!world) throw new Error(`world is required`);
@@ -76,9 +76,12 @@ export default class WorldManager {
     this.selection = new SelectionManager(this.wdoc);
     this.identities = new IdentityManager(this);
     this.chat = new ChatManager(this.identities, this.wdoc.messages);
+    this.camera = new CameraManager(this);
 
     this.mount();
     this.populate();
+
+    this.camera.init();
 
     shadowsEnabled.subscribe(($enabled) => {
       const ref = this.light.getByName("DirectionalLightRef");
@@ -139,14 +142,6 @@ export default class WorldManager {
           // TODO: Make it so window resize events "step" a frame
           break;
       }
-    });
-
-    scale.subscribe(($scale) => {
-      const follow = this.camera?.get(Follow);
-      if (!follow) return;
-
-      this.cameraOffset.y = 5.5 + (20 * $scale) / 100;
-      this.cameraOffset.z = 5 + (20 * $scale) / 100;
     });
   }
 
@@ -258,8 +253,7 @@ export default class WorldManager {
       throw new Error(`Can't populate when avatar entity is null`);
     }
 
-    const { camera, light } = makeStageAndActivate(this.world, this.avatar);
-    this.camera = camera;
+    const light = makeLight(this.world, this.avatar).activate();
     this.light = light;
 
     makeInitialCollider(this.world).activate();
@@ -379,16 +373,9 @@ export default class WorldManager {
     this.worldStep(delta);
     this.identities.sync();
     this.sendTransformData();
-    this.lerpCamera();
+    this.camera.update(time);
 
     this.previousLoopTime = time;
-  }
-
-  lerpCamera() {
-    const follow: Follow = this.camera?.get(Follow);
-    if (!follow) return;
-
-    follow.offset.lerp(this.cameraOffset, 0.4);
   }
 
   sendTransformData() {

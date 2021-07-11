@@ -1,26 +1,15 @@
 import { Transform } from "~/ecs/plugins/core";
-import { LookAt, Camera } from "~/ecs/plugins/core";
+import { Camera } from "~/ecs/plugins/core";
 import { Vector3, Quaternion, Euler } from "three";
 
 import { Follow } from "~/ecs/plugins/follow";
+import { LookAt } from "~/ecs/plugins/look-at";
 import { DirectionalLight } from "~/ecs/plugins/lighting";
 
 import { makeEntity } from "./makeEntity";
 
-export function makeStageAndActivate(world, avatar) {
-  // Create the singleton camera
+export function makeLight(world, avatar) {
   const cameraPosition = new Vector3(0, 5.5, 5);
-  const camera = makeEntity(world, "Camera")
-    .add(Transform, {
-      position: cameraPosition,
-      rotation: new Quaternion().setFromEuler(new Euler(-Math.PI / 4.5, 0, 0)),
-    })
-    .add(Follow, {
-      entity: avatar.id,
-      offset: cameraPosition,
-    })
-    .add(Camera)
-    .activate();
 
   const lightOffset = new Vector3(-5, 5, 2);
   const lightPosition = new Vector3().add(cameraPosition).add(lightOffset);
@@ -30,7 +19,7 @@ export function makeStageAndActivate(world, avatar) {
       position: lightPosition,
     })
     .add(Follow, {
-      entity: avatar.id,
+      target: avatar.id,
       offset: lightOffset,
     })
     .add(DirectionalLight, {
@@ -45,8 +34,7 @@ export function makeStageAndActivate(world, avatar) {
       shadowFar: 100,
       shadowRadius: 1.75,
       shadowDistanceGrowthRatio: 12,
-    })
-    .activate();
+    });
 
-  return { camera, light };
+  return light;
 }
