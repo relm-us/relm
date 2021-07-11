@@ -11,6 +11,7 @@ export class Renderable extends Component {
   borderColor: string;
   scale: number;
   editable: boolean;
+  alwaysOn: boolean;
 
   static props = {
     kind: {
@@ -108,6 +109,14 @@ export class Renderable extends Component {
       editor: {
         label: "Editable",
         requires: [{ prop: "kind", value: "LABEL" }],
+      },
+    },
+    
+    alwaysOn: {
+      type: BooleanType,
+      default: false,
+      editor: {
+        label: "Always On",
       },
     },
   };

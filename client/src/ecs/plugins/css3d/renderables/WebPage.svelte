@@ -5,8 +5,10 @@
   export let width: number;
   export let height: number;
   export let url: string;
+  export let alwaysOn: boolean;
 
   let iframe;
+  let active = false;
   let highlighted = false;
 
   // We need to do this in Firefox, because we can't just detect a blur event
@@ -21,13 +23,24 @@
   }
 
   function onWindowBlur(event: FocusEvent) {
-    if (!highlighted) {
+    if (active) {
+      setTimeout(() => {
+        if (document.activeElement === iframe) {
+          highlighted = true;
+        }
+      }, 10);
+    } else {
       forceRestoreFocus();
     }
   }
 
+  function onWindowFocus(event: FocusEvent) {
+    highlighted = false;
+  }
+
   function onFrameMouseout() {
-    if ($mode === "play") {
+    if ($mode === "play" && !alwaysOn) {
+      active = false;
       highlighted = false;
       forceRestoreFocus();
     }
@@ -35,6 +48,7 @@
 
   function onOverlayMousedown() {
     if ($mode === "play") {
+      active = true;
       highlighted = true;
       iframe?.focus();
     }
@@ -47,32 +61,38 @@
     );
   }
 
-  $: if ($mode === "build") highlighted = false;
+  $: if ($mode === "build") {
+    active = false;
+    highlighted = false;
+  }
+  $: if (alwaysOn) active = true;
 
   // ignore warning about missing props
   $$props;
 </script>
 
-<svelte:window on:blur={onWindowBlur} />
+<svelte:window on:blur={onWindowBlur} on:focus={onWindowFocus} />
 
-{#if highlighted}
-  <iframe
-    bind:this={iframe}
-    on:mouseout={onFrameMouseout}
-    title="Web Page"
-    {width}
-    {height}
-    src={url}
-    frameborder="0"
-    allowfullscreen
-    allow="camera;microphone"
-  />
-{:else}
+<iframe
+  bind:this={iframe}
+  on:mouseout={onFrameMouseout}
+  class:active
+  title="Web Page"
+  {width}
+  {height}
+  src={url}
+  frameborder="0"
+  allowfullscreen
+  allow="camera;microphone"
+  scrolling="yes"
+/>
+{#if !active}
   <img src={screenshot(url, width, height)} alt="screenshot" />
 {/if}
 
 <overlay
   class:build-mode={$mode === "build"}
+  class:active
   class:highlighted
   on:mousedown={onOverlayMousedown}
 />
@@ -83,6 +103,11 @@
     top: 0;
     left: 0;
     z-index: 0;
+
+    display: none;
+  }
+  iframe.active {
+    display: block;
   }
   overlay {
     position: absolute;
@@ -105,6 +130,8 @@
   overlay.highlighted {
     box-shadow: inset 0px 0px 0px 6px #ff4400;
     background-color: rgb(0, 0, 0, 0);
+  }
+  overlay.active {
     pointer-events: none;
   }
   overlay.build-mode {
