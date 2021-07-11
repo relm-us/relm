@@ -107,6 +107,11 @@ export class Entity {
     return this;
   }
 
+  removeByName(componentName: string) {
+    const Component = this.world.components.getByName(componentName);
+    return this.remove(Component);
+  }
+
   bind() {
     if (!this.needsBind) return;
     // After deserializing an entity we need to bind the parent and child ID's to actual entities...
