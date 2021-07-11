@@ -1,4 +1,4 @@
-import { Component, StringType } from "~/ecs/base";
+import { BooleanType, Component, NumberType, StringType } from "~/ecs/base";
 import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
@@ -32,6 +32,15 @@ export class LookAt extends Component {
       default: new Vector3(),
       editor: {
         label: "Target Offset",
+      },
+    },
+
+    // Angle to rotate per frame; 0 is instantaneous
+    stepRadians: {
+      type: NumberType,
+      default: 0,
+      editor: {
+        label: "Angle Step",
       },
     },
   };

@@ -2,11 +2,13 @@ import { Vector3, Matrix4, Quaternion } from "three";
 import { System, Groups, Entity } from "~/ecs/base";
 
 import { Transform, WorldTransform, Presentation } from "~/ecs/plugins/core";
+import { Follow } from "~/ecs/plugins/follow";
 import { LookAt } from "../components";
 
 const m1 = new Matrix4();
 const q1 = new Quaternion();
 const targetPosition = new Vector3();
+const targetRotation = new Quaternion();
 const position = new Vector3();
 const up = new Vector3(0, 1, 0);
 const delta = new Vector3();
@@ -31,32 +33,44 @@ export class LookAtSystem extends System {
     this.cameraId = this.presentation.camera.parent?.userData.entityId;
 
     this.queries.targeted.forEach((entity) => {
-      const { target, limit, offset } = entity.get(LookAt);
-      this.lookAt(entity, target, limit, offset);
+      this.lookAt(entity);
     });
   }
 
-  lookAt(entity: Entity, targetId: string, limit: string, offset: Vector3) {
+  lookAt(entity: Entity) {
+    const lookAt = entity.get(LookAt);
     const transform = entity.get(Transform);
     const world = entity.get(WorldTransform);
-    const targetEntity = this.world.entities.getById(targetId);
+
+    const targetEntity = this.world.entities.getById(lookAt.target);
     if (!targetEntity) return;
+
     const targetWorld = targetEntity.get(WorldTransform) as any;
     if (!targetWorld) return;
-    targetPosition.copy(targetWorld.position);
+
+    // Tie-in to Follow system: if the Follow target exists, we look at
+    // what the Follow system is lerping towards (i.e. the target position),
+    // rather than whatever position Follow is currently at.
+    const follow = entity.get(Follow);
+    if (follow && follow.targetPosition && follow.target === lookAt.target) {
+      targetPosition.copy(follow.targetPosition);
+    } else {
+      // regular target
+      targetPosition.copy(targetWorld.position);
+    }
     position.copy(world.position);
 
-    if (limit === "NONE") {
+    if (lookAt.limit === "NONE") {
       targetPosition.copy(targetWorld.position);
-    } else if (limit === "X_AXIS") {
+    } else if (lookAt.limit === "X_AXIS") {
       targetPosition.x = position.x;
       targetPosition.y = targetWorld.position.y;
       targetPosition.z = targetWorld.position.z;
-    } else if (limit === "Y_AXIS") {
+    } else if (lookAt.limit === "Y_AXIS") {
       targetPosition.x = targetWorld.position.x;
       targetPosition.y = position.y;
       targetPosition.z = targetWorld.position.z;
-    } else if (limit === "Z_AXIS") {
+    } else if (lookAt.limit === "Z_AXIS") {
       targetPosition.x = targetWorld.position.x;
       targetPosition.y = targetWorld.position.y;
       targetPosition.z = position.z;
@@ -68,10 +82,15 @@ export class LookAtSystem extends System {
       targetPosition.sub(delta);
     }
 
-    targetPosition.add(offset);
+    targetPosition.add(lookAt.offset);
 
     m1.lookAt(targetPosition, position, up);
-    transform.rotation.setFromRotationMatrix(m1);
+    if (lookAt.stepRadians == 0) {
+      transform.rotation.setFromRotationMatrix(m1);
+    } else {
+      targetRotation.setFromRotationMatrix(m1);
+      transform.rotation.rotateTowards(targetRotation, lookAt.stepRadians);
+    }
 
     const parent = entity.getParent();
     if (parent) {

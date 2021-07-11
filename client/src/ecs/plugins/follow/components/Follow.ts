@@ -3,13 +3,15 @@ import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
 export class Follow extends Component {
-  entity: string;
-  limit: string;
+  target: string;
   offset: Vector3;
   lerpAlpha: number;
 
+  // Calculated at run-time; the position we are lerping towards
+  targetPosition: Vector3;
+
   static props = {
-    entity: {
+    target: {
       type: StringType,
       editor: {
         label: "Entity",

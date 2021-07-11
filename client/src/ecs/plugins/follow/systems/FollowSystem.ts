@@ -1,11 +1,8 @@
-import * as THREE from "three";
+import { Vector3 } from "three";
 import { System, Groups } from "~/ecs/base";
 import { WorldTransform, Transform } from "~/ecs/plugins/core";
 
 import { Follow } from "../components";
-
-const targetPosition = new THREE.Vector3();
-const position = new THREE.Vector3();
 
 export class FollowSystem extends System {
   // order = Groups.Simulation;
@@ -22,8 +19,8 @@ export class FollowSystem extends System {
   }
 
   follow(world, entity) {
-    const spec = entity.get(Follow);
-    const targetId = spec.entity;
+    const spec: Follow = entity.get(Follow);
+    const targetId = spec.target;
 
     const transform = entity.get(Transform);
 
@@ -33,14 +30,19 @@ export class FollowSystem extends System {
     const targetWorld = targetEntity.get(WorldTransform) as any;
     if (!targetWorld) return;
 
-    targetPosition.copy(targetWorld.position);
+    if (!spec.targetPosition) {
+      // Keep targetPosition around so that other systems such as LookAtSystem
+      // can know what target we will eventually follow, once lerp is finished.
+      spec.targetPosition = new Vector3();
+    }
+    spec.targetPosition.copy(targetWorld.position);
 
-    position.set(
+    spec.targetPosition.set(
       targetWorld.position.x,
       targetWorld.position.y,
       targetWorld.position.z
     );
-    position.add(spec.offset);
-    transform.position.lerp(position, spec.lerpAlpha);
+    spec.targetPosition.add(spec.offset);
+    transform.position.lerp(spec.targetPosition, spec.lerpAlpha);
   }
 }
