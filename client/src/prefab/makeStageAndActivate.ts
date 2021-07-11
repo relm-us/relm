@@ -17,7 +17,6 @@ export function makeStageAndActivate(world, avatar) {
     })
     .add(Follow, {
       entity: avatar.id,
-      limit: "XYZ_AXIS",
       offset: cameraPosition,
     })
     .add(Camera)
@@ -31,8 +30,7 @@ export function makeStageAndActivate(world, avatar) {
       position: lightPosition,
     })
     .add(Follow, {
-      entity: camera.id,
-      limit: "XYZ_AXIS",
+      entity: avatar.id,
       offset: lightOffset,
     })
     .add(DirectionalLight, {

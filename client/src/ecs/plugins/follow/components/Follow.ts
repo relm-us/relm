@@ -16,19 +16,6 @@ export class Follow extends Component {
         input: "Entity",
       },
     },
-    limit: {
-      type: StringType,
-      default: "XYZ_AXIS",
-      editor: {
-        label: "Limit",
-        input: "Select",
-        options: [
-          { label: "X-Axis", value: "X_AXIS" },
-          { label: "Y-Axis", value: "Y_AXIS" },
-          { label: "Z-Axis", value: "Z_AXIS" },
-        ],
-      },
-    },
     offset: {
       type: Vector3Type,
       default: new Vector3(0, 0, 0),
@@ -38,7 +25,7 @@ export class Follow extends Component {
     },
     lerpAlpha: {
       type: NumberType,
-      default: 0.03,
+      default: 0.075,
       editor: {
         label: "LERP Alpha",
       },
