@@ -10,6 +10,7 @@
   import SelectType from "./types/SelectType.svelte";
   import StringType from "./types/StringType.svelte";
   import Vector3Type from "./types/Vector3Type.svelte";
+  import Vector2Type from "./types/Vector2Type.svelte";
 
   export let key;
   export let component;
@@ -41,6 +42,8 @@
         return StringType;
       case "Vector3":
         return Vector3Type;
+      case "Vector2":
+        return Vector2Type;
       default:
         return MiscType;
     }
