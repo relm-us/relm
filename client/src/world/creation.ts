@@ -104,14 +104,6 @@ export function createScene() {
   return scene;
 }
 
-export function createCamera(ortho = true) {
-  if (ortho) {
-    return new OrthographicCamera(-15, 15, 15, -15, 0.1, 1000);
-  } else {
-    return new PerspectiveCamera(35, 1, 0.1, 1000);
-  }
-}
-
 export function createWorld(rapier) {
   const world = new World({
     getTime: performance.now.bind(performance),
@@ -119,7 +111,7 @@ export function createWorld(rapier) {
       CorePlugin({
         renderer: createRenderer(),
         scene: createScene(),
-        camera: createCamera(false),
+        camera: new PerspectiveCamera(35, 1, 0.1, 1000),
       }),
       PhysicsPlugin({
         // Pass the physics engine in to the plugin
