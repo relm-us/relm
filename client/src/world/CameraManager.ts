@@ -77,10 +77,10 @@ export class CameraManager {
       .copy(this.zoomedInOffset)
       .lerp(this.zoomedOutOffset, this.zoom)
       .add(this.pan);
-    this.entity?.get(Follow).offset.copy(this.followOffset);
+    this.entity?.get(Follow)?.offset.copy(this.followOffset);
 
-    this.lookAtOffset.copy(this.pan);
-    this.entity?.get(LookAt).offset.copy(this.lookAtOffset);
+    // this.lookAtOffset.copy(this.pan);
+    // this.entity?.get(LookAt)?.offset.copy(this.lookAtOffset);
   }
 
   setPan(x, z) {

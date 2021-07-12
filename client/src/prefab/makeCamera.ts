@@ -11,6 +11,7 @@ const AVATAR_HEIGHT = 1.5;
 export function makeCamera(world, avatar) {
   // Create the singleton camera
   const cameraPosition = new Vector3(0, 5.5, 5);
+  const cameraOffset = new Vector3(0, AVATAR_HEIGHT, 0);
   const camera = makeEntity(world, "Camera")
     .add(Transform, {
       position: cameraPosition,
@@ -21,8 +22,8 @@ export function makeCamera(world, avatar) {
     })
     .add(LookAt, {
       target: avatar.id,
-      limit: "X_AXIS",
-      offset: new Vector3(0, AVATAR_HEIGHT, 0),
+      offset: cameraOffset,
+      oneShot: true,
     })
     .add(Camera);
 

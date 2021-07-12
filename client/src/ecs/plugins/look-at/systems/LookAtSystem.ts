@@ -83,5 +83,11 @@ export class LookAtSystem extends System {
       q1.setFromRotationMatrix(m1);
       transform.rotation.premultiply(q1.inverse());
     }
+
+    if (lookAt.oneShot) {
+      lookAt.oneShot = false;
+      console.log("ONE SHOT")
+      entity.remove(LookAt);
+    }
   }
 }

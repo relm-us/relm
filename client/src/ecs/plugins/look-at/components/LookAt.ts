@@ -3,6 +3,12 @@ import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
 export class LookAt extends Component {
+  target: string;
+  limit: string;
+  offset: Vector3;
+  stepRadians: number;
+  oneShot: boolean;
+  
   static props = {
     target: {
       type: StringType,
@@ -41,6 +47,14 @@ export class LookAt extends Component {
       default: 0,
       editor: {
         label: "Angle Step",
+      },
+    },
+
+    oneShot: {
+      type: BooleanType,
+      default: false,
+      editor: {
+        label: "One Shot",
       },
     },
   };
