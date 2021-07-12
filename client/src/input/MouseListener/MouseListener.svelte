@@ -160,14 +160,15 @@
     } else if ($mode === "play") {
       const follow = $Relm.camera.entity.getByName("Follow");
       const transform = $Relm.camera.entity.getByName("Transform");
-      const planes: WorldPlanes = $Relm.world.perspective.getAvatarPlanes();
       if (!follow || !transform) return;
+
+      const planes: WorldPlanes = $Relm.world.perspective.getAvatarPlanes();
 
       if (
         mouseMode === "click" &&
         mousePosition.distanceTo(mouseStartPosition) > DRAG_DISTANCE_THRESHOLD
       ) {
-        dragStartFollowOffset.copy(follow.offset);
+        dragStartFollowOffset.copy($Relm.camera.pan);
         dragStartTransformPosition.copy(transform.position);
 
         // drag  mode start
@@ -182,19 +183,10 @@
           camera: dragStartCamera,
         });
 
-        const frustum: Frustum = $Relm.world.presentation.getFrustum();
-        const avatarPos = $Relm.avatar.getByName("Transform").position;
-        if (!frustum.containsPoint(avatarPos)) {
-          // TODO: Make this less jerky when out of bounds
-          dragStartPosition.lerp(avatarPos, 0.1);
-        }
-
-        dragOffset.copy(dragPosition).sub(dragStartPosition);
-
+        dragOffset.copy(dragPosition).sub(dragStartPosition).sub(dragStartFollowOffset);
         v1.copy(dragStartFollowOffset).sub(dragOffset);
 
-        follow.offset.x = v1.x;
-        follow.offset.z = v1.z;
+        $Relm.camera.setPan(-dragOffset.x, -dragOffset.z);
       }
     }
   }

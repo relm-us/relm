@@ -22,7 +22,7 @@ export function makeCamera(world, avatar) {
     .add(LookAt, {
       target: avatar.id,
       limit: "X_AXIS",
-      offset: new Vector3(0, -AVATAR_HEIGHT, 0),
+      offset: new Vector3(0, AVATAR_HEIGHT, 0),
     })
     .add(Camera);
 

@@ -76,7 +76,7 @@ export default class WorldManager {
     this.selection = new SelectionManager(this.wdoc);
     this.identities = new IdentityManager(this);
     this.chat = new ChatManager(this.identities, this.wdoc.messages);
-    this.camera = new CameraManager(this);
+    this.camera = new CameraManager(this, this.identities.me.avatar.entity);
 
     this.mount();
     this.populate();

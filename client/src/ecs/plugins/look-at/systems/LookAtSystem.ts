@@ -16,7 +16,7 @@ export class LookAtSystem extends System {
   presentation: Presentation;
   cameraId: string;
 
-  order = Groups.Initialization;
+  order = 3001;
 
   static queries = {
     targeted: [LookAt],
@@ -39,7 +39,9 @@ export class LookAtSystem extends System {
   lookAt(entity: Entity) {
     const lookAt = entity.get(LookAt);
     const transform = entity.get(Transform);
+
     const world = entity.get(WorldTransform);
+    if (!world) return;
 
     const targetEntity = this.world.entities.getById(lookAt.target);
     if (!targetEntity) return;
@@ -51,6 +53,14 @@ export class LookAtSystem extends System {
 
     targetPosition.copy(targetWorld.position);
 
+    // Camera looks down negative z-axis, so when it is the thing doing the looking, flip it around
+    if (entity.id === this.cameraId) {
+      delta.copy(targetPosition).sub(position).multiplyScalar(2);
+      targetPosition.sub(delta).sub(lookAt.offset);
+    } else {
+      targetPosition.add(lookAt.offset);
+    }
+
     if (lookAt.limit === "X_AXIS") {
       targetPosition.x = position.x;
     } else if (lookAt.limit === "Y_AXIS") {
@@ -58,14 +68,6 @@ export class LookAtSystem extends System {
     } else if (lookAt.limit === "Z_AXIS") {
       targetPosition.z = position.z;
     }
-
-    // Camera looks down negative z-axis, so when it is the thing doing the looking, flip it around
-    if (entity.id === this.cameraId) {
-      delta.copy(targetPosition).sub(position).multiplyScalar(2);
-      targetPosition.sub(delta);
-    }
-
-    targetPosition.add(lookAt.offset);
 
     m1.lookAt(targetPosition, position, up);
     if (lookAt.stepRadians == 0) {
