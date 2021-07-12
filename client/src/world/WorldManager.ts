@@ -287,7 +287,7 @@ export default class WorldManager {
     if (enabled) {
       this.avatar.add(Translucent, { opacity: 0.5 });
     } else {
-      this.avatar.remove(Translucent);
+      this.avatar.maybeRemove(Translucent);
     }
   }
 
@@ -295,7 +295,7 @@ export default class WorldManager {
     if (enabled) {
       this.avatar.add(NonInteractive);
     } else {
-      this.avatar.remove(NonInteractive);
+      this.avatar.maybeRemove(NonInteractive);
     }
   }
 
