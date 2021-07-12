@@ -7,9 +7,6 @@ export class Follow extends Component {
   offset: Vector3;
   lerpAlpha: number;
 
-  // Calculated at run-time; the position we are lerping towards
-  targetPosition: Vector3;
-
   static props = {
     target: {
       type: StringType,

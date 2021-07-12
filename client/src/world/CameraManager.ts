@@ -13,24 +13,23 @@ export class CameraManager {
   worldManager: WorldManager;
 
   entity: Entity;
-  offset: Vector3 = new Vector3();
+  targetOffset: Vector3 = new Vector3();
 
   constructor(worldManager: WorldManager) {
     this.worldManager = worldManager;
   }
 
   init() {
+    // Create the ECS camera entity that holds the ThreeJS camera
     this.entity = makeCamera(
       this.worldManager.world,
       this.worldManager.avatar
     ).activate();
 
+    // Listen to the mousewheel for zoom events
     scale.subscribe(($scale) => {
-      const follow = this.entity?.get(Follow);
-      if (!follow) return;
-
-      this.offset.y = 5.5 + (20 * $scale) / 100;
-      this.offset.z = 5 + (20 * $scale) / 100;
+      this.targetOffset.y = 5.5 + (20 * $scale) / 100;
+      this.targetOffset.z = 5 + (20 * $scale) / 100;
     });
   }
 
@@ -38,6 +37,7 @@ export class CameraManager {
     const follow: Follow = this.entity?.get(Follow);
     if (!follow) return;
 
-    follow.offset.lerp(this.offset, 0.4);
+    // follow.offset.copy(this.targetOffset);
+    follow.offset.lerp(this.targetOffset, 0.4);
   }
 }

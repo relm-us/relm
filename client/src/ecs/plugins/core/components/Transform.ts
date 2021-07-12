@@ -1,8 +1,12 @@
+import { Vector3, Quaternion } from "three";
 import { Component } from "~/ecs/base";
 import { Vector3Type, QuaternionType } from "../types";
-import { Vector3 } from "three";
 
 export class Transform extends Component {
+  position: Vector3;
+  rotation: Quaternion;
+  scale: Vector3;
+
   static props = {
     position: {
       type: Vector3Type,

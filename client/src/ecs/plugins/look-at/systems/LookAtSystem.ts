@@ -2,7 +2,6 @@ import { Vector3, Matrix4, Quaternion } from "three";
 import { System, Groups, Entity } from "~/ecs/base";
 
 import { Transform, WorldTransform, Presentation } from "~/ecs/plugins/core";
-import { Follow } from "~/ecs/plugins/follow";
 import { LookAt } from "../components";
 
 const m1 = new Matrix4();
@@ -48,31 +47,15 @@ export class LookAtSystem extends System {
     const targetWorld = targetEntity.get(WorldTransform) as any;
     if (!targetWorld) return;
 
-    // Tie-in to Follow system: if the Follow target exists, we look at
-    // what the Follow system is lerping towards (i.e. the target position),
-    // rather than whatever position Follow is currently at.
-    const follow = entity.get(Follow);
-    if (follow && follow.targetPosition && follow.target === lookAt.target) {
-      targetPosition.copy(follow.targetPosition);
-    } else {
-      // regular target
-      targetPosition.copy(targetWorld.position);
-    }
     position.copy(world.position);
 
-    if (lookAt.limit === "NONE") {
-      targetPosition.copy(targetWorld.position);
-    } else if (lookAt.limit === "X_AXIS") {
+    targetPosition.copy(targetWorld.position);
+
+    if (lookAt.limit === "X_AXIS") {
       targetPosition.x = position.x;
-      targetPosition.y = targetWorld.position.y;
-      targetPosition.z = targetWorld.position.z;
     } else if (lookAt.limit === "Y_AXIS") {
-      targetPosition.x = targetWorld.position.x;
       targetPosition.y = position.y;
-      targetPosition.z = targetWorld.position.z;
     } else if (lookAt.limit === "Z_AXIS") {
-      targetPosition.x = targetWorld.position.x;
-      targetPosition.y = targetWorld.position.y;
       targetPosition.z = position.z;
     }
 
