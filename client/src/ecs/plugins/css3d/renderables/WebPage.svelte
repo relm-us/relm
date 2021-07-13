@@ -1,11 +1,14 @@
 <script lang="ts">
+  import { Entity } from "~/ecs/base";
   import { mode } from "~/stores/mode";
+  import { Relm } from "~/stores/Relm";
   import { config } from "~/config";
 
   export let width: number;
   export let height: number;
   export let url: string;
   export let alwaysOn: boolean;
+  export let entity: Entity;
 
   let iframe;
   let active = false;
@@ -36,6 +39,7 @@
 
   function onWindowFocus(event: FocusEvent) {
     highlighted = false;
+    $Relm.camera.followParticipant();
   }
 
   function onFrameMouseout() {
@@ -43,14 +47,19 @@
       active = false;
       highlighted = false;
       forceRestoreFocus();
+      $Relm.camera.followParticipant();
     }
   }
 
   function onOverlayMousedown() {
     if ($mode === "play") {
-      active = true;
-      highlighted = true;
-      iframe?.focus();
+      if ($Relm.camera.state.type === "following") {
+        $Relm.camera.focus(entity, () => {
+          active = true;
+          highlighted = true;
+          iframe?.focus();
+        });
+      }
     }
   }
 

@@ -1,9 +1,9 @@
-import { Vector3 } from "three";
+import { Vector3, Quaternion } from "three";
 
 import type WorldManager from "./WorldManager";
 
 import { Entity } from "~/ecs/base";
-import { WorldTransform } from "~/ecs/plugins/core";
+import { Object3D, Transform } from "~/ecs/plugins/core";
 import { Follow } from "~/ecs/plugins/follow";
 import { LookAt } from "~/ecs/plugins/look-at";
 
@@ -11,80 +11,183 @@ import { scale } from "~/stores/viewport";
 
 import { makeCamera } from "~/prefab/makeCamera";
 
-type ViewPerspective = "top" | "front";
+function updateComponent(entity: Entity, Component, attrs: object) {
+  if (!entity) return;
+  let component = entity.get(Component);
+  if (component) {
+    Object.assign(component, attrs);
+  } else {
+    entity.add(Component, attrs);
+  }
+}
 
-// type CameraAngle = {
-//   entityId: string;
+type CameraFollowingParticipant = {
+  type: "following";
+};
 
-// }
+type CameraFocusing = {
+  type: "focusing";
 
-// type CameraStateNormal = {
-//   state: "normal";
-//   entityId: string;
-// };
+  // Entity to focus in on
+  target: Entity;
+};
 
-// type CameraStateFocused = {
-//   state: "focused";
-//   alpha: number;
-//   startPos: Vector3;
-//   startQuat: Quaternion;
-//   view: ViewPerspective;
-//   entityId: string;
-// };
+type CameraDefocusing = {
+  type: "defocusing";
 
-// type CameraState = CameraStateFollowing | CameraStateZooming;
+  // Count frames since defocus started
+  frames: number;
+};
 
+type CameraState =
+  | CameraFollowingParticipant
+  | CameraFocusing
+  | CameraDefocusing;
+
+const AVATAR_HEIGHT = 1.5;
+const FOCUS_DISTANCE = 5.0;
 export class CameraManager {
   worldManager: WorldManager;
 
   // The ECS entity with a Camera component holding the ThreeJS PerspectiveCamera object
   entity: Entity;
 
-  // The ECS entity that the camera is targeting (usually the participant's Avatar)
-  target: Entity;
+  // The participant's avatar
+  avatar: Entity;
+
+  // Track what we're doing with the camera right now
+  state: CameraState = { type: "following" };
+
+  // How much the camera is "off-center" from the participant
+  pan: Vector3 = new Vector3();
 
   // 0: zoomed all the way in; 1: zoomed all the way out
-  zoom: number;
-
-  //
-  pan: Vector3 = new Vector3();
+  zoom: number = 0.5;
 
   followOffset: Vector3 = new Vector3();
   lookAtOffset: Vector3 = new Vector3();
   zoomedInOffset: Vector3 = new Vector3(0, 5.5, 5.0);
   zoomedOutOffset: Vector3 = new Vector3(0, 25.5, 25.0);
 
-  constructor(worldManager: WorldManager, initialTarget: Entity) {
+  constructor(worldManager: WorldManager, avatar: Entity) {
     this.worldManager = worldManager;
-    this.target = initialTarget;
+    this.avatar = avatar;
   }
 
   init() {
     // Create the ECS camera entity that holds the ThreeJS camera
-    this.entity = makeCamera(
-      this.worldManager.world,
-      this.worldManager.avatar
-    ).activate();
+    this.entity = makeCamera(this.worldManager.world)
+      .add(Follow, {
+        target: this.avatar.id,
+        offset: new Vector3().copy(this.zoomedInOffset),
+      })
+      .add(LookAt, {
+        target: this.avatar.id,
+        offset: new Vector3(0, AVATAR_HEIGHT, 0),
+        oneShot: true,
+      })
+      .activate();
 
     // Listen to the mousewheel for zoom events
     scale.subscribe(($scale) => {
-      this.zoom = $scale / 100;
+      if (this.state.type === "following") {
+        this.zoom = $scale / 100;
+      }
     });
   }
 
   update(delta: number) {
-    this.followOffset
-      .copy(this.zoomedInOffset)
-      .lerp(this.zoomedOutOffset, this.zoom)
-      .add(this.pan);
-    this.entity?.get(Follow)?.offset.copy(this.followOffset);
+    const camera = this.entity;
+    if (!camera) return;
 
-    // this.lookAtOffset.copy(this.pan);
-    // this.entity?.get(LookAt)?.offset.copy(this.lookAtOffset);
+    switch (this.state.type) {
+      case "following": {
+        this.followOffset
+          .copy(this.zoomedInOffset)
+          .lerp(this.zoomedOutOffset, this.zoom)
+          .add(this.pan);
+        camera.get(Follow)?.offset.copy(this.followOffset);
+        break;
+      }
+      case "focusing": {
+        break;
+      }
+      case "defocusing": {
+        this.state.frames++;
+        if (this.state.frames++ >= 12) {
+          this.defocusDone();
+        }
+        break;
+      }
+    }
   }
 
   setPan(x, z) {
     this.pan.x = x;
     this.pan.z = z;
+  }
+
+  focus(target: Entity, done: Function) {
+    this.state = {
+      type: "focusing",
+      target,
+    };
+
+    const camera = this.entity;
+    if (!camera) return;
+
+    updateComponent(camera, Follow, {
+      target: target.id,
+      offset: new Vector3(0, 0, FOCUS_DISTANCE),
+    });
+
+    updateComponent(camera, LookAt, {
+      target: target.id,
+      offset: new Vector3(0, 0, 0),
+      limit: "NONE",
+      stepRadians: Math.PI / 32,
+      oneShot: false,
+    });
+
+    // TODO: make this actually wait until focus is done
+    setTimeout(done, 1000);
+  }
+
+  followParticipant() {
+    const camera = this.entity;
+    if (!camera) return;
+
+    if (this.state.type === "focusing") {
+      updateComponent(camera, LookAt, {
+        target: this.state.target.id,
+        offset: new Vector3(0, -1, 0),
+        limit: "X_AXIS",
+        stepRadians: Math.PI / 64,
+      });
+    }
+
+    this.state = { type: "defocusing", frames: 0 };
+
+    updateComponent(camera, Follow, {
+      target: this.avatar.id,
+      offset: new Vector3().copy(this.zoomedInOffset),
+    });
+
+  }
+
+  defocusDone() {
+    const camera = this.entity;
+    if (!camera) return;
+
+    this.state = {
+      type: "following",
+    };
+
+    updateComponent(camera, LookAt, {
+      target: this.avatar.id,
+      offset: new Vector3(0, AVATAR_HEIGHT, 0),
+      stepRadians: 0,
+      // oneShot: true,
+    });
   }
 }

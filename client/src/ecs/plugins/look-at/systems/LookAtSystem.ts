@@ -86,7 +86,6 @@ export class LookAtSystem extends System {
 
     if (lookAt.oneShot) {
       lookAt.oneShot = false;
-      console.log("ONE SHOT")
       entity.remove(LookAt);
     }
   }

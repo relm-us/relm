@@ -6,24 +6,11 @@ import { LookAt } from "~/ecs/plugins/look-at";
 
 import { makeEntity } from "./makeEntity";
 
-const AVATAR_HEIGHT = 1.5;
-
-export function makeCamera(world, avatar) {
+export function makeCamera(world) {
   // Create the singleton camera
-  const cameraPosition = new Vector3(0, 5.5, 5);
-  const cameraOffset = new Vector3(0, AVATAR_HEIGHT, 0);
   const camera = makeEntity(world, "Camera")
     .add(Transform, {
-      position: cameraPosition,
-    })
-    .add(Follow, {
-      target: avatar.id,
-      offset: cameraPosition,
-    })
-    .add(LookAt, {
-      target: avatar.id,
-      offset: cameraOffset,
-      oneShot: true,
+      position: new Vector3(0, 5.5, 5),
     })
     .add(Camera);
 

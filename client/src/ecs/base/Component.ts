@@ -49,12 +49,6 @@ export class Component {
       let prop = staticProps[key];
       const value = values[key];
 
-      // // rewrite shorthand to expanded first time
-      // if (!prop.type) {
-      //   prop = { type: prop };
-      //   this.constructor.props[key] = prop;
-      // }
-
       const initialValue =
         value === undefined
           ? prop.defaultFn
