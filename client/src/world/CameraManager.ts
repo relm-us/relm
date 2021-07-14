@@ -39,10 +39,23 @@ type CameraDefocusing = {
   frames: number;
 };
 
+type CameraCircling = {
+  type: "circling";
+
+  target: Entity;
+
+  radius: number;
+
+  radians: number;
+
+  radianStep: number;
+};
+
 type CameraState =
   | CameraFollowingParticipant
   | CameraFocusing
-  | CameraDefocusing;
+  | CameraDefocusing
+  | CameraCircling;
 
 const AVATAR_HEIGHT = 1.5;
 const FOCUS_DISTANCE = 5.0;
@@ -119,6 +132,17 @@ export class CameraManager {
         }
         break;
       }
+      case "circling": {
+        this.state.radians += this.state.radianStep;
+        updateComponent(camera, Follow, {
+          target: this.state.target.id,
+          offset: new Vector3(
+            Math.cos(this.state.radians) * this.state.radius,
+            8,
+            Math.sin(this.state.radians) * this.state.radius
+          ),
+        });
+      }
     }
   }
 
@@ -172,7 +196,6 @@ export class CameraManager {
       target: this.avatar.id,
       offset: new Vector3().copy(this.zoomedInOffset),
     });
-
   }
 
   defocusDone() {
@@ -188,6 +211,38 @@ export class CameraManager {
       offset: new Vector3(0, AVATAR_HEIGHT, 0),
       stepRadians: 0,
       // oneShot: true,
+    });
+  }
+
+  circleAround(
+    target: Entity,
+    { radius = 5.0, radians = null, radianStep = 0.01 } = {}
+  ) {
+    const camera = this.entity;
+    if (!camera) return;
+
+    if (radians === null) {
+      if (this.state.type === 'circling') {
+        radians = this.state.radians;
+      } else {
+        radians = 0;
+      }
+    }
+
+    this.state = {
+      type: "circling",
+      target,
+      radius,
+      radians,
+      radianStep,
+    };
+
+    updateComponent(camera, LookAt, {
+      target: target.id,
+      offset: new Vector3(0, 0, 0),
+      limit: "NONE",
+      stepRadians: radianStep,
+      oneShot: false,
     });
   }
 }
