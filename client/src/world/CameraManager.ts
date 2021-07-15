@@ -3,7 +3,7 @@ import { Vector3, Quaternion } from "three";
 import type WorldManager from "./WorldManager";
 
 import { Entity } from "~/ecs/base";
-import { Object3D, Transform } from "~/ecs/plugins/core";
+import { Transform } from "~/ecs/plugins/core";
 import { Follow } from "~/ecs/plugins/follow";
 import { LookAt } from "~/ecs/plugins/look-at";
 
@@ -43,6 +43,8 @@ type CameraCircling = {
   type: "circling";
 
   target: Entity;
+
+  height: number;
 
   radius: number;
 
@@ -138,7 +140,7 @@ export class CameraManager {
           target: this.state.target.id,
           offset: new Vector3(
             Math.cos(this.state.radians) * this.state.radius,
-            8,
+            this.state.height,
             Math.sin(this.state.radians) * this.state.radius
           ),
         });
@@ -216,22 +218,28 @@ export class CameraManager {
 
   circleAround(
     target: Entity,
-    { radius = 5.0, radians = null, radianStep = 0.01 } = {}
+    { height = null, radius = 5.0, radians = null, radianStep = 0.01 } = {}
   ) {
     const camera = this.entity;
     if (!camera) return;
 
     if (radians === null) {
-      if (this.state.type === 'circling') {
+      if (this.state.type === "circling") {
         radians = this.state.radians;
       } else {
         radians = 0;
       }
     }
 
+    if (height === null) {
+      const position = this.entity.get(Transform).position;
+      height = position.y;
+    }
+
     this.state = {
       type: "circling",
       target,
+      height,
       radius,
       radians,
       radianStep,
