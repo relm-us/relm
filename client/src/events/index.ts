@@ -5,6 +5,7 @@ import { onUndo, onRedo } from "./onUndoRedo";
 import { onDelete } from "./onDelete";
 import { onEscape } from "./onEscape";
 import { onSwitchMode } from "./onSwitchMode";
+import { onTogglePause } from "./onTogglePause";
 import { onDropItem } from "./onDropItem";
 import { onAction } from "./onAction";
 
@@ -30,6 +31,7 @@ globalEvents.on("delete", onDelete);
 globalEvents.on("escape", onEscape);
 
 globalEvents.on("switch-mode", onSwitchMode);
+globalEvents.on("toggle-pause", onTogglePause);
 globalEvents.on("drop-item", onDropItem);
 
 globalEvents.on("action", onAction);

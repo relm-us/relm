@@ -6,6 +6,7 @@
   import DeleteKeyListener from "./DeleteKeyListener";
   import EscapeKeyListener from "./EscapeKeyListener";
   import SwitchModeKeyListener from "./SwitchModeKeyListener";
+  import PauseKeyListener from "./PauseKeyListener";
   import UndoRedoKeyListener from "./UndoRedoKeyListener";
   import EnterChatKeyListener from "./EnterChatKeyListener";
 
@@ -22,6 +23,7 @@
 <DeleteKeyListener />
 <EscapeKeyListener />
 <SwitchModeKeyListener />
+<PauseKeyListener />
 <UndoRedoKeyListener />
 <EnterChatKeyListener />
 

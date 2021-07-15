@@ -24,6 +24,7 @@
   import { LoadingScreen, LoadingFailed } from "~/ui/LoadingScreen";
   import { AvatarChooser } from "~/ui/AvatarBuilder";
   import MediaSetup from "~/ui/MediaSetup";
+  import { PauseAutomatically, PauseMessage } from "~/ui/Pause";
 
   import { runCommand } from "~/commands";
   import { globalEvents } from "~/events";
@@ -34,6 +35,7 @@
   import { openPanel } from "~/stores/openPanel";
   import { setupState } from "~/stores/setupState";
   import { askAvatarSetup } from "~/stores/askAvatarSetup";
+  import { playState } from "~/stores/playState";
 
   const playMode = () => {
     globalEvents.emit("switch-mode", "play");
@@ -57,7 +59,6 @@
   const onDoneAvatarSetup = ({ detail }) => {
     $setupState = "done";
   };
-
 </script>
 
 {#if $setupState === "media"}
@@ -78,6 +79,11 @@
 
   <!-- Keyboard, Mouse input -->
   <Input world={$world} />
+{/if}
+
+<PauseAutomatically />
+{#if $playState === "paused"}
+  <PauseMessage />
 {/if}
 
 <overlay class:open={$mode === "build"}>
@@ -130,6 +136,9 @@
 
   <overlay-content>
     <overlay-left>
+      {#if $playState === "paused"}
+        <WorldStatePane />
+      {/if}
       {#if $mode === "build"}
         <GroupUngroupButton />
         <ResetWorldButton />
@@ -139,7 +148,6 @@
     <overlay-right>
       <AvatarSetupButton />
       <UploadButton on:uploaded={onUpload} />
-      <!-- <WorldStatePane /> -->
     </overlay-right>
   </overlay-content>
 </overlay>
@@ -231,5 +239,4 @@
     left: 300px;
     transform: translate(-50%) rotate(90deg) translate(50%, -50%);
   }
-
 </style>

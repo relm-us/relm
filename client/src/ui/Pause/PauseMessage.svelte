@@ -1,14 +1,18 @@
-<script lang="ts">
+<script>
+  import Button from "~/ui/lib/Button";
   import { playState } from "~/stores/playState";
 </script>
 
-{#if $playState === "paused"}
-  <message>Paused</message>
-{/if}
+<message>
+  <div>Paused</div>
+  <Button on:click={() => ($playState = "playing")}>continue</Button>
+</message>
 
 <style>
   message {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     position: absolute;
     z-index: 3;

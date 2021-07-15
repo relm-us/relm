@@ -1,12 +1,13 @@
-<script>
+<script lang="ts">
   import { onMount } from "svelte";
   import CircleButton from "~/ui/lib/CircleButton";
   import { AudioIcon, audioDesired } from "video-mirror";
   import { setupState } from "~/stores/setupState";
   import { Relm } from "~/stores/Relm";
+  import { Identity } from "~/identity/Identity";
 
   let muted = false;
-  let identity;
+  let identity: Identity;
 
   $: identity = $Relm && $Relm.identities.me;
 
@@ -23,7 +24,6 @@
       clearInterval(interval);
     };
   });
-
 </script>
 
 <CircleButton on:click={toggleMute}>
@@ -43,5 +43,4 @@
     height: 32px;
     margin: 0 auto;
   }
-
 </style>
