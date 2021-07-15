@@ -65,7 +65,7 @@
     word-break: break-word;
   }
 
-  resizer-left {
+  /* resizer-left {
     position: absolute;
 
     left: 0;
@@ -85,5 +85,5 @@
     height: 100%;
 
     cursor: ew-resize;
-  }
+  } */
 </style>

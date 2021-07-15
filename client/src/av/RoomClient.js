@@ -37,8 +37,6 @@ const SCREEN_SHARING_SIMULCAST_ENCODINGS = [
 // Used for VP9 screen sharing.
 const SCREEN_SHARING_SVC_ENCODINGS = [{ scalabilityMode: "S3T3", dtx: true }];
 
-const EXTERNAL_VIDEO_SRC = "/resources/videos/video-audio-stereo.mp4";
-
 const logger = new Logger("RoomClient");
 
 let store;
