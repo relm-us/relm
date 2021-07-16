@@ -328,23 +328,25 @@ export default class WorldManager {
   }
 
   start() {
-    // Signal to all participants we are "present" and our avatar can be shown
-    this.identities.me.set({ status: "present" });
+    if (this.started) {
+      playState.set("playing");
+    } else {
+      // Signal to all participants we are "present" and our avatar can be shown
+      this.identities.me.set({ status: "present" });
 
-    if (this.started) return;
+      // Pre-compile assets to prevent some jank while exploring the world
+      this.world.presentation.compile();
 
-    // Pre-compile assets to prevent some jank while exploring the world
-    this.world.presentation.compile();
+      // Move avatar to named entryway once world has loaded
+      entryway.subscribe(($entryway) => {
+        this.enter($entryway);
+      });
 
-    // Move avatar to named entryway once world has loaded
-    entryway.subscribe(($entryway) => {
-      this.enter($entryway);
-    });
+      worldState.set("running");
+      playState.set("playing");
 
-    worldState.set("running");
-    playState.set("playing");
-
-    this.started = true;
+      this.started = true;
+    }
   }
 
   stop() {
