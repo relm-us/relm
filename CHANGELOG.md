@@ -1,4 +1,26 @@
-2021-07-06
+2021-07-15
+- NEW: Automatically pause when focus is not in window to save battery/CPU
+- NEW: Press 'P' key to pause or unpause
+- NEW: When in javascript console, you can use relm.start() to unpause programatically.
+
+2021-07-12
+- NEW: Clicking on a WebPage causes the camera to zoom in on it, and taking focus away will zoom back out.
+- IMPROVED: Camera panning and zooming is smoother and more consistent. The zoom in/out centers on the current center (wherever you've panned to). There is currently no restriction on how far you can pan (this will probably be changed).
+- CODE NOTES: All camera actions are now managed by CameraManager.
+
+2021-07-11
+- NEW: WebPage renderables have an "Always On" toggle which will keep them showing the content rather than switching off when unused. NOTE: This makes everyone's browser slower, so use with prudence.
+
+2021-07-10
+- IMPROVED: (Build Mode) Billboards and Web Pages (and all other CssPlane Renderables) are now easier to set width and height. The width and height used to be a combination of rectangleSize, width, height, and scale. Now it is just size and scale.
+- NEW: Billboards have a border. Color can be set in editor.
+- NEW: Billboards show a resize icon at left and right. NOTE: resizing doesn't work yet.
+
+2021-07-08
+- FIXED: Build mode: Website object could not be selected
+- FIXED: Play mode: Labels can be dragged around again (Note: this does not affect Billboards).
+
+2021-07-06 (v1.5.1)
 - CHANGED: Updated to latest humanoid character set (Thanks Rey!)
     - improves 'long' hairstyle
     - waving animation doesn't alter leg posture
