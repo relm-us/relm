@@ -35,7 +35,10 @@ const producers = (state = initialState, action) => {
       const producer = state[producerId];
       const newProducer = { ...producer, paused: true };
 
-      return { ...state, [producerId]: newProducer };
+      const newState = { ...state, [producerId]: newProducer };
+      producersStore.set(newState);
+
+      return newState;
     }
 
     case "SET_PRODUCER_RESUMED": {
@@ -43,7 +46,10 @@ const producers = (state = initialState, action) => {
       const producer = state[producerId];
       const newProducer = { ...producer, paused: false };
 
-      return { ...state, [producerId]: newProducer };
+      const newState = { ...state, [producerId]: newProducer };
+      producersStore.set(newState);
+
+      return newState;
     }
 
     case "SET_PRODUCER_TRACK": {
@@ -51,7 +57,10 @@ const producers = (state = initialState, action) => {
       const producer = state[producerId];
       const newProducer = { ...producer, track };
 
-      return { ...state, [producerId]: newProducer };
+      const newState = { ...state, [producerId]: newProducer };
+      producersStore.set(newState);
+
+      return newState;
     }
 
     case "SET_PRODUCER_SCORE": {

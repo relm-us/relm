@@ -15,6 +15,8 @@ import { producers } from "~/av/stores/producers";
 import { get } from "svelte/store";
 import { audioTrack, videoTrack } from "video-mirror";
 
+export { default as RoomClient } from "./RoomClient";
+
 const reduxMiddlewares = [thunk];
 
 export const store = createReduxStore(
@@ -25,15 +27,21 @@ export const store = createReduxStore(
 RoomClient.init({ store });
 
 let roomClient: RoomClient;
-export function connectAV({ roomId, displayName, peerId }) {
+export function connectAV({
+  roomId,
+  displayName,
+  peerId,
+  produceAudio,
+  produceVideo,
+}) {
   if (roomClient) roomClient.close();
   roomClient = new RoomClient({
     roomId,
     displayName,
     peerId,
     device: browser,
-    produceAudio: !!get(audioTrack),
-    produceVideo: !!get(videoTrack),
+    produceAudio: produceAudio,
+    produceVideo: produceVideo,
     consume: true,
   });
 

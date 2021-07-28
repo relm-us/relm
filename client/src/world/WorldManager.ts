@@ -5,6 +5,7 @@ import { WorldDoc } from "~/y-integration/WorldDoc";
 
 import { keyShift, keySpace } from "~/input/store";
 import { exportRelm, importRelm } from "./Export";
+import { audioDesired, videoDesired } from "video-mirror";
 
 import { mode } from "~/stores/mode";
 import { deltaTime, fpsTime } from "~/stores/stats";
@@ -41,7 +42,7 @@ import {
   GROUND_INTERACTION,
 } from "~/config/colliderInteractions";
 
-import { connectAV } from "~/av";
+import { connectAV, RoomClient } from "~/av";
 import { setupState } from "~/stores/setupState";
 
 import type { DecoratedWorld } from "~/types/DecoratedWorld";
@@ -58,7 +59,7 @@ export default class WorldManager {
   chat: ChatManager;
   camera: CameraManager;
 
-  roomClient: any;
+  roomClient: RoomClient;
 
   previousLoopTime: number = 0;
   sendLocalStateInterval: any; // Timeout
@@ -188,12 +189,19 @@ export default class WorldManager {
       this.identities.me.avatar.editableName = false;
     }
 
-    setupState.subscribe(($setupState) => {
-      if ($setupState === "done") {
+    derived(
+      [setupState, audioDesired, videoDesired],
+      ([$setupState, $audio, $video], set) => {
+        set({ ready: $setupState === "done", audio: $audio, video: $video });
+      }
+    ).subscribe(({ ready, audio, video }) => {
+      if (ready) {
         this.roomClient = connectAV({
           roomId: connectOpts.room,
           displayName: connectOpts.username || this.identities.me.get("name"),
           peerId: this.identities.me.playerId,
+          produceAudio: audio,
+          produceVideo: video,
         });
       }
     });
