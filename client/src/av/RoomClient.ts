@@ -42,6 +42,35 @@ const logger = new Logger("RoomClient");
 let store;
 
 export default class RoomClient {
+  _closed: boolean;
+  _displayName: string;
+  _device: object;
+  _forceTcp: boolean;
+  _produceAudio: boolean;
+  _produceVideo: boolean;
+  _consume: boolean;
+  _useDataChannel: boolean;
+  _forceH264: boolean;
+  _forceVP9: boolean;
+  _nextDataChannelTestNumber: number;
+  _handlerName: string;
+  _useSimulcast: boolean;
+  _useSharingSimulcast: boolean;
+  _protooUrl: string;
+  _protoo: any;
+  _mediasoupDevice: any;
+  _sendTransport: any;
+  _recvTransport: any;
+  _micProducer: any;
+  _webcamProducer: any;
+  _shareProducer: any;
+  _chatDataProducer: any;
+  _botDataProducer: any;
+  _consumers: Map<string, any>;
+  _dataConsumers: Map<string, any>;
+  _webcams: Map<string, any>;
+  _webcam: any;
+
   /**
    * @param  {Object} data
    * @param  {Object} data.store - The Redux store.
@@ -55,17 +84,17 @@ export default class RoomClient {
     peerId,
     displayName,
     device,
-    handlerName,
-    useSimulcast,
-    useSharingSimulcast,
-    forceTcp,
-    produceAudio,
-    produceVideo,
-    consume,
-    forceH264,
-    forceVP9,
-    svc,
-    datachannel,
+    handlerName = undefined,
+    useSimulcast = true,
+    useSharingSimulcast = true,
+    forceTcp = false,
+    produceAudio = true,
+    produceVideo = true,
+    consume = true,
+    forceH264 = false,
+    forceVP9 = false,
+    svc = undefined,
+    datachannel = false,
   }) {
     logger.debug(
       'constructor() [roomId:"%s", peerId:"%s", displayName:"%s", device:%s]',
@@ -432,11 +461,11 @@ export default class RoomClient {
               );
 
               // TODO: For debugging.
-              window.DC_MESSAGE = message;
+              (window as any).DC_MESSAGE = message;
 
               if (message instanceof ArrayBuffer) {
                 const view = new DataView(message);
-                const number = view.getUint32();
+                const number = (view as any).getUint32();
 
                 if (number == Math.pow(2, 32) - 1) {
                   logger.warn("dataChannelTest finished!");
@@ -504,7 +533,7 @@ export default class RoomClient {
             });
 
             // TODO: REMOVE
-            window.DC = dataConsumer;
+            (window as any).DC = dataConsumer;
 
             store.dispatch(
               stateActions.addDataConsumer(
@@ -1160,7 +1189,7 @@ export default class RoomClient {
     try {
       logger.debug("enableShare() | calling getUserMedia()");
 
-      const stream = await navigator.mediaDevices.getDisplayMedia({
+      const stream = await (navigator.mediaDevices as any).getDisplayMedia({
         audio: false,
         video: {
           displaySurface: "monitor",
@@ -1927,7 +1956,7 @@ export default class RoomClient {
 
     try {
       this._mediasoupDevice = new mediasoupClient.Device({
-        handlerName: this._handlerName,
+        handlerName: this._handlerName as any,
       });
 
       const routerRtpCapabilities = await this._protoo.request(
@@ -2154,7 +2183,7 @@ export default class RoomClient {
       }
 
       // NOTE: For testing.
-      if (window.SHOW_INFO) {
+      if ((window as any).SHOW_INFO) {
         const { me } = store.getState();
 
         store.dispatch(stateActions.setRoomStatsPeerId(me.id));
