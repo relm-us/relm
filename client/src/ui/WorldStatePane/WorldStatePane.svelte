@@ -2,7 +2,13 @@
   import { onMount } from "svelte";
   import Pane from "./Pane.svelte";
 
-  import { audioTrack, videoTrack } from "video-mirror";
+  import {
+    audioDesired,
+    audioTrack,
+    videoDesired,
+    videoTrack,
+  } from "video-mirror";
+  import { audioProducing, videoProducing } from "~/av/stores/producers";
   import { setupState } from "~/stores/setupState";
   import { Identity } from "~/identity/Identity";
 
@@ -26,6 +32,7 @@
     assetsLoaded,
     assetsMaximum,
   } from "~/stores/loading";
+  import { peers } from "~/av/stores/peers";
 
   let minimized = true;
 
@@ -62,7 +69,6 @@
     }, 1000);
     return () => clearInterval(interval);
   });
-
 </script>
 
 <container class:connected={$yConnectState === "connected"}>
@@ -96,11 +102,23 @@
         {/if}
         <tr>
           <th>audio</th>
-          <td> {!!$audioTrack} </td>
+          <td>
+            {$audioDesired ? "desired" : ""}
+            {$audioTrack ? "recording" : ""}
+            {$audioProducing ? "sending" : ""}
+          </td>
         </tr>
         <tr>
           <th>video</th>
-          <td> {!!$videoTrack} </td>
+          <td>
+            {$videoDesired ? "desired" : ""}
+            {$videoTrack ? "recording" : ""}
+            {$videoProducing ? "sending" : ""}
+          </td>
+        </tr>
+        <tr>
+          <th>av peers</th>
+          <td>{JSON.stringify(peers)}</td>
         </tr>
         <tr>
           <th>loading:</th>
@@ -190,5 +208,4 @@
     pointer-events: all;
     max-height: 90vh;
   }
-
 </style>
