@@ -4,11 +4,11 @@ import { makeEntity } from "./makeEntity";
 
 import { Transform } from "~/ecs/plugins/core";
 import { Html2d } from "~/ecs/plugins/html2d";
-import { Shape } from "~/ecs/plugins/shape";
+import { Diamond } from "~/ecs/plugins/diamond";
 
 export function makeLabel(
   world,
-  { x = 0, y = 0.5, z = 0, yOffset = 0, content = "Hello" }
+  { x = 0, y = 0, z = 0, yOffset = 1, content = "Hello" }
 ) {
   const linearColor = new Color("#BBFF00");
   linearColor.convertSRGBToLinear();
@@ -20,13 +20,10 @@ export function makeLabel(
     .add(Html2d, {
       kind: "LABEL",
       content,
-      offset: new Vector3(0.1, 0, 0),
-      hanchor: 1,
+      offset: new Vector3(0, -0.6, 0),
+      hanchor: 0,
+      vanchor: 0,
       draggable: true,
     })
-    .add(Shape, {
-      kind: "SPHERE",
-      color: "#" + linearColor.getHexString(),
-      sphereRadius: 0.1,
-    });
+    .add(Diamond);
 }
