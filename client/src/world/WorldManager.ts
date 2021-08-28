@@ -10,7 +10,7 @@ import { audioDesired, videoDesired } from "video-mirror";
 import { mode } from "~/stores/mode";
 import { deltaTime, fpsTime } from "~/stores/stats";
 import { worldState, WorldState } from "~/stores/worldState";
-import { playState } from "~/stores/playState";
+import { playState, PlayState } from "~/stores/playState";
 import { ConnectOptions } from "~/stores/connection";
 import { shadowsEnabled } from "~/stores/settings";
 import { entryway } from "~/stores/subrelm";
@@ -49,7 +49,6 @@ import type { DecoratedWorld } from "~/types/DecoratedWorld";
 export default class WorldManager {
   world: DecoratedWorld;
   viewport: HTMLElement;
-  state: Writable<WorldState>;
   light: Entity;
   connectOpts;
 
@@ -70,7 +69,6 @@ export default class WorldManager {
     if (!viewport) throw new Error(`viewport is required`);
     this.world = world;
     this.viewport = viewport;
-    this.state = worldState;
 
     this.wdoc = new WorldDoc(world);
 
@@ -422,4 +420,31 @@ export default class WorldManager {
   get scene() {
     return this.world.presentation.scene;
   }
+  
+  get worldState(): WorldState {
+    return get(worldState);
+  }
+
+  set worldState(state: WorldState) {
+    const possibilities = ["loading", "running", "error"];
+    if (!possibilities.includes(state)) {
+      console.error("state must be one of", possibilities);
+    } else {
+      worldState.set(state);
+    }
+  }
+
+  get playState(): PlayState {
+    return get(playState);
+  }
+
+  set playState(state: PlayState) {
+    const possibilities = ["playing", "paused"];
+    if (!possibilities.includes(state)) {
+      console.error("state must be one of", possibilities);
+    } else {
+      playState.set(state);
+    }
+  }
+
 }
