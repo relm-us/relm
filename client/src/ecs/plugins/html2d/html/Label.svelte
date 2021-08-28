@@ -21,26 +21,30 @@
   let clickStarted = false;
   let dragging = false;
   let editing = false;
+  let showNoteIcon = false;
+
+  $: showNoteIcon = editable && !editing && content === "";
 
   const initialEntityPos = new Vector3();
   const initialMousePos = new Vector2();
 
   function doneEditing() {
     if (!editing) return;
-    editing = false;
 
-    const text = labelEl.innerHTML;
+    content = labelEl.innerHTML;
     const component = entity.get(Html2d);
-    component.content = text;
+    component.content = content;
 
     if ($Relm.avatar === entity) {
       // TODO: make a way for Avatar to subscribe to ECS component
       // changes instead of this hack:
-      $Relm.identities.me.set({ name: text });
+      $Relm.identities.me.set({ name: content });
     } else {
       // Broadcast changes
       $Relm.wdoc.syncFrom(entity);
     }
+
+    editing = false;
   }
 
   function onKeydown(event) {
@@ -82,7 +86,7 @@
     if (dragging) {
       $Relm.wdoc.syncFrom(entity);
       dragging = false;
-    } else if (clickStarted && editable) {
+    } else if (clickStarted && editable && !editing) {
       editing = true;
       setTimeout(() => labelEl.focus(), 100);
     }
@@ -120,19 +124,23 @@
   $$props;
 </script>
 
-<div
-  contenteditable={editing}
-  class="truncate-overflow"
-  class:underline={!!underlineColor}
-  class:dragging
-  style="--color:{color};--shadow-color:{shadowColor};--underline-color:{underlineColor}"
-  bind:this={labelEl}
-  on:mousedown={onMousedown}
-  on:blur={doneEditing}
-  on:keydown={onKeydown}
->
-  {@html cleanHtml(content)}
-</div>
+{#if showNoteIcon}
+  <div on:mousedown={onMousedown}>📝</div>
+{:else}
+  <div
+    contenteditable={editing}
+    class="truncate-overflow"
+    class:underline={!!underlineColor}
+    class:dragging
+    style="--color:{color};--shadow-color:{shadowColor};--underline-color:{underlineColor}"
+    bind:this={labelEl}
+    on:mousedown={onMousedown}
+    on:blur={doneEditing}
+    on:keydown={onKeydown}
+  >
+    {@html cleanHtml(content)}
+  </div>
+{/if}
 
 <svelte:window on:mousemove={onMousemove} on:mouseup={onMouseup} />
 

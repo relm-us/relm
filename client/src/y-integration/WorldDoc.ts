@@ -163,6 +163,11 @@ export class WorldDoc extends EventEmitter {
       /* This entity is new to WorldDoc */
       this._add(entity);
     }
+
+    // Recursively save children entities as well
+    for (const child of entity.getChildren()) {
+      this.syncFrom(child);
+    }
   }
 
   delete(entity: Entity) {

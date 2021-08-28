@@ -2,7 +2,7 @@
   import { fade } from "svelte/transition";
 
   import { Relm } from "~/stores/Relm";
-  import { makeLabel, makeBillboard } from "~/prefab";
+  import { makeDiamond, makeBillboard } from "~/prefab";
   import { cleanHtml } from "~/utils/cleanHtml";
 
   import IoMdCloseCircleOutline from "svelte-icons/io/IoMdCloseCircleOutline.svelte";
@@ -41,12 +41,13 @@
 
   function createLabel(text) {
     const position = $Relm.avatar.getByName("WorldTransform").position;
-    const label = makeLabel($Relm.world, {
+    const diamond = makeDiamond($Relm.world, {
       x: position.x,
       z: position.z,
       content: text,
-    }).activate();
-    $Relm.wdoc.syncFrom(label);
+    });
+    diamond.traverse(entity => entity.activate());
+    $Relm.wdoc.syncFrom(diamond);
   }
 
   function createBillboard(text) {

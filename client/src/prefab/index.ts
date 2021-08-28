@@ -2,6 +2,7 @@
 import { makeBall } from "./makeBall";
 import { makeBillboard } from "./makeBillboard";
 import { makeBox } from "./makeBox";
+import { makeDiamond } from "./makeDiamond";
 import { makeEntity } from "./makeEntity";
 import { makeGround } from "./makeGround";
 import { makeInitialCollider } from "./makeInitialCollider";
@@ -18,6 +19,7 @@ export {
   makeBall,
   makeBillboard,
   makeBox,
+  makeDiamond,
   makeEntity,
   makeGround,
   makeInitialCollider,
@@ -34,6 +36,7 @@ export const directory = [
   { name: "Ball", prefab: makeBall },
   { name: "Billboard", prefab: makeBillboard },
   { name: "Box", prefab: makeBox },
+  { name: "Diamond", prefab: makeDiamond },
   { name: "Ground", prefab: makeGround },
   { name: "Image", prefab: makeImage },
   { name: "Label", prefab: makeLabel },
