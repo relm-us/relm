@@ -6,8 +6,10 @@
 </script>
 
 <message>
-  <div>Paused</div>
-  <Button on:click={() => ($playState = "playing")}>continue</Button>
+  <div class="paused">Paused</div>
+  <div class="button">
+    <Button on:click={() => ($playState = "playing")}>continue</Button>
+  </div>
   <div class="toggle-auto-pause">
     <ToggleSwitch
       bind:enabled={$autoPause}
@@ -31,6 +33,14 @@
 
     font-size: 6vw;
     color: white;
+
+    padding: 16px 32px 24px 32px;
+    background: rgba(40, 40, 40, 0.9);
+    border-radius: 5px;
+  }
+
+  .button {
+    margin: 16px 0 12px 0;
   }
 
   .toggle-auto-pause {
