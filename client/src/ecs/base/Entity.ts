@@ -160,6 +160,7 @@ export class Entity {
         this.subgroup[i].traverse(callback);
       }
     }
+    return this;
   }
 
   traverseAncestors(callback: (e: Entity) => void) {
