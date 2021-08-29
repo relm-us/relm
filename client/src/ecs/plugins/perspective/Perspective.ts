@@ -3,6 +3,7 @@ import { Box3, Vector2, Vector3 } from "three";
 import { Entity } from "~/ecs/base";
 import { Presentation } from "~/ecs/plugins/core";
 import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
+import { GetWorldFromScreenOpts, WorldPlanes } from "~/ecs/shared/WorldPlanes";
 
 const BOUNDS_EXTENT = [-1, 1];
 
@@ -27,12 +28,23 @@ export class Perspective {
     this.avatar = avatar;
   }
 
-  getAvatarPlanes() {
+  getAvatarPlanes(): WorldPlanes {
     return this.avatar?.get(PointerPositionRef)?.value;
   }
 
-  getWorldFromScreen(...args) {
-    return this.getAvatarPlanes()?.getWorldFromScreen(...args);
+  getWorldFromScreen(
+    screenCoord: Vector2,
+    target: Vector3,
+    { plane = "xz", camera }: GetWorldFromScreenOpts = {}
+  ) {
+    const worldPlanes = this.getAvatarPlanes();
+    if (worldPlanes) {
+      const cam = camera ?? worldPlanes.camera;
+      return worldPlanes.getWorldFromScreen(screenCoord, target, {
+        plane,
+        camera: cam,
+      });
+    }
   }
 
   updateVisibleBounds() {
