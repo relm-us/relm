@@ -1,6 +1,6 @@
 import { Vector3 } from "three";
 
-import { Entity, World } from "~/ecs/base";
+import { Entity } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
 import {
   PointerPosition,
@@ -8,20 +8,25 @@ import {
 } from "~/ecs/plugins/pointer-position";
 import type { PlaneOrientation } from "~/ecs/shared/WorldPlanes";
 
+import { DecoratedWorld } from "~/types/DecoratedWorld";
 import { uuidv4 } from "~/utils/uuid";
 
 export class DragPlane {
-  world: World;
-  plane: PlaneOrientation = "xz";
+  world: DecoratedWorld;
+  orientation: PlaneOrientation = "xz";
   center: Vector3 = new Vector3();
   entity: Entity;
 
-  constructor(world: World) {
+  constructor(world: DecoratedWorld) {
     this.world = world;
+    this.entity = this.world.entities
+      .create("PointerDragPlane", uuidv4())
+      .add(Transform, { position: new Vector3() })
+      .add(PointerPosition);
   }
 
   setOrientation(orientation: PlaneOrientation) {
-    this.plane = orientation;
+    this.orientation = orientation;
   }
 
   setCenter(center: Vector3) {
@@ -29,10 +34,13 @@ export class DragPlane {
   }
 
   show() {
-    this.entity = this.world.entities
-      .create("PointerDragPlane", uuidv4())
-      .add(Transform, { position: this.center })
-      .add(PointerPosition)
-      .activate();
+    this.entity.activate();
+
+    const transform = this.entity.get(Transform);
+    transform.position.copy(this.center);
+  }
+
+  hide() {
+    this.entity.deactivate();
   }
 }

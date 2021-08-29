@@ -8,23 +8,30 @@
   import { IntersectionFinder } from "./IntersectionFinder";
 
   import { Entity, World } from "~/ecs/base";
+  import { Transform } from "~/ecs/plugins/core";
   import { Controller } from "~/ecs/plugins/player-control";
   import {
     PointerPosition,
     PointerPositionRef,
   } from "~/ecs/plugins/pointer-position";
   import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
+  import {
+    NonInteractive,
+    NonInteractiveApplied,
+  } from "~/ecs/plugins/non-interactive";
 
   import { Relm } from "~/stores/Relm";
   import { mode } from "~/stores/mode";
   import { hovered } from "~/stores/selection";
   import { mouse } from "~/stores/mouse";
 
+  import type { DecoratedWorld } from "~/types/DecoratedWorld";
   import { DRAG_DISTANCE_THRESHOLD } from "~/config/constants";
   import { isInputEvent } from "../isInputEvent";
   import { DragPlane } from "./DragPlane";
+  import { SelectionBox } from "./SelectionBox";
 
-  export let world: World;
+  export let world: DecoratedWorld;
 
   const pointerPosition = new Vector2();
   const pointerStartPosition = new Vector2();
@@ -35,9 +42,9 @@
   const dragStartTransformPosition = new Vector3();
   const v1 = new Vector3();
   const dragPlane = new DragPlane(world);
+  const selectionBox = new SelectionBox(world);
 
   let pointerState: "initial" | "click" | "drag" | "drag-select" = "initial";
-  let pointerPosEntity;
   let dragOffset;
   let shiftKey = false;
   let selectionRectangle = new Box2();
@@ -107,44 +114,52 @@
           dragPlane.setOrientation(shiftKey ? "xy" : "xz");
         } else {
           pointerState = "drag-select";
+          selectionBox.show();
           dragPlane.setOrientation("xz");
         }
 
         dragOffset = null;
 
-        dragPlane.setCenter($Relm.selection.centroid);
+        // console.log(
+        //   "centroid",
+        //   $Relm.selection.length,
+        //   $Relm.selection.centroid
+        // );
+        // dragPlane.setCenter($Relm.selection.centroid);
         dragPlane.show();
-        
       } else if (pointerState === "drag") {
         // drag mode
-        const ref = pointerPosEntity.get(PointerPositionRef);
+        const ref = dragPlane.entity.get(PointerPositionRef);
         if (ref) {
           if (dragOffset) {
-            const position = new Vector3().copy(ref.value.points[dragPlane]);
+            const position = new Vector3().copy(
+              ref.value.points[dragPlane.orientation]
+            );
             position.sub(dragOffset);
             $Relm.selection.moveRelativeToSavedPositions(position);
           } else if (ref.updateCount > 1) {
             $Relm.selection.savePositions();
-            dragOffset = new Vector3().copy(ref.value.points[dragPlane]);
+            dragOffset = new Vector3().copy(
+              ref.value.points[dragPlane.orientation]
+            );
           }
         }
       } else if (pointerState === "drag-select") {
-        selectionLogic.getSelectionBox(
-          $Relm.world,
+        let pointerStart = new Vector3();
+        world.perspective.getWorldFromScreen(
           pointerStartPosition,
-          pointerPosition,
-          selectionRectangle
+          pointerStart,
+          { plane: "xz" }
         );
-        const p = new Vector2();
-        for (let entity of $Relm.world.entities.entities.values()) {
-          const position = entity.getByName("Transform")?.position;
-          if (!position) continue;
-          p.x = position.x;
-          p.y = position.z; // note: switching from 3D XZ plane to 2D XY plane
-          if (selectionRectangle.containsPoint(p)) {
-            $Relm.selection.addEntityId(entity.id);
-          }
-        }
+        let pointerEnd = new Vector3();
+        world.perspective.getWorldFromScreen(pointerPosition, pointerEnd, {
+          plane: "xz",
+        });
+        selectionBox.setRange(pointerStart, pointerEnd, dragPlane.orientation);
+        const contained = selectionBox.getContainedEntities();
+
+        $Relm.selection.clear(true);
+        $Relm.selection.addEntityIds(contained);
       }
     } else if ($mode === "play") {
       const follow = $Relm.camera.entity.getByName("Follow");
@@ -243,10 +258,8 @@
       removeTouchController($Relm.avatar);
     }
 
-    if (pointerPosEntity) {
-      pointerPosEntity.destroy();
-      pointerPosEntity = null;
-    }
+    dragPlane.hide();
+    selectionBox.hide();
 
     // reset mouse mode
     pointerState = "initial";
