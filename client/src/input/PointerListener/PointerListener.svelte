@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Box2, Frustum, PerspectiveCamera, Vector2, Vector3 } from "three";
+  import { Box2, PerspectiveCamera, Vector2, Vector3 } from "three";
   import { difference } from "~/utils/setOps";
   import { hasAncestor } from "~/utils/hasAncestor";
   import { globalEvents } from "~/events";
@@ -70,14 +70,14 @@
     if (isInputEvent(event)) return false;
 
     // Prevent Renderable overlays (e.g. over websites) from erroneously
-    // becoming MouseListener click targets. TODO: make this less hacky?
+    // becoming PointerListener click targets. TODO: make this less hacky?
     if (event.target.tagName === "OVERLAY" && $mode === "play") return false;
 
     // An HTML element whose ancestor is the viewport is in the "world" (i.e. not part of the UI)
     return hasAncestor(event.target, world.presentation.viewport);
   }
 
-  function onPointermove(x, y) {
+  function onPointerMove(x, y) {
     pointerPosition.set(x, y);
 
     globalEvents.emit("mouseActivity");
@@ -116,7 +116,7 @@
         const position = $Relm.selection.centroid;
 
         pointerPosEntity = world.entities
-          .create("MouseDragPointerPlane", uuidv4())
+          .create("PointerDragPlane", uuidv4())
           .add(Transform, { position })
           .add(PointerPosition)
           .activate();
@@ -191,14 +191,14 @@
 
   function onMouseMove(event: MouseEvent) {
     if (!eventTargetsWorld(event, $mode)) return;
-    onPointermove(event.clientX, event.clientY);
+    onPointerMove(event.clientX, event.clientY);
   }
 
   function onTouchMove(event: TouchEvent) {
     if (!eventTargetsWorld(event, $mode)) return;
     event.preventDefault();
     var touch = event.changedTouches[0];
-    onPointermove(touch.clientX, touch.clientY);
+    onPointerMove(touch.clientX, touch.clientY);
   }
 
   function onPointerDown(x, y, eventShiftKey) {

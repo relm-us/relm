@@ -10,7 +10,7 @@
   import UndoRedoKeyListener from "./UndoRedoKeyListener";
   import EnterChatKeyListener from "./EnterChatKeyListener";
 
-  import MouseListener from "./MouseListener";
+  import PointerListener from "./PointerListener";
   import WheelListener from "./WheelListener";
 
   export let world;
@@ -27,5 +27,5 @@
 <UndoRedoKeyListener />
 <EnterChatKeyListener />
 
-<MouseListener {world} />
+<PointerListener {world} />
 <WheelListener {world} />
