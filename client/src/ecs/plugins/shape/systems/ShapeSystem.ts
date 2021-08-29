@@ -2,23 +2,11 @@ import { Mesh, MeshStandardMaterial, RepeatWrapping } from "three";
 
 import { isBrowser } from "~/utils/isBrowser";
 
-import {
-  Entity,
-  System,
-  Not,
-  Modified,
-  Groups,
-} from "~/ecs/base";
+import { Entity, System, Not, Modified, Groups } from "~/ecs/base";
 import { Object3D } from "~/ecs/plugins/core";
 import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 
-import {
-  Shape,
-  ShapeMesh,
-  ShapeAttached,
-  ShapeWithTexture,
-  ShapeWithoutTexture,
-} from "../components";
+import { Shape, ShapeBuilt, ShapeNeedsTexture, ShapeMesh } from "../components";
 
 import { getGeometry } from "../ShapeCache";
 
@@ -30,8 +18,8 @@ export class ShapeSystem extends System {
   order = Groups.Initialization;
 
   static queries = {
-    added: [Shape, Not(ShapeWithTexture), Not(ShapeWithoutTexture)],
-    addedWithTexture: [Shape, ShapeWithTexture, AssetLoaded],
+    added: [Shape, Not(ShapeBuilt)],
+    addedWithTexture: [ShapeNeedsTexture, AssetLoaded, Not(ShapeMesh)],
     modified: [Modified(Shape)],
     removed: [Not(Shape), ShapeMesh],
   };
@@ -57,8 +45,10 @@ export class ShapeSystem extends System {
 
   build(entity: Entity) {
     const shape = entity.get(Shape);
-    if (!blank(shape.texture.url) && !entity.has(ShapeWithTexture)) {
-      entity.add(ShapeWithTexture);
+    entity.add(ShapeBuilt);
+
+    if (!blank(shape.texture.url)) {
+      entity.add(ShapeNeedsTexture);
 
       let asset = entity.get(Asset);
       if (asset) {
@@ -67,9 +57,8 @@ export class ShapeSystem extends System {
       } else {
         entity.add(Asset, { texture: shape.texture });
       }
-    } else if (!entity.has(ShapeWithoutTexture)) {
+    } else {
       entity.maybeRemove(Asset);
-      entity.add(ShapeWithoutTexture);
       this.buildWithoutTexture(entity);
     }
   }
@@ -120,8 +109,8 @@ export class ShapeSystem extends System {
 
       entity.remove(ShapeMesh);
     }
-    entity.maybeRemove(ShapeWithTexture);
-    entity.maybeRemove(ShapeWithoutTexture);
+    entity.maybeRemove(ShapeBuilt);
+    entity.maybeRemove(ShapeNeedsTexture);
   }
 
   attach(entity: Entity) {

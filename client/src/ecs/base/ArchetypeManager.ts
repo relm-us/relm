@@ -33,6 +33,7 @@ export class ArchetypeManager {
     }
 
     if (Component.id === undefined) {
+      console.error(Component);
       throw Error('Unregistered component');
     }
 
