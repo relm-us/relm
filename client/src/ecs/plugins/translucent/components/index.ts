@@ -1,1 +1,2 @@
-export { Translucent, TranslucentApplied } from "./Translucent";
+export { Translucent } from "./Translucent";
+export { TranslucentApplied } from "./TranslucentApplied";

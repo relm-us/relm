@@ -41,11 +41,11 @@ export class TranslucentSystem extends System {
       }
     });
 
-    entity.add(TranslucentApplied);
+    entity.add(TranslucentApplied, { value: object3d });
   }
 
   remove(entity: Entity) {
-    const object3d = entity.get(Object3D);
+    const object3d = entity.get(TranslucentApplied).value;
 
     object3d.value.traverse((node) => {
       if (node.isMesh) {
