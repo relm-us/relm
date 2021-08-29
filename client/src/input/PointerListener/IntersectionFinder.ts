@@ -39,29 +39,22 @@ export class IntersectionFinder {
     );
   }
 
-  find(firstOnly = false): Set<Object3D> {
+  find(): Set<Object3D> {
     // Reduce length to zero rather than garbage collect (speed optimization)
     this._intersections.length = 0;
     this.raycaster.intersectObject(this.scene, true, this._intersections);
 
-    if (firstOnly && this._intersections.length > 0) {
-      const object = findObjectActingAsEntityRoot(
-        this._intersections[0].object
-      );
-      return new Set([object]);
-    } else {
-      return this._intersections.reduce((acc, intersection, i) => {
-        const object = findObjectActingAsEntityRoot(intersection.object);
-        if (object !== null) {
-          // outlines and other "things" should be invisible to
-          // IntersectionFinder
-          if (!object.userData.nonInteractive) {
-            acc.add(object);
-          }
+    return this._intersections.reduce((acc, intersection, i) => {
+      const object = findObjectActingAsEntityRoot(intersection.object);
+      if (object !== null) {
+        // outlines and other things should be invisible to IntersectionFinder
+        if (!object.userData.nonInteractive) {
+          object.userData.lastIntersectionPoint = intersection.point;
+          acc.add(object);
         }
-        return acc;
-      }, new Set<Object3D>());
-    }
+      }
+      return acc;
+    }, new Set<Object3D>());
   }
 }
 
