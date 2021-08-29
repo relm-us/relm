@@ -1,24 +1,29 @@
-import { Vector3, Box3, Object3D as ThreeObject3D } from "three";
+import { Vector2, Vector3, Box3, Object3D as ThreeObject3D } from "three";
 
 import { Entity } from "~/ecs/base";
 import { Object3D, Transform } from "~/ecs/plugins/core";
 import { Shape } from "~/ecs/plugins/shape";
 import { Translucent } from "~/ecs/plugins/translucent";
-import { PlaneOrientation } from "~/ecs/plugins/core/Presentation";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
+import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
 
 import { DecoratedWorld } from "~/types/DecoratedWorld";
 
-const INFINITY = 100;
+const DEFAULT_BOX_HEIGHT = 3;
 
 const limit: Vector3 = new Vector3();
 
 export class SelectionBox {
   world: DecoratedWorld;
-  orientation: PlaneOrientation;
   entity: Entity;
   box: Box3 = new Box3();
   center: Vector3 = new Vector3();
+
+  start: Vector3 = new Vector3();
+  end: Vector3 = new Vector3();
+  top: Vector3 = null;
+
+  endPlanes: WorldPlanes = null;
 
   constructor(world: DecoratedWorld) {
     this.world = world;
@@ -32,18 +37,68 @@ export class SelectionBox {
       .add(Translucent);
   }
 
-  setRange(start: Vector3, end: Vector3, orientation: PlaneOrientation) {
-    this.orientation = orientation;
+  clearTop() {
+    this.top = null;
+    this.endPlanes = null;
+  }
 
+  setStart(screenCoord: Vector2) {
+    this.world.perspective.getWorldFromScreen(screenCoord, this.start, {
+      plane: "xz",
+    });
+    this.recalculateBox();
+  }
+
+  setEnd(screenCoord: Vector2) {
+    this.world.perspective.getWorldFromScreen(screenCoord, this.end, {
+      plane: "xz",
+    });
+    this.recalculateBox();
+  }
+
+  setTop(screenCoord: Vector2) {
+    if (!this.top) this.top = new Vector3();
+
+    if (!this.endPlanes) {
+      this.endPlanes = new WorldPlanes(
+        this.world.presentation.camera,
+        this.world.presentation.size,
+        this.end
+      );
+    }
+    this.endPlanes.getWorldFromScreen(screenCoord, this.top, {
+      plane: "xy",
+    });
+    this.top.x = this.end.x;
+    this.top.y *= 2;
+    this.recalculateBox();
+  }
+
+  setStartPoint(start: Vector3) {
+    this.start.copy(start);
+    this.recalculateBox();
+  }
+
+  setEndPoint(end: Vector3) {
+    this.end.copy(end);
+    this.recalculateBox();
+  }
+
+  recalculateBox() {
     this.box.makeEmpty();
-    this.box.expandByPoint(start);
-    this.box.expandByPoint(end);
+    this.box.expandByPoint(this.start);
+    this.box.expandByPoint(this.end);
 
+    // Get center BEFORE expanding by top point
     this.box.getCenter(this.center);
-    let axis = orientation === "xz" ? "y" : "z";
+
+    if (this.top) {
+      this.box.expandByPoint(this.top);
+    }
+
     [-1, 1].forEach((direction) => {
       limit.copy(this.center);
-      limit[axis] += INFINITY * direction;
+      limit.y += DEFAULT_BOX_HEIGHT * direction;
       this.box.expandByPoint(limit);
     });
 

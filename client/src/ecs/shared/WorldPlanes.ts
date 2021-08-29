@@ -69,6 +69,8 @@ export class WorldPlanes {
     this.screenSize = screenSize;
     this.origin = origin;
     this.offset = offset || new Vector3();
+
+    this.recalculatePlanesConstants();
   }
 
   getWorldFromScreen(
@@ -96,12 +98,16 @@ export class WorldPlanes {
     return target;
   }
 
-  update(point?: Vector2) {
-    if (!this.origin) return;
-
+  recalculatePlanesConstants() {
     // Set both planes to origin
     this.planes.xz.constant = -this.origin.y - this.offset.y;
     this.planes.xy.constant = -this.origin.z - this.offset.z;
+  }
+
+  update(point?: Vector2) {
+    if (!this.origin) return;
+
+    this.recalculatePlanesConstants();
 
     // If a 2d point on the screen is given, calculate its 3d world coords on both planes
     if (point) {

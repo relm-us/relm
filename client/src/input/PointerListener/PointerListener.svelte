@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Box2, PerspectiveCamera, Vector2, Vector3 } from "three";
+  import { PerspectiveCamera, Vector2, Vector3 } from "three";
   import { difference } from "~/utils/setOps";
   import { hasAncestor } from "~/utils/hasAncestor";
   import { globalEvents } from "~/events";
@@ -7,18 +7,10 @@
 
   import { IntersectionFinder } from "./IntersectionFinder";
 
-  import { Entity, World } from "~/ecs/base";
-  import { Transform } from "~/ecs/plugins/core";
+  import { Entity } from "~/ecs/base";
   import { Controller } from "~/ecs/plugins/player-control";
-  import {
-    PointerPosition,
-    PointerPositionRef,
-  } from "~/ecs/plugins/pointer-position";
+  import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
   import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
-  import {
-    NonInteractive,
-    NonInteractiveApplied,
-  } from "~/ecs/plugins/non-interactive";
 
   import { Relm } from "~/stores/Relm";
   import { mode } from "~/stores/mode";
@@ -47,7 +39,6 @@
   let pointerState: "initial" | "click" | "drag" | "drag-select" = "initial";
   let dragOffset;
   let shiftKey = false;
-  let selectionRectangle = new Box2();
 
   const finder = new IntersectionFinder(
     world.presentation.camera,
@@ -82,7 +73,7 @@
     return hasAncestor(event.target, world.presentation.viewport);
   }
 
-  function onPointerMove(x, y) {
+  function onPointerMove(x, y, moveShiftKey) {
     pointerPosition.set(x, y);
 
     globalEvents.emit("mouseActivity");
@@ -145,17 +136,15 @@
           }
         }
       } else if (pointerState === "drag-select") {
-        let pointerStart = new Vector3();
-        world.perspective.getWorldFromScreen(
-          pointerStartPosition,
-          pointerStart,
-          { plane: "xz" }
-        );
-        let pointerEnd = new Vector3();
-        world.perspective.getWorldFromScreen(pointerPosition, pointerEnd, {
-          plane: "xz",
-        });
-        selectionBox.setRange(pointerStart, pointerEnd, dragPlane.orientation);
+        selectionBox.setStart(pointerStartPosition);
+
+        if (moveShiftKey) {
+          selectionBox.setTop(pointerPosition);
+        } else {
+          selectionBox.clearTop();
+          selectionBox.setEnd(pointerPosition);
+        }
+
         const contained = selectionBox.getContainedEntities();
 
         $Relm.selection.clear(true);
@@ -201,14 +190,14 @@
 
   function onMouseMove(event: MouseEvent) {
     if (!eventTargetsWorld(event, $mode)) return;
-    onPointerMove(event.clientX, event.clientY);
+    onPointerMove(event.clientX, event.clientY, event.shiftKey);
   }
 
   function onTouchMove(event: TouchEvent) {
     if (!eventTargetsWorld(event, $mode)) return;
     event.preventDefault();
     var touch = event.changedTouches[0];
-    onPointerMove(touch.clientX, touch.clientY);
+    onPointerMove(touch.clientX, touch.clientY, event.shiftKey);
   }
 
   function onPointerDown(x, y, eventShiftKey) {
