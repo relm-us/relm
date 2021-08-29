@@ -32,6 +32,10 @@ export class ArchetypeManager {
       this.removeFromArchetype(entity);
     }
 
+    if (Component.id === undefined) {
+      throw Error('Unregistered component');
+    }
+
     entity.archetypeId =
       entity.archetypeId.substring(0, Component.id) +
       (isAdded ? "1" : "0") +
