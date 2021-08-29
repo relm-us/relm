@@ -28,8 +28,8 @@
 
   export let world;
 
-  const mousePosition = new Vector2();
-  const mouseStartPosition = new Vector2();
+  const pointerPosition = new Vector2();
+  const pointerStartPosition = new Vector2();
   const dragPosition = new Vector3();
   const dragStartPosition = new Vector3();
   const dragStartCamera = new PerspectiveCamera();
@@ -37,7 +37,7 @@
   const dragStartTransformPosition = new Vector3();
   const v1 = new Vector3();
 
-  let mouseMode: "initial" | "click" | "drag" | "drag-select" = "initial";
+  let pointerState: "initial" | "click" | "drag" | "drag-select" = "initial";
   let pointerPosEntity;
   let dragOffset;
   let dragPlane: PlaneOrientation = "xz";
@@ -59,13 +59,8 @@
     controller.touchEnabled = false;
   }
 
-  function setMousePositionFromEvent(event, isStart = false) {
-    mousePosition.set(event.clientX, event.clientY);
-    if (isStart) mouseStartPosition.copy(mousePosition);
-  }
-
-  function findIntersectionsAtMousePosition() {
-    finder.castRay(mousePosition);
+  function findIntersectionsAtPointerPosition() {
+    finder.castRay(pointerPosition);
     const findings = [...finder.find()];
     return findings.map((object) => object.userData.entityId);
   }
@@ -82,15 +77,13 @@
     return hasAncestor(event.target, world.presentation.viewport);
   }
 
-  function onMousemove(event: MouseEvent) {
-    if (!eventTargetsWorld(event, $mode)) return;
+  function onPointermove(x, y) {
+    pointerPosition.set(x, y);
 
     globalEvents.emit("mouseActivity");
 
-    setMousePositionFromEvent(event);
+    const found = findIntersectionsAtPointerPosition();
 
-    const found = findIntersectionsAtMousePosition();
-    // console.log("mouse.set", finder._normalizedCoords);
     mouse.set(finder._normalizedCoords);
 
     if ($mode === "build") {
@@ -106,15 +99,16 @@
       }
 
       if (
-        mouseMode === "click" &&
-        mousePosition.distanceTo(mouseStartPosition) > DRAG_DISTANCE_THRESHOLD
+        pointerState === "click" &&
+        pointerPosition.distanceTo(pointerStartPosition) >
+          DRAG_DISTANCE_THRESHOLD
       ) {
         // drag  mode start
         if ($Relm.selection.length > 0) {
-          mouseMode = "drag";
+          pointerState = "drag";
           dragPlane = shiftKey ? "xy" : "xz";
         } else {
-          mouseMode = "drag-select";
+          pointerState = "drag-select";
           dragPlane = "xz";
         }
 
@@ -126,7 +120,7 @@
           .add(Transform, { position })
           .add(PointerPosition)
           .activate();
-      } else if (mouseMode === "drag") {
+      } else if (pointerState === "drag") {
         // drag mode
         const ref = pointerPosEntity.get(PointerPositionRef);
         if (ref) {
@@ -139,11 +133,11 @@
             dragOffset = new Vector3().copy(ref.value.points[dragPlane]);
           }
         }
-      } else if (mouseMode === "drag-select") {
+      } else if (pointerState === "drag-select") {
         selectionLogic.getSelectionBox(
           $Relm.world,
-          mouseStartPosition,
-          mousePosition,
+          pointerStartPosition,
+          pointerPosition,
           selectionRectangle
         );
         const p = new Vector2();
@@ -165,25 +159,29 @@
       const planes: WorldPlanes = $Relm.world.perspective.getAvatarPlanes();
 
       if (
-        mouseMode === "click" &&
-        mousePosition.distanceTo(mouseStartPosition) > DRAG_DISTANCE_THRESHOLD
+        pointerState === "click" &&
+        pointerPosition.distanceTo(pointerStartPosition) >
+          DRAG_DISTANCE_THRESHOLD
       ) {
         dragStartFollowOffset.copy($Relm.camera.pan);
         dragStartTransformPosition.copy(transform.position);
 
         // drag  mode start
-        mouseMode = "drag";
+        pointerState = "drag";
         dragOffset = new Vector3();
         dragStartCamera.copy(planes.camera);
         dragStartPosition.copy(planes.points.xz);
-      } else if (mouseMode === "drag") {
+      } else if (pointerState === "drag") {
         // We can't copy planes.points.xz coords here, because the camera itself
         // may be following the drag, so we need to use the previous projection
-        planes.getWorldFromScreen(mousePosition, dragPosition, {
+        planes.getWorldFromScreen(pointerPosition, dragPosition, {
           camera: dragStartCamera,
         });
 
-        dragOffset.copy(dragPosition).sub(dragStartPosition).sub(dragStartFollowOffset);
+        dragOffset
+          .copy(dragPosition)
+          .sub(dragStartPosition)
+          .sub(dragStartFollowOffset);
         v1.copy(dragStartFollowOffset).sub(dragOffset);
 
         $Relm.camera.setPan(-dragOffset.x, -dragOffset.z);
@@ -191,41 +189,59 @@
     }
   }
 
-  /**
-   * Track mouse click events in connection with the object selection system
-   *
-   * @param event
-   */
-  function onMousedown(event: MouseEvent) {
+  function onMouseMove(event: MouseEvent) {
     if (!eventTargetsWorld(event, $mode)) return;
+    onPointermove(event.clientX, event.clientY);
+  }
 
-    setMousePositionFromEvent(event, true);
+  function onTouchMove(event: TouchEvent) {
+    if (!eventTargetsWorld(event, $mode)) return;
+    event.preventDefault();
+    var touch = event.changedTouches[0];
+    onPointermove(touch.clientX, touch.clientY);
+  }
 
-    const found = findIntersectionsAtMousePosition();
+  function onPointerDown(x, y, eventShiftKey) {
+    pointerPosition.set(x, y);
+    pointerStartPosition.set(x, y);
+
+    const found = findIntersectionsAtPointerPosition();
 
     if ($mode === "build") {
       // At this point, at least a 'click' has started. TBD if it's a drag.
-      mouseMode = "click";
-      shiftKey = event.shiftKey;
+      pointerState = "click";
+      shiftKey = eventShiftKey;
 
-      selectionLogic.mousedown(found, event.shiftKey);
+      selectionLogic.mousedown(found, eventShiftKey);
     } else if ($mode === "play") {
       if (found.includes($Relm.avatar.id)) {
         addTouchController($Relm.avatar);
       } else {
         // At this point, at least a 'click' has started. TBD if it's a drag.
-        mouseMode = "click";
+        pointerState = "click";
       }
     }
   }
 
-  function onMouseup(event: MouseEvent) {
+  function onMouseDown(event: MouseEvent) {
+    if (!eventTargetsWorld(event, $mode)) return;
+    onPointerDown(event.clientX, event.clientY, event.shiftKey);
+  }
+
+  function onTouchStart(event: TouchEvent) {
+    if (!eventTargetsWorld(event, $mode)) return;
+    event.preventDefault();
+    var touch = event.changedTouches[0];
+    onPointerDown(touch.clientX, touch.clientY, event.shiftKey);
+  }
+
+  function onPointerUp(event: MouseEvent | TouchEvent) {
     if (!eventTargetsWorld(event, $mode)) return;
 
     if ($mode === "build") {
-      if (mouseMode === "click") {
+      if (pointerState === "click") {
         selectionLogic.mouseup($Relm.selection);
-      } else if (mouseMode === "drag") {
+      } else if (pointerState === "drag") {
         $Relm.selection.syncEntities();
       }
     } else if ($mode === "play") {
@@ -238,57 +254,16 @@
     }
 
     // reset mouse mode
-    mouseMode = "initial";
-  }
-
-  function onTouchStart(event: TouchEvent) {
-    event.preventDefault();
-    var touches = event.changedTouches;
-
-    mousePosition.set(touches[0].clientX, touches[0].clientY);
-
-    const found = findIntersectionsAtMousePosition();
-
-    if ($mode === "build") {
-      selectionLogic.mousedown(found, false);
-    } else if ($mode === "play") {
-      if (found.includes($Relm.avatar.id)) {
-        addTouchController($Relm.avatar);
-      } else {
-        // At this point, at least a 'click' has started. TBD if it's a drag.
-        mouseMode = "click";
-      }
-    }
-  }
-
-  function onTouchMove(event: TouchEvent) {
-    if (!eventTargetsWorld(event, $mode)) return;
-
-    globalEvents.emit("mouseActivity");
-
-    event.preventDefault();
-    var touches = event.changedTouches;
-    mousePosition.set(touches[0].clientX, touches[0].clientY);
-
-    const found = findIntersectionsAtMousePosition();
-    mouse.set(finder._normalizedCoords);
-  }
-
-  function onTouchEnd(event: TouchEvent) {
-    if ($mode === "build") {
-      // TODO?
-    } else if ($mode === "play") {
-      removeTouchController($Relm.avatar);
-    }
+    pointerState = "initial";
   }
 </script>
 
 <svelte:window
-  on:mousemove={onMousemove}
-  on:mousedown={onMousedown}
-  on:mouseup={onMouseup}
+  on:mousemove={onMouseMove}
+  on:mousedown={onMouseDown}
+  on:mouseup={onPointerUp}
   on:touchstart={onTouchStart}
   on:touchmove={onTouchMove}
-  on:touchend={onTouchEnd}
-  on:touchcancel={onTouchEnd}
+  on:touchend={onPointerUp}
+  on:touchcancel={onPointerUp}
 />
