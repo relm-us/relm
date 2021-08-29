@@ -7,16 +7,13 @@
 
   import { IntersectionFinder } from "./IntersectionFinder";
 
-  import { Entity } from "~/ecs/base";
+  import { Entity, World } from "~/ecs/base";
   import { Controller } from "~/ecs/plugins/player-control";
   import {
     PointerPosition,
     PointerPositionRef,
   } from "~/ecs/plugins/pointer-position";
-  import { Transform } from "~/ecs/plugins/core";
   import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
-  import type { PlaneOrientation } from "~/ecs/shared/WorldPlanes";
-  import { uuidv4 } from "~/utils/uuid";
 
   import { Relm } from "~/stores/Relm";
   import { mode } from "~/stores/mode";
@@ -25,8 +22,9 @@
 
   import { DRAG_DISTANCE_THRESHOLD } from "~/config/constants";
   import { isInputEvent } from "../isInputEvent";
+  import { DragPlane } from "./DragPlane";
 
-  export let world;
+  export let world: World;
 
   const pointerPosition = new Vector2();
   const pointerStartPosition = new Vector2();
@@ -36,11 +34,11 @@
   const dragStartFollowOffset = new Vector3();
   const dragStartTransformPosition = new Vector3();
   const v1 = new Vector3();
+  const dragPlane = new DragPlane(world);
 
   let pointerState: "initial" | "click" | "drag" | "drag-select" = "initial";
   let pointerPosEntity;
   let dragOffset;
-  let dragPlane: PlaneOrientation = "xz";
   let shiftKey = false;
   let selectionRectangle = new Box2();
 
@@ -106,20 +104,17 @@
         // drag  mode start
         if ($Relm.selection.length > 0) {
           pointerState = "drag";
-          dragPlane = shiftKey ? "xy" : "xz";
+          dragPlane.setOrientation(shiftKey ? "xy" : "xz");
         } else {
           pointerState = "drag-select";
-          dragPlane = "xz";
+          dragPlane.setOrientation("xz");
         }
 
         dragOffset = null;
-        const position = $Relm.selection.centroid;
 
-        pointerPosEntity = world.entities
-          .create("PointerDragPlane", uuidv4())
-          .add(Transform, { position })
-          .add(PointerPosition)
-          .activate();
+        dragPlane.setCenter($Relm.selection.centroid);
+        dragPlane.show();
+        
       } else if (pointerState === "drag") {
         // drag mode
         const ref = pointerPosEntity.get(PointerPositionRef);

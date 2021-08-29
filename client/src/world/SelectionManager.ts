@@ -4,7 +4,7 @@ import { Vector3 } from "three";
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import { first, difference } from "~/utils/setOps";
 
-import { EntityId } from "~/ecs/base";
+import { Entity, EntityId } from "~/ecs/base";
 import { Outline } from "~/ecs/plugins/outline";
 import { Transform } from "~/ecs/plugins/core";
 
@@ -20,21 +20,21 @@ export class SelectionManager {
     this.subscribe();
   }
 
-  get ids() {
+  get ids(): Array<string> {
     return [...get(selectedEntities)];
   }
 
-  get length() {
+  get length(): number {
     return this.ids.length;
   }
 
-  get entities() {
+  get entities(): Array<Entity> {
     return this.ids
       .map((id) => this.wdoc.world.entities.getById(id))
       .filter((entity) => entity && entity.has(Transform));
   }
 
-  hasEntityId(entityId: EntityId) {
+  hasEntityId(entityId: EntityId): boolean {
     return selectedEntities.has(entityId);
   }
 
@@ -63,7 +63,7 @@ export class SelectionManager {
     selectedEntities.delete(entityId);
   }
 
-  getFirst(_) {
+  getFirst(_): Entity {
     const $selected = get(selectedEntities);
     const entityId = first($selected);
     if (entityId) {
@@ -71,7 +71,7 @@ export class SelectionManager {
     }
   }
 
-  get centroid() {
+  get centroid(): Vector3 {
     const center = new Vector3();
     let count = 0;
     for (const entity of this.entities) {
