@@ -8,17 +8,19 @@ import {
   Not,
   Modified,
   Groups,
-  StateComponent,
 } from "~/ecs/base";
 import { Object3D } from "~/ecs/plugins/core";
 import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 
-import { Shape, ShapeMesh, ShapeAttached } from "../components";
+import {
+  Shape,
+  ShapeMesh,
+  ShapeAttached,
+  ShapeWithTexture,
+  ShapeWithoutTexture,
+} from "../components";
 
 import { getGeometry } from "../ShapeCache";
-
-class ShapeWithTexture extends StateComponent {}
-class ShapeWithoutTexture extends StateComponent {}
 
 function blank(str: string) {
   return str === undefined || str === null || str === "";
@@ -30,12 +32,8 @@ export class ShapeSystem extends System {
   static queries = {
     added: [Shape, Not(ShapeWithTexture), Not(ShapeWithoutTexture)],
     addedWithTexture: [Shape, ShapeWithTexture, AssetLoaded],
-    addedWithoutTexture: [Shape, ShapeWithoutTexture],
     modified: [Modified(Shape)],
     removed: [Not(Shape), ShapeMesh],
-
-    attachable: [Object3D, ShapeMesh, Not(ShapeAttached)],
-    detachable: [Not(ShapeMesh), ShapeAttached],
   };
 
   update() {
@@ -45,34 +43,15 @@ export class ShapeSystem extends System {
     this.queries.addedWithTexture.forEach((entity) => {
       this.buildWithTexture(entity);
     });
-    this.queries.addedWithoutTexture.forEach((entity) => {
-      this.buildWithoutTexture(entity);
-    });
     this.queries.modified.forEach((entity) => {
-      const shape = entity.get(Shape);
-
-      const textureAdded =
-        entity.has(ShapeWithoutTexture) && !blank(shape.texture.url);
-      const textureRemoved =
-        entity.has(ShapeWithTexture) && blank(shape.texture.url);
-
-      if (textureAdded || textureRemoved) {
-        this.remove(entity);
-        this.build(entity);
-      } else {
-        entity.maybeRemove(ShapeMesh);
-      }
+      this.remove(entity);
+      this.build(entity);
 
       // Notify outline to rebuild if necessary
       entity.getByName("Outline")?.modified();
     });
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
-    });
-
-    this.queries.attachable.forEach((entity) => this.attach(entity));
-    this.queries.detachable.forEach((entity) => {
-      this.detach(entity);
     });
   }
 
@@ -91,6 +70,7 @@ export class ShapeSystem extends System {
     } else if (!entity.has(ShapeWithoutTexture)) {
       entity.maybeRemove(Asset);
       entity.add(ShapeWithoutTexture);
+      this.buildWithoutTexture(entity);
     }
   }
 
@@ -110,6 +90,7 @@ export class ShapeSystem extends System {
 
     const mesh = this.makeMesh(shape, material);
     entity.add(ShapeMesh, { value: mesh });
+    this.attach(entity);
   }
 
   buildWithoutTexture(entity: Entity) {
@@ -124,12 +105,15 @@ export class ShapeSystem extends System {
 
     const mesh = this.makeMesh(shape, material);
     entity.add(ShapeMesh, { value: mesh });
+    this.attach(entity);
   }
 
   remove(entity: Entity) {
     const mesh = entity.get(ShapeMesh)?.value;
 
     if (mesh) {
+      this.detach(entity);
+
       mesh.geometry?.dispose();
       mesh.material?.dispose();
       mesh.dispose?.();
@@ -144,13 +128,11 @@ export class ShapeSystem extends System {
     const parent = entity.get(Object3D).value;
     const child = entity.get(ShapeMesh).value;
     parent.add(child);
-    entity.add(ShapeAttached, { parent, child });
   }
 
   detach(entity: Entity) {
-    const { parent, child } = entity.get(ShapeAttached);
-    parent.remove(child);
-    entity.remove(ShapeAttached);
+    const child = entity.get(ShapeMesh).value;
+    child.removeFromParent();
   }
 
   makeMesh(shape, material) {

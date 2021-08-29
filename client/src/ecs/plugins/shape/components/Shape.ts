@@ -1,8 +1,32 @@
-import { Component, StringType, NumberType, BooleanType } from "~/ecs/base";
-import { AssetType, Vector3Type } from "~/ecs/plugins/core";
+import { Component, StringType, NumberType } from "~/ecs/base";
+import { Asset, AssetType, Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
 export class Shape extends Component {
+  kind: string;
+
+  boxSize: Vector3;
+
+  sphereRadius: number;
+  sphereWidthSegments: number;
+  sphereHeightSegments: number;
+
+  cylinderRadius: number;
+  cylinderHeight: number;
+  cylinderSegments: number;
+
+  capsuleRadius: number;
+  capsuleHeight: number;
+  capsuleSegments: number;
+
+  color: string;
+  emissive: string;
+  roughness: number;
+  metalness: number;
+
+  texture: Asset;
+  textureScale: number;
+
   static props = {
     kind: {
       type: StringType,
