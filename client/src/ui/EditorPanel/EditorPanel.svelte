@@ -1,10 +1,6 @@
 <script lang="ts">
   import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
-  import {
-    hovered,
-    selectedEntities,
-    selectedGroups,
-  } from "~/stores/selection";
+  import { selectedEntities, selectedGroups } from "~/stores/selection";
   import { Relm } from "~/stores/Relm";
   import SelectCreatePrefab from "./SelectCreatePrefab.svelte";
   import EditorShowSingleEntity from "./EditorShowSingleEntity.svelte";
@@ -28,11 +24,6 @@
       {/each}
       {#each [...$selectedGroups] as groupId}
         <div>{groupId}</div>
-      {/each}
-    </Pane>
-    <Pane title="Hovered">
-      {#each [...$hovered] as entityId}
-        <div>{entityId}</div>
       {/each}
     </Pane>
   {/if}

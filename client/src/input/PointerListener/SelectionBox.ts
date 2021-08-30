@@ -74,16 +74,6 @@ export class SelectionBox {
     this.recalculateBox();
   }
 
-  setStartPoint(start: Vector3) {
-    this.start.copy(start);
-    this.recalculateBox();
-  }
-
-  setEndPoint(end: Vector3) {
-    this.end.copy(end);
-    this.recalculateBox();
-  }
-
   recalculateBox() {
     this.box.makeEmpty();
     this.box.expandByPoint(this.start);
@@ -115,7 +105,7 @@ export class SelectionBox {
     translucent.modified();
   }
 
-  getContainedEntities() {
+  getContainedEntityIds() {
     const objectBounds = new Box3();
     const objectSize = new Vector3();
     const contained = [];

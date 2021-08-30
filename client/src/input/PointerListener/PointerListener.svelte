@@ -14,7 +14,6 @@
 
   import { Relm } from "~/stores/Relm";
   import { mode } from "~/stores/mode";
-  import { hovered } from "~/stores/selection";
   import { mouse } from "~/stores/mouse";
 
   import type { DecoratedWorld } from "~/types/DecoratedWorld";
@@ -83,17 +82,6 @@
     mouse.set(finder._normalizedCoords);
 
     if ($mode === "build") {
-      {
-        // Keep svelte `hovered` store up to date based on mouse movements
-        const foundSet: Set<string> = new Set(found);
-
-        const added = difference(foundSet, $hovered);
-        const deleted = difference($hovered, foundSet);
-
-        for (const entityId of added) hovered.add(entityId);
-        for (const entityId of deleted) hovered.delete(entityId);
-      }
-
       if (
         pointerState === "click" &&
         pointerPosition.distanceTo(pointerStartPosition) >
@@ -144,7 +132,7 @@
           selectionBox.setEnd(pointerPosition);
         }
 
-        const contained = selectionBox.getContainedEntities();
+        const contained = selectionBox.getContainedEntityIds();
 
         $Relm.selection.clear(true);
         $Relm.selection.addEntityIds(contained);

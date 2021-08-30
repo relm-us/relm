@@ -147,6 +147,5 @@ function createSetStore<T>() {
 export const groupTree = createGroupTree();
 
 // Stores containing Set information, e.g. if an entity is selected, it is in the 'set'.
-export const hovered = createSetStore<string>();
 export const selectedEntities = createSetStore<string>();
 export const selectedGroups = createSetStore<string>();
