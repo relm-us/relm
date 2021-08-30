@@ -105,8 +105,10 @@
           dragPlane.setOrientation(shiftKey ? "xy" : "xz");
         } else {
           pointerState = "drag-select";
-          selectionBox.show();
           dragPlane.setOrientation("xz");
+          selectionBox.show();
+          selectionBox.setStart(pointerStartPosition);
+          selectionBox.setEnd(pointerStartPosition);
         }
 
         dragOffset = null;
@@ -136,12 +138,9 @@
           }
         }
       } else if (pointerState === "drag-select") {
-        selectionBox.setStart(pointerStartPosition);
-
         if (moveShiftKey) {
           selectionBox.setTop(pointerPosition);
         } else {
-          selectionBox.clearTop();
           selectionBox.setEnd(pointerPosition);
         }
 

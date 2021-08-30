@@ -37,7 +37,7 @@ export class SelectionBox {
       .add(Translucent);
   }
 
-  clearTop() {
+  reset() {
     this.top = null;
     this.endPlanes = null;
   }
@@ -140,6 +140,7 @@ export class SelectionBox {
 
   show() {
     this.entity.activate();
+    this.reset();
   }
 
   hide() {
