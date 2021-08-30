@@ -47,3 +47,11 @@ test("make a group", () => {
   tree.makeGroup(["0:1", "0:2", "0:3"], "g1");
   expect(tree.getEntitiesInGroup("g1")).toEqual(new Set(["0:1", "0:2", "0:3"]));
 });
+
+test("clone a tree", () => {
+  const tree = createGroupTree();
+  tree.makeGroup(["0:1", "0:2", "0:3"], "g1");
+  const copy = createGroupTree(tree.cloneTree());
+  tree.unmakeGroup("g1");
+  expect(copy.getEntitiesInGroup("g1")).toEqual(new Set(["0:1", "0:2", "0:3"]));
+})

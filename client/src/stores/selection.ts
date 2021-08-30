@@ -8,10 +8,13 @@ export type GroupTree = {
   groups: Map<GroupId, GroupId>;
 };
 
-export function createGroupTree() {
+export function createGroupTree({
+  entities = new Map(),
+  groups = new Map(),
+} = {}) {
   const tree: GroupTree = {
-    entities: new Map(),
-    groups: new Map(),
+    entities,
+    groups,
   };
 
   const getGroupRoot = (groupId: GroupId): GroupId | null => {
@@ -76,6 +79,16 @@ export function createGroupTree() {
     }
   }
 
+  function cloneTree(): GroupTree {
+    return { entities: new Map(tree.entities), groups: new Map(tree.groups) };
+  }
+
+  function mergeTree(newTree: GroupTree) {
+    for (const [entityId, parentGroupId] of newTree.entities) {
+      tree.entities.set(entityId, parentGroupId);
+    }
+  }
+
   return {
     tree,
     getEntitiesInGroup,
@@ -84,6 +97,8 @@ export function createGroupTree() {
     addGroup,
     makeGroup,
     unmakeGroup,
+    cloneTree,
+    mergeTree,
   };
 }
 

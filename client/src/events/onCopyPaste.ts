@@ -1,7 +1,12 @@
 import { get } from "svelte/store";
 import { Relm } from "~/stores/Relm";
 import { mode } from "~/stores/mode";
-import { selectedEntities } from "~/stores/selection";
+import {
+  selectedEntities,
+  selectedGroups,
+  groupTree,
+  GroupTree,
+} from "~/stores/selection";
 import { copyBuffer } from "~/stores/copyBuffer";
 import { Transform } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
@@ -37,9 +42,9 @@ function serializeEntityWithOffset(entity, offset) {
 
 // Given a set of JSON-ified entities, give them all new identifiers.
 // Note that entities are organized in a hierarchy and reference each other.
-function assignNewIds(serializedEntities) {
+function assignNewIds(serializedEntities: Array<any>) {
   // map from OLD IDs to NEW IDs
-  const idMap = new Map();
+  const idMap = new Map<string, string>();
 
   // First pass: Assign new IDs
   for (const sEntity of serializedEntities) {
@@ -56,6 +61,32 @@ function assignNewIds(serializedEntities) {
     sEntity.children = sEntity.children.map((childId) => {
       return idMap.get(childId);
     });
+  }
+
+  return idMap;
+}
+
+function assignNewGroupIds(groupTree: GroupTree, idMap: Map<string, string>) {
+  // map from OLD IDs to NEW IDs
+  const groupIdMap = new Map<string, string>();
+
+  // First: update entity IDs from idMap
+  const entities = groupTree.entities;
+  for (const [oldId, newId] of idMap) {
+    const oldGroupId = entities.get(oldId);
+
+    if (oldGroupId) {
+      // Get or create a newGroupId
+      let newGroupId = groupIdMap.get(oldGroupId);
+      if (!newGroupId) {
+        newGroupId = nanoid();
+        groupIdMap.set(oldGroupId, newGroupId);
+      }
+
+      // Update group tree
+      entities.set(newId, newGroupId);
+      entities.delete(oldId);
+    }
   }
 }
 
@@ -93,10 +124,10 @@ export function onCopy() {
           return entity.toJSON();
         }
       });
-
       copyBuffer.set({
         center,
         entities: serialized,
+        groupTree: groupTree.cloneTree(),
       });
     } else {
       console.warn("Nothing copied (nothing selected)");
@@ -108,38 +139,43 @@ export function onCopy() {
 
 export function onPaste() {
   const offset = new Vector3();
-  if (get(mode) === "build") {
-    const buffer = get(copyBuffer);
-    if (buffer.entities.length > 0) {
-      // Entities in copy buffer get new IDs on every paste
-      assignNewIds(buffer.entities);
+  if (get(mode) !== "build") return;
 
-      const $Relm = get(Relm);
+  const buffer = get(copyBuffer);
+  if (buffer.entities.length === 0) {
+    console.warn("nothing to paste");
+    return;
+  }
+  // Entities in copy buffer get new IDs on every paste
+  const idMap = assignNewIds(buffer.entities);
 
-      const targetPosition = new Vector3().copy(
-        $Relm.avatar.get(Transform).position
-      );
-      targetPosition.y = buffer.center.y;
+  // Re-create group(s) by assigning new group IDs and merging in
+  assignNewGroupIds(buffer.groupTree, idMap);
+  groupTree.mergeTree(buffer.groupTree);
 
-      const entities = [];
+  const $Relm = get(Relm);
 
-      for (const json of buffer.entities) {
-        const entity = $Relm.world.entities.create().fromJSON(json).activate();
-        const transform = entity.get(Transform);
-        if (transform && entity.parent === null) {
-          offset.copy(transform.position);
-          transform.position.copy(targetPosition).add(offset);
-        }
-        entities.push(entity);
-      }
-      for (const entity of entities) {
-        entity.bind();
-        $Relm.wdoc.syncFrom(entity);
-      }
-    } else {
-      console.warn("Nothing pasted (nothing in copy buffer)");
+  const targetPosition = new Vector3().copy(
+    $Relm.avatar.get(Transform).position
+  );
+  targetPosition.y = buffer.center.y;
+
+  const entities = [];
+
+  // Create a copy of each entity and put it in it's new location
+  for (const json of buffer.entities) {
+    const entity = $Relm.world.entities.create().fromJSON(json).activate();
+    const transform = entity.get(Transform);
+    if (transform && entity.parent === null) {
+      offset.copy(transform.position);
+      transform.position.copy(targetPosition).add(offset);
     }
-  } else {
-    console.warn("Nothing pasted (play mode)");
+    entities.push(entity);
+  }
+
+  // Update yjs WorldDoc
+  for (const entity of entities) {
+    entity.bind();
+    $Relm.wdoc.syncFrom(entity);
   }
 }
