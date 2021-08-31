@@ -1,6 +1,7 @@
 import { SelectionManager } from "~/world/SelectionManager";
 import { groupTree } from "~/stores/selection";
 import { intersection } from "~/utils/setOps";
+import { Object3D } from "~/ecs/plugins/core";
 
 type EntityId = string;
 
@@ -89,4 +90,10 @@ export function mousedown(
 ) {
   found = foundOnMousedown;
   shiftKey = shiftKeyOnMousedown;
+}
+
+export function pointerPointInSelection(selection, found) {
+  const entity = selection.entities.find((e) => found.includes(e.id));
+  const object3d = entity?.get(Object3D)?.value;
+  return object3d?.userData.lastIntersectionPoint;
 }

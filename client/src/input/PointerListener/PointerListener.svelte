@@ -1,15 +1,14 @@
 <script lang="ts">
   import { PerspectiveCamera, Vector2, Vector3 } from "three";
-  import { difference } from "~/utils/setOps";
   import { hasAncestor } from "~/utils/hasAncestor";
   import { globalEvents } from "~/events";
+  import { pointerPointInSelection } from "./selectionLogic";
   import * as selectionLogic from "./selectionLogic";
 
   import { IntersectionFinder } from "./IntersectionFinder";
 
   import { Entity } from "~/ecs/base";
   import { Controller } from "~/ecs/plugins/player-control";
-  import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
   import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
 
   import { Relm } from "~/stores/Relm";
@@ -37,6 +36,7 @@
 
   let pointerState: "initial" | "click" | "drag" | "drag-select" = "initial";
   let dragOffset;
+  let pointerPoint: Vector3;
   let shiftKey = false;
 
   const finder = new IntersectionFinder(
@@ -84,47 +84,25 @@
     if ($mode === "build") {
       if (
         pointerState === "click" &&
-        pointerPosition.distanceTo(pointerStartPosition) >
+        pointerPosition.distanceTo(pointerStartPosition) >=
           DRAG_DISTANCE_THRESHOLD
       ) {
         // drag  mode start
-        if ($Relm.selection.length > 0) {
+        if ($Relm.selection.length > 0 && pointerPoint) {
           pointerState = "drag";
+          $Relm.selection.savePositions();
           dragPlane.setOrientation(shiftKey ? "xy" : "xz");
+          // dragPlane.show();
         } else {
           pointerState = "drag-select";
-          dragPlane.setOrientation("xz");
           selectionBox.show();
           selectionBox.setStart(pointerStartPosition);
           selectionBox.setEnd(pointerStartPosition);
         }
-
-        dragOffset = null;
-
-        // console.log(
-        //   "centroid",
-        //   $Relm.selection.length,
-        //   $Relm.selection.centroid
-        // );
-        // dragPlane.setCenter($Relm.selection.centroid);
-        dragPlane.show();
       } else if (pointerState === "drag") {
         // drag mode
-        const ref = dragPlane.entity.get(PointerPositionRef);
-        if (ref) {
-          if (dragOffset) {
-            const position = new Vector3().copy(
-              ref.value.points[dragPlane.orientation]
-            );
-            position.sub(dragOffset);
-            $Relm.selection.moveRelativeToSavedPositions(position);
-          } else if (ref.updateCount > 1) {
-            $Relm.selection.savePositions();
-            dragOffset = new Vector3().copy(
-              ref.value.points[dragPlane.orientation]
-            );
-          }
-        }
+        const delta = dragPlane.getDelta(pointerPosition);
+        $Relm.selection.moveRelativeToSavedPositions(delta);
       } else if (pointerState === "drag-select") {
         if (moveShiftKey) {
           selectionBox.setTop(pointerPosition);
@@ -146,7 +124,7 @@
 
       if (
         pointerState === "click" &&
-        pointerPosition.distanceTo(pointerStartPosition) >
+        pointerPosition.distanceTo(pointerStartPosition) >=
           DRAG_DISTANCE_THRESHOLD
       ) {
         dragStartFollowOffset.copy($Relm.camera.pan);
@@ -199,6 +177,8 @@
       shiftKey = eventShiftKey;
 
       selectionLogic.mousedown(found, eventShiftKey);
+      pointerPoint = pointerPointInSelection($Relm.selection, found);
+      if (pointerPoint) dragPlane.setOrigin(pointerPoint);
     } else if ($mode === "play") {
       if (found.includes($Relm.avatar.id)) {
         addTouchController($Relm.avatar);
@@ -234,7 +214,7 @@
       removeTouchController($Relm.avatar);
     }
 
-    dragPlane.hide();
+    // dragPlane.hide();
     selectionBox.hide();
 
     // reset mouse mode
