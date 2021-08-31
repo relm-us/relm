@@ -35,8 +35,14 @@ export class ShapeSystem extends System {
       this.remove(entity);
 
       const shape = entity.get(Shape);
+      const asset = entity.get(Asset);
+      const texture = entity.get(AssetLoaded)?.value;
       if (!blank(shape.texture.url)) {
-        this.buildWithTexture(entity);
+        if (texture && shape.texture.url === asset?.texture.url) {
+          this.buildWithTexture(entity);
+        } else {
+          this.build(entity);
+        }
       } else {
         this.buildWithoutTexture(entity);
       }
@@ -72,7 +78,13 @@ export class ShapeSystem extends System {
 
   buildWithTexture(entity: Entity) {
     const shape = entity.get(Shape);
-    const texture = entity.get(AssetLoaded).value;
+    const texture = entity.get(AssetLoaded)?.value;
+
+    if (!texture) {
+      console.error("Can't build with null texture", entity.id);
+      entity.remove(Shape);
+      return;
+    }
 
     texture.repeat.set(shape.textureScale, shape.textureScale);
     texture.wrapS = RepeatWrapping;

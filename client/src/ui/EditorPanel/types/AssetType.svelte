@@ -18,7 +18,7 @@
 
   const onInputChange = (event) => {
     const value = event.target.value.match(/^\s*$/)
-      ? undefined
+      ? ""
       : event.target.value;
     Object.assign(component[key], {
       name: "",
