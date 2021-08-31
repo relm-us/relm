@@ -215,6 +215,10 @@
     width: 100%;
     display: flex;
     justify-content: center;
+    pointer-events: none;
+  }
+  play-buttons {
+    pointer-events: all;
   }
   overlay-right {
     display: flex;

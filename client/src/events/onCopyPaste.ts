@@ -3,7 +3,6 @@ import { Relm } from "~/stores/Relm";
 import { mode } from "~/stores/mode";
 import {
   selectedEntities,
-  selectedGroups,
   groupTree,
   GroupTree,
 } from "~/stores/selection";
