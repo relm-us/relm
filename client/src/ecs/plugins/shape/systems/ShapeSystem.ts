@@ -33,13 +33,20 @@ export class ShapeSystem extends System {
     });
     this.queries.modified.forEach((entity) => {
       this.remove(entity);
-      this.build(entity);
+
+      const shape = entity.get(Shape);
+      if (!blank(shape.texture.url)) {
+        this.buildWithTexture(entity);
+      } else {
+        this.buildWithoutTexture(entity);
+      }
 
       // Notify outline to rebuild if necessary
       entity.getByName("Outline")?.modified();
     });
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
+      entity.maybeRemove(ShapeBuilt);
     });
   }
 
@@ -109,7 +116,6 @@ export class ShapeSystem extends System {
 
       entity.remove(ShapeMesh);
     }
-    entity.maybeRemove(ShapeBuilt);
     entity.maybeRemove(ShapeNeedsTexture);
   }
 
