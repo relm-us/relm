@@ -36,21 +36,26 @@
   const dragPlane = new DragPlane(world);
   const selectionBox = new SelectionBox(world);
 
-  let pointerState: "initial" | "click" | "drag" | "drag-select" = "initial";
+  type PointerState = "initial" | "click" | "drag" | "drag-select";
+
+  let pointerState: PointerState = "initial";
   let dragOffset;
   let pointerPoint: Vector3;
   let shiftKeyOnClick = false;
+
+  function setPointerState(nextState: PointerState) {
+    if (nextState === "drag" || nextState === "drag-select") {
+      document.body.classList.add("pointer-events-none");
+    } else {
+      document.body.classList.remove("pointer-events-none");
+    }
+    pointerState = nextState;
+  }
 
   const finder = new IntersectionFinder(
     world.presentation.camera,
     world.presentation.scene
   );
-
-  function findIntersectionsAtPointerPosition() {
-    finder.castRay(pointerPosition);
-    const findings = [...finder.find()];
-    return findings.map((object) => object.userData.entityId);
-  }
 
   function eventTargetsWorld(event, $mode) {
     // Allow dragging Html2d objects, as well as selecting text
@@ -71,7 +76,7 @@
 
     const found = finder.entityIdsAt(pointerPosition);
 
-    mouse.set(finder._normalizedCoords);
+    mouse.set(finder._normalizedCoord);
 
     if ($mode === "build") {
       if (
@@ -81,12 +86,12 @@
       ) {
         // drag  mode start
         if ($Relm.selection.length > 0 && pointerPoint) {
-          pointerState = "drag";
+          setPointerState("drag");
           $Relm.selection.savePositions();
           dragPlane.setOrientation(shiftKeyOnClick ? "xy" : "xz");
           // dragPlane.show();
         } else {
-          pointerState = "drag-select";
+          setPointerState("drag-select");
           selectionBox.show();
           selectionBox.setStart(pointerStartPosition);
           selectionBox.setEnd(pointerStartPosition);
@@ -123,7 +128,7 @@
         dragStartTransformPosition.copy(transform.position);
 
         // drag  mode start
-        pointerState = "drag";
+        setPointerState("drag");
         dragOffset = new Vector3();
         dragStartCamera.copy(planes.camera);
         dragStartPosition.copy(planes.points.xz);
@@ -165,7 +170,7 @@
 
     if ($mode === "build") {
       // At this point, at least a 'click' has started. TBD if it's a drag.
-      pointerState = "click";
+      setPointerState("click");
       shiftKeyOnClick = shiftKey;
 
       selectionLogic.mousedown(found, shiftKey);
@@ -176,7 +181,7 @@
         addTouchController($Relm.avatar);
       } else {
         // At this point, at least a 'click' has started. TBD if it's a drag.
-        pointerState = "click";
+        setPointerState("click");
       }
     }
   }
@@ -210,7 +215,7 @@
     selectionBox.hide();
 
     // reset mouse mode
-    pointerState = "initial";
+    setPointerState("initial");
   }
 </script>
 

@@ -87,7 +87,7 @@
 {/if}
 
 <overlay class:open={$mode === "build"}>
-  <overlay-panel>
+  <overlay-panel class="interactive">
     {#if $mode === "build"}
       {#if $openPanel === "collections"}
         <CollectionsPanel on:minimize={playMode} />
@@ -135,7 +135,7 @@
   </overlay-panel>
 
   <overlay-content>
-    <overlay-left>
+    <overlay-left class="interactive">
       {#if $playState === "paused"}
         <WorldStatePane />
       {/if}
@@ -145,7 +145,7 @@
       {/if}
     </overlay-left>
 
-    <overlay-right>
+    <overlay-right class="interactive">
       <AvatarSetupButton />
       <UploadButton on:uploaded={onUpload} />
     </overlay-right>
@@ -153,7 +153,7 @@
 </overlay>
 
 <overlay-center>
-  <play-buttons>
+  <play-buttons class="interactive">
     <ShareScreenButton />
     <MicButton />
     <MediaSetupButton />

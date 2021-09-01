@@ -13,7 +13,7 @@ export class IntersectionFinder {
   scene: Scene;
 
   _intersections: Array<Intersection>;
-  _normalizedCoords: Vector2;
+  _normalizedCoord: Vector2;
 
   constructor(camera, scene) {
     this.camera = camera;
@@ -21,20 +21,20 @@ export class IntersectionFinder {
     this.raycaster = new Raycaster();
 
     this._intersections = [];
-    this._normalizedCoords = new Vector2();
+    this._normalizedCoord = new Vector2();
   }
 
-  getNormalizedCoords(screenCoords) {
-    this._normalizedCoords.set(
-      (screenCoords.x * 2) / window.innerWidth - 1,
-      -(screenCoords.y * 2) / window.innerHeight + 1
+  getNormalizedCoord(screenCoord) {
+    this._normalizedCoord.set(
+      (screenCoord.x * 2) / window.innerWidth - 1,
+      -(screenCoord.y * 2) / window.innerHeight + 1
     );
-    return this._normalizedCoords;
+    return this._normalizedCoord;
   }
 
-  castRay(screenCoords) {
+  castRay(screenCoord) {
     this.raycaster.setFromCamera(
-      this.getNormalizedCoords(screenCoords),
+      this.getNormalizedCoord(screenCoord),
       this.camera
     );
   }
@@ -55,6 +55,12 @@ export class IntersectionFinder {
       }
       return acc;
     }, new Set<Object3D>());
+  }
+
+  entityIdsAt(screenCoord: Vector2) {
+    this.castRay(screenCoord);
+    const findings = [...this.find()];
+    return findings.map((object) => object.userData.entityId);
   }
 }
 

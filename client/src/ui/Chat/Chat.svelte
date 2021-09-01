@@ -20,7 +20,7 @@
   }
 </script>
 
-<container class:close={!$chatOpen} class:open={$chatOpen}>
+<container class="interactive" class:close={!$chatOpen} class:open={$chatOpen}>
   <attached>
     <ChatButton
       on:click={toggleChat}

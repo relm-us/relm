@@ -129,7 +129,7 @@
 {:else}
   <div
     contenteditable={editing}
-    class="truncate-overflow"
+    class="truncate-overflow interactive"
     class:underline={!!underlineColor}
     class:dragging
     style="--color:{color};--shadow-color:{shadowColor};--underline-color:{underlineColor}"

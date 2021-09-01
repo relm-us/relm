@@ -41,6 +41,11 @@ body {
   touch-action: none;
 }
 
+body.pointer-events-none .interactive,
+body.pointer-events-none .interactive * {
+  pointer-events: none !important;
+}
+
 a {
   color: rgb(0, 100, 200);
   text-decoration: none;
