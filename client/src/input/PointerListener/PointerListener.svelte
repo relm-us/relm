@@ -37,7 +37,7 @@
   let pointerState: "initial" | "click" | "drag" | "drag-select" = "initial";
   let dragOffset;
   let pointerPoint: Vector3;
-  let shiftKey = false;
+  let shiftKeyOnClick = false;
 
   const finder = new IntersectionFinder(
     world.presentation.camera,
@@ -72,7 +72,7 @@
     return hasAncestor(event.target, world.presentation.viewport);
   }
 
-  function onPointerMove(x, y, moveShiftKey) {
+  function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
     pointerPosition.set(x, y);
 
     globalEvents.emit("mouseActivity");
@@ -91,7 +91,7 @@
         if ($Relm.selection.length > 0 && pointerPoint) {
           pointerState = "drag";
           $Relm.selection.savePositions();
-          dragPlane.setOrientation(shiftKey ? "xy" : "xz");
+          dragPlane.setOrientation(shiftKeyOnClick ? "xy" : "xz");
           // dragPlane.show();
         } else {
           pointerState = "drag-select";
@@ -104,7 +104,7 @@
         const delta = dragPlane.getDelta(pointerPosition);
         $Relm.selection.moveRelativeToSavedPositions(delta);
       } else if (pointerState === "drag-select") {
-        if (moveShiftKey) {
+        if (shiftKeyOnMove) {
           selectionBox.setTop(pointerPosition);
         } else {
           selectionBox.setEnd(pointerPosition);
@@ -165,7 +165,7 @@
     onPointerMove(touch.clientX, touch.clientY, event.shiftKey);
   }
 
-  function onPointerDown(x, y, eventShiftKey) {
+  function onPointerDown(x: number, y: number, shiftKey: boolean) {
     pointerPosition.set(x, y);
     pointerStartPosition.set(x, y);
 
@@ -174,9 +174,9 @@
     if ($mode === "build") {
       // At this point, at least a 'click' has started. TBD if it's a drag.
       pointerState = "click";
-      shiftKey = eventShiftKey;
+      shiftKeyOnClick = shiftKey;
 
-      selectionLogic.mousedown(found, eventShiftKey);
+      selectionLogic.mousedown(found, shiftKey);
       pointerPoint = pointerPointInSelection($Relm.selection, found);
       if (pointerPoint) dragPlane.setOrigin(pointerPoint);
     } else if ($mode === "play") {
