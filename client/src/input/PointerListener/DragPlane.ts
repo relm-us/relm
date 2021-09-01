@@ -1,4 +1,4 @@
-import { Vector2, Vector3, Group } from "three";
+import { Vector2, Vector3, PerspectiveCamera, Group } from "three";
 
 import { PlaneOrientation, WorldPlanes } from "~/ecs/shared/WorldPlanes";
 
@@ -9,6 +9,7 @@ export class DragPlane {
   world: DecoratedWorld;
   orientation: PlaneOrientation = "xz";
   planes: WorldPlanes = null;
+  camera: PerspectiveCamera = new PerspectiveCamera();
   group: Group;
 
   constructor(world: DecoratedWorld) {
@@ -25,6 +26,7 @@ export class DragPlane {
   }
 
   setOrigin(origin: Vector3) {
+    this.camera.copy(this.world.presentation.camera);
     this.planes.origin.copy(origin);
     this.planes.recalculatePlanesConstants();
   }
@@ -34,6 +36,7 @@ export class DragPlane {
 
     this.planes.getWorldFromScreen(screenCoord, delta, {
       plane: this.orientation,
+      camera: this.camera
     });
     delta.sub(this.planes.origin);
 

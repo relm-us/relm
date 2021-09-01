@@ -61,6 +61,8 @@ type CameraState =
 
 const AVATAR_HEIGHT = 1.5;
 const FOCUS_DISTANCE = 5.0;
+const CAMERA_LERP_ALPHA = 0.125;
+
 export class CameraManager {
   worldManager: WorldManager;
 
@@ -95,6 +97,7 @@ export class CameraManager {
       .add(Follow, {
         target: this.avatar.id,
         offset: new Vector3().copy(this.zoomedInOffset),
+        lerpAlpha: CAMERA_LERP_ALPHA,
       })
       .add(LookAt, {
         target: this.avatar.id,

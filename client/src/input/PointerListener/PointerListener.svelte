@@ -11,6 +11,7 @@
     addTouchController,
     removeTouchController,
   } from "~/ecs/plugins/player-control";
+  import { Object3D } from "~/ecs/plugins/core";
   import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
 
   import { Relm } from "~/stores/Relm";
@@ -30,16 +31,14 @@
   const dragPosition = new Vector3();
   const dragStartPosition = new Vector3();
   const dragStartCamera = new PerspectiveCamera();
-  const dragStartFollowOffset = new Vector3();
-  const dragStartTransformPosition = new Vector3();
-  const v1 = new Vector3();
+  const cameraPanOffset = new Vector3();
   const dragPlane = new DragPlane(world);
   const selectionBox = new SelectionBox(world);
 
   type PointerState = "initial" | "click" | "drag" | "drag-select";
 
   let pointerState: PointerState = "initial";
-  let dragOffset;
+  let dragOffset: Vector3 = new Vector3();
   let pointerPoint: Vector3;
   let shiftKeyOnClick = false;
 
@@ -113,38 +112,17 @@
         $Relm.selection.addEntityIds(contained);
       }
     } else if ($mode === "play") {
-      const follow = $Relm.camera.entity.getByName("Follow");
-      const transform = $Relm.camera.entity.getByName("Transform");
-      if (!follow || !transform) return;
-
-      const planes: WorldPlanes = $Relm.world.perspective.getAvatarPlanes();
-
       if (
         pointerState === "click" &&
         pointerPosition.distanceTo(pointerStartPosition) >=
           DRAG_DISTANCE_THRESHOLD
       ) {
-        dragStartFollowOffset.copy($Relm.camera.pan);
-        dragStartTransformPosition.copy(transform.position);
-
         // drag  mode start
         setPointerState("drag");
-        dragOffset = new Vector3();
-        dragStartCamera.copy(planes.camera);
-        dragStartPosition.copy(planes.points.xz);
+        cameraPanOffset.copy($Relm.camera.pan);
       } else if (pointerState === "drag") {
-        // We can't copy planes.points.xz coords here, because the camera itself
-        // may be following the drag, so we need to use the previous projection
-        planes.getWorldFromScreen(pointerPosition, dragPosition, {
-          camera: dragStartCamera,
-        });
-
-        dragOffset
-          .copy(dragPosition)
-          .sub(dragStartPosition)
-          .sub(dragStartFollowOffset);
-        v1.copy(dragStartFollowOffset).sub(dragOffset);
-
+        const delta = dragPlane.getDelta(pointerPosition);
+        dragOffset.copy(delta).sub(cameraPanOffset);
         $Relm.camera.setPan(-dragOffset.x, -dragOffset.z);
       }
     }
@@ -182,6 +160,16 @@
       } else {
         // At this point, at least a 'click' has started. TBD if it's a drag.
         setPointerState("click");
+        dragPlane.setOrientation("xz");
+        if (found.length > 0) {
+          const position = clickedPosition(found[0], world);
+          dragPlane.setOrigin(position);
+        } else {
+          const planes: WorldPlanes = $Relm.world.perspective.getAvatarPlanes();
+          const position = new Vector3();
+          planes.getWorldFromScreen(pointerPosition, position);
+          dragPlane.setOrigin(position);
+        }
       }
     }
   }
@@ -216,6 +204,12 @@
 
     // reset mouse mode
     setPointerState("initial");
+  }
+
+  function clickedPosition(entityId, world) {
+    const entity = world.entities.getById(entityId);
+    const object3d = entity?.get(Object3D)?.value;
+    return object3d?.userData.lastIntersectionPoint;
   }
 </script>
 
