@@ -7,8 +7,10 @@
 
   import { IntersectionFinder } from "./IntersectionFinder";
 
-  import { Entity } from "~/ecs/base";
-  import { Controller } from "~/ecs/plugins/player-control";
+  import {
+    addTouchController,
+    removeTouchController,
+  } from "~/ecs/plugins/player-control";
   import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
 
   import { Relm } from "~/stores/Relm";
@@ -44,16 +46,6 @@
     world.presentation.scene
   );
 
-  function addTouchController(entity: Entity) {
-    const controller = entity.get(Controller);
-    controller.touchEnabled = true;
-  }
-
-  function removeTouchController(entity: Entity) {
-    const controller = entity.get(Controller);
-    controller.touchEnabled = false;
-  }
-
   function findIntersectionsAtPointerPosition() {
     finder.castRay(pointerPosition);
     const findings = [...finder.find()];
@@ -77,7 +69,7 @@
 
     globalEvents.emit("mouseActivity");
 
-    const found = findIntersectionsAtPointerPosition();
+    const found = finder.entityIdsAt(pointerPosition);
 
     mouse.set(finder._normalizedCoords);
 
@@ -169,7 +161,7 @@
     pointerPosition.set(x, y);
     pointerStartPosition.set(x, y);
 
-    const found = findIntersectionsAtPointerPosition();
+    const found = finder.entityIdsAt(pointerPosition);
 
     if ($mode === "build") {
       // At this point, at least a 'click' has started. TBD if it's a drag.
