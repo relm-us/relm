@@ -22,7 +22,7 @@ export const createPrefab = {
     },
   },
   command: ($Relm, { name, src }, props) => {
-    const transform = $Relm.avatar?.get(WorldTransform);
+    const transform = $Relm.avatar.entity?.get(WorldTransform);
     if (transform) {
       const x = transform.position.x;
       const z = transform.position.z;

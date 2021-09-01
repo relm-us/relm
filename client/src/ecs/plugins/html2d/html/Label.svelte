@@ -35,7 +35,7 @@
     const component = entity.get(Html2d);
     component.content = content;
 
-    if ($Relm.avatar === entity) {
+    if ($Relm.avatar.entity === entity) {
       // TODO: make a way for Avatar to subscribe to ECS component
       // changes instead of this hack:
       $Relm.identities.me.set({ name: content });

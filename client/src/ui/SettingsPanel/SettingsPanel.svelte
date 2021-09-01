@@ -5,10 +5,10 @@
   import { Relm } from "~/stores/Relm";
   import { assetUrl } from "~/config/assetUrl";
 
-  import { Entity } from '~/ecs/base'
-  import { Asset } from "~/ecs/plugins/core";
+  import { Entity } from "~/ecs/base";
+  import { Asset, Transform } from "~/ecs/plugins/core";
   import { Skybox } from "~/ecs/plugins/skybox";
-  
+
   import EntrywayMap from "./EntrywayMap.svelte";
   import LeftPanel, { Header } from "~/ui/LeftPanel";
   import UploadButton from "~/ui/ButtonControls/UploadButton";
@@ -17,12 +17,16 @@
   let newEntrywayName = "";
 
   function addEntryway(event) {
-    const coords: Vector3 = $Relm.avatar.getByName("Transform").position;
-    $Relm.wdoc.entryways.y.set(event.target.value, [coords.x, coords.y, coords.z]);
+    const coords: Vector3 = $Relm.avatar.entity.get(Transform).position;
+    $Relm.wdoc.entryways.y.set(event.target.value, [
+      coords.x,
+      coords.y,
+      coords.z,
+    ]);
   }
 
   function onDeleteEntryway({ detail: name }) {
-    $Relm.wdoc.entryways.y.delete(name)
+    $Relm.wdoc.entryways.y.delete(name);
   }
 
   function onUploadedSkybox({ detail }) {
@@ -58,7 +62,10 @@
     </setting>
     <setting>
       <h2>Entryways</h2>
-      <EntrywayMap entryways={$Relm.wdoc.entryways} on:delete={onDeleteEntryway} />
+      <EntrywayMap
+        entryways={$Relm.wdoc.entryways}
+        on:delete={onDeleteEntryway}
+      />
       <Capsule
         label="Add Entryway"
         value={newEntrywayName}

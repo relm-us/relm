@@ -13,6 +13,9 @@ import { FaceMapColors } from "~/ecs/plugins/coloration";
 import { Distance, DistanceRef } from "~/ecs/plugins/distance";
 import { Morph } from "~/ecs/plugins/morph";
 import { Controller } from "~/ecs/plugins/player-control";
+import { Collider } from "~/ecs/plugins/physics";
+import { Translucent } from "~/ecs/plugins/translucent";
+import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import {
   TwistBone,
   headFollowsPointer,
@@ -21,6 +24,12 @@ import {
 
 import { chatOpen } from "~/stores/chatOpen";
 import { appearanceToCharacterTraits } from "./appearance";
+
+import {
+  AVATAR_BUILDER_INTERACTION,
+  AVATAR_INTERACTION,
+  GROUND_INTERACTION,
+} from "~/config/colliderInteractions";
 
 const OCULUS_HEIGHT = 2.4;
 const DEFAULT_LABEL_COLOR = "#D0D0D0";
@@ -50,8 +59,13 @@ export class Avatar {
     }
   }
 
+  // Remove Avatar's distance to participant's Avatar
   get distance() {
     return this.entity?.get(DistanceRef)?.value;
+  }
+
+  get position() {
+    return this.entity?.get(Transform)?.position;
   }
 
   get editableName() {
@@ -363,6 +377,42 @@ export class Avatar {
       }
     }
   }
+
+  enableCanFly(enabled = true) {
+    const controller = this.entity.get(Controller);
+    controller.canFly = enabled;
+    controller.modified();
+  }
+
+  enablePhysics(enabled = true) {
+    this.entity.traverse((entity) => {
+      const collider = entity.components.get(Collider);
+      if (!collider) return;
+
+      // prettier-ignore
+      (collider as any).interaction =
+        enabled ? AVATAR_INTERACTION : // interact with normal things
+                  AVATAR_BUILDER_INTERACTION ; // interact only with ground
+
+      collider.modified();
+    });
+  }
+
+  enableTranslucency(enabled = true) {
+    if (enabled) {
+      this.entity.add(Translucent, { opacity: 0.5 });
+    } else {
+      this.entity.maybeRemove(Translucent);
+    }
+  }
+
+  enableNonInteractive(enabled = true) {
+    if (enabled) {
+      this.entity.add(NonInteractive);
+    } else {
+      this.entity.maybeRemove(NonInteractive);
+    }
+  }
 }
 
 export function moveAvatarTo(
@@ -379,16 +429,4 @@ export function moveAvatarTo(
   // Don't render the next 3 frames so that everything has
   // a chance to "catch up" to the participant's new position
   presentation.skipUpdate = 3;
-}
-
-function validInfluences(influences) {
-  if (!influences) return influences;
-  else {
-    return {
-      "gender": MathUtils.clamp(influences["gender"] ?? 0, 0, 1),
-      "wide": MathUtils.clamp(influences["wide"] ?? 0, 0, 1),
-      "hair": MathUtils.clamp(influences["hair"] ?? 0, 0, 1),
-      "hair-02": MathUtils.clamp(influences["hair-02"] ?? 0, 0, 1),
-    };
-  }
 }

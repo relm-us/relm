@@ -1,13 +1,14 @@
 <script>
   import { fade } from "svelte/transition";
 
-  import { Relm } from "~/stores/Relm";
-  import { makeDiamond, makeBillboard } from "~/prefab";
-  import { cleanHtml } from "~/utils/cleanHtml";
-
   import IoMdCloseCircleOutline from "svelte-icons/io/IoMdCloseCircleOutline.svelte";
   import IoMdPricetag from "svelte-icons/io/IoMdPricetag.svelte";
   import IoMdEasel from "svelte-icons/io/IoMdEasel.svelte";
+
+  import { Relm } from "~/stores/Relm";
+  import { makeDiamond, makeBillboard } from "~/prefab";
+  import { cleanHtml } from "~/utils/cleanHtml";
+  import { WorldTransform } from "~/ecs/plugins/core";
 
   export let content;
   export let hanchor;
@@ -40,18 +41,18 @@
   }
 
   function createLabel(text) {
-    const position = $Relm.avatar.getByName("WorldTransform").position;
+    const position = $Relm.avatar.entity.get(WorldTransform).position;
     const diamond = makeDiamond($Relm.world, {
       x: position.x,
       z: position.z,
       content: text,
     });
-    diamond.traverse(entity => entity.activate());
+    diamond.traverse((entity) => entity.activate());
     $Relm.wdoc.syncFrom(diamond);
   }
 
   function createBillboard(text) {
-    const position = $Relm.avatar.getByName("WorldTransform").position;
+    const position = $Relm.avatar.entity.get(WorldTransform).position;
     const label = makeBillboard($Relm.world, {
       x: position.x,
       z: position.z,

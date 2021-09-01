@@ -26,26 +26,23 @@ import { makeLight } from "~/prefab/makeLight";
 import { Entity } from "~/ecs/base";
 import { Collider, ColliderVisible } from "~/ecs/plugins/physics";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
-import { Translucent } from "~/ecs/plugins/translucent";
 import { BoundingHelper } from "~/ecs/plugins/bounding-helper";
-import { Controller, ControllerState } from "~/ecs/plugins/player-control";
+import { ControllerState } from "~/ecs/plugins/player-control";
 import { WAVING } from "~/ecs/plugins/player-control/constants";
 
 import { SelectionManager } from "./SelectionManager";
 import { IdentityManager } from "~/identity/IdentityManager";
 import { ChatManager } from "./ChatManager";
 import { CameraManager } from "./CameraManager";
+import { Avatar } from "~/identity/Avatar";
 
-import {
-  AVATAR_BUILDER_INTERACTION,
-  AVATAR_INTERACTION,
-  GROUND_INTERACTION,
-} from "~/config/colliderInteractions";
+import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 
 import { connectAV, RoomClient } from "~/av";
 import { setupState } from "~/stores/setupState";
 
 import type { DecoratedWorld } from "~/types/DecoratedWorld";
+
 export default class WorldManager {
   world: DecoratedWorld;
   viewport: HTMLElement;
@@ -92,8 +89,8 @@ export default class WorldManager {
     // Make colliders visible in build mode
     mode.subscribe(($mode) => {
       const enabled = $mode === "build";
-      this.enableAvatarCanFly(enabled);
-      this.enableAvatarNonInteractive(enabled);
+      this.avatar.enableCanFly(enabled);
+      this.avatar.enableNonInteractive(enabled);
       this.enableNonInteractiveGround(enabled);
       this.enableCollidersVisible(enabled);
     });
@@ -126,7 +123,7 @@ export default class WorldManager {
         set(false);
       }
     }).subscribe((wave: boolean) => {
-      const state = this.avatar.get(ControllerState);
+      const state = this.avatar.entity.get(ControllerState);
       if (!state) return;
       state.animOverride = wave ? WAVING : null;
     });
@@ -146,17 +143,17 @@ export default class WorldManager {
 
   enter(entryway: string) {
     const entryways = this.wdoc.entryways.y.toJSON();
-    const coords = new Vector3(0, 0, 0);
+    const position = new Vector3(0, 0, 0);
     if (entryway in entryways) {
-      coords.fromArray(entryways[entryway]);
+      position.fromArray(entryways[entryway]);
     }
-    this.identities.me.avatar.moveTo(coords);
+    this.avatar.moveTo(position);
   }
 
   mount() {
     const world = this.world;
 
-    world.perspective.setAvatar(this.avatar);
+    world.perspective.setAvatar(this.avatar.entity);
 
     // CSS3D elements go "behind" the WebGL canvas
     world.cssPresentation.setViewport(this.viewport);
@@ -247,19 +244,19 @@ export default class WorldManager {
     this.world.reset();
   }
 
-  get avatar(): Entity {
-    return this.identities.me.avatar.entity;
+  get avatar(): Avatar {
+    return this.identities.me.avatar;
   }
 
   populate() {
     if (!this.world) {
       throw new Error(`Can't populate when world is null`);
     }
-    if (!this.avatar) {
+    if (!this.avatar.entity) {
       throw new Error(`Can't populate when avatar entity is null`);
     }
 
-    const light = makeLight(this.world, this.avatar).activate();
+    const light = makeLight(this.world, this.avatar.entity).activate();
     this.light = light;
 
     makeInitialCollider(this.world).activate();
@@ -267,42 +264,6 @@ export default class WorldManager {
 
   depopulate() {
     this.world.reset();
-  }
-
-  enableAvatarCanFly(enabled = true) {
-    const controller = this.avatar.get(Controller);
-    controller.canFly = enabled;
-    controller.modified();
-  }
-
-  enableAvatarPhysics(enabled = true) {
-    this.avatar.traverse((entity) => {
-      const collider = entity.components.get(Collider);
-      if (!collider) return;
-
-      // prettier-ignore
-      (collider as any).interaction =
-        enabled ? AVATAR_INTERACTION : // interact with normal things
-                  AVATAR_BUILDER_INTERACTION ; // interact only with ground
-
-      collider.modified();
-    });
-  }
-
-  enableAvatarTranslucency(enabled = true) {
-    if (enabled) {
-      this.avatar.add(Translucent, { opacity: 0.5 });
-    } else {
-      this.avatar.maybeRemove(Translucent);
-    }
-  }
-
-  enableAvatarNonInteractive(enabled = true) {
-    if (enabled) {
-      this.avatar.add(NonInteractive);
-    } else {
-      this.avatar.maybeRemove(NonInteractive);
-    }
   }
 
   enableNonInteractiveGround(enabled = true) {
@@ -420,7 +381,7 @@ export default class WorldManager {
   get scene() {
     return this.world.presentation.scene;
   }
-  
+
   get worldState(): WorldState {
     return get(worldState);
   }
@@ -446,5 +407,4 @@ export default class WorldManager {
       playState.set(state);
     }
   }
-
 }

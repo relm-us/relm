@@ -155,7 +155,7 @@ export function onPaste() {
   const $Relm = get(Relm);
 
   const targetPosition = new Vector3().copy(
-    $Relm.avatar.get(Transform).position
+    $Relm.avatar.entity.get(Transform).position
   );
   targetPosition.y = buffer.center.y;
 

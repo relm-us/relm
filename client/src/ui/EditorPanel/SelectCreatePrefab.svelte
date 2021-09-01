@@ -15,7 +15,7 @@
   };
 
   const create = (prefab) => () => {
-    const transform = $Relm.avatar?.get(WorldTransform);
+    const transform = $Relm.avatar.entity?.get(WorldTransform);
     if (transform) {
       const x = transform.position.x;
       const y = transform.position.y - PLAYER_CENTER_HEIGHT;

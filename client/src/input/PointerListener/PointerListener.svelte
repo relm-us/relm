@@ -177,8 +177,8 @@
       pointerPoint = pointerPointInSelection($Relm.selection, found);
       if (pointerPoint) dragPlane.setOrigin(pointerPoint);
     } else if ($mode === "play") {
-      if (found.includes($Relm.avatar.id)) {
-        addTouchController($Relm.avatar);
+      if (found.includes($Relm.avatar.entity.id)) {
+        addTouchController($Relm.avatar.entity);
       } else {
         // At this point, at least a 'click' has started. TBD if it's a drag.
         setPointerState("click");
@@ -208,7 +208,7 @@
         $Relm.selection.syncEntities();
       }
     } else if ($mode === "play") {
-      removeTouchController($Relm.avatar);
+      removeTouchController($Relm.avatar.entity);
     }
 
     // dragPlane.hide();
