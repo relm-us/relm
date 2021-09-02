@@ -5,7 +5,7 @@ import { WorldDoc } from "~/y-integration/WorldDoc";
 
 import { keyShift, keySpace } from "~/input/store";
 import { exportRelm, importRelm } from "./Export";
-import { audioDesired, videoDesired } from "video-mirror";
+import { mediaDesired } from "video-mirror";
 
 import { mode } from "~/stores/mode";
 import { deltaTime, fpsTime } from "~/stores/stats";
@@ -185,9 +185,13 @@ export default class WorldManager {
     }
 
     derived(
-      [setupState, audioDesired, videoDesired],
-      ([$setupState, $audio, $video], set) => {
-        set({ ready: $setupState === "done", audio: $audio, video: $video });
+      [setupState, mediaDesired],
+      ([$setupState, $mediaDesired]: any[], set) => {
+        set({
+          ready: $setupState === "done",
+          audio: $mediaDesired.audio,
+          video: $mediaDesired.video,
+        });
       }
     ).subscribe(({ ready, audio, video }) => {
       if (ready) {

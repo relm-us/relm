@@ -1,6 +1,6 @@
 <script lang="ts">
   import CircleButton from "~/ui/lib/CircleButton";
-  import { AudioIcon, audioDesired } from "video-mirror";
+  import { AudioIcon, mediaDesired } from "video-mirror";
   import { audioProducing } from "~/av/stores/producers";
   import { setupState } from "~/stores/setupState";
   import { Relm } from "~/stores/Relm";
@@ -13,7 +13,7 @@
   $: muted = !$audioProducing;
 
   function toggleMute() {
-    if (!$audioDesired) $setupState = "media";
+    if (!$mediaDesired.audio) $setupState = "media";
     else {
       identity.toggleShowAudio();
     }

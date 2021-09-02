@@ -12,7 +12,7 @@ import { playerId } from "./playerId";
 import { Identity } from "./Identity";
 import { getLocalIdentityData } from "./identityData";
 import { ChatMessage, getEmojiFromMessage } from "~/world/ChatManager";
-import { audioRequested, videoRequested } from "video-mirror";
+import { mediaDesired } from "video-mirror";
 
 type ClientUpdateFunction = (data: any[]) => void;
 
@@ -59,13 +59,12 @@ export class IdentityManager extends EventEmitter {
     };
     identity.set(data);
 
-    // audioRequested.subscribe((showAudio) => {
-    //   identity.set({ showAudio });
-    // });
-
-    // videoRequested.subscribe((showVideo) => {
-    //   identity.set({ showVideo });
-    // });
+    mediaDesired.subscribe(($mediaDesired) => {
+      identity.set({
+        showAudio: $mediaDesired.audio,
+        showVideo: $mediaDesired.video,
+      });
+    });
 
     this.me = identity;
   }

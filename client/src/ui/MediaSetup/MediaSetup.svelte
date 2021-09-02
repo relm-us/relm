@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher } from "svelte";
-  import { VideoMirror, audioDesired, videoDesired } from "video-mirror";
+  import { VideoMirror, mediaDesired } from "video-mirror";
   import { askMediaSetup } from "~/stores/askMediaSetup";
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import PageOverlay from "~/ui/lib/PageOverlay";
@@ -17,11 +17,9 @@
 
   function joinWithout() {
     showButtonBar = false;
-    $audioDesired = false;
-    $videoDesired = false;
+    mediaDesired.set({ audio: false, video: false });
     dispatch("done", { audio: null, video: null });
   }
-
 </script>
 
 <PageOverlay zIndex={5}>
@@ -93,5 +91,4 @@
     color: #b0b0b0;
     margin: 3vh 8px 3vh 8px;
   }
-
 </style>

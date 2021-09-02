@@ -2,12 +2,7 @@
   import { onMount } from "svelte";
   import Pane from "./Pane.svelte";
 
-  import {
-    audioDesired,
-    audioTrack,
-    videoDesired,
-    videoTrack,
-  } from "video-mirror";
+  import { audioTrack, videoTrack, mediaDesired } from "video-mirror";
   import { audioProducing, videoProducing } from "~/av/stores/producers";
   import { setupState } from "~/stores/setupState";
   import { Identity } from "~/identity/Identity";
@@ -103,7 +98,7 @@
         <tr>
           <th>audio</th>
           <td>
-            {$audioDesired ? "desired" : ""}
+            {$mediaDesired.audio ? "desired" : ""}
             {$audioTrack ? "recording" : ""}
             {$audioProducing ? "sending" : ""}
           </td>
@@ -111,7 +106,7 @@
         <tr>
           <th>video</th>
           <td>
-            {$videoDesired ? "desired" : ""}
+            {$mediaDesired.video ? "desired" : ""}
             {$videoTrack ? "recording" : ""}
             {$videoProducing ? "sending" : ""}
           </td>

@@ -1,0 +1,20 @@
+2021-09-02 How does audio/video visibility state get propagated to both the avatar and mediasoup?
+
+Identity class
+`set` method:
+- when showAudio bool is set, sends roomClient.(un)muteMic
+- when showVideo bool is set, sends roomClient.(en/dis)ableWebcam
+- sets sharedFields.showAudio/showVideo
+identity.toggleShowAudio -> identity.set({showAudio:!showAudio})
+identity.toggleShowVideo -> identity.set({showVideo:!showVideo})
+
+Avatar class
+`syncOculus` method:
+- sets ECS Oculus component's showAudio/showVideo to identity's sharedFields showAudio/showVideo
+- when only showAudio or showVideo is modified, sets these values directly on the svelte component
+
+OculusSystem.build passes ECS Oculus showAudio/showVideo to HtmlOculus svelte component
+- unlike stream/localStream (stores), showAudio/showVideo do not change unless rebuilt
+
+IdentityManager
+- `registerMe` subscribes to mediaDesired, which sets showAudio/showVideo for "me" identity
