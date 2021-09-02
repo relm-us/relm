@@ -42,7 +42,7 @@
   let pointerPoint: Vector3;
   let shiftKeyOnClick = false;
 
-  function setPointerState(nextState: PointerState) {
+  function setNextPointerState(nextState: PointerState) {
     if (nextState === "drag" || nextState === "drag-select") {
       document.body.classList.add("pointer-events-none");
     } else {
@@ -85,12 +85,12 @@
       ) {
         // drag  mode start
         if ($Relm.selection.length > 0 && pointerPoint) {
-          setPointerState("drag");
+          setNextPointerState("drag");
           $Relm.selection.savePositions();
           dragPlane.setOrientation(shiftKeyOnClick ? "xy" : "xz");
           // dragPlane.show();
         } else {
-          setPointerState("drag-select");
+          setNextPointerState("drag-select");
           selectionBox.show();
           selectionBox.setStart(pointerStartPosition);
           selectionBox.setEnd(pointerStartPosition);
@@ -118,7 +118,7 @@
           DRAG_DISTANCE_THRESHOLD
       ) {
         // drag  mode start
-        setPointerState("drag");
+        setNextPointerState("drag");
         cameraPanOffset.copy($Relm.camera.pan);
       } else if (pointerState === "drag") {
         const delta = dragPlane.getDelta(pointerPosition);
@@ -148,7 +148,7 @@
 
     if ($mode === "build") {
       // At this point, at least a 'click' has started. TBD if it's a drag.
-      setPointerState("click");
+      setNextPointerState("click");
       shiftKeyOnClick = shiftKey;
 
       selectionLogic.mousedown(found, shiftKey);
@@ -159,7 +159,7 @@
         addTouchController($Relm.avatar.entity);
       } else {
         // At this point, at least a 'click' has started. TBD if it's a drag.
-        setPointerState("click");
+        setNextPointerState("click");
         dragPlane.setOrientation("xz");
         if (found.length > 0) {
           const position = clickedPosition(found[0], world);
@@ -203,7 +203,7 @@
     selectionBox.hide();
 
     // reset mouse mode
-    setPointerState("initial");
+    setNextPointerState("initial");
   }
 
   function clickedPosition(entityId, world) {
