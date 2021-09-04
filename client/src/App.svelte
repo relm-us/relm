@@ -21,9 +21,9 @@
   import ResetWorldButton from "~/ui/ResetWorldButton";
   import Chat from "~/ui/Chat";
 
+  import MediaSetup from "~/ui/MediaSetup";
   import { LoadingScreen, LoadingFailed } from "~/ui/LoadingScreen";
   import { AvatarChooser } from "~/ui/AvatarBuilder";
-  import MediaSetup from "~/ui/MediaSetup";
   import { PauseAutomatically, PauseMessage } from "~/ui/Pause";
 
   import { runCommand } from "~/commands";

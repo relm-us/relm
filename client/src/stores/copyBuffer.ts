@@ -2,7 +2,7 @@ import { writable, Writable } from "svelte/store";
 import { Vector3 } from "three";
 import type { GroupTree } from "./selection";
 
-type CopyBuffer = {
+export type CopyBuffer = {
   center: Vector3;
   entities: Array<string>;
   groupTree: GroupTree;

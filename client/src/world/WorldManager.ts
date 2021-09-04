@@ -11,6 +11,7 @@ import { mode } from "~/stores/mode";
 import { deltaTime, fpsTime } from "~/stores/stats";
 import { worldState, WorldState } from "~/stores/worldState";
 import { playState, PlayState } from "~/stores/playState";
+import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 import { ConnectOptions } from "~/stores/connection";
 import { shadowsEnabled } from "~/stores/settings";
 import { entryway } from "~/stores/subrelm";
@@ -410,5 +411,9 @@ export default class WorldManager {
     } else {
       playState.set(state);
     }
+  }
+
+  get copyBuffer(): CopyBuffer {
+    return get(copyBuffer);
   }
 }
