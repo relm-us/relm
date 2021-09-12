@@ -766,7 +766,7 @@ export default class RoomClient {
       track = get(audioTrack);
 
       this._micProducer = await this._sendTransport.produce({
-        track,
+        track: track.clone(),
         codecOptions: {
           opusStereo: 1,
           opusDtx: 1,
@@ -979,7 +979,7 @@ export default class RoomClient {
       }
 
       this._webcamProducer = await this._sendTransport.produce({
-        track,
+        track: track.clone(),
         encodings,
         codecOptions,
         codec,

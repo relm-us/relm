@@ -1,7 +1,7 @@
 <script lang="ts">
   import CircleButton from "~/ui/lib/CircleButton";
-  import { VideoIcon } from "video-mirror";
   import { setupState } from "~/stores/setupState";
+  import SettingsIcon from "svelte-icons/io/IoMdSettings.svelte";
 
   const onClick = () => {
     $setupState = "media";
@@ -10,7 +10,7 @@
 
 <CircleButton on:click={onClick}>
   <icon>
-    <VideoIcon />
+    <SettingsIcon />
   </icon>
   <slot />
 </CircleButton>

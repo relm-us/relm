@@ -59,16 +59,15 @@
 
   // ignore warning about missing props
   $$props;
-
 </script>
 
-<container
-  style="--background-image:url({shineImg}); --oculus-size: {(
-    volume * 100
-  ).toFixed(3)}%"
->
-  <oculus class="round" on:click={toggleVideo}>
-    {#if showVideo}
+{#if showVideo}
+  <container
+    style="--background-image:url({shineImg}); --oculus-size: {(
+      volume * 100
+    ).toFixed(3)}%"
+  >
+    <oculus class="round" on:click>
       {#if fullscreen}
         <Fullscreen on:close={exitFullscreen}>
           <Video stream={$stream} mirror={false} class="oculus-video" />
@@ -79,14 +78,12 @@
       {:else}
         <Video stream={$stream} mirror={isLocal} class="oculus-video" />
       {/if}
-    {:else}
-      <icon><VideoIcon /></icon>
-    {/if}
-    {#if showAudio && !isLocal}
-      <Audio stream={$stream} {volume} />
-    {/if}
-  </oculus>
-</container>
+      {#if showAudio && !isLocal}
+        <Audio stream={$stream} {volume} />
+      {/if}
+    </oculus>
+  </container>
+{/if}
 
 <style lang="scss">
   container {
@@ -116,16 +113,6 @@
     transform: translate3d(0, 0, 0);
   }
 
-  icon {
-    display: block;
-    width: 48px;
-    height: 48px;
-
-    box-shadow: 0 0 10px rgba(0, 0, 0, 15%);
-    border-radius: 100%;
-    padding: 5px;
-  }
-
   @keyframes white {
     from {
       color: #959595;
@@ -133,10 +120,6 @@
     to {
       color: white;
     }
-  }
-
-  oculus:hover icon {
-    animation: both 0.15s white;
   }
 
   oculus::after {
@@ -159,5 +142,4 @@
     bottom: 24px;
     border: 2px solid white;
   }
-
 </style>

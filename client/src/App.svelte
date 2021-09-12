@@ -13,6 +13,7 @@
   import UploadButton from "~/ui/ButtonControls/UploadButton";
   import MediaSetupButton from "~/ui/ButtonControls/MediaSetupButton";
   import MicButton from "~/ui/ButtonControls/MicButton";
+  import VideoButton from "~/ui/ButtonControls/VideoButton";
   import AvatarSetupButton from "~/ui/ButtonControls/AvatarSetupButton";
   import ShareScreenButton from "~/ui/ButtonControls/ShareScreenButton";
 
@@ -156,6 +157,7 @@
   <play-buttons class="interactive">
     <ShareScreenButton />
     <MicButton />
+    <VideoButton />
     <MediaSetupButton />
   </play-buttons>
 </overlay-center>
