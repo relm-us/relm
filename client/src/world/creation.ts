@@ -66,7 +66,7 @@ export function createRenderer() {
   renderer.toneMapping = LinearToneMapping;
   renderer.toneMappingExposure = 1.1;
   renderer.physicallyCorrectLights = true;
-  renderer.shadowMap.enabled = false;
+  renderer.shadowMap.enabled = true;
   renderer.outputEncoding = LinearEncoding;
   switch (shadowMapConfig) {
     case "BASIC":

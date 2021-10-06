@@ -88,6 +88,8 @@ export class ModelSystem extends System {
     if (entity.name === "Avatar")
       clonedScene.traverse(rotateSkinnedMeshBoundingBox);
 
+    clonedScene.traverse((e) => (e.castShadow = true));
+
     // TODO: Optimization: move `normalize` to Loader?
     normalize(clonedScene);
 

@@ -45,9 +45,6 @@ export class DirectionalLightSystem extends System {
           resolution,
           this.getFrustumFromSpec(spec)
         );
-
-        // helper = new THREE.CameraHelper(light.shadow.camera);
-        // this.presentation.scene.add(helper);
       }
       entity.add(DirectionalLightRef, { value: light });
     });
@@ -59,8 +56,27 @@ export class DirectionalLightSystem extends System {
 
       // size ranges from about 10 to 60
       // zoom ranges from about 1 to 0.30
-      light.shadow.camera.zoom = (1 - (size - 10) / 50) * 0.5 + 0.2;
+      // light.shadow.camera.zoom = (1 - (size - 10) / 50) * 0.5 + 0.2;
       light.shadow.camera.updateProjectionMatrix();
+    });
+
+    this.queries.modified.forEach((entity) => {
+      const spec = entity.get(DirectionalLight);
+      const light = entity.get(DirectionalLightRef).value;
+      if (spec.shadow && !light.castShadow) {
+        const resolution = {
+          width: spec.shadowWidth,
+          height: spec.shadowHeight,
+        };
+        this.buildShadow(
+          light,
+          spec.shadowRadius,
+          resolution,
+          this.getFrustumFromSpec(spec)
+        );
+      } else if (!spec.shadow && light.castShadow) {
+        light.castShadow = false;
+      }
     });
   }
 
@@ -113,6 +129,7 @@ export class DirectionalLightSystem extends System {
     light.shadow.camera.right = frustum.right;
     light.shadow.camera.near = frustum.near;
     light.shadow.camera.far = frustum.far;
+    light.shadow.camera.updateProjectionMatrix();
 
     light.shadow.radius = radius;
 
@@ -127,6 +144,9 @@ export class DirectionalLightSystem extends System {
         light.shadow.bias = -0.0002;
         break;
     }
+
+    // helper = new THREE.CameraHelper(light.shadow.camera);
+    // this.perspective.presentation.scene.add(helper);
   }
 
   getFrustumFromSpec(spec) {

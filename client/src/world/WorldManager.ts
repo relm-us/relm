@@ -81,10 +81,11 @@ export default class WorldManager {
     this.camera.init();
 
     shadowsEnabled.subscribe(($enabled) => {
-      const ref = this.light.getByName("DirectionalLightRef");
-      if (!ref) return;
-      const light: DirectionalLight = ref.value;
-      light.castShadow = $enabled;
+      console.log("shadows enabled", $enabled);
+      this.world.presentation.renderer.shadowMap.enabled = $enabled;
+      const spec = this.light.getByName("DirectionalLight");
+      spec.shadow = $enabled;
+      spec.modified();
     });
 
     // Make colliders visible in build mode

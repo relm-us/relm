@@ -26,7 +26,7 @@ export function makeLight(world, avatar) {
       target: avatar.id,
       color: 0xffffff,
       intensity: 2.5,
-      shadow: false, // TODO: make this turn on/off based on FPS
+      shadow: true, // TODO: make this turn on/off based on FPS
       shadowLeft: -shadowSize,
       shadowRight: shadowSize,
       shadowTop: shadowSize,
