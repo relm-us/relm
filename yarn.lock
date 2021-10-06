@@ -10807,10 +10807,10 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-video-mirror@^0.8.0:
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/video-mirror/-/video-mirror-0.8.0.tgz#1283399eb67e52bf5140cfa47168f414ce6f944e"
-  integrity sha512-n6eMuKl3dZAECY7liXKgvqML8+Gnhhc9jN7Ca4WEDJbZWsWtBhhx14JETyRM2mY6tM+B+GyDWQCfQFd2lUvz7g==
+video-mirror@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/video-mirror/-/video-mirror-0.9.0.tgz#5295b0ecbd441ca792e866ba6f27335e83318adf"
+  integrity sha512-fJXKg/ujpz4Vb4WDrxN4u0FkeFB7RT3apLzykNC7gpxeVFc7LJzGP4ytUYKOWvBrjR/d0kRF6sSBBIxlonjwjA==
   dependencies:
     hark "^1.2.3"
     media-devices "^0.2.0"
