@@ -60,6 +60,9 @@ export class WorldDoc extends EventEmitter {
   // A map of entryways into this subrelm. Default is [0, 0, 0].
   entryways: YReadableMap<any>;
 
+  // A map of settings for the world
+  settings: YReadableMap<any>;
+
   // A table of Y.IDs (as strings) mapped to HECS IDs; used for deletion
   yids: Map<YIDSTR, EntityId>;
 
@@ -84,6 +87,7 @@ export class WorldDoc extends EventEmitter {
     this.messages = this.ydoc.getArray("messages");
 
     this.entryways = readableMap(this.ydoc.getMap("entryways"));
+    this.settings = readableMap(this.ydoc.getMap("settings"));
 
     this.undoManager = new Y.UndoManager([this.entities], {
       captureTimeout: UNDO_CAPTURE_TIMEOUT,

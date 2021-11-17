@@ -1,5 +1,5 @@
-import { Vector3, DirectionalLight } from "three";
-import { derived, get, Writable } from "svelte/store";
+import { Vector3, Color } from "three";
+import { derived, get } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
@@ -79,6 +79,18 @@ export default class WorldManager {
     this.populate();
 
     this.camera.init();
+
+    this.wdoc.settings.subscribe(($settings) => {
+      console.log("$settings", $settings);
+
+      const fog = this.world.presentation.scene.fog;
+      if ($settings.get("fogColor")) {
+        fog.color = new Color($settings.get("fogColor"));
+      }
+      if ($settings.get("fogDensity")) {
+        fog.density = $settings.get("fogDensity");
+      }
+    });
 
     shadowsEnabled.subscribe(($enabled) => {
       console.log("shadows enabled", $enabled);

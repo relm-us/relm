@@ -1,6 +1,6 @@
 <script lang="ts">
   import { nanoid } from "nanoid";
-  import { Vector3 } from "three";
+  import { Vector3, Color } from "three";
 
   import { Relm } from "~/stores/Relm";
   import { assetUrl } from "~/config/assetUrl";
@@ -10,11 +10,17 @@
   import { Skybox } from "~/ecs/plugins/skybox";
 
   import EntrywayMap from "./EntrywayMap.svelte";
-  import LeftPanel, { Header } from "~/ui/LeftPanel";
+  import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
   import UploadButton from "~/ui/ButtonControls/UploadButton";
   import Capsule from "~/ui/lib/Capsule";
+  import ColorPicker from "~/ui/lib/ColorPicker";
+  import Slider from "~/ui/lib/Slider";
+  import { onMount } from "svelte";
+  import debounce from "lodash/debounce";
 
   let newEntrywayName = "";
+  let fogColor;
+  let fogDensity;
 
   function addEntryway(event) {
     const coords: Vector3 = $Relm.avatar.entity.get(Transform).position;
@@ -47,32 +53,82 @@
       .activate();
     $Relm.wdoc.syncFrom(skybox);
   }
+
+  function onSlideFog({ detail }) {
+    const value = detail[1];
+    const fog = $Relm.world.presentation.scene.fog;
+    fog.density = value * 0.05;
+
+    saveFogDensity(fog.density);
+  }
+
+  const saveFogDensity = debounce((density) => {
+    $Relm.wdoc.settings.y.set("fogDensity", density);
+  }, 500);
+
+  function onChangeFogColor({ detail }) {
+    const color = detail.slice(0, 7);
+    const fog = $Relm.world.presentation.scene.fog;
+    fog.color = new Color(color);
+
+    saveFogColor(color);
+  }
+
+  const saveFogColor = debounce((color) => {
+    $Relm.wdoc.settings.y.set("fogColor", color);
+  }, 500);
+
+  onMount(() => {
+    const fog = $Relm.world.presentation.scene.fog;
+    fogDensity = fog.density / 0.05;
+    fogColor = "#" + fog.color.getHexString();
+  });
 </script>
 
 <LeftPanel on:minimize>
   <Header>Relm Settings</Header>
   <container>
-    <setting>
-      <h2>Skybox</h2>
-      <div class="upload">
-        <UploadButton on:uploaded={onUploadedSkybox}>
-          <lbl>Upload</lbl>
-        </UploadButton>
-      </div>
-    </setting>
-    <setting>
-      <h2>Entryways</h2>
-      <EntrywayMap
-        entryways={$Relm.wdoc.entryways}
-        on:delete={onDeleteEntryway}
-      />
-      <Capsule
-        label="Add Entryway"
-        value={newEntrywayName}
-        editable={true}
-        on:change={addEntryway}
-      />
-    </setting>
+    <Pane title="Entryways">
+      <setting>
+        <EntrywayMap
+          entryways={$Relm.wdoc.entryways}
+          on:delete={onDeleteEntryway}
+        />
+        <Capsule
+          label="Add:"
+          value={newEntrywayName}
+          editable={true}
+          on:change={addEntryway}
+        />
+      </setting>
+    </Pane>
+
+    <Pane title="Skybox">
+      <setting>
+        <div class="upload">
+          <UploadButton on:uploaded={onUploadedSkybox}>
+            <lbl>Upload</lbl>
+          </UploadButton>
+        </div>
+      </setting>
+    </Pane>
+
+    <Pane title="Fog">
+      <setting>
+        <div style="width:100%">
+          <Slider on:change={onSlideFog} value={[0, fogDensity]} single />
+        </div>
+        <ColorPicker
+          bind:value={fogColor}
+          on:change={onChangeFogColor}
+          enableSwatches={true}
+          enableAlpha={false}
+          open={false}
+          width="24px"
+          height="24px"
+        />
+      </setting>
+    </Pane>
   </container>
 </LeftPanel>
 
@@ -84,12 +140,12 @@
     height: 100%;
     overflow: hidden;
   }
-
   setting {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
+    padding: 8px;
+    margin: auto;
   }
 
   .upload {
