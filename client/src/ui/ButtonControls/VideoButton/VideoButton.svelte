@@ -1,7 +1,7 @@
 <script lang="ts">
   import CircleButton from "~/ui/lib/CircleButton";
   import { VideoIcon, mediaDesired } from "video-mirror";
-  import { videoProducing } from "~/av/stores/producers";
+  // import { videoProducing } from "~/av/stores/producers";
   import { setupState } from "~/stores/setupState";
   import { Relm } from "~/stores/Relm";
   import { Identity } from "~/identity/Identity";
@@ -10,7 +10,7 @@
   $: identity = $Relm && $Relm.identities.me;
 
   let muted = false;
-  $: muted = !$videoProducing;
+  // $: muted = !$videoProducing;
 
   function toggleMute() {
     if (!$mediaDesired.video) $setupState = "media";

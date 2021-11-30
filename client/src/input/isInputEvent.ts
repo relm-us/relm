@@ -1,5 +1,5 @@
 export function isInputEvent(event) {
-  if (!event.target) return false;
+  if (!event.target || !event.target.getAttribute) return false;
   else
     return (
       // Regular text inputs and textareas should be able to use copy paste, arrow keys

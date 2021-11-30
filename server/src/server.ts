@@ -8,6 +8,7 @@ if (!fs.existsSync(ASSETS_DIR)) {
   throw Error(`Asset upload directory doesn't exist: ${ASSETS_DIR}`);
 }
 
+
 async function start() {
   try {
     await init();

@@ -1,51 +1,28 @@
-import {
-  applyMiddleware as applyReduxMiddleware,
-  createStore as createReduxStore,
-} from "redux";
-import thunk from "redux-thunk";
-import reducers from "./redux/reducers";
-import { types } from "mediasoup-client";
+import { ClientAVAdapter } from "./base/ClientAVAdapter";
+import { AVConnection } from "./AVConnection";
 
-import RoomClient from "./RoomClient";
-import { browser } from "~/av/browserInfo";
+export { ClientAVAdapter, AVConnection };
 
-import { roomConnectState } from "~/av/stores/roomConnectState";
-import { producers } from "~/av/stores/producers";
+// type ConnectAVOpts = {
+//   roomId: string;
+//   playerId: string;
+//   token?: string;
+//   displayName?: string;
+//   produceAudio?: boolean;
+//   produceVideo?: boolean;
+// };
 
-import { get } from "svelte/store";
-import { audioTrack, videoTrack } from "video-mirror";
+// export async function connect({
+//   roomId,
+//   playerId,
+//   token,
+//   displayName,
+//   produceAudio,
+//   produceVideo,
+// }: ConnectAVOpts): Promise<AVConnection> {
+//   const connection = new AVConnection(playerId);
 
-export { default as RoomClient } from "./RoomClient";
+//   await connection.connect(roomId, token);
 
-const reduxMiddlewares = [thunk];
-
-export const store = createReduxStore(
-  reducers,
-  undefined,
-  applyReduxMiddleware(...reduxMiddlewares)
-);
-RoomClient.init({ store });
-
-let roomClient: RoomClient;
-export function connectAV({
-  roomId,
-  displayName,
-  peerId,
-  produceAudio,
-  produceVideo,
-}) {
-  if (roomClient) roomClient.close();
-  roomClient = new RoomClient({
-    roomId,
-    displayName,
-    peerId,
-    device: browser,
-    produceAudio: produceAudio,
-    produceVideo: produceVideo,
-    consume: true,
-  });
-
-  roomClient.join();
-
-  return roomClient;
-}
+//   return connection;
+// }

@@ -4,9 +4,9 @@ import type { IdentityManager } from "./IdentityManager";
 import { IdentityData, PlayerID } from "./types";
 import { defaultIdentityData, localIdentityData } from "./identityData";
 
-import { setMe } from "~/av/redux/stateActions";
-import { store as avStore } from "~/av";
-import { browser } from "~/av/browserInfo";
+// import { setMe } from "~/av/redux/stateActions";
+// import { store as avStore } from "~/av";
+// import { browser } from "~/av/browserInfo";
 
 const LONG_TIME_AGO = 600000; // 5 minutes ago
 const LAST_SEEN_TIMEOUT = 15000;
@@ -66,19 +66,23 @@ export class Identity {
         }
       }
 
-      if (this.manager.relm.roomClient) {
+      if (this.manager.relm.avConnection) {
         if ("showAudio" in fields) {
           if (this.sharedFields.showAudio) {
-            this.manager.relm.roomClient.unmuteMic();
+            this.manager.relm.avConnection.adapter.enableMic();
+            // this.manager.relm.roomClient.unmuteMic();
           } else {
-            this.manager.relm.roomClient.muteMic();
+            this.manager.relm.avConnection.adapter.disableMic();
+            // this.manager.relm.roomClient.muteMic();
           }
         }
         if ("showVideo" in fields) {
           if (this.sharedFields.showVideo) {
-            this.manager.relm.roomClient.enableWebcam();
+            this.manager.relm.avConnection.adapter.enableCam();
+            // this.manager.relm.roomClient.enableWebcam();
           } else {
-            this.manager.relm.roomClient.disableWebcam();
+            this.manager.relm.avConnection.adapter.disableCam();
+            // this.manager.relm.roomClient.disableWebcam();
           }
         }
       }
@@ -106,14 +110,14 @@ export class Identity {
     return showVideo;
   }
 
-  setAvName(name) {
-    avStore.dispatch(
-      setMe({
-        peerId: this.playerId,
-        displayName: name,
-        displayNameSet: false,
-        device: browser,
-      })
-    );
-  }
+  // setAvName(name) {
+  //   avStore.dispatch(
+  //     setMe({
+  //       peerId: this.playerId,
+  //       displayName: name,
+  //       displayNameSet: false,
+  //       device: browser,
+  //     })
+  //   );
+  // }
 }
