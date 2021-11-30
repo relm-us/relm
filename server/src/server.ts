@@ -1,4 +1,5 @@
 import fs from "fs";
+import dotenv from "dotenv";
 
 import { ASSETS_DIR, DATABASE_NAME, PORT } from "./config";
 import { server } from "./server_ws";
@@ -7,6 +8,8 @@ import { init } from "./db/db";
 if (!fs.existsSync(ASSETS_DIR)) {
   throw Error(`Asset upload directory doesn't exist: ${ASSETS_DIR}`);
 }
+
+dotenv.config();
 
 async function start() {
   try {

@@ -5,8 +5,8 @@
   "author": "Duane Johnson",
   "license": "GPL-3.0-only",
   "scripts": {
-    "test": "cross-env NODE_ENV=test DATABASE_NAME=relm-test DATABASE_HOST=localhost jest src/**/*.test.ts",
-    "start": "cross-env TMP_DIR=data/tmp ASSETS_DIR=data/assets DATABASE_HOST=localhost ts-node-dev src/server.ts",
+    "test": "cross-env NODE_ENV=test DATABASE_NAME=relm-test jest src/**/*.test.ts",
+    "start": "cross-env TMP_DIR=data/tmp ASSETS_DIR=data/assets ts-node-dev src/server.ts",
     "build": "tsc",
     "pretest": "dropdb relm-test; createdb relm-test"
   },
@@ -17,6 +17,7 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "detect-file-type": "^0.2.8",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.10",
     "fastestsmallesttextencoderdecoder": "^1.0.22",
@@ -32,6 +33,7 @@
     "pgkeen": "^1.4.0",
     "postgres-migrations": "^4.0.3",
     "sharp": "^0.25.4",
+    "twilio": "^3.71.2",
     "ws": "^7.2.3",
     "y-protocols": "1.0.1",
     "y-websocket": "canadaduane/y-websocket#custom-callbacks",
