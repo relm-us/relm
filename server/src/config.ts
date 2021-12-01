@@ -1,3 +1,7 @@
+import dotenv from "dotenv";
+
+dotenv.config();
+
 const SECURITY_CONFIG = {
   name: "ECDSA",
   namedCurve: "P-384",

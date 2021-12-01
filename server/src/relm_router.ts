@@ -7,8 +7,9 @@ import * as crypto from "crypto";
 
 import * as config from "./config";
 import * as util from "./util";
-import { Invitation, Permission, Relm, Doc } from "./db";
 import * as middleware from "./middleware";
+import * as twilio from "./twilio";
+import { Invitation, Permission, Relm, Doc } from "./db";
 
 const { wrapAsync, uuidv4 } = util;
 
@@ -121,20 +122,38 @@ relmRouter.get(
   })
 );
 
+// Get a Twilio access token within a relm
+relmRouter.get(
+  "/twilio",
+  cors(),
+  middleware.relmExists(),
+  middleware.authenticated(),
+  middleware.authorized("access"),
+  wrapAsync(async (req, res) => {
+    const token = twilio.getToken(req.body.playerId);
+
+    return util.respond(res, 200, {
+      status: "success",
+      action: "token",
+      relm: req.relm,
+      token
+    });
+  })
+);
+
 relmRouter.post(
   "/truncate",
   cors(),
   middleware.relmExists(),
   middleware.authenticated(),
-  middleware.authorized("edit"),
+  middleware.authorized("admin"),
   wrapAsync(async (req, res) => {
     const relm = req.relm;
 
     const permanentDoc = await yws.getYDoc(req.relm.permanentDocId);
 
     const newDocName = uuidv4();
-    console.log("newDocName", newDocName);
-    const ydoc = truncateYDoc(permanentDoc, newDocName);
+    truncateYDoc(permanentDoc, newDocName);
 
     await Doc.setDoc({
       docId: newDocName,
