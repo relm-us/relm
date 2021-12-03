@@ -239,6 +239,7 @@ relmRouter.get(
             status: "success",
             action: "permit",
             authmode: "public",
+            twilio: twilio.getToken(req.body.playerId),
             relm: req.relm,
           });
         } else {
@@ -255,6 +256,7 @@ relmRouter.get(
               status: "success",
               action: "permit",
               authmode: "jwt",
+              twilio: twilio.getToken(req.body.playerId),
               relm: req.relm,
               user: { name: jwtresult.decoded.username },
             });

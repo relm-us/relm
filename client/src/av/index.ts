@@ -1,51 +1,37 @@
-import {
-  applyMiddleware as applyReduxMiddleware,
-  createStore as createReduxStore,
-} from "redux";
-import thunk from "redux-thunk";
-import reducers from "./redux/reducers";
-import { types } from "mediasoup-client";
+import { config } from "~/config";
 
-import RoomClient from "./RoomClient";
-import { browser } from "~/av/browserInfo";
+import { localAudioTrack, localVideoTrack } from "video-mirror";
 
-import { roomConnectState } from "~/av/stores/roomConnectState";
-import { producers } from "~/av/stores/producers";
+import { ClientAVAdapter } from "./base/ClientAVAdapter";
+import { TwilioClientAVAdapter } from "./twilio/TwilioClientAVAdapter";
 
-import { get } from "svelte/store";
-import { audioTrack, videoTrack } from "video-mirror";
+export { ClientAVAdapter };
 
-export { default as RoomClient } from "./RoomClient";
+type ConnectAVOpts = {
+  roomId: string;
+  twilioToken: string;
+  displayName: string;
+  peerId: string;
+  produceAudio: boolean;
+  produceVideo: boolean;
+};
 
-const reduxMiddlewares = [thunk];
+let adapter: ClientAVAdapter;
 
-export const store = createReduxStore(
-  reducers,
-  undefined,
-  applyReduxMiddleware(...reduxMiddlewares)
-);
-RoomClient.init({ store });
-
-let roomClient: RoomClient;
-export function connectAV({
+export async function connect({
   roomId,
+  twilioToken,
   displayName,
   peerId,
   produceAudio,
   produceVideo,
-}) {
-  if (roomClient) roomClient.close();
-  roomClient = new RoomClient({
-    roomId,
-    displayName,
-    peerId,
-    device: browser,
-    produceAudio: produceAudio,
-    produceVideo: produceVideo,
-    consume: true,
-  });
+}: ConnectAVOpts): Promise<ClientAVAdapter> {
+  if (adapter) {
+    await adapter.disconnect();
+  }
+  adapter = new TwilioClientAVAdapter();
 
-  roomClient.join();
+  await adapter.connect(twilioToken, roomId, localAudioTrack, localVideoTrack);
 
-  return roomClient;
+  return adapter;
 }

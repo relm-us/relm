@@ -26,6 +26,7 @@ export type ConnectOptions = {
   room: string;
   entitiesCount: number;
   assetsCount: number;
+  twilio?: string;
   username?: string;
   params: {
     s: string;
@@ -75,7 +76,7 @@ export const connection: Readable<ConnectStatus> = derived(
     getSecureParams(window.location.href)
       .then((params) => {
         playerPermit(params, config.serverUrl, $subrelm)
-          .then(({ relm, user }) => {
+          .then(({ relm, user, twilio }) => {
             set({
               state: "connected",
               url: config.serverYjsUrl,
@@ -83,6 +84,7 @@ export const connection: Readable<ConnectStatus> = derived(
               entitiesCount: relm.entitiesCount,
               assetsCount: relm.assetsCount,
               username: user?.name,
+              twilio,
               params,
             });
           })
