@@ -13,33 +13,45 @@ interface AVAdapterEvents {
   "participant-updated": (peer: AVParticipant) => void;
   "participant-removed": (peerId: string) => void;
 
-  "resource-added": (resource: AVResource) => void;
-  "resource-updated": (resource: AVResource) => void;
-  "resource-removed": (resourceId: string) => void;
+  "resources-added": (resources: Array<AVResource>) => void;
+  "resources-updated": (resource: Array<AVResource>) => void;
+  "resources-removed": (resourceId: Array<string>) => void;
 
   "bandwidth-estimate": (estimate: BandwidthEstimate) => void;
   "status-updated": (status: ConnectStatus) => void;
 }
 
+export class UnimplementedError extends Error {
+  constructor(public reason = "Not Implemented") {
+    super("Not Implemented");
+  }
+}
+
+// prettier-ignore
 export class ClientAVAdapter extends TypedEmitter<AVAdapterEvents> {
   origin: string;
 
   async connect(
-    identity: string, // may be token, may be username, depends on service
     roomId: string,
-    localAudioTrackStore: TrackStore,
-    localVideoTrackStore: TrackStore,
+    identityOrToken: string, // may be token, may be username, depends on service
     options: ConnectOptions = {}
-  ) {}
+  ) { throw new UnimplementedError(); }
 
-  async disconnect() {}
+  async disconnect() { throw new UnimplementedError(); }
 
-  enableMic() {}
-  disableMic(pause: boolean = false) {}
+  enableMic() { throw new UnimplementedError(); }
+  disableMic(pause: boolean = false) { throw new UnimplementedError(); }
 
-  enableCam() {}
-  disableCam(pause: boolean = false) {}
+  enableCam() { throw new UnimplementedError(); }
+  disableCam(pause: boolean = false) { throw new UnimplementedError(); }
 
-  enableShare() {}
-  disableShare(pause: boolean = false) {}
+  enableShare() { throw new UnimplementedError(); }
+  disableShare(pause: boolean = false) { throw new UnimplementedError(); }
+
+  replaceLocalTrack(tracks: Array<MediaStreamTrack>) {
+    throw new UnimplementedError();
+  }
+  removeLocalTrack(tracks: Array<MediaStreamTrack>) {
+    throw new UnimplementedError();
+  }
 }

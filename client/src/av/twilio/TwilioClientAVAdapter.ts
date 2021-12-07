@@ -1,16 +1,14 @@
 import {
   connect,
-  createLocalVideoTrack,
-  Logger,
+  Room,
+  ConnectOptions,
   Participant,
   RemoteAudioTrack,
   RemoteParticipant,
   RemoteTrackPublication,
   RemoteVideoTrack,
 } from "twilio-video";
-import type { Room, ConnectOptions } from "twilio-video";
-import { get } from "svelte/store";
-import type { Readable } from "svelte/store";
+import { get, writable, Writable } from "svelte/store";
 
 import { TrackStore } from "../base/types";
 import { ClientAVAdapter } from "../base/ClientAVAdapter";
@@ -20,10 +18,8 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
   room: Room;
 
   async connect(
-    identity: string,
     roomId: string,
-    localAudioTrackStore: TrackStore,
-    localVideoTrackStore: TrackStore,
+    identityOrToken: string,
     { displayName = "user", produceAudio = true, produceVideo = true }
   ) {
     const options: ConnectOptions = {
@@ -63,46 +59,29 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
       // Capture 720p video @ 24 fps.
       // video: { deviceId: get(), height: 720, frameRate: 24, width: 1280 },
     };
-    this.room = await connect(identity, options);
-
-    // Whenever audio track changes, publish or re-publish
-    let previousAudioTrack;
-    localAudioTrackStore.subscribe((localAudioTrack: MediaStreamTrack) => {
-      if (previousAudioTrack)
-        this.room.localParticipant.unpublishTrack(previousAudioTrack);
-      if (localAudioTrack) {
-        this.room.localParticipant.publishTrack(localAudioTrack);
-        previousAudioTrack = localAudioTrack;
-      }
-    });
-
-    // Whenever video track changes, publish or re-publish
-    let previousVideoTrack;
-    localVideoTrackStore.subscribe((localVideoTrack) => {
-      if (previousAudioTrack)
-        this.room.localParticipant.unpublishTrack(previousVideoTrack);
-      if (localVideoTrack) {
-        this.room.localParticipant.publishTrack(localVideoTrack);
-        previousVideoTrack = localVideoTrack;
-      }
-    });
+    this.room = await connect(identityOrToken, options);
 
     this.room.on("participantConnected", (participant: RemoteParticipant) => {
+      const participantId = participant.identity;
+
       this.emit("participant-added", {
         id: participant.identity,
         isDominant: false,
         connectionScore: 1,
       });
-      for (const [trackSid, track] of Object.entries(participant.tracks)) {
-        this.emit("resource-added", {
+
+      this.emit(
+        "resources-added",
+        Object.entries(participant.tracks).map(([trackSid, track]) => ({
+          participantId,
           id: trackSid,
-          participantId: participant.identity,
           paused: false,
           kind: track.kind,
           track: track,
-        });
-      }
+        }))
+      );
     });
+
     this.room.on(
       "participantDisconnected",
       (participant: RemoteParticipant) => {
@@ -113,23 +92,42 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
       "trackPublished",
       (publication: RemoteTrackPublication, participant: RemoteParticipant) => {
         const { kind, track } = getResourceKindTrack(publication);
-        this.emit("resource-added", {
-          id: publication.trackSid,
-          participantId: participant.identity,
-          paused: false,
-          kind,
-          track,
-        });
+        this.emit("resources-added", [
+          {
+            id: publication.trackSid,
+            participantId: participant.identity,
+            paused: false,
+            kind,
+            track,
+          },
+        ]);
       }
     );
     this.room.on("trackUnpublished", (publication: RemoteTrackPublication) => {
-      this.emit("resource-removed", publication.trackSid);
+      this.emit("resources-removed", [publication.trackSid]);
     });
   }
-}
 
-function randomPeerId() {
-  return Math.random().toString().slice(2);
+  replaceLocalTracks(tracks: Array<MediaStreamTrack>) {
+    const localParticipant = this.room.localParticipant;
+    let previousTrack;
+    for (const track of tracks) {
+      if (track.kind === "video")
+        previousTrack = localParticipant.videoTracks.values()[0];
+      if (track.kind === "audio")
+        previousTrack = localParticipant.audioTracks.values()[0];
+
+      if (previousTrack) localParticipant.unpublishTrack(previousTrack);
+      localParticipant.publishTrack(track);
+    }
+  }
+
+  removeLocalTracks(tracks: Array<MediaStreamTrack>) {
+    const localParticipant = this.room.localParticipant;
+    for (const track of tracks) {
+      localParticipant.unpublishTrack(track);
+    }
+  }
 }
 
 /**
@@ -145,12 +143,6 @@ const isMobile = (() => {
   }
   return /Mobile/.test(navigator.userAgent);
 })();
-
-function getStoreValue(store) {
-  let value;
-  store.subscribe((v) => (value = v))();
-  return value;
-}
 
 function getResourceKindTrack(
   publication: RemoteTrackPublication
