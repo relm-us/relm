@@ -130,7 +130,7 @@ relmRouter.get(
   middleware.authenticated(),
   middleware.authorized("access"),
   wrapAsync(async (req, res) => {
-    const token = twilio.getToken(req.body.playerId);
+    const token = twilio.getToken(req.authenticatedPlayerId);
 
     return util.respond(res, 200, {
       status: "success",
@@ -239,7 +239,7 @@ relmRouter.get(
             status: "success",
             action: "permit",
             authmode: "public",
-            twilio: twilio.getToken(req.body.playerId),
+            twilio: twilio.getToken(req.authenticatedPlayerId),
             relm: req.relm,
           });
         } else {
@@ -256,7 +256,7 @@ relmRouter.get(
               status: "success",
               action: "permit",
               authmode: "jwt",
-              twilio: twilio.getToken(req.body.playerId),
+              twilio: twilio.getToken(req.authenticatedPlayerId),
               relm: req.relm,
               user: { name: jwtresult.decoded.username },
             });

@@ -28,12 +28,12 @@ export class AVConnection {
   watchLocalStreamChanges() {
     // Whenever local audio source or settings change, update the adapter
     localAudioTrackStore.subscribe((localAudioTrack: MediaStreamTrack) => {
-      this.adapter.replaceLocalTrack([localAudioTrack]);
+      this.adapter.replaceLocalTracks([localAudioTrack]);
     });
 
     // Whenever local video source or settings change, update the adapter
     localVideoTrackStore.subscribe((localVideoTrack: MediaStreamTrack) => {
-      this.adapter.replaceLocalTrack([localVideoTrack]);
+      this.adapter.replaceLocalTracks([localVideoTrack]);
     });
   }
 
