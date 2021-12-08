@@ -5,7 +5,6 @@ import { WorldTransform, Presentation } from "~/ecs/plugins/core";
 import { Perspective } from "~/ecs/plugins/perspective";
 
 import { playerId } from "~/identity/playerId";
-import { getStreamStore, getLocalStreamStore } from "~/av/getStreamStore";
 
 import HtmlOculus from "../HtmlOculus.svelte";
 import { Oculus, OculusRef } from "../components";
@@ -55,8 +54,8 @@ export class OculusSystem extends System {
   build(entity: Entity) {
     const spec = entity.get(Oculus);
     const isLocal = spec.playerId === playerId;
-    const localStream = getLocalStreamStore();
-    const stream = isLocal ? localStream : getStreamStore(spec.playerId);
+    // const localStream = getLocalStreamStore();
+    // const stream = isLocal ? localStream : getStreamStore(spec.playerId);
 
     // Prepare a container for Svelte
     const container = this.htmlPresentation.createContainer(
@@ -72,7 +71,7 @@ export class OculusSystem extends System {
     // Create the Svelte component
     const component = new HtmlOculus({
       target: container,
-      props: { ...spec, stream, localStream, isLocal, entity },
+      props: { ...spec, entity },
     });
 
     entity.add(OculusRef, { container, component });

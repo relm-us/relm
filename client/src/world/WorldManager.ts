@@ -42,7 +42,7 @@ import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 import { setupState } from "~/stores/setupState";
 
 import type { DecoratedWorld } from "~/types/DecoratedWorld";
-import { connect as connectAudioVideo, ClientAVAdapter } from "~/av";
+import { connect as connectAudioVideo, AVConnection } from "~/av";
 
 export default class WorldManager {
   world: DecoratedWorld;
@@ -56,7 +56,7 @@ export default class WorldManager {
   chat: ChatManager;
   camera: CameraManager;
 
-  avAdapter: ClientAVAdapter;
+  avConnection: AVConnection;
 
   previousLoopTime: number = 0;
   sendLocalStateInterval: any; // Timeout
@@ -209,7 +209,7 @@ export default class WorldManager {
       }
     ).subscribe(async ({ ready, audio, video }) => {
       if (ready) {
-        this.avAdapter = await connectAudioVideo({
+        this.avConnection = await connectAudioVideo({
           roomId: connectOpts.room,
           twilioToken: connectOpts.twilio,
           displayName: connectOpts.username || this.identities.me.get("name"),

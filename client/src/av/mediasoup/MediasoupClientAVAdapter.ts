@@ -8,15 +8,9 @@ export class MediasoupClientAVAdapter extends ClientAVAdapter {
   room: RoomClient;
 
   async connect(
-    localAudioTrackStore: TrackStore,
-    localVideoTrackStore: TrackStore,
-    {
-      roomId = "default",
-      userId = randomPeerId(),
-      displayName = "user",
-      produceAudio = true,
-      produceVideo = true,
-    }
+    roomId = "default",
+    userId = randomPeerId(),
+    { displayName = "user", produceAudio = true, produceVideo = true }
   ) {
     this.room = new RoomClient(this.origin);
     this.room.on("peer-added", (peer: MSPeer) => {
@@ -30,27 +24,27 @@ export class MediasoupClientAVAdapter extends ClientAVAdapter {
       this.emit("participant-removed", peerId);
     });
     this.room.on("consumer-added", (consumer) => {
-      this.emit("resource-added", {
+      this.emit("resources-added", [{
         id: consumer.id,
         participantId: consumer.peerId,
         paused: false,
         kind: consumer.kind,
         track: consumer.track,
-      });
+      }]);
     });
     this.room.on("consumer-removed", (consumerId) => {
-      this.emit("resource-removed", consumerId);
+      this.emit("resources-removed", [consumerId]);
     });
     this.room.on("bandwidth-estimate", (estimate: BandwidthEstimate) => {
       this.emit("bandwidth-estimate", estimate);
     });
-    this.room.join(localAudioTrackStore, localVideoTrackStore, {
-      roomId,
-      peerId: userId,
-      displayName,
-      produceAudio,
-      produceVideo,
-    });
+    // this.room.join(localAudioTrackStore, localVideoTrackStore, {
+    //   roomId,
+    //   peerId: userId,
+    //   displayName,
+    //   produceAudio,
+    //   produceVideo,
+    // });
   }
 }
 

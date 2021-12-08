@@ -1,7 +1,7 @@
 import { ClientAVAdapter } from "./base/ClientAVAdapter";
 import { AVConnection } from './AVConnection'
 
-export { ClientAVAdapter };
+export { ClientAVAdapter, AVConnection };
 
 type ConnectAVOpts = {
   roomId: string;
@@ -22,7 +22,7 @@ export async function connect({
 }: ConnectAVOpts): Promise<AVConnection> {
   const connection = new AVConnection();
 
-  await connection.connect(twilioToken, roomId);
+  await connection.connect(roomId, twilioToken);
 
   return connection;
 }
