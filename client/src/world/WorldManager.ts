@@ -42,7 +42,7 @@ import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 import { setupState } from "~/stores/setupState";
 
 import type { DecoratedWorld } from "~/types/DecoratedWorld";
-import { connect as connectAudioVideo, AVConnection } from "~/av";
+import { AVConnection } from "~/av";
 
 export default class WorldManager {
   world: DecoratedWorld;
@@ -74,6 +74,7 @@ export default class WorldManager {
     this.identities = new IdentityManager(this);
     this.chat = new ChatManager(this.identities, this.wdoc.messages);
     this.camera = new CameraManager(this, this.identities.me.avatar.entity);
+    this.avConnection = new AVConnection();
 
     this.mount();
     this.populate();
@@ -209,11 +210,11 @@ export default class WorldManager {
       }
     ).subscribe(async ({ ready, audio, video }) => {
       if (ready) {
-        this.avConnection = await connectAudioVideo({
+        await this.avConnection.connect({
           roomId: connectOpts.room,
-          twilioToken: connectOpts.twilio,
+          participantId: this.identities.me.playerId,
+          token: connectOpts.twilio,
           displayName: connectOpts.username || this.identities.me.get("name"),
-          peerId: this.identities.me.playerId,
           produceAudio: audio,
           produceVideo: video,
         });

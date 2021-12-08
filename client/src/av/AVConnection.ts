@@ -9,15 +9,27 @@ import { TwilioClientAVAdapter } from "./twilio/TwilioClientAVAdapter";
 import { AVResource } from "./base/types";
 import { groupBy } from "~/utils/groupBy";
 
+type AVConnectOpts = {
+  roomId: string;
+  participantId: string;
+  token?: string;
+  displayName?: string;
+  produceAudio?: boolean;
+  produceVideo?: boolean;
+};
+
 export class AVConnection {
+  participantId: string; // same as playerId
   adapter: ClientAVAdapter;
   streamStores: Record<string, Writable<MediaStream>>;
 
   constructor() {
     this.adapter = new TwilioClientAVAdapter();
+    this.streamStores = {};
   }
 
-  async connect(roomId, token) {
+  async connect({ roomId, participantId, token }: AVConnectOpts) {
+    this.participantId = participantId;
     await this.adapter.connect(roomId, token);
     this.watchLocalStreamChanges();
   }
@@ -29,11 +41,13 @@ export class AVConnection {
     // Whenever local audio source or settings change, update the adapter
     localAudioTrackStore.subscribe((localAudioTrack: MediaStreamTrack) => {
       this.adapter.replaceLocalTracks([localAudioTrack]);
+      this.acceptTracks(this.participantId, [localAudioTrack]);
     });
 
     // Whenever local video source or settings change, update the adapter
     localVideoTrackStore.subscribe((localVideoTrack: MediaStreamTrack) => {
       this.adapter.replaceLocalTracks([localVideoTrack]);
+      this.acceptTracks(this.participantId, [localVideoTrack]);
     });
   }
 
@@ -48,14 +62,15 @@ export class AVConnection {
       const groups = groupBy(resources, "participantId");
 
       for (const [participantId, resources] of Object.entries(groups)) {
-        const tracks = resources.map(r => r.track);
-        this.acceptRemoteTracks(participantId, tracks);
+        const tracks = resources.map((r) => r.track);
+        if (participantId !== this.participantId)
+          this.acceptTracks(participantId, tracks);
       }
     });
   }
 
   // Finds or creates a streamStore associated with a remote participant
-  getRemoteStreamStore(participantId: string): Writable<MediaStream> {
+  getStreamStore(participantId: string): Writable<MediaStream> {
     if (!this.streamStores[participantId]) {
       this.streamStores[participantId] = writable(new MediaStream());
     }
@@ -64,8 +79,8 @@ export class AVConnection {
 
   // Adds or replaces the tracks associated with a remote participant
   // that this peer knows about.
-  acceptRemoteTracks(participantId: string, tracks: Array<MediaStreamTrack>) {
-    this.getRemoteStreamStore(participantId).update((stream) => {
+  acceptTracks(participantId: string, tracks: Array<MediaStreamTrack>) {
+    this.getStreamStore(participantId).update((stream) => {
       let previousTrack;
       for (const track of tracks) {
         if (track.kind === "video") previousTrack = stream.getVideoTracks()[0];
@@ -78,4 +93,3 @@ export class AVConnection {
     });
   }
 }
-

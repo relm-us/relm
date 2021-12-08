@@ -61,7 +61,6 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
     if (isMobile) {
       options.bandwidthProfile.video.maxSubscriptionBitrate = 250000;
     }
-    console.log('identityOrToken', identityOrToken);
     this.room = await connect(identityOrToken, options);
 
     this.room.on("participantConnected", (participant: RemoteParticipant) => {
