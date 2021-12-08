@@ -1,6 +1,7 @@
 import {
   localAudioTrack as localAudioTrackStore,
   localVideoTrack as localVideoTrackStore,
+  localStream as localStreamStore,
 } from "video-mirror";
 import { writable, Writable } from "svelte/store";
 
@@ -11,7 +12,6 @@ import { groupBy } from "~/utils/groupBy";
 
 type AVConnectOpts = {
   roomId: string;
-  participantId: string;
   token?: string;
   displayName?: string;
   produceAudio?: boolean;
@@ -23,33 +23,37 @@ export class AVConnection {
   adapter: ClientAVAdapter;
   streamStores: Record<string, Writable<MediaStream>>;
 
-  constructor() {
+  constructor(participantId) {
+    this.participantId = participantId;
     this.adapter = new TwilioClientAVAdapter();
     this.streamStores = {};
+
+    // Assign the local audio/video stream to the local participant
+    console.log('assign streamStore for participantId', participantId);
+    this.streamStores[participantId] = localStreamStore;
   }
 
-  async connect({ roomId, participantId, token }: AVConnectOpts) {
-    this.participantId = participantId;
+  async connect({ roomId, token }: AVConnectOpts) {
     await this.adapter.connect(roomId, token);
-    this.watchLocalStreamChanges();
+    this.watchRemoteStreamChanges();
   }
 
   // Reactively waits for local participant's stream changes (e.g. if they
   // reconfigure their video or audio with video-mirror) and then publishes
   // any changes.
-  watchLocalStreamChanges() {
-    // Whenever local audio source or settings change, update the adapter
-    localAudioTrackStore.subscribe((localAudioTrack: MediaStreamTrack) => {
-      this.adapter.replaceLocalTracks([localAudioTrack]);
-      this.acceptTracks(this.participantId, [localAudioTrack]);
-    });
+  // watchLocalStreamChanges() {
+  //   // Whenever local audio source or settings change, update the adapter
+  //   localAudioTrackStore.subscribe((localAudioTrack: MediaStreamTrack) => {
+  //     this.adapter.replaceLocalTracks([localAudioTrack]);
+  //     this.acceptTracks(this.participantId, [localAudioTrack]);
+  //   });
 
-    // Whenever local video source or settings change, update the adapter
-    localVideoTrackStore.subscribe((localVideoTrack: MediaStreamTrack) => {
-      this.adapter.replaceLocalTracks([localVideoTrack]);
-      this.acceptTracks(this.participantId, [localVideoTrack]);
-    });
-  }
+  //   // Whenever local video source or settings change, update the adapter
+  //   localVideoTrackStore.subscribe((localVideoTrack: MediaStreamTrack) => {
+  //     this.adapter.replaceLocalTracks([localVideoTrack]);
+  //     this.acceptTracks(this.participantId, [localVideoTrack]);
+  //   });
+  // }
 
   // Reactively waits for remote participants' stream changes and updates
   // our streamStores.

@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { Audio, Video, localStream } from "video-mirror";
+  import { Audio, Video } from "video-mirror";
   import { Relm } from "~/stores/Relm";
   import Fullscreen from "./Fullscreen.svelte";
   import shineImg from "./shine.svg";
@@ -15,16 +15,22 @@
   let isLocal;
   $: {
     isLocal = $Relm.identities.me.playerId === playerId;
-    console.log('isLocal', playerId, isLocal);
+    console.log("isLocal", playerId, isLocal);
   }
 
   let identity;
   $: identity = $Relm.identities.identities.get(playerId);
 
   let stream;
-  $: if ($Relm.avConnection) {
+  $: {
     stream = $Relm.avConnection.getStreamStore(playerId);
-    console.log('stream', playerId, $stream.getTracks());
+    // console.log("stream", playerId, $stream, $stream.getTracks());
+  }
+
+  let localStream;
+  $: {
+    localStream = $Relm.avConnection.getStreamStore($Relm.identities.me.playerId);
+    // console.log("localStream", $Relm.identities.me.playerId, $localStream, $localStream.getTracks());
   }
 
   function exitFullscreen() {

@@ -74,7 +74,7 @@ export default class WorldManager {
     this.identities = new IdentityManager(this);
     this.chat = new ChatManager(this.identities, this.wdoc.messages);
     this.camera = new CameraManager(this, this.identities.me.avatar.entity);
-    this.avConnection = new AVConnection();
+    this.avConnection = new AVConnection(this.identities.me.playerId);
 
     this.mount();
     this.populate();
@@ -212,7 +212,6 @@ export default class WorldManager {
       if (ready) {
         await this.avConnection.connect({
           roomId: connectOpts.room,
-          participantId: this.identities.me.playerId,
           token: connectOpts.twilio,
           displayName: connectOpts.username || this.identities.me.get("name"),
           produceAudio: audio,
