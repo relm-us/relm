@@ -1,5 +1,4 @@
 import { ClientAVAdapter } from "../base/ClientAVAdapter";
-import { TrackStore } from "../base/types";
 
 import { RoomClient } from "./RoomClient";
 import type { BandwidthEstimate, MSPeer } from "./types";

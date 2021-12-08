@@ -1,7 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { Audio, Video, VideoIcon, videoTrack } from "video-mirror";
-  import { setupState } from "~/stores/setupState";
+  import { Audio, Video } from "video-mirror";
   import { Relm } from "~/stores/Relm";
   import Fullscreen from "./Fullscreen.svelte";
   import shineImg from "./shine.svg";
@@ -18,17 +17,6 @@
 
   let identity;
   $: identity = $Relm.identities.identities.get(playerId);
-
-  function toggleVideo() {
-    if (identity) {
-      if (isLocal) {
-        if (!$videoTrack) $setupState = "media";
-        else identity.toggleShowVideo();
-      } else if (showVideo) {
-        fullscreen = true;
-      }
-    }
-  }
 
   function exitFullscreen() {
     fullscreen = false;

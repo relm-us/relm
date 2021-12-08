@@ -20,7 +20,7 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
   async connect(
     roomId: string,
     identityOrToken: string,
-    { displayName = "user", produceAudio = true, produceVideo = true }
+    { displayName = "user", produceAudio = true, produceVideo = true } = {}
   ) {
     const options: ConnectOptions = {
       name: roomId,
@@ -34,7 +34,6 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
           mode: "collaboration",
           clientTrackSwitchOffControl: "auto",
           contentPreferencesMode: "auto",
-          maxSubscriptionBitrate: isMobile ? 250000 : undefined,
         },
       },
 
@@ -59,6 +58,10 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
       // Capture 720p video @ 24 fps.
       // video: { deviceId: get(), height: 720, frameRate: 24, width: 1280 },
     };
+    if (isMobile) {
+      options.bandwidthProfile.video.maxSubscriptionBitrate = 250000;
+    }
+    console.log('identityOrToken', identityOrToken);
     this.room = await connect(identityOrToken, options);
 
     this.room.on("participantConnected", (participant: RemoteParticipant) => {

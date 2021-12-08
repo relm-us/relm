@@ -2,8 +2,8 @@
   import { onMount } from "svelte";
   import Pane from "./Pane.svelte";
 
-  import { audioTrack, videoTrack, mediaDesired } from "video-mirror";
-  import { audioProducing, videoProducing } from "~/av/stores/producers";
+  import { localAudioTrack, localVideoTrack, mediaDesired } from "video-mirror";
+  // import { audioProducing, videoProducing } from "~/av/stores/producers";
   import { setupState } from "~/stores/setupState";
   import { Identity } from "~/identity/Identity";
 
@@ -17,7 +17,7 @@
   import { viewport, size, scale } from "~/stores/viewport";
   import { world } from "~/stores/world";
   import { worldState } from "~/stores/worldState";
-  import { roomConnectState } from "~/av/stores/roomConnectState";
+  // import { roomConnectState } from "~/av/stores/roomConnectState";
   import {
     loadingState,
     loaded,
@@ -27,7 +27,7 @@
     assetsLoaded,
     assetsMaximum,
   } from "~/stores/loading";
-  import { peers } from "~/av/stores/peers";
+  // import { peers } from "~/av/stores/peers";
 
   let minimized = true;
 
@@ -79,7 +79,7 @@
         <tr><th>entryway:</th><td>{$entryway}</td></tr>
         <tr><th>world state:</th><td>{$worldState}</td></tr>
         <tr><th>setup state:</th><td>{$setupState}</td></tr>
-        <tr><th>conference:</th><td>{$roomConnectState}</td></tr>
+        <!-- <tr><th>conference:</th><td>{$roomConnectState}</td></tr> -->
         <tr><th>yjs:</th><td>{$connection.state}<br />{$yLoadingState}</td></tr>
         {#if $connection.state === "connected"}
           <tr>
@@ -99,22 +99,22 @@
           <th>audio</th>
           <td>
             {$mediaDesired.audio ? "desired" : ""}
-            {$audioTrack ? "recording" : ""}
-            {$audioProducing ? "sending" : ""}
+            {$localAudioTrack ? "recording" : ""}
+            <!-- {$audioProducing ? "sending" : ""} -->
           </td>
         </tr>
         <tr>
           <th>video</th>
           <td>
             {$mediaDesired.video ? "desired" : ""}
-            {$videoTrack ? "recording" : ""}
-            {$videoProducing ? "sending" : ""}
+            {$localVideoTrack ? "recording" : ""}
+            <!-- {$videoProducing ? "sending" : ""} -->
           </td>
         </tr>
-        <tr>
+        <!-- <tr>
           <th>av peers</th>
           <td>{JSON.stringify(peers)}</td>
-        </tr>
+        </tr> -->
         <tr>
           <th>loading:</th>
           <td>
