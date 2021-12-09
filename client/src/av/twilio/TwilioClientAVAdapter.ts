@@ -7,6 +7,10 @@ import {
   RemoteParticipant,
   RemoteTrackPublication,
   RemoteVideoTrack,
+  TrackPublication,
+  Track,
+  RemoteTrack,
+  LocalTrack,
 } from "twilio-video";
 import { get, writable, Writable } from "svelte/store";
 
@@ -72,16 +76,25 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
         connectionScore: 1,
       });
 
-      this.emit(
-        "resources-added",
-        Object.entries(participant.tracks).map(([trackSid, track]) => ({
-          participantId,
-          id: trackSid,
-          paused: false,
-          kind: track.kind,
-          track: track,
-        }))
+      const publications = Array.from(participant.tracks.values());
+      this.tracksPublished(publications, participant);
+      // // const publicationEntries: [string, TrackPublication][] = Object.entries(
+      // //   participant.tracks
+      // // );
+      // const resources = publicationEntries.map(([trackSid, trackPub]) => ({
+      //   participantId,
+      //   id: trackSid,
+      //   paused: false,
+      //   kind: trackPub.kind,
+      //   track: (trackPub as any).track as MediaStreamTrack,
+      // }));
+      // console.log("participantConnected resources", resources);
+      // this.emit("resources-added", resources);
+
+      participant.on("trackPublished", (publication: RemoteTrackPublication) =>
+        this.tracksPublished([publication], participant)
       );
+      participant.on("trackUnpublished", this.trackUnpublished.bind(this));
     });
 
     this.room.on(
@@ -90,10 +103,23 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
         this.emit("participant-removed", participant.identity);
       }
     );
-    this.room.on(
-      "trackPublished",
-      (publication: RemoteTrackPublication, participant: RemoteParticipant) => {
-        const { kind, track } = getResourceKindTrack(publication);
+  }
+
+  tracksPublished(
+    publications: RemoteTrackPublication[],
+    participant: RemoteParticipant
+  ) {
+    console.log(
+      "tracksPublished publications",
+      participant.identity,
+      publications,
+      publications.map((pub) => pub.track)
+    );
+
+    for (const publication of publications) {
+      if (publication.isSubscribed) {
+        const { kind, track } = getResourceKindTrack(publication.track);
+        console.log('resources added 1', kind, track);
         this.emit("resources-added", [
           {
             id: publication.trackSid,
@@ -104,15 +130,32 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
           },
         ]);
       }
-    );
-    this.room.on("trackUnpublished", (publication: RemoteTrackPublication) => {
-      this.emit("resources-removed", [publication.trackSid]);
-    });
+      publication.on("subscribed", (remoteTrack: RemoteTrack) => {
+        const { kind, track } = getResourceKindTrack(remoteTrack);
+        console.log('resources added 2', kind, track);
+        this.emit("resources-added", [
+          {
+            id: publication.trackSid,
+            participantId: participant.identity,
+            paused: false,
+            kind,
+            track,
+          },
+        ]);
+      });
+    }
+
+    // console.log("tracksPublished resources", resources);
+    // this.emit("resources-added", resources);
   }
 
-  replaceLocalTracks(tracks: Array<MediaStreamTrack>) {
+  trackUnpublished(publication: RemoteTrackPublication) {
+    this.emit("resources-removed", [publication.trackSid]);
+  }
+
+  publishLocalTracks(tracks: Array<MediaStreamTrack>) {
     const localParticipant = this.room.localParticipant;
-    let previousTrack;
+    let previousTrack: LocalTrack;
     for (const track of tracks) {
       if (track.kind === "video")
         previousTrack = localParticipant.videoTracks.values()[0];
@@ -124,7 +167,7 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
     }
   }
 
-  removeLocalTracks(tracks: Array<MediaStreamTrack>) {
+  unpublishLocalTracks(tracks: Array<MediaStreamTrack>) {
     const localParticipant = this.room.localParticipant;
     for (const track of tracks) {
       localParticipant.unpublishTrack(track);
@@ -147,21 +190,19 @@ const isMobile = (() => {
 })();
 
 function getResourceKindTrack(
-  publication: RemoteTrackPublication
+  remoteTrack: RemoteTrack
 ): {
   kind: "audio" | "video";
   track: MediaStreamTrack;
 } {
-  switch (publication.kind) {
+  switch (remoteTrack.kind) {
     case "audio": {
-      const remoteAudioTrack = publication.track as RemoteAudioTrack;
-      return { kind: "audio", track: remoteAudioTrack.mediaStreamTrack };
+      return { kind: "audio", track: remoteTrack.mediaStreamTrack };
     }
     case "video": {
-      const remoteVideoTrack = publication.track as RemoteVideoTrack;
-      return { kind: "video", track: remoteVideoTrack.mediaStreamTrack };
+      return { kind: "video", track: remoteTrack.mediaStreamTrack };
     }
     default:
-      throw Error(`unexpected kind of track: ${publication.kind}`);
+      throw Error(`unexpected kind of track: ${remoteTrack.kind}`);
   }
 }

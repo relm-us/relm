@@ -48,10 +48,10 @@ export class ClientAVAdapter extends TypedEmitter<AVAdapterEvents> {
   enableShare() { throw new UnimplementedError(); }
   disableShare(pause: boolean = false) { throw new UnimplementedError(); }
 
-  replaceLocalTracks(tracks: Array<MediaStreamTrack>) {
+  publishLocalTracks(tracks: Array<MediaStreamTrack>) {
     throw new UnimplementedError();
   }
-  removeLocalTracks(tracks: Array<MediaStreamTrack>) {
+  unpublishLocalTracks(tracks: Array<MediaStreamTrack>) {
     throw new UnimplementedError();
   }
 }

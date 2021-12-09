@@ -29,31 +29,37 @@ export class AVConnection {
     this.streamStores = {};
 
     // Assign the local audio/video stream to the local participant
-    console.log('assign streamStore for participantId', participantId);
     this.streamStores[participantId] = localStreamStore;
   }
 
   async connect({ roomId, token }: AVConnectOpts) {
     await this.adapter.connect(roomId, token);
+    this.watchLocalStreamChanges();
     this.watchRemoteStreamChanges();
   }
 
   // Reactively waits for local participant's stream changes (e.g. if they
   // reconfigure their video or audio with video-mirror) and then publishes
   // any changes.
-  // watchLocalStreamChanges() {
-  //   // Whenever local audio source or settings change, update the adapter
-  //   localAudioTrackStore.subscribe((localAudioTrack: MediaStreamTrack) => {
-  //     this.adapter.replaceLocalTracks([localAudioTrack]);
-  //     this.acceptTracks(this.participantId, [localAudioTrack]);
-  //   });
+  watchLocalStreamChanges() {
+    // Whenever local audio source or settings change, update the adapter
+    localStreamStore.subscribe((stream: MediaStream) => {
+      const tracks = stream.getTracks();
+      console.log("publish tracks", tracks);
+      this.adapter.publishLocalTracks(tracks);
+    });
 
-  //   // Whenever local video source or settings change, update the adapter
-  //   localVideoTrackStore.subscribe((localVideoTrack: MediaStreamTrack) => {
-  //     this.adapter.replaceLocalTracks([localVideoTrack]);
-  //     this.acceptTracks(this.participantId, [localVideoTrack]);
-  //   });
-  // }
+    // localAudioTrackStore.subscribe((localAudioTrack: MediaStreamTrack) => {
+    //   this.adapter.replaceLocalTracks([localAudioTrack]);
+    //   this.acceptTracks(this.participantId, [localAudioTrack]);
+    // });
+
+    // // Whenever local video source or settings change, update the adapter
+    // localVideoTrackStore.subscribe((localVideoTrack: MediaStreamTrack) => {
+    //   this.adapter.replaceLocalTracks([localVideoTrack]);
+    //   this.acceptTracks(this.participantId, [localVideoTrack]);
+    // });
+  }
 
   // Reactively waits for remote participants' stream changes and updates
   // our streamStores.
@@ -64,6 +70,7 @@ export class AVConnection {
     // of our internal stream stores.
     this.adapter.on("resources-added", (resources: AVResource[]) => {
       const groups = groupBy(resources, "participantId");
+      console.log('resources-added groups', groups);
 
       for (const [participantId, resources] of Object.entries(groups)) {
         const tracks = resources.map((r) => r.track);
@@ -93,6 +100,7 @@ export class AVConnection {
         if (previousTrack) stream.removeTrack(stream.getVideoTracks()[0]);
         stream.addTrack(track);
       }
+      console.log('accepTracks stream', stream, stream.getTracks());
       return stream;
     });
   }

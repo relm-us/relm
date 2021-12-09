@@ -7,7 +7,7 @@ export type AVParticipant = {
 export type AVResource = {
   id: string;
   participantId: string;
-  kind: "audio" | "video";
+  kind: "audio" | "video" | "data";
   paused: boolean;
   track: MediaStreamTrack;
 };

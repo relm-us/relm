@@ -10,27 +10,25 @@
   export let playerId;
 
   let fullscreen = false;
+  // TODO: add `size` var instead of hardcoding volume to be size
   let volume = 0;
 
+  let localPlayerId = $Relm.identities.me.playerId;
+
   let isLocal;
-  $: {
-    isLocal = $Relm.identities.me.playerId === playerId;
-    console.log("isLocal", playerId, isLocal);
-  }
+  $: isLocal = playerId === localPlayerId;
 
   let identity;
   $: identity = $Relm.identities.identities.get(playerId);
 
   let stream;
-  $: {
-    stream = $Relm.avConnection.getStreamStore(playerId);
-    // console.log("stream", playerId, $stream, $stream.getTracks());
-  }
+  $: stream = $Relm.avConnection.getStreamStore(playerId);
 
   let localStream;
+  $: localStream = $Relm.avConnection.getStreamStore(localPlayerId);
+
   $: {
-    localStream = $Relm.avConnection.getStreamStore($Relm.identities.me.playerId);
-    // console.log("localStream", $Relm.identities.me.playerId, $localStream, $localStream.getTracks());
+    console.log("showVideo", showVideo, "isLocal", isLocal, "stream", $stream);
   }
 
   function exitFullscreen() {
@@ -38,11 +36,11 @@
   }
 
   onMount(() => {
-    if (isLocal) {
-      volume = 1;
-      return;
-    }
     const interval = setInterval(() => {
+      if (isLocal) {
+        volume = 1;
+        return;
+      }
       const falloffStart = 3;
       const falloffEnd = 6;
       const distance = identity.avatar.distance;
