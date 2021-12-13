@@ -22,7 +22,10 @@
   $: identity = $Relm.identities.identities.get(playerId);
 
   let videoStore;
-  $: videoStore = $Relm.avConnection.getTrackStore(playerId, "video");
+  $: {
+    videoStore = $Relm.avConnection.getTrackStore(playerId, "video");
+    console.log("videoStore", $videoStore);
+  }
 
   let audioStore;
   $: audioStore = $Relm.avConnection.getTrackStore(playerId, "audio");
@@ -31,7 +34,7 @@
   $: localVideoStore = $Relm.avConnection.getTrackStore(localPlayerId, "video");
 
   $: {
-    console.log("showVideo", showVideo, "isLocal", isLocal, "video", $videoStore);
+    // console.log("showVideo", showVideo, "isLocal", isLocal, "video", $videoStore);
   }
 
   function exitFullscreen() {

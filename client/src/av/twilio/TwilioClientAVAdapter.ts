@@ -118,35 +118,31 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
 
     for (const publication of publications) {
       if (publication.isSubscribed) {
-        const { kind, track } = getResourceKindTrack(publication.track);
-        console.log('resources added 1', kind, track);
-        this.emit("resources-added", [
-          {
-            id: publication.trackSid,
-            participantId: participant.identity,
-            paused: false,
-            kind,
-            track,
-          },
-        ]);
+        const track = publication.track;
+        if (track)
+          this.emit("resources-added", [
+            {
+              id: publication.trackSid,
+              participantId: participant.identity,
+              paused: false,
+              kind: track.kind,
+              track: track,
+            },
+          ]);
       }
       publication.on("subscribed", (remoteTrack: RemoteTrack) => {
-        const { kind, track } = getResourceKindTrack(remoteTrack);
-        console.log('resources added 2', kind, track);
-        this.emit("resources-added", [
-          {
-            id: publication.trackSid,
-            participantId: participant.identity,
-            paused: false,
-            kind,
-            track,
-          },
-        ]);
+        if (remoteTrack)
+          this.emit("resources-added", [
+            {
+              id: publication.trackSid,
+              participantId: participant.identity,
+              paused: false,
+              kind: remoteTrack.kind,
+              track: remoteTrack,
+            },
+          ]);
       });
     }
-
-    // console.log("tracksPublished resources", resources);
-    // this.emit("resources-added", resources);
   }
 
   trackUnpublished(publication: RemoteTrackPublication) {
