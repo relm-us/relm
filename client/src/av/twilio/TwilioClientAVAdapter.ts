@@ -67,42 +67,41 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
     }
     this.room = await connect(identityOrToken, options);
 
-    this.room.on("participantConnected", (participant: RemoteParticipant) => {
-      const participantId = participant.identity;
+    // Add participants already in room
+    this.room.participants.forEach(this.participantConnected.bind(this));
 
-      this.emit("participant-added", {
-        id: participant.identity,
-        isDominant: false,
-        connectionScore: 1,
-      });
-
-      const publications = Array.from(participant.tracks.values());
-      this.tracksPublished(publications, participant);
-      // // const publicationEntries: [string, TrackPublication][] = Object.entries(
-      // //   participant.tracks
-      // // );
-      // const resources = publicationEntries.map(([trackSid, trackPub]) => ({
-      //   participantId,
-      //   id: trackSid,
-      //   paused: false,
-      //   kind: trackPub.kind,
-      //   track: (trackPub as any).track as MediaStreamTrack,
-      // }));
-      // console.log("participantConnected resources", resources);
-      // this.emit("resources-added", resources);
-
-      participant.on("trackPublished", (publication: RemoteTrackPublication) =>
-        this.tracksPublished([publication], participant)
-      );
-      participant.on("trackUnpublished", this.trackUnpublished.bind(this));
-    });
+    // Add participants yet to connect
+    this.room.on("participantConnected", this.participantConnected.bind(this));
 
     this.room.on(
       "participantDisconnected",
-      (participant: RemoteParticipant) => {
-        this.emit("participant-removed", participant.identity);
-      }
+      this.participantDisconnected.bind(this)
     );
+  }
+
+  participantConnected(participant: RemoteParticipant) {
+    const participantId = participant.identity;
+
+    this.emit("participant-added", {
+      id: participant.identity,
+      isDominant: false,
+      connectionScore: 1,
+    });
+
+    // Add tracks already available for participant
+    const publications = Array.from(participant.tracks.values());
+    this.tracksPublished(publications, participant);
+
+    // Add tracks yet to be published by participant
+    participant.on("trackPublished", (publication: RemoteTrackPublication) =>
+      this.tracksPublished([publication], participant)
+    );
+
+    participant.on("trackUnpublished", this.trackUnpublished.bind(this));
+  }
+
+  participantDisconnected(participant: RemoteParticipant) {
+    this.emit("participant-removed", participant.identity);
   }
 
   tracksPublished(
@@ -117,19 +116,19 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
     );
 
     for (const publication of publications) {
-      if (publication.isSubscribed) {
-        const track = publication.track;
-        if (track)
-          this.emit("resources-added", [
-            {
-              id: publication.trackSid,
-              participantId: participant.identity,
-              paused: false,
-              kind: track.kind,
-              track: track,
-            },
-          ]);
-      }
+      // if (publication.isSubscribed) {
+      const track = publication.track;
+      if (track)
+        this.emit("resources-added", [
+          {
+            id: publication.trackSid,
+            participantId: participant.identity,
+            paused: false,
+            kind: track.kind,
+            track: track,
+          },
+        ]);
+      // }
       publication.on("subscribed", (remoteTrack: RemoteTrack) => {
         if (remoteTrack)
           this.emit("resources-added", [
