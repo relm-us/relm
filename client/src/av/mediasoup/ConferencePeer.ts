@@ -172,7 +172,7 @@ export class ConferencePeer extends Peer {
         await this.closeProducer("micProducer");
       }
 
-      await this.openMicProducer(track);
+      await this.openMicProducer(track as MediaStreamTrack);
     });
   }
 
@@ -236,7 +236,7 @@ export class ConferencePeer extends Peer {
       }
 
       try {
-        await this.openCamProducer(track);
+        await this.openCamProducer(track as MediaStreamTrack);
       } catch (err) {
         logger.error("enableCam() | failed: %o", err);
 

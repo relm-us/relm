@@ -21,14 +21,17 @@
   let identity;
   $: identity = $Relm.identities.identities.get(playerId);
 
-  let stream;
-  $: stream = $Relm.avConnection.getStreamStore(playerId);
+  let videoStore;
+  $: videoStore = $Relm.avConnection.getTrackStore(playerId, "video");
 
-  let localStream;
-  $: localStream = $Relm.avConnection.getStreamStore(localPlayerId);
+  let audioStore;
+  $: audioStore = $Relm.avConnection.getTrackStore(playerId, "audio");
+
+  let localVideoStore;
+  $: localVideoStore = $Relm.avConnection.getTrackStore(localPlayerId, "video");
 
   $: {
-    console.log("showVideo", showVideo, "isLocal", isLocal, "stream", $stream);
+    console.log("showVideo", showVideo, "isLocal", isLocal, "video", $videoStore);
   }
 
   function exitFullscreen() {
@@ -71,16 +74,16 @@
     <oculus class="round" on:click>
       {#if fullscreen}
         <Fullscreen on:close={exitFullscreen}>
-          <Video stream={$stream} mirror={false} class="oculus-video" />
+          <Video track={$videoStore} mirror={false} class="oculus-video" />
           <picture-in-picture>
-            <Video stream={$localStream} mirror={true} class="oculus-video" />
+            <Video track={$localVideoStore} mirror={true} class="oculus-video" />
           </picture-in-picture>
         </Fullscreen>
       {:else}
-        <Video stream={$stream} mirror={isLocal} class="oculus-video" />
+        <Video track={$videoStore} mirror={isLocal} class="oculus-video" />
       {/if}
       {#if showAudio && !isLocal}
-        <Audio stream={$stream} {volume} />
+        <Audio track={$audioStore} {volume} />
       {/if}
     </oculus>
   </container>

@@ -1,3 +1,6 @@
+export type TrackKind = "audio" | "video" | "data";
+export type Track = MediaStreamTrack | SimplifiedTrack;
+
 export type AVParticipant = {
   id: string;
   isDominant: boolean;
@@ -7,9 +10,9 @@ export type AVParticipant = {
 export type AVResource = {
   id: string;
   participantId: string;
-  kind: "audio" | "video" | "data";
+  kind: TrackKind;
   paused: boolean;
-  track: MediaStreamTrack;
+  track: Track;
 };
 
 export type ConnectStatus =
@@ -41,7 +44,15 @@ interface Writable<T> extends Readable<T> {
   update(this: void, updater: Updater<T>): void;
 }
 
-export type TrackStore = Writable<MediaStreamTrack>;
+export interface SimplifiedTrack {
+  kind: TrackKind;
+
+  attach?(element?: HTMLMediaElement | string): HTMLMediaElement;
+  detach?(element?: HTMLMediaElement | string): HTMLMediaElement[];
+}
+
+
+export type TrackStore = Writable<Track>;
 
 export type BandwidthEstimate = {
   desired: number;

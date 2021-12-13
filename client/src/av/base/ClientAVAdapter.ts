@@ -4,8 +4,8 @@ import type {
   AVResource,
   ConnectOptions,
   ConnectStatus,
-  TrackStore,
   BandwidthEstimate,
+  SimplifiedTrack
 } from "./types";
 
 interface AVAdapterEvents {
@@ -48,10 +48,10 @@ export class ClientAVAdapter extends TypedEmitter<AVAdapterEvents> {
   enableShare() { throw new UnimplementedError(); }
   disableShare(pause: boolean = false) { throw new UnimplementedError(); }
 
-  publishLocalTracks(tracks: Array<MediaStreamTrack>) {
+  publishLocalTracks(tracks: Array<MediaStreamTrack | SimplifiedTrack>) {
     throw new UnimplementedError();
   }
-  unpublishLocalTracks(tracks: Array<MediaStreamTrack>) {
+  unpublishLocalTracks(tracks: Array<MediaStreamTrack | SimplifiedTrack>) {
     throw new UnimplementedError();
   }
 }
