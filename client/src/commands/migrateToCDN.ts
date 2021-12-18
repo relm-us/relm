@@ -5,6 +5,7 @@ function removeLocalServerUrlPrefixes(entity) {
   let component;
   let modified = false;
   const prefixesToRemove = [
+    "http://localhost:3000/asset/",
     "https://y-staging.relm.us/asset/",
     "https://y-prod.relm.us/asset/",
   ];
@@ -13,10 +14,20 @@ function removeLocalServerUrlPrefixes(entity) {
 
   component = entity.getByName("Shape");
   if (component) {
-    console.log("Shape", component);
     for (const prefix of prefixesToRemove) {
       if (component.texture.url.startsWith(prefix)) {
         component.texture.url = component.texture.url.replace(prefix, "");
+        component.modified();
+        modified = true;
+      }
+    }
+  }
+
+  component = entity.getByName("Model");
+  if (component) {
+    for (const prefix of prefixesToRemove) {
+      if (component.asset.url.startsWith(prefix)) {
+        component.asset.url = component.asset.url.replace(prefix, "");
         component.modified();
         modified = true;
       }
