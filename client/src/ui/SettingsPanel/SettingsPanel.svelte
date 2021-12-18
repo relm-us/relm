@@ -15,8 +15,10 @@
   import Capsule from "~/ui/lib/Capsule";
   import ColorPicker from "~/ui/lib/ColorPicker";
   import Slider from "~/ui/lib/Slider";
+  import Button from "~/ui/lib/Button";
   import { onMount } from "svelte";
   import debounce from "lodash/debounce";
+  import { migrateToCDN } from "~/commands/migrateToCDN";
 
   let newEntrywayName = "";
   let fogColor;
@@ -83,6 +85,11 @@
     fogDensity = fog.density / 0.05;
     fogColor = "#" + fog.color.getHexString();
   });
+
+  function startMigrationAndReport() {
+    const migrated = migrateToCDN($Relm.world, $Relm.wdoc);
+    alert(`Migrated ${migrated} entities in this world to CDN`);
+  }
 </script>
 
 <LeftPanel on:minimize>
@@ -127,6 +134,16 @@
           width="24px"
           height="24px"
         />
+      </setting>
+    </Pane>
+
+    <Pane title="Migration">
+      <setting>
+        <div class="upload">
+          <Button on:click={startMigrationAndReport}>
+            Migrate Assets to CDN
+          </Button>
+        </div>
       </setting>
     </Pane>
   </container>

@@ -6,11 +6,25 @@ import * as config from "../config";
 
 const pgp = pgPromise();
 
-const conn = config.DATABASE_URL || {
-  host: config.DATABASE_HOST,
-  database: config.DATABASE_NAME,
-  password: config.DATABASE_PASSWORD,
+type ConnectionParams = {
+  host?: string;
+  database: string;
+  password?: string;
 };
+
+let conn: string | ConnectionParams;
+
+if (config.DATABASE_URL) {
+  conn = config.DATABASE_URL;
+} else {
+  conn = {
+    // host: config.DATABASE_HOST,
+    database: config.DATABASE_NAME,
+  };
+  if (config.DATABASE_PASSWORD) conn.password = config.DATABASE_PASSWORD;
+}
+
+console.log("Connecting to Postgresql...", conn);
 
 export const db = pgp(conn);
 
