@@ -2,19 +2,12 @@ import {
   connect,
   Room,
   ConnectOptions,
-  Participant,
-  RemoteAudioTrack,
   RemoteParticipant,
   RemoteTrackPublication,
-  RemoteVideoTrack,
-  TrackPublication,
-  Track,
   RemoteTrack,
   LocalTrack,
 } from "twilio-video";
-import { get, writable, Writable } from "svelte/store";
 
-import { TrackStore } from "../base/types";
 import { ClientAVAdapter } from "../base/ClientAVAdapter";
 
 // https://www.twilio.com/docs/video
@@ -68,18 +61,18 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
     this.room = await connect(identityOrToken, options);
 
     // Add participants already in room
-    this.room.participants.forEach(this.participantConnected.bind(this));
+    this.room.participants.forEach(this._participantConnected.bind(this));
 
     // Add participants yet to connect
-    this.room.on("participantConnected", this.participantConnected.bind(this));
+    this.room.on("participantConnected", this._participantConnected.bind(this));
 
     this.room.on(
       "participantDisconnected",
-      this.participantDisconnected.bind(this)
+      this._participantDisconnected.bind(this)
     );
   }
 
-  participantConnected(participant: RemoteParticipant) {
+  _participantConnected(participant: RemoteParticipant) {
     const participantId = participant.identity;
 
     this.emit("participant-added", {
@@ -90,21 +83,21 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
 
     // Add tracks already available for participant
     const publications = Array.from(participant.tracks.values());
-    this.tracksPublished(publications, participant);
+    this._tracksPublished(publications, participant);
 
     // Add tracks yet to be published by participant
     participant.on("trackPublished", (publication: RemoteTrackPublication) =>
-      this.tracksPublished([publication], participant)
+      this._tracksPublished([publication], participant)
     );
 
-    participant.on("trackUnpublished", this.trackUnpublished.bind(this));
+    participant.on("trackUnpublished", this._trackUnpublished.bind(this));
   }
 
-  participantDisconnected(participant: RemoteParticipant) {
+  _participantDisconnected(participant: RemoteParticipant) {
     this.emit("participant-removed", participant.identity);
   }
 
-  tracksPublished(
+  _tracksPublished(
     publications: RemoteTrackPublication[],
     participant: RemoteParticipant
   ) {
@@ -144,7 +137,7 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
     }
   }
 
-  trackUnpublished(publication: RemoteTrackPublication) {
+  _trackUnpublished(publication: RemoteTrackPublication) {
     this.emit("resources-removed", [publication.trackSid]);
   }
 
@@ -168,6 +161,32 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
       localParticipant.unpublishTrack(track);
     }
   }
+
+  _enableMedia(kind = "audio", enable = true) {
+    // TODO: sync with audo/video desired
+    if (!this.room) return;
+    
+    const publications = this.room.localParticipant[
+      kind == "audio" ? "audioTracks" : "videoTracks"
+    ];
+    publications.forEach(function (publication) {
+      publication.track[enable ? 'enable' : 'disable']();
+    });
+  }
+
+  enableMic() {
+    this._enableMedia('audio', true);
+  }
+  disableMic(pause: boolean = false) {
+    this._enableMedia('audio', false);
+  }
+
+  enableCam() {
+    this._enableMedia('video', true);
+  }
+  disableCam(pause: boolean = false) {
+    this._enableMedia('video', false);
+  }
 }
 
 /**
@@ -183,21 +202,3 @@ const isMobile = (() => {
   }
   return /Mobile/.test(navigator.userAgent);
 })();
-
-function getResourceKindTrack(
-  remoteTrack: RemoteTrack
-): {
-  kind: "audio" | "video";
-  track: MediaStreamTrack;
-} {
-  switch (remoteTrack.kind) {
-    case "audio": {
-      return { kind: "audio", track: remoteTrack.mediaStreamTrack };
-    }
-    case "video": {
-      return { kind: "video", track: remoteTrack.mediaStreamTrack };
-    }
-    default:
-      throw Error(`unexpected kind of track: ${remoteTrack.kind}`);
-  }
-}
