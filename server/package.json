@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@peculiar/webcrypto": "^1.0.27",
+    "aws-sdk": "^2.1046.0",
     "base64-arraybuffer": "^0.2.0",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",

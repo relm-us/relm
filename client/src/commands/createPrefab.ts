@@ -29,12 +29,11 @@ export const createPrefab = {
 
       const prefab = directory.find((item) => item.name === name);
       if (prefab) {
-        const url = assetUrl(src);
         let entities = prefab.prefab($Relm.world, {
           ...props,
           x,
           z,
-          url,
+          url: src,
         });
         if (!(entities instanceof Array)) entities = [entities];
 

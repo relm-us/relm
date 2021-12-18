@@ -1,0 +1,17 @@
+<CORSConfiguration>
+ <CORSRule>
+   <AllowedOrigin>http://localhost:8080</AllowedOrigin>
+   <AllowedMethod>GET</AllowedMethod>
+   <AllowedHeader>*</AllowedHeader>
+ </CORSRule>
+ <CORSRule>
+   <AllowedOrigin>https://relm.us</AllowedOrigin>
+   <AllowedMethod>GET</AllowedMethod>
+   <AllowedHeader>*</AllowedHeader>
+ </CORSRule>
+ <CORSRule>
+   <AllowedOrigin>https://staging.relm.us</AllowedOrigin>
+   <AllowedMethod>GET</AllowedMethod>
+   <AllowedHeader>*</AllowedHeader>
+ </CORSRule>
+</CORSConfiguration>

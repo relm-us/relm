@@ -95,11 +95,15 @@ export class Identity {
   }
 
   toggleShowAudio() {
-    this.set({ showAudio: !this.sharedFields.showAudio });
+    const showAudio = !this.sharedFields.showAudio;
+    this.set({ showAudio });
+    return showAudio;
   }
 
   toggleShowVideo() {
-    this.set({ showVideo: !this.sharedFields.showVideo });
+    const showVideo = !this.sharedFields.showVideo;
+    this.set({ showVideo });
+    return showVideo;
   }
 
   setAvName(name) {

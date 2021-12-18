@@ -2,6 +2,7 @@ import { DEFAULT_RELM_ID, DEFAULT_ENTRYWAY } from "./constants";
 import { canonicalIdentifier } from "~/utils/canonicalIdentifier";
 
 export type Config = {
+  assetUrl: string;
   serverUrl: string;
   serverYjsUrl: string;
   serverUploadUrl: string;
@@ -11,6 +12,7 @@ export type Config = {
 };
 
 export const config: Config = {
+  assetUrl: "https://assets.ourrelm.com",
   ...getServerConfig(window.location),
   ...getSubrelmAndEntryway(window.location),
   mediasoupUrl: "wss://media2.relm.us:4443",

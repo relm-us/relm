@@ -27,6 +27,8 @@ function maybeSelectGroupContainingEntity(
 }
 
 export function mouseup(selection: SelectionManager) {
+  if (!found) return;
+  
   const foundSet: Set<string> = new Set(found);
 
   if (found.length === 0) {

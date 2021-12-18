@@ -15,7 +15,7 @@
   function toggleMute() {
     if (!$mediaDesired.audio) $setupState = "media";
     else {
-      identity.toggleShowAudio();
+      muted = !identity.toggleShowAudio();
     }
   }
 </script>

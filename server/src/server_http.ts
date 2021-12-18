@@ -19,6 +19,7 @@ import {
   ASSETS_DIR,
   MAX_FILE_EXTENSION_LENGTH,
   MAX_FILE_SIZE,
+  SPACES_ASSET_ORIGIN,
 } from "./config";
 
 const capture = require("capture-website");
@@ -173,31 +174,27 @@ app.post(
         case ".webp":
           const pngTempFile = asset.tempFilePath + ".png";
           await sharp(asset.tempFilePath).toFile(asset.tempFilePath + ".png");
-          const pngFile = await conversion.moveAndRenameContentAddressable(
+          const png = await conversion.moveAndRenameContentAddressable(
             pngTempFile
           );
 
           const webpTempFile = asset.tempFilePath + ".webp";
           await sharp(asset.tempFilePath).toFile(asset.tempFilePath + ".webp");
-          const webpFile = await conversion.moveAndRenameContentAddressable(
+          const webp = await conversion.moveAndRenameContentAddressable(
             webpTempFile
           );
 
-          return conversion.fileUploadSuccess(res, {
-            png: pngFile,
-            webp: webpFile,
-          });
+          return conversion.fileUploadSuccess(res, { png, webp });
 
         case ".glb":
         case ".packed-glb":
         case ".gltf":
         case ".packed-gltf":
-          return conversion.fileUploadSuccess(res, {
-            gltf: await conversion.moveAndRenameContentAddressable(
-              asset.tempFilePath,
-              extension
-            ),
-          });
+          const gltf = await conversion.moveAndRenameContentAddressable(
+            asset.tempFilePath,
+            extension
+          );
+          return conversion.fileUploadSuccess(res, { gltf });
 
         default:
           const file = await conversion.moveAndRenameContentAddressable(

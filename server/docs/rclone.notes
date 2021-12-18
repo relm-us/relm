@@ -1,0 +1,9 @@
+From our ssdnodes server:
+
+cd /home/relmstaging/data/assets
+rclone copy -v ./ ourrelm:relm-assets
+
+cd /home/relmprod/data/assets
+rclone copy -v ./ ourrelm:relm-assets
+
+https://docs.digitalocean.com/tutorials/transfer-spaces-rclone/
