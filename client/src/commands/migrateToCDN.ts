@@ -34,6 +34,17 @@ function removeLocalServerUrlPrefixes(entity) {
     }
   }
 
+  component = entity.getByName("Image");
+  if (component) {
+    for (const prefix of prefixesToRemove) {
+      if (component.asset.url.startsWith(prefix)) {
+        component.asset.url = component.asset.url.replace(prefix, "");
+        component.modified();
+        modified = true;
+      }
+    }
+  }
+
   component = entity.getByName("Asset");
   if (component) {
     for (const prefix of prefixesToRemove) {
