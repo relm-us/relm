@@ -34,7 +34,7 @@ const TWILIO_API_SECRET = process.env.TWILIO_API_SECRET;
 const SPACES_KEY = process.env.SPACES_KEY;
 const SPACES_SECRET = process.env.SPACES_SECRET;
 const SPACES_BUCKET = process.env.SPACES_BUCKET;
-const SPACES_ASSET_ORIGIN = process.env.SPACES_ASSET_ORIGIN || "https://assets.ourrelm.com"
+const SPACES_ENDPOINT = process.env.SPACES_ENDPOINT || "sfo3.digitaloceanspaces.com";
 
 const JWTSECRET = process.env.JWTSECRET;
 
@@ -68,7 +68,7 @@ export {
   SPACES_KEY,
   SPACES_SECRET,
   SPACES_BUCKET,
-  SPACES_ASSET_ORIGIN,
+  SPACES_ENDPOINT,
 
   JWTSECRET,
 };

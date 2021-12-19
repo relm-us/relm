@@ -1,40 +1,9 @@
 import fs from "fs";
 import path from "path";
-import util from "util";
 import md5File from "md5-file";
-import AWS from "aws-sdk";
+import { useSpaces, uploadToSpaces } from "./spaces";
 
-import {
-  ASSETS_DIR,
-  CONTENT_TYPE_JSON,
-  SPACES_ASSET_ORIGIN,
-  SPACES_BUCKET,
-} from "./config";
-
-const readFile = (fileName) => util.promisify(fs.readFile)(fileName, "utf8");
-
-const s3 = new AWS.S3({
-  endpoint: new AWS.Endpoint("sfo3.digitaloceanspaces.com"),
-  accessKeyId: process.env.SPACES_KEY,
-  secretAccessKey: process.env.SPACES_SECRET,
-});
-
-async function uploadToSpaces(filepath) {
-  const Key = path.basename(filepath);
-  const Body = await readFile(filepath);
-  var params = {
-    Bucket: SPACES_BUCKET,
-    Key,
-    Body,
-    ACL: "public-read",
-  };
-
-  await s3.putObject(params).promise();
-}
-
-export function assetUrl(basename: string) {
-  return SPACES_ASSET_ORIGIN + "/" + basename;
-}
+import { ASSETS_DIR, CONTENT_TYPE_JSON } from "./config";
 
 export async function getContentAddressableName(
   filepath,
@@ -55,6 +24,33 @@ export async function getContentAddressableName(
   return `${hash}-${fileSize}${extension}`;
 }
 
+export async function moveOrUploadContentAddressable(
+  filepath,
+  extension = null
+) {
+  if (useSpaces()) {
+    console.log("upload branch")
+    return await uploadContentAddressable(filepath, extension);
+  } else {
+    console.log("moveAndRename branch")
+    return await moveAndRenameContentAddressable(filepath, extension);
+  }
+}
+
+export async function uploadContentAddressable(filepath, extension) {
+  const contentAddressableName = await getContentAddressableName(
+    filepath,
+    extension
+  );
+
+  await uploadToSpaces(filepath, contentAddressableName);
+
+  // clean up
+  await fs.promises.unlink(filepath);
+
+  return contentAddressableName;
+}
+
 export async function moveAndRenameContentAddressable(
   filepath,
   extension = null
@@ -67,8 +63,6 @@ export async function moveAndRenameContentAddressable(
   const destination = path.join(ASSETS_DIR, contentAddressableName);
 
   try {
-    const url = await uploadToSpaces(filepath);
-
     // Check if destination already exists. If content-addressable file exists,
     // we need not overwrite it because we are guaranteed its content is the same
     await fs.promises.access(destination);

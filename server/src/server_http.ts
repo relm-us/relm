@@ -19,7 +19,6 @@ import {
   ASSETS_DIR,
   MAX_FILE_EXTENSION_LENGTH,
   MAX_FILE_SIZE,
-  SPACES_ASSET_ORIGIN,
 } from "./config";
 
 const capture = require("capture-website");
@@ -154,6 +153,8 @@ app.use(
 app.post(
   "/asset",
   cors(),
+  // middleware.authenticated(),
+  // middleware.authorized("edit"),
   wrapAsync(async (req, res) => {
     const asset = req.files["files[]"];
     if (asset.size > MAX_FILE_SIZE) {
@@ -174,13 +175,13 @@ app.post(
         case ".webp":
           const pngTempFile = asset.tempFilePath + ".png";
           await sharp(asset.tempFilePath).toFile(asset.tempFilePath + ".png");
-          const png = await conversion.moveAndRenameContentAddressable(
+          const png = await conversion.moveOrUploadContentAddressable(
             pngTempFile
           );
 
           const webpTempFile = asset.tempFilePath + ".webp";
           await sharp(asset.tempFilePath).toFile(asset.tempFilePath + ".webp");
-          const webp = await conversion.moveAndRenameContentAddressable(
+          const webp = await conversion.moveOrUploadContentAddressable(
             webpTempFile
           );
 
@@ -190,20 +191,14 @@ app.post(
         case ".packed-glb":
         case ".gltf":
         case ".packed-gltf":
-          const gltf = await conversion.moveAndRenameContentAddressable(
+          const gltf = await conversion.moveOrUploadContentAddressable(
             asset.tempFilePath,
             extension
           );
           return conversion.fileUploadSuccess(res, { gltf });
 
         default:
-          const file = await conversion.moveAndRenameContentAddressable(
-            asset.tempFilePath,
-            extension
-          );
-          return conversion.fileUploadSuccess(res, {
-            "*": file,
-          });
+          return fail(res, "unsupported filetype");
       }
     } catch (err) {
       return fail(res, err);
