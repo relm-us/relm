@@ -45,6 +45,17 @@ function removeLocalServerUrlPrefixes(entity) {
     }
   }
 
+  component = entity.getByName("Skybox");
+  if (component) {
+    for (const prefix of prefixesToRemove) {
+      if (component.image.url.startsWith(prefix)) {
+        component.image.url = component.image.url.replace(prefix, "");
+        component.modified();
+        modified = true;
+      }
+    }
+  }
+
   component = entity.getByName("Asset");
   if (component) {
     for (const prefix of prefixesToRemove) {
