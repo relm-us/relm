@@ -18,7 +18,7 @@ if (config.DATABASE_URL) {
   conn = config.DATABASE_URL;
 } else {
   conn = {
-    // host: config.DATABASE_HOST,
+    host: config.DATABASE_HOST,
     database: config.DATABASE_NAME,
   };
   if (config.DATABASE_PASSWORD) conn.password = config.DATABASE_PASSWORD;
