@@ -5,34 +5,13 @@ import { useSpaces, uploadToSpaces } from "./spaces";
 
 import { ASSETS_DIR, CONTENT_TYPE_JSON } from "./config";
 
-export async function getContentAddressableName(
-  filepath,
-  fallbackExtension = null
-) {
-  const hash = await md5File(filepath);
-  const fileSize = getFileSizeInBytes(filepath);
-  let extension = path.extname(filepath);
-
-  if (extension === "") {
-    if (fallbackExtension) {
-      extension = fallbackExtension;
-    } else {
-      throw Error(`File has no extension: '${filepath}'`);
-    }
-  }
-
-  return `${hash}-${fileSize}${extension}`;
-}
-
 export async function moveOrUploadContentAddressable(
   filepath,
   extension = null
 ) {
   if (useSpaces()) {
-    console.log("upload branch")
     return await uploadContentAddressable(filepath, extension);
   } else {
-    console.log("moveAndRename branch")
     return await moveAndRenameContentAddressable(filepath, extension);
   }
 }
@@ -67,23 +46,37 @@ export async function moveAndRenameContentAddressable(
     // we need not overwrite it because we are guaranteed its content is the same
     await fs.promises.access(destination);
 
-    console.log(`Skipping 'move file': file already exists (${destination})`);
-
     // clean up
     await fs.promises.unlink(filepath);
 
-    return path.basename(destination);
   } catch (accessError) {
     if (accessError.code === "ENOENT") {
-      console.log(`Moving file to '${destination}'`);
-
       await fs.promises.rename(filepath, destination);
-
-      return path.basename(destination);
     } else {
       throw accessError;
     }
   }
+
+  return contentAddressableName;
+}
+
+export async function getContentAddressableName(
+  filepath,
+  fallbackExtension = null
+) {
+  const hash = await md5File(filepath);
+  const fileSize = getFileSizeInBytes(filepath);
+  let extension = path.extname(filepath);
+
+  if (extension === "") {
+    if (fallbackExtension) {
+      extension = fallbackExtension;
+    } else {
+      throw Error(`File has no extension: '${filepath}'`);
+    }
+  }
+
+  return `${hash}-${fileSize}${extension}`;
 }
 
 export function getFileSizeInBytes(filename) {

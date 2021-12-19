@@ -9,14 +9,13 @@ import {
   SPACES_ENDPOINT,
 } from "./config";
 
-const readFile = (fileName) => util.promisify(fs.readFile)(fileName, "utf8");
+const readFile = (fileName) =>
+  util.promisify(fs.readFile)(fileName, null /* binary */);
 
 let spaces;
 
 // Whether or not we should upload to Digital Ocean Spaces (object storage)
 export function useSpaces() {
-  const use = !!SPACES_KEY;
-  console.log("useSpaces", SPACES_KEY, use);
   return !!SPACES_KEY;
 }
 
