@@ -10,12 +10,10 @@ function removeLocalServerUrlPrefixes(entity) {
     "https://y-prod.relm.us/asset/",
   ];
 
-  console.log("entity", entity);
-
   component = entity.getByName("Shape");
   if (component) {
     for (const prefix of prefixesToRemove) {
-      if (component.texture.url.startsWith(prefix)) {
+      if (component.texture?.url?.startsWith(prefix)) {
         component.texture.url = component.texture.url.replace(prefix, "");
         component.modified();
         modified = true;
@@ -26,7 +24,7 @@ function removeLocalServerUrlPrefixes(entity) {
   component = entity.getByName("Model");
   if (component) {
     for (const prefix of prefixesToRemove) {
-      if (component.asset.url.startsWith(prefix)) {
+      if (component.asset?.url?.startsWith(prefix)) {
         component.asset.url = component.asset.url.replace(prefix, "");
         component.modified();
         modified = true;
@@ -37,7 +35,7 @@ function removeLocalServerUrlPrefixes(entity) {
   component = entity.getByName("Image");
   if (component) {
     for (const prefix of prefixesToRemove) {
-      if (component.asset.url.startsWith(prefix)) {
+      if (component.asset?.url?.startsWith(prefix)) {
         component.asset.url = component.asset.url.replace(prefix, "");
         component.modified();
         modified = true;
@@ -48,7 +46,7 @@ function removeLocalServerUrlPrefixes(entity) {
   component = entity.getByName("Skybox");
   if (component) {
     for (const prefix of prefixesToRemove) {
-      if (component.image.url.startsWith(prefix)) {
+      if (component.image?.url?.startsWith(prefix)) {
         component.image.url = component.image.url.replace(prefix, "");
         component.modified();
         modified = true;
@@ -59,17 +57,21 @@ function removeLocalServerUrlPrefixes(entity) {
   component = entity.getByName("Asset");
   if (component) {
     for (const prefix of prefixesToRemove) {
-      if (component.model.url.startsWith(prefix)) {
+      if (component.model?.url?.startsWith(prefix)) {
         component.model.url = component.model.url.replace(prefix, "");
         component.modified();
         modified = true;
       }
-      if (component.texture.url.startsWith(prefix)) {
+      if (component.texture?.url?.startsWith(prefix)) {
         component.texture.url = component.texture.url.replace(prefix, "");
         component.modified();
         modified = true;
       }
     }
+  }
+
+  if (modified) {
+    console.log("Migrated:", entity);
   }
 
   return modified;
