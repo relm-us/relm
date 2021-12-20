@@ -1,7 +1,7 @@
 <script>
-  import { onMount } from "svelte";
   import { Audio, Video } from "video-mirror";
   import { Relm } from "~/stores/Relm";
+  import { audioMode } from "~/stores/audioMode";
   import Fullscreen from "./Fullscreen.svelte";
   import shineImg from "./shine.svg";
 
@@ -11,7 +11,7 @@
 
   let fullscreen = false;
   // TODO: add `size` var instead of hardcoding volume to be size
-  let volume = 0;
+  let volume = 1;
 
   let localPlayerId = $Relm.identities.me.playerId;
 
@@ -22,10 +22,7 @@
   $: identity = $Relm.identities.identities.get(playerId);
 
   let videoStore;
-  $: {
-    videoStore = $Relm.avConnection.getTrackStore(playerId, "video");
-    console.log("videoStore", $videoStore);
-  }
+  $: videoStore = $Relm.avConnection.getTrackStore(playerId, "video");
 
   let audioStore;
   $: audioStore = $Relm.avConnection.getTrackStore(playerId, "audio");
@@ -33,20 +30,14 @@
   let localVideoStore;
   $: localVideoStore = $Relm.avConnection.getTrackStore(localPlayerId, "video");
 
-  $: {
-    // console.log("showVideo", showVideo, "isLocal", isLocal, "video", $videoStore);
-  }
-
   function exitFullscreen() {
     fullscreen = false;
   }
 
-  onMount(() => {
-    const interval = setInterval(() => {
-      if (isLocal) {
-        volume = 1;
-        return;
-      }
+  let interval;
+  $: if ($audioMode === "proximity" && !isLocal) {
+    if (interval) clearInterval(interval);
+    interval = setInterval(() => {
       const falloffStart = 3;
       const falloffEnd = 6;
       const distance = identity.avatar.distance;
@@ -59,10 +50,10 @@
         volume = 0;
       }
     }, 100);
-    return () => {
-      clearInterval(interval);
-    };
-  });
+  } else if (interval) {
+    clearInterval(interval);
+    volume = 1;
+  }
 
   // ignore warning about missing props
   $$props;
@@ -79,7 +70,11 @@
         <Fullscreen on:close={exitFullscreen}>
           <Video track={$videoStore} mirror={false} class="oculus-video" />
           <picture-in-picture>
-            <Video track={$localVideoStore} mirror={true} class="oculus-video" />
+            <Video
+              track={$localVideoStore}
+              mirror={true}
+              class="oculus-video"
+            />
           </picture-in-picture>
         </Fullscreen>
       {:else}
