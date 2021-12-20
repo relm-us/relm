@@ -23,7 +23,6 @@
     height: 24px;
     border: 2px solid black;
     border-radius: 4px;
-    /* margin: 2px; */
   }
 
 </style>

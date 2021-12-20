@@ -18,6 +18,7 @@ export class Html2d extends Component {
         input: "Select",
         options: [
           { label: "Label", value: "LABEL" },
+          { label: "Info", value: "INFO" },
           { label: "Speech", value: "SPEECH" },
           { label: "Emoji", value: "EMOJI" },
         ],
@@ -97,6 +98,22 @@ export class Html2d extends Component {
       },
     },
 
+    title: {
+      type: StringType,
+      default: null,
+      editor: {
+        label: "Title",
+      },
+    },
+
+    link: {
+      type: StringType,
+      default: null,
+      editor: {
+        label: "Title Link (URL)",
+      },
+    },
+
     content: {
       type: StringType,
       default: null,
@@ -118,6 +135,14 @@ export class Html2d extends Component {
       default: false,
       editor: {
         label: "Editable",
+      },
+    },
+
+    visible: {
+      type: BooleanType,
+      default: false,
+      editor: {
+        label: "Visible",
       },
     },
 

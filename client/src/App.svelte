@@ -173,7 +173,6 @@
     display: flex;
     justify-content: left;
     margin-bottom: 4px;
-    --margin: 2px;
   }
 
   overlay {
@@ -230,7 +229,6 @@
     flex-direction: column;
     margin-top: 8px;
     margin-right: 8px;
-    --margin: 2px;
   }
   overlay-content {
     display: flex;

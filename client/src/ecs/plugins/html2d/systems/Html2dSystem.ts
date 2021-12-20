@@ -68,7 +68,7 @@ export class Html2dSystem extends System {
     // When hovering over the container and we're zoomed out, we still want
     // the HTML label (for example) to have plenty of width so it can be read.
     container.addEventListener("mouseenter", () => {
-      if (isOverflowing(container)) container.style.minWidth = "300px";
+      // if (isOverflowing(container)) container.style.minWidth = "300px";
     });
     container.addEventListener("mouseleave", () => {
       container.style.minWidth = "";

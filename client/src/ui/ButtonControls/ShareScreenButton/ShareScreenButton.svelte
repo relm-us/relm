@@ -1,12 +1,10 @@
 <script lang="ts">
   import CircleButton from "~/ui/lib/CircleButton";
   import MdScreenShare from "svelte-icons/md/MdScreenShare.svelte";
-  import { Relm } from "~/stores/Relm";
 
   const onClick = () => {
-    $Relm.roomClient.enableShare();
+    alert("Sorry, share screen isn't ready yet!");
   };
-
 </script>
 
 <CircleButton on:click={onClick}>
@@ -23,5 +21,4 @@
     height: 32px;
     margin: 0 auto;
   }
-
 </style>

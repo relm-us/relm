@@ -1,15 +1,18 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
 
-  export let enabled = true;
-  export let size = 48;
+  export let enabled: boolean = true;
+  export let size: number = 48;
+  export let margin: number = 2;
+  export let padding: number = null;
+
+  $: if (!padding) padding = size / 6;
 
   let dispatch = createEventDispatcher();
-
 </script>
 
 <button
-  style="--size: {size}px"
+  style="width: {size}px; height: {size}px; margin: {margin}px; padding: {padding}px"
   class:disabled={!enabled}
   on:mousedown|stopPropagation={() => {
     dispatch("click");
@@ -24,11 +27,6 @@
     flex-direction: var(--direction, column);
     justify-content: center;
     align-items: center;
-
-    margin: var(--margin, 16px);
-    padding: var(--padding, 8px);
-    width: var(--size, 48px);
-    height: var(--size, 48px);
 
     cursor: pointer;
 
@@ -55,5 +53,4 @@
   button:active {
     transform: translateY(1px);
   }
-
 </style>

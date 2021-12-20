@@ -45,6 +45,11 @@ body {
   touch-action: none;
 }
 
+input {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
 body.pointer-events-none .interactive,
 body.pointer-events-none .interactive * {
   pointer-events: none !important;
