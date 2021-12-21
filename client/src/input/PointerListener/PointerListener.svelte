@@ -13,6 +13,7 @@
   } from "~/ecs/plugins/player-control";
   import { Object3D } from "~/ecs/plugins/core";
   import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
+  import { Clickable, Clicked } from "~/ecs/plugins/clickable";
 
   import { Relm } from "~/stores/Relm";
   import { mode } from "~/stores/mode";
@@ -28,9 +29,6 @@
 
   const pointerPosition = new Vector2();
   const pointerStartPosition = new Vector2();
-  const dragPosition = new Vector3();
-  const dragStartPosition = new Vector3();
-  const dragStartCamera = new PerspectiveCamera();
   const cameraPanOffset = new Vector3();
   const dragPlane = new DragPlane(world);
   const selectionBox = new SelectionBox(world);
@@ -38,6 +36,7 @@
   type PointerState = "initial" | "click" | "drag" | "drag-select";
 
   let pointerState: PointerState = "initial";
+  let pointerDownFound: string[] = [];
   let dragOffset: Vector3 = new Vector3();
   let pointerPoint: Vector3;
   let shiftKeyOnClick = false;
@@ -144,25 +143,25 @@
     pointerPosition.set(x, y);
     pointerStartPosition.set(x, y);
 
-    const found = finder.entityIdsAt(pointerPosition);
+    pointerDownFound = finder.entityIdsAt(pointerPosition);
 
     if ($mode === "build") {
       // At this point, at least a 'click' has started. TBD if it's a drag.
       setNextPointerState("click");
       shiftKeyOnClick = shiftKey;
 
-      selectionLogic.mousedown(found, shiftKey);
-      pointerPoint = pointerPointInSelection($Relm.selection, found);
+      selectionLogic.mousedown(pointerDownFound, shiftKey);
+      pointerPoint = pointerPointInSelection($Relm.selection, pointerDownFound);
       if (pointerPoint) dragPlane.setOrigin(pointerPoint);
     } else if ($mode === "play") {
-      if (found.includes($Relm.avatar.entity.id)) {
+      if (pointerDownFound.includes($Relm.avatar.entity.id as string)) {
         addTouchController($Relm.avatar.entity);
       } else {
         // At this point, at least a 'click' has started. TBD if it's a drag.
         setNextPointerState("click");
         dragPlane.setOrientation("xz");
-        if (found.length > 0) {
-          const position = clickedPosition(found[0], world);
+        if (pointerDownFound.length > 0) {
+          const position = clickedPosition(pointerDownFound[0], world);
           dragPlane.setOrigin(position);
         } else {
           const planes: WorldPlanes = $Relm.world.perspective.getAvatarPlanes();
@@ -196,7 +195,17 @@
         $Relm.selection.syncEntities();
       }
     } else if ($mode === "play") {
-      removeTouchController($Relm.avatar.entity);
+      if (pointerState === "click" && pointerDownFound.length > 0) {
+        const entities = $Relm.world.entities;
+        pointerDownFound.forEach((entityId) => {
+          const entity = entities.getById(entityId);
+          if (entity.has(Clickable)) {
+            entity.add(Clicked);
+          }
+        });
+      } else {
+        removeTouchController($Relm.avatar.entity);
+      }
     }
 
     // dragPlane.hide();
