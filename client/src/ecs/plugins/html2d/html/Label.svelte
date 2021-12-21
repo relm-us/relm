@@ -7,8 +7,6 @@
   import { mode } from "~/stores/mode";
   import { DRAG_DISTANCE_THRESHOLD } from "~/config/constants";
 
-  import IoIosCreate from "svelte-icons/io/IoIosCreate.svelte";
-
   export let content;
   export let color;
   export let shadowColor;
@@ -127,7 +125,7 @@
 </script>
 
 {#if showNoteIcon}
-  <div on:mousedown={onMousedown}><IoIosCreate /></div>
+  <div on:mousedown={onMousedown}>✎</div>
 {:else}
   <div
     contenteditable={editing}
