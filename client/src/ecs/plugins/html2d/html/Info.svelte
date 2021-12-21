@@ -144,6 +144,7 @@
     transform: translate(-50%, 0);
 
     min-width: 100px;
+    max-width: 280px;
 
     background-color: var(--bg-color, rgba(0, 0, 0, 0.4));
 
@@ -178,6 +179,7 @@
     min-height: 48px;
     font-size: 10pt;
     padding: 4px;
+    word-break: break-word;
   }
   .row-content {
     align-self: center;
@@ -186,5 +188,7 @@
     padding-left: 2px;
     padding-right: 4px;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 </style>

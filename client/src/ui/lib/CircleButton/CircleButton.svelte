@@ -25,6 +25,7 @@
   button {
     display: flex;
     flex-direction: var(--direction, column);
+    flex-shrink: 0;
     justify-content: center;
     align-items: center;
 
