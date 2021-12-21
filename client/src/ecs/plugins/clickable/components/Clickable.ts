@@ -8,7 +8,7 @@ export class Clickable extends Component {
   static props = {
     action: {
       type: StringType,
-      default: "LINK",
+      default: "TOGGLE",
       editor: {
         label: "Action",
         input: "Select",
