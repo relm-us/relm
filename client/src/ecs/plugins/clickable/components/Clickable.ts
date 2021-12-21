@@ -29,7 +29,7 @@ export class Clickable extends Component {
 
     toggle: {
       type: JSONType,
-      default: "{}",
+      default: {},
       editor: {
         label: "Toggle Script",
         requires: [{ prop: "action", value: "TOGGLE" }],
