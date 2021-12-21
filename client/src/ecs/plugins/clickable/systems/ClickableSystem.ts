@@ -1,5 +1,10 @@
-import { System, Groups, Entity, Not, Modified } from "~/ecs/base";
-import { Object3D, Presentation } from "~/ecs/plugins/core";
+import { get } from "svelte/store";
+
+import { System, Groups, Entity } from "~/ecs/base";
+import { Presentation } from "~/ecs/plugins/core";
+
+import { Relm } from "~/stores/Relm";
+
 import { Clickable, Clicked } from "../components";
 
 export class ClickableSystem extends System {
@@ -53,6 +58,11 @@ export class ClickableSystem extends System {
             if (component && this.propertyNames.has(propertyName)) {
               component[propertyName] = !component[propertyName];
               component.modified();
+
+              // On next tick, update yjs so all can see state change
+              setTimeout(() => {
+                get(Relm).wdoc.syncFrom(entity);
+              }, 0);
             }
           }
         });
