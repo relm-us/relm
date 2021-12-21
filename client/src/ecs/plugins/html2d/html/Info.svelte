@@ -14,7 +14,7 @@
   export let title;
   export let link;
   export let content;
-  export let editable;
+  // export let editable;
   export let visible;
 
   // The entity that this Label is attached to
@@ -91,6 +91,7 @@
         </r-row>
       {:else}
         <r-row class="margin-bottom">
+          <!-- svelte-ignore a11y-positive-tabindex -->
           <input
             bind:this={titleEl}
             on:keydown={onKeydown}
@@ -103,6 +104,7 @@
           </CircleButton>
         </r-row>
         <r-row class="margin-bottom">
+          <!-- svelte-ignore a11y-positive-tabindex -->
           <input
             bind:this={linkEl}
             on:keydown={onKeydown}
@@ -114,6 +116,7 @@
             <IoIosLink />
           </CircleButton>
         </r-row>
+        <!-- svelte-ignore a11y-positive-tabindex -->
         <r-body
           bind:this={contentEl}
           on:keydown={onKeydown}
