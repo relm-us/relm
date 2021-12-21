@@ -57,7 +57,7 @@
 
   attached {
     position: absolute;
-    left: -80px;
-    bottom: -10px;
+    left: -63px;
+    bottom: 4px;
   }
 </style>
