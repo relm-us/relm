@@ -1,15 +1,14 @@
 <script>
-  import { Vector2, Vector3 } from "three";
-  import { cleanHtml } from "~/utils/cleanHtml";
-
-  import { Html2d } from "../components";
-  import { Relm } from "~/stores/Relm";
-  import CircleButton from "~/ui/lib/CircleButton";
-  // import { mode } from "~/stores/mode";
-  // import { DRAG_DISTANCE_THRESHOLD } from "~/config/constants";
-
+  import { onMount } from "svelte";
   import IoIosLink from "svelte-icons/io/IoIosLink.svelte";
   import IoIosArrowDown from "svelte-icons/io/IoIosArrowDown.svelte";
+
+  import { cleanHtml } from "~/utils/cleanHtml";
+
+  import { Relm } from "~/stores/Relm";
+  import CircleButton from "~/ui/lib/CircleButton";
+
+  import { Html2d } from "../components";
 
   export let title;
   export let link;
@@ -29,11 +28,11 @@
     editing = !editing;
 
     if (!editing) {
-      doneEditing();
+      saveText();
     }
   }
 
-  function doneEditing() {
+  function saveText() {
     const component = entity.get(Html2d);
 
     title = component.title = titleEl.value;
@@ -42,8 +41,16 @@
 
     // Broadcast changes
     $Relm.wdoc.syncFrom(entity);
+  }
 
-    editing = false;
+  function isModified() {
+    const component = entity.get(Html2d);
+
+    return (
+      component.title !== titleEl.value ||
+      component.link !== linkEl.value ||
+      component.content !== contentEl.innerHTML
+    );
   }
 
   function imageContent(content) {
@@ -64,9 +71,19 @@
   function onKeydown(event) {
     if (event.key === "Escape") {
       event.preventDefault();
-      doneEditing();
+      saveText();
+      editing = false;
     }
   }
+
+  onMount(() => {
+    const interval = setInterval(() => {
+      if (editing && isModified()) {
+        saveText();
+      }
+    }, 1500);
+    return () => clearInterval(interval);
+  });
 
   // ignore warning about missing props
   $$props;
@@ -155,6 +172,7 @@
           <r-row style="margin-top: 8px">
             <r-body bind:this={contentEl}>
               {#if imageContent(content)}
+                <!-- svelte-ignore a11y-missing-attribute -->
                 <img src={imageContent(content)} width="250" />
               {:else}
                 {@html cleanHtml(content)}
