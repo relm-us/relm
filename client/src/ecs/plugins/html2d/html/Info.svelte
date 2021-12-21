@@ -14,7 +14,7 @@
   export let title;
   export let link;
   export let content;
-  // export let editable;
+  export let editable;
   export let visible;
 
   // The entity that this Label is attached to
@@ -50,7 +50,7 @@
     window.open(link, "_blank");
   }
 
-  function hasLink(link) {
+  function notEmpty(link) {
     return link && link.length > 0;
   }
 
@@ -66,68 +66,94 @@
 </script>
 
 {#if visible}
-  <r-container>
-    <r-info>
-      {#if !editing}
-        <r-row>
-          {#if title && hasLink(link)}
+  {#if editable}
+    <r-container>
+      <r-info>
+        {#if !editing}
+          <r-row>
+            {#if notEmpty(title) && notEmpty(link)}
+              <a class="row-content" href={link} target="_blank">{title}</a>
+            {:else if notEmpty(title)}
+              <div class="row-content interactive">
+                {title}
+              </div>
+            {:else}
+              <div
+                class="row-content"
+                style="text-align: center; cursor: pointer"
+                on:click={toggleEditing}
+              >
+                Add Info
+              </div>
+            {/if}
+            <CircleButton size={24} on:click={toggleEditing}>
+              <IoIosArrowDown />
+            </CircleButton>
+          </r-row>
+        {:else}
+          <r-row class="margin-bottom">
+            <!-- svelte-ignore a11y-positive-tabindex -->
+            <input
+              bind:this={titleEl}
+              on:keydown={onKeydown}
+              tabIndex="1"
+              type="text"
+              value={title ? title : ""}
+            />
+            <CircleButton size={24} on:click={toggleEditing}>
+              <IoIosArrowDown />
+            </CircleButton>
+          </r-row>
+          <r-row class="margin-bottom">
+            <!-- svelte-ignore a11y-positive-tabindex -->
+            <input
+              bind:this={linkEl}
+              on:keydown={onKeydown}
+              tabIndex="2"
+              type="text"
+              value={link ? link : ""}
+            />
+            <CircleButton size={24} on:click={openLink}>
+              <IoIosLink />
+            </CircleButton>
+          </r-row>
+          <!-- svelte-ignore a11y-positive-tabindex -->
+          <r-body
+            bind:this={contentEl}
+            on:keydown={onKeydown}
+            tabIndex="3"
+            contenteditable={true}
+          >
+            {@html cleanHtml(content)}
+          </r-body>
+        {/if}
+      </r-info>
+    </r-container>
+  {:else if notEmpty(title) || notEmpty(content)}
+    <r-container>
+      <r-info>
+        {#if notEmpty(title) && notEmpty(link)}
+          <r-row>
             <a class="row-content" href={link} target="_blank">{title}</a>
-          {:else if title}
+          </r-row>
+        {:else if notEmpty(title)}
+          <r-row>
             <div class="row-content interactive">
               {title}
             </div>
-          {:else}
-            <div
-              class="row-content"
-              style="text-align: center; cursor: pointer"
-              on:click={toggleEditing}
-            >
-              Add Info
-            </div>
-          {/if}
-          <CircleButton size={24} on:click={toggleEditing}>
-            <IoIosArrowDown />
-          </CircleButton>
-        </r-row>
-      {:else}
-        <r-row class="margin-bottom">
-          <!-- svelte-ignore a11y-positive-tabindex -->
-          <input
-            bind:this={titleEl}
-            on:keydown={onKeydown}
-            tabIndex="1"
-            type="text"
-            value={title ? title : ""}
-          />
-          <CircleButton size={24} on:click={toggleEditing}>
-            <IoIosArrowDown />
-          </CircleButton>
-        </r-row>
-        <r-row class="margin-bottom">
-          <!-- svelte-ignore a11y-positive-tabindex -->
-          <input
-            bind:this={linkEl}
-            on:keydown={onKeydown}
-            tabIndex="2"
-            type="text"
-            value={link ? link : ""}
-          />
-          <CircleButton size={24} on:click={openLink}>
-            <IoIosLink />
-          </CircleButton>
-        </r-row>
-        <!-- svelte-ignore a11y-positive-tabindex -->
-        <r-body
-          bind:this={contentEl}
-          on:keydown={onKeydown}
-          tabIndex="3"
-          contenteditable={true}
-        >
-          {@html cleanHtml(content)}
-        </r-body>
-      {/if}
-    </r-info>
-  </r-container>
+          </r-row>
+        {/if}
+
+        {#if notEmpty(content)}
+          <r-row style="margin-top: 8px">
+            <r-body bind:this={contentEl}>
+              {@html cleanHtml(content)}
+            </r-body>
+          </r-row>
+        {/if}
+      </r-info>
+    </r-container>
+  {/if}
 {/if}
 
 <!-- <svelte:window on:mouseup={onMouseup} /> -->
@@ -169,13 +195,14 @@
   }
   r-body,
   r-row input {
-    background-color: var(--fg-color, #dddddd);
+    background-color: var(--fg-color, rgba(221, 221, 221, 0.9));
     color: #222;
     border: 0;
     border-radius: 3px;
     padding-left: 4px;
   }
   r-body {
+    flex-grow: 1;
     min-height: 48px;
     font-size: 10pt;
     padding: 4px;
@@ -184,7 +211,7 @@
   .row-content {
     align-self: center;
     text-align: center;
-    color: var(--fg-color, #dddddd);
+    color: var(--fg-color, rgba(221, 221, 221, 0.9));
     flex-grow: 1;
     padding-left: 2px;
     padding-right: 4px;
