@@ -1,7 +1,13 @@
+import {
+  Mesh,
+  MeshStandardMaterial,
+  Geometry,
+  SphereGeometry,
+  Color,
+} from "three";
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
 import { Presentation, Object3D } from "~/ecs/plugins/core";
 import { Diamond, DiamondRef } from "../components";
-import { Mesh, MeshStandardMaterial, Geometry, SphereGeometry } from "three";
 import { GlowShader } from "../GlowShader";
 
 const PI_THIRDS = Math.PI / 3.0;
@@ -58,7 +64,7 @@ export class DiamondSystem extends System {
     const spec = entity.get(Diamond);
     const object3d = entity.get(Object3D).value;
 
-    const diamond = this.createKernel();
+    const diamond = this.createKernel(new Color(spec.color));
     if (spec.offset) diamond.position.copy(spec.offset);
     object3d.add(diamond);
 
@@ -79,9 +85,9 @@ export class DiamondSystem extends System {
   }
 
   // The small orange "kernel" at the interior of the diamond
-  createKernel() {
+  createKernel(color) {
     const material = new MeshStandardMaterial({
-      color: 0xff6600,
+      color,
       transparent: true,
     });
 
