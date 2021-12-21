@@ -46,6 +46,13 @@
     editing = false;
   }
 
+  function imageContent(content) {
+    const match = content.match(/^\s*image:\s*(http.*)$/);
+    if (match) {
+      return match[1];
+    }
+  }
+
   function openLink() {
     window.open(link, "_blank");
   }
@@ -147,7 +154,11 @@
         {#if notEmpty(content)}
           <r-row style="margin-top: 8px">
             <r-body bind:this={contentEl}>
-              {@html cleanHtml(content)}
+              {#if imageContent(content)}
+                <img src={imageContent(content)} width="250" />
+              {:else}
+                {@html cleanHtml(content)}
+              {/if}
             </r-body>
           </r-row>
         {/if}
