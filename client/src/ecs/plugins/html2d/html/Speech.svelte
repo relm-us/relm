@@ -13,8 +13,8 @@
   export let content;
   export let hanchor;
   export let onClose;
+  export let visible;
 
-  let visible = true;
   let controlsVisible = false;
 
   function showControls() {

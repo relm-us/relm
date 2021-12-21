@@ -140,7 +140,7 @@ export class Html2d extends Component {
 
     visible: {
       type: BooleanType,
-      default: false,
+      default: true,
       editor: {
         label: "Visible",
       },
