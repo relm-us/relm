@@ -183,6 +183,7 @@
   }
   .row-content {
     align-self: center;
+    text-align: center;
     color: var(--fg-color, #dddddd);
     flex-grow: 1;
     padding-left: 2px;
