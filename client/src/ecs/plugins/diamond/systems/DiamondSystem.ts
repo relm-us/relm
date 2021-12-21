@@ -1,12 +1,15 @@
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
 import { Presentation, Object3D } from "~/ecs/plugins/core";
 import { Diamond, DiamondRef } from "../components";
-import { Mesh, MeshStandardMaterial, SphereGeometry } from "three";
+import { Mesh, MeshStandardMaterial, Geometry, SphereGeometry } from "three";
 import { GlowShader } from "../GlowShader";
 
 const PI_THIRDS = Math.PI / 3.0;
 
 export class DiamondSystem extends System {
+  diamondGeometry: Geometry;
+  loaded: boolean = false;
+
   order = Groups.Simulation + 1;
 
   presentation: Presentation;
@@ -20,10 +23,18 @@ export class DiamondSystem extends System {
 
   init({ presentation }) {
     this.presentation = presentation;
+    this.presentation.loadGltf("/diamond.glb").then((mesh: any) => {
+      this.diamondGeometry = mesh.scene.getObjectByName("Diamond").geometry;
+      this.loaded = true;
+    });
   }
 
   update(delta) {
+    if (!this.loaded) return;
+
+    // Rotate diamonds in step with actual time
     const d = 1 / (1000 / delta);
+
     this.queries.new.forEach((entity) => {
       this.build(entity);
     });
@@ -34,11 +45,9 @@ export class DiamondSystem extends System {
     this.queries.active.forEach((entity) => {
       const spec = entity.get(Diamond);
       const ref = entity.get(DiamondRef);
-      if (ref.loaded) {
-        ref.time += spec.speed * Math.PI * d;
-        this.setKernelScale(ref.diamond.scale, ref.time);
-        this.setDiamondRotation(ref.glow.rotation, ref.time);
-      }
+      ref.time += spec.speed * Math.PI * d;
+      this.setKernelScale(ref.diamond.scale, ref.time);
+      this.setDiamondRotation(ref.glow.rotation, ref.time);
     });
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
@@ -46,46 +55,37 @@ export class DiamondSystem extends System {
   }
 
   async build(entity: Entity) {
+    const spec = entity.get(Diamond);
     const object3d = entity.get(Object3D).value;
 
-    if (!entity.has(DiamondRef)) {
-      entity.add(DiamondRef);
-    }
+    const diamond = this.createKernel();
+    if (spec.offset) diamond.position.copy(spec.offset);
+    object3d.add(diamond);
 
-    const diamondMesh = await this.presentation.loadGltf("/diamond.glb");
-    const ref = entity.get(DiamondRef);
-    if (ref) {
-      ref.diamond = this.createKernel(diamondMesh);
-      object3d.add(ref.diamond);
+    const glow = this.createDiamond();
+    if (spec.offset) glow.position.copy(spec.offset);
+    object3d.add(glow);
 
-      ref.glow = this.createDiamond();
-      object3d.add(ref.glow);
-
-      ref.loaded = true;
-    }
+    entity.add(DiamondRef, { diamond, glow });
   }
 
   remove(entity: Entity) {
     const ref = entity.get(DiamondRef);
 
-    const object3d = entity.get(Object3D);
-    if (object3d) {
-      if (ref.diamond) object3d.value.remove(ref.diamond);
-      if (ref.glow) object3d.value.remove(ref.glow);
-    }
+    if (ref.diamond) ref.diamond.removeFromParent();
+    if (ref.glow) ref.glow.removeFromParent();
 
     entity.remove(DiamondRef);
   }
 
   // The small orange "kernel" at the interior of the diamond
-  createKernel(diamondMesh) {
+  createKernel() {
     const material = new MeshStandardMaterial({
       color: 0xff6600,
       transparent: true,
     });
-    const geometry = diamondMesh.scene.getObjectByName("Diamond").geometry;
 
-    const diamond = new Mesh(geometry, material);
+    const diamond = new Mesh(this.diamondGeometry, material);
     this.setKernelScale(diamond.scale, 0);
     diamond.rotation.z = Math.PI / 2;
     diamond.rotation.x = Math.PI / 8;
