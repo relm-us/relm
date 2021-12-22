@@ -48,11 +48,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{serverUrl}}/authenticate?t=setup",
+							"raw": "{{serverUrl}}/admin/authenticate?t=setup",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
+								"admin",
 								"authenticate"
 							],
 							"query": [
