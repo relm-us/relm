@@ -13,7 +13,7 @@ import { Invitation, Permission, Relm, Doc } from "../db";
 
 const { wrapAsync, uuidv4 } = util;
 
-export const relmRouter = express.Router();
+export const relm = express.Router();
 
 function JWT_is_valid(jwt, secretkey) {
   const jwtHeader = jwt.split(".")[0];
@@ -37,7 +37,7 @@ function JWT_is_valid(jwt, secretkey) {
 }
 
 // Create a new relm
-relmRouter.post(
+relm.post(
   "/create",
   cors(),
   middleware.authenticated(),
@@ -67,7 +67,7 @@ relmRouter.post(
   })
 );
 
-relmRouter.delete(
+relm.delete(
   "/delete",
   cors(),
   middleware.relmExists(),
@@ -84,7 +84,7 @@ relmRouter.delete(
 );
 
 // Get an existing relm
-relmRouter.get(
+relm.get(
   "/meta",
   cors(),
   middleware.relmExists(),
@@ -103,7 +103,7 @@ relmRouter.get(
 );
 
 // Get an existing relm
-relmRouter.get(
+relm.get(
   "/data",
   cors(),
   middleware.relmExists(),
@@ -123,7 +123,7 @@ relmRouter.get(
 );
 
 // Get a Twilio access token within a relm
-relmRouter.get(
+relm.get(
   "/twilio",
   cors(),
   middleware.relmExists(),
@@ -141,7 +141,7 @@ relmRouter.get(
   })
 );
 
-relmRouter.post(
+relm.post(
   "/truncate",
   cors(),
   middleware.relmExists(),
@@ -201,7 +201,7 @@ function truncateYDoc(ydoc, newDocName) {
 }
 
 // Update an existing relm
-relmRouter.put(
+relm.put(
   "/meta",
   cors(),
   middleware.relmExists(),
@@ -224,7 +224,7 @@ relmRouter.put(
 );
 
 // Check permission for player in an existing relm
-relmRouter.get(
+relm.get(
   "/can/:permission",
   cors(),
   middleware.relmExists(),
@@ -273,7 +273,7 @@ relmRouter.get(
 );
 
 // Create an invitation to a relm
-relmRouter.post(
+relm.post(
   "/invitation",
   cors(),
   middleware.relmExists(),

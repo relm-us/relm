@@ -9,9 +9,7 @@ import crypto from "crypto";
 
 import * as conversion from "./conversion";
 import * as middleware from "./middleware";
-import { relmRouter } from "./routes/relm";
-import { relmsRouter } from "./routes/relms";
-import { Relm, Permission } from "./db";
+import * as routes from "./routes";
 import { respond, fail, uuidv4, wrapAsync } from "./utils";
 
 import {
@@ -51,33 +49,9 @@ app.post(
   })
 );
 
-app.post(
-  "/mkadmin",
-  cors(),
-  middleware.authenticated(),
-  middleware.authorized("admin"),
-  wrapAsync(async (req, res) => {
-    const permits: Array<Permission.Permission> = [
-      "admin",
-      "access",
-      "invite",
-      "edit",
-    ];
-    await Permission.setPermissions({
-      playerId: req.body.playerId,
-      permits,
-    });
-    respond(res, 200, {
-      status: "success",
-      action: "mkadmin",
-      permits: permits,
-    });
-  })
-);
-
-
-app.use("/relms", relmsRouter);
-app.use("/relm/:relmName", middleware.relmName(), relmRouter);
+app.use("/relm/:relmName", middleware.relmName(), routes.relm);
+app.use("/relms", routes.relms);
+app.use("/admin", routes.admin);
 
 app.use(express.static(SCREENSHOTS_DIR)).get(
   /^\/screenshot\/([\dx]+)\/(http.+)$/,

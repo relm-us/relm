@@ -5,9 +5,9 @@ import * as middleware from "../middleware";
 import { Relm } from "../db";
 import { respond, wrapAsync } from "../utils";
 
-export const relmsRouter = express.Router();
+export const relms = express.Router();
 
-relmsRouter.get(
+relms.get(
   "/all",
   cors(),
   middleware.authenticated(),
@@ -21,7 +21,7 @@ relmsRouter.get(
   })
 );
 
-relmsRouter.get(
+relms.get(
   "/public",
   cors(),
   wrapAsync(async (req, res) => {
