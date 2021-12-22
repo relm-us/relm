@@ -1,7 +1,7 @@
 import { Permission } from "./permission";
 
 import { db, sql, INSERT, UPDATE } from "./db";
-import { uuidv4 } from "../util";
+import { uuidv4 } from "../utils";
 
 function randomToken() {
   return uuidv4().split("-")[0];

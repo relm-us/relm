@@ -8,7 +8,7 @@ import sharp from "sharp";
 import crypto from "crypto";
 
 import * as conversion from "./conversion";
-import { respond, fail, uuidv4, wrapAsync, getRemoteIP } from "./util";
+import { respond, fail, uuidv4, wrapAsync } from "./utils";
 import * as middleware from "./middleware";
 import { relmRouter } from "./relm_router";
 import { Relm, Permission } from "./db";
@@ -233,3 +233,8 @@ app.use((error, req, res, next) => {
     reason: `${error.message} (${errorId})`,
   });
 });
+
+// Used for logging IP addresses
+export function getRemoteIP(req) {
+  return req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+}

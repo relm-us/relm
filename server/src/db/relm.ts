@@ -1,6 +1,6 @@
 import * as Doc from './doc'
 import { db, sql, INSERT, UPDATE, WHERE } from './db'
-import { getDefinedKeys, nullOr } from "../util";
+import { getDefinedKeys, nullOr } from "../utils";
 
 type RelmColumns = {
   relm_id: string;

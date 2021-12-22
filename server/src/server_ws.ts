@@ -3,7 +3,6 @@ import { createServer } from "http";
 import * as yws from "y-websocket/bin/utils";
 
 import { app } from "./server_http";
-import { getUrlParams } from "./util";
 import { Player, Permission, Doc } from "./db";
 
 export const server = createServer();
@@ -35,6 +34,12 @@ server.on("request", app);
 function getRelmDocFromRequest(req) {
   return req.url.slice(1).split("?")[0];
 }
+
+function getUrlParams(requestUrl) {
+  const queryString = requestUrl.slice(requestUrl.indexOf("?"));
+  return new URLSearchParams(queryString);
+}
+
 
 server.on("upgrade", async (req, socket, head) => {
   const docId = getRelmDocFromRequest(req);

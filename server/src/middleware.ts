@@ -1,4 +1,4 @@
-import { normalizeRelmName, respond, joinError } from "./util";
+import { respond, joinError } from "./utils";
 import { Player, Permission, Relm, useToken } from "./db";
 import createError from "http-errors";
 
@@ -23,6 +23,11 @@ export function relmName(key = "relmName") {
     }
   };
 }
+
+function normalizeRelmName(name) {
+  return name.toLowerCase().replace(/[^a-z0-9\-]+/, "");
+}
+
 
 export function relmExists() {
   return async (req, res, next) => {

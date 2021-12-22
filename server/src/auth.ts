@@ -1,7 +1,7 @@
 import { Crypto } from "@peculiar/webcrypto";
 import base64 from "base64-arraybuffer";
 
-import { joinError } from "./util";
+import { joinError } from "./utils";
 import { SECURITY_CONFIG } from "./config";
 
 const { encode } = require("fastestsmallesttextencoderdecoder");

@@ -1,5 +1,5 @@
 import { db, sql, INSERT } from "./db";
-import * as set from "../set";
+import * as set from "../utils/set";
 
 export type Permission = "admin" | "access" | "invite" | "edit";
 

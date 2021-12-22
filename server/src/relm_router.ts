@@ -6,7 +6,7 @@ import * as yws from "y-websocket/bin/utils";
 import * as crypto from "crypto";
 
 import * as config from "./config";
-import * as util from "./util";
+import * as util from "./utils";
 import * as middleware from "./middleware";
 import * as twilio from "./twilio";
 import { Invitation, Permission, Relm, Doc } from "./db";
