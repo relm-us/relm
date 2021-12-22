@@ -8,6 +8,19 @@ import { respond, wrapAsync } from "../utils";
 export const admin = express.Router();
 
 admin.post(
+  "/authenticate",
+  cors(),
+  middleware.authenticated(),
+  middleware.acceptToken(),
+  wrapAsync(async (req, res) => {
+    respond(res, 200, {
+      status: "success",
+      action: "authenticate",
+    });
+  })
+);
+
+admin.post(
   "/mkadmin",
   cors(),
   middleware.authenticated(),
@@ -30,3 +43,4 @@ admin.post(
     });
   })
 );
+

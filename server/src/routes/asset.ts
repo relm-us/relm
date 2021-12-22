@@ -38,6 +38,7 @@ asset.use(
 
 // Upload images and 3D assets
 asset.post(
+  "/",
   cors(),
   // middleware.authenticated(),
   // middleware.authorized("edit"),
@@ -91,4 +92,3 @@ asset.post(
     }
   })
 );
-
