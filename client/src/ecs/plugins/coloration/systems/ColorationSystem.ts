@@ -35,10 +35,12 @@ export class ColorationSystem extends System {
     if (!scene) return;
 
     scene.traverse((node) => {
-      if (node.isMesh && hasFacemaps(node)) {
+      if (node.isMesh) {
         const facemapNames: Array<any> = getFacemapNames(node);
-        for (let i = 0; i < facemapNames.length; i++) {
-          changeFacemapColor(node, i, "#000000", 0);
+        if (facemapNames) {
+          for (let i = 0; i < facemapNames.length; i++) {
+            changeFacemapColor(node, i, "#000000", 0);
+          }
         }
       }
     });
@@ -53,16 +55,18 @@ export class ColorationSystem extends System {
     if (!spec.colors) return;
 
     scene.traverse((node) => {
-      if (node.isMesh && hasFacemaps(node)) {
+      if (node.isMesh) {
         const facemapNames: Array<any> = getFacemapNames(node);
-        getOrCreateOriginalColorAttribute(node);
+        if (facemapNames) {
+          getOrCreateOriginalColorAttribute(node);
 
-        for (const [name, target] of Object.entries(spec.colors)) {
-          const index = facemapNames.findIndex((n) => n === name);
-          if (index >= 0) {
-            const targetColor = target[0];
-            const targetAlpha = target[1];
-            changeFacemapColor(node, index, targetColor, targetAlpha);
+          for (const [name, target] of Object.entries(spec.colors)) {
+            const index = facemapNames.findIndex((n) => n === name);
+            if (index >= 0) {
+              const targetColor = target[0];
+              const targetAlpha = target[1];
+              changeFacemapColor(node, index, targetColor, targetAlpha);
+            }
           }
         }
       }
@@ -85,12 +89,14 @@ export class ColorationSystem extends System {
   }
 }
 
-function hasFacemaps(node) {
-  return "facemaps" in node.userData;
-}
-
 function getFacemapNames(node) {
-  return node.userData["facemaps"];
+  if ("facemaps" in node.userData) {
+    return node.userData["facemaps"];
+  } else if (node.parent) {
+    return getFacemapNames(node.parent);
+  } else {
+    return null;
+  }
 }
 
 function getOrCreateColorAttribute(node) {
