@@ -55,6 +55,6 @@ app.use((error, req, res, next) => {
 });
 
 // Used for logging IP addresses
-export function getRemoteIP(req) {
+function getRemoteIP(req) {
   return req.headers["x-forwarded-for"] || req.connection.remoteAddress;
 }
