@@ -1,6 +1,6 @@
 import * as Invitation from "./invitation";
 import { init, deinit } from "./db";
-import { uuidv4 } from "../util";
+import { uuidv4 } from "../utils";
 
 describe("Invitation model tests", () => {
   beforeAll(init);

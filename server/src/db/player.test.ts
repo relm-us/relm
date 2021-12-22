@@ -2,7 +2,7 @@ import * as Player from "./player";
 import * as auth from "../auth";
 import { CryptoKey } from "@peculiar/webcrypto";
 
-import { uuidv4 } from "../util";
+import { uuidv4 } from "../utils";
 import { init, deinit } from "./db";
 
 describe("Player model tests", () => {

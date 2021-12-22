@@ -1,7 +1,7 @@
 import * as Relm from "./relm";
 
 import { init, deinit } from "./db";
-import { uuidv4, UUID_RE } from "../util";
+import { uuidv4, UUID_RE } from "../utils";
 
 describe("Relm model tests", () => {
   beforeAll(init);

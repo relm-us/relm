@@ -1,7 +1,7 @@
 import * as Doc from "./doc";
 
 import { init, deinit } from "./db";
-import { uuidv4, UUID_RE } from "../util";
+import { uuidv4, UUID_RE } from "../utils";
 
 async function setHistDoc(date, attrs) {
   let doc = await Doc.setDoc(attrs);

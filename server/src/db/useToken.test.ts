@@ -2,7 +2,7 @@ import { useToken } from "./useToken";
 import { createInvitation } from "./invitation";
 import { getPermissions } from "./permission";
 import { init, deinit } from "./db";
-import { uuidv4 } from "../util";
+import { uuidv4 } from "../utils";
 
 describe("useToken", () => {
   beforeAll(init);

@@ -1,6 +1,6 @@
 import * as Permission from "./permission";
 
-import { uuidv4 } from "../util";
+import { uuidv4 } from "../utils";
 import { init, deinit } from "./db";
 
 const welcomeRelmId = uuidv4()
