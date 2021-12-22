@@ -3,6 +3,8 @@
   export let highlighted = false;
 </script>
 
+<div class:highlighted on:click>{name}</div>
+
 <style>
   div {
     background-color: var(--unselected-gray);
@@ -18,5 +20,3 @@
     background-color: var(--selected-red);
   }
 </style>
-
-<div class:highlighted on:click>{name}</div>

@@ -24,6 +24,16 @@
   let items = [];
 </script>
 
+<button
+  data-dropzone-id={dropzoneId}
+  class="dropzone-{list.category}"
+  class:selected
+  class:blink={$active}
+  on:click
+>
+  <slot {list}>{list.name}</slot>
+</button>
+
 <style>
   button {
     all: unset;
@@ -67,12 +77,3 @@
     border-color: transparent;
   }
 </style>
-
-<button
-  data-dropzone-id={dropzoneId}
-  class="dropzone-{list.category}"
-  class:selected
-  class:blink={$active}
-  on:click>
-  <slot {list}>{list.name}</slot>
-</button>
