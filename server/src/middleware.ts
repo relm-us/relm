@@ -28,7 +28,6 @@ function normalizeRelmName(name) {
   return name.toLowerCase().replace(/[^a-z0-9\-]+/, "");
 }
 
-
 export function relmExists() {
   return async (req, res, next) => {
     req.relm = await Relm.getRelm({ relmName: req.relmName });
@@ -97,10 +96,11 @@ export function authorized(permission) {
       try {
         const permissions = await Permission.getPermissions({
           playerId: req.authenticatedPlayerId,
-          relmId: req.relm ? req.relm.relmId : undefined,
+          relmNames: req.relmName ? [req.relmName] : [],
         });
 
-        permitted = permissions.has(permission);
+        const relmName = req.relmName || "*";
+        permitted = permissions[relmName].includes(permission);
       } catch (err) {
         next(err);
       }

@@ -27,10 +27,11 @@ describe("useToken", () => {
     });
     expect(usedInvitation.used).toEqual(1);
 
-    const permits = await getPermissions({
-      relmId,
+    const permitsByRelm = await getPermissions({
       playerId,
+      relmIds: [relmId],
     });
-    expect(permits).toEqual(new Set(["access"]));
+    const permits = permitsByRelm[relmId];
+    expect(permits).toEqual(["access"]);
   });
 });

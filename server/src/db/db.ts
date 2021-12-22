@@ -49,4 +49,11 @@ export function sql(...args) {
 
 export const raw = pgSql.raw;
 
-export { INSERT, UPDATE, WHERE, AND, OR, LIMIT, OFFSET } from "pg-sql-helpers";
+export const IN = function (values) {
+  return pgSql`IN ${pgSql.raw("(")}${pgSql.join(
+    values.map((v) => pgSql.value(v)),
+    ", "
+  )}${pgSql.raw(")")}`;
+};
+
+export { INSERT, UPDATE, VALUES, WHERE, AND, OR, LIMIT, OFFSET } from "pg-sql-helpers";

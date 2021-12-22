@@ -1,4 +1,4 @@
-import { db, sql, INSERT } from "./db";
+import { db, sql, VALUES, INSERT, IN, raw } from "./db";
 import * as set from "../utils/set";
 
 export type Permission = "admin" | "access" | "invite" | "edit";
@@ -35,32 +35,70 @@ export async function setPermissions({
   return new Set(row.permits);
 }
 
-export async function getPermissions({ playerId, relmId }) {
+export async function getPermissions({
+  playerId,
+  relmNames,
+  relmIds,
+}: {
+  playerId: string;
+  relmNames?: string[];
+  relmIds?: string[];
+}): Promise<Record<string, string[]>> {
+  if (empty(relmNames) && empty(relmIds)) return {};
+
+  const relms = relmNames ? relmNames : relmIds;
   const rows = await db.manyOrNone(sql`
-      SELECT relm_id, permits
-      FROM permissions
-      WHERE player_id = ${playerId}
+      SELECT
+        r.relm_name AS relm,
+        CASE
+          WHEN r.is_public = 't' THEN '["access"]'::jsonb
+          ELSE p.permits
+        END AS permits
+      FROM permissions AS p
+      LEFT JOIN relms AS r USING (relm_id)
+      WHERE p.player_id = ${playerId}
         AND (
-          relm_id IS NULL OR relm_id = ${relmId}
+          r.relm_id IS NULL OR
+          r.relm_${raw(relmNames ? "name" : "id")} ${IN(relms)}
         )
-    `);
+  `);
 
-  // union of all permissions
-  let permits = new Set();
+  // Admins can have permission for "all relms", which is designated
+  // by a NULL value as the relm_id. Collect up any wildcard permissions
+  // and remove them for the next step.
+  let wildcardPermits: Set<string> = new Set();
+  for (let i = rows.length - 1; i >= 0; i--) {
+    if (!rows[i].relm) {
+      const row = rows.splice(i, 1)[0];
+      const _permits = new Set<string>(row.permits);
+      wildcardPermits = set.union(wildcardPermits, _permits);
+    }
+  }
+
+  // Each relm's permission starts out blank; however, if there is a
+  // wildcard permit, starts out with the designated wildcard permission
+  // set.
+  let permitsByRelm: Map<string, Set<string>> = new Map(
+    relms.map((id) => [id, new Set(wildcardPermits)])
+  );
+  permitsByRelm.set("*", new Set(wildcardPermits));
+
+  // For each relm, add permits that have been granted to the playerId
   for (const row of rows) {
-    const _permits = new Set(row.permits);
-    permits = set.union(permits, _permits);
+    const permits = permitsByRelm.get(row.relm);
+    for (const permit of row.permits) {
+      permits.add(permit);
+    }
   }
 
-  const rows2 = await db.oneOrNone(sql`
-      SELECT *
-      FROM relms
-      WHERE relm_id = ${relmId}
-        AND is_public = true
-    `);
-  if (rows2 !== null) {
-    permits.add("access");
+  // Convert Map<string, Set> to Record<string, Array>:
+  let result = Object.create(null);
+  for (let [k, v] of permitsByRelm) {
+    result[k] = [...v];
   }
+  return result;
+}
 
-  return permits;
+function empty(arr) {
+  return !arr || arr.length == 0;
 }
