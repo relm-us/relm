@@ -7,7 +7,7 @@ import {
   SPACES_SECRET,
   SPACES_BUCKET,
   SPACES_ENDPOINT,
-} from "./config";
+} from "../config";
 
 const readFile = (fileName) =>
   util.promisify(fs.readFile)(fileName, null /* binary */);

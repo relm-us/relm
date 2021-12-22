@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import md5File from "md5-file";
-import { useSpaces, uploadToSpaces } from "./spaces";
+import { useSpaces, uploadToSpaces } from "./lib/spaces";
 
 import { ASSETS_DIR, CONTENT_TYPE_JSON } from "./config";
 
