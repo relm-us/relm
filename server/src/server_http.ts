@@ -1,5 +1,4 @@
 import express from "express";
-import bodyParser from "body-parser";
 import cors from "cors";
 
 import * as middleware from "./middleware";
@@ -9,7 +8,7 @@ import { respond, uuidv4, wrapAsync } from "./utils";
 export const app = express();
 
 // Automatically parse JSON body when received in REST requests
-app.use(bodyParser.json());
+app.use(express.json());
 
 // Enable CORS pre-flight requests across the board
 // See https://expressjs.com/en/resources/middleware/cors.html#enabling-cors-pre-flight
