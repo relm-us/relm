@@ -5,11 +5,11 @@ import * as Y from "yjs";
 import * as yws from "y-websocket/bin/utils";
 import * as crypto from "crypto";
 
-import * as config from "./config";
-import * as util from "./utils";
-import * as middleware from "./middleware";
-import * as twilio from "./lib/twilio";
-import { Invitation, Permission, Relm, Doc } from "./db";
+import * as config from "../config";
+import * as util from "../utils";
+import * as middleware from "../middleware";
+import * as twilio from "../lib/twilio";
+import { Invitation, Permission, Relm, Doc } from "../db";
 
 const { wrapAsync, uuidv4 } = util;
 

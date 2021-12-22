@@ -8,10 +8,11 @@ import sharp from "sharp";
 import crypto from "crypto";
 
 import * as conversion from "./conversion";
-import { respond, fail, uuidv4, wrapAsync } from "./utils";
 import * as middleware from "./middleware";
-import { relmRouter } from "./relm_router";
+import { relmRouter } from "./routes/relm";
+import { relmsRouter } from "./routes/relms";
 import { Relm, Permission } from "./db";
+import { respond, fail, uuidv4, wrapAsync } from "./utils";
 
 import {
   SCREENSHOTS_DIR,
@@ -74,32 +75,8 @@ app.post(
   })
 );
 
-app.get(
-  "/relms/all",
-  cors(),
-  middleware.authenticated(),
-  middleware.authorized("admin"),
-  wrapAsync(async (req, res) => {
-    const relms = await Relm.getAllRelms({});
-    respond(res, 200, {
-      status: "success",
-      relms,
-    });
-  })
-);
 
-app.get(
-  "/relms/public",
-  cors(),
-  wrapAsync(async (req, res) => {
-    const relms = await Relm.getAllRelms({ isPublic: true });
-    respond(res, 200, {
-      status: "success",
-      relms,
-    });
-  })
-);
-
+app.use("/relms", relmsRouter);
 app.use("/relm/:relmName", middleware.relmName(), relmRouter);
 
 app.use(express.static(SCREENSHOTS_DIR)).get(
