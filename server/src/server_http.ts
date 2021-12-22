@@ -1,21 +1,10 @@
-import path from "path";
 import express from "express";
 import bodyParser from "body-parser";
-import fileupload from "express-fileupload";
 import cors from "cors";
-import sharp from "sharp";
 
-import * as conversion from "./conversion";
 import * as middleware from "./middleware";
 import * as routes from "./routes";
-import { respond, fail, uuidv4, wrapAsync } from "./utils";
-
-import {
-  TMP_DIR,
-  ASSETS_DIR,
-  MAX_FILE_EXTENSION_LENGTH,
-  MAX_FILE_SIZE,
-} from "./config";
+import { respond, uuidv4, wrapAsync } from "./utils";
 
 export const app = express();
 
@@ -31,101 +20,12 @@ app.get("/", function (_req, res) {
   res.send("Relm Server is OK");
 });
 
-app.post(
-  "/authenticate",
-  cors(),
-  middleware.authenticated(),
-  middleware.acceptToken(),
-  wrapAsync(async (req, res) => {
-    respond(res, 200, {
-      status: "success",
-      action: "authenticate",
-    });
-  })
-);
-
 app.use("/admin", routes.admin);
+app.use("/asset", routes.asset);
+app.use("/auth", routes.auth);
 app.use("/relm/:relmName", middleware.relmName(), routes.relm);
 app.use("/relms", routes.relms);
 app.use("/screenshot", routes.screenshot);
-
-// Serve uploaded files
-app.use(
-  "/asset",
-  express.static(ASSETS_DIR, {
-    setHeaders: (res, path, stat) => {
-      res.header("Access-Control-Allow-Origin", "*");
-      res.header("Access-Control-Allow-Methods", "GET");
-      res.header("Access-Control-Allow-Headers", "Content-Type");
-    },
-  })
-);
-
-// Allow files to be uploaded.
-// NOTE: This must be before app.post('/asset')
-app.use(
-  fileupload({
-    useTempFiles: true,
-    tempFileDir: TMP_DIR,
-  }) as any
-);
-
-// Upload images and 3D assets
-app.post(
-  "/asset",
-  cors(),
-  // middleware.authenticated(),
-  // middleware.authorized("edit"),
-  wrapAsync(async (req, res) => {
-    const asset = req.files["files[]"];
-    if (asset.size > MAX_FILE_SIZE) {
-      return fail(res, "file too large");
-    }
-
-    const extension = path.extname(asset.name).toLowerCase();
-    if (extension.length > MAX_FILE_EXTENSION_LENGTH) {
-      return fail(res, "file extension too long");
-    }
-
-    try {
-      switch (extension) {
-        case ".jpg":
-        case ".jpeg":
-        case ".gif":
-        case ".png":
-        case ".webp":
-          const pngTempFile = asset.tempFilePath + ".png";
-          await sharp(asset.tempFilePath).toFile(asset.tempFilePath + ".png");
-          const png = await conversion.moveOrUploadContentAddressable(
-            pngTempFile
-          );
-
-          const webpTempFile = asset.tempFilePath + ".webp";
-          await sharp(asset.tempFilePath).toFile(asset.tempFilePath + ".webp");
-          const webp = await conversion.moveOrUploadContentAddressable(
-            webpTempFile
-          );
-
-          return conversion.fileUploadSuccess(res, { png, webp });
-
-        case ".glb":
-        case ".packed-glb":
-        case ".gltf":
-        case ".packed-gltf":
-          const gltf = await conversion.moveOrUploadContentAddressable(
-            asset.tempFilePath,
-            extension
-          );
-          return conversion.fileUploadSuccess(res, { gltf });
-
-        default:
-          return fail(res, "unsupported filetype");
-      }
-    } catch (err) {
-      return fail(res, err);
-    }
-  })
-);
 
 // Error handling: catch-all for 404s
 app.use((req, res) => {
