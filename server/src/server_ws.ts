@@ -40,7 +40,6 @@ function getUrlParams(requestUrl) {
   return new URLSearchParams(queryString);
 }
 
-
 server.on("upgrade", async (req, socket, head) => {
   const docId = getRelmDocFromRequest(req);
   const params = getUrlParams(req.url);
@@ -81,7 +80,14 @@ server.on("upgrade", async (req, socket, head) => {
         relmIds: [doc.relmId],
       });
 
-      const permitted = permissions[doc.relmId].includes("access");
+      let permitted;
+      if (doc.relmId in permissions) {
+        permitted = permissions[doc.relmId].includes("access");
+      } else if ("*" in permissions) {
+        permitted = permissions["*"].includes("access");
+      } else {
+        permitted = false;
+      }
 
       if (permitted) {
         wss.handleUpgrade(req, socket, head, (conn) => {
