@@ -3,6 +3,7 @@ import { Avatar } from "./Avatar";
 import type { IdentityManager } from "./IdentityManager";
 import { IdentityData, PlayerID } from "./types";
 import { defaultIdentityData, localIdentityData } from "./identityData";
+import { getSecureParams, secureParamsAsHeaders } from "./secureParams";
 
 // import { setMe } from "~/av/redux/stateActions";
 // import { store as avStore } from "~/av";
@@ -48,6 +49,12 @@ export class Identity {
     return lastSeen === undefined
       ? LONG_TIME_AGO
       : performance.now() - this.lastSeen;
+  }
+
+  async getPrivateKey() {
+    const params = await getSecureParams(window.location.href);
+
+    return secureParamsAsHeaders(params);
   }
 
   wasRecentlySeen() {

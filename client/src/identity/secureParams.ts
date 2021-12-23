@@ -45,3 +45,13 @@ export async function getSecureParams(href?: string): Promise<SecureParams> {
 
   return params;
 }
+
+export function secureParamsAsHeaders(params: SecureParams): object {
+  return {
+    "x-relm-id": params.id,
+    "x-relm-s": params.s,
+    "x-relm-x": params.x,
+    "x-relm-y": params.y,
+    "x-relm-jwt": params.jwt,
+  };
+}

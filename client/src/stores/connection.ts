@@ -2,7 +2,10 @@ import { derived, writable, Readable, Writable } from "svelte/store";
 import axios from "axios";
 
 import { config } from "~/config";
-import { getSecureParams } from "~/identity";
+import {
+  getSecureParams,
+  secureParamsAsHeaders,
+} from "~/identity/secureParams";
 import { subrelm } from "./subrelm";
 
 export type YConnectState =
@@ -48,13 +51,7 @@ async function playerPermit(params, serverUrl, subrelm) {
     url += `?t=${params.t}`;
   }
   const res = await axios.get(url, {
-    headers: {
-      "x-relm-id": params.id,
-      "x-relm-s": params.s,
-      "x-relm-x": params.x,
-      "x-relm-y": params.y,
-      "x-relm-jwt": params.jwt,
-    },
+    headers: secureParamsAsHeaders(params),
   });
   if (res.data.status === "success") {
     if (res.data.authmode == "public") {
