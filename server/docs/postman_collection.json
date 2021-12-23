@@ -6,6 +6,51 @@
 	},
 	"item": [
 		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "List My Permissions",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"description": "Signed Player ID",
+								"key": "X-Relm-S",
+								"type": "text",
+								"value": "{{relmSig}}"
+							},
+							{
+								"description": "Player ID",
+								"key": "X-Relm-Id",
+								"type": "text",
+								"value": "{{relmId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"relms\": [\"default\", \"test\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/auth/permissions",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"auth",
+								"permissions"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Admin",
 			"item": [
 				{

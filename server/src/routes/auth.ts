@@ -7,7 +7,7 @@ import { fail, respond, wrapAsync } from "../utils";
 
 export const auth = express.Router();
 
-auth.get(
+auth.post(
   "/permissions",
   cors(),
   middleware.authenticated(),
