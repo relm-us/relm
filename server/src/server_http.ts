@@ -42,7 +42,7 @@ app.use((req, res) => {
 app.use((error, req, res, next) => {
   const errorId = uuidv4().split("-")[0];
   const code = error.status || 400;
-  console.log(
+  console.warn(
     `[${getRemoteIP(req)}] ${code} (${errorId}): ${error.message}\n${
       error.stack
     }`

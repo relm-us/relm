@@ -94,13 +94,19 @@ export function authorized(permission) {
     } else {
       let permitted = false;
       try {
+        const relmNames = req.relmName ? [req.relmName] : [];
         const permissions = await Permission.getPermissions({
           playerId: req.authenticatedPlayerId,
-          relmNames: req.relmName ? [req.relmName] : [],
+          relmNames,
         });
 
-        const relmName = req.relmName || "*";
-        permitted = permissions[relmName]?.includes(permission);
+        if (req.relmName in permissions) {
+          permitted = permissions[req.relmName].includes(permission);
+        } else if ("*" in permissions) {
+          permitted = permissions["*"].includes(permission);
+        } else {
+          permitted = false;
+        }
       } catch (err) {
         next(err);
       }

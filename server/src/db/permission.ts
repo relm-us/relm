@@ -50,7 +50,7 @@ export async function getPermissions({
   // TODO: add CHECK relm_name <> '*' in table defn
   const rows = await db.manyOrNone(sql`
       --
-      -- Get wildcard access (e.g. admin) for all relms, if granted
+      -- Check for wildcard permission (e.g. admin)
       --
       SELECT '*' AS relm, p.permits
       FROM permissions p
@@ -60,33 +60,21 @@ export async function getPermissions({
       UNION
 
       --
-      -- Get access permission for public relms
+      -- Check for specific access to a relm (public or private)
       --
       SELECT
-        r.relm_${raw(relmNames ? "name" : "id")} AS relm,
-        '["access"]'::jsonb AS permits
-      FROM relms r
-      WHERE r.is_public = 't'
-        AND r.relm_${raw(relmNames ? "name" : "id")} ${IN(relms)}
-
-      UNION
-
-      --
-      -- Get various permissions for player in private relms
-      --
-      SELECT
-        r.relm_${raw(relmNames ? "name" : "id")} AS relm,
-        p.permits
+        r.relm_${raw(relmNames ? "name" : "id")}::text AS relm,
+        CASE
+          WHEN r.is_public = 't' THEN '["access"]'::jsonb
+          WHEN p.permits IS NULL THEN '[]'::jsonb
+          ELSE p.permits
+        END AS permits
       FROM relms AS r
       LEFT JOIN permissions AS p USING (relm_id)
-      WHERE r.is_public = 'f'
-        AND p.player_id = ${playerId}
+      WHERE (p.player_id IS NULL OR p.player_id = ${playerId})
         AND r.relm_${raw(relmNames ? "name" : "id")} ${IN(relms)}
   `);
 
-  // Each relm's permission starts out blank; however, if there is a
-  // wildcard permit, starts out with the designated wildcard permission
-  // set.
   let permitsByRelm: Map<string, Set<string>> = new Map(
     rows.map((row) => [row.relm, new Set()])
   );

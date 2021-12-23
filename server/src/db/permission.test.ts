@@ -19,7 +19,7 @@ describe("Permission model tests", () => {
     ).toEqual(new Set(["admin", "access", "invite", "edit"]));
   });
 
-  it("gets acccess permission to public relm", async () => {
+  it("gets access permission to public relm", async () => {
     const playerId = uuidv4();
     const relmId = uuidv4();
     const relmName = uuidv4();
@@ -36,7 +36,7 @@ describe("Permission model tests", () => {
     });
 
     expect(permitsByRelm["*"]).not.toBeDefined();
-    expect(permitsByRelm[relmName].sort()).toEqual(["access"]);
+    expect(permitsByRelm[relmName]).toEqual(["access"]);
 
     // We requested a relm that doesn't exist, so permissions should be undefined
     expect(permitsByRelm["doesnotexist"]).not.toBeDefined();
