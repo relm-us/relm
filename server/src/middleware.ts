@@ -100,7 +100,7 @@ export function authorized(permission) {
         });
 
         const relmName = req.relmName || "*";
-        permitted = permissions[relmName].includes(permission);
+        permitted = permissions[relmName]?.includes(permission);
       } catch (err) {
         next(err);
       }

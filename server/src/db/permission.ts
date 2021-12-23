@@ -47,12 +47,21 @@ export async function getPermissions({
   if (empty(relmNames) && empty(relmIds)) return {};
 
   const relms = relmNames ? relmNames : relmIds;
-  // First SELECT:
-  //  - get access permission for public relms
-  //
-  // Second SELECT:
-  //  - get various permissions for player in relms
+  // TODO: add CHECK relm_name <> '*' in table defn
   const rows = await db.manyOrNone(sql`
+      --
+      -- Get wildcard access (e.g. admin) for all relms, if granted
+      --
+      SELECT '*' AS relm, p.permits
+      FROM permissions p
+      WHERE p.player_id = ${playerId}
+        AND p.relm_id IS NULL
+
+      UNION
+
+      --
+      -- Get access permission for public relms
+      --
       SELECT
         r.relm_${raw(relmNames ? "name" : "id")} AS relm,
         '["access"]'::jsonb AS permits
@@ -62,37 +71,25 @@ export async function getPermissions({
 
       UNION
 
+      --
+      -- Get various permissions for player in private relms
+      --
       SELECT
         r.relm_${raw(relmNames ? "name" : "id")} AS relm,
         p.permits
-      FROM permissions AS p
-      LEFT JOIN relms AS r USING (relm_id)
-      WHERE p.player_id = ${playerId}
-        AND (
-          r.relm_id IS NULL OR
-          r.relm_${raw(relmNames ? "name" : "id")} ${IN(relms)}
-        )
+      FROM relms AS r
+      LEFT JOIN permissions AS p USING (relm_id)
+      WHERE r.is_public = 'f'
+        AND p.player_id = ${playerId}
+        AND r.relm_${raw(relmNames ? "name" : "id")} ${IN(relms)}
   `);
-
-  // Admins can have permission for "all relms", which is designated
-  // by a NULL value as the relm_id. Collect up any wildcard permissions
-  // and remove them for the next step.
-  let wildcardPermits: Set<string> = new Set();
-  for (let i = rows.length - 1; i >= 0; i--) {
-    if (!rows[i].relm) {
-      const row = rows.splice(i, 1)[0];
-      const _permits = new Set<string>(row.permits);
-      wildcardPermits = set.union(wildcardPermits, _permits);
-    }
-  }
 
   // Each relm's permission starts out blank; however, if there is a
   // wildcard permit, starts out with the designated wildcard permission
   // set.
   let permitsByRelm: Map<string, Set<string>> = new Map(
-    relms.map((id) => [id, new Set(wildcardPermits)])
+    rows.map((row) => [row.relm, new Set()])
   );
-  permitsByRelm.set("*", new Set(wildcardPermits));
 
   // For each relm, add permits that have been granted to the playerId
   for (const row of rows) {
@@ -102,10 +99,12 @@ export async function getPermissions({
     }
   }
 
+  const wildcardPermits = permitsByRelm.get("*") || new Set();
+
   // Convert Map<string, Set> to Record<string, Array>:
   let result = Object.create(null);
   for (let [k, v] of permitsByRelm) {
-    result[k] = [...v];
+    result[k] = [...set.union(v, wildcardPermits)];
   }
   return result;
 }

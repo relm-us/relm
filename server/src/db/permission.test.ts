@@ -32,11 +32,14 @@ describe("Permission model tests", () => {
 
     const permitsByRelm = await Permission.getPermissions({
       playerId,
-      relmNames: [relmName],
+      relmNames: [relmName, "doesnotexist"],
     });
 
-    expect(permitsByRelm["*"]).toEqual([]);
-    expect(permitsByRelm[relmName]).toEqual(["access"]);
+    expect(permitsByRelm["*"]).not.toBeDefined();
+    expect(permitsByRelm[relmName].sort()).toEqual(["access"]);
+
+    // We requested a relm that doesn't exist, so permissions should be undefined
+    expect(permitsByRelm["doesnotexist"]).not.toBeDefined();
   });
 
   it("gets unioned permissions", async () => {
@@ -87,6 +90,8 @@ describe("Permission model tests", () => {
     expect(permitsByRelm[relmName1].sort()).toEqual(
       ["admin", "access", "edit"].sort()
     );
-    expect(permitsByRelm[relmName2].sort()).toEqual(["admin", "access"].sort());
+    expect(permitsByRelm[relmName2].sort()).toEqual(
+      ["admin", "access"].sort()
+    );
   });
 });
