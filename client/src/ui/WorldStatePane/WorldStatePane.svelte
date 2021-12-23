@@ -7,7 +7,7 @@
   import { setupState } from "~/stores/setupState";
   import { Identity } from "~/identity/Identity";
 
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
   import { subrelm, entryway } from "~/stores/subrelm";
   import {
     connection,
@@ -50,14 +50,14 @@
 
   onMount(() => {
     const interval = setInterval(() => {
-      if (!$Relm || minimized) return;
+      if (minimized) return;
 
-      if ($Relm.identities.active !== idActive)
-        idActive = $Relm.identities.active;
+      if (worldManager.identities.active !== idActive)
+        idActive = worldManager.identities.active;
 
-      if ($Relm.identities.total !== idTotal) idTotal = $Relm.identities.total;
+      if (worldManager.identities.total !== idTotal) idTotal = worldManager.identities.total;
 
-      identities = [...$Relm.identities.identities.values()];
+      identities = [...worldManager.identities.identities.values()];
       identities.sort((a: Identity, b: Identity) => {
         return a.seenAgo - b.seenAgo;
       });

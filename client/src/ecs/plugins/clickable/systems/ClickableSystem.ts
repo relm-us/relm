@@ -1,9 +1,7 @@
-import { get } from "svelte/store";
-
 import { System, Groups, Entity } from "~/ecs/base";
 import { Presentation } from "~/ecs/plugins/core";
 
-import { Relm } from "~/stores/Relm";
+import { worldManager } from "~/world";
 
 import { Clickable, Clicked } from "../components";
 
@@ -61,7 +59,7 @@ export class ClickableSystem extends System {
 
               // On next tick, update yjs so all can see state change
               setTimeout(() => {
-                get(Relm).wdoc.syncFrom(entity);
+                worldManager.wdoc.syncFrom(entity);
               }, 0);
             }
           }

@@ -1,6 +1,6 @@
 <script>
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
 import { onMount } from "svelte";
 
   export let name;
@@ -8,13 +8,13 @@ import { onMount } from "svelte";
   let enabled = true;
 
   $: {
-    const system = $Relm.world.systems.getByName(name);
+    const system = worldManager.world.systems.getByName(name);
     if (system) system.active = enabled;
   }
 
   onMount(() => {
     const interval = setInterval(() => {
-      const system = $Relm.world.systems.getByName(name)
+      const system = worldManager.world.systems.getByName(name)
       if (system) enabled = system.active;
     }, 50)
     return () => {

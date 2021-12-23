@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
   import { askAvatarSetup } from "~/stores/askAvatarSetup";
   import PageOverlay from "~/ui/lib/PageOverlay";
   import { getDefaultAppearance } from "~/identity/appearance";
@@ -11,7 +11,7 @@
   const pick = (gender: BinaryGender) => () => {
     const appearance = getDefaultAppearance(gender);
 
-    $Relm.identities.me.set({ appearance });
+    worldManager.identities.me.set({ appearance });
 
     $askAvatarSetup = false;
     dispatch("done");

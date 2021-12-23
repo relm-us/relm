@@ -1,6 +1,6 @@
 <script>
   import { Audio, Video } from "video-mirror";
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
   import { audioMode } from "~/stores/audioMode";
   import Fullscreen from "./Fullscreen.svelte";
   import shineImg from "./shine.svg";
@@ -13,22 +13,22 @@
   // TODO: add `size` var instead of hardcoding volume to be size
   let volume = 1;
 
-  let localPlayerId = $Relm.identities.me.playerId;
+  let localPlayerId = worldManager.identities.me.playerId;
 
   let isLocal;
   $: isLocal = playerId === localPlayerId;
 
   let identity;
-  $: identity = $Relm.identities.identities.get(playerId);
+  $: identity = worldManager.identities.identities.get(playerId);
 
   let videoStore;
-  $: videoStore = $Relm.avConnection.getTrackStore(playerId, "video");
+  $: videoStore = worldManager.avConnection.getTrackStore(playerId, "video");
 
   let audioStore;
-  $: audioStore = $Relm.avConnection.getTrackStore(playerId, "audio");
+  $: audioStore = worldManager.avConnection.getTrackStore(playerId, "audio");
 
   let localVideoStore;
-  $: localVideoStore = $Relm.avConnection.getTrackStore(localPlayerId, "video");
+  $: localVideoStore = worldManager.avConnection.getTrackStore(localPlayerId, "video");
 
   function exitFullscreen() {
     fullscreen = false;

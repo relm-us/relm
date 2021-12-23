@@ -2,7 +2,7 @@
   import { nanoid } from "nanoid";
   import { Vector3, Color } from "three";
 
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
   import { assetUrl } from "~/config/assetUrl";
 
   import { Entity } from "~/ecs/base";
@@ -25,8 +25,8 @@
   let fogDensity;
 
   function addEntryway(event) {
-    const coords: Vector3 = $Relm.avatar.entity.get(Transform).position;
-    $Relm.wdoc.entryways.y.set(event.target.value, [
+    const coords: Vector3 = worldManager.avatar.entity.get(Transform).position;
+    worldManager.wdoc.entryways.y.set(event.target.value, [
       coords.x,
       coords.y,
       coords.z,
@@ -34,7 +34,7 @@
   }
 
   function onDeleteEntryway({ detail: name }) {
-    $Relm.wdoc.entryways.y.delete(name);
+    worldManager.wdoc.entryways.y.delete(name);
   }
 
   function onUploadedSkybox({ detail }) {
@@ -43,51 +43,51 @@
     const imageUrl = assetUrl(result.types.webp);
 
     // Delete any previous Skybox object
-    const entities: Entity[] = $Relm.world.entities.getAllByComponent(Skybox);
+    const entities: Entity[] = worldManager.world.entities.getAllByComponent(Skybox);
     for (let entity of entities) {
-      $Relm.wdoc.deleteById(entity.id.toString());
+      worldManager.wdoc.deleteById(entity.id.toString());
     }
 
     // Create a new Skybox
-    const skybox = $Relm.world.entities
+    const skybox = worldManager.world.entities
       .create("Skybox", nanoid())
       .add(Skybox, { image: new Asset(imageUrl) })
       .activate();
-    $Relm.wdoc.syncFrom(skybox);
+    worldManager.wdoc.syncFrom(skybox);
   }
 
   function onSlideFog({ detail }) {
     const value = detail[1];
-    const fog = $Relm.world.presentation.scene.fog;
+    const fog = worldManager.world.presentation.scene.fog;
     fog.density = value * 0.05;
 
     saveFogDensity(fog.density);
   }
 
   const saveFogDensity = debounce((density) => {
-    $Relm.wdoc.settings.y.set("fogDensity", density);
+    worldManager.wdoc.settings.y.set("fogDensity", density);
   }, 500);
 
   function onChangeFogColor({ detail }) {
     const color = detail.slice(0, 7);
-    const fog = $Relm.world.presentation.scene.fog;
+    const fog = worldManager.world.presentation.scene.fog;
     fog.color = new Color(color);
 
     saveFogColor(color);
   }
 
   const saveFogColor = debounce((color) => {
-    $Relm.wdoc.settings.y.set("fogColor", color);
+    worldManager.wdoc.settings.y.set("fogColor", color);
   }, 500);
 
   onMount(() => {
-    const fog = $Relm.world.presentation.scene.fog;
+    const fog = worldManager.world.presentation.scene.fog;
     fogDensity = fog.density / 0.05;
     fogColor = "#" + fog.color.getHexString();
   });
 
   function startMigrationAndReport() {
-    const migrated = migrateToCDN($Relm.world, $Relm.wdoc);
+    const migrated = migrateToCDN(worldManager.world, worldManager.wdoc);
     alert(`Migrated ${migrated} entities in this world to CDN`);
   }
 </script>
@@ -98,7 +98,7 @@
     <Pane title="Entryways">
       <setting>
         <EntrywayMap
-          entryways={$Relm.wdoc.entryways}
+          entryways={worldManager.wdoc.entryways}
           on:delete={onDeleteEntryway}
         />
         <Capsule

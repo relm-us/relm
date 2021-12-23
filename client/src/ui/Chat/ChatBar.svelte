@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher } from "svelte";
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
   import { chatFocused, chatOpen } from "~/stores/chatOpen";
   import { playerId } from "~/identity/playerId";
 
@@ -18,7 +18,7 @@
     if (text.match(/^\s*$/)) {
       dispatch("close");
     } else {
-      $Relm.chat.addMessage({ u: playerId, c: text });
+      worldManager.chat.addMessage({ u: playerId, c: text });
     }
   }
 

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
   import { config } from "~/config";
 
   import { exportRelm, jsonFormat } from "~/world/Export";
@@ -18,7 +18,7 @@
 
   function applyText() {
     const json = parse(text);
-    errorState = !$Relm.fromJSON(json);
+    errorState = !worldManager.fromJSON(json);
   }
 
   onMount(() => {
@@ -28,11 +28,11 @@
       server: config.serverUrl,
     };
     let exported;
-    if ($Relm.selection.length > 0) {
-      exported = exportRelm($Relm.wdoc, $Relm.selection.ids);
+    if (worldManager.selection.length > 0) {
+      exported = exportRelm(worldManager.wdoc, worldManager.selection.ids);
       meta.scope = "selection";
     } else {
-      exported = exportRelm($Relm.wdoc);
+      exported = exportRelm(worldManager.wdoc);
     }
     const json = jsonFormat(exported, meta);
     text = JSON.stringify(json, null, 2);

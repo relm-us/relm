@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
 
   import { skinColors, hairColors } from "~/identity/appearance";
   import type {
@@ -71,7 +71,7 @@
         shoeColor.indexOf("#") === 0 ? shoeColor.slice(0, 7) : shoeColor,
     };
 
-    $Relm.identities.me.set({ appearance });
+    worldManager.identities.me.set({ appearance });
   }
 
   function onSlideGender({ detail }) {

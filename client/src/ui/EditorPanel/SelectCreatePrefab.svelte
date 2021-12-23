@@ -1,6 +1,6 @@
 <script lang="ts">
   import Button from "~/ui/lib/Button";
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
   import { WorldTransform } from "~/ecs/plugins/core";
   import { directory } from "~/prefab";
 
@@ -8,19 +8,19 @@
 
   const activate = (entity) => {
     entity.activate();
-    $Relm.wdoc.syncFrom(entity);
+    worldManager.wdoc.syncFrom(entity);
     for (const child of entity.getChildren()) {
       activate(child);
     }
   };
 
   const create = (prefab) => () => {
-    const transform = $Relm.avatar.entity?.get(WorldTransform);
+    const transform = worldManager.avatar.entity?.get(WorldTransform);
     if (transform) {
       const x = transform.position.x;
       const y = transform.position.y - PLAYER_CENTER_HEIGHT;
       const z = transform.position.z;
-      let entities = prefab.prefab($Relm.world, { x, yOffset: y, z });
+      let entities = prefab.prefab(worldManager.world, { x, yOffset: y, z });
       if (!(entities instanceof Array)) entities = [entities];
 
       for (const entity of entities) {

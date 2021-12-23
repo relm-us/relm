@@ -15,7 +15,7 @@
   import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
   import { Clickable, Clicked } from "~/ecs/plugins/clickable";
 
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
   import { mode } from "~/stores/mode";
   import { mouse } from "~/stores/mouse";
 
@@ -83,9 +83,9 @@
           DRAG_DISTANCE_THRESHOLD
       ) {
         // drag  mode start
-        if ($Relm.selection.length > 0 && pointerPoint) {
+        if (worldManager.selection.length > 0 && pointerPoint) {
           setNextPointerState("drag");
-          $Relm.selection.savePositions();
+          worldManager.selection.savePositions();
           dragPlane.setOrientation(shiftKeyOnClick ? "xy" : "xz");
           // dragPlane.show();
         } else {
@@ -97,7 +97,7 @@
       } else if (pointerState === "drag") {
         // drag mode
         const delta = dragPlane.getDelta(pointerPosition);
-        $Relm.selection.moveRelativeToSavedPositions(delta);
+        worldManager.selection.moveRelativeToSavedPositions(delta);
       } else if (pointerState === "drag-select") {
         if (shiftKeyOnMove) {
           selectionBox.setTop(pointerPosition);
@@ -107,8 +107,8 @@
 
         const contained = selectionBox.getContainedEntityIds();
 
-        $Relm.selection.clear(true);
-        $Relm.selection.addEntityIds(contained);
+        worldManager.selection.clear(true);
+        worldManager.selection.addEntityIds(contained);
       }
     } else if ($mode === "play") {
       if (
@@ -118,11 +118,11 @@
       ) {
         // drag  mode start
         setNextPointerState("drag");
-        cameraPanOffset.copy($Relm.camera.pan);
+        cameraPanOffset.copy(worldManager.camera.pan);
       } else if (pointerState === "drag") {
         const delta = dragPlane.getDelta(pointerPosition);
         dragOffset.copy(delta).sub(cameraPanOffset);
-        $Relm.camera.setPan(-dragOffset.x, -dragOffset.z);
+        worldManager.camera.setPan(-dragOffset.x, -dragOffset.z);
       }
     }
   }
@@ -151,11 +151,11 @@
       shiftKeyOnClick = shiftKey;
 
       selectionLogic.mousedown(pointerDownFound, shiftKey);
-      pointerPoint = pointerPointInSelection($Relm.selection, pointerDownFound);
+      pointerPoint = pointerPointInSelection(worldManager.selection, pointerDownFound);
       if (pointerPoint) dragPlane.setOrigin(pointerPoint);
     } else if ($mode === "play") {
-      if (pointerDownFound.includes($Relm.avatar.entity.id as string)) {
-        addTouchController($Relm.avatar.entity);
+      if (pointerDownFound.includes(worldManager.avatar.entity.id as string)) {
+        addTouchController(worldManager.avatar.entity);
       } else {
         // At this point, at least a 'click' has started. TBD if it's a drag.
         setNextPointerState("click");
@@ -164,7 +164,7 @@
           const position = clickedPosition(pointerDownFound[0], world);
           dragPlane.setOrigin(position);
         } else {
-          const planes: WorldPlanes = $Relm.world.perspective.getAvatarPlanes();
+          const planes: WorldPlanes = worldManager.world.perspective.getAvatarPlanes();
           const position = new Vector3();
           planes.getWorldFromScreen(pointerPosition, position);
           dragPlane.setOrigin(position);
@@ -190,13 +190,13 @@
 
     if ($mode === "build") {
       if (pointerState === "click") {
-        selectionLogic.mouseup($Relm.selection);
+        selectionLogic.mouseup(worldManager.selection);
       } else if (pointerState === "drag") {
-        $Relm.selection.syncEntities();
+        worldManager.selection.syncEntities();
       }
     } else if ($mode === "play") {
       if (pointerState === "click" && pointerDownFound.length > 0) {
-        const entities = $Relm.world.entities;
+        const entities = worldManager.world.entities;
         pointerDownFound.forEach((entityId) => {
           const entity = entities.getById(entityId);
           if (entity.has(Clickable)) {
@@ -204,7 +204,7 @@
           }
         });
       } else {
-        removeTouchController($Relm.avatar.entity);
+        removeTouchController(worldManager.avatar.entity);
       }
     }
 

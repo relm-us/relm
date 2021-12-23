@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { Relm } from "~/stores/Relm";
+import { worldManager } from "~/world";
 import { mode } from "~/stores/mode";
 import {
   selectedEntities,
@@ -101,10 +101,8 @@ export function onCopy() {
   if (get(mode) === "build") {
     const selectedIds = selectedEntities.get();
     if (selectedIds.size > 0) {
-      const $Relm = get(Relm);
-
       const entities = [...selectedIds].map((id) =>
-        $Relm.world.entities.getById(id)
+        worldManager.world.entities.getById(id)
       );
 
       // expand selection to include children
@@ -152,10 +150,8 @@ export function onPaste() {
   assignNewGroupIds(buffer.groupTree, idMap);
   groupTree.mergeTree(buffer.groupTree);
 
-  const $Relm = get(Relm);
-
   const targetPosition = new Vector3().copy(
-    $Relm.avatar.entity.get(Transform).position
+    worldManager.avatar.entity.get(Transform).position
   );
   targetPosition.y = buffer.center.y;
 
@@ -163,7 +159,7 @@ export function onPaste() {
 
   // Create a copy of each entity and put it in it's new location
   for (const json of buffer.entities) {
-    const entity = $Relm.world.entities.create().fromJSON(json).activate();
+    const entity = worldManager.world.entities.create().fromJSON(json).activate();
     const transform = entity.get(Transform);
     if (transform && entity.parent === null) {
       offset.copy(transform.position);
@@ -175,6 +171,6 @@ export function onPaste() {
   // Update yjs WorldDoc
   for (const entity of entities) {
     entity.bind();
-    $Relm.wdoc.syncFrom(entity);
+    worldManager.wdoc.syncFrom(entity);
   }
 }

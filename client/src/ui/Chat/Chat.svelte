@@ -3,11 +3,13 @@
   import ChatBar from "./ChatBar.svelte";
   import ChatHistory from "./ChatHistory.svelte";
 
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
   import { chatOpen, chatFocused } from "~/stores/chatOpen";
   import { playerId } from "~/identity/playerId";
+  import { onMount } from "svelte";
 
   let chatBar;
+  let chatManager;
 
   function toggleChat() {
     $chatOpen = !$chatOpen;
@@ -18,22 +20,29 @@
     $chatOpen = false;
     $chatFocused = false;
   }
+
+  onMount(() => {
+    worldManager.chatStore.subscribe(
+      ($chatStore) => (chatManager = $chatStore)
+    );
+  });
 </script>
 
-<container class="interactive" class:close={!$chatOpen} class:open={$chatOpen}>
-  <attached>
-    <ChatButton
-      on:click={toggleChat}
-      unread={$Relm && $Relm.chat.unreadCount}
-    />
-  </attached>
-  <slide-in>
-    {#if $Relm}
-      <ChatHistory messages={$Relm.chat.messages} myID={playerId} />
-    {/if}
-    <ChatBar bind:this={chatBar} on:close={closeChat} />
-  </slide-in>
-</container>
+{#if chatManager}
+  <container
+    class="interactive"
+    class:close={!$chatOpen}
+    class:open={$chatOpen}
+  >
+    <attached>
+      <ChatButton on:click={toggleChat} unread={chatManager.unreadCount} />
+    </attached>
+    <slide-in>
+      <ChatHistory messages={chatManager.messages} myID={playerId} />
+      <ChatBar bind:this={chatBar} on:close={closeChat} />
+    </slide-in>
+  </container>
+{/if}
 
 <style>
   container {

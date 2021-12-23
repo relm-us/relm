@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
 
   import Button from "~/ui/lib/Button";
 
   const onClick = () => {
-    $Relm.wdoc.reapplyWorld();
+    worldManager.wdoc.reapplyWorld();
   };
 </script>
 

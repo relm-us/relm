@@ -5,7 +5,7 @@
   import IoMdPricetag from "svelte-icons/io/IoMdPricetag.svelte";
   import IoMdEasel from "svelte-icons/io/IoMdEasel.svelte";
 
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
   import { makeDiamond, makeBillboard } from "~/prefab";
   import { cleanHtml } from "~/utils/cleanHtml";
   import { WorldTransform } from "~/ecs/plugins/core";
@@ -41,25 +41,25 @@
   }
 
   function createLabel(text) {
-    const position = $Relm.avatar.entity.get(WorldTransform).position;
-    const diamond = makeDiamond($Relm.world, {
+    const position = worldManager.avatar.entity.get(WorldTransform).position;
+    const diamond = makeDiamond(worldManager.world, {
       x: position.x,
       z: position.z,
       content: text,
     });
     diamond.traverse((entity) => entity.activate());
-    $Relm.wdoc.syncFrom(diamond);
+    worldManager.wdoc.syncFrom(diamond);
   }
 
   function createBillboard(text) {
-    const position = $Relm.avatar.entity.get(WorldTransform).position;
-    const label = makeBillboard($Relm.world, {
+    const position = worldManager.avatar.entity.get(WorldTransform).position;
+    const label = makeBillboard(worldManager.world, {
       x: position.x,
       z: position.z,
       text: text,
       editable: true,
     }).activate();
-    $Relm.wdoc.syncFrom(label);
+    worldManager.wdoc.syncFrom(label);
   }
 
   // ignore warning about missing props

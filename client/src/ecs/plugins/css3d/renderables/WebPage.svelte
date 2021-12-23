@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Entity } from "~/ecs/base";
   import { mode } from "~/stores/mode";
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
   import { config } from "~/config";
 
   export let width: number;
@@ -39,7 +39,7 @@
 
   function onWindowFocus(event: FocusEvent) {
     highlighted = false;
-    $Relm.camera.followParticipant();
+    worldManager.camera.followParticipant();
   }
 
   function onFrameMouseout() {
@@ -47,14 +47,14 @@
       active = false;
       highlighted = false;
       forceRestoreFocus();
-      $Relm.camera.followParticipant();
+      worldManager.camera.followParticipant();
     }
   }
 
   function onOverlayMousedown() {
     if ($mode === "play") {
-      if ($Relm.camera.state.type === "following") {
-        $Relm.camera.focus(entity, () => {
+      if (worldManager.camera.state.type === "following") {
+        worldManager.camera.focus(entity, () => {
           active = true;
           highlighted = true;
           iframe?.focus();

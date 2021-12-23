@@ -1,6 +1,6 @@
 <script>
   import { beforeUpdate, afterUpdate } from "svelte";
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
   import { cleanHtml } from "~/utils/cleanHtml";
   import Message from "./Message.svelte";
 
@@ -11,7 +11,7 @@
   let autoscroll;
 
   function getIdentity(playerId) {
-    return $Relm.identities.get(playerId);
+    return worldManager.identities.get(playerId);
   }
 
   beforeUpdate(() => {

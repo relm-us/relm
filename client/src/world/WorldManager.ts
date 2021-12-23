@@ -1,5 +1,5 @@
 import { Vector3, Color } from "three";
-import { derived, get } from "svelte/store";
+import { derived, get, writable, Writable } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
@@ -12,7 +12,7 @@ import { deltaTime, fpsTime } from "~/stores/stats";
 import { worldState, WorldState } from "~/stores/worldState";
 import { playState, PlayState } from "~/stores/playState";
 import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
-import { ConnectOptions } from "~/stores/connection";
+import { connection, ConnectOptions } from "~/stores/connection";
 import { shadowsEnabled } from "~/stores/settings";
 import { entryway } from "~/stores/subrelm";
 import {
@@ -46,8 +46,9 @@ import { setupState } from "~/stores/setupState";
 
 import type { DecoratedWorld } from "~/types/DecoratedWorld";
 import { AVConnection } from "~/av";
+import { Identity } from "~/identity/Identity";
 
-export default class WorldManager {
+export class WorldManager {
   world: DecoratedWorld;
   viewport: HTMLElement;
   light: Entity;
@@ -56,7 +57,9 @@ export default class WorldManager {
   wdoc: WorldDoc;
   selection: SelectionManager;
   identities: IdentityManager;
+  meStore: Writable<Identity> = writable(null);
   chat: ChatManager;
+  chatStore: Writable<ChatManager> = writable(null);
   camera: CameraManager;
 
   avConnection: AVConnection;
@@ -66,7 +69,10 @@ export default class WorldManager {
   sendLocalStateInterval: any; // Timeout
   started: boolean = false;
 
-  constructor({ world, viewport }) {
+  constructor() {
+  }
+
+  init({ world, viewport }) {
     if (!world) throw new Error(`world is required`);
     if (!viewport) throw new Error(`viewport is required`);
     this.world = world;
@@ -76,7 +82,10 @@ export default class WorldManager {
 
     this.selection = new SelectionManager(this.wdoc);
     this.identities = new IdentityManager(this);
+    // TODO: should we follow this store pattern everywhere?
+    this.meStore.set(this.identities.me);
     this.chat = new ChatManager(this.identities, this.wdoc.messages);
+    this.chatStore.set(this.chat);
     this.camera = new CameraManager(this, this.identities.me.avatar.entity);
     this.avConnection = new AVConnection(this.identities.me.playerId);
 
@@ -87,6 +96,15 @@ export default class WorldManager {
     this.populate();
 
     this.camera.init();
+
+    connection.subscribe(($connection) => {
+      if ($connection.state === "connected") {
+        // Initial connect
+        this.connect($connection);
+      } else if ($connection.state === "error") {
+        worldState.set("error");
+      }
+    });
 
     this.wdoc.settings.subscribe(($settings) => {
       console.log("$settings", $settings);

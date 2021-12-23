@@ -1,6 +1,6 @@
-import { Vector3, Quaternion } from "three";
+import { Vector3 } from "three";
 
-import type WorldManager from "./WorldManager";
+import type { WorldManager } from "./WorldManager";
 
 import { Entity } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";

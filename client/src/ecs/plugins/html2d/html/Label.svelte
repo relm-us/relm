@@ -3,7 +3,7 @@
   import { cleanHtml } from "~/utils/cleanHtml";
 
   import { Html2d } from "../components";
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
   import { mode } from "~/stores/mode";
   import { DRAG_DISTANCE_THRESHOLD } from "~/config/constants";
 
@@ -35,13 +35,13 @@
     const component = entity.get(Html2d);
     component.content = content;
 
-    if ($Relm.avatar.entity === entity) {
+    if (worldManager.avatar.entity === entity) {
       // TODO: make a way for Avatar to subscribe to ECS component
       // changes instead of this hack:
-      $Relm.identities.me.set({ name: content });
+      worldManager.identities.me.set({ name: content });
     } else {
       // Broadcast changes
-      $Relm.wdoc.syncFrom(entity);
+      worldManager.wdoc.syncFrom(entity);
     }
 
     editing = false;
@@ -68,13 +68,13 @@
       // Uses setTimeout because a click on "nothing" will deselect everything
       // TODO: use selectionLogic to implement complete set of selection possibilities
       setTimeout(() => {
-        $Relm.selection.clear();
-        $Relm.selection.addEntityId(entity.id);
+        worldManager.selection.clear();
+        worldManager.selection.addEntityId(entity.id);
       }, 100);
     } else if ($mode === "play") {
-      const mouse2d = $Relm.world.presentation.mouse2d;
+      const mouse2d = worldManager.world.presentation.mouse2d;
       // Store the original click in 3d world coords
-      $Relm.world.perspective.getWorldFromScreen(mouse2d, initialEntityPos);
+      worldManager.world.perspective.getWorldFromScreen(mouse2d, initialEntityPos);
       initialEntityPos.sub(entity.getByName("Transform").position);
 
       initialMousePos.copy(mouse2d);
@@ -84,7 +84,7 @@
 
   function onMouseup(_event) {
     if (dragging) {
-      $Relm.wdoc.syncFrom(entity);
+      worldManager.wdoc.syncFrom(entity);
       dragging = false;
     } else if (clickStarted && editable && !editing) {
       editing = true;
@@ -98,7 +98,7 @@
 
     if (!event.target.parentElement) return;
 
-    const mouse2d = $Relm.world.presentation.mouse2d;
+    const mouse2d = worldManager.world.presentation.mouse2d;
 
     if (
       draggable &&
@@ -111,7 +111,7 @@
 
     if (!dragging) return;
 
-    const drag = $Relm.world.perspective.getWorldFromScreen(mouse2d);
+    const drag = worldManager.world.perspective.getWorldFromScreen(mouse2d);
     drag.x -= initialEntityPos.x;
     drag.z -= initialEntityPos.z;
 

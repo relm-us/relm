@@ -1,13 +1,13 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import CircleButton from "~/ui/lib/CircleButton";
   import { AudioIcon, mediaDesired } from "video-mirror";
   // import { audioProducing } from "~/av/stores/producers";
   import { setupState } from "~/stores/setupState";
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
   import { Identity } from "~/identity/Identity";
 
   let identity: Identity;
-  $: identity = $Relm && $Relm.identities.me;
 
   let muted = false;
   // $: muted = !$audioProducing;
@@ -18,6 +18,10 @@
       muted = !identity.toggleShowAudio();
     }
   }
+
+  onMount(() => {
+    return worldManager.meStore.subscribe(($me) => (identity = $me));
+  });
 </script>
 
 <CircleButton on:click={toggleMute}>

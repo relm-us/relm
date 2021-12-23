@@ -1,7 +1,7 @@
 <script lang="ts">
   import CircleButton from "~/ui/lib/CircleButton";
   import IoIosHappy from "svelte-icons/io/IoIosHappy.svelte";
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
   import { AvatarBuilder } from "~/ui/AvatarBuilder";
   import { getDefaultAppearance } from "~/identity/appearance";
 
@@ -28,7 +28,7 @@
   <div class="builder" bind:this={builderEl}>
     <AvatarBuilder
       on:click={() => (showBuilder = false)}
-      {...$Relm.identities.me.get("appearance") || getDefaultAppearance("male")}
+      {...worldManager.identities.me.get("appearance") || getDefaultAppearance("male")}
     />
   </div>
 {/if}

@@ -4,7 +4,7 @@ import EventEmitter from "eventemitter3";
 import { withArrayEdits, withMapEdits } from "relm-common/yjs/observeUtils";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
-import type WorldManager from "~/world/WorldManager";
+import type { WorldManager } from "~/world/WorldManager";
 
 import { IdentityData, PlayerID, YClientID } from "./types";
 

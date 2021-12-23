@@ -5,7 +5,7 @@
 
   import { cleanHtml } from "~/utils/cleanHtml";
 
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
   import CircleButton from "~/ui/lib/CircleButton";
 
   import { Html2d } from "../components";
@@ -40,7 +40,7 @@
     content = component.content = contentEl.innerHTML;
 
     // Broadcast changes
-    $Relm.wdoc.syncFrom(entity);
+    worldManager.wdoc.syncFrom(entity);
   }
 
   function isModified() {

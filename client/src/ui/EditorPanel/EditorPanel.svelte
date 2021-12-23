@@ -1,7 +1,7 @@
 <script lang="ts">
   import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
   import { selectedEntities, selectedGroups } from "~/stores/selection";
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
   import SelectCreatePrefab from "./SelectCreatePrefab.svelte";
   import EditorShowSingleEntity from "./EditorShowSingleEntity.svelte";
 </script>
@@ -15,7 +15,7 @@
   {:else if $selectedEntities.size === 1}
     <!-- Must pass in $selectedEntities so svelte knows to re-render on new selection -->
     <EditorShowSingleEntity
-      entity={$Relm.selection.getFirst($selectedEntities)}
+      entity={worldManager.selection.getFirst($selectedEntities)}
     />
   {:else}
     <Pane title="Selected">

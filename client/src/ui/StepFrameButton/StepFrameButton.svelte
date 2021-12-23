@@ -1,11 +1,11 @@
 <script lang="ts">
   import Button from "../Button";
-  import { Relm } from "~/stores/Relm";
+  import { worldManager } from "~/world";
 
   import IoIosSkipForward from "svelte-icons/io/IoIosSkipForward.svelte";
 
   const step = () => {
-    $Relm.step();
+    worldManager.step();
   };
 </script>
 
