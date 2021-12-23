@@ -4,6 +4,7 @@ import fileupload from "express-fileupload";
 import cors from "cors";
 import sharp from "sharp";
 
+import * as middleware from "../middleware";
 import * as conversion from "../conversion";
 import { fail, wrapAsync } from "../utils";
 
@@ -23,6 +24,15 @@ asset.use(
     useTempFiles: true,
     tempFileDir: TMP_DIR,
   }) as any
+);
+
+asset.get(
+  "/query",
+  cors(),
+  // middleware.authenticated(),
+  wrapAsync(async (req, res) => {
+    const asset = req.files["files[]"];
+  })
 );
 
 // Serve uploaded files
