@@ -10,7 +10,7 @@ export type SecureParams = {
   s: string;
   x: string;
   y: string;
-  jwt: string;
+  jwt?: string;
   t?: string;
 };
 
