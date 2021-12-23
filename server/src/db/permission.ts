@@ -70,9 +70,11 @@ export async function getPermissions({
           ELSE p.permits
         END AS permits
       FROM relms AS r
-      LEFT JOIN permissions AS p USING (relm_id)
-      WHERE (p.player_id IS NULL OR p.player_id = ${playerId})
-        AND r.relm_${raw(relmNames ? "name" : "id")} ${IN(relms)}
+      LEFT JOIN (
+        SELECT * FROM permissions
+        WHERE player_id = ${playerId}
+      ) p USING (relm_id)
+      WHERE r.relm_${raw(relmNames ? "name" : "id")} ${IN(relms)}
   `);
 
   let permitsByRelm: Map<string, Set<string>> = new Map(

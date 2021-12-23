@@ -3,6 +3,7 @@ import { createInvitation } from "./invitation";
 import { getPermissions } from "./permission";
 import { init, deinit } from "./db";
 import { uuidv4 } from "../utils";
+import { createRelm } from "./relm";
 
 describe("useToken", () => {
   beforeAll(init);
@@ -12,6 +13,10 @@ describe("useToken", () => {
     const token = uuidv4(); // token can be anything, we just need something unique for testing
     const relmId = uuidv4();
     const playerId = uuidv4();
+
+    // Relm must exist for getPermissions to return a result
+    await createRelm({ relmId, relmName: relmId, isPublic: false });
+
     const invitation = await createInvitation({
       token,
       relmId,
