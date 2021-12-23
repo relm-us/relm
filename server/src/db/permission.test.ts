@@ -4,8 +4,6 @@ import { uuidv4 } from "../utils";
 import { init, deinit } from "./db";
 import { Relm } from ".";
 
-const welcomeRelmId = uuidv4();
-
 describe("Permission model tests", () => {
   beforeAll(init);
   afterAll(deinit);
