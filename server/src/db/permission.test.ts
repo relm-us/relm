@@ -19,6 +19,26 @@ describe("Permission model tests", () => {
     ).toEqual(new Set(["admin", "access", "invite", "edit"]));
   });
 
+  it("gets acccess permission to public relm", async () => {
+    const playerId = uuidv4();
+    const relmId = uuidv4();
+    const relmName = uuidv4();
+
+    await Relm.createRelm({
+      relmId,
+      relmName,
+      isPublic: true,
+    });
+
+    const permitsByRelm = await Permission.getPermissions({
+      playerId,
+      relmNames: [relmName],
+    });
+
+    expect(permitsByRelm["*"]).toEqual([]);
+    expect(permitsByRelm[relmName]).toEqual(["access"]);
+  });
+
   it("gets unioned permissions", async () => {
     const playerId = uuidv4();
     const relmId1 = uuidv4();

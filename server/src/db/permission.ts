@@ -47,13 +47,24 @@ export async function getPermissions({
   if (empty(relmNames) && empty(relmIds)) return {};
 
   const relms = relmNames ? relmNames : relmIds;
+  // First SELECT:
+  //  - get access permission for public relms
+  //
+  // Second SELECT:
+  //  - get various permissions for player in relms
   const rows = await db.manyOrNone(sql`
       SELECT
-        r.relm_name AS relm,
-        CASE
-          WHEN r.is_public = 't' THEN '["access"]'::jsonb
-          ELSE p.permits
-        END AS permits
+        r.relm_${raw(relmNames ? "name" : "id")} AS relm,
+        '["access"]'::jsonb AS permits
+      FROM relms r
+      WHERE r.is_public = 't'
+        AND r.relm_${raw(relmNames ? "name" : "id")} ${IN(relms)}
+
+      UNION
+
+      SELECT
+        r.relm_${raw(relmNames ? "name" : "id")} AS relm,
+        p.permits
       FROM permissions AS p
       LEFT JOIN relms AS r USING (relm_id)
       WHERE p.player_id = ${playerId}

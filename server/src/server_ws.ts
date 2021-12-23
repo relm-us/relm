@@ -78,10 +78,10 @@ server.on("upgrade", async (req, socket, head) => {
     } else {
       const permissions = await Permission.getPermissions({
         playerId,
-        relmId: doc.relmId,
+        relmIds: [doc.relmId],
       });
 
-      const permitted = permissions.has("access");
+      const permitted = permissions[doc.relmId].includes("access");
 
       if (permitted) {
         wss.handleUpgrade(req, socket, head, (conn) => {
