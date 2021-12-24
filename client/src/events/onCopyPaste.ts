@@ -1,15 +1,13 @@
 import { get } from "svelte/store";
-import { worldManager } from "~/world";
-import { mode } from "~/stores/mode";
-import {
-  selectedEntities,
-  groupTree,
-  GroupTree,
-} from "~/stores/selection";
-import { copyBuffer } from "~/stores/copyBuffer";
-import { Transform } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 import { nanoid } from "nanoid";
+
+import { worldManager } from "~/world";
+import { mode } from "~/stores/mode";
+import { selectedEntities, groupTree, GroupTree } from "~/stores/selection";
+import { copyBuffer } from "~/stores/copyBuffer";
+import { Transform } from "~/ecs/plugins/core";
+import { worldDoc } from "~/stores/worldDoc";
 
 function getCenter(entities) {
   const center = new Vector3();
@@ -159,7 +157,10 @@ export function onPaste() {
 
   // Create a copy of each entity and put it in it's new location
   for (const json of buffer.entities) {
-    const entity = worldManager.world.entities.create().fromJSON(json).activate();
+    const entity = worldManager.world.entities
+      .create()
+      .fromJSON(json)
+      .activate();
     const transform = entity.get(Transform);
     if (transform && entity.parent === null) {
       offset.copy(transform.position);
@@ -169,8 +170,9 @@ export function onPaste() {
   }
 
   // Update yjs WorldDoc
+  const $worldDoc = get(worldDoc);
   for (const entity of entities) {
     entity.bind();
-    worldManager.wdoc.syncFrom(entity);
+    $worldDoc.syncFrom(entity);
   }
 }

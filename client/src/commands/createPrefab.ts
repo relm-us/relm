@@ -1,10 +1,12 @@
+import { get } from "svelte/store";
 import { worldManager } from "~/world";
+import { worldDoc } from "~/stores/worldDoc";
 import { WorldTransform } from "~/ecs/plugins/core";
 import { directory } from "~/prefab";
 
 function activate(entity) {
   entity.activate();
-  worldManager.wdoc.syncFrom(entity);
+  get(worldDoc).syncFrom(entity);
   for (const child of entity.getChildren()) {
     activate(child);
   }

@@ -48,15 +48,17 @@ import type { DecoratedWorld } from "~/types/DecoratedWorld";
 import { AVConnection } from "~/av";
 import { Identity } from "~/identity/Identity";
 
+import { worldDoc } from "~/stores/worldDoc";
 export class WorldManager {
   world: DecoratedWorld;
   viewport: HTMLElement;
   light: Entity;
   connectOpts;
 
-  wdoc: WorldDoc;
+  $wdoc: WorldDoc;
+
   selection: SelectionManager;
-  identities: IdentityManager;
+  identities: IdentityManager = new IdentityManager();
   meStore: Writable<Identity> = writable(null);
   chat: ChatManager;
   chatStore: Writable<ChatManager> = writable(null);
@@ -69,8 +71,7 @@ export class WorldManager {
   sendLocalStateInterval: any; // Timeout
   started: boolean = false;
 
-  constructor() {
-  }
+  constructor() {}
 
   init({ world, viewport }) {
     if (!world) throw new Error(`world is required`);
@@ -78,15 +79,32 @@ export class WorldManager {
     this.world = world;
     this.viewport = viewport;
 
-    this.wdoc = new WorldDoc(world);
+    worldDoc.subscribe(($worldDoc) => {
+      this.$wdoc = $worldDoc;
 
-    this.selection = new SelectionManager(this.wdoc);
-    this.identities = new IdentityManager();
-    this.identities.setYdoc(this.wdoc.ydoc);
+      const settingsUnsub = $worldDoc.settings.subscribe(($settings) => {
+        console.log("$settings", $settings);
+
+        const fog = this.world.presentation.scene.fog;
+        if ($settings.get("fogColor")) {
+          fog.color = new Color($settings.get("fogColor"));
+        }
+        if ($settings.get("fogDensity")) {
+          fog.density = $settings.get("fogDensity");
+        }
+      });
+
+      return () => {
+        settingsUnsub();
+      };
+    });
+
+    this.selection = new SelectionManager(this.$wdoc);
+    this.identities.setYdoc(this.$wdoc.ydoc);
     // TODO: should we follow this store pattern everywhere?
     this.meStore.set(this.identities.me);
     this.chat = new ChatManager(this.identities);
-    this.chat.setMessages(this.wdoc.messages);
+    this.chat.setMessages(this.$wdoc.messages);
     this.chatStore.set(this.chat);
     this.camera = new CameraManager(this, this.identities.me.avatar.entity);
     this.avConnection = new AVConnection(this.identities.me.playerId);
@@ -105,18 +123,6 @@ export class WorldManager {
         this.connect($connection);
       } else if ($connection.state === "error") {
         worldState.set("error");
-      }
-    });
-
-    this.wdoc.settings.subscribe(($settings) => {
-      console.log("$settings", $settings);
-
-      const fog = this.world.presentation.scene.fog;
-      if ($settings.get("fogColor")) {
-        fog.color = new Color($settings.get("fogColor"));
-      }
-      if ($settings.get("fogDensity")) {
-        fog.density = $settings.get("fogDensity");
       }
     });
 
@@ -184,7 +190,7 @@ export class WorldManager {
   }
 
   enter(entryway: string) {
-    const entryways = this.wdoc.entryways.y.toJSON();
+    const entryways = this.$wdoc.entryways.y.toJSON();
     const position = new Vector3(0, 0, 0);
     if (entryway in entryways) {
       position.fromArray(entryways[entryway]);
@@ -249,29 +255,29 @@ export class WorldManager {
 
     // Poll for loading state info such as entities and assets loaded
     loadingState.set("loading");
-    startPollingLoadingState(this.wdoc, () => {
+    startPollingLoadingState(this.$wdoc, () => {
       loadingState.set("loaded");
     });
 
     // Connect & show loading progress
     resetLoading(connectOpts.assetsCount, connectOpts.entitiesCount);
-    this.wdoc.connect(this.connectOpts);
+    this.$wdoc.connect(this.connectOpts);
 
-    this.wdoc.provider.awareness.on("change", (changes) => {
+    this.$wdoc.provider.awareness.on("change", (changes) => {
       for (let id of changes.removed) {
         this.identities.removeByClientId(id);
       }
     });
 
-    this.wdoc.provider.awareness.on("update", () => {
-      const states = this.wdoc.provider.awareness.getStates();
+    this.$wdoc.provider.awareness.on("update", () => {
+      const states = this.$wdoc.provider.awareness.getStates();
 
       states.forEach(({ m }, clientId) => {
         // Ignore updates that don't include matrix transform data
         if (!m) return;
 
         // Ignore updates about ourselves
-        if (clientId === this.wdoc.ydoc.clientID) return;
+        if (clientId === this.$wdoc.ydoc.clientID) return;
 
         this.identities.setTransformData(clientId, m);
       });
@@ -281,7 +287,7 @@ export class WorldManager {
   disconnect() {
     clearInterval(this.sendLocalStateInterval);
     this.sendLocalStateInterval = undefined;
-    this.wdoc.disconnect();
+    this.$wdoc.disconnect();
   }
 
   reset() {
@@ -395,11 +401,11 @@ export class WorldManager {
 
   sendTransformData() {
     const data = this.identities.getTransformData();
-    if (data) this.wdoc.provider?.awareness.setLocalStateField("m", data);
+    if (data) this.$wdoc.provider?.awareness.setLocalStateField("m", data);
   }
 
   toJSON() {
-    return exportRelm(this.wdoc);
+    return exportRelm(this.$wdoc);
   }
 
   fromJSON(json) {
@@ -407,7 +413,7 @@ export class WorldManager {
     let entityIds = [];
     try {
       // Import everything in the JSON document
-      entityIds = importRelm(this.wdoc, json);
+      entityIds = importRelm(this.$wdoc, json);
     } catch (err) {
       console.warn(err);
       return false;
