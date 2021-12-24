@@ -1,7 +1,7 @@
 import { World, Entity, EntityId } from "~/ecs/base";
 import { DeepDiff } from "deep-diff";
 import { readableMap, YReadableMap } from "svelt-yjs";
-import { loadingState } from "~/stores/loading";
+import { loadingState } from "~/stores/loadingState";
 
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
@@ -29,12 +29,9 @@ import {
 import EventEmitter from "eventemitter3";
 import { applyDiffToYEntity } from "./applyDiff";
 
-import {
-  yConnectState,
-  yLoadingState,
-  ConnectOptions,
-  YConnectState,
-} from "~/stores/connection";
+import { ConnectOptions } from "~/stores/connection";
+import { yConnectState, YConnectState } from "~/stores/yConnectState";
+import { yLoadingState } from "~/stores/yLoadingState";
 import { selectedEntities } from "~/stores/selection";
 
 const UNDO_CAPTURE_TIMEOUT = 50;

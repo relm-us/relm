@@ -15,11 +15,8 @@ import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 import { connection, ConnectOptions } from "~/stores/connection";
 import { shadowsEnabled } from "~/stores/settings";
 import { entryway } from "~/stores/subrelm";
-import {
-  loadingState,
-  resetLoading,
-  startPollingLoadingState,
-} from "~/stores/loading";
+import { resetLoading, startPollingLoadingState } from "~/stores/loading";
+import { loadingState } from "~/stores/loadingState";
 
 import { makeInitialCollider } from "~/prefab";
 import { makeLight } from "~/prefab/makeLight";

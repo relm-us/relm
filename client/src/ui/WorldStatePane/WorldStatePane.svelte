@@ -9,18 +9,15 @@
 
   import { worldManager } from "~/world";
   import { subrelm, entryway } from "~/stores/subrelm";
-  import {
-    connection,
-    yConnectState,
-    yLoadingState,
-  } from "~/stores/connection";
+  import { connection } from "~/stores/connection";
+
+  import { yConnectState } from "~/stores/yConnectState";
+  import { yLoadingState } from "~/stores/yLoadingState";
   import { viewportSize } from "~/stores/viewportSize";
   import { viewport } from "~/stores/viewport";
   import { ecsWorld } from "~/stores/ecsWorld";
   import { worldState } from "~/stores/worldState";
-  // import { roomConnectState } from "~/av/stores/roomConnectState";
   import {
-    loadingState,
     loaded,
     maximum,
     entitiesLoaded,
@@ -28,12 +25,14 @@
     assetsLoaded,
     assetsMaximum,
   } from "~/stores/loading";
-  // import { peers } from "~/av/stores/peers";
+  import { loadingState } from "~/stores/loadingState";
 
   let minimized = true;
 
   let vw;
-  $: vw = $viewportSize ? `(${$viewportSize.width},${$viewportSize.height})` : "";
+  $: vw = $viewportSize
+    ? `(${$viewportSize.width},${$viewportSize.height})`
+    : "";
 
   let showAbbreviatedRoom = true;
   function toggleRoom() {

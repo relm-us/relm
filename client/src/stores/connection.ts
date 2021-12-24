@@ -1,4 +1,4 @@
-import { derived, writable, Readable, Writable } from "svelte/store";
+import { derived, Readable } from "svelte/store";
 import axios from "axios";
 
 import { config } from "~/config";
@@ -7,18 +7,6 @@ import {
   secureParamsAsHeaders,
 } from "~/identity/secureParams";
 import { subrelm } from "./subrelm";
-
-export type YConnectState =
-  | "disconnected"
-  | "connecting"
-  | "connected"
-  | "error";
-
-export const yConnectState: Writable<YConnectState> = writable("disconnected");
-
-export type YLoadingState = "initial" | "loading" | "loaded";
-
-export const yLoadingState: Writable<YLoadingState> = writable("initial");
 
 export type ConnectInitial = {
   state: "initial";

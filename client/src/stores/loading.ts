@@ -10,12 +10,6 @@ import { World } from "~/ecs/base";
 const MAX_THRESHOLD = 1.0;
 
 /**
- * Track loading state as a store
- */
-export type LoadingState = "initial" | "loading" | "loaded" | "error";
-export const loadingState: Writable<LoadingState> = writable("initial");
-
-/**
  * loading is a sub-state of worldState, i.e. when worldState is 'loading'
  * we have more detail here in these stores that can be used to show a progress
  * bar.
