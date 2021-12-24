@@ -52,7 +52,6 @@ import { worldDoc } from "~/stores/worldDoc";
 
 export class WorldManager {
   world: DecoratedECSWorld;
-  viewport: HTMLElement;
   light: Entity;
   connectOpts;
 
@@ -74,11 +73,9 @@ export class WorldManager {
 
   constructor() {}
 
-  init({ world, viewport }) {
+  init({ world }) {
     if (!world) throw new Error(`world is required`);
-    if (!viewport) throw new Error(`viewport is required`);
     this.world = world;
-    this.viewport = viewport;
 
     worldDoc.subscribe(($worldDoc) => {
       this.$wdoc = $worldDoc;
@@ -203,25 +200,6 @@ export class WorldManager {
     const world = this.world;
 
     world.perspective.setAvatar(this.avatar.entity);
-
-    // CSS3D elements go "behind" the WebGL canvas
-    world.cssPresentation.setViewport(this.viewport);
-    world.cssPresentation.renderer.domElement.style.zIndex = "0";
-
-    // WebGL canvas goes "on top" of CSS3D HTML elements
-    world.presentation.setViewport(this.viewport);
-    world.presentation.renderer.domElement.style.zIndex = "1";
-
-    // HTML2D elements go "above" the WebGL canvas
-    world.htmlPresentation.setViewport(this.viewport);
-    world.htmlPresentation.domElement.style.zIndex = "2";
-  }
-
-  unmount() {
-    const world = this.world;
-
-    world.cssPresentation.setViewport(null);
-    world.presentation.setViewport(null);
   }
 
   connect(connectOpts: ConnectOptions) {
@@ -293,7 +271,6 @@ export class WorldManager {
 
   reset() {
     this.disconnect();
-    this.unmount();
     this.world.reset();
   }
 

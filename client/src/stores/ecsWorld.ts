@@ -1,11 +1,11 @@
 import { derived, Readable } from "svelte/store";
 
 import { rapier } from "./rapier";
-import { World } from "~/ecs/base";
+import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
 import { createECSWorld } from "../world/createECSWorld";
 
-export const ecsWorld: Readable<World> = derived(
+export const ecsWorld: Readable<DecoratedECSWorld> = derived(
   rapier,
   ($rapier, set) => {
     if ($rapier) set(createECSWorld($rapier));
