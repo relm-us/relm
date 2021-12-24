@@ -1,5 +1,5 @@
 <script>
-  import { shadowsEnabled } from "~/stores/settings";
+  import { shadowsEnabled } from "~/stores/shadowsEnabled";
 
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import Button from "~/ui/lib/Button";

@@ -8,7 +8,8 @@
   import { Identity } from "~/identity/Identity";
 
   import { worldManager } from "~/world";
-  import { subrelm, entryway } from "~/stores/subrelm";
+  import { subrelm } from "~/stores/subrelm";
+  import { entryway } from "~/stores/entryway";
   import { connection } from "~/stores/connection";
 
   import { yConnectState } from "~/stores/yConnectState";

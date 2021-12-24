@@ -13,8 +13,8 @@ import { worldState, WorldState } from "~/stores/worldState";
 import { playState, PlayState } from "~/stores/playState";
 import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 import { connection, ConnectOptions } from "~/stores/connection";
-import { shadowsEnabled } from "~/stores/settings";
-import { entryway } from "~/stores/subrelm";
+import { shadowsEnabled } from "~/stores/shadowsEnabled";
+import { entryway } from "~/stores/entryway";
 import { resetLoading, startPollingLoadingState } from "~/stores/loading";
 import { loadingState } from "~/stores/loadingState";
 
