@@ -8,7 +8,6 @@ import { createECSWorld } from "../world/createECSWorld";
 export const ecsWorld: Readable<World> = derived(
   rapier,
   ($rapier, set) => {
-    console.log("$rapier", $rapier);
     if ($rapier) set(createECSWorld($rapier));
   },
   null

@@ -3,13 +3,13 @@
   import { get } from "svelte/store";
   import { hasAncestor } from "~/utils/hasAncestor";
 
-  import { scale as scaleStore } from "~/stores/viewport";
+  import { viewportScale } from "~/stores/viewportScale";
 
   export let world;
 
   const scaleRange = { min: 0, max: 100 };
 
-  let scale = get(scaleStore);
+  let scale = get(viewportScale);
 
   function onWheel(event: WheelEvent) {
     if (hasAncestor(event.target as HTMLElement, world.presentation.viewport)) {
@@ -20,7 +20,7 @@
         scaleRange.max
       );
 
-      scaleStore.set(scale);
+      viewportScale.set(scale);
     }
   }
 </script>

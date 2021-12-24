@@ -7,7 +7,7 @@ import { Transform } from "~/ecs/plugins/core";
 import { Follow } from "~/ecs/plugins/follow";
 import { LookAt } from "~/ecs/plugins/look-at";
 
-import { scale } from "~/stores/viewport";
+import { viewportScale } from "~/stores/viewportScale";
 
 import { makeCamera } from "~/prefab/makeCamera";
 
@@ -107,7 +107,7 @@ export class CameraManager {
       .activate();
 
     // Listen to the mousewheel for zoom events
-    scale.subscribe(($scale) => {
+    viewportScale.subscribe(($scale) => {
       if (this.state.type === "following") {
         this.zoom = $scale / 100;
       }

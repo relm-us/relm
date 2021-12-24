@@ -14,7 +14,8 @@
     yConnectState,
     yLoadingState,
   } from "~/stores/connection";
-  import { viewport, size, scale } from "~/stores/viewport";
+  import { viewportSize } from "~/stores/viewportSize";
+  import { viewport } from "~/stores/viewport";
   import { ecsWorld } from "~/stores/ecsWorld";
   import { worldState } from "~/stores/worldState";
   // import { roomConnectState } from "~/av/stores/roomConnectState";
@@ -32,7 +33,7 @@
   let minimized = true;
 
   let vw;
-  $: vw = $size ? `(${$size.width},${$size.height})` : "";
+  $: vw = $viewportSize ? `(${$viewportSize.width},${$viewportSize.height})` : "";
 
   let showAbbreviatedRoom = true;
   function toggleRoom() {
@@ -55,7 +56,8 @@
       if (worldManager.identities.active !== idActive)
         idActive = worldManager.identities.active;
 
-      if (worldManager.identities.total !== idTotal) idTotal = worldManager.identities.total;
+      if (worldManager.identities.total !== idTotal)
+        idTotal = worldManager.identities.total;
 
       identities = [...worldManager.identities.identities.values()];
       identities.sort((a: Identity, b: Identity) => {
