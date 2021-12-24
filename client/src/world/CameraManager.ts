@@ -7,7 +7,7 @@ import { Transform } from "~/ecs/plugins/core";
 import { Follow } from "~/ecs/plugins/follow";
 import { LookAt } from "~/ecs/plugins/look-at";
 
-import { viewportScale } from "~/stores/viewportScale";
+import { viewportScale } from "~/stores";
 
 import { makeCamera } from "~/prefab/makeCamera";
 

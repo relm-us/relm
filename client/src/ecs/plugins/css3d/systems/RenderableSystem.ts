@@ -1,9 +1,6 @@
 import { System, Groups, Not, Modified } from "~/ecs/base";
 import { WorldTransform } from "~/ecs/plugins/core";
-import {
-  CSS3DObject,
-  CSS3DSprite,
-} from "three/examples/jsm/renderers/CSS3DRenderer";
+import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer";
 
 import { isBrowser } from "~/utils/isBrowser";
 

@@ -1,7 +1,9 @@
 import { derived } from "svelte/store";
 
+import { WorldDoc } from "~/y-integration/WorldDoc";
 import { ecsWorld } from "~/stores/ecsWorld";
 import { viewport } from "~/stores/viewport";
+import { worldDoc } from "~/stores/worldDoc";
 import { WorldManager } from "./WorldManager";
 
 export const worldManager = new WorldManager();
@@ -11,7 +13,10 @@ export const worldManager = new WorldManager();
 
 // Start worldManager when ecsWorld loads
 ecsWorld.subscribe(($ecsWorld) => {
-  if ($ecsWorld) worldManager.init({ world: $ecsWorld });
+  if ($ecsWorld) {
+    worldDoc.set(new WorldDoc($ecsWorld));
+    worldManager.init({ world: $ecsWorld });
+  }
 });
 
 // Initialize the worldManager when world & viewport are ready

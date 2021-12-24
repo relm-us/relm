@@ -1,13 +1,5 @@
-import { derived, Readable } from "svelte/store";
+import { writable, Writable } from "svelte/store";
 
-import { ecsWorld } from "./ecsWorld";
+import type { WorldDoc } from "~/y-integration/WorldDoc";
 
-import { WorldDoc } from "~/y-integration/WorldDoc";
-
-export const worldDoc: Readable<WorldDoc> = derived(
-  ecsWorld,
-  ($ecsWorld, set) => {
-    if ($ecsWorld) set(new WorldDoc($ecsWorld));
-  },
-  null
-);
+export const worldDoc: Writable<WorldDoc> = writable(null);

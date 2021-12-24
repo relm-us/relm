@@ -31,13 +31,15 @@
   import { runCommand } from "~/commands";
   import { globalEvents } from "~/events";
 
-  import { ecsWorld } from "~/stores/ecsWorld";
-  import { worldState } from "~/stores/worldState";
-  import { worldUIMode } from "~/stores/worldUIMode";
-  import { openPanel } from "~/stores/openPanel";
-  import { setupState } from "~/stores/setupState";
-  import { askAvatarSetup } from "~/stores/askAvatarSetup";
-  import { playState } from "~/stores/playState";
+  import {
+    ecsWorld,
+    worldState,
+    worldUIMode,
+    openPanel,
+    setupState,
+    askAvatarSetup,
+    playState,
+  } from "~/stores";
 
   const playMode = () => {
     globalEvents.emit("switch-mode", "play");

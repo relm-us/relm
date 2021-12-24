@@ -9,7 +9,7 @@ import { Outline } from "~/ecs/plugins/outline";
 import { Transform } from "~/ecs/plugins/core";
 
 import { selectedEntities, selectedGroups } from "~/stores/selection";
-import { openPanel } from "~/stores/openPanel";
+import { openPanel } from "~/stores";
 
 export class SelectionManager {
   wdoc: WorldDoc;

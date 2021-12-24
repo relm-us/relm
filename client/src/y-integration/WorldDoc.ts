@@ -1,7 +1,6 @@
 import { World, Entity, EntityId } from "~/ecs/base";
 import { DeepDiff } from "deep-diff";
 import { readableMap, YReadableMap } from "svelt-yjs";
-import { loadingState } from "~/stores/loadingState";
 
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";

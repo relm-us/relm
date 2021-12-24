@@ -4,20 +4,22 @@
 
   import { localAudioTrack, localVideoTrack, mediaDesired } from "video-mirror";
   // import { audioProducing, videoProducing } from "~/av/stores/producers";
-  import { setupState } from "~/stores/setupState";
   import { Identity } from "~/identity/Identity";
 
   import { worldManager } from "~/world";
-  import { subrelm } from "~/stores/subrelm";
-  import { entryway } from "~/stores/entryway";
-  import { connection } from "~/stores/connection";
 
-  import { yConnectState } from "~/stores/yConnectState";
-  import { yLoadingState } from "~/stores/yLoadingState";
-  import { viewportSize } from "~/stores/viewportSize";
-  import { viewport } from "~/stores/viewport";
-  import { ecsWorld } from "~/stores/ecsWorld";
-  import { worldState } from "~/stores/worldState";
+  import {
+    ecsWorld,
+    entryway,
+    loadingState,
+    setupState,
+    subrelm,
+    viewportSize,
+    viewport,
+    worldState,
+    yConnectState,
+    yLoadingState,
+  } from "~/stores";
   import {
     loaded,
     maximum,
@@ -26,7 +28,7 @@
     assetsLoaded,
     assetsMaximum,
   } from "~/stores/loading";
-  import { loadingState } from "~/stores/loadingState";
+  import { connection } from "~/stores/connection";
 
   let minimized = true;
 
