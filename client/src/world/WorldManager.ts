@@ -44,13 +44,14 @@ import { config } from "~/config";
 
 import { setupState } from "~/stores/setupState";
 
-import type { DecoratedWorld } from "~/types/DecoratedWorld";
+import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import { AVConnection } from "~/av";
 import { Identity } from "~/identity/Identity";
 
 import { worldDoc } from "~/stores/worldDoc";
+
 export class WorldManager {
-  world: DecoratedWorld;
+  world: DecoratedECSWorld;
   viewport: HTMLElement;
   light: Entity;
   connectOpts;

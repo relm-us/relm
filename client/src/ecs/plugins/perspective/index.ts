@@ -1,4 +1,4 @@
-import { DecoratedWorld } from "~/types/DecoratedWorld";
+import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
 import { createPlugin } from "~/ecs/base";
 import CorePlugin from "~/ecs/plugins/core";
@@ -17,7 +17,7 @@ export default createPlugin({
   name: "perspective",
   plugins: [CorePlugin],
   systems: Object.values(Systems),
-  decorate(world: DecoratedWorld) {
+  decorate(world: DecoratedECSWorld) {
     world.perspective = new Perspective(world.presentation);
   },
 });

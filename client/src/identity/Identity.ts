@@ -6,7 +6,7 @@ import { worldManager } from "~/world";
 import { IdentityData, PlayerID } from "./types";
 import { defaultIdentityData, localIdentityData } from "./identityData";
 import { getSecureParams, secureParamsAsHeaders } from "./secureParams";
-import { world } from "~/stores/world";
+import { ecsWorld } from "~/stores/ecsWorld";
 
 const LONG_TIME_AGO = 600000; // 5 minutes ago
 const LAST_SEEN_TIMEOUT = 15000;
@@ -36,7 +36,7 @@ export class Identity {
     this.sharedFields = { ...defaultIdentityData };
 
     // Create an avatar to go with the identity
-    this.avatar = new Avatar(this, get(world));
+    this.avatar = new Avatar(this, get(ecsWorld));
   }
 
   get lastSeen() {

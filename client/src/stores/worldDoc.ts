@@ -1,14 +1,13 @@
 import { derived, Readable } from "svelte/store";
 
-import { world } from "./world";
+import { ecsWorld } from "./ecsWorld";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
 export const worldDoc: Readable<WorldDoc> = derived(
-  world,
-  ($world, set) => {
-    console.log("$world", $world);
-    if ($world) set(new WorldDoc($world));
+  ecsWorld,
+  ($ecsWorld, set) => {
+    if ($ecsWorld) set(new WorldDoc($ecsWorld));
   },
   null
 );

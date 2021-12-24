@@ -15,7 +15,7 @@
     yLoadingState,
   } from "~/stores/connection";
   import { viewport, size, scale } from "~/stores/viewport";
-  import { world } from "~/stores/world";
+  import { ecsWorld } from "~/stores/ecsWorld";
   import { worldState } from "~/stores/worldState";
   // import { roomConnectState } from "~/av/stores/roomConnectState";
   import {
@@ -124,7 +124,7 @@
             <div>(Ast: {$assetsLoaded}/{$assetsMaximum})</div>
           </td>
         </tr>
-        <tr><th>physics:</th><td>{$world !== null}</td></tr>
+        <tr><th>physics:</th><td>{$ecsWorld !== null}</td></tr>
         <tr><th>viewport:</th><td>{$viewport !== null} {vw}</td></tr>
 
         {#if showAbbreviatedIdentities}

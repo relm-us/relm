@@ -5,7 +5,7 @@ import type { CssPresentation } from "~/ecs/plugins/css3d/CssPresentation";
 import type { HtmlPresentation } from "~/ecs/plugins/html2d/HtmlPresentation";
 import type { Perspective } from "~/ecs/plugins/perspective/Perspective";
 
-export type DecoratedWorld = World & {
+export type DecoratedECSWorld = World & {
   physics: Physics;
   presentation: Presentation;
   cssPresentation: CssPresentation;

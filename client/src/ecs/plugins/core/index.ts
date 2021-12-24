@@ -1,5 +1,5 @@
 import { createPlugin, World } from "~/ecs/base";
-import { DecoratedWorld } from "~/types/DecoratedWorld";
+import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
 import * as Components from "./components";
 import * as Systems from "./systems";
@@ -19,7 +19,7 @@ export default function ConfigurablePlugin(options?) {
     name: "core",
     systems: Object.values(Systems) as any,
     components: Object.values(Components),
-    decorate(world: DecoratedWorld) {
+    decorate(world: DecoratedECSWorld) {
       if (IS_BROWSER) {
         world.presentation = new Presentation(world, options || {});
       }

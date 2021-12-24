@@ -7,14 +7,14 @@ import { Translucent } from "~/ecs/plugins/translucent";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
 
-import { DecoratedWorld } from "~/types/DecoratedWorld";
+import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
 const DEFAULT_BOX_HEIGHT = 3;
 
 const limit: Vector3 = new Vector3();
 
 export class SelectionBox {
-  world: DecoratedWorld;
+  world: DecoratedECSWorld;
   entity: Entity;
   box: Box3 = new Box3();
   center: Vector3 = new Vector3();
@@ -25,7 +25,7 @@ export class SelectionBox {
 
   endPlanes: WorldPlanes = null;
 
-  constructor(world: DecoratedWorld) {
+  constructor(world: DecoratedECSWorld) {
     this.world = world;
     this.entity = this.world.entities
       .create("SelectionBox")

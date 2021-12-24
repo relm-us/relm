@@ -19,13 +19,13 @@
   import { mode } from "~/stores/mode";
   import { mouse } from "~/stores/mouse";
 
-  import type { DecoratedWorld } from "~/types/DecoratedWorld";
+  import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
   import { DRAG_DISTANCE_THRESHOLD } from "~/config/constants";
   import { isInputEvent } from "../isInputEvent";
   import { DragPlane } from "./DragPlane";
   import { SelectionBox } from "./SelectionBox";
 
-  export let world: DecoratedWorld;
+  export let world: DecoratedECSWorld;
 
   const pointerPosition = new Vector2();
   const pointerStartPosition = new Vector2();

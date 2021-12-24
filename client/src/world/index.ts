@@ -1,6 +1,6 @@
 import { derived } from "svelte/store";
 
-import { world } from "~/stores/world";
+import { ecsWorld } from "~/stores/ecsWorld";
 import { viewport } from "~/stores/viewport";
 import { WorldManager } from "./WorldManager";
 
@@ -11,11 +11,11 @@ export const worldManager = new WorldManager();
 
 // Initialize the worldManager when world & viewport are ready
 derived(
-  [world, viewport],
-  ([$world, $viewport], set) => {
-    if ($world && $viewport) {
+  [ecsWorld, viewport],
+  ([$ecsWorld, $viewport], set) => {
+    if ($ecsWorld && $viewport) {
       set({
-        world: $world,
+        world: $ecsWorld,
         viewport: $viewport,
       });
     } else {

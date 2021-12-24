@@ -1,6 +1,6 @@
 import { createPlugin } from "~/ecs/base";
 import CorePlugin from "~/ecs/plugins/core";
-import { DecoratedWorld } from "~/types/DecoratedWorld";
+import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
 import { CssPresentation } from "./CssPresentation";
 
@@ -16,7 +16,7 @@ export default createPlugin({
   plugins: [CorePlugin],
   systems: Object.values(Systems),
   components: Object.values(Components),
-  decorate(world: DecoratedWorld) {
+  decorate(world: DecoratedECSWorld) {
     if (!world.presentation) {
       throw new Error("css3d plugin reguires plugin/three");
     }

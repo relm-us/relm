@@ -31,7 +31,7 @@
   import { runCommand } from "~/commands";
   import { globalEvents } from "~/events";
 
-  import { world } from "~/stores/world";
+  import { ecsWorld } from "~/stores/ecsWorld";
   import { worldState } from "~/stores/worldState";
   import { mode } from "~/stores/mode";
   import { openPanel } from "~/stores/openPanel";
@@ -77,11 +77,11 @@
 {/if}
 
 <!-- The virtual world! -->
-{#if $world}
+{#if $ecsWorld}
   <WorldContainer />
 
   <!-- Keyboard, Mouse input -->
-  <Input world={$world} />
+  <Input world={$ecsWorld} />
 {/if}
 
 <PauseAutomatically />

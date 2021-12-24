@@ -2,17 +2,17 @@ import { Vector2, Vector3, PerspectiveCamera, Group } from "three";
 
 import { PlaneOrientation, WorldPlanes } from "~/ecs/shared/WorldPlanes";
 
-import { DecoratedWorld } from "~/types/DecoratedWorld";
+import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import { makeDragPlaneHelper } from "./DragPlaneHelper";
 
 export class DragPlane {
-  world: DecoratedWorld;
+  world: DecoratedECSWorld;
   orientation: PlaneOrientation = "xz";
   planes: WorldPlanes = null;
   camera: PerspectiveCamera = new PerspectiveCamera();
   group: Group;
 
-  constructor(world: DecoratedWorld) {
+  constructor(world: DecoratedECSWorld) {
     this.world = world;
     this.planes = new WorldPlanes(
       this.world.presentation.camera,

@@ -5,7 +5,7 @@ import { World } from "~/ecs/base";
 
 import { createECSWorld } from "../world/createECSWorld";
 
-export const world: Readable<World> = derived(
+export const ecsWorld: Readable<World> = derived(
   rapier,
   ($rapier, set) => {
     console.log("$rapier", $rapier);
