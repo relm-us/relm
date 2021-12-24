@@ -3,9 +3,6 @@ import EventEmitter from "eventemitter3";
 
 import { withArrayEdits, withMapEdits } from "relm-common/yjs/observeUtils";
 
-import { WorldDoc } from "~/y-integration/WorldDoc";
-import type { WorldManager } from "~/world/WorldManager";
-
 import { IdentityData, PlayerID, YClientID } from "./types";
 
 import { playerId } from "./playerId";
@@ -17,35 +14,30 @@ import { mediaDesired } from "video-mirror";
 type ClientUpdateFunction = (data: any[]) => void;
 
 export class IdentityManager extends EventEmitter {
-  relm: WorldManager;
-  wdoc: WorldDoc;
+  ydoc: Y.Doc;
 
-  yfields: Y.Map<IdentityData>;
+  identities: Map<PlayerID, Identity> = new Map();
 
-  ymessages: Y.Array<ChatMessage>;
-
-  identities: Map<PlayerID, Identity>;
-
-  clientLastSeen: Map<YClientID, number>;
-  clientUpdateFns: Map<YClientID, ClientUpdateFunction>;
+  clientLastSeen: Map<YClientID, number> = new Map();
+  clientUpdateFns: Map<YClientID, ClientUpdateFunction> = new Map();
 
   me: Identity;
 
-  constructor(relm: WorldManager) {
-    super();
+  setYdoc(ydoc: Y.Doc) {
+    this.ydoc = ydoc;
 
-    const ydoc = relm.wdoc.ydoc;
-    this.relm = relm;
-    this.yfields = ydoc.getMap("identities");
-    this.ymessages = ydoc.getArray("messages");
-    this.identities = new Map();
-    this.clientLastSeen = new Map();
-    this.clientUpdateFns = new Map();
-
-    this.registerMe(ydoc.clientID);
+    this.registerMe(this.ydoc.clientID);
 
     this.observeFields();
     this.observeChat();
+  }
+
+  get yfields(): Y.Map<IdentityData> {
+    return this.ydoc.getMap("identities");
+  }
+
+  get ymessages(): Y.Array<ChatMessage> {
+    return this.ydoc.getArray("messages");
   }
 
   registerMe(clientId: YClientID) {

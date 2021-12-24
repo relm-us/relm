@@ -25,17 +25,18 @@ export class ChatManager {
    */
   messages: Readable<Array<ChatMessage>> & { y: any };
 
-  processed: Writable<number>;
+  processed: Writable<number> = writable(0);
 
-  readCount: Writable<number>;
+  readCount: Writable<number> = writable(0);
   unreadCount: Readable<number>;
 
-  constructor(identities: IdentityManager, messages: Y.Array<ChatMessage>) {
+  constructor(identities: IdentityManager) {
     this.identities = identities;
-    this.messages = readableArray(messages);
-    this.processed = writable(0);
+  }
 
-    this.readCount = writable(0);
+  setMessages(messages: Y.Array<ChatMessage>) {
+    this.messages = readableArray(messages);
+
     this.unreadCount = derived(
       [this.messages, this.readCount],
       ([$messages, $readCount], set) => {
@@ -45,10 +46,6 @@ export class ChatManager {
       }
     );
 
-    this.subscribe();
-  }
-
-  subscribe() {
     // Consider all past chat history as "read" when entering the relm
     let doneFirstPass = false;
     let unsubscribe = this.messages.subscribe(($messages) => {
@@ -75,6 +72,7 @@ export class ChatManager {
 
   setActingState(key: string, value: boolean) {
     this.identities.me.set({ [key]: value });
+    // get(myIdentity).set({ [key]: value });
   }
 
   addMessage(msg: ChatMessage) {

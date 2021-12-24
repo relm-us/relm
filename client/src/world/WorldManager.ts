@@ -81,10 +81,12 @@ export class WorldManager {
     this.wdoc = new WorldDoc(world);
 
     this.selection = new SelectionManager(this.wdoc);
-    this.identities = new IdentityManager(this);
+    this.identities = new IdentityManager();
+    this.identities.setYdoc(this.wdoc.ydoc);
     // TODO: should we follow this store pattern everywhere?
     this.meStore.set(this.identities.me);
-    this.chat = new ChatManager(this.identities, this.wdoc.messages);
+    this.chat = new ChatManager(this.identities);
+    this.chat.setMessages(this.wdoc.messages);
     this.chatStore.set(this.chat);
     this.camera = new CameraManager(this, this.identities.me.avatar.entity);
     this.avConnection = new AVConnection(this.identities.me.playerId);

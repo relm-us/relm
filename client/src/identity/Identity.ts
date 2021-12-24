@@ -1,13 +1,10 @@
 import { Avatar } from "./Avatar";
 
 import type { IdentityManager } from "./IdentityManager";
+import { worldManager } from "~/world";
 import { IdentityData, PlayerID } from "./types";
 import { defaultIdentityData, localIdentityData } from "./identityData";
 import { getSecureParams, secureParamsAsHeaders } from "./secureParams";
-
-// import { setMe } from "~/av/redux/stateActions";
-// import { store as avStore } from "~/av";
-// import { browser } from "~/av/browserInfo";
 
 const LONG_TIME_AGO = 600000; // 5 minutes ago
 const LAST_SEEN_TIMEOUT = 15000;
@@ -37,7 +34,7 @@ export class Identity {
     this.sharedFields = { ...defaultIdentityData };
 
     // Create an avatar to go with the identity
-    this.avatar = new Avatar(this, this.manager.relm.wdoc.world);
+    this.avatar = new Avatar(this, worldManager.wdoc.world);
   }
 
   get lastSeen() {
@@ -73,23 +70,19 @@ export class Identity {
         }
       }
 
-      if (this.manager.relm.avConnection) {
+      if (worldManager.avConnection) {
         if ("showAudio" in fields) {
           if (this.sharedFields.showAudio) {
-            this.manager.relm.avConnection.adapter.enableMic();
-            // this.manager.relm.roomClient.unmuteMic();
+            worldManager.avConnection.adapter.enableMic();
           } else {
-            this.manager.relm.avConnection.adapter.disableMic();
-            // this.manager.relm.roomClient.muteMic();
+            worldManager.avConnection.adapter.disableMic();
           }
         }
         if ("showVideo" in fields) {
           if (this.sharedFields.showVideo) {
-            this.manager.relm.avConnection.adapter.enableCam();
-            // this.manager.relm.roomClient.enableWebcam();
+            worldManager.avConnection.adapter.enableCam();
           } else {
-            this.manager.relm.avConnection.adapter.disableCam();
-            // this.manager.relm.roomClient.disableWebcam();
+            worldManager.avConnection.adapter.disableCam();
           }
         }
       }
