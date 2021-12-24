@@ -1,21 +1,9 @@
-import {
-  WebGLRenderer,
-  OrthographicCamera,
-  Scene,
-  Fog,
-  FogExp2,
-  Color,
-  AmbientLight,
-  HemisphereLight,
-  VSMShadowMap,
-  PCFShadowMap,
-  BasicShadowMap,
-  PerspectiveCamera,
-  LinearToneMapping,
-  LinearEncoding,
-} from "three";
+import { PerspectiveCamera } from "three";
 
 import { World } from "~/ecs/base";
+
+import { createRenderer } from "./createRenderer";
+import { createScene } from "./createScene";
 
 import CorePlugin from "~/ecs/plugins/core";
 import ShapePlugin from "~/ecs/plugins/shape";
@@ -53,60 +41,7 @@ import TwistBonePlugin from "~/ecs/plugins/twist-bone";
 
 import { PerformanceStatsSystem } from "~/ecs/systems/PerformanceStatsSystem";
 
-import { shadowMapConfig } from "~/config/constants";
-
-export function createRenderer() {
-  const renderer = new WebGLRenderer({
-    antialias: true,
-    alpha: true,
-    stencil: false,
-    powerPreference: "high-performance",
-  });
-
-  renderer.setClearColor(0x000000, 1.0);
-  renderer.toneMapping = LinearToneMapping;
-  renderer.toneMappingExposure = 1.1;
-  renderer.physicallyCorrectLights = true;
-  renderer.shadowMap.enabled = true;
-  renderer.outputEncoding = LinearEncoding;
-  switch (shadowMapConfig) {
-    case "BASIC":
-      renderer.shadowMap.type = BasicShadowMap;
-      break;
-    case "PCF":
-      renderer.shadowMap.type = PCFShadowMap;
-      break;
-    case "VSM":
-      renderer.shadowMap.type = VSMShadowMap;
-      break;
-  }
-
-  const style = renderer.domElement.style;
-  style.outline = "0";
-  style.position = "absolute";
-  style.pointerEvents = "none";
-  style.zIndex = "1";
-
-  return renderer;
-}
-
-export function createScene() {
-  const scene = new Scene();
-  scene.background = new Color(0xaec7ed);
-  scene.name = "scene";
-
-  scene.fog = new FogExp2(0xe5e0dd, 0.022);
-
-  // const hemiLight = new HemisphereLight(0xffffff, 0xffffff, 2);
-  // scene.add(hemiLight);
-
-  const ambientLight = new AmbientLight(0xffffff, 1);
-  scene.add(ambientLight);
-
-  return scene;
-}
-
-export function createWorld(rapier) {
+export function createECSWorld(rapier) {
   const world = new World({
     getTime: performance.now.bind(performance),
     plugins: [

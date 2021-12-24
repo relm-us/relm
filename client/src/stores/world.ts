@@ -1,37 +1,15 @@
-import { readable, derived, Readable } from "svelte/store";
+import { derived, Readable } from "svelte/store";
 
+import { rapier } from "./rapier";
 import { World } from "~/ecs/base";
 
-import { createWorld } from "../world/creation";
-
-export const rapier = readable(null, (set) => {
-  import("@dimforge/rapier3d")
-    .then((rapier) => {
-      set(rapier);
-    })
-    .catch((error) => {
-      console.error("Can't load physics engine rapier3d", error.message);
-    });
-});
+import { createECSWorld } from "../world/createECSWorld";
 
 export const world: Readable<World> = derived(
   rapier,
   ($rapier, set) => {
-    if (!$rapier) return;
-    const world = createWorld($rapier);
-    set(world);
+    console.log("$rapier", $rapier);
+    if ($rapier) set(createECSWorld($rapier));
   },
   null
 );
-
-// export const world: Readable<World | null> = readable(null, (set) => {
-//   import("@dimforge/rapier3d")
-//     .then((rapier) => {
-//       const world = createWorld(rapier);
-
-//       set(world);
-//     })
-//     .catch((error) => {
-//       console.error("Can't load physics engine rapier3d", error.message);
-//     });
-// });

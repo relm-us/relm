@@ -44,7 +44,7 @@ export class WorldDoc extends EventEmitter {
   world: World;
 
   // The "root node" (document) containing all specification data for the world
-  ydoc: Y.Doc;
+  ydoc: Y.Doc = new Y.Doc();
 
   // Yjs synchronization provider
   provider: WebsocketProvider;
@@ -64,10 +64,10 @@ export class WorldDoc extends EventEmitter {
   settings: YReadableMap<any>;
 
   // A table of Y.IDs (as strings) mapped to HECS IDs; used for deletion
-  yids: Map<YIDSTR, EntityId>;
+  yids: Map<YIDSTR, EntityId> = new Map();
 
   // A table of HECS IDs mapped to YEntity; used for fast lookup
-  hids: Map<EntityId, YEntity>;
+  hids: Map<EntityId, YEntity> = new Map();
 
   // An UndoManager allowing users to undo/redo edits on `entities`
   undoManager: Y.UndoManager;
@@ -76,10 +76,6 @@ export class WorldDoc extends EventEmitter {
     super();
 
     this.world = world;
-
-    this.ydoc = new Y.Doc();
-    this.yids = new Map();
-    this.hids = new Map();
 
     this.entities = this.ydoc.getArray("entities");
     this.entities.observeDeep(this._observer.bind(this));
