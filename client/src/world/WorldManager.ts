@@ -7,7 +7,7 @@ import { keyShift, keySpace } from "~/input/store";
 import { exportRelm, importRelm } from "./Export";
 import { mediaDesired } from "video-mirror";
 
-import { mode } from "~/stores/mode";
+import { worldUIMode } from "~/stores/worldUIMode";
 import { deltaTime, fpsTime } from "~/stores/stats";
 import { worldState, WorldState } from "~/stores/worldState";
 import { playState, PlayState } from "~/stores/playState";
@@ -130,7 +130,7 @@ export class WorldManager {
     });
 
     // Make colliders visible in build mode
-    mode.subscribe(($mode) => {
+    worldUIMode.subscribe(($mode) => {
       const enabled = $mode === "build";
       this.avatar.enableCanFly(enabled);
       this.avatar.enableNonInteractive(enabled);
@@ -147,7 +147,7 @@ export class WorldManager {
       if (ready) this.start();
     });
 
-    derived([mode, keyShift], ([$mode, $keyShift], set) => {
+    derived([worldUIMode, keyShift], ([$mode, $keyShift], set) => {
       if ($mode === "build" && $keyShift) {
         set(true);
       } else {
@@ -159,7 +159,7 @@ export class WorldManager {
     });
 
     // Temporary hack: spacebar makes avatar wave
-    derived([mode, keySpace], ([$mode, $keySpace], set) => {
+    derived([worldUIMode, keySpace], ([$mode, $keySpace], set) => {
       if ($mode === "play" && $keySpace) {
         set(true);
       } else {

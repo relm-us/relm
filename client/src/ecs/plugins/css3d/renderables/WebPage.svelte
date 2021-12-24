@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Entity } from "~/ecs/base";
-  import { mode } from "~/stores/mode";
+  import { worldUIMode } from "~/stores/worldUIMode";
   import { worldManager } from "~/world";
   import { config } from "~/config";
 
@@ -43,7 +43,7 @@
   }
 
   function onFrameMouseout() {
-    if ($mode === "play" && !alwaysOn) {
+    if ($worldUIMode === "play" && !alwaysOn) {
       active = false;
       highlighted = false;
       forceRestoreFocus();
@@ -52,7 +52,7 @@
   }
 
   function onOverlayMousedown() {
-    if ($mode === "play") {
+    if ($worldUIMode === "play") {
       if (worldManager.camera.state.type === "following") {
         worldManager.camera.focus(entity, () => {
           active = true;
@@ -70,7 +70,7 @@
     );
   }
 
-  $: if ($mode === "build") {
+  $: if ($worldUIMode === "build") {
     active = false;
     highlighted = false;
   }
@@ -100,7 +100,7 @@
 {/if}
 
 <overlay
-  class:build-mode={$mode === "build"}
+  class:build-mode={$worldUIMode === "build"}
   class:active
   class:highlighted
   on:mousedown={onOverlayMousedown}

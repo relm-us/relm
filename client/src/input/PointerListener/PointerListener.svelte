@@ -16,7 +16,7 @@
   import { Clickable, Clicked } from "~/ecs/plugins/clickable";
 
   import { worldManager } from "~/world";
-  import { mode } from "~/stores/mode";
+  import { worldUIMode } from "~/stores/worldUIMode";
   import { mouse } from "~/stores/mouse";
 
   import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
@@ -76,7 +76,7 @@
 
     mouse.set(finder._normalizedCoord);
 
-    if ($mode === "build") {
+    if ($worldUIMode === "build") {
       if (
         pointerState === "click" &&
         pointerPosition.distanceTo(pointerStartPosition) >=
@@ -110,7 +110,7 @@
         worldManager.selection.clear(true);
         worldManager.selection.addEntityIds(contained);
       }
-    } else if ($mode === "play") {
+    } else if ($worldUIMode === "play") {
       if (
         pointerState === "click" &&
         pointerPosition.distanceTo(pointerStartPosition) >=
@@ -128,12 +128,12 @@
   }
 
   function onMouseMove(event: MouseEvent) {
-    if (!eventTargetsWorld(event, $mode)) return;
+    if (!eventTargetsWorld(event, $worldUIMode)) return;
     onPointerMove(event.clientX, event.clientY, event.shiftKey);
   }
 
   function onTouchMove(event: TouchEvent) {
-    if (!eventTargetsWorld(event, $mode)) return;
+    if (!eventTargetsWorld(event, $worldUIMode)) return;
     event.preventDefault();
     var touch = event.changedTouches[0];
     onPointerMove(touch.clientX, touch.clientY, event.shiftKey);
@@ -145,7 +145,7 @@
 
     pointerDownFound = finder.entityIdsAt(pointerPosition);
 
-    if ($mode === "build") {
+    if ($worldUIMode === "build") {
       // At this point, at least a 'click' has started. TBD if it's a drag.
       setNextPointerState("click");
       shiftKeyOnClick = shiftKey;
@@ -153,7 +153,7 @@
       selectionLogic.mousedown(pointerDownFound, shiftKey);
       pointerPoint = pointerPointInSelection(worldManager.selection, pointerDownFound);
       if (pointerPoint) dragPlane.setOrigin(pointerPoint);
-    } else if ($mode === "play") {
+    } else if ($worldUIMode === "play") {
       if (pointerDownFound.includes(worldManager.avatar.entity.id as string)) {
         addTouchController(worldManager.avatar.entity);
       } else {
@@ -174,27 +174,27 @@
   }
 
   function onMouseDown(event: MouseEvent) {
-    if (!eventTargetsWorld(event, $mode)) return;
+    if (!eventTargetsWorld(event, $worldUIMode)) return;
     onPointerDown(event.clientX, event.clientY, event.shiftKey);
   }
 
   function onTouchStart(event: TouchEvent) {
-    if (!eventTargetsWorld(event, $mode)) return;
+    if (!eventTargetsWorld(event, $worldUIMode)) return;
     event.preventDefault();
     var touch = event.changedTouches[0];
     onPointerDown(touch.clientX, touch.clientY, event.shiftKey);
   }
 
   function onPointerUp(event: MouseEvent | TouchEvent) {
-    if (!eventTargetsWorld(event, $mode)) return;
+    if (!eventTargetsWorld(event, $worldUIMode)) return;
 
-    if ($mode === "build") {
+    if ($worldUIMode === "build") {
       if (pointerState === "click") {
         selectionLogic.mouseup(worldManager.selection);
       } else if (pointerState === "drag") {
         worldManager.selection.syncEntities();
       }
-    } else if ($mode === "play") {
+    } else if ($worldUIMode === "play") {
       if (pointerState === "click" && pointerDownFound.length > 0) {
         const entities = worldManager.world.entities;
         pointerDownFound.forEach((entityId) => {

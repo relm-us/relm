@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { mode } from "~/stores/mode";
+  import { worldUIMode } from "~/stores/worldUIMode";
 
   export let width: number;
   export let height: number;
@@ -56,7 +56,7 @@
   }
 
   function onPreviewClicked() {
-    if ($mode === "play") {
+    if ($worldUIMode === "play") {
       active = true;
     }
   }
@@ -83,7 +83,7 @@
     autoplay={true}
   />
 
-  {#if state !== "LOADED" || $mode === "build"}
+  {#if state !== "LOADED" || $worldUIMode === "build"}
     <overlay>
       {#if state !== "LOADED"}
         <div>Loading...</div>

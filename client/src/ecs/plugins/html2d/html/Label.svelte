@@ -4,7 +4,7 @@
 
   import { Html2d } from "../components";
   import { worldManager } from "~/world";
-  import { mode } from "~/stores/mode";
+  import { worldUIMode } from "~/stores/worldUIMode";
   import { DRAG_DISTANCE_THRESHOLD } from "~/config/constants";
 
   export let content;
@@ -63,7 +63,7 @@
   }
 
   function onMousedown(event) {
-    if ($mode === "build") {
+    if ($worldUIMode === "build") {
       event.preventDefault();
       // Uses setTimeout because a click on "nothing" will deselect everything
       // TODO: use selectionLogic to implement complete set of selection possibilities
@@ -71,7 +71,7 @@
         worldManager.selection.clear();
         worldManager.selection.addEntityId(entity.id);
       }, 100);
-    } else if ($mode === "play") {
+    } else if ($worldUIMode === "play") {
       const mouse2d = worldManager.world.presentation.mouse2d;
       // Store the original click in 3d world coords
       worldManager.world.perspective.getWorldFromScreen(mouse2d, initialEntityPos);

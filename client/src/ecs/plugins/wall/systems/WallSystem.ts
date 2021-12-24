@@ -2,7 +2,7 @@ import { System, Not, Modified, Groups } from "~/ecs/base";
 import { Object3D, Transform } from "~/ecs/plugins/core";
 import * as THREE from "three";
 import { RigidBodyRef } from "~/ecs/plugins/physics";
-import { mode } from "~/stores/mode";
+import { worldUIMode } from "~/stores/worldUIMode";
 import { get } from "svelte/store";
 
 import { isBrowser } from "~/utils/isBrowser";
@@ -58,7 +58,7 @@ export class WallSystem extends System {
       this.remove(entity);
     });
 
-    const $mode = get(mode);
+    const $mode = get(worldUIMode);
     if ($mode === "build") {
       this.queries.needsVisible.forEach((entity) => {
         const object3d = entity.get(Object3D).value;

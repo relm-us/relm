@@ -1,6 +1,6 @@
 <script lang="ts">
   import { worldManager } from "~/world";
-  import { mode } from "~/stores/mode";
+  import { worldUIMode } from "~/stores/worldUIMode";
   import { cleanHtml } from "~/utils/cleanHtml";
 
   import { Renderable } from "../components";
@@ -17,14 +17,14 @@
 
   let canEdit = false;
 
-  $: canEdit = $mode === "play" && editable;
+  $: canEdit = $worldUIMode === "play" && editable;
 
   function onInput(event) {
     const text = event.target.innerHTML;
 
     const renderable = entity.get(Renderable);
     renderable.text = text;
-    worldManager.wdoc.syncFrom(entity);
+    worldManager.$wdoc.syncFrom(entity);
   }
 
   // ignore warning about missing props

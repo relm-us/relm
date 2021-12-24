@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Button from "../Button";
-  import { mode } from "~/stores/mode";
+  import Button from "~/ui/lib/Button";
+  import { worldUIMode } from "~/stores/worldUIMode";
   import { globalEvents } from "~/events";
 
   import IoIosBuild from "svelte-icons/io/IoIosBuild.svelte";
@@ -15,7 +15,7 @@
   };
 </script>
 
-<contain-build class:selected={$mode == "build"}>
+<contain-build class:selected={$worldUIMode == "build"}>
   <Button on:click={buildMode} style="min-width:80px">
     <icon>
       <IoIosBuild />
@@ -24,7 +24,7 @@
   </Button>
 </contain-build>
 
-<contain-play class:selected={$mode == "play"}>
+<contain-play class:selected={$worldUIMode == "play"}>
   <Button on:click={playMode} style="min-width:80px">
     <icon>
       <IoIosRocket />

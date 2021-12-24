@@ -33,7 +33,7 @@
 
   import { ecsWorld } from "~/stores/ecsWorld";
   import { worldState } from "~/stores/worldState";
-  import { mode } from "~/stores/mode";
+  import { worldUIMode } from "~/stores/worldUIMode";
   import { openPanel } from "~/stores/openPanel";
   import { setupState } from "~/stores/setupState";
   import { askAvatarSetup } from "~/stores/askAvatarSetup";
@@ -89,9 +89,9 @@
   <PauseMessage />
 {/if}
 
-<overlay class:open={$mode === "build"}>
+<overlay class:open={$worldUIMode === "build"}>
   <overlay-panel class="interactive">
-    {#if $mode === "build"}
+    {#if $worldUIMode === "build"}
       {#if $openPanel === "collections"}
         <CollectionsPanel on:minimize={playMode} />
       {/if}
@@ -142,7 +142,7 @@
       {#if $playState === "paused"}
         <WorldStatePane />
       {/if}
-      {#if $mode === "build"}
+      {#if $worldUIMode === "build"}
         <GroupUngroupButton />
         <ResetWorldButton />
       {/if}

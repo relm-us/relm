@@ -3,7 +3,7 @@ import { Vector3 } from "three";
 import { nanoid } from "nanoid";
 
 import { worldManager } from "~/world";
-import { mode } from "~/stores/mode";
+import { worldUIMode } from "~/stores/worldUIMode";
 import { selectedEntities, groupTree, GroupTree } from "~/stores/selection";
 import { copyBuffer } from "~/stores/copyBuffer";
 import { Transform } from "~/ecs/plugins/core";
@@ -96,7 +96,7 @@ function selfWithDescendants(entity) {
 }
 
 export function onCopy() {
-  if (get(mode) === "build") {
+  if (get(worldUIMode) === "build") {
     const selectedIds = selectedEntities.get();
     if (selectedIds.size > 0) {
       const entities = [...selectedIds].map((id) =>
@@ -134,7 +134,7 @@ export function onCopy() {
 
 export function onPaste() {
   const offset = new Vector3();
-  if (get(mode) !== "build") return;
+  if (get(worldUIMode) !== "build") return;
 
   const buffer = get(copyBuffer);
   if (buffer.entities.length === 0) {
