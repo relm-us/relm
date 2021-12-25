@@ -33,7 +33,7 @@
 
   import {
     ecsWorld,
-    worldState,
+    appState,
     worldUIMode,
     openPanel,
     setupState,
@@ -72,9 +72,9 @@
   <AvatarChooser on:done={onDoneAvatarSetup} />
 {/if}
 
-{#if $worldState === "loading"}
+{#if $appState === "loading"}
   <LoadingScreen />
-{:else if $worldState === "error"}
+{:else if $appState === "error"}
   <LoadingFailed />
 {/if}
 

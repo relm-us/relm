@@ -10,7 +10,7 @@ import { World } from "~/ecs/base";
 const MAX_THRESHOLD = 1.0;
 
 /**
- * loading is a sub-state of worldState, i.e. when worldState is 'loading'
+ * loading is a sub-state of appState, i.e. when appState is 'loading'
  * we have more detail here in these stores that can be used to show a progress
  * bar.
  */

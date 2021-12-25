@@ -16,7 +16,7 @@
     subrelm,
     viewportSize,
     viewport,
-    worldState,
+    appState,
     yConnectState,
     yLoadingState,
   } from "~/stores";
@@ -81,7 +81,7 @@
       <table>
         <tr><th>subrelm:</th><td>{$subrelm}</td></tr>
         <tr><th>entryway:</th><td>{$entryway}</td></tr>
-        <tr><th>world state:</th><td>{$worldState}</td></tr>
+        <tr><th>app state:</th><td>{$appState}</td></tr>
         <tr><th>setup state:</th><td>{$setupState}</td></tr>
         <!-- <tr><th>conference:</th><td>{$roomConnectState}</td></tr> -->
         <tr><th>yjs:</th><td>{$connection.state}<br />{$yLoadingState}</td></tr>

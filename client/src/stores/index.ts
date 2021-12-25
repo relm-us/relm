@@ -1,3 +1,6 @@
+export { appState } from "./appState";
+export type { AppState } from "./appState";
+
 export { askAvatarSetup } from "./askAvatarSetup";
 export { askMediaSetup } from "./askMediaSetup";
 export { audioMode } from "./audioMode";
@@ -26,8 +29,6 @@ export { viewport } from "./viewport";
 export { viewportScale } from "./viewportScale";
 export { viewportSize } from "./viewportSize";
 export { worldDoc } from "./worldDoc";
-export { worldState } from "./worldState";
-export type { WorldState } from "./worldState";
 export { worldUIMode } from "./worldUIMode";
 export { yConnectState } from "./yConnectState";
 export type { YConnectState } from "./yConnectState";

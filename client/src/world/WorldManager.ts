@@ -9,7 +9,7 @@ import { mediaDesired } from "video-mirror";
 
 import { worldUIMode } from "~/stores/worldUIMode";
 import { deltaTime, fpsTime } from "~/stores/stats";
-import { worldState, WorldState } from "~/stores/worldState";
+import { appState, AppState } from "~/stores/appState";
 import { playState, PlayState } from "~/stores/playState";
 import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 import { connection, ConnectOptions } from "~/stores/connection";
@@ -117,7 +117,7 @@ export class WorldManager {
         // Initial connect
         this.connect($connection);
       } else if ($connection.state === "error") {
-        worldState.set("error");
+        appState.set("error");
       }
     });
 
@@ -336,7 +336,7 @@ export class WorldManager {
         this.enter($entryway);
       });
 
-      worldState.set("running");
+      appState.set("running");
       playState.set("playing");
 
       this.started = true;
@@ -409,16 +409,16 @@ export class WorldManager {
     return this.world.presentation.scene;
   }
 
-  get worldState(): WorldState {
-    return get(worldState);
+  get appState(): AppState {
+    return get(appState);
   }
 
-  set worldState(state: WorldState) {
+  set appState(state: AppState) {
     const possibilities = ["loading", "running", "error"];
     if (!possibilities.includes(state)) {
       console.error("state must be one of", possibilities);
     } else {
-      worldState.set(state);
+      appState.set(state);
     }
   }
 
