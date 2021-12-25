@@ -6,6 +6,6 @@ export const rapier = readable(null, (set) => {
       set(rapier);
     })
     .catch((error) => {
-      console.error("Can't load physics engine rapier3d", error.message);
+      console.error("Can't load physics engine rapier3d", error.message, error.stack);
     });
 });

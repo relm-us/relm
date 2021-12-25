@@ -1,4 +1,4 @@
-import { World, Entity, EntityId } from "~/ecs/base";
+import { Entity, EntityId } from "~/ecs/base";
 import { DeepDiff } from "deep-diff";
 import { readableMap, YReadableMap } from "svelt-yjs";
 
@@ -32,12 +32,13 @@ import { ConnectOptions } from "~/stores/connection";
 import { yConnectState, YConnectState } from "~/stores/yConnectState";
 import { yLoadingState } from "~/stores/yLoadingState";
 import { selectedEntities } from "~/stores/selection";
+import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
 
 export class WorldDoc extends EventEmitter {
   // The Hecs world that this document will synchronize with
-  world: World;
+  world: DecoratedECSWorld;
 
   // The "root node" (document) containing all specification data for the world
   ydoc: Y.Doc = new Y.Doc();
@@ -68,10 +69,10 @@ export class WorldDoc extends EventEmitter {
   // An UndoManager allowing users to undo/redo edits on `entities`
   undoManager: Y.UndoManager;
 
-  constructor(world: World) {
+  constructor(ecsWorld: DecoratedECSWorld) {
     super();
 
-    this.world = world;
+    this.world = ecsWorld;
 
     this.entities = this.ydoc.getArray("entities");
     this.entities.observeDeep(this._observer.bind(this));

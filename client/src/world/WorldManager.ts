@@ -101,7 +101,7 @@ export class WorldManager {
     this.chat = new ChatManager(this.identities);
     this.chat.setMessages(this.$wdoc.messages);
     this.chatStore.set(this.chat);
-    this.camera = new CameraManager(this, this.identities.me.avatar.entity);
+    this.camera = new CameraManager(world, this.identities.me.avatar.entity);
     this.avConnection = new AVConnection(this.identities.me.playerId);
 
     const token = new URL(window.location.href).searchParams.get("t");

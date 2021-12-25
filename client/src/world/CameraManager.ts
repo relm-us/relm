@@ -10,6 +10,7 @@ import { LookAt } from "~/ecs/plugins/look-at";
 import { viewportScale } from "~/stores";
 
 import { makeCamera } from "~/prefab/makeCamera";
+import { DecoratedECSWorld } from "types/DecoratedECSWorld";
 
 function updateComponent(entity: Entity, Component, attrs: object) {
   if (!entity) return;
@@ -64,7 +65,7 @@ const FOCUS_DISTANCE = 5.0;
 const CAMERA_LERP_ALPHA = 0.125;
 
 export class CameraManager {
-  worldManager: WorldManager;
+  ecsWorld: DecoratedECSWorld;
 
   // The ECS entity with a Camera component holding the ThreeJS PerspectiveCamera object
   entity: Entity;
@@ -86,14 +87,14 @@ export class CameraManager {
   zoomedInOffset: Vector3 = new Vector3(0, 5.5, 5.0);
   zoomedOutOffset: Vector3 = new Vector3(0, 25.5, 25.0);
 
-  constructor(worldManager: WorldManager, avatar: Entity) {
-    this.worldManager = worldManager;
+  constructor(ecsWorld: DecoratedECSWorld, avatar: Entity) {
+    this.ecsWorld = ecsWorld;
     this.avatar = avatar;
   }
 
   init() {
     // Create the ECS camera entity that holds the ThreeJS camera
-    this.entity = makeCamera(this.worldManager.world)
+    this.entity = makeCamera(this.ecsWorld)
       .add(Follow, {
         target: this.avatar.id,
         offset: new Vector3().copy(this.zoomedInOffset),

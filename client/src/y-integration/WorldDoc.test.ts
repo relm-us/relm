@@ -18,8 +18,8 @@ describe("WorldDoc", () => {
   let wdoc2: WorldDoc;
 
   beforeEach(() => {
-    wdoc1 = new WorldDoc(new World({ plugins: [CorePlugin] }));
-    wdoc2 = new WorldDoc(new World({ plugins: [CorePlugin] }));
+    wdoc1 = new WorldDoc(new World({ plugins: [CorePlugin] }) as any);
+    wdoc2 = new WorldDoc(new World({ plugins: [CorePlugin] }) as any);
 
     keepYDocsInSync(wdoc1.ydoc, wdoc2.ydoc);
   });
