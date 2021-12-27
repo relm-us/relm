@@ -7,6 +7,7 @@ import {
   secureParamsAsHeaders,
 } from "~/identity/secureParams";
 import { subrelm } from "./subrelm";
+import { buildModeAllowed } from '~/stores/buildModeAllowed';
 
 export type ConnectInitial = {
   state: "initial";
@@ -19,6 +20,7 @@ export type ConnectOptions = {
   assetsCount: number;
   twilio?: string;
   username?: string;
+  mode: string;
   params: {
     s: string;
     x: string;
@@ -46,7 +48,10 @@ async function playerPermit(params, serverUrl, subrelm) {
       console.log("public authmode enabled");
     } else {
       console.log("jwt authmode enabled");
-      console.log("username from JWT", res.data.user?.name);
+      // console.log("username from JWT", res.data.user?.name, ' - ', res.data.mode);
+      if (res.data.mode == 'build') {
+        buildModeAllowed.set(true);
+      }
     }
     return res.data;
   } else {
@@ -61,7 +66,7 @@ export const connection: Readable<ConnectStatus> = derived(
     getSecureParams(window.location.href)
       .then((params) => {
         playerPermit(params, config.serverUrl, $subrelm)
-          .then(({ relm, user, twilio }) => {
+          .then(({ relm, user, twilio, mode }) => {
             set({
               state: "connected",
               url: config.serverYjsUrl,
@@ -69,6 +74,7 @@ export const connection: Readable<ConnectStatus> = derived(
               entitiesCount: relm.entitiesCount,
               assetsCount: relm.assetsCount,
               username: user?.name,
+              mode,
               twilio,
               params,
             });

@@ -1,8 +1,15 @@
 import { get } from "svelte/store";
 import { worldManager } from "~/world";
 import { worldUIMode } from "~/stores/worldUIMode";
+import { buildModeAllowed } from '~/stores/buildModeAllowed';
 
 export function onSwitchMode(switchTo) {
+
+  const $buildModeAllowed = get(buildModeAllowed);
+  if (!$buildModeAllowed) {
+    switchTo = "play";
+  }
+
   if (!switchTo) {
     const $mode = get(worldUIMode);
     if ($mode === "play") switchTo = "build";

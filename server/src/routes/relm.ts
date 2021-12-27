@@ -239,6 +239,7 @@ relm.get(
             status: "success",
             action: "permit",
             authmode: "public",
+            mode: "build",
             twilio: twilio.getToken(req.authenticatedPlayerId),
             relm: req.relm,
           });
@@ -259,6 +260,7 @@ relm.get(
               twilio: twilio.getToken(req.authenticatedPlayerId),
               relm: req.relm,
               user: { name: jwtresult.decoded.username },
+              mode: jwtresult.decoded.mode,
             });
           } else {
             throw createError(401, "access denied");
