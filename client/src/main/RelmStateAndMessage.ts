@@ -16,7 +16,9 @@ export type RelmState = {
   entitiesCount?: number;
   assetsMax?: number;
   assetsCount?: number;
+  errorMessage?: string;
   screen?:
+    | "error"
     | "initial"
     | "video-mirror"
     | "choose-avatar"
@@ -32,8 +34,9 @@ export type RelmMessage =
       secureParams: SecureParams;
     }
   | { id: "initializedECS"; ecsWorld: DecoratedECSWorld }
+  | { id: "changeSubrelm"; subrelm: string; entryway: string }
   | { id: "gotSubrelm"; subrelm: string; entryway: string }
-  | { id: "gotPermits"; permits: Record<string, string[]> }
+  | { id: "gotPermits"; permits: string }
   | {
       id: "gotMetadata";
       subrelmDocId: string;

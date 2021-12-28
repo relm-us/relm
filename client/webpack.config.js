@@ -45,7 +45,7 @@ module.exports = {
     bundle: [
       // Note: Paths in the `stylesheets` variable will be added here
       // automatically
-      "./src/main.ts",
+      "./src/main/index.ts",
     ],
   },
   resolve: {

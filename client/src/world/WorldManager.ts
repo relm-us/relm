@@ -44,6 +44,7 @@ import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import type { Dispatch } from "~/main/RelmStateAndMessage";
 import { AVConnection } from "~/av";
 import { Identity } from "~/identity/Identity";
+import { playerId } from "~/identity/playerId";
 
 export class WorldManager {
   dispatch: Dispatch;
@@ -69,10 +70,12 @@ export class WorldManager {
   sendLocalStateInterval: any; // Timeout
   started: boolean = false;
 
-  constructor() {}
+  get participantId() {
+    return playerId;
+  }
 
   init(
-    // dispatch: Dispatch,
+    dispatch: Dispatch,
     ecsWorld: DecoratedECSWorld,
     worldDoc: WorldDoc,
     subrelm: string,
@@ -80,7 +83,7 @@ export class WorldManager {
     subrelmDocId: string,
     twilioToken: string
   ) {
-    // this.dispatch = dispatch;
+    this.dispatch = dispatch;
     this.world = ecsWorld;
     this.worldDoc = worldDoc;
     this.subrelm = subrelm;
@@ -188,7 +191,7 @@ export class WorldManager {
         produceVideo: $mediaDesired.video,
       });
     });
-    
+
     this.start();
   }
 

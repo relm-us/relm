@@ -45,13 +45,19 @@ export class RelmRestAPI {
   async getHeaders() {
     const params = await this.getAuthenticationParams();
 
-    return {
+    let headers = {
       "x-relm-id": params.id,
       "x-relm-s": params.s,
       "x-relm-x": params.x,
       "x-relm-y": params.y,
-      "x-relm-jwt": params.jwt,
     };
+    if (params.jwt) {
+      headers["x-relm-jwt"] = params.jwt;
+    }
+    if (params.t) {
+      headers["x-relm-t"] = params.t;
+    }
+    return headers;
   }
 
   async get(path, params = {}) {
@@ -68,7 +74,7 @@ export class RelmRestAPI {
     // await fetch(request)
   }
 
-  async post(path, body) {
+  async post(path, body = {}) {
     const url = `${this.url}${path}`;
     const headers = await this.getHeaders();
     return await axios.post(url, body, { headers });
@@ -88,7 +94,20 @@ export class RelmRestAPI {
     }
   }
 
-  async listPermissions(relms: string[]) {
+  async getPermits(relm: string) {
+    const res = await this.get(`/relm/${relm}/permissions`);
+    if (res.status === 200) {
+      if (res.data.status === "success") {
+        return res.data.permits;
+      } else {
+        throw Error(`can't get permissions (${res.data.status})`);
+      }
+    } else {
+      throw Error(`can't get permissions (${res.status})`);
+    }
+  }
+
+  async getPermitsForManyRelms(relms: string[]) {
     const res = await this.post("/auth/permissions", { relms });
     if (res.status === 200) {
       if (res.data.status === "success") {

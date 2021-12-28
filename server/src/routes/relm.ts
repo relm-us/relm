@@ -225,6 +225,24 @@ relm.put(
   })
 );
 
+relm.get(
+  "/permissions",
+  cors(),
+  middleware.relmExists(),
+  middleware.authenticated(),
+  middleware.acceptToken(),
+  wrapAsync(async (req, res) => {
+    const permissions = await Permission.getPermissions({
+      playerId: req.authenticatedPlayerId,
+      relmNames: [req.relmName],
+    });
+    util.respond(res, 200, {
+      status: "success",
+      permits: permissions[req.relmName],
+    });
+  })
+);
+
 // Check permission for player in an existing relm
 relm.get(
   "/can/:permission",

@@ -52,13 +52,15 @@ export function authenticated() {
     const x = getParam(req, "x");
     const y = getParam(req, "y");
 
+    const params = {
+      playerId,
+      sig,
+      x,
+      y,
+    };
+
     try {
-      req.verifiedPubKey = await Player.findOrCreateVerifiedPubKey({
-        playerId,
-        sig,
-        x,
-        y,
-      });
+      req.verifiedPubKey = await Player.findOrCreateVerifiedPubKey(params);
       req.authenticatedPlayerId = playerId;
       next();
     } catch (err) {

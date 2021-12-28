@@ -6,6 +6,7 @@ export const getPermits = (subrelm) => async (dispatch: Dispatch) => {
   const token = new URL(window.location.href).searchParams.get("t");
   const api = new RelmRestAPI(config.serverUrl, { token });
 
-  const permits = await api.listPermissions([subrelm]);
+  const permits = await api.getPermits(subrelm);
+  console.log('getpermits', permits)
   dispatch({ id: "gotPermits", permits });
 };

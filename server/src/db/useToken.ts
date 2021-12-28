@@ -17,6 +17,12 @@ export async function useToken({ token, relmId, playerId }) {
       permits: [...invite.permits],
     });
 
+    console.log(
+      `Participant ${playerId} used token ${token} to enter ${relmId} with permits ${JSON.stringify(
+        invite.permits
+      )}`
+    );
+
     return invite;
   }
 

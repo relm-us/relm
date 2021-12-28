@@ -105,6 +105,21 @@ export async function useInvitation(
   }: { token: string; relmId?: string; playerId?: string },
   db = database
 ) {
+  const row = await db.oneOrNone(
+    sql`
+      SELECT i.*
+      FROM invitation_uses iu
+      LEFT JOIN invitations i USING (token, relm_id)
+      WHERE iu.token = ${token}
+        AND iu.relm_id = ${relmId}
+        AND iu.used_by = ${playerId}
+    `
+  );
+  if (row !== null) {
+    // Valid token already used, return without errors
+    return row;
+  }
+
   return await db.task("useInvitation", async (task) => {
     const invite = await getInvitation({ token, relmId }, task as any);
 

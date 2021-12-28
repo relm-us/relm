@@ -1,27 +1,28 @@
 import { get } from "svelte/store";
 
-import SvelteProgram from "~/main/SvelteProgram.svelte";
-import * as Cmd from "./main/Cmd";
-import { RelmState, RelmMessage } from "./main/RelmStateAndMessage";
+import SvelteProgram from "./SvelteProgram.svelte";
+import * as Cmd from "./Cmd"
+import { RelmState, RelmMessage } from "./RelmStateAndMessage"
 
-import Blank from "./main/Blank.svelte";
-import MediaSetupShim from "./main/MediaSetupShim.svelte";
-import AvatarChooserShim from "./main/AvatarChooserShim.svelte";
-import GameWorldShim from "./main/GameWorldShim.svelte";
+import BlankWithLogo from "./BlankWithLogo.svelte";
+import MediaSetupShim from "./MediaSetupShim.svelte";
+import AvatarChooserShim from "./AvatarChooserShim.svelte";
+import GameWorldShim from "./GameWorldShim.svelte";
+import ErrorScreen from "./ErrorScreen.svelte";
 import { LoadingScreen, LoadingFailed } from "~/ui/LoadingScreen";
 import { resetLoading, startPollingLoadingState } from "~/stores/loading";
 
-import { identifyParticipant } from "./main/identifyParticipant";
-import { initializeECS } from "./main/initializeECS";
-import { locateSubrelm } from "./main/locateSubrelm";
-import { getPermits } from "./main/getPermits";
-import { getMetadata } from "./main/getMetadata";
-import { connectYjs } from "./main/connectYjs";
+import { identifyParticipant } from "./identifyParticipant"
+import { initializeECS } from "./initializeECS"
+import { locateSubrelm } from "./locateSubrelm"
+import { getPermits } from "./getPermits"
+import { getMetadata } from "./getMetadata"
+import { connectYjs } from "./connectYjs"
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
-import { worldManager } from "~/world";
 import { askAvatarSetup } from "~/stores/askAvatarSetup";
 import { askMediaSetup } from "~/stores/askMediaSetup";
+import { initializeWorldManager } from "./initializeWorldManager";
 
 function init() {
   const initialState: RelmState = {
@@ -37,6 +38,9 @@ export const relmProgram = {
   init: init(),
   update(msg: RelmMessage, state: RelmState) {
     switch (msg.id) {
+      case "error":
+        return [{ ...state, screen: "error", errorMessage: msg.message }];
+
       case "identified":
         return [
           {
@@ -50,6 +54,13 @@ export const relmProgram = {
       case "initializedECS":
         return [{ ...state, ecsWorld: msg.ecsWorld }, locateSubrelm];
 
+      case "changeSubrelm":
+        state.ecsWorld.reset();
+        return [
+          { ...state, subrelm: msg.subrelm, entryway: msg.entryway },
+          Cmd.batch([getPermits(msg.subrelm), getMetadata(msg.subrelm)]),
+        ];
+
       case "gotSubrelm":
         return [
           { ...state, subrelm: msg.subrelm, entryway: msg.entryway },
@@ -57,13 +68,9 @@ export const relmProgram = {
         ];
 
       case "gotPermits":
-        if (
-          state.subrelm in msg.permits &&
-          msg.permits[state.subrelm].length > 0
-        ) {
-          const permits = msg.permits[state.subrelm];
+        if (msg.permits && msg.permits.length > 0) {
           return [
-            { ...state, permits },
+            { ...state, permits: msg.permits },
             Cmd.ofMsg({ id: "combinePermitsAndMetadata" }),
           ];
         } else {
@@ -91,22 +98,21 @@ export const relmProgram = {
       case "combinePermitsAndMetadata":
         // Wait until both permits & metadata are available
         if (state.permits && state.subrelmDocId) {
+          console.log("combine state", state);
           state.worldDoc = new WorldDoc(state.ecsWorld);
-          worldManager.init(
-            state.ecsWorld,
-            state.worldDoc,
-            state.subrelm,
-            state.entryway,
-            state.subrelmDocId,
-            state.twilioToken
-          );
-          console.log('combine state', state)
           return [
             { ...state },
-            connectYjs(state.worldDoc, state.subrelmDocId, state.secureParams),
+            Cmd.batch([
+              initializeWorldManager(state),
+              connectYjs(
+                state.worldDoc,
+                state.subrelmDocId,
+                state.secureParams
+              ),
+            ]),
           ];
         } else {
-          return [state]
+          return [state];
         }
 
       case "connectedYjs": {
@@ -150,29 +156,35 @@ export const relmProgram = {
 
   view(state, dispatch) {
     // console.log("view state change", state.screen);
-    switch (state.screen) {
-      case "initial":
-        return [Blank];
-      case "video-mirror":
-        return [MediaSetupShim, { dispatch }];
-      case "choose-avatar":
-        return [AvatarChooserShim, { dispatch }];
-      case "loading-screen":
-        return [LoadingScreen];
-      case "loading-failed":
-        return [LoadingFailed];
-      case "game-world":
-        return [
-          GameWorldShim,
-          {
-            dispatch,
-            ecsWorld: state.ecsWorld,
-            buildModeAllowed: state.permits.includes("edit"),
-          },
-        ];
-      default:
-        throw Error(`Unknown screen: ${state.screen}`);
-    }
+    if (state)
+      switch (state.screen) {
+        case "initial":
+          return [BlankWithLogo];
+        case "error":
+          return [
+            ErrorScreen,
+            { message: state.errorMessage || "There was an error" },
+          ];
+        case "video-mirror":
+          return [MediaSetupShim, { dispatch }];
+        case "choose-avatar":
+          return [AvatarChooserShim, { dispatch }];
+        case "loading-screen":
+          return [LoadingScreen];
+        case "loading-failed":
+          return [LoadingFailed];
+        case "game-world":
+          return [
+            GameWorldShim,
+            {
+              dispatch,
+              ecsWorld: state.ecsWorld,
+              buildModeAllowed: state.permits.includes("edit"),
+            },
+          ];
+        default:
+          throw Error(`Unknown screen: ${state.screen}`);
+      }
   },
 };
 
