@@ -41,7 +41,7 @@
       worldManager.identities.me.set({ name: content });
     } else {
       // Broadcast changes
-      worldManager.wdoc.syncFrom(entity);
+      worldManager.worldDoc.syncFrom(entity);
     }
 
     editing = false;
@@ -84,7 +84,7 @@
 
   function onMouseup(_event) {
     if (dragging) {
-      worldManager.wdoc.syncFrom(entity);
+      worldManager.worldDoc.syncFrom(entity);
       dragging = false;
     } else if (clickStarted && editable && !editing) {
       editing = true;

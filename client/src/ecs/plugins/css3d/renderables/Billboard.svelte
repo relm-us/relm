@@ -24,7 +24,7 @@
 
     const renderable = entity.get(Renderable);
     renderable.text = text;
-    worldManager.$wdoc.syncFrom(entity);
+    worldManager.worldDoc.syncFrom(entity);
   }
 
   // ignore warning about missing props

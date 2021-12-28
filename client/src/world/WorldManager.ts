@@ -9,10 +9,9 @@ import { mediaDesired } from "video-mirror";
 
 import { worldUIMode } from "~/stores/worldUIMode";
 import { deltaTime, fpsTime } from "~/stores/stats";
-import { appState, AppState } from "~/stores/appState";
+// import { appState, AppState } from "stores/appState-x";
 import { playState, PlayState } from "~/stores/playState";
 import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
-import { connection, ConnectOptions } from "~/stores/connection";
 import { shadowsEnabled } from "~/stores/shadowsEnabled";
 import { entryway } from "~/stores/entryway";
 import { resetLoading, startPollingLoadingState } from "~/stores/loading";
@@ -42,17 +41,19 @@ import { config } from "~/config";
 import { setupState } from "~/stores/setupState";
 
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
+import type { Dispatch } from "~/main/RelmStateAndMessage";
 import { AVConnection } from "~/av";
 import { Identity } from "~/identity/Identity";
 
-import { worldDoc } from "~/stores/worldDoc";
-
 export class WorldManager {
+  dispatch: Dispatch;
   world: DecoratedECSWorld;
+  worldDoc: WorldDoc;
+  subrelm: string;
+  entryway: string;
+
   light: Entity;
   connectOpts;
-
-  $wdoc: WorldDoc;
 
   selection: SelectionManager;
   identities: IdentityManager = new IdentityManager();
@@ -70,38 +71,42 @@ export class WorldManager {
 
   constructor() {}
 
-  init({ world }) {
-    if (!world) throw new Error(`world is required`);
-    this.world = world;
+  init(
+    // dispatch: Dispatch,
+    ecsWorld: DecoratedECSWorld,
+    worldDoc: WorldDoc,
+    subrelm: string,
+    entryway: string,
+    subrelmDocId: string,
+    twilioToken: string
+  ) {
+    // this.dispatch = dispatch;
+    this.world = ecsWorld;
+    this.worldDoc = worldDoc;
+    this.subrelm = subrelm;
+    this.entryway = entryway;
 
-    worldDoc.subscribe(($worldDoc) => {
-      this.$wdoc = $worldDoc;
-
-      const settingsUnsub = $worldDoc.settings.subscribe(($settings) => {
-        console.log("$settings", $settings);
-
-        const fog = this.world.presentation.scene.fog;
-        if ($settings.get("fogColor")) {
-          fog.color = new Color($settings.get("fogColor"));
-        }
-        if ($settings.get("fogDensity")) {
-          fog.density = $settings.get("fogDensity");
-        }
-      });
-
-      return () => {
-        settingsUnsub();
-      };
+    const settingsUnsub = worldDoc.settings.subscribe(($settings) => {
+      const fog = this.world.presentation.scene.fog;
+      if ($settings.get("fogColor")) {
+        fog.color = new Color($settings.get("fogColor"));
+      }
+      if ($settings.get("fogDensity")) {
+        fog.density = $settings.get("fogDensity");
+      }
     });
 
-    this.selection = new SelectionManager(this.$wdoc);
-    this.identities.setYdoc(this.$wdoc.ydoc);
+    this.selection = new SelectionManager(this.worldDoc);
+    this.identities.init(this.worldDoc.ydoc, this.world);
     // TODO: should we follow this store pattern everywhere?
     this.meStore.set(this.identities.me);
     this.chat = new ChatManager(this.identities);
-    this.chat.setMessages(this.$wdoc.messages);
+    this.chat.setMessages(this.worldDoc.messages);
     this.chatStore.set(this.chat);
-    this.camera = new CameraManager(world, this.identities.me.avatar.entity);
+    this.camera = new CameraManager(
+      this.world,
+      this.identities.me.avatar.entity
+    );
     this.avConnection = new AVConnection(this.identities.me.playerId);
 
     const token = new URL(window.location.href).searchParams.get("t");
@@ -112,17 +117,16 @@ export class WorldManager {
 
     this.camera.init();
 
-    connection.subscribe(($connection) => {
-      if ($connection.state === "connected") {
-        // Initial connect
-        this.connect($connection);
-      } else if ($connection.state === "error") {
-        appState.set("error");
-      }
-    });
+    // connection.subscribe(($connection) => {
+    //   if ($connection.state === "connected") {
+    //     // Initial connect
+    //     this.connect($connection);
+    //   } else if ($connection.state === "error") {
+    //     appState.set("error");
+    //   }
+    // });
 
     shadowsEnabled.subscribe(($enabled) => {
-      console.log("shadows enabled", $enabled);
       this.world.presentation.renderer.shadowMap.enabled = $enabled;
       const spec = this.light.getByName("DirectionalLight");
       spec.shadow = $enabled;
@@ -136,15 +140,6 @@ export class WorldManager {
       this.avatar.enableNonInteractive(enabled);
       this.enableNonInteractiveGround(enabled);
       this.enableCollidersVisible(enabled);
-    });
-
-    /**
-     * Start when both loading is done and audio/video screen is complete
-     */
-    derived([loadingState, setupState], ([$loadingState, $setupState], set) => {
-      set($loadingState === "loaded" && $setupState === "done");
-    }).subscribe((ready) => {
-      if (ready) this.start();
     });
 
     derived([worldUIMode, keyShift], ([$mode, $keyShift], set) => {
@@ -182,10 +177,23 @@ export class WorldManager {
           break;
       }
     });
+
+    mediaDesired.subscribe(($mediaDesired) => {
+      this.avConnection.connect({
+        roomId: subrelmDocId,
+        token: twilioToken,
+        // displayName: connectOpts.username || this.identities.me.get("name"),
+        displayName: this.identities.me.get("name"),
+        produceAudio: $mediaDesired.audio,
+        produceVideo: $mediaDesired.video,
+      });
+    });
+    
+    this.start();
   }
 
   enter(entryway: string) {
-    const entryways = this.$wdoc.entryways.y.toJSON();
+    const entryways = this.worldDoc.entryways.y.toJSON();
     const position = new Vector3(0, 0, 0);
     if (entryway in entryways) {
       position.fromArray(entryways[entryway]);
@@ -194,76 +202,74 @@ export class WorldManager {
   }
 
   mount() {
-    const world = this.world;
-
-    world.perspective.setAvatar(this.avatar.entity);
+    this.world.perspective.setAvatar(this.avatar.entity);
   }
 
-  connect(connectOpts: ConnectOptions) {
-    this.connectOpts = connectOpts;
+  // connect(connectOpts: ConnectOptions) {
+  //   this.connectOpts = connectOpts;
 
-    // set name from server, if available (overrides localstorage)
-    if (connectOpts.username) {
-      this.identities.me.set({ name: connectOpts.username });
-      this.identities.me.avatar.editableName = false;
-    }
+  //   // set name from server, if available (overrides localstorage)
+  //   if (connectOpts.username) {
+  //     this.identities.me.set({ name: connectOpts.username });
+  //     this.identities.me.avatar.editableName = false;
+  //   }
 
-    derived(
-      [setupState, mediaDesired],
-      ([$setupState, $mediaDesired]: any[], set) => {
-        set({
-          ready: $setupState === "done",
-          audio: $mediaDesired.audio,
-          video: $mediaDesired.video,
-        });
-      }
-    ).subscribe(async ({ ready, audio, video }) => {
-      if (ready) {
-        await this.avConnection.connect({
-          roomId: connectOpts.room,
-          token: connectOpts.twilio,
-          displayName: connectOpts.username || this.identities.me.get("name"),
-          produceAudio: audio,
-          produceVideo: video,
-        });
-      }
-    });
+  //   derived(
+  //     [setupState, mediaDesired],
+  //     ([$setupState, $mediaDesired]: any[], set) => {
+  //       set({
+  //         ready: $setupState === "done",
+  //         audio: $mediaDesired.audio,
+  //         video: $mediaDesired.video,
+  //       });
+  //     }
+  //   ).subscribe(async ({ ready, audio, video }) => {
+  //     if (ready) {
+  //       await this.avConnection.connect({
+  //         roomId: connectOpts.room,
+  //         token: connectOpts.twilio,
+  //         displayName: connectOpts.username || this.identities.me.get("name"),
+  //         produceAudio: audio,
+  //         produceVideo: video,
+  //       });
+  //     }
+  //   });
 
-    // Poll for loading state info such as entities and assets loaded
-    loadingState.set("loading");
-    startPollingLoadingState(this.$wdoc, () => {
-      loadingState.set("loaded");
-    });
+  //   // Poll for loading state info such as entities and assets loaded
+  //   loadingState.set("loading");
+  //   startPollingLoadingState(this.worldDoc, () => {
+  //     loadingState.set("loaded");
+  //   });
 
-    // Connect & show loading progress
-    resetLoading(connectOpts.assetsCount, connectOpts.entitiesCount);
-    this.$wdoc.connect(this.connectOpts);
+  //   // Connect & show loading progress
+  //   resetLoading(connectOpts.assetsCount, connectOpts.entitiesCount);
+  //   this.worldDoc.connect(this.connectOpts);
 
-    this.$wdoc.provider.awareness.on("change", (changes) => {
-      for (let id of changes.removed) {
-        this.identities.removeByClientId(id);
-      }
-    });
+  //   this.worldDoc.provider.awareness.on("change", (changes) => {
+  //     for (let id of changes.removed) {
+  //       this.identities.removeByClientId(id);
+  //     }
+  //   });
 
-    this.$wdoc.provider.awareness.on("update", () => {
-      const states = this.$wdoc.provider.awareness.getStates();
+  //   this.worldDoc.provider.awareness.on("update", () => {
+  //     const states = this.worldDoc.provider.awareness.getStates();
 
-      states.forEach(({ m }, clientId) => {
-        // Ignore updates that don't include matrix transform data
-        if (!m) return;
+  //     states.forEach(({ m }, clientId) => {
+  //       // Ignore updates that don't include matrix transform data
+  //       if (!m) return;
 
-        // Ignore updates about ourselves
-        if (clientId === this.$wdoc.ydoc.clientID) return;
+  //       // Ignore updates about ourselves
+  //       if (clientId === this.worldDoc.ydoc.clientID) return;
 
-        this.identities.setTransformData(clientId, m);
-      });
-    });
-  }
+  //       this.identities.setTransformData(clientId, m);
+  //     });
+  //   });
+  // }
 
   disconnect() {
     clearInterval(this.sendLocalStateInterval);
     this.sendLocalStateInterval = undefined;
-    this.$wdoc.disconnect();
+    this.worldDoc.disconnect();
   }
 
   reset() {
@@ -332,11 +338,8 @@ export class WorldManager {
       this.world.presentation.compile();
 
       // Move avatar to named entryway once world has loaded
-      entryway.subscribe(($entryway) => {
-        this.enter($entryway);
-      });
+      this.enter(this.entryway);
 
-      appState.set("running");
       playState.set("playing");
 
       this.started = true;
@@ -376,11 +379,11 @@ export class WorldManager {
 
   sendTransformData() {
     const data = this.identities.getTransformData();
-    if (data) this.$wdoc.provider?.awareness.setLocalStateField("m", data);
+    if (data) this.worldDoc.provider?.awareness.setLocalStateField("m", data);
   }
 
   toJSON() {
-    return exportRelm(this.$wdoc);
+    return exportRelm(this.worldDoc);
   }
 
   fromJSON(json) {
@@ -388,7 +391,7 @@ export class WorldManager {
     let entityIds = [];
     try {
       // Import everything in the JSON document
-      entityIds = importRelm(this.$wdoc, json);
+      entityIds = importRelm(this.worldDoc, json);
     } catch (err) {
       console.warn(err);
       return false;
@@ -407,19 +410,6 @@ export class WorldManager {
 
   get scene() {
     return this.world.presentation.scene;
-  }
-
-  get appState(): AppState {
-    return get(appState);
-  }
-
-  set appState(state: AppState) {
-    const possibilities = ["loading", "running", "error"];
-    if (!possibilities.includes(state)) {
-      console.error("state must be one of", possibilities);
-    } else {
-      appState.set(state);
-    }
   }
 
   get playState(): PlayState {

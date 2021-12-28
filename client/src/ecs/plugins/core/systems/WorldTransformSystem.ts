@@ -21,6 +21,7 @@ export class WorldTransformSystem extends System {
     this.frame++;
     this.queries.new.forEach((entity) => {
       entity.add(WorldTransform);
+      this.updateTransform(entity, true);
     });
     this.queries.active.forEach((entity) => {
       this.updateTransform(entity);
@@ -30,9 +31,10 @@ export class WorldTransformSystem extends System {
     });
   }
 
-  updateTransform(entity) {
+  updateTransform(entity, forceUpdate = false) {
     const object3d = entity.get(Object3D).value;
     const world = entity.get(WorldTransform);
+    if (forceUpdate) object3d.updateMatrixWorld(true);
     object3d.matrixWorld.decompose(world.position, world.rotation, world.scale);
   }
 }

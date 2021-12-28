@@ -1,10 +1,10 @@
 import { get } from "svelte/store";
 import { worldUIMode } from "~/stores/worldUIMode";
-import { worldDoc } from "~/stores/worldDoc";
+import { worldManager } from "~/world";
 
 export function onUndo() {
   if (get(worldUIMode) === "build") {
-    get(worldDoc).undoManager.undo();
+    worldManager.worldDoc.undoManager.undo();
   } else {
     console.warn("Nothing undone (play mode)");
   }
@@ -12,7 +12,7 @@ export function onUndo() {
 
 export function onRedo() {
   if (get(worldUIMode) === "build") {
-    get(worldDoc).undoManager.redo();
+    worldManager.worldDoc.undoManager.redo();
   } else {
     console.warn("Nothing redone (play mode)");
   }

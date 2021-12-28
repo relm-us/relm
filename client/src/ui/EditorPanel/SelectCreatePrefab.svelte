@@ -8,7 +8,7 @@
 
   const activate = (entity) => {
     entity.activate();
-    worldManager.wdoc.syncFrom(entity);
+    worldManager.worldDoc.syncFrom(entity);
     for (const child of entity.getChildren()) {
       activate(child);
     }

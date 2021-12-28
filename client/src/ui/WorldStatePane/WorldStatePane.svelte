@@ -9,14 +9,12 @@
   import { worldManager } from "~/world";
 
   import {
-    ecsWorld,
     entryway,
     loadingState,
     setupState,
     subrelm,
     viewportSize,
     viewport,
-    appState,
     yConnectState,
     yLoadingState,
   } from "~/stores";
@@ -28,7 +26,6 @@
     assetsLoaded,
     assetsMaximum,
   } from "~/stores/loading";
-  import { connection } from "~/stores/connection";
 
   let minimized = true;
 
@@ -81,11 +78,11 @@
       <table>
         <tr><th>subrelm:</th><td>{$subrelm}</td></tr>
         <tr><th>entryway:</th><td>{$entryway}</td></tr>
-        <tr><th>app state:</th><td>{$appState}</td></tr>
+        <!-- <tr><th>app state:</th><td>{$appState}</td></tr> -->
         <tr><th>setup state:</th><td>{$setupState}</td></tr>
         <!-- <tr><th>conference:</th><td>{$roomConnectState}</td></tr> -->
-        <tr><th>yjs:</th><td>{$connection.state}<br />{$yLoadingState}</td></tr>
-        {#if $connection.state === "connected"}
+        <!-- <tr><th>yjs:</th><td>{$connection.state}<br />{$yLoadingState}</td></tr> -->
+        <!-- {#if $connection.state === "connected"}
           <tr>
             <th>yjs room:</th>
             <td>
@@ -98,7 +95,7 @@
               {/if}
             </td>
           </tr>
-        {/if}
+        {/if} -->
         <tr>
           <th>audio</th>
           <td>
@@ -128,7 +125,7 @@
             <div>(Ast: {$assetsLoaded}/{$assetsMaximum})</div>
           </td>
         </tr>
-        <tr><th>physics:</th><td>{$ecsWorld !== null}</td></tr>
+        <!-- <tr><th>physics:</th><td>{$ecsWorld !== null}</td></tr> -->
         <tr><th>viewport:</th><td>{$viewport !== null} {vw}</td></tr>
 
         {#if showAbbreviatedIdentities}

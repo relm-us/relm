@@ -48,7 +48,7 @@
       content: text,
     });
     diamond.traverse((entity) => entity.activate());
-    worldManager.wdoc.syncFrom(diamond);
+    worldManager.worldDoc.syncFrom(diamond);
   }
 
   function createBillboard(text) {
@@ -59,7 +59,7 @@
       text: text,
       editable: true,
     }).activate();
-    worldManager.wdoc.syncFrom(label);
+    worldManager.worldDoc.syncFrom(label);
   }
 
   // ignore warning about missing props

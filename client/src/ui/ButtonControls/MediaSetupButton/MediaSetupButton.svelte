@@ -1,10 +1,12 @@
 <script lang="ts">
   import CircleButton from "~/ui/lib/CircleButton";
-  import { setupState } from "~/stores/setupState";
   import SettingsIcon from "svelte-icons/io/IoMdSettings.svelte";
+  import type { Dispatch } from "~/main/RelmStateAndMessage";
+
+  export let dispatch: Dispatch;
 
   const onClick = () => {
-    $setupState = "media";
+    dispatch({ id: "prepareMedia" });
   };
 </script>
 

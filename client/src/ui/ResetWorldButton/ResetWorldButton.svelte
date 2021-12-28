@@ -4,7 +4,7 @@
   import Button from "~/ui/lib/Button";
 
   const onClick = () => {
-    worldManager.wdoc.reapplyWorld();
+    worldManager.worldDoc.reapplyWorld();
   };
 </script>
 

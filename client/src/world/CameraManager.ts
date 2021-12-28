@@ -100,11 +100,11 @@ export class CameraManager {
         offset: new Vector3().copy(this.zoomedInOffset),
         lerpAlpha: CAMERA_LERP_ALPHA,
       })
-      .add(LookAt, {
-        target: this.avatar.id,
-        offset: new Vector3(0, AVATAR_HEIGHT, 0),
-        oneShot: true,
-      })
+      // .add(LookAt, {
+      //   target: this.avatar.id,
+      //   offset: new Vector3(0, AVATAR_HEIGHT, 0),
+      //   oneShot: true,
+      // })
       .activate();
 
     // Listen to the mousewheel for zoom events
@@ -125,7 +125,8 @@ export class CameraManager {
           .copy(this.zoomedInOffset)
           .lerp(this.zoomedOutOffset, this.zoom)
           .add(this.pan);
-        camera.get(Follow)?.offset.copy(this.followOffset);
+        const follow = camera.get(Follow);
+        follow?.offset.copy(this.followOffset);
         break;
       }
       case "focusing": {

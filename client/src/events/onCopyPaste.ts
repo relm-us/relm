@@ -7,7 +7,6 @@ import { worldUIMode } from "~/stores/worldUIMode";
 import { selectedEntities, groupTree, GroupTree } from "~/stores/selection";
 import { copyBuffer } from "~/stores/copyBuffer";
 import { Transform } from "~/ecs/plugins/core";
-import { worldDoc } from "~/stores/worldDoc";
 
 function getCenter(entities) {
   const center = new Vector3();
@@ -170,9 +169,8 @@ export function onPaste() {
   }
 
   // Update yjs WorldDoc
-  const $worldDoc = get(worldDoc);
   for (const entity of entities) {
     entity.bind();
-    $worldDoc.syncFrom(entity);
+    worldManager.worldDoc.syncFrom(entity);
   }
 }

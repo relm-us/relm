@@ -29,10 +29,10 @@
     };
     let exported;
     if (worldManager.selection.length > 0) {
-      exported = exportRelm(worldManager.wdoc, worldManager.selection.ids);
+      exported = exportRelm(worldManager.worldDoc, worldManager.selection.ids);
       meta.scope = "selection";
     } else {
-      exported = exportRelm(worldManager.wdoc);
+      exported = exportRelm(worldManager.worldDoc);
     }
     const json = jsonFormat(exported, meta);
     text = JSON.stringify(json, null, 2);

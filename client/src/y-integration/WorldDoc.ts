@@ -28,11 +28,12 @@ import {
 import EventEmitter from "eventemitter3";
 import { applyDiffToYEntity } from "./applyDiff";
 
-import { ConnectOptions } from "~/stores/connection";
+import { ConnectOptions } from "~/types/ConnectOptions";
 import { yConnectState, YConnectState } from "~/stores/yConnectState";
 import { yLoadingState } from "~/stores/yLoadingState";
 import { selectedEntities } from "~/stores/selection";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
+import { SecureParams } from "~/identity/secureParams";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
 
@@ -85,6 +86,13 @@ export class WorldDoc extends EventEmitter {
     this.undoManager = new Y.UndoManager([this.entities], {
       captureTimeout: UNDO_CAPTURE_TIMEOUT,
     });
+  }
+
+  justConnect(url: string, subrelmDocId: string, secureParams: SecureParams) {
+    this.provider = new WebsocketProvider(url, subrelmDocId, this.ydoc, {
+      params: secureParams,
+    });
+    return this.provider;
   }
 
   connect(connectOpts: ConnectOptions) {

@@ -1,13 +1,10 @@
 <script lang="ts">
-  import WorldContainer from "~/ui/WorldContainer";
-
   import CollectionsPanel from "~/ui/CollectionsPanel";
   import EditorPanel from "~/ui/EditorPanel";
   import ExportPanel from "~/ui/ExportPanel";
   import SettingsPanel from "~/ui/SettingsPanel";
   import PerformancePanel from "~/ui/PerformancePanel";
 
-  import Input from "~/input";
   import Button from "~/ui/lib/Button";
 
   import UploadButton from "~/ui/ButtonControls/UploadButton";
@@ -23,25 +20,20 @@
   import ResetWorldButton from "~/ui/ResetWorldButton";
   import Chat from "~/ui/Chat";
 
-  import MediaSetup from "~/ui/MediaSetup";
-  import { LoadingScreen, LoadingFailed } from "~/ui/LoadingScreen";
-  import { AvatarChooser } from "~/ui/AvatarBuilder";
   import { PauseAutomatically, PauseMessage } from "~/ui/Pause";
 
   import { runCommand } from "~/commands";
   import { globalEvents } from "~/events";
 
-  import {
-    ecsWorld,
-    appState,
-    worldUIMode,
-    openPanel,
-    setupState,
-    askAvatarSetup,
-    playState,
-  } from "~/stores";
+  import { worldUIMode, openPanel, playState } from "~/stores";
 
-  const playMode = () => {
+  export let dispatch
+  export let buildModeAllowed = false;
+
+  let buildMode = false;
+  $: buildMode = buildModeAllowed && $worldUIMode === 'build'
+
+  const toPlayMode = () => {
     globalEvents.emit("switch-mode", "play");
   };
 
@@ -55,63 +47,29 @@
       }
     }
   };
-
-  const onDoneMediaSetup = ({ detail }) => {
-    if ($askAvatarSetup) $setupState = "avatar";
-    else $setupState = "done";
-  };
-
-  const onDoneAvatarSetup = ({ detail }) => {
-    $setupState = "done";
-  };
 </script>
 
-{#if $setupState === "media"}
-  <MediaSetup on:done={onDoneMediaSetup} />
-{:else if $setupState === "avatar"}
-  <AvatarChooser on:done={onDoneAvatarSetup} />
-{/if}
-
-{#if $appState === "loading"}
-  <LoadingScreen />
-{:else if $appState === "error"}
-  <LoadingFailed />
-{/if}
-
-<!-- The virtual world! -->
-{#if $ecsWorld}
-  <WorldContainer />
-
-  <!-- Keyboard, Mouse input -->
-  <Input world={$ecsWorld} />
-{/if}
-
-<PauseAutomatically />
-{#if $playState === "paused"}
-  <PauseMessage />
-{/if}
-
-<overlay class:open={$worldUIMode === "build"}>
+<overlay class:open={buildMode}>
   <overlay-panel class="interactive">
-    {#if $worldUIMode === "build"}
+    {#if buildMode}
       {#if $openPanel === "collections"}
-        <CollectionsPanel on:minimize={playMode} />
+        <CollectionsPanel on:minimize={toPlayMode} />
       {/if}
 
       {#if $openPanel === "editor"}
-        <EditorPanel on:minimize={playMode} />
+        <EditorPanel on:minimize={toPlayMode} />
       {/if}
 
       {#if $openPanel === "export"}
-        <ExportPanel on:minimize={playMode} />
+        <ExportPanel on:minimize={toPlayMode} />
       {/if}
 
       {#if $openPanel === "performance"}
-        <PerformancePanel on:minimize={playMode} />
+        <PerformancePanel on:minimize={toPlayMode} />
       {/if}
 
       {#if $openPanel === "settings"}
-        <SettingsPanel on:minimize={playMode} />
+        <SettingsPanel on:minimize={toPlayMode} />
       {/if}
 
       <panel-tabs>
@@ -144,7 +102,7 @@
       {#if $playState === "paused"}
         <WorldStatePane />
       {/if}
-      {#if $worldUIMode === "build"}
+      {#if buildMode}
         <GroupUngroupButton />
         <ResetWorldButton />
       {/if}
@@ -163,7 +121,7 @@
     <AudioModeButton />
     <MicButton />
     <VideoButton />
-    <MediaSetupButton />
+    <MediaSetupButton {dispatch} />
   </play-buttons>
 </overlay-center>
 

@@ -18,7 +18,7 @@ export const config: Config = {
   mediasoupUrl: "wss://media2.relm.us:4443",
 };
 
-function getSubrelmAndEntryway(
+export function getSubrelmAndEntryway(
   location: Location
 ): { initialSubrelm: string; entryway: string } {
   const params = new URLSearchParams(location.search.substring(1));

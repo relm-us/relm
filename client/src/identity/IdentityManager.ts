@@ -10,11 +10,13 @@ import { Identity } from "./Identity";
 import { getLocalIdentityData } from "./identityData";
 import { ChatMessage, getEmojiFromMessage } from "~/world/ChatManager";
 import { mediaDesired } from "video-mirror";
+import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
 type ClientUpdateFunction = (data: any[]) => void;
 
 export class IdentityManager extends EventEmitter {
   ydoc: Y.Doc;
+  ecsWorld: DecoratedECSWorld;
 
   identities: Map<PlayerID, Identity> = new Map();
 
@@ -23,8 +25,9 @@ export class IdentityManager extends EventEmitter {
 
   me: Identity;
 
-  setYdoc(ydoc: Y.Doc) {
+  init(ydoc: Y.Doc, ecsWorld: DecoratedECSWorld) {
     this.ydoc = ydoc;
+    this.ecsWorld = ecsWorld;
 
     this.registerMe(this.ydoc.clientID);
 
@@ -65,7 +68,7 @@ export class IdentityManager extends EventEmitter {
     let identity = this.identities.get(playerId);
 
     if (!identity) {
-      identity = new Identity(this, playerId, isLocal);
+      identity = new Identity(this, this.ecsWorld, playerId, isLocal);
       this.identities.set(playerId, identity);
     }
 

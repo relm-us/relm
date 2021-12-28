@@ -70,7 +70,7 @@
     const componentName = detail.value;
     setTimeout(() => {
       entity.addByName(componentName);
-      worldManager.wdoc.syncFrom(entity);
+      worldManager.worldDoc.syncFrom(entity);
       dispatch("modified");
 
       componentOptions = getComponents(worldManager, entity);

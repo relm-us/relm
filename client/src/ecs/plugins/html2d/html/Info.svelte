@@ -40,7 +40,7 @@
     content = component.content = contentEl.innerHTML;
 
     // Broadcast changes
-    worldManager.wdoc.syncFrom(entity);
+    worldManager.worldDoc.syncFrom(entity);
   }
 
   function isModified() {

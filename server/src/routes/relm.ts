@@ -93,11 +93,13 @@ relm.get(
   wrapAsync(async (req, res) => {
     const permanentDoc = await yws.getYDoc(req.relm.permanentDocId);
     req.relm.permanentDocSize = Y.encodeStateAsUpdate(permanentDoc).byteLength;
+    const twilioToken = twilio.getToken(req.authenticatedPlayerId);
 
     return util.respond(res, 200, {
       status: "success",
       action: "read",
       relm: req.relm,
+      twilioToken,
     });
   })
 );
@@ -136,7 +138,7 @@ relm.get(
       status: "success",
       action: "token",
       relm: req.relm,
-      token
+      token,
     });
   })
 );

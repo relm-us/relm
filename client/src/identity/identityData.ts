@@ -1,5 +1,5 @@
-import { writable, Writable } from "svelte-local-storage-store";
-import { get } from "svelte/store";
+import { writable } from "svelte-local-storage-store";
+import { get, Writable } from "svelte/store";
 
 import { playerId } from "./playerId";
 import { randomColor } from "~/utils/colors";

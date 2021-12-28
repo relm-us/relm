@@ -38,7 +38,7 @@
 
   const destroyComponent = (entity, Component) => {
     entity.remove(Component);
-    worldManager.wdoc.syncFrom(entity);
+    worldManager.worldDoc.syncFrom(entity);
     primaryComponents = primaryComponents;
     secondaryComponents = secondaryComponents;
   };
@@ -57,7 +57,7 @@
 
   const saveEntity = (entity) => () => {
     // console.log("saveEntity", entity);
-    worldManager.wdoc.syncFrom(entity);
+    worldManager.worldDoc.syncFrom(entity);
   };
 
   const onModified = () => {
@@ -67,7 +67,7 @@
   };
 
   const destroyEntity = () => {
-    worldManager.wdoc.delete(entity);
+    worldManager.worldDoc.delete(entity);
   };
 
   onMount(() => {

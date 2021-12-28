@@ -54,10 +54,38 @@ export class RelmRestAPI {
     };
   }
 
+  async get(path, params = {}) {
+    const url = `${this.url}${path}`;
+    const headers = await this.getHeaders();
+    return await axios.get(url, { headers });
+    // const request = new Request(url, {
+    //   method: 'GET',
+    //   headers: new Headers(headers),
+    //   mode: 'cors',
+    //   cache: 'default',
+    // });
+
+    // await fetch(request)
+  }
+
   async post(path, body) {
     const url = `${this.url}${path}`;
     const headers = await this.getHeaders();
     return await axios.post(url, body, { headers });
+  }
+
+  async getMetadata(relm: string) {
+    const res = await this.get(`/relm/${relm}/meta`);
+    if (res.status === 200) {
+      if (res.data.status === "success") {
+        const r = res.data.relm;
+        return { ...res.data.relm, twilioToken: res.data.twilioToken };
+      } else {
+        throw Error(`can't get metadata for ${relm} (${res.data.status})`);
+      }
+    } else {
+      throw Error(`can't get metadata for ${relm} (${res.status})`);
+    }
   }
 
   async listPermissions(relms: string[]) {
@@ -66,8 +94,10 @@ export class RelmRestAPI {
       if (res.data.status === "success") {
         return res.data.permits;
       } else {
-        throw Error(`can't get permissions (${res.status})`);
+        throw Error(`can't get permissions (${res.data.status})`);
       }
+    } else {
+      throw Error(`can't get permissions (${res.status})`);
     }
   }
 }

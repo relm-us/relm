@@ -26,7 +26,7 @@
 
   function addEntryway(event) {
     const coords: Vector3 = worldManager.avatar.entity.get(Transform).position;
-    worldManager.wdoc.entryways.y.set(event.target.value, [
+    worldManager.worldDoc.entryways.y.set(event.target.value, [
       coords.x,
       coords.y,
       coords.z,
@@ -34,7 +34,7 @@
   }
 
   function onDeleteEntryway({ detail: name }) {
-    worldManager.wdoc.entryways.y.delete(name);
+    worldManager.worldDoc.entryways.y.delete(name);
   }
 
   function onUploadedSkybox({ detail }) {
@@ -45,7 +45,7 @@
     // Delete any previous Skybox object
     const entities: Entity[] = worldManager.world.entities.getAllByComponent(Skybox);
     for (let entity of entities) {
-      worldManager.wdoc.deleteById(entity.id.toString());
+      worldManager.worldDoc.deleteById(entity.id.toString());
     }
 
     // Create a new Skybox
@@ -53,7 +53,7 @@
       .create("Skybox", nanoid())
       .add(Skybox, { image: new Asset(imageUrl) })
       .activate();
-    worldManager.wdoc.syncFrom(skybox);
+    worldManager.worldDoc.syncFrom(skybox);
   }
 
   function onSlideFog({ detail }) {
@@ -65,7 +65,7 @@
   }
 
   const saveFogDensity = debounce((density) => {
-    worldManager.wdoc.settings.y.set("fogDensity", density);
+    worldManager.worldDoc.settings.y.set("fogDensity", density);
   }, 500);
 
   function onChangeFogColor({ detail }) {
@@ -77,7 +77,7 @@
   }
 
   const saveFogColor = debounce((color) => {
-    worldManager.wdoc.settings.y.set("fogColor", color);
+    worldManager.worldDoc.settings.y.set("fogColor", color);
   }, 500);
 
   onMount(() => {
@@ -87,7 +87,7 @@
   });
 
   function startMigrationAndReport() {
-    const migrated = migrateToCDN(worldManager.world, worldManager.wdoc);
+    const migrated = migrateToCDN(worldManager.world, worldManager.worldDoc);
     alert(`Migrated ${migrated} entities in this world to CDN`);
   }
 </script>
@@ -98,7 +98,7 @@
     <Pane title="Entryways">
       <setting>
         <EntrywayMap
-          entryways={worldManager.wdoc.entryways}
+          entryways={worldManager.worldDoc.entryways}
           on:delete={onDeleteEntryway}
         />
         <Capsule
