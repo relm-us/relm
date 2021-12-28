@@ -67,8 +67,9 @@ export class WorldManager {
   api: RelmRestAPI;
 
   previousLoopTime: number = 0;
-  sendLocalStateInterval: any; // Timeout
   started: boolean = false;
+
+  unsubs: Function[] = [];
 
   get participantId() {
     return playerId;
@@ -89,15 +90,17 @@ export class WorldManager {
     this.subrelm = subrelm;
     this.entryway = entryway;
 
-    const settingsUnsub = worldDoc.settings.subscribe(($settings) => {
-      const fog = this.world.presentation.scene.fog;
-      if ($settings.get("fogColor")) {
-        fog.color = new Color($settings.get("fogColor"));
-      }
-      if ($settings.get("fogDensity")) {
-        fog.density = $settings.get("fogDensity");
-      }
-    });
+    this.unsubs.push(
+      worldDoc.settings.subscribe(($settings) => {
+        const fog = this.world.presentation.scene.fog;
+        if ($settings.get("fogColor")) {
+          fog.color = new Color($settings.get("fogColor"));
+        }
+        if ($settings.get("fogDensity")) {
+          fog.density = $settings.get("fogDensity");
+        }
+      })
+    );
 
     this.selection = new SelectionManager(this.worldDoc);
     this.identities.init(this.worldDoc.ydoc, this.world);
@@ -120,77 +123,80 @@ export class WorldManager {
 
     this.camera.init();
 
-    // connection.subscribe(($connection) => {
-    //   if ($connection.state === "connected") {
-    //     // Initial connect
-    //     this.connect($connection);
-    //   } else if ($connection.state === "error") {
-    //     appState.set("error");
-    //   }
-    // });
-
-    shadowsEnabled.subscribe(($enabled) => {
-      this.world.presentation.renderer.shadowMap.enabled = $enabled;
-      const spec = this.light.getByName("DirectionalLight");
-      spec.shadow = $enabled;
-      spec.modified();
-    });
+    this.unsubs.push(
+      shadowsEnabled.subscribe(($enabled) => {
+        this.world.presentation.renderer.shadowMap.enabled = $enabled;
+        const spec = this.light.getByName("DirectionalLight");
+        spec.shadow = $enabled;
+        spec.modified();
+      })
+    );
 
     // Make colliders visible in build mode
-    worldUIMode.subscribe(($mode) => {
-      const enabled = $mode === "build";
-      this.avatar.enableCanFly(enabled);
-      this.avatar.enableNonInteractive(enabled);
-      this.enableNonInteractiveGround(enabled);
-      this.enableCollidersVisible(enabled);
-    });
+    this.unsubs.push(
+      worldUIMode.subscribe(($mode) => {
+        const enabled = $mode === "build";
+        this.avatar.enableCanFly(enabled);
+        this.avatar.enableNonInteractive(enabled);
+        this.enableNonInteractiveGround(enabled);
+        this.enableCollidersVisible(enabled);
+      })
+    );
 
-    derived([worldUIMode, keyShift], ([$mode, $keyShift], set) => {
-      if ($mode === "build" && $keyShift) {
-        set(true);
-      } else {
-        set(false);
-      }
-    }).subscribe((buildModeShift: boolean) => {
-      this.enableNonInteractiveGround(!buildModeShift);
-      this.enableBoundingVisible(buildModeShift);
-    });
+    this.unsubs.push(
+      derived([worldUIMode, keyShift], ([$mode, $keyShift], set) => {
+        if ($mode === "build" && $keyShift) {
+          set(true);
+        } else {
+          set(false);
+        }
+      }).subscribe((buildModeShift: boolean) => {
+        this.enableNonInteractiveGround(!buildModeShift);
+        this.enableBoundingVisible(buildModeShift);
+      })
+    );
 
     // Temporary hack: spacebar makes avatar wave
-    derived([worldUIMode, keySpace], ([$mode, $keySpace], set) => {
-      if ($mode === "play" && $keySpace) {
-        set(true);
-      } else {
-        set(false);
-      }
-    }).subscribe((wave: boolean) => {
-      const state = this.avatar.entity.get(ControllerState);
-      if (!state) return;
-      state.animOverride = wave ? WAVING : null;
-    });
+    this.unsubs.push(
+      derived([worldUIMode, keySpace], ([$mode, $keySpace], set) => {
+        if ($mode === "play" && $keySpace) {
+          set(true);
+        } else {
+          set(false);
+        }
+      }).subscribe((wave: boolean) => {
+        const state = this.avatar.entity.get(ControllerState);
+        if (!state) return;
+        state.animOverride = wave ? WAVING : null;
+      })
+    );
 
-    playState.subscribe(($state) => {
-      switch ($state) {
-        case "playing":
-          this.world.presentation.setLoop(this.loop.bind(this));
-          break;
-        case "paused":
-          this.world.presentation.setLoop(null);
-          // TODO: Make it so window resize events "step" a frame
-          break;
-      }
-    });
+    this.unsubs.push(
+      playState.subscribe(($state) => {
+        switch ($state) {
+          case "playing":
+            this.world.presentation.setLoop(this.loop.bind(this));
+            break;
+          case "paused":
+            this.world.presentation.setLoop(null);
+            // TODO: Make it so window resize events "step" a frame
+            break;
+        }
+      })
+    );
 
-    mediaDesired.subscribe(($mediaDesired) => {
-      this.avConnection.connect({
-        roomId: subrelmDocId,
-        token: twilioToken,
-        // displayName: connectOpts.username || this.identities.me.get("name"),
-        displayName: this.identities.me.get("name"),
-        produceAudio: $mediaDesired.audio,
-        produceVideo: $mediaDesired.video,
-      });
-    });
+    this.unsubs.push(
+      mediaDesired.subscribe(($mediaDesired) => {
+        this.avConnection.connect({
+          roomId: subrelmDocId,
+          token: twilioToken,
+          // displayName: connectOpts.username || this.identities.me.get("name"),
+          displayName: this.identities.me.get("name"),
+          produceAudio: $mediaDesired.audio,
+          produceVideo: $mediaDesired.video,
+        });
+      })
+    );
 
     this.start();
   }
@@ -269,15 +275,21 @@ export class WorldManager {
   //   });
   // }
 
-  disconnect() {
-    clearInterval(this.sendLocalStateInterval);
-    this.sendLocalStateInterval = undefined;
+  reset() {
+    this.stop();
+    this.unsubscribe();
+    this.worldDoc.unsubscribe()
     this.worldDoc.disconnect();
+    this.world.reset();
+    this.scene.traverse((node) => {
+      if (node.removeFromParent) node.removeFromParent();
+    });
   }
 
-  reset() {
-    this.disconnect();
-    this.world.reset();
+  unsubscribe() {
+    this.unsubs.forEach((f) => f());
+    this.unsubs.length = 0;
+
   }
 
   get avatar(): Avatar {

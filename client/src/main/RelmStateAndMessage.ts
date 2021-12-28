@@ -5,10 +5,12 @@ import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 export type RelmState = {
   playerId?: string;
   secureParams?: SecureParams;
+  physicsEngine?: any;
   ecsWorld?: DecoratedECSWorld;
   worldDoc?: WorldDoc;
   twilioToken?: string;
   subrelm?: string;
+  changingSubrelm?: boolean;
   entryway?: string;
   permits?: string[];
   subrelmDocId?: string;
@@ -33,6 +35,7 @@ export type RelmMessage =
       playerId: string;
       secureParams: SecureParams;
     }
+  | { id: "importedPhysicsEngine"; physicsEngine: any }
   | { id: "initializedECS"; ecsWorld: DecoratedECSWorld }
   | { id: "changeSubrelm"; subrelm: string; entryway: string }
   | { id: "gotSubrelm"; subrelm: string; entryway: string }

@@ -70,13 +70,18 @@ export class WorldDoc extends EventEmitter {
   // An UndoManager allowing users to undo/redo edits on `entities`
   undoManager: Y.UndoManager;
 
+  unsubs: Function[] = [];
+
   constructor(ecsWorld: DecoratedECSWorld) {
     super();
 
     this.world = ecsWorld;
 
     this.entities = this.ydoc.getArray("entities");
-    this.entities.observeDeep(this._observer.bind(this));
+
+    const observer = this._observer.bind(this);
+    this.entities.observeDeep(observer);
+    this.unsubs.push(() => this.entities.unobserveDeep(observer));
 
     this.messages = this.ydoc.getArray("messages");
 
@@ -129,6 +134,11 @@ export class WorldDoc extends EventEmitter {
       this.provider.disconnect();
       this.provider = null;
     }
+  }
+
+  unsubscribe() {
+    this.unsubs.forEach((f) => f());
+    this.unsubs.length = 0;
   }
 
   reapplyWorld() {

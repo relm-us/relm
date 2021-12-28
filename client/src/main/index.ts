@@ -1,8 +1,8 @@
 import { get } from "svelte/store";
 
 import SvelteProgram from "./SvelteProgram.svelte";
-import * as Cmd from "./Cmd"
-import { RelmState, RelmMessage } from "./RelmStateAndMessage"
+import * as Cmd from "./Cmd";
+import { RelmState, RelmMessage } from "./RelmStateAndMessage";
 
 import BlankWithLogo from "./BlankWithLogo.svelte";
 import MediaSetupShim from "./MediaSetupShim.svelte";
@@ -12,17 +12,19 @@ import ErrorScreen from "./ErrorScreen.svelte";
 import { LoadingScreen, LoadingFailed } from "~/ui/LoadingScreen";
 import { resetLoading, startPollingLoadingState } from "~/stores/loading";
 
-import { identifyParticipant } from "./identifyParticipant"
-import { initializeECS } from "./initializeECS"
-import { locateSubrelm } from "./locateSubrelm"
-import { getPermits } from "./getPermits"
-import { getMetadata } from "./getMetadata"
-import { connectYjs } from "./connectYjs"
+import { identifyParticipant } from "./identifyParticipant";
+import { initializeECS } from "./initializeECS";
+import { locateSubrelm } from "./locateSubrelm";
+import { getPermits } from "./getPermits";
+import { getMetadata } from "./getMetadata";
+import { connectYjs } from "./connectYjs";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import { askAvatarSetup } from "~/stores/askAvatarSetup";
 import { askMediaSetup } from "~/stores/askMediaSetup";
 import { initializeWorldManager } from "./initializeWorldManager";
+import { worldManager } from "~/world";
+import { importPhysicsEngine } from "./importPhysicsEngine";
 
 function init() {
   const initialState: RelmState = {
@@ -37,6 +39,7 @@ function init() {
 export const relmProgram = {
   init: init(),
   update(msg: RelmMessage, state: RelmState) {
+    console.log("relmProgram update", msg);
     switch (msg.id) {
       case "error":
         return [{ ...state, screen: "error", errorMessage: msg.message }];
@@ -48,18 +51,42 @@ export const relmProgram = {
             playerId: msg.playerId,
             secureParams: msg.secureParams,
           },
-          initializeECS,
+          importPhysicsEngine,
+        ];
+
+      case "importedPhysicsEngine":
+        return [
+          {
+            ...state,
+            physicsEngine: msg.physicsEngine,
+          },
+          initializeECS(msg.physicsEngine),
+        ];
+
+      case "changeSubrelm":
+        worldManager.reset();
+        return [
+          {
+            playerId: state.playerId,
+            secureParams: state.secureParams,
+            physicsEngine: state.physicsEngine,
+            changingSubrelm: true,
+            subrelm: msg.subrelm,
+            entryway: msg.entryway,
+            screen: "loading-screen",
+          },
+          initializeECS(state.physicsEngine),
         ];
 
       case "initializedECS":
-        return [{ ...state, ecsWorld: msg.ecsWorld }, locateSubrelm];
-
-      case "changeSubrelm":
-        state.ecsWorld.reset();
-        return [
-          { ...state, subrelm: msg.subrelm, entryway: msg.entryway },
-          Cmd.batch([getPermits(msg.subrelm), getMetadata(msg.subrelm)]),
-        ];
+        if (state.subrelm && state.entryway) {
+          return [
+            { ...state, ecsWorld: msg.ecsWorld },
+            Cmd.batch([getPermits(state.subrelm), getMetadata(state.subrelm)]),
+          ];
+        } else {
+          return [{ ...state, ecsWorld: msg.ecsWorld }, locateSubrelm];
+        }
 
       case "gotSubrelm":
         return [
@@ -117,7 +144,7 @@ export const relmProgram = {
 
       case "connectedYjs": {
         const ask = get(askMediaSetup);
-        if (ask) {
+        if (ask && !state.changingSubrelm) {
           return [state, Cmd.ofMsg({ id: "prepareMedia" })];
         } else {
           return [state, Cmd.ofMsg({ id: "configuredMedia" })];
@@ -155,7 +182,7 @@ export const relmProgram = {
   },
 
   view(state, dispatch) {
-    // console.log("view state change", state.screen);
+    console.log("relmProgram view", state.screen);
     if (state)
       switch (state.screen) {
         case "initial":
