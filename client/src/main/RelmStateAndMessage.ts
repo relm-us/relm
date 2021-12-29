@@ -5,6 +5,8 @@ import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 export type RelmState = {
   playerId?: string;
   secureParams?: SecureParams;
+  audioDesired?: boolean;
+  videoDesired?: boolean;
   physicsEngine?: any;
   ecsWorld?: DecoratedECSWorld;
   worldDoc?: WorldDoc;
@@ -49,8 +51,8 @@ export type RelmMessage =
     }
   | { id: "combinePermitsAndMetadata" }
   | { id: "connectedYjs" }
-  | { id: "prepareMedia" }
-  | { id: "configuredMedia" }
+  | { id: "setupAudioVideo"; respectSkip?: boolean }
+  | { id: "configuredAudioVideo" }
   | { id: "choseAvatar" }
   | { id: "startPlaying" }
   | { id: "error"; message: string; stack?: any };

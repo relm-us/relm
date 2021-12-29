@@ -11287,10 +11287,10 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-video-mirror@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/video-mirror/-/video-mirror-3.0.0.tgz#f2cef54d4f26e179e34dbaa2d11db8f4cd284528"
-  integrity sha512-dhtDc7HLpeAZ86CPQEqudYXpXJc0uHc4RKkkJeR4D0L881l5Mq0f6nWx1xudqWxIwwt+9vJ7JMs93j38NT03yA==
+video-mirror@^3.1.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/video-mirror/-/video-mirror-3.2.0.tgz#1c1c90bd9287ff48f929f03ce62f55a1ddee8629"
+  integrity sha512-Utpv94A8HKe8tYm0vvk/aFd/Ds0l9FpDQfT7io9tYmixn8NS3umy+zxut410mEhTtVJCxWkBfhVXDlKQD5nFkg==
   dependencies:
     audio-activity "1.0.0"
     media-devices "0.2.0"

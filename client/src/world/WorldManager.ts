@@ -278,7 +278,7 @@ export class WorldManager {
   reset() {
     this.stop();
     this.unsubscribe();
-    this.worldDoc.unsubscribe()
+    this.worldDoc.unsubscribe();
     this.worldDoc.disconnect();
     this.world.reset();
     this.scene.traverse((node) => {
@@ -289,7 +289,6 @@ export class WorldManager {
   unsubscribe() {
     this.unsubs.forEach((f) => f());
     this.unsubs.length = 0;
-
   }
 
   get avatar(): Avatar {

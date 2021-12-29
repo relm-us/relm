@@ -25,6 +25,7 @@ import { askMediaSetup } from "~/stores/askMediaSetup";
 import { initializeWorldManager } from "./initializeWorldManager";
 import { worldManager } from "~/world";
 import { importPhysicsEngine } from "./importPhysicsEngine";
+import { mediaDesired } from "video-mirror";
 
 function init() {
   const initialState: RelmState = {
@@ -45,6 +46,12 @@ export const relmProgram = {
         return [{ ...state, screen: "error", errorMessage: msg.message }];
 
       case "identified":
+        mediaDesired.set(
+          JSON.parse(
+            localStorage.getItem("mediaDesired") ||
+              '{"audio":true,"video":true}'
+          )
+        );
         return [
           {
             ...state,
@@ -143,18 +150,26 @@ export const relmProgram = {
         }
 
       case "connectedYjs": {
-        const ask = get(askMediaSetup);
-        if (ask && !state.changingSubrelm) {
-          return [state, Cmd.ofMsg({ id: "prepareMedia" })];
+        return [state, Cmd.ofMsg({ id: "configuredAudioVideo" })];
+        // const ask = get(askMediaSetup);
+        // if (ask && !state.changingSubrelm) {
+        //   return [state, Cmd.ofMsg({ id: "setupAudioVideo", respectSkip: true })];
+        // } else {
+        // }
+      }
+
+      case "setupAudioVideo": {
+        const skip = get(askMediaSetup) === false && msg.respectSkip;
+        if (skip) {
+          mediaDesired.set({ audio: false, video: false });
+          return [{ ...state }, Cmd.ofMsg({ id: "configuredAudioVideo" })];
         } else {
-          return [state, Cmd.ofMsg({ id: "configuredMedia" })];
+          return [{ ...state, screen: "video-mirror" }];
         }
       }
 
-      case "prepareMedia":
-        return [{ ...state, screen: "video-mirror" }];
-
-      case "configuredMedia": {
+      case "configuredAudioVideo": {
+        localStorage.setItem("mediaDesired", JSON.stringify(get(mediaDesired)));
         const ask = get(askAvatarSetup);
         if (ask) {
           return [{ ...state, screen: "choose-avatar" }];

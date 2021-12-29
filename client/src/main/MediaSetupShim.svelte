@@ -5,7 +5,7 @@
   export let dispatch: Dispatch;
 
   function done() {
-    dispatch({ id: "configuredMedia" });
+    dispatch({ id: "configuredAudioVideo" });
   }
 </script>
 
