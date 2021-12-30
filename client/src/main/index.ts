@@ -22,10 +22,12 @@ import { connectYjs } from "./connectYjs";
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import { askAvatarSetup } from "~/stores/askAvatarSetup";
 import { askMediaSetup } from "~/stores/askMediaSetup";
+import { audioDesired } from "~/stores/audioDesired";
+import { videoDesired } from "~/stores/videoDesired";
+
 import { initializeWorldManager } from "./initializeWorldManager";
 import { worldManager } from "~/world";
 import { importPhysicsEngine } from "./importPhysicsEngine";
-import { mediaDesired } from "video-mirror";
 
 export const relmProgram = {
   init: [{ screen: "initial" }, identifyParticipant],
@@ -36,12 +38,6 @@ export const relmProgram = {
         return [{ ...state, screen: "error", errorMessage: msg.message }];
 
       case "identified":
-        mediaDesired.set(
-          JSON.parse(
-            localStorage.getItem("mediaDesired") ||
-              '{"audio":true,"video":true}'
-          )
-        );
         return [
           {
             ...state,
@@ -140,26 +136,56 @@ export const relmProgram = {
         }
 
       case "connectedYjs": {
-        return [state, Cmd.ofMsg({ id: "configuredAudioVideo" })];
-        // const ask = get(askMediaSetup);
-        // if (ask && !state.changingSubrelm) {
-        //   return [state, Cmd.ofMsg({ id: "setupAudioVideo", respectSkip: true })];
-        // } else {
-        // }
+        return [
+          state,
+          Cmd.ofMsg({ id: "configureAudioVideo", respectSkip: true }),
+        ];
       }
 
-      case "setupAudioVideo": {
+      case "configureAudioVideo": {
         const skip = get(askMediaSetup) === false && msg.respectSkip;
         if (skip) {
-          mediaDesired.set({ audio: false, video: false });
-          return [{ ...state }, Cmd.ofMsg({ id: "configuredAudioVideo" })];
+          return [{ ...state }, Cmd.ofMsg({ id: "chooseAvatar" })];
         } else {
-          return [{ ...state, screen: "video-mirror" }];
+          return [
+            {
+              ...state,
+              audioDesired: get(audioDesired),
+              videoDesired: get(videoDesired),
+              preferredDeviceIds: JSON.parse(
+                localStorage.getItem("preferredDeviceIds") || "{}"
+              ),
+              screen: "video-mirror",
+            },
+          ];
         }
       }
 
       case "configuredAudioVideo": {
-        localStorage.setItem("mediaDesired", JSON.stringify(get(mediaDesired)));
+        console.log("configuredAudioVideo", msg.state);
+        let newState;
+        if (msg.state) {
+          audioDesired.set(msg.state.audioDesired);
+          videoDesired.set(msg.state.videoDesired);
+          localStorage.setItem(
+            "preferredDeviceIds",
+            JSON.stringify(msg.state.preferredDeviceIds)
+          );
+          newState = {
+            ...state,
+            audioDesired: msg.state.audioDesired,
+            videoDesired: msg.state.videoDesired,
+            preferredDeviceIds: msg.state.preferredDeviceIds,
+          };
+        } else {
+          audioDesired.set(false);
+          videoDesired.set(false);
+          newState = { ...state };
+        }
+        return [newState, Cmd.ofMsg({ id: "chooseAvatar" })];
+      }
+
+      case "chooseAvatar": {
         const ask = get(askAvatarSetup);
         if (ask) {
           return [{ ...state, screen: "choose-avatar" }];
@@ -198,7 +224,15 @@ export const relmProgram = {
             { message: state.errorMessage || "There was an error" },
           ];
         case "video-mirror":
-          return [MediaSetupShim, { dispatch }];
+          return [
+            MediaSetupShim,
+            {
+              dispatch,
+              audioDesired: state.audioDesired,
+              videoDesired: state.videoDesired,
+              preferredDeviceIds: state.preferredDeviceIds,
+            },
+          ];
         case "choose-avatar":
           return [AvatarChooserShim, { dispatch }];
         case "loading-screen":

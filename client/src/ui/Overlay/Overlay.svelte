@@ -26,12 +26,14 @@
   import { globalEvents } from "~/events";
 
   import { worldUIMode, openPanel, playState } from "~/stores";
+  import { audioDesired } from "~/stores/audioDesired";
+  import { videoDesired } from "~/stores/videoDesired";
 
-  export let dispatch
+  export let dispatch;
   export let buildModeAllowed = false;
 
   let buildMode = false;
-  $: buildMode = buildModeAllowed && $worldUIMode === 'build'
+  $: buildMode = buildModeAllowed && $worldUIMode === "build";
 
   const toPlayMode = () => {
     globalEvents.emit("switch-mode", "play");
@@ -119,8 +121,8 @@
   <play-buttons class="interactive">
     <ShareScreenButton />
     <AudioModeButton />
-    <MicButton />
-    <VideoButton />
+    <MicButton enabled={$audioDesired} />
+    <VideoButton enabled={$videoDesired} />
     <MediaSetupButton {dispatch} />
   </play-buttons>
 </overlay-center>

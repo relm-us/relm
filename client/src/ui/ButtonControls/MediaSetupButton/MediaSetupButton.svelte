@@ -6,7 +6,7 @@
   export let dispatch: Dispatch;
 
   const onClick = () => {
-    dispatch({ id: "setupAudioVideo" });
+    dispatch({ id: "configureAudioVideo" });
   };
 </script>
 

@@ -9,7 +9,8 @@ import { playerId } from "./playerId";
 import { Identity } from "./Identity";
 import { getLocalIdentityData } from "./identityData";
 import { ChatMessage, getEmojiFromMessage } from "~/world/ChatManager";
-import { mediaDesired } from "video-mirror";
+import { audioDesired } from "~/stores/audioDesired";
+import { videoDesired } from "~/stores/videoDesired";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
 type ClientUpdateFunction = (data: any[]) => void;
@@ -54,12 +55,8 @@ export class IdentityManager extends EventEmitter {
     };
     identity.set(data);
 
-    mediaDesired.subscribe(($mediaDesired) => {
-      identity.set({
-        showAudio: $mediaDesired.audio,
-        showVideo: $mediaDesired.video,
-      });
-    });
+    audioDesired.subscribe((showAudio) => identity.set({ showAudio }));
+    videoDesired.subscribe((showVideo) => identity.set({ showVideo }));
 
     this.me = identity;
   }

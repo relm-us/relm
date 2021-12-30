@@ -1,22 +1,16 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import CircleButton from "~/ui/lib/CircleButton";
-  import { VideoIcon, mediaDesired } from "video-mirror";
-  // import { videoProducing } from "~/av/stores/producers";
-  import { setupState } from "~/stores/setupState";
+  import { VideoIcon } from "video-mirror";
   import { worldManager } from "~/world";
   import { Identity } from "~/identity/Identity";
 
   let identity: Identity;
 
-  let muted = false;
-  // $: muted = !$videoProducing;
+  export let enabled = false;
 
-  function toggleMute() {
-    if (!$mediaDesired.video) $setupState = "media";
-    else {
-      muted = !identity.toggleShowVideo();
-    }
+  function toggle() {
+    enabled = identity.toggleShowVideo();
   }
 
   onMount(() => {
@@ -24,8 +18,8 @@
   });
 </script>
 
-<CircleButton on:click={toggleMute}>
-  <icon class:muted>
+<CircleButton on:click={toggle}>
+  <icon class:muted={!enabled}>
     <VideoIcon />
   </icon>
 </CircleButton>

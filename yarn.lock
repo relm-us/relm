@@ -11287,13 +11287,14 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-video-mirror@^3.1.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/video-mirror/-/video-mirror-3.2.0.tgz#1c1c90bd9287ff48f929f03ce62f55a1ddee8629"
-  integrity sha512-Utpv94A8HKe8tYm0vvk/aFd/Ds0l9FpDQfT7io9tYmixn8NS3umy+zxut410mEhTtVJCxWkBfhVXDlKQD5nFkg==
+video-mirror@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/video-mirror/-/video-mirror-4.1.1.tgz#e060cd496719c1a993647969a91a8e6874cd91dc"
+  integrity sha512-tyZim/FhfnlzRx8h2nhVfSYq03dKX6RddHUhsn9F8cyplbMGbVb7JiOgVoiOdjFodoX4AEp9yRkqbSLHUOdPXw==
   dependencies:
     audio-activity "1.0.0"
     media-devices "0.2.0"
+    raj "^1.0.0"
 
 vm-browserify@^1.0.1:
   version "1.1.2"

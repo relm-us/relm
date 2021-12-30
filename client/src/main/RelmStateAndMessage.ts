@@ -1,12 +1,14 @@
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import type { SecureParams } from "~/identity/secureParams";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
+import type { DeviceIds } from "video-mirror";
 
 export type RelmState = {
   playerId?: string;
   secureParams?: SecureParams;
   audioDesired?: boolean;
   videoDesired?: boolean;
+  preferredDeviceIds?: DeviceIds;
   physicsEngine?: any;
   ecsWorld?: DecoratedECSWorld;
   worldDoc?: WorldDoc;
@@ -51,8 +53,9 @@ export type RelmMessage =
     }
   | { id: "combinePermitsAndMetadata" }
   | { id: "connectedYjs" }
-  | { id: "setupAudioVideo"; respectSkip?: boolean }
-  | { id: "configuredAudioVideo" }
+  | { id: "configureAudioVideo"; respectSkip?: boolean }
+  | { id: "configuredAudioVideo"; state: any }
+  | { id: "chooseAvatar" }
   | { id: "choseAvatar" }
   | { id: "startPlaying" }
   | { id: "error"; message: string; stack?: any };

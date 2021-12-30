@@ -1,24 +1,26 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { VideoMirror, mediaDesired } from "video-mirror";
+  import { VideoMirror } from "video-mirror";
+  import type { DeviceIds } from "video-mirror";
   import { askMediaSetup } from "~/stores/askMediaSetup";
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import PageOverlay from "~/ui/lib/PageOverlay";
   import relmLogo from "./relm-logo.png";
 
-  const dispatch = createEventDispatcher();
+  export let audioDesired = true;
+  export let videoDesired = true;
+  export let preferredDeviceIds: DeviceIds;
 
-  let showButtonBar = true;
-
-  function joinWith({ detail }) {
-    showButtonBar = false;
-    dispatch("done", detail);
+  $: {
+    console.log("MS audioDesired", audioDesired);
+    console.log("MS videoDesired", videoDesired);
+    console.log("MS preferredDeviceIds", preferredDeviceIds);
   }
 
+  const dispatch = createEventDispatcher();
+
   function joinWithout() {
-    showButtonBar = false;
-    mediaDesired.set({ audio: false, video: false });
-    dispatch("done", { audio: null, video: null });
+    dispatch("done");
   }
 </script>
 
@@ -26,14 +28,12 @@
   <logo>
     <img src={relmLogo} alt="logo" />
   </logo>
+  
   <message>
     You're about to join a social experience with audio & video.
   </message>
-  <VideoMirror
-    on:done={joinWith}
-    tr={{ request_perms: "Use Camera & Mic" }}
-    {showButtonBar}
-  />
+
+  <VideoMirror on:done {audioDesired} {videoDesired} {preferredDeviceIds} />
 
   <or>or</or>
   <button on:click={joinWithout}> Join without audio / video </button>

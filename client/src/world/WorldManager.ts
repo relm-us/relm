@@ -5,7 +5,6 @@ import { WorldDoc } from "~/y-integration/WorldDoc";
 
 import { keyShift, keySpace } from "~/input/store";
 import { exportRelm, importRelm } from "./Export";
-import { mediaDesired } from "video-mirror";
 
 import { worldUIMode } from "~/stores/worldUIMode";
 import { deltaTime, fpsTime } from "~/stores/stats";
@@ -185,18 +184,15 @@ export class WorldManager {
       })
     );
 
-    this.unsubs.push(
-      mediaDesired.subscribe(($mediaDesired) => {
-        this.avConnection.connect({
-          roomId: subrelmDocId,
-          token: twilioToken,
-          // displayName: connectOpts.username || this.identities.me.get("name"),
-          displayName: this.identities.me.get("name"),
-          produceAudio: $mediaDesired.audio,
-          produceVideo: $mediaDesired.video,
-        });
-      })
-    );
+    this.avConnection.connect({
+      roomId: subrelmDocId,
+      token: twilioToken,
+      // displayName: connectOpts.username || this.identities.me.get("name"),
+      displayName: this.identities.me.get("name"),
+      // TODO: take audioDesired, videoDesired as input here?
+      produceAudio: true,
+      produceVideo: true,
+    });
 
     this.start();
   }
