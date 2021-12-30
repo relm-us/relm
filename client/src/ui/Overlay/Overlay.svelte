@@ -30,10 +30,10 @@
   import { videoDesired } from "~/stores/videoDesired";
 
   export let dispatch;
-  export let buildModeAllowed = false;
+  export let permits;
 
   let buildMode = false;
-  $: buildMode = buildModeAllowed && $worldUIMode === "build";
+  $: buildMode = permits.includes("edit") && $worldUIMode === "build";
 
   const toPlayMode = () => {
     globalEvents.emit("switch-mode", "play");

@@ -245,7 +245,7 @@ export const relmProgram = {
             {
               dispatch,
               ecsWorld: state.ecsWorld,
-              buildModeAllowed: state.permits.includes("edit"),
+              permits: state.permits,
             },
           ];
         default:

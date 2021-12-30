@@ -5,14 +5,14 @@
 
   export let ecsWorld;
   export let dispatch;
-  export let buildModeAllowed = false;
+  export let permits;
 
   $$props;
 </script>
 
 <Viewport {ecsWorld} />
 
-<Overlay {dispatch} {buildModeAllowed} />
+<Overlay {dispatch} {permits} />
 
 <!-- Keyboard, Mouse input -->
-<Input world={ecsWorld} />
+<Input world={ecsWorld} {permits} />
