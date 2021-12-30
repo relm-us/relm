@@ -10,10 +10,8 @@
   import { worldManager } from "~/world";
 
   import {
-    entryway,
     loadingState,
     setupState,
-    subrelm,
     viewportSize,
     viewport,
     yConnectState,
@@ -77,8 +75,6 @@
   >
     <inner-scroll>
       <table>
-        <tr><th>subrelm:</th><td>{$subrelm}</td></tr>
-        <tr><th>entryway:</th><td>{$entryway}</td></tr>
         <!-- <tr><th>app state:</th><td>{$appState}</td></tr> -->
         <tr><th>setup state:</th><td>{$setupState}</td></tr>
         <!-- <tr><th>conference:</th><td>{$roomConnectState}</td></tr> -->

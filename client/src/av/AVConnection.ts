@@ -39,6 +39,14 @@ export class AVConnection {
     await this.adapter.connect(roomId, token);
     this.watchLocalTrackChanges();
     this.watchRemoteTrackChanges();
+
+    return () => {
+      this.disconnect();
+    };
+  }
+
+  async disconnect() {
+    await this.adapter.disconnect();
   }
 
   // Reactively waits for local participant's stream changes (e.g. if they
@@ -103,7 +111,7 @@ export class AVConnection {
 
   getTrackStore(participantId: string, kind: TrackKind) {
     const storage = this.getTrackMemberByKind(kind);
-    console.log('storage', storage);
+    console.log("storage", storage);
     if (!this[storage][participantId]) {
       this[storage][participantId] = writable(null);
     }

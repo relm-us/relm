@@ -12,157 +12,102 @@ import ErrorScreen from "./ErrorScreen.svelte";
 import { LoadingScreen, LoadingFailed } from "~/ui/LoadingScreen";
 import { resetLoading, startPollingLoadingState } from "~/stores/loading";
 
-import { identifyParticipant } from "./identifyParticipant";
-import { initializeECS } from "./initializeECS";
-import { locateSubrelm } from "./locateSubrelm";
-import { getPermits } from "./getPermits";
-import { getMetadata } from "./getMetadata";
-import { connectYjs } from "./connectYjs";
+import { getParticipantAndRelm } from "./effects/getParticipantAndRelmName";
+import { getRelmPermitsAndMetadata } from "./effects/getRelmPermitsAndMetadata";
+import { importPhysicsEngine } from "./effects/importPhysicsEngine";
+import { nextSetupStep } from "./effects/nextSetupStep";
+import { createWorldDoc } from "./effects/createWorldDoc";
 
-import { WorldDoc } from "~/y-integration/WorldDoc";
-import { askAvatarSetup } from "~/stores/askAvatarSetup";
-import { askMediaSetup } from "~/stores/askMediaSetup";
 import { audioDesired } from "~/stores/audioDesired";
 import { videoDesired } from "~/stores/videoDesired";
 
-import { initializeWorldManager } from "./initializeWorldManager";
 import { worldManager } from "~/world";
-import { importPhysicsEngine } from "./importPhysicsEngine";
 
 export const relmProgram = {
-  init: [{ screen: "initial" }, identifyParticipant],
+  init: [{ screen: "initial" }, Cmd.ofMsg({ id: "pageLoaded" })],
   update(msg: RelmMessage, state: RelmState) {
-    console.log("relmProgram update", msg);
+    // console.log("got RelmMessage:", msg);
+
     switch (msg.id) {
-      case "error":
-        return [{ ...state, screen: "error", errorMessage: msg.message }];
+      case "pageLoaded": {
+        return [state, getParticipantAndRelm];
+      }
 
-      case "identified":
+      case "gotParticipantAndRelm": {
         return [
           {
             ...state,
-            playerId: msg.playerId,
+            participantId: msg.participantId,
             secureParams: msg.secureParams,
-          },
-          importPhysicsEngine,
-        ];
-
-      case "importedPhysicsEngine":
-        return [
-          {
-            ...state,
-            physicsEngine: msg.physicsEngine,
-          },
-          initializeECS(msg.physicsEngine),
-        ];
-
-      case "changeSubrelm":
-        worldManager.reset();
-        return [
-          {
-            playerId: state.playerId,
-            secureParams: state.secureParams,
-            physicsEngine: state.physicsEngine,
-            changingSubrelm: true,
-            subrelm: msg.subrelm,
+            relmName: msg.relmName,
             entryway: msg.entryway,
-            screen: "loading-screen",
           },
-          initializeECS(state.physicsEngine),
+          getRelmPermitsAndMetadata(msg.relmName),
         ];
+      }
 
-      case "initializedECS":
-        if (state.subrelm && state.entryway) {
-          return [
-            { ...state, ecsWorld: msg.ecsWorld },
-            Cmd.batch([getPermits(state.subrelm), getMetadata(state.subrelm)]),
-          ];
-        } else {
-          return [{ ...state, ecsWorld: msg.ecsWorld }, locateSubrelm];
-        }
-
-      case "gotSubrelm":
-        return [
-          { ...state, subrelm: msg.subrelm, entryway: msg.entryway },
-          Cmd.batch([getPermits(msg.subrelm), getMetadata(msg.subrelm)]),
-        ];
-
-      case "gotPermits":
-        if (msg.permits && msg.permits.length > 0) {
-          return [
-            { ...state, permits: msg.permits },
-            Cmd.ofMsg({ id: "combinePermitsAndMetadata" }),
-          ];
-        } else {
+      case "gotRelmPermitsAndMetadata": {
+        if (!msg.permits || !msg.permits.includes("access")) {
           return [
             state,
             Cmd.ofMsg({ id: "error", message: `Permission not granted` }),
           ];
         }
-
-      case "gotMetadata":
-        resetLoading(msg.assetsCount, msg.entitiesCount);
         return [
           {
             ...state,
-            subrelmDocId: msg.subrelmDocId,
-            entitiesMax: msg.entitiesCount,
-            entitiesCount: 0,
-            assetsMax: msg.assetsCount,
-            assetsCount: 0,
+            permits: msg.permits,
+            relmDocId: msg.relmDocId,
+            entitiesCount: msg.entitiesCount,
+            assetsCount: msg.assetsCount,
             twilioToken: msg.twilioToken,
           },
-          Cmd.ofMsg({ id: "combinePermitsAndMetadata" }),
+          // Kick off parallel loading physics, ECS, worldDoc;
+          // meanwhile, set up audio/video and avatar if needed
+          Cmd.batch([importPhysicsEngine, nextSetupStep(state)]),
         ];
+      }
 
-      case "combinePermitsAndMetadata":
-        // Wait until both permits & metadata are available
-        if (state.permits && state.subrelmDocId) {
-          console.log("combine state", state);
-          state.worldDoc = new WorldDoc(state.ecsWorld);
-          return [
-            { ...state },
-            Cmd.batch([
-              initializeWorldManager(state),
-              connectYjs(
-                state.worldDoc,
-                state.subrelmDocId,
-                state.secureParams
-              ),
-            ]),
-          ];
-        } else {
-          return [state];
-        }
-
-      case "connectedYjs": {
+      case "importedPhysicsEngine": {
         return [
-          state,
-          Cmd.ofMsg({ id: "configureAudioVideo", respectSkip: true }),
+          {
+            ...state,
+            physicsEngine: msg.physicsEngine,
+          },
+          createWorldDoc(
+            msg.physicsEngine,
+            state.relmName,
+            state.entryway,
+            state.relmDocId,
+            state.secureParams,
+            state.twilioToken
+          ),
+        ];
+      }
+
+      case "createdWorldDoc": {
+        return [
+          { ...state, ecsWorld: msg.ecsWorld, worldDoc: msg.worldDoc },
+          // loadAssets
+          Cmd.ofMsg({ id: "loadedAndReady" }),
         ];
       }
 
       case "configureAudioVideo": {
-        const skip = get(askMediaSetup) === false && msg.respectSkip;
-        if (skip) {
-          return [{ ...state }, Cmd.ofMsg({ id: "chooseAvatar" })];
-        } else {
-          return [
-            {
-              ...state,
-              audioDesired: get(audioDesired),
-              videoDesired: get(videoDesired),
-              preferredDeviceIds: JSON.parse(
-                localStorage.getItem("preferredDeviceIds") || "{}"
-              ),
-              screen: "video-mirror",
-            },
-          ];
-        }
+        return [
+          {
+            ...state,
+            audioDesired: get(audioDesired),
+            videoDesired: get(videoDesired),
+            preferredDeviceIds: JSON.parse(
+              localStorage.getItem("preferredDeviceIds") || "{}"
+            ),
+            screen: "video-mirror",
+          },
+        ];
       }
 
       case "configuredAudioVideo": {
-        console.log("configuredAudioVideo", msg.state);
         let newState;
         if (msg.state) {
           audioDesired.set(msg.state.audioDesired);
@@ -173,6 +118,7 @@ export const relmProgram = {
           );
           newState = {
             ...state,
+            audioVideoSetupDone: true,
             audioDesired: msg.state.audioDesired,
             videoDesired: msg.state.videoDesired,
             preferredDeviceIds: msg.state.preferredDeviceIds,
@@ -180,40 +126,57 @@ export const relmProgram = {
         } else {
           audioDesired.set(false);
           videoDesired.set(false);
-          newState = { ...state };
+          newState = { ...state, audioVideoSetupDone: true };
         }
-        return [newState, Cmd.ofMsg({ id: "chooseAvatar" })];
+        return [newState, nextSetupStep(newState)];
       }
 
       case "chooseAvatar": {
-        const ask = get(askAvatarSetup);
-        if (ask) {
-          return [{ ...state, screen: "choose-avatar" }];
-        } else {
-          return [state, Cmd.ofMsg({ id: "startPlaying" })];
-        }
+        return [{ ...state, screen: "choose-avatar" }];
       }
 
       case "choseAvatar":
+        const newState: RelmState = {
+          ...state,
+          avatarSetupDone: true,
+          screen: "loading-screen",
+        };
         return [
-          { ...state, screen: "loading-screen" },
+          newState,
+
           (dispatch) => {
             startPollingLoadingState(state.worldDoc, () => {
-              dispatch({ id: "startPlaying" });
+              nextSetupStep(newState)(dispatch);
             });
           },
         ];
 
+      case "loadedAndReady": {
+        if (
+          state.worldDoc &&
+          state.audioVideoSetupDone &&
+          state.avatarSetupDone
+        ) {
+          return [state, Cmd.ofMsg({ id: "startPlaying" })];
+        } else {
+          return [state];
+        }
+      }
+
       case "startPlaying":
         return [{ ...state, screen: "game-world" }];
 
+      case "error":
+        return [{ ...state, screen: "error", errorMessage: msg.message }];
+
       default:
+        console.warn("Unknown relm message:", msg);
         return [state];
     }
   },
 
   view(state, dispatch) {
-    console.log("relmProgram view", state.screen);
+    // console.log("relmProgram view", state.screen);
     if (state)
       switch (state.screen) {
         case "initial":

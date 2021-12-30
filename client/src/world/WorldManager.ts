@@ -12,7 +12,6 @@ import { deltaTime, fpsTime } from "~/stores/stats";
 import { playState, PlayState } from "~/stores/playState";
 import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 import { shadowsEnabled } from "~/stores/shadowsEnabled";
-import { entryway } from "~/stores/entryway";
 import { resetLoading, startPollingLoadingState } from "~/stores/loading";
 import { loadingState } from "~/stores/loadingState";
 
@@ -74,7 +73,7 @@ export class WorldManager {
     return playerId;
   }
 
-  init(
+  async init(
     dispatch: Dispatch,
     ecsWorld: DecoratedECSWorld,
     worldDoc: WorldDoc,
@@ -184,7 +183,37 @@ export class WorldManager {
       })
     );
 
-    this.avConnection.connect({
+    // Remove participant avatars when they disconnect
+    const removeDisconnectedIdentities = (changes) => {
+      for (let id of changes.removed) {
+        this.identities.removeByClientId(id);
+      }
+    };
+    worldDoc.provider.awareness.on("change", removeDisconnectedIdentities);
+    this.unsubs.push(() =>
+      worldDoc.provider.awareness.off("change", removeDisconnectedIdentities)
+    );
+
+    // Update participants' transform data (position, rotation, etc.)
+    const updateParticipant = () => {
+      const states = worldDoc.provider.awareness.getStates();
+
+      states.forEach(({ m }, clientId) => {
+        // Ignore updates that don't include matrix transform data
+        if (!m) return;
+
+        // Ignore updates about ourselves
+        if (clientId === worldDoc.ydoc.clientID) return;
+
+        this.identities.setTransformData(clientId, m);
+      });
+    };
+    worldDoc.provider.awareness.on("update", updateParticipant);
+    this.unsubs.push(() =>
+      worldDoc.provider.awareness.off("update", updateParticipant)
+    );
+
+    const disconnect = await this.avConnection.connect({
       roomId: subrelmDocId,
       token: twilioToken,
       // displayName: connectOpts.username || this.identities.me.get("name"),
@@ -193,6 +222,7 @@ export class WorldManager {
       produceAudio: true,
       produceVideo: true,
     });
+    this.unsubs.push(disconnect);
 
     this.start();
   }

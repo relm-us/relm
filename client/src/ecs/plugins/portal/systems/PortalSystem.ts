@@ -4,7 +4,6 @@ import { Portal } from "../components";
 import { Impact, Impactable } from "~/ecs/plugins/physics";
 import { Controller } from "~/ecs/plugins/player-control";
 import { Vector3 } from "three";
-import { subrelm } from "~/stores/subrelm";
 import { moveAvatarTo } from "~/identity/Avatar";
 
 const bodyFacing = new Vector3();
@@ -51,7 +50,7 @@ export class PortalSystem extends System {
               otherEntity
             );
           } else if (portal.kind === "REMOTE") {
-            subrelm.set(portal.subrelm);
+            // TODO
           }
         }
       }

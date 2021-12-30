@@ -7,7 +7,6 @@ export { chatOpen, chatFocused } from "./chatOpen";
 export { copyBuffer } from "./copyBuffer";
 export type { CopyBuffer } from "./copyBuffer";
 // export type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
-export { entryway } from "./entryway";
 // TODO: loading
 export { loadingState } from "./loadingState";
 export { mouse } from "./mouse";
@@ -19,7 +18,6 @@ export { rapier } from "./rapier";
 export { setupState } from "./setupState";
 export { shadowsEnabled } from "./shadowsEnabled";
 // TODO: stats
-export { subrelm } from "./subrelm";
 export { viewport } from "./viewport";
 export { viewportScale } from "./viewportScale";
 export { viewportSize } from "./viewportSize";

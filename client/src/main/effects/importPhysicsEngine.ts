@@ -1,4 +1,4 @@
-import { Dispatch } from "./RelmStateAndMessage";
+import { Dispatch } from "../RelmStateAndMessage";
 
 export async function importPhysicsEngine(dispatch: Dispatch) {
   let rapier;

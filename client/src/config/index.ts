@@ -1,42 +1,16 @@
-import { DEFAULT_RELM_ID, DEFAULT_ENTRYWAY } from "./constants";
-import { canonicalIdentifier } from "~/utils/canonicalIdentifier";
-
 export type Config = {
   assetUrl: string;
   serverUrl: string;
   serverYjsUrl: string;
   serverUploadUrl: string;
   mediasoupUrl: string;
-  initialSubrelm: string;
-  entryway: string;
 };
 
 export const config: Config = {
   assetUrl: "https://assets.ourrelm.com",
   ...getServerConfig(window.location),
-  ...getSubrelmAndEntryway(window.location),
   mediasoupUrl: "wss://media2.relm.us:4443",
 };
-
-export function getSubrelmAndEntryway(
-  location: Location
-): { initialSubrelm: string; entryway: string } {
-  const params = new URLSearchParams(location.search.substring(1));
-
-  const pathParts = location.pathname
-    .split("/")
-    .map((part) => (part === "" ? null : part));
-
-  // Normally, the subrelm is specified as part of the path, e.g. "/demo", but
-  // allow a `?subrelm=[value]` to override it.
-  const subrelm = params.get("subrelm") || pathParts[1] || DEFAULT_RELM_ID;
-  const entryway = params.get("entryway") || pathParts[2] || DEFAULT_ENTRYWAY;
-
-  return {
-    initialSubrelm: canonicalIdentifier(subrelm),
-    entryway: canonicalIdentifier(entryway),
-  };
-}
 
 function getServerConfig(
   location
