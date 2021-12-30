@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
 
-import SvelteProgram from "./SvelteProgram.svelte";
+import Program from "./Program.svelte";
 import * as Cmd from "./Cmd";
 import { RelmState, RelmMessage } from "./RelmStateAndMessage";
 
@@ -27,18 +27,8 @@ import { worldManager } from "~/world";
 import { importPhysicsEngine } from "./importPhysicsEngine";
 import { mediaDesired } from "video-mirror";
 
-function init() {
-  const initialState: RelmState = {
-    playerId: null,
-    secureParams: null,
-    screen: "initial",
-  };
-  const initialCmd = identifyParticipant;
-  return [initialState, initialCmd];
-}
-
 export const relmProgram = {
-  init: init(),
+  init: [{ screen: "initial" }, identifyParticipant],
   update(msg: RelmMessage, state: RelmState) {
     console.log("relmProgram update", msg);
     switch (msg.id) {
@@ -230,7 +220,7 @@ export const relmProgram = {
   },
 };
 
-const app = new SvelteProgram({
+const app = new Program({
   target: document.body,
   props: { createApp: (props) => relmProgram },
 });
