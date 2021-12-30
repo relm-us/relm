@@ -39,13 +39,15 @@ import { config } from "~/config";
 import { setupState } from "~/stores/setupState";
 
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
-import type { Dispatch } from "~/main/RelmStateAndMessage";
+import type { Dispatch, RelmState } from "~/main/RelmStateAndMessage";
 import { AVConnection } from "~/av";
 import { Identity } from "~/identity/Identity";
 import { playerId } from "~/identity/playerId";
 
 export class WorldManager {
   dispatch: Dispatch;
+  state: RelmState;
+
   world: DecoratedECSWorld;
   worldDoc: WorldDoc;
   subrelm: string;
@@ -75,21 +77,18 @@ export class WorldManager {
 
   async init(
     dispatch: Dispatch,
-    ecsWorld: DecoratedECSWorld,
-    worldDoc: WorldDoc,
-    subrelm: string,
-    entryway: string,
-    subrelmDocId: string,
-    twilioToken: string
+    state: RelmState
   ) {
     this.dispatch = dispatch;
-    this.world = ecsWorld;
-    this.worldDoc = worldDoc;
-    this.subrelm = subrelm;
-    this.entryway = entryway;
+    this.state = state;
+
+    this.world = state.ecsWorld;
+    this.worldDoc = state.worldDoc;
+    this.subrelm = state.relmName;
+    this.entryway = state.entryway;
 
     this.unsubs.push(
-      worldDoc.settings.subscribe(($settings) => {
+      this.worldDoc.settings.subscribe(($settings) => {
         const fog = this.world.presentation.scene.fog;
         if ($settings.get("fogColor")) {
           fog.color = new Color($settings.get("fogColor"));
@@ -189,33 +188,33 @@ export class WorldManager {
         this.identities.removeByClientId(id);
       }
     };
-    worldDoc.provider.awareness.on("change", removeDisconnectedIdentities);
+    this.worldDoc.provider.awareness.on("change", removeDisconnectedIdentities);
     this.unsubs.push(() =>
-      worldDoc.provider.awareness.off("change", removeDisconnectedIdentities)
+      this.worldDoc.provider.awareness.off("change", removeDisconnectedIdentities)
     );
 
     // Update participants' transform data (position, rotation, etc.)
     const updateParticipant = () => {
-      const states = worldDoc.provider.awareness.getStates();
+      const states = this.worldDoc.provider.awareness.getStates();
 
       states.forEach(({ m }, clientId) => {
         // Ignore updates that don't include matrix transform data
         if (!m) return;
 
         // Ignore updates about ourselves
-        if (clientId === worldDoc.ydoc.clientID) return;
+        if (clientId === this.worldDoc.ydoc.clientID) return;
 
         this.identities.setTransformData(clientId, m);
       });
     };
-    worldDoc.provider.awareness.on("update", updateParticipant);
+    this.worldDoc.provider.awareness.on("update", updateParticipant);
     this.unsubs.push(() =>
-      worldDoc.provider.awareness.off("update", updateParticipant)
+      this.worldDoc.provider.awareness.off("update", updateParticipant)
     );
 
     const disconnect = await this.avConnection.connect({
-      roomId: subrelmDocId,
-      token: twilioToken,
+      roomId: this.state.relmDocId,
+      token: this.state.twilioToken,
       // displayName: connectOpts.username || this.identities.me.get("name"),
       displayName: this.identities.me.get("name"),
       // TODO: take audioDesired, videoDesired as input here?

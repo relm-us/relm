@@ -22,8 +22,8 @@ export const getRelmPermitsAndMetadata = (relmName) => async (
     id: "gotRelmPermitsAndMetadata",
     permits,
     relmDocId: permanentDocId,
-    entitiesCount,
-    assetsCount,
+    entitiesMax: entitiesCount, // TOOD: Change metadata API call to return 'max' values
+    assetsMax: assetsCount,
     twilioToken,
   });
 };

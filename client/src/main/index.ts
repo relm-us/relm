@@ -6,7 +6,7 @@ import { RelmState, RelmMessage } from "./RelmStateAndMessage";
 
 import BlankWithLogo from "./BlankWithLogo.svelte";
 import MediaSetupShim from "./MediaSetupShim.svelte";
-import AvatarChooserShim from "./AvatarChooserShim.svelte";
+import AvatarChooser from "~/ui/AvatarBuilder/AvatarChooser.svelte";
 import GameWorldShim from "./GameWorldShim.svelte";
 import ErrorScreen from "./ErrorScreen.svelte";
 import { LoadingScreen, LoadingFailed } from "~/ui/LoadingScreen";
@@ -58,8 +58,8 @@ export const relmProgram = {
             ...state,
             permits: msg.permits,
             relmDocId: msg.relmDocId,
-            entitiesCount: msg.entitiesCount,
-            assetsCount: msg.assetsCount,
+            entitiesMax: msg.entitiesMax,
+            assetsMax: msg.assetsMax,
             twilioToken: msg.twilioToken,
           },
           // Kick off parallel loading physics, ECS, worldDoc;
@@ -69,26 +69,24 @@ export const relmProgram = {
       }
 
       case "importedPhysicsEngine": {
+        const newState = {
+          ...state,
+          physicsEngine: msg.physicsEngine,
+        };
         return [
-          {
-            ...state,
-            physicsEngine: msg.physicsEngine,
-          },
-          createWorldDoc(
-            msg.physicsEngine,
-            state.relmName,
-            state.entryway,
-            state.relmDocId,
-            state.secureParams,
-            state.twilioToken
-          ),
+          newState,
+          Cmd.batch([
+            (dispatch) => {
+              resetLoading(newState.assetsMax, newState.entitiesMax);
+            },
+            createWorldDoc(newState),
+          ]),
         ];
       }
 
       case "createdWorldDoc": {
         return [
           { ...state, ecsWorld: msg.ecsWorld, worldDoc: msg.worldDoc },
-          // loadAssets
           Cmd.ofMsg({ id: "loadedAndReady" }),
         ];
       }
@@ -139,17 +137,10 @@ export const relmProgram = {
         const newState: RelmState = {
           ...state,
           avatarSetupDone: true,
+          appearance: msg.appearance,
           screen: "loading-screen",
         };
-        return [
-          newState,
-
-          (dispatch) => {
-            startPollingLoadingState(state.worldDoc, () => {
-              nextSetupStep(newState)(dispatch);
-            });
-          },
-        ];
+        return [newState, nextSetupStep(newState)];
 
       case "loadedAndReady": {
         if (
@@ -157,7 +148,16 @@ export const relmProgram = {
           state.audioVideoSetupDone &&
           state.avatarSetupDone
         ) {
-          return [state, Cmd.ofMsg({ id: "startPlaying" })];
+          worldManager.identities.me.set({ appearance: state.appearance });
+          return [
+            state,
+            (dispatch) => {
+              startPollingLoadingState(state.worldDoc, () => {
+                console.log("DONE POLLING");
+                dispatch({ id: "startPlaying" });
+              });
+            },
+          ];
         } else {
           return [state];
         }
@@ -197,7 +197,7 @@ export const relmProgram = {
             },
           ];
         case "choose-avatar":
-          return [AvatarChooserShim, { dispatch }];
+          return [AvatarChooser, { dispatch }];
         case "loading-screen":
           return [LoadingScreen];
         case "loading-failed":

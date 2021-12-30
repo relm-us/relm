@@ -1,20 +1,13 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import { worldManager } from "~/world";
-  import { askAvatarSetup } from "~/stores/askAvatarSetup";
   import PageOverlay from "~/ui/lib/PageOverlay";
   import { getDefaultAppearance } from "~/identity/appearance";
   import type { BinaryGender } from "~/identity/types";
 
-  const dispatch = createEventDispatcher();
+  export let dispatch
 
   const pick = (gender: BinaryGender) => () => {
     const appearance = getDefaultAppearance(gender);
-
-    worldManager.identities.me.set({ appearance });
-
-    $askAvatarSetup = false;
-    dispatch("done");
+    dispatch({ id: "choseAvatar", appearance });
   };
 
 </script>

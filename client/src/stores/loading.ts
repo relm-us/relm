@@ -3,9 +3,11 @@ import { get, writable, derived, Readable, Writable } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
+import { World } from "~/ecs/base";
 import { ImageRef } from "~/ecs/plugins/image";
 import { ModelRef } from "~/ecs/plugins/model";
-import { World } from "~/ecs/base";
+import { SkyboxRef } from "~/ecs/plugins/skybox";
+import { AssetLoaded } from "~/ecs/plugins/asset";
 
 const MAX_THRESHOLD = 1.0;
 
@@ -40,8 +42,15 @@ export const loaded: Readable<number> = derived(
 function countAssetsLoaded(world: World) {
   let count = 0;
   world.entities.entities.forEach((e) => {
-    if (e.get(ModelRef)) count++;
-    else if (e.get(ImageRef)) count++;
+    if (e.get(ModelRef)) {
+      count++;
+    } else if (e.get(ImageRef)) {
+      count++;
+    } else if (e.get(AssetLoaded)) {
+      count++;
+    } else if (e.get(SkyboxRef)) {
+      count++;
+    }
   });
   return count;
 }

@@ -2,6 +2,7 @@ import { WorldDoc } from "~/y-integration/WorldDoc";
 import type { SecureParams } from "~/identity/secureParams";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import type { DeviceIds } from "video-mirror";
+import type { Appearance } from "~/identity/types";
 
 export type RelmState = {
   // initialization
@@ -27,6 +28,7 @@ export type RelmState = {
 
   // avatar setup
   avatarSetupDone?: boolean;
+  appearance?: Appearance;
 
   // create worldDoc & establish yjs connection
   physicsEngine?: any;
@@ -59,8 +61,8 @@ export type RelmMessage =
       id: "gotRelmPermitsAndMetadata";
       permits: string[];
       relmDocId: string;
-      entitiesCount: number;
-      assetsCount: number;
+      entitiesMax: number;
+      assetsMax: number;
       twilioToken: string;
     }
   | { id: "importedPhysicsEngine"; physicsEngine: any }
@@ -68,7 +70,7 @@ export type RelmMessage =
   | { id: "configureAudioVideo" }
   | { id: "configuredAudioVideo"; state: any }
   | { id: "chooseAvatar" }
-  | { id: "choseAvatar" }
+  | { id: "choseAvatar", appearance: Appearance }
   | { id: "loadedAndReady" }
   | { id: "startPlaying" }
   | { id: "error"; message: string; stack?: any };
