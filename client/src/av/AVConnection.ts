@@ -30,8 +30,9 @@ export class AVConnection {
     this.videoTrackStores = {};
 
     // Assign the local audio/video stream to the local participant
-    this.audioTrackStores[participantId] = localAudioTrackStore;
-    this.videoTrackStores[participantId] = localVideoTrackStore;
+    // TODO: Shouldn't assign a Readable to a Writable
+    this.audioTrackStores[participantId] = localAudioTrackStore as any;
+    this.videoTrackStores[participantId] = localVideoTrackStore as any;
   }
 
   async connect({ roomId, token }: AVConnectOpts) {
