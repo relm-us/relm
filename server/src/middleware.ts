@@ -64,6 +64,7 @@ export function authenticated() {
       req.authenticatedPlayerId = playerId;
       next();
     } catch (err) {
+      console.warn(`Can't findOrCreateVerifiedPubKey`, params);
       next(joinError(err, Error(`can't authenticate`)));
     }
   };

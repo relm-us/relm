@@ -65,9 +65,9 @@ export async function getPermissions({
       SELECT
         r.relm_${raw(relmNames ? "name" : "id")}::text AS relm,
         CASE
+          WHEN p.permits IS NOT NULL THEN p.permits
           WHEN r.is_public = 't' THEN '["access"]'::jsonb
           WHEN p.permits IS NULL THEN '[]'::jsonb
-          ELSE p.permits
         END AS permits
       FROM relms AS r
       LEFT JOIN (

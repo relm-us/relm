@@ -14,6 +14,7 @@
   import WheelListener from "./WheelListener";
 
   export let world;
+  export let permits;
 </script>
 
 <ArrowKeyListener />
@@ -22,7 +23,9 @@
 <ShiftKeyListener />
 <DeleteKeyListener />
 <EscapeKeyListener />
-<SwitchModeKeyListener />
+{#if permits.includes("edit")}
+  <SwitchModeKeyListener />
+{/if}
 <PauseKeyListener />
 <UndoRedoKeyListener />
 <EnterChatKeyListener />
