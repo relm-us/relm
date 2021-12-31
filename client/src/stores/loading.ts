@@ -93,10 +93,11 @@ export function startPollingLoadingState(wdoc, onDone?: Function) {
       entitiesLoaded.update(($loaded) => Math.max($loaded, syntheticLoaded));
     }, 500)
   );
-  const unsub = loaded.subscribe(($loaded) => {
+  let unsub;
+  unsub = loaded.subscribe(($loaded) => {
     if ($loaded >= get(maximum) * MAX_THRESHOLD) {
       stopPollingLoadingState();
-      unsub();
+      unsub?.();
       onDone?.();
     }
   });
