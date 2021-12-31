@@ -1,7 +1,5 @@
 import { Vector3 } from "three";
 
-import type { WorldManager } from "./WorldManager";
-
 import { Entity } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
 import { Follow } from "~/ecs/plugins/follow";
@@ -100,11 +98,6 @@ export class CameraManager {
         offset: new Vector3().copy(this.zoomedInOffset),
         lerpAlpha: CAMERA_LERP_ALPHA,
       })
-      // .add(LookAt, {
-      //   target: this.avatar.id,
-      //   offset: new Vector3(0, AVATAR_HEIGHT, 0),
-      //   oneShot: true,
-      // })
       .activate();
 
     // Listen to the mousewheel for zoom events
@@ -113,6 +106,11 @@ export class CameraManager {
         this.zoom = $scale / 100;
       }
     });
+  }
+
+  moveTo(position: Vector3) {
+    const transform = this.entity.get(Transform);
+    transform.position.copy(position);
   }
 
   update(delta: number) {

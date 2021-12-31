@@ -5,7 +5,7 @@ import { makeAvatar } from "~/prefab/makeAvatar";
 import { playerId } from "~/identity/playerId";
 
 import { World, Entity } from "~/ecs/base";
-import { Presentation, Transform } from "~/ecs/plugins/core";
+import { Presentation, Transform, WorldTransform } from "~/ecs/plugins/core";
 import { ModelRef } from "~/ecs/plugins/model";
 import { Html2d, Oculus, OculusRef } from "~/ecs/plugins/html2d";
 import { Animation } from "~/ecs/plugins/animation";
@@ -13,7 +13,7 @@ import { FaceMapColors } from "~/ecs/plugins/coloration";
 import { Distance, DistanceRef } from "~/ecs/plugins/distance";
 import { Morph } from "~/ecs/plugins/morph";
 import { Controller } from "~/ecs/plugins/player-control";
-import { Collider } from "~/ecs/plugins/physics";
+import { Collider, RigidBodyRef } from "~/ecs/plugins/physics";
 import { Translucent } from "~/ecs/plugins/translucent";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import {
@@ -21,9 +21,11 @@ import {
   headFollowsPointer,
   headFollowsAngle,
 } from "~/ecs/plugins/twist-bone";
+import type { RigidBody as RapierRigidBody } from "@dimforge/rapier3d";
 
 import { chatOpen } from "~/stores/chatOpen";
 import { appearanceToCharacterTraits } from "./appearance";
+import { worldManager } from "~/world";
 
 import {
   AVATAR_BUILDER_INTERACTION,
@@ -380,6 +382,7 @@ export class Avatar {
 
   enableCanFly(enabled = true) {
     const controller = this.entity.get(Controller);
+    if (!controller) return;
     controller.canFly = enabled;
     controller.modified();
   }
@@ -421,12 +424,29 @@ export function moveAvatarTo(
   entity: Entity
 ) {
   const transform = entity.get(Transform);
+  // How much to move Avatar by to arrive at newCoords
   const delta = new Vector3().copy(newCoords).sub(transform.position);
 
   // Move the participant
-  entity.traverse((e) => e.get(Transform).position.add(delta), false, true);
+  entity.traverse(
+    (e) => {
+      // Update ECS Transform object
+      const transform = e.get(Transform);
+      transform.position.add(delta);
+
+      const world = e.get(WorldTransform);
+      world.position.add(delta);
+
+      // Physics engine keeps a copy of position, update it too
+      const rigidBody = entity.getByName("RigidBody").sync = true;
+    },
+    false,
+    true
+  );
+
+  worldManager.camera.moveTo(newCoords);
 
   // Don't render the next 3 frames so that everything has
   // a chance to "catch up" to the participant's new position
-  presentation.skipUpdate = 3;
+  // presentation.skipUpdate = 3;
 }

@@ -2,6 +2,12 @@ import { Component, StringType, NumberType } from "~/ecs/base";
 import { Vector3Type } from "~/ecs/plugins/core";
 
 export class RigidBody extends Component {
+  // The `sync` property is transient; it allows us to tell the physics
+  // system that the rigid body's translation (position) should be copied
+  // from the WorldTransform. Useful when "warping" the Avatar to a new
+  // position.
+  sync: boolean | number;
+
   static props = {
     kind: {
       type: StringType,

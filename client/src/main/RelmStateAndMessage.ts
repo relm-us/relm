@@ -3,6 +3,7 @@ import type { SecureParams } from "~/identity/secureParams";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import type { DeviceIds } from "video-mirror";
 import type { Appearance } from "~/identity/types";
+import { Vector3 } from "three";
 
 export type RelmState = {
   // initialization
@@ -10,6 +11,7 @@ export type RelmState = {
   secureParams?: SecureParams;
   relmName?: string; // unique human name for the relm
   entryway?: string;
+  entrywayPosition: Vector3;
 
   // relm metadata
   relmDocId?: string; // server-assigned UUID for the relm
@@ -67,10 +69,11 @@ export type RelmMessage =
     }
   | { id: "importedPhysicsEngine"; physicsEngine: any }
   | { id: "createdWorldDoc"; ecsWorld: DecoratedECSWorld; worldDoc: WorldDoc }
+  | { id: "gotEntrywayPosition"; entrywayPosition: Vector3 }
   | { id: "configureAudioVideo" }
   | { id: "configuredAudioVideo"; state: any }
   | { id: "chooseAvatar" }
-  | { id: "choseAvatar", appearance: Appearance }
+  | { id: "choseAvatar"; appearance: Appearance }
   | { id: "loadedAndReady" }
   | { id: "startPlaying" }
   | { id: "error"; message: string; stack?: any };

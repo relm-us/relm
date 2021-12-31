@@ -80,28 +80,6 @@ export class PhysicsSystem extends System {
       ref.value[name].apply(ref.value, args);
     });
 
-    this.queries.default.forEach((entity) => {
-      const world = entity.get(WorldTransform);
-      const spec = entity.get(RigidBody);
-      const body = entity.get(RigidBodyRef).value as RapierRigidBody;
-      const transform = entity.get(Transform);
-
-      // @todo Should we teleport if the distance is huge?
-
-      if (spec.kind === "KINEMATIC") {
-        body.setNextKinematicTranslation(transform.position);
-        body.setNextKinematicRotation(transform.rotation);
-      }
-      if (spec.kind === "STATIC" || spec.kind === "DYNAMIC") {
-        body.setTranslation(world.position, false);
-        body.setRotation(world.rotation, false);
-      }
-      if (spec.kind === "DYNAMIC") {
-        body.setAngvel(spec.angularVelocity, false);
-        body.setLinvel(spec.linearVelocity, false);
-      }
-    });
-
     world.step(eventQueue);
 
     this.queries.default.forEach((entity) => {
@@ -111,8 +89,16 @@ export class PhysicsSystem extends System {
       const spec = entity.get(RigidBody);
       const body = entity.get(RigidBodyRef).value;
 
-      if (spec.kind === "DYNAMIC") {
+      if (spec.sync) {
+        if (spec.sync === true) {
+          spec.sync = this.physics.hecsWorld.version;
+        } else if (this.physics.hecsWorld.version > spec.sync + 1) {
+          spec.sync = false;
+        }
+        body.setTranslation(world.position, true);
+      } else if (spec.kind === "DYNAMIC") {
         if (!parent) {
+          // if (entity.name === "Avatar") return;
           local.position.copy(body.translation());
           world.position.copy(body.translation());
           local.rotation.copy(body.rotation());

@@ -1,4 +1,5 @@
 import { get } from "svelte/store";
+import { Vector3 } from "three";
 
 import Program from "./Program.svelte";
 import * as Cmd from "./Cmd";
@@ -25,7 +26,7 @@ import { worldManager } from "~/world";
 
 export const relmProgram = {
   init: [{ screen: "initial" }, Cmd.ofMsg({ id: "pageLoaded" })],
-  update(msg: RelmMessage, state: RelmState) {
+  update(msg: RelmMessage, state: RelmState): [RelmState, any?] {
     // console.log("got RelmMessage:", msg);
 
     switch (msg.id) {
@@ -91,6 +92,16 @@ export const relmProgram = {
         ];
       }
 
+      case "gotEntrywayPosition": {
+        return [
+          {
+            ...state,
+            entrywayPosition: msg.entrywayPosition,
+          },
+          Cmd.ofMsg({ id: "loadedAndReady" }),
+        ];
+      }
+
       case "configureAudioVideo": {
         return [
           {
@@ -146,14 +157,15 @@ export const relmProgram = {
         if (
           state.worldDoc &&
           state.audioVideoSetupDone &&
-          state.avatarSetupDone
+          state.avatarSetupDone &&
+          state.entrywayPosition
         ) {
           worldManager.identities.me.set({ appearance: state.appearance });
+          worldManager.avatar.moveTo(state.entrywayPosition);
           return [
             state,
             (dispatch) => {
               startPollingLoadingState(state.worldDoc, () => {
-                console.log("DONE POLLING");
                 dispatch({ id: "startPlaying" });
               });
             },

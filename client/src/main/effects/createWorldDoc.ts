@@ -1,8 +1,8 @@
+import { Vector3 } from "three";
 import { createECSWorld } from "~/world/createECSWorld";
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import { worldManager } from "~/world";
 import { config } from "~/config";
-import type { SecureParams } from "~/identity/secureParams";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
 import { Dispatch, RelmState } from "../RelmStateAndMessage";
@@ -20,6 +20,14 @@ export const createWorldDoc = (state: RelmState) => async (
     state.secureParams
   );
   worldManager.init(dispatch, { ...state, ecsWorld, worldDoc });
+
+  worldDoc.entryways.subscribe(($entryways) => {
+    const position = $entryways.get(state.entryway);
+    if (position) {
+      const entrywayPosition = new Vector3().fromArray(position);
+      dispatch({ id: "gotEntrywayPosition", entrywayPosition });
+    }
+  });
 
   connection.once("status", ({ status }: { status: YConnectState }) => {
     switch (status) {

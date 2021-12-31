@@ -75,10 +75,7 @@ export class WorldManager {
     return playerId;
   }
 
-  async init(
-    dispatch: Dispatch,
-    state: RelmState
-  ) {
+  async init(dispatch: Dispatch, state: RelmState) {
     this.dispatch = dispatch;
     this.state = state;
 
@@ -190,7 +187,10 @@ export class WorldManager {
     };
     this.worldDoc.provider.awareness.on("change", removeDisconnectedIdentities);
     this.unsubs.push(() =>
-      this.worldDoc.provider.awareness.off("change", removeDisconnectedIdentities)
+      this.worldDoc.provider.awareness.off(
+        "change",
+        removeDisconnectedIdentities
+      )
     );
 
     // Update participants' transform data (position, rotation, etc.)
@@ -224,15 +224,6 @@ export class WorldManager {
     this.unsubs.push(disconnect);
 
     this.start();
-  }
-
-  enter(entryway: string) {
-    const entryways = this.worldDoc.entryways.y.toJSON();
-    const position = new Vector3(0, 0, 0);
-    if (entryway in entryways) {
-      position.fromArray(entryways[entryway]);
-    }
-    this.avatar.moveTo(position);
   }
 
   mount() {
@@ -375,9 +366,6 @@ export class WorldManager {
 
       // Pre-compile assets to prevent some jank while exploring the world
       this.world.presentation.compile();
-
-      // Move avatar to named entryway once world has loaded
-      this.enter(this.entryway);
 
       playState.set("playing");
 
