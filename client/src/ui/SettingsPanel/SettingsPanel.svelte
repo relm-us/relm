@@ -19,6 +19,7 @@
   import { onMount } from "svelte";
   import debounce from "lodash/debounce";
   import { migrateToCDN } from "~/commands/migrateToCDN";
+  import SkyboxOption from "./SkyboxOption.svelte";
 
   let newEntrywayName = "";
   let fogColor;
@@ -48,8 +49,10 @@
   function onUploadedSkybox({ detail }) {
     if (detail.results.length === 0) return;
     const result = detail.results[0];
-    const imageUrl = assetUrl(result.types.webp);
+    setSkybox(assetUrl(result.types.webp));
+  }
 
+  function setSkybox(imageUrl) {
     // Delete any previous Skybox object
     const entities: Entity[] = worldManager.world.entities.getAllByComponent(
       Skybox
@@ -100,6 +103,10 @@
     const migrated = migrateToCDN(worldManager.world, worldManager.worldDoc);
     alert(`Migrated ${migrated} entities in this world to CDN`);
   }
+
+  function chooseSkybox({ detail }) {
+    setSkybox(assetUrl(detail));
+  }
 </script>
 
 <LeftPanel on:minimize>
@@ -127,6 +134,32 @@
 
     <Pane title="Skybox">
       <setting>
+        <div class="select-skyboxes">
+          <SkyboxOption
+            name="Blue Sky"
+            value="edc3d0040ef1e1feece33adef09b32c4-7496.webp"
+            thumbnail="5edd94b3d28b8a05c2858de0ae503e39-1586.webp"
+            on:choose={chooseSkybox}
+          />
+          <SkyboxOption
+            name="Stars"
+            value="42e9b44e8e2cce697d446c85809a378c-79050.webp"
+            thumbnail="fdeb9a7dab4c03b2befe637d55c8ea36-6908.webp"
+            on:choose={chooseSkybox}
+          />
+          <SkyboxOption
+            name="Pink Clouds"
+            value="6c798e8ce73d162955743af2dd2c27ff-22658.webp"
+            thumbnail="9f15e6be6c086594fbe8e389f4a209b1-4138.webp"
+            on:choose={chooseSkybox}
+          />
+          <SkyboxOption
+            name="Galaxy"
+            value="b0c5c961730f92fbd97d3b8f4ad73f53-31160.webp"
+            thumbnail="543ba08c91613b380a8c304bec4f11b5-4322.webp"
+            on:choose={chooseSkybox}
+          />
+        </div>
         <div class="upload">
           <UploadButton on:uploaded={onUploadedSkybox}>
             <lbl>Upload</lbl>
@@ -194,5 +227,23 @@
 
   r-entryways-list {
     margin: 16px 0;
+  }
+
+  .select-skyboxes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .select-skyboxes :global(button) {
+    display: flex;
+    padding: 0;
+    margin: 6px;
+    border-radius: 5px;
+    width: 100px;
+    height: 100px;
+  }
+  .select-skyboxes :global(button > img) {
+    border-radius: 3px;
+    object-fit: cover;
   }
 </style>
