@@ -16,6 +16,6 @@ export const nextSetupStep = (state: RelmState) => async (
   } else if (!state.avatarSetupDone) {
     dispatch({ id: "chooseAvatar" });
   } else {
-    dispatch({ id: "loadedAndReady" });
+    dispatch({ id: "loading" });
   }
 };

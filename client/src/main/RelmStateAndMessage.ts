@@ -74,7 +74,9 @@ export type RelmMessage =
   | { id: "configuredAudioVideo"; state: any }
   | { id: "chooseAvatar" }
   | { id: "choseAvatar"; appearance: Appearance }
+  | { id: "loading" }
   | { id: "loadedAndReady" }
+  | { id: "assumeOriginAsEntryway" }
   | { id: "startPlaying" }
   | { id: "error"; message: string; stack?: any };
 

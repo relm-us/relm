@@ -149,9 +149,34 @@ export const relmProgram = {
           ...state,
           avatarSetupDone: true,
           appearance: msg.appearance,
-          screen: "loading-screen",
         };
         return [newState, nextSetupStep(newState)];
+
+      case "loading": {
+        return [
+          { ...state, screen: "loading-screen" },
+          (dispatch) => {
+            startPollingLoadingState(state.worldDoc, () => {
+              setTimeout(() => {
+                dispatch({ id: "assumeOriginAsEntryway" });
+              }, 1500);
+              dispatch({ id: "loadedAndReady" });
+            });
+          },
+        ];
+      }
+
+      case "assumeOriginAsEntryway": {
+        if (!state.entrywayPosition) {
+          alert("This relm's default entryway is not set yet.");
+          return [
+            { ...state, entrywayPosition: new Vector3(0, 0, 0) },
+            Cmd.ofMsg({ id: "loadedAndReady" }),
+          ];
+        } else {
+          return [state];
+        }
+      }
 
       case "loadedAndReady": {
         if (
@@ -162,14 +187,7 @@ export const relmProgram = {
         ) {
           worldManager.identities.me.set({ appearance: state.appearance });
           worldManager.avatar.moveTo(state.entrywayPosition);
-          return [
-            state,
-            (dispatch) => {
-              startPollingLoadingState(state.worldDoc, () => {
-                dispatch({ id: "startPlaying" });
-              });
-            },
-          ];
+          return [state, Cmd.ofMsg({ id: "startPlaying" })];
         } else {
           return [state];
         }
