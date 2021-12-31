@@ -12,6 +12,7 @@ export type RelmState = {
   relmName?: string; // unique human name for the relm
   entryway?: string;
   entrywayPosition: Vector3;
+  entrywayUnsub: Function;
 
   // relm metadata
   relmDocId?: string; // server-assigned UUID for the relm
@@ -38,7 +39,7 @@ export type RelmState = {
   worldDoc?: WorldDoc;
 
   // other
-  changingSubrelm?: boolean;
+  doneLoading?: boolean;
   errorMessage?: string;
   screen?:
     | "error"
@@ -70,11 +71,13 @@ export type RelmMessage =
   | { id: "importedPhysicsEngine"; physicsEngine: any }
   | { id: "createdWorldDoc"; ecsWorld: DecoratedECSWorld; worldDoc: WorldDoc }
   | { id: "gotEntrywayPosition"; entrywayPosition: Vector3 }
+  | { id: "gotEntrywayUnsub"; entrywayUnsub: Function }
   | { id: "configureAudioVideo" }
   | { id: "configuredAudioVideo"; state: any }
   | { id: "chooseAvatar" }
-  | { id: "choseAvatar"; appearance: Appearance }
+  | { id: "choseAvatar"; appearance?: Appearance }
   | { id: "loading" }
+  | { id: "loaded" }
   | { id: "loadedAndReady" }
   | { id: "assumeOriginAsEntryway" }
   | { id: "startPlaying" }

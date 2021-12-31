@@ -21,13 +21,14 @@ export const createWorldDoc = (state: RelmState) => async (
   );
   worldManager.init(dispatch, { ...state, ecsWorld, worldDoc });
 
-  worldDoc.entryways.subscribe(($entryways) => {
+  const entrywayUnsub = worldDoc.entryways.subscribe(($entryways) => {
     const position = $entryways.get(state.entryway);
     if (position) {
       const entrywayPosition = new Vector3().fromArray(position);
       dispatch({ id: "gotEntrywayPosition", entrywayPosition });
     }
   });
+  dispatch({ id: "gotEntrywayUnsub", entrywayUnsub });
 
   connection.once("status", ({ status }: { status: YConnectState }) => {
     switch (status) {

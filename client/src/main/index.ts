@@ -88,7 +88,7 @@ export const relmProgram = {
       case "createdWorldDoc": {
         return [
           { ...state, ecsWorld: msg.ecsWorld, worldDoc: msg.worldDoc },
-          Cmd.ofMsg({ id: "loadedAndReady" }),
+          Cmd.ofMsg({ id: "loading" }),
         ];
       }
 
@@ -100,6 +100,10 @@ export const relmProgram = {
           },
           Cmd.ofMsg({ id: "loadedAndReady" }),
         ];
+      }
+
+      case "gotEntrywayUnsub": {
+        return [{ ...state, entrywayUnsub: msg.entrywayUnsub }];
       }
 
       case "configureAudioVideo": {
@@ -153,25 +157,40 @@ export const relmProgram = {
         return [newState, nextSetupStep(newState)];
 
       case "loading": {
+        if (
+          state.worldDoc &&
+          state.audioVideoSetupDone &&
+          state.avatarSetupDone
+        ) {
+          return [
+            { ...state, doneLoading: false, screen: "loading-screen" },
+            (dispatch) => {
+              startPollingLoadingState(state.worldDoc, () => {
+                setTimeout(() => {
+                  dispatch({ id: "assumeOriginAsEntryway" });
+                }, 1500);
+                dispatch({ id: "loaded" });
+              });
+            },
+          ];
+        } else {
+          return [state];
+        }
+      }
+
+      case "loaded": {
         return [
-          { ...state, screen: "loading-screen" },
-          (dispatch) => {
-            startPollingLoadingState(state.worldDoc, () => {
-              setTimeout(() => {
-                dispatch({ id: "assumeOriginAsEntryway" });
-              }, 1500);
-              dispatch({ id: "loadedAndReady" });
-            });
-          },
+          { ...state, doneLoading: true },
+          Cmd.ofMsg({ id: "loadedAndReady" }),
         ];
       }
 
       case "assumeOriginAsEntryway": {
         if (!state.entrywayPosition) {
-          alert("This relm's default entryway is not set yet.");
+          alert("This relm's default entryway is not yet set.");
           return [
             { ...state, entrywayPosition: new Vector3(0, 0, 0) },
-            Cmd.ofMsg({ id: "loadedAndReady" }),
+            Cmd.ofMsg({ id: "loaded" }),
           ];
         } else {
           return [state];
@@ -179,15 +198,21 @@ export const relmProgram = {
       }
 
       case "loadedAndReady": {
-        if (
-          state.worldDoc &&
-          state.audioVideoSetupDone &&
-          state.avatarSetupDone &&
-          state.entrywayPosition
-        ) {
-          worldManager.identities.me.set({ appearance: state.appearance });
+        if (state.entrywayPosition && state.doneLoading) {
           worldManager.avatar.moveTo(state.entrywayPosition);
-          return [state, Cmd.ofMsg({ id: "startPlaying" })];
+
+          if (state.appearance) {
+            worldManager.identities.me.set({ appearance: state.appearance });
+          }
+
+          if (state.entrywayUnsub) {
+            state.entrywayUnsub();
+          }
+
+          return [
+            { ...state, entrywayUnsub: null },
+            Cmd.ofMsg({ id: "startPlaying" }),
+          ];
         } else {
           return [state];
         }
