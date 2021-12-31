@@ -24,7 +24,7 @@ wss.on("connection", (conn, req) => {
             return (
               (name === "Model" &&
                 !empty(component.get("values").get("asset")?.url)) ||
-              (name === "Image" && 
+              (name === "Image" &&
                 !empty(component.get("values").get("asset")?.url)) ||
               (name === "Shape" &&
                 !empty(component.get("values").get("texture")?.url)) ||
@@ -36,6 +36,9 @@ wss.on("connection", (conn, req) => {
           assetsCount++;
       });
       const entitiesCount = entities.length;
+      console.log(
+        `Recomputing stats for ${doc.name}; entities: ${entitiesCount}, assets: ${assetsCount}`
+      );
       await Doc.updateStats({
         docId: doc.name,
         entitiesCount,

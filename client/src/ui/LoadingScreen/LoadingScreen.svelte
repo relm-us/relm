@@ -2,10 +2,19 @@
   import PageOverlay from "~/ui/lib/PageOverlay";
   import { loaded, maximum } from "~/stores/loading";
 
+  export let dispatch;
+
+  let count = 0;
+  function click() {
+    if (++count >= 5) {
+      dispatch({ id: "loaded" });
+      dispatch({ id: "assumeOriginAsEntryway" });
+    }
+  }
 </script>
 
 <PageOverlay zIndex={3} justify="center">
-  <container>
+  <container on:click={click}>
     <img src="/loading.png" alt="Loading" />
     <progress-bar style="--percent:{($loaded / $maximum) * 140}%" />
   </container>
@@ -43,5 +52,4 @@
     border-radius: 16px;
     z-index: -1;
   }
-
 </style>

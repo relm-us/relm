@@ -254,7 +254,7 @@ export const relmProgram = {
         case "choose-avatar":
           return [AvatarChooser, { dispatch }];
         case "loading-screen":
-          return [LoadingScreen];
+          return [LoadingScreen, { dispatch }];
         case "loading-failed":
           return [LoadingFailed];
         case "game-world":
