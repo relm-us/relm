@@ -8,17 +8,12 @@ import { LookAt } from "~/ecs/plugins/look-at";
 import { viewportScale } from "~/stores";
 
 import { makeCamera } from "~/prefab/makeCamera";
-import { DecoratedECSWorld } from "types/DecoratedECSWorld";
-
-function updateComponent(entity: Entity, Component, attrs: object) {
-  if (!entity) return;
-  let component = entity.get(Component);
-  if (component) {
-    Object.assign(component, attrs);
-  } else {
-    entity.add(Component, attrs);
-  }
-}
+import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
+import {
+  AVATAR_HEIGHT,
+  CAMERA_FOCUS_DISTANCE,
+  CAMERA_LERP_ALPHA,
+} from "~/config/constants";
 
 type CameraFollowingParticipant = {
   type: "following";
@@ -57,10 +52,6 @@ type CameraState =
   | CameraFocusing
   | CameraDefocusing
   | CameraCircling;
-
-const AVATAR_HEIGHT = 1.5;
-const FOCUS_DISTANCE = 5.0;
-const CAMERA_LERP_ALPHA = 0.125;
 
 export class CameraManager {
   ecsWorld: DecoratedECSWorld;
@@ -167,7 +158,7 @@ export class CameraManager {
 
     updateComponent(camera, Follow, {
       target: target.id,
-      offset: new Vector3(0, 0, FOCUS_DISTANCE),
+      offset: new Vector3(0, 0, CAMERA_FOCUS_DISTANCE),
     });
 
     updateComponent(camera, LookAt, {
@@ -255,5 +246,15 @@ export class CameraManager {
       stepRadians: radianStep,
       oneShot: false,
     });
+  }
+}
+
+function updateComponent(entity: Entity, Component, attrs: object) {
+  if (!entity) return;
+  let component = entity.get(Component);
+  if (component) {
+    Object.assign(component, attrs);
+  } else {
+    entity.add(Component, attrs);
   }
 }

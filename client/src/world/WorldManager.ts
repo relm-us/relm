@@ -1,4 +1,4 @@
-import { Vector3, Color } from "three";
+import { Color } from "three";
 import { derived, get, writable, Writable } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
@@ -8,12 +8,9 @@ import { exportRelm, importRelm } from "./Export";
 
 import { worldUIMode } from "~/stores/worldUIMode";
 import { deltaTime, fpsTime } from "~/stores/stats";
-// import { appState, AppState } from "stores/appState-x";
 import { playState, PlayState } from "~/stores/playState";
 import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 import { shadowsEnabled } from "~/stores/shadowsEnabled";
-import { resetLoading, startPollingLoadingState } from "~/stores/loading";
-import { loadingState } from "~/stores/loadingState";
 
 import { makeInitialCollider } from "~/prefab";
 import { makeLight } from "~/prefab/makeLight";
@@ -35,8 +32,6 @@ import { RelmRestAPI } from "~/identity/RelmRestAPI";
 
 import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 import { config } from "~/config";
-
-import { setupState } from "~/stores/setupState";
 
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import type { Dispatch, RelmState } from "~/main/RelmStateAndMessage";
