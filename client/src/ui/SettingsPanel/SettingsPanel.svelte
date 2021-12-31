@@ -24,13 +24,21 @@
   let fogColor;
   let fogDensity;
 
-  function addEntryway(event) {
+  function handleAddEntryway(event) {
+    addEntryway(event.target.value);
+  }
+
+  function addEntryway(entrywayName) {
     const coords: Vector3 = worldManager.avatar.entity.get(Transform).position;
-    worldManager.worldDoc.entryways.y.set(event.target.value, [
+    worldManager.worldDoc.entryways.y.set(entrywayName, [
       coords.x,
       coords.y,
       coords.z,
     ]);
+  }
+
+  function setDefaultEntryway() {
+    addEntryway("default");
   }
 
   function onDeleteEntryway({ detail: name }) {
@@ -43,7 +51,9 @@
     const imageUrl = assetUrl(result.types.webp);
 
     // Delete any previous Skybox object
-    const entities: Entity[] = worldManager.world.entities.getAllByComponent(Skybox);
+    const entities: Entity[] = worldManager.world.entities.getAllByComponent(
+      Skybox
+    );
     for (let entity of entities) {
       worldManager.worldDoc.deleteById(entity.id.toString());
     }
@@ -97,15 +107,20 @@
   <container>
     <Pane title="Entryways">
       <setting>
-        <EntrywayMap
-          entryways={worldManager.worldDoc.entryways}
-          on:delete={onDeleteEntryway}
-        />
+        <Button on:click={setDefaultEntryway} style="border: 1px solid #999;">
+          Set Default to Here
+        </Button>
+        <r-entryways-list>
+          <EntrywayMap
+            entryways={worldManager.worldDoc.entryways}
+            on:delete={onDeleteEntryway}
+          />
+        </r-entryways-list>
         <Capsule
           label="Add:"
           value={newEntrywayName}
           editable={true}
-          on:change={addEntryway}
+          on:change={handleAddEntryway}
         />
       </setting>
     </Pane>
@@ -122,7 +137,7 @@
 
     <Pane title="Fog">
       <setting>
-        <div style="width:100%">
+        <div style="width:100%; margin-bottom: 8px;">
           <Slider on:change={onSlideFog} value={[0, fogDensity]} single />
         </div>
         <ColorPicker
@@ -137,15 +152,18 @@
       </setting>
     </Pane>
 
-    <Pane title="Migration">
+    <!-- <Pane title="Migration">
       <setting>
         <div class="upload">
-          <Button on:click={startMigrationAndReport}>
+          <Button
+            on:click={startMigrationAndReport}
+            style="border: 1px solid #999;"
+          >
             Migrate Assets to CDN
           </Button>
         </div>
       </setting>
-    </Pane>
+    </Pane> -->
   </container>
 </LeftPanel>
 
@@ -172,5 +190,9 @@
   }
   .upload lbl {
     margin-left: 8px;
+  }
+
+  r-entryways-list {
+    margin: 16px 0;
   }
 </style>
