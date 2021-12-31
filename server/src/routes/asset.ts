@@ -43,6 +43,10 @@ asset.post(
   // middleware.authenticated(),
   // middleware.authorized("edit"),
   wrapAsync(async (req, res) => {
+    if (!('files[]' in req.files)) {
+      return fail(res, "expecting files[] form-data")
+    }
+
     const asset = req.files["files[]"];
     if (asset.size > MAX_FILE_SIZE) {
       return fail(res, "file too large");
