@@ -87,39 +87,39 @@ server.on("upgrade", async (req, socket, head) => {
     // Get relm from docId
     const doc = await Doc.getDoc({ docId });
 
-    if (doc === null) {
-      console.log(
-        `Visitor sought to sync doc '${docId}' but was rejected because it doesn't exist`
-      );
-      socket.write("HTTP/1.1 404 Not Found\r\n\r\n");
-      socket.destroy();
+    const permissions = await Permission.getPermissions({
+      playerId,
+      relmIds: [docId],
+    });
+
+    let permitted;
+    if (docId in permissions) {
+      permitted = permissions[docId].includes("access");
+    } else if ("*" in permissions) {
+      permitted = permissions["*"].includes("access");
     } else {
-      const permissions = await Permission.getPermissions({
-        playerId,
-        relmIds: [doc.relmId],
-      });
+      permitted = false;
+    }
 
-      let permitted;
-      if (doc.relmId in permissions) {
-        permitted = permissions[doc.relmId].includes("access");
-      } else if ("*" in permissions) {
-        permitted = permissions["*"].includes("access");
+    if (permitted) {
+      if (doc === null) {
+        console.log(
+          `Visitor sought to sync doc '${docId}' but was rejected because it doesn't exist`
+        );
+        socket.write("HTTP/1.1 404 Not Found\r\n\r\n");
+        socket.destroy();
       } else {
-        permitted = false;
-      }
-
-      if (permitted) {
         wss.handleUpgrade(req, socket, head, (conn) => {
           wss.emit("connection", conn, req);
         });
-      } else {
-        console.log(
-          `Visitor sought to enter '${docId}' but was rejected because unauthorized`,
-          params
-        );
-        socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
-        socket.destroy();
       }
+    } else {
+      console.log(
+        `Visitor sought to enter '${docId}' but was rejected because unauthorized`,
+        params
+      );
+      socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+      socket.destroy();
     }
   }
 });

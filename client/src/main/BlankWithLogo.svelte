@@ -6,7 +6,7 @@
 
 <PageOverlay>
   <r-column>
-    <div><img src={relmLogo} alt="logo" width="150" /></div>
+    <div class="logo"><img src={relmLogo} alt="logo" width="150" /></div>
     <slot />
   </r-column>
 </PageOverlay>
@@ -17,5 +17,8 @@
     flex-direction: column;
     justify-content: center;
     height: 100%;
+  }
+  .logo {
+    text-align: center;
   }
 </style>

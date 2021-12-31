@@ -28,8 +28,6 @@ import { ChatManager } from "./ChatManager";
 import { CameraManager } from "./CameraManager";
 import { Avatar } from "~/identity/Avatar";
 
-import { RelmRestAPI } from "~/identity/RelmRestAPI";
-
 import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 import { config } from "~/config";
 
@@ -59,7 +57,6 @@ export class WorldManager {
   camera: CameraManager;
 
   avConnection: AVConnection;
-  api: RelmRestAPI;
 
   previousLoopTime: number = 0;
   started: boolean = false;
@@ -105,7 +102,6 @@ export class WorldManager {
     this.avConnection = new AVConnection(this.identities.me.playerId);
 
     const token = new URL(window.location.href).searchParams.get("t");
-    this.api = new RelmRestAPI(config.serverUrl, { token });
 
     this.mount();
     this.populate();

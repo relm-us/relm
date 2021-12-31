@@ -1,8 +1,8 @@
 import axios from "axios";
 
-import { Security } from "./Security";
-import { playerId } from "./playerId";
-import { SecureParams } from "./secureParams";
+import { Security } from "~/identity/Security";
+import { playerId } from "~/identity/playerId";
+import { SecureParams } from "~/identity/secureParams";
 
 export class RelmRestAPI {
   _authenticationParams: SecureParams;
@@ -64,14 +64,6 @@ export class RelmRestAPI {
     const url = `${this.url}${path}`;
     const headers = await this.getHeaders();
     return await axios.get(url, { headers });
-    // const request = new Request(url, {
-    //   method: 'GET',
-    //   headers: new Headers(headers),
-    //   mode: 'cors',
-    //   cache: 'default',
-    // });
-
-    // await fetch(request)
   }
 
   async post(path, body = {}) {
@@ -94,8 +86,17 @@ export class RelmRestAPI {
     }
   }
 
-  async getPermits(relm: string) {
-    const res = await this.get(`/relm/${relm}/permissions`);
+  async getPermits(relm: string): Promise<string[]> {
+    let res;
+    try {
+      res = await this.get(`/relm/${relm}/permissions`);
+    } catch (err) {
+      if (err.response && err.response.status === 404) {
+        throw Error(`relm named "${relm}" not found`);
+      } else if (err.response && err.response.status === 400) {
+        throw Error(`permission denied`);
+      }
+    }
     if (res.status === 200) {
       if (res.data.status === "success") {
         return res.data.permits;
