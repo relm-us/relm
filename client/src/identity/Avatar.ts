@@ -1,4 +1,4 @@
-import { Vector3, Euler, AnimationClip, MathUtils } from "three";
+import { Vector3, Euler, AnimationClip } from "three";
 
 import type { Identity } from "./Identity";
 import { makeAvatar } from "~/prefab/makeAvatar";
@@ -13,7 +13,7 @@ import { FaceMapColors } from "~/ecs/plugins/coloration";
 import { Distance, DistanceRef } from "~/ecs/plugins/distance";
 import { Morph } from "~/ecs/plugins/morph";
 import { Controller } from "~/ecs/plugins/player-control";
-import { Collider, RigidBodyRef } from "~/ecs/plugins/physics";
+import { Collider } from "~/ecs/plugins/physics";
 import { Translucent } from "~/ecs/plugins/translucent";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import {
@@ -21,7 +21,6 @@ import {
   headFollowsPointer,
   headFollowsAngle,
 } from "~/ecs/plugins/twist-bone";
-import type { RigidBody as RapierRigidBody } from "@dimforge/rapier3d";
 
 import { chatOpen } from "~/stores/chatOpen";
 import { appearanceToCharacterTraits } from "./appearance";
@@ -30,8 +29,8 @@ import { worldManager } from "~/world";
 import {
   AVATAR_BUILDER_INTERACTION,
   AVATAR_INTERACTION,
-  GROUND_INTERACTION,
 } from "~/config/colliderInteractions";
+import { worldUIMode } from "~/stores/worldUIMode";
 
 const OCULUS_HEIGHT = 2.4;
 const DEFAULT_LABEL_COLOR = "#D0D0D0";
@@ -123,6 +122,16 @@ export class Avatar {
         boneName: "mixamorigHead",
         function: headFollowsPointer((angle) => (this.headAngle = angle)),
       });
+    });
+
+    // Local participant name is hidden in build mode so the label does
+    // not obstruct clicking / dragging etc.
+    worldUIMode.subscribe(($mode) => {
+      const label = this.entity.get(Html2d);
+      if (label) {
+        label.visible = $mode === "play";
+        label.modified();
+      }
     });
   }
 
@@ -303,20 +312,23 @@ export class Avatar {
     const label = this.entity.get(Html2d);
     if (!label) return;
 
+    let modified = false;
     if (label.content !== name) {
       label.content = name;
-      label.modified();
+      modified = true;
     }
 
     if (label.editable !== editable) {
       label.editable = editable;
-      label.modified();
+      modified = true;
     }
 
     if (label.underlineColor !== color) {
       label.underlineColor = color;
-      label.modified();
+      modified = true;
     }
+
+    if (modified) label.modified();
   }
 
   moveTo(coords: Vector3) {
@@ -438,7 +450,7 @@ export function moveAvatarTo(
       world.position.add(delta);
 
       // Physics engine keeps a copy of position, update it too
-      const rigidBody = entity.getByName("RigidBody").sync = true;
+      const rigidBody = (entity.getByName("RigidBody").sync = true);
     },
     false,
     true

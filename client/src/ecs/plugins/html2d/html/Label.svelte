@@ -13,6 +13,7 @@
   export let underlineColor;
   export let draggable;
   export let editable;
+  export let visible;
 
   // The entity that this Label is attached to
   export let entity;
@@ -74,7 +75,10 @@
     } else if ($worldUIMode === "play") {
       const mouse2d = worldManager.world.presentation.mouse2d;
       // Store the original click in 3d world coords
-      worldManager.world.perspective.getWorldFromScreen(mouse2d, initialEntityPos);
+      worldManager.world.perspective.getWorldFromScreen(
+        mouse2d,
+        initialEntityPos
+      );
       initialEntityPos.sub(entity.getByName("Transform").position);
 
       initialMousePos.copy(mouse2d);
@@ -94,6 +98,8 @@
   }
 
   function onMousemove(event) {
+    if (!visible) return;
+
     if (!editing) event.preventDefault();
 
     if (!event.target.parentElement) return;
@@ -124,22 +130,24 @@
   $$props;
 </script>
 
-{#if showNoteIcon}
-  <div on:mousedown={onMousedown}>✎</div>
-{:else}
-  <div
-    contenteditable={editing}
-    class="truncate-overflow interactive"
-    class:underline={!!underlineColor}
-    class:dragging
-    style="--color:{color};--shadow-color:{shadowColor};--underline-color:{underlineColor}"
-    bind:this={labelEl}
-    on:mousedown={onMousedown}
-    on:blur={doneEditing}
-    on:keydown={onKeydown}
-  >
-    {@html cleanHtml(content)}
-  </div>
+{#if visible}
+  {#if showNoteIcon}
+    <div on:mousedown={onMousedown}>✎</div>
+  {:else}
+    <div
+      contenteditable={editing}
+      class="truncate-overflow interactive"
+      class:underline={!!underlineColor}
+      class:dragging
+      style="--color:{color};--shadow-color:{shadowColor};--underline-color:{underlineColor}"
+      bind:this={labelEl}
+      on:mousedown={onMousedown}
+      on:blur={doneEditing}
+      on:keydown={onKeydown}
+    >
+      {@html cleanHtml(content)}
+    </div>
+  {/if}
 {/if}
 
 <svelte:window on:mousemove={onMousemove} on:mouseup={onMouseup} />
