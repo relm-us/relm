@@ -234,16 +234,4 @@
     flex-wrap: wrap;
     justify-content: center;
   }
-  .select-skyboxes :global(button) {
-    display: flex;
-    padding: 0;
-    margin: 6px;
-    border-radius: 5px;
-    width: 100px;
-    height: 100px;
-  }
-  .select-skyboxes :global(button > img) {
-    border-radius: 3px;
-    object-fit: cover;
-  }
 </style>

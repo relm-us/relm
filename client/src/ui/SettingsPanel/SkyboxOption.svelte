@@ -16,3 +16,19 @@
 <button on:click={click(value)}>
   <img src={assetUrl(thumbnail)} alt={name} />
 </button>
+
+<style>
+  button {
+    display: flex;
+    padding: 0;
+    margin: 6px;
+    border-radius: 5px;
+  }
+
+  img {
+    border-radius: 3px;
+    object-fit: cover;
+    width: 100px;
+    height: 100px;
+  }
+</style>
