@@ -12,7 +12,6 @@ import { playState, PlayState } from "~/stores/playState";
 import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 import { shadowsEnabled } from "~/stores/shadowsEnabled";
 
-import { makeInitialCollider } from "~/prefab";
 import { makeLight } from "~/prefab/makeLight";
 
 import { Entity } from "~/ecs/base";
@@ -312,8 +311,6 @@ export class WorldManager {
 
     const light = makeLight(this.world, this.avatar.entity).activate();
     this.light = light;
-
-    makeInitialCollider(this.world).activate();
   }
 
   depopulate() {

@@ -5,7 +5,6 @@ import { makeBox } from "./makeBox";
 import { makeDiamond } from "./makeDiamond";
 import { makeEntity } from "./makeEntity";
 import { makeGround } from "./makeGround";
-import { makeInitialCollider } from "./makeInitialCollider";
 import { makeImage } from "./makeImage";
 import { makeLabel } from "./makeLabel";
 import { makeThing } from "./makeThing";
@@ -22,7 +21,6 @@ export {
   makeDiamond,
   makeEntity,
   makeGround,
-  makeInitialCollider,
   makeLabel,
   makeImage,
   makeThing,

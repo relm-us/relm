@@ -81,16 +81,20 @@ relm.post(
       let seedDocId: string;
       let newRelmDocId: string = relm.permanentDocId;
 
+      let relmContent;
       if (seedRelmId) {
         seedDocId = await Doc.getSeedDocId({
           docId: newRelmDocId,
         });
         const seedRelmDoc: Y.Doc = await yws.getYDoc(seedDocId);
-        const newRelmDoc: Y.Doc = await yws.getYDoc(newRelmDocId);
 
-        const json = exportRelm(seedRelmDoc);
-        importRelm(json, newRelmDoc);
+        relmContent = exportRelm(seedRelmDoc);
+      } else {
+        relmContent = config.DEFAULT_RELM_CONTENT;
       }
+
+      const newRelmDoc: Y.Doc = await yws.getYDoc(newRelmDocId);
+      importRelm(relmContent, newRelmDoc);
 
       if (seedDocId) {
         if (seedRelmName) {
