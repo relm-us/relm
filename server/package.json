@@ -35,9 +35,9 @@
     "sharp": "^0.25.4",
     "twilio": "^3.71.2",
     "ws": "^7.2.3",
-    "y-protocols": "1.0.1",
-    "y-websocket": "canadaduane/y-websocket#custom-callbacks",
-    "yjs": "13.5.4"
+    "y-protocols": "1.0.5",
+    "y-websocket": "canadaduane/y-websocket#3d9dc7ea5ff2cebc9e5155757c21a94513e6cc10",
+    "yjs": "13.5.23"
   },
   "devDependencies": {
     "@jest-mock/express": "^1.4.0",
