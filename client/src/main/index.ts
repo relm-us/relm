@@ -8,7 +8,7 @@ import { RelmState, RelmMessage } from "./RelmStateAndMessage";
 import BlankWithLogo from "./BlankWithLogo.svelte";
 import MediaSetupShim from "./MediaSetupShim.svelte";
 import AvatarChooser from "~/ui/AvatarBuilder/AvatarChooser.svelte";
-import GameWorldShim from "./GameWorldShim.svelte";
+import GameWorld from "./GameWorld.svelte";
 import ErrorScreen from "./ErrorScreen.svelte";
 import { LoadingScreen, LoadingFailed } from "~/ui/LoadingScreen";
 import { resetLoading, startPollingLoadingState } from "~/stores/loading";
@@ -259,7 +259,7 @@ export const relmProgram = {
           return [LoadingFailed];
         case "game-world":
           return [
-            GameWorldShim,
+            GameWorld,
             {
               dispatch,
               ecsWorld: state.ecsWorld,

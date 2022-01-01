@@ -51,6 +51,14 @@
   };
 </script>
 
+<!-- Pause game if player is not focused on window, to save CPU/GPU resources -->
+<PauseAutomatically />
+
+{#if $playState === "paused"}
+  <PauseMessage />
+{/if}
+
+
 <overlay class:open={buildMode}>
   <overlay-panel class="interactive">
     {#if buildMode}
