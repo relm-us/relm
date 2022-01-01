@@ -95,7 +95,7 @@ server.on("upgrade", async (req, socket, head) => {
 
     let permitted;
     if (doc.relmId in permissions) {
-      permitted = permissions[docId].includes("access");
+      permitted = permissions[doc.relmId].includes("access");
     } else if ("*" in permissions) {
       permitted = permissions["*"].includes("access");
     } else {
