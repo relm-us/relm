@@ -72,6 +72,11 @@ module.exports = {
           options: {
             dev: !prod,
             emitCss: prod,
+            onwarn(warning, onwarn) {
+              if (!/A11y:/.test(warning.message)) {
+                onwarn(warning);
+              }
+            },
             preprocess: Preprocess({
               scss: true,
               postcss: {
