@@ -177,9 +177,9 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "",
+									"key": "files[]",
 									"type": "file",
-									"src": "/home/duane/Downloads/foliage-06-04.glb"
+									"src": "/home/duane/tmp/skyboxes/skybox-bluesky.webp"
 								}
 							]
 						},
@@ -213,6 +213,26 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Asset (from CDN)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://assets.ourrelm.com/052ae126b79707f97c83b447805f32ea.jpg",
+							"protocol": "https",
+							"host": [
+								"assets",
+								"ourrelm",
+								"com"
+							],
+							"path": [
+								"052ae126b79707f97c83b447805f32ea.jpg"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -240,7 +260,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"token\": \"welcome-token\",\n    \"maxUses\": 3\n}",
+									"raw": "{\n    \"token\": \"welcome\",\n    \"maxUses\": 3,\n    \"permits\": [\"access\", \"edit\"]\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -248,13 +268,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{serverUrl}}/relm/relm/invitation",
+									"raw": "{{serverUrl}}/relm/default/invitation",
 									"host": [
 										"{{serverUrl}}"
 									],
 									"path": [
 										"relm",
-										"relm",
+										"default",
 										"invitation"
 									]
 								}
@@ -290,13 +310,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{serverUrl}}/relm/welcome/can/access?t=welcome-token",
+									"raw": "{{serverUrl}}/relm/default/can/access?t=welcome-token",
 									"host": [
 										"{{serverUrl}}"
 									],
 									"path": [
 										"relm",
-										"welcome",
+										"default",
 										"can",
 										"access"
 									],
@@ -330,7 +350,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"isPublic\": true,\n    \"password\": \"welcome\"\n}",
+							"raw": "{\n    \"isPublic\": true,\n    \"password\": \"welcome\",\n    \"seedRelmName\": \"default\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -338,13 +358,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{serverUrl}}/relm/relm/create",
+							"raw": "{{serverUrl}}/relm/new-relm/create",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"relm",
-								"relm",
+								"new-relm",
 								"create"
 							]
 						}
@@ -352,7 +372,7 @@
 					"response": []
 				},
 				{
-					"name": "Get Relm Permission",
+					"name": "Get Relm Permission [DEPRECATED]",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -368,15 +388,45 @@
 							}
 						],
 						"url": {
-							"raw": "{{serverUrl}}/relm/relm/can/access",
+							"raw": "{{serverUrl}}/relm/default/can/access",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"relm",
-								"relm",
+								"default",
 								"can",
 								"access"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Relm Permissions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{serverUrl}}/relm/default/permissions",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"default",
+								"permissions"
 							]
 						}
 					},
@@ -399,13 +449,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{serverUrl}}/relm/relm/data",
+							"raw": "{{serverUrl}}/relm/default/data",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"relm",
-								"relm",
+								"default",
 								"data"
 							]
 						}
@@ -429,13 +479,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{serverUrl}}/relm/relm/meta",
+							"raw": "{{serverUrl}}/relm/default/meta",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"relm",
-								"relm",
+								"default",
 								"meta"
 							]
 						}
@@ -468,13 +518,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{serverUrl}}/relm/relm/meta",
+							"raw": "{{serverUrl}}/relm/default/meta",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"relm",
-								"relm",
+								"default",
 								"meta"
 							]
 						}
@@ -507,13 +557,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{serverUrl}}/relm/relm/delete",
+							"raw": "{{serverUrl}}/relm/default/delete",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"relm",
-								"relm",
+								"default",
 								"delete"
 							]
 						}
@@ -537,13 +587,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{serverUrl}}/relm/relm/truncate",
+							"raw": "{{serverUrl}}/relm/default/truncate",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"relm",
-								"relm",
+								"default",
 								"truncate"
 							]
 						}
@@ -567,13 +617,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{serverUrl}}/relm/relm/twilio",
+							"raw": "{{serverUrl}}/relm/default/twilio",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"relm",
-								"relm",
+								"default",
 								"twilio"
 							]
 						}

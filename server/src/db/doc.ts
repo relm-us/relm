@@ -31,14 +31,43 @@ const mkDoc = nullOr((cols: DocColumns) => {
   };
 });
 
-export async function getDoc({ docId }: { docId: string }) {
+export async function getDoc({
+  docId,
+}: {
+  docId: string;
+}): Promise<DocColumns> {
   return mkDoc(
     await db.oneOrNone(sql`
     SELECT *
-    FROM docs
-    WHERE doc_id = ${docId}
+      FROM docs
+     WHERE doc_id = ${docId}
   `)
   );
+}
+
+// Given a docId, find the associated relm, and then find that relm's
+// "seed relm". If the "seed relm" exists, return its docId (e.g. probably
+// so we can clone it)
+export async function getSeedDocId({
+  docId,
+}: {
+  docId: string;
+}): Promise<string> {
+  const row = await db.oneOrNone(
+    sql`
+    SELECT d2.doc_id
+      FROM relms r1
+      JOIN docs d1 ON (d1.relm_id = r1.relm_id)
+      JOIN relms r2 ON (r2.relm_id = r1.seed_relm_id)
+      JOIN docs d2 ON (d2.relm_id = r2.relm_id AND d2.doc_type = 'permanent')
+     WHERE d1.doc_id = ${docId}
+  `
+  );
+  if (row) {
+    return row.doc_id;
+  } else {
+    return null;
+  }
 }
 
 /**

@@ -1,10 +1,11 @@
-import * as Doc from './doc'
-import { db, sql, INSERT, UPDATE, WHERE } from './db'
+import * as Doc from "./doc";
+import { db, sql, INSERT, UPDATE, WHERE } from "./db";
 import { getDefinedKeys, nullOr } from "../utils";
 
 type RelmColumns = {
   relm_id: string;
   relm_name: string;
+  seed_relm_id: string;
   is_public: boolean;
   created_by?: string;
   created_at: string;
@@ -14,6 +15,7 @@ const mkRelm = nullOr((cols: RelmColumns) => {
   return {
     relmId: cols.relm_id,
     relmName: cols.relm_name,
+    seedRelmId: cols.seed_relm_id,
     isPublic: cols.is_public,
     createdBy: cols.created_by || null,
     createdAt: cols.created_at,
@@ -23,6 +25,7 @@ const mkRelm = nullOr((cols: RelmColumns) => {
 type RelmSummaryColumns = {
   relm_id: string;
   relm_name: string;
+  seed_relm_id: string;
   is_public: boolean;
   created_at: string;
 };
@@ -31,6 +34,7 @@ const mkRelmSummary = nullOr((cols: RelmSummaryColumns) => {
   return {
     relmId: cols.relm_id,
     relmName: cols.relm_name,
+    seedRelmId: cols.seed_relm_id,
     isPublic: cols.is_public,
     createdAt: cols.created_at,
   };
@@ -113,11 +117,13 @@ export async function deleteRelm({ relmId }: { relmId: string }) {
 export async function createRelm({
   relmId,
   relmName,
+  seedRelmId,
   isPublic,
   createdBy,
 }: {
   relmId?: string;
   relmName: string;
+  seedRelmId?: string;
   isPublic?: boolean;
   createdBy?: string;
 }) {
@@ -125,6 +131,7 @@ export async function createRelm({
     relm_name: relmName,
   };
   if (relmId !== undefined) attrs.relm_id = relmId;
+  if (seedRelmId !== undefined) attrs.seed_relm_id = seedRelmId;
   if (isPublic !== undefined) attrs.is_public = isPublic;
   if (createdBy !== undefined) attrs.created_by = createdBy;
 
@@ -135,19 +142,11 @@ export async function createRelm({
   if (row !== null) {
     const relm = mkRelm(row);
 
-    relm.transientDocId = (
-      await Doc.setDoc({
-        docType: "transient",
-        relmId: relm.relmId,
-      })
-    ).docId;
-
-    relm.permanentDocId = (
-      await Doc.setDoc({
-        docType: "permanent",
-        relmId: relm.relmId,
-      })
-    ).docId;
+    const doc = await Doc.setDoc({
+      docType: "permanent",
+      relmId: relm.relmId,
+    });
+    relm.permanentDocId = doc.docId;
 
     return relm;
   } else {
@@ -158,14 +157,17 @@ export async function createRelm({
 export async function updateRelm({
   relmId,
   relmName,
+  seedRelmId,
   isPublic,
 }: {
   relmId: string;
   relmName?: string;
+  seedRelmId?: string;
   isPublic?: boolean;
 }) {
   const attrs: any = {};
   if (relmName !== undefined) attrs.relm_name = relmName;
+  if (seedRelmId !== undefined) attrs.seed_relm_id = seedRelmId;
   if (isPublic !== undefined) attrs.is_public = isPublic;
 
   if (getDefinedKeys(attrs).length > 0) {

@@ -15,6 +15,7 @@ wss.on("connection", (conn, req) => {
   yws.setupWSConnection(conn, req, {
     callbackHandler: async (update, origin, doc) => {
       const entities = doc.getArray("entities");
+
       let assetsCount = 0;
       entities.forEach((entity) => {
         const components = entity.get("components").toArray();
@@ -109,7 +110,7 @@ server.on("upgrade", async (req, socket, head) => {
         socket.write("HTTP/1.1 404 Not Found\r\n\r\n");
         socket.destroy();
       } else {
-        wss.handleUpgrade(req, socket, head, (conn) => {
+        wss.handleUpgrade(req, socket as any, head, (conn) => {
           wss.emit("connection", conn, req);
         });
       }

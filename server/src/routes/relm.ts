@@ -10,6 +10,8 @@ import * as util from "../utils";
 import * as middleware from "../middleware";
 import * as twilio from "../lib/twilio";
 import { Invitation, Permission, Relm, Doc } from "../db";
+import exportRelm from "relm-common/serialize/export";
+import importRelm from "relm-common/serialize/import";
 
 const { wrapAsync, uuidv4 } = util;
 
@@ -47,16 +49,67 @@ relm.post(
     if (relm !== null) {
       throw Error(`relm '${req.relmName}' already exists`);
     } else {
-      console.log(`Creating relm '${req.relmName}'`);
+      let seedRelmId: string = req.body.seedRelmId;
+      let seedRelmName: string = req.body.seedRelmName;
+
+      if (seedRelmId) {
+        const seedRelm = await Relm.getRelm({ relmId: seedRelmId });
+        if (!seedRelm) {
+          throw Error(
+            `relm can't be created because ` +
+              `seedRelmId '${seedRelmId}' doesn't exist`
+          );
+        }
+      } else if (seedRelmName) {
+        const seedRelm = await Relm.getRelm({ relmName: seedRelmName });
+        if (!seedRelm) {
+          throw Error(
+            `relm can't be created because ` +
+              `seed relm named '${seedRelmName}' doesn't exist`
+          );
+        }
+        seedRelmId = seedRelm.relmId;
+      }
+
       const relm = await Relm.createRelm({
         relmName: req.relmName,
+        seedRelmId,
         isPublic: !!req.body.isPublic,
         createdBy: req.authenticatedPlayerId,
       });
 
-      // Create the transient & permanent Y documents for the new relm
-      // yws.findOrCreateDoc(relm.transientVersion)
-      // yws.findOrCreateDoc(relm.permanentVersion)
+      let seedDocId: string;
+      let newRelmDocId: string = relm.permanentDocId;
+
+      if (seedRelmId) {
+        seedDocId = await Doc.getSeedDocId({
+          docId: newRelmDocId,
+        });
+        const seedRelmDoc: Y.Doc = await yws.getYDoc(seedDocId);
+        const newRelmDoc: Y.Doc = await yws.getYDoc(newRelmDocId);
+
+        const json = exportRelm(seedRelmDoc);
+        importRelm(json, newRelmDoc);
+      }
+
+      if (seedDocId) {
+        if (seedRelmName) {
+          console.log(
+            `Cloned new relm '${req.relmName}' from '${seedRelmName}' ` +
+              `('${seedDocId}') (creator: '${req.authenticatedPlayerId}')`
+          );
+        } else {
+          console.log(
+            `Cloned new relm '${req.relmName}' from '${seedDocId}' ` +
+              `(creator: '${req.authenticatedPlayerId}')`
+          );
+        }
+      } else {
+        console.log(
+          `Created relm '${req.relmName}' ` +
+            `(creator: '${req.authenticatedPlayerId}')`
+        );
+      }
 
       return util.respond(res, 200, {
         status: "success",
@@ -91,8 +144,8 @@ relm.get(
   middleware.authenticated(),
   middleware.authorized("access"),
   wrapAsync(async (req, res) => {
-    const permanentDoc = await yws.getYDoc(req.relm.permanentDocId);
-    req.relm.permanentDocSize = Y.encodeStateAsUpdate(permanentDoc).byteLength;
+    const doc: Y.Doc = await yws.getYDoc(req.relm.permanentDocId);
+    req.relm.permanentDocSize = Y.encodeStateAsUpdate(doc).byteLength;
     const twilioToken = twilio.getToken(req.authenticatedPlayerId);
 
     return util.respond(res, 200, {
