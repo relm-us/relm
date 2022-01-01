@@ -18,11 +18,13 @@ type ClientUpdateFunction = (data: any[]) => void;
 export class IdentityManager extends EventEmitter {
   ydoc: Y.Doc;
   ecsWorld: DecoratedECSWorld;
+  transformDataCounter: number = 0;
 
   identities: Map<PlayerID, Identity> = new Map();
 
   clientLastSeen: Map<YClientID, number> = new Map();
   clientUpdateFns: Map<YClientID, ClientUpdateFunction> = new Map();
+  clientUpdateIds: Map<YClientID, Identity> = new Map();
 
   me: Identity;
 
@@ -112,6 +114,14 @@ export class IdentityManager extends EventEmitter {
     this.clientLastSeen.set(clientId, performance.now());
     let update = this.clientUpdateFns.get(clientId);
 
+    // invalidate cached `update` function if identity doesn't match
+    if (++this.transformDataCounter % 61 === 60) {
+      if (this.clientUpdateIds.get(clientId) !== this.getByClientId(clientId)) {
+        console.log("cached clientUpdateFn invalidated");
+        update = null;
+      }
+    }
+
     if (!update) {
       const identity = this.getByClientId(clientId);
 
@@ -120,6 +130,7 @@ export class IdentityManager extends EventEmitter {
 
       update = identity.avatar.setTransformData.bind(identity.avatar);
       this.clientUpdateFns.set(clientId, update);
+      this.clientUpdateIds.set(clientId, identity);
     }
 
     update(transformData);
