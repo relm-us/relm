@@ -90,11 +90,11 @@ server.on("upgrade", async (req, socket, head) => {
 
     const permissions = await Permission.getPermissions({
       playerId,
-      relmIds: [docId],
+      relmIds: [doc.relmId],
     });
 
     let permitted;
-    if (docId in permissions) {
+    if (doc.relmId in permissions) {
       permitted = permissions[docId].includes("access");
     } else if ("*" in permissions) {
       permitted = permissions["*"].includes("access");
@@ -105,7 +105,7 @@ server.on("upgrade", async (req, socket, head) => {
     if (permitted) {
       if (doc === null) {
         console.log(
-          `Visitor sought to sync doc '${docId}' but was rejected because it doesn't exist`
+          `Participant '${playerId}' sought to sync doc '${docId}' but was rejected because it doesn't exist`
         );
         socket.write("HTTP/1.1 404 Not Found\r\n\r\n");
         socket.destroy();
@@ -116,7 +116,7 @@ server.on("upgrade", async (req, socket, head) => {
       }
     } else {
       console.log(
-        `Visitor sought to enter '${docId}' but was rejected because unauthorized`,
+        `Participant '${playerId}' sought to enter '${docId}' but was rejected because unauthorized`,
         params
       );
       socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");

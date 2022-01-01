@@ -31,11 +31,7 @@ const mkDoc = nullOr((cols: DocColumns) => {
   };
 });
 
-export async function getDoc({
-  docId,
-}: {
-  docId: string;
-}): Promise<DocColumns> {
+export async function getDoc({ docId }: { docId: string }) {
   return mkDoc(
     await db.oneOrNone(sql`
     SELECT *
