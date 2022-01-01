@@ -8,10 +8,13 @@ import { RelmState, RelmMessage } from "./RelmStateAndMessage";
 import BlankWithLogo from "./BlankWithLogo.svelte";
 import MediaSetupShim from "./MediaSetupShim.svelte";
 import AvatarChooser from "~/ui/AvatarBuilder/AvatarChooser.svelte";
-import GameWorld from "./GameWorld.svelte";
-import ErrorScreen from "./ErrorScreen.svelte";
 import { LoadingScreen, LoadingFailed } from "~/ui/LoadingScreen";
 import { resetLoading, startPollingLoadingState } from "~/stores/loading";
+
+import { loadPreferredDeviceIds } from "~/av/loadPreferredDeviceIds";
+
+import GameWorld from "./GameWorld.svelte";
+import ErrorScreen from "./ErrorScreen.svelte";
 
 import { getParticipantAndRelm } from "./effects/getParticipantAndRelmName";
 import { getRelmPermitsAndMetadata } from "./effects/getRelmPermitsAndMetadata";
@@ -23,7 +26,6 @@ import { audioDesired } from "~/stores/audioDesired";
 import { videoDesired } from "~/stores/videoDesired";
 
 import { worldManager } from "~/world";
-import { loadPreferredDeviceIds } from "./loadPreferredDeviceIds";
 
 export const relmProgram = {
   init: [{ screen: "initial" }, Cmd.ofMsg({ id: "pageLoaded" })],
