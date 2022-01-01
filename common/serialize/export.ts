@@ -1,6 +1,6 @@
 import * as Y from "yjs";
-import { yEntityToJSON } from "../yjs";
-import { YEntity } from "../yjs/types";
+import { yEntityToJSON } from "../yrelm";
+import { YEntity } from "../yrelm/types";
 import { MinimalRelmJSON } from "./types";
 
 export default function (ydoc: Y.Doc, ids?: Set<string>): MinimalRelmJSON {

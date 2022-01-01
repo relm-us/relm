@@ -4,4 +4,5 @@
 **/.DS_Store
 server/data/
 server/dist/
+common/dist/
 deploy/

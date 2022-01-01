@@ -1,7 +1,7 @@
 import * as Y from "yjs";
 import EventEmitter from "eventemitter3";
 
-import { withArrayEdits, withMapEdits } from "relm-common/yjs/observeUtils";
+import { withArrayEdits, withMapEdits } from "relm-common/yrelm/observeUtils";
 
 import { IdentityData, PlayerID, YClientID } from "./types";
 

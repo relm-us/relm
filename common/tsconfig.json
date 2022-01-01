@@ -1,20 +1,20 @@
 {
   "include": [
-    "src/**/*"
+    "./**/*.ts"
   ],
   "exclude": [
     "node_modules/*"
   ],
   "compilerOptions": {
     "moduleResolution": "node",
-    "target": "es2017",
-    "module": "es2020",
+    "target": "es2019",
+    "module": "commonjs",
     "importsNotUsedAsValues": "remove",
     "isolatedModules": true,
     "esModuleInterop": true,
     "sourceMap": true,
     "outDir": "dist",
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "paths": {
       "~*": [
         ".*"
@@ -22,10 +22,6 @@
     },
     "typeRoots": [
       "types"
-    ],
-    "types": [
-      "jest",
-      "@types/jest"
     ]
   }
 }

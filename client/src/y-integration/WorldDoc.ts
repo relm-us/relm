@@ -14,7 +14,7 @@ import {
   yEntityToJSON,
   yComponentToJSON,
   jsonToYEntity,
-} from "relm-common/yjs";
+} from "relm-common/yrelm";
 
 import {
   YEntities,
@@ -23,7 +23,7 @@ import {
   YComponent,
   YValues,
   YIDSTR,
-} from "relm-common/yjs/types";
+} from "relm-common/yrelm/types";
 
 import EventEmitter from "eventemitter3";
 import { applyDiffToYEntity } from "./applyDiff";

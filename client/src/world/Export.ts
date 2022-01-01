@@ -1,7 +1,7 @@
 import { EntityId } from "~/ecs/base";
 import { WorldDoc } from "~/y-integration/WorldDoc";
-import { yEntityToJSON } from "relm-common/yjs";
-import { YEntity } from "relm-common/yjs/types";
+import { yEntityToJSON } from "relm-common/yrelm";
+import { YEntity } from "relm-common/yrelm/types";
 
 const RELM_EXPORT_VERSION = "relm-export v.1.2";
 
