@@ -177,6 +177,8 @@ export class CameraManager {
     const camera = this.entity;
     if (!camera) return;
 
+    if (this.state.type === "following") return;
+
     if (this.state.type === "focusing") {
       updateComponent(camera, LookAt, {
         target: this.state.target.id,
@@ -208,6 +210,12 @@ export class CameraManager {
       stepRadians: 0,
       // oneShot: true,
     });
+
+    setTimeout(() => {
+      // TODO: This hack fixes the weird zoom bug, but makes
+      // for a clunky zoom out
+      camera.remove(LookAt);
+    }, 1000);
   }
 
   circleAround(
