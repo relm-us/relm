@@ -1,6 +1,6 @@
 <script lang="ts">
   import CircleButton from "~/ui/lib/CircleButton";
-  import IoIosHappy from "svelte-icons/io/IoIosHappy.svelte";
+  import FaUserAlt from "svelte-icons/fa/FaUserAlt.svelte";
   import { worldManager } from "~/world";
   import { AvatarBuilder } from "~/ui/AvatarBuilder";
   import { getDefaultAppearance } from "~/identity/appearance";
@@ -14,12 +14,11 @@
 
   // escape absolute/relative positioned elements
   $: if (showBuilder && builderEl) document.body.appendChild(builderEl);
-
 </script>
 
-<CircleButton on:click={onClick}>
+<CircleButton on:click={onClick} padding={0}>
   <icon>
-    <IoIosHappy />
+    <FaUserAlt />
   </icon>
   <slot />
 </CircleButton>
@@ -28,7 +27,8 @@
   <div class="builder" bind:this={builderEl}>
     <AvatarBuilder
       on:click={() => (showBuilder = false)}
-      {...worldManager.identities.me.get("appearance") || getDefaultAppearance("male")}
+      {...worldManager.identities.me.get("appearance") ||
+        getDefaultAppearance("male")}
     />
   </div>
 {/if}
@@ -36,8 +36,8 @@
 <style>
   icon {
     display: block;
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     margin: 0 auto;
   }
 
@@ -56,5 +56,4 @@
 
     pointer-events: all;
   }
-
 </style>

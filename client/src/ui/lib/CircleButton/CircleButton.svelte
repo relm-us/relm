@@ -6,7 +6,7 @@
   export let margin: number = 2;
   export let padding: number = null;
 
-  $: if (!padding) padding = size / 6;
+  $: if (padding === null) padding = size / 6;
 
   let dispatch = createEventDispatcher();
 </script>

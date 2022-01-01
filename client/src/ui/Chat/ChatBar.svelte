@@ -1,5 +1,5 @@
 <script>
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import { worldManager } from "~/world";
   import { chatFocused, chatOpen } from "~/stores/chatOpen";
   import { playerId } from "~/identity/playerId";
@@ -12,6 +12,10 @@
     if (!inputEl) return;
     if ($chatOpen) inputEl.focus();
     else inputEl.blur();
+  });
+
+  chatFocused.subscribe(($chatFocused) => {
+    if ($chatFocused && inputEl) inputEl.focus();
   });
 
   function addMessage(text) {
@@ -33,10 +37,6 @@
 
   function onBlur(event) {
     $chatFocused = false;
-  }
-
-  $: if ($chatFocused && inputEl) {
-    inputEl.focus();
   }
 </script>
 

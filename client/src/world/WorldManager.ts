@@ -52,7 +52,6 @@ export class WorldManager {
   identities: IdentityManager = new IdentityManager();
   meStore: Writable<Identity> = writable(null);
   chat: ChatManager;
-  chatStore: Writable<ChatManager> = writable(null);
   camera: CameraManager;
 
   avConnection: AVConnection;
@@ -93,7 +92,6 @@ export class WorldManager {
     this.meStore.set(this.identities.me);
     this.chat = new ChatManager(this.identities);
     this.chat.setMessages(this.worldDoc.messages);
-    this.chatStore.set(this.chat);
     this.camera = new CameraManager(
       this.world,
       this.identities.me.avatar.entity

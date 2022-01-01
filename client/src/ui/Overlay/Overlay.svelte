@@ -14,6 +14,7 @@
   import VideoButton from "~/ui/ButtonControls/VideoButton";
   import AvatarSetupButton from "~/ui/ButtonControls/AvatarSetupButton";
   import ShareScreenButton from "~/ui/ButtonControls/ShareScreenButton";
+  import ChatButton from "~/ui/Chat/ChatButton.svelte";
 
   import GroupUngroupButton from "~/ui/GroupUngroupButton";
   import WorldStatePane from "~/ui/WorldStatePane";
@@ -28,6 +29,7 @@
   import { worldUIMode, openPanel, playState } from "~/stores";
   import { audioDesired } from "~/stores/audioDesired";
   import { videoDesired } from "~/stores/videoDesired";
+  import { worldManager } from "~/world";
 
   export let dispatch;
   export let permits;
@@ -57,7 +59,6 @@
 {#if $playState === "paused"}
   <PauseMessage />
 {/if}
-
 
 <overlay class:open={buildMode}>
   <overlay-panel class="interactive">
@@ -118,20 +119,20 @@
       {/if}
     </overlay-left>
 
-    <overlay-right class="interactive">
-      <AvatarSetupButton />
+    <!-- <overlay-right class="interactive">
       <UploadButton on:uploaded={onUpload} />
-    </overlay-right>
+    </overlay-right> -->
   </overlay-content>
 </overlay>
 
 <overlay-center>
   <play-buttons class="interactive">
+    <ChatButton unread={worldManager.chat.unreadCount} />
     <ShareScreenButton />
     <AudioModeButton />
     <MicButton enabled={$audioDesired} />
-    <VideoButton enabled={$videoDesired} />
-    <MediaSetupButton {dispatch} />
+    <VideoButton enabled={$videoDesired} {dispatch} />
+    <AvatarSetupButton />
   </play-buttons>
 </overlay-center>
 
@@ -193,12 +194,6 @@
   }
   play-buttons {
     pointer-events: all;
-  }
-  overlay-right {
-    display: flex;
-    flex-direction: column;
-    margin-top: 8px;
-    margin-right: 8px;
   }
   overlay-content {
     display: flex;

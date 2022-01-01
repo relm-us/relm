@@ -1,16 +1,21 @@
 <script>
   import IoIosText from "svelte-icons/io/IoIosText.svelte";
   import CircleButton from "~/ui/lib/CircleButton";
+  import { chatOpen, chatFocused } from "~/stores/chatOpen";
 
-  export let unread;
+  export let unread = null;
 
+  function toggleChat() {
+    $chatOpen = !$chatOpen;
+    $chatFocused = $chatOpen;
+  }
 </script>
 
-<CircleButton on:click>
+<CircleButton on:click={toggleChat}>
   <icon>
     <IoIosText />
   </icon>
-  {#if $unread > 0}
+  {#if unread && $unread > 0}
     <counter>
       {$unread}
     </counter>
@@ -44,5 +49,4 @@
     font-weight: bold;
     background-color: var(--selected-red);
   }
-
 </style>

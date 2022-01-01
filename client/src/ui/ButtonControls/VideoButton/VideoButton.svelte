@@ -4,21 +4,23 @@
   import { VideoIcon } from "video-mirror";
   import { worldManager } from "~/world";
   import { Identity } from "~/identity/Identity";
+  import type { Dispatch } from "~/main/RelmStateAndMessage";
+
+  export let enabled = false;
+  export let dispatch: Dispatch;
 
   let identity: Identity;
 
-  export let enabled = false;
-
-  function toggle() {
-    enabled = identity.toggleShowVideo();
-  }
+  const onClick = () => {
+    dispatch({ id: "configureAudioVideo" });
+  };
 
   onMount(() => {
     return worldManager.meStore.subscribe(($me) => (identity = $me));
   });
 </script>
 
-<CircleButton on:click={toggle}>
+<CircleButton on:click={onClick}>
   <icon class:muted={!enabled}>
     <VideoIcon />
   </icon>
