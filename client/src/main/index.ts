@@ -23,6 +23,7 @@ import { audioDesired } from "~/stores/audioDesired";
 import { videoDesired } from "~/stores/videoDesired";
 
 import { worldManager } from "~/world";
+import { loadPreferredDeviceIds } from "./loadPreferredDeviceIds";
 
 export const relmProgram = {
   init: [{ screen: "initial" }, Cmd.ofMsg({ id: "pageLoaded" })],
@@ -107,22 +108,12 @@ export const relmProgram = {
       }
 
       case "configureAudioVideo": {
-        let preferredDeviceIds = {
-          audioinput: null,
-          audiooutput: null,
-          videoinput: null,
-        };
-        try {
-          preferredDeviceIds = JSON.parse(
-            localStorage.getItem("preferredDeviceIds")
-          );
-        } catch (err) {}
         return [
           {
             ...state,
             audioDesired: get(audioDesired),
             videoDesired: get(videoDesired),
-            preferredDeviceIds,
+            preferredDeviceIds: loadPreferredDeviceIds(),
             screen: "video-mirror",
           },
         ];
