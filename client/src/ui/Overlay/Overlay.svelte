@@ -8,7 +8,6 @@
   import Button from "~/ui/lib/Button";
 
   import UploadButton from "~/ui/ButtonControls/UploadButton";
-  import MediaSetupButton from "~/ui/ButtonControls/MediaSetupButton";
   import AudioModeButton from "~/ui/ButtonControls/AudioModeButton";
   import MicButton from "~/ui/ButtonControls/MicButton";
   import VideoButton from "~/ui/ButtonControls/VideoButton";
@@ -119,9 +118,11 @@
       {/if}
     </overlay-left>
 
-    <!-- <overlay-right class="interactive">
-      <UploadButton on:uploaded={onUpload} />
-    </overlay-right> -->
+    {#if permits.includes("edit")}
+      <overlay-right class="interactive">
+        <UploadButton on:uploaded={onUpload} />
+      </overlay-right>
+    {/if}
   </overlay-content>
 </overlay>
 
