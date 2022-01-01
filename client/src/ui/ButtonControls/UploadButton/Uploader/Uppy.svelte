@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { onMount, createEventDispatcher } from "svelte";
+  import { onMount, createEventDispatcher, onDestroy } from "svelte";
 
   import Uppy from "@uppy/core";
   import Dashboard from "@uppy/dashboard";
   import XHRUpload from "@uppy/xhr-upload";
-  import Webcam from "@uppy/webcam";
-  import ScreenCapture from "@uppy/screen-capture";
-  import ImageEditor from "@uppy/image-editor";
+
+  import { uploadingDialogOpen } from "~/stores/uploadingDialogOpen";
 
   export let endpoint = "http://localhost:3000/asset";
 
@@ -15,10 +14,12 @@
   let dashboardElement;
 
   onMount(() => {
-    const uppy = Uppy({
+    $uploadingDialogOpen = true;
+
+    const uppy = new Uppy({
       debug: true,
-      autoProceed: false,
-      allowMultipleUploads: false,
+      autoProceed: true,
+      allowMultipleUploadBatches: false,
       restrictions: {
         maxFileSize: 1024 * 1024 * 16,
         maxNumberOfFiles: 12,
@@ -28,38 +29,17 @@
     })
       .use(XHRUpload, {
         endpoint,
-        limit: 4,
+        bundle: false, // send as single 'file'
+        limit: 4, // simultaneous uploads
       })
       .use(Dashboard, {
-        trigger: false,
-        // inline: true,
-        // maxWidth: 300,
-        // maxHeight: 350,
-
+        note: "Max file size: 4.0 MB each",
+        trigger: null,
         target: dashboardElement,
-        replaceTargetContent: true,
         showProgressDetails: true,
-
-        note: "Up to 12 images, max 4 MB each",
-        metaFields: [
-          { id: "name", name: "Name", placeholder: "file name" },
-          { id: "author", name: "Author", placeholder: "attribution" },
-        ],
         browserBackButtonClose: false,
         proudlyDisplayPoweredByUppy: false,
-        closeAfterFinish: true,
-      })
-      .use(Webcam, { target: Dashboard, modes: ["picture"] })
-      .use(ScreenCapture, { target: Dashboard })
-      .use(ImageEditor, {
-        target: Dashboard,
-        actions: {
-          zoomIn: false,
-          zoomOut: false,
-          cropSquare: false,
-          cropWidescreen: false,
-          cropWidescreenVertical: false,
-        },
+        closeAfterFinish: false,
       });
 
     uppy.on("complete", (result) => {
@@ -83,6 +63,8 @@
 
     dashboard.openModal();
   });
+
+  onDestroy(() => ($uploadingDialogOpen = false));
 </script>
 
 <dashboard bind:this={dashboardElement} />

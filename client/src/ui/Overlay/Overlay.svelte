@@ -41,7 +41,6 @@
   };
 
   const onUpload = ({ detail }) => {
-    console.log("onUpload", detail.results);
     for (const result of detail.results) {
       if (result.types.webp) {
         runCommand("createPrefab", { name: "Image", src: result.types.webp });

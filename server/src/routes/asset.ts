@@ -43,15 +43,16 @@ asset.post(
   // middleware.authenticated(),
   // middleware.authorized("edit"),
   wrapAsync(async (req, res) => {
-    if (!('files[]' in req.files)) {
-      return fail(res, "expecting files[] form-data")
+    if (!('file' in req.files)) {
+      return fail(res, "expecting file form-data")
     }
 
-    const asset = req.files["files[]"];
+    const asset = req.files["file"];
     if (asset.size > MAX_FILE_SIZE) {
       return fail(res, "file too large");
     }
 
+    console.log('asset', asset.name, asset)
     const extension = path.extname(asset.name).toLowerCase();
     if (extension.length > MAX_FILE_EXTENSION_LENGTH) {
       return fail(res, "file extension too long");
