@@ -107,40 +107,46 @@ export const relmProgram = {
       }
 
       case "configureAudioVideo": {
+        let preferredDeviceIds = {
+          audioinput: null,
+          audiooutput: null,
+          videoinput: null,
+        };
+        try {
+          preferredDeviceIds = JSON.parse(
+            localStorage.getItem("preferredDeviceIds")
+          );
+        } catch (err) {}
         return [
           {
             ...state,
             audioDesired: get(audioDesired),
             videoDesired: get(videoDesired),
-            preferredDeviceIds: JSON.parse(
-              localStorage.getItem("preferredDeviceIds") || "{}"
-            ),
+            preferredDeviceIds,
             screen: "video-mirror",
           },
         ];
       }
 
       case "configuredAudioVideo": {
-        let newState;
+        let newState = { ...state, audioVideoSetupDone: true };
         if (msg.state) {
-          audioDesired.set(msg.state.audioDesired);
-          videoDesired.set(msg.state.videoDesired);
-          localStorage.setItem(
-            "preferredDeviceIds",
-            JSON.stringify(msg.state.preferredDeviceIds)
-          );
-          newState = {
-            ...state,
-            audioVideoSetupDone: true,
-            audioDesired: msg.state.audioDesired,
-            videoDesired: msg.state.videoDesired,
-            preferredDeviceIds: msg.state.preferredDeviceIds,
-          };
+          newState.audioDesired = msg.state.audioDesired;
+          newState.videoDesired = msg.state.videoDesired;
+          newState.preferredDeviceIds = msg.state.preferredDeviceIds;
         } else {
-          audioDesired.set(false);
-          videoDesired.set(false);
-          newState = { ...state, audioVideoSetupDone: true };
+          newState.audioDesired = false;
+          newState.videoDesired = false;
         }
+
+        // Save program state into svelte stores
+        audioDesired.set(newState.audioDesired);
+        videoDesired.set(newState.videoDesired);
+        localStorage.setItem(
+          "preferredDeviceIds",
+          JSON.stringify(newState.preferredDeviceIds)
+        );
+
         return [newState, nextSetupStep(newState)];
       }
 

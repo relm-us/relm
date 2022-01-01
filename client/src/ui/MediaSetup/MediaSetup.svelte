@@ -11,12 +11,6 @@
   export let videoDesired = true;
   export let preferredDeviceIds: DeviceIds;
 
-  $: {
-    console.log("MS audioDesired", audioDesired);
-    console.log("MS videoDesired", videoDesired);
-    console.log("MS preferredDeviceIds", preferredDeviceIds);
-  }
-
   const dispatch = createEventDispatcher();
 
   function joinWithout() {
