@@ -29,11 +29,11 @@ screenshot.use(express.static(SCREENSHOTS_DIR)).get(
     const filepath = path.resolve(path.join(SCREENSHOTS_DIR, filename));
     if (!fs.existsSync(filepath)) {
       // Website screen capture hasn't been taken yet
+      console.log("Taking screenshot", url);
       await capture.file(url, filepath, { type: "jpeg", width, height });
     }
 
     // jpeg
-    console.log("filepath", filepath);
     res.sendFile(filepath);
   })
 );

@@ -41,6 +41,18 @@ export async function getDoc({ docId }: { docId: string }) {
   );
 }
 
+export async function getDocWithRelmName({ docId }: { docId: string }) {
+  const rows = await db.oneOrNone(sql`
+    SELECT docs.*, r.relm_name
+      FROM docs
+      JOIN relms r USING (relm_id)
+     WHERE doc_id = ${docId}
+  `);
+  const doc = mkDoc(rows);
+  if (rows) doc.relmName = rows.relm_name;
+  return doc;
+}
+
 // Given a docId, find the associated relm, and then find that relm's
 // "seed relm". If the "seed relm" exists, return its docId (e.g. probably
 // so we can clone it)

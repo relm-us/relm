@@ -37,9 +37,14 @@ wss.on("connection", (conn, req) => {
           assetsCount++;
       });
       const entitiesCount = entities.length;
+
+      const docBefore = await Doc.getDocWithRelmName({ docId: doc.name });
       console.log(
-        `Recomputing stats for ${doc.name}; entities: ${entitiesCount}, assets: ${assetsCount}`
+        `Storing stats for '${docBefore.relmName}':\n` +
+          `  entities: ${entitiesCount} (was ${docBefore.entitiesCount})\n` +
+          `  assets: ${assetsCount} (was ${docBefore.assetsCount})`
       );
+
       await Doc.updateStats({
         docId: doc.name,
         entitiesCount,
