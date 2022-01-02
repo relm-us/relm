@@ -27,10 +27,14 @@ import { videoDesired } from "~/stores/videoDesired";
 
 import { worldManager } from "~/world";
 
+const logEnabled = (localStorage.getItem("debug") || "")
+  .split(":")
+  .includes("program");
+
 export const relmProgram = {
   init: [{ screen: "initial" }, Cmd.ofMsg({ id: "pageLoaded" })],
   update(msg: RelmMessage, state: RelmState): [RelmState, any?] {
-    // console.log(`got RelmMessage ${msg.id}: %o`, { state });
+    if (logEnabled) console.log(`relmProgram msg '${msg.id}': %o`, { state });
 
     switch (msg.id) {
       case "pageLoaded": {
@@ -255,7 +259,7 @@ export const relmProgram = {
   },
 
   view(state, dispatch) {
-    // console.log("relmProgram view", state.screen);
+    if (logEnabled) console.log("relmProgram view", state.screen);
     if (state)
       switch (state.screen) {
         case "initial":

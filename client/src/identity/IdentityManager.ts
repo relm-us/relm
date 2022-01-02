@@ -13,6 +13,10 @@ import { audioDesired } from "~/stores/audioDesired";
 import { videoDesired } from "~/stores/videoDesired";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
+const logEnabled = (localStorage.getItem("debug") || "")
+  .split(":")
+  .includes("identity");
+
 export class IdentityManager extends EventEmitter {
   ydoc: Y.Doc;
   ecsWorld: DecoratedECSWorld;
@@ -95,12 +99,14 @@ export class IdentityManager extends EventEmitter {
   }
 
   updateSharedFields(playerId: PlayerID, sharedFields: IdentityData) {
-    console.log(
-      "updateSharedFields playerId:",
-      playerId,
-      ", skip because is me?",
-      playerId === this.me.playerId
-    );
+    if (logEnabled) {
+      console.log(
+        "updateSharedFields playerId:",
+        playerId,
+        ", skip because is me?",
+        playerId === this.me.playerId
+      );
+    }
     // Don't allow the network to override my own shared fields prior to sync
     if (playerId === this.me.playerId) return;
 
@@ -155,9 +161,11 @@ export class IdentityManager extends EventEmitter {
   }
 
   observeFields() {
-    this.yfields.forEach((value, key, map) => {
-      console.log("ignoring fields", key, value);
-    });
+    if (logEnabled) {
+      this.yfields.forEach((value, key, map) => {
+        console.log("ignoring fields", key, value);
+      });
+    }
 
     this._observeFields = (
       event: Y.YMapEvent<IdentityData>,
@@ -173,7 +181,7 @@ export class IdentityManager extends EventEmitter {
             this.identities.delete(playerId);
           },
         },
-        true /* log for debug */
+        logEnabled
       );
     };
 
