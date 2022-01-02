@@ -47,12 +47,16 @@ asset.post(
       return fail(res, "expecting file form-data")
     }
 
+    // TODO: turn on `batch: true` and change this to one-or-many
+    //   - attribute would change from "file" to "files[]"
+    //   - asset becomes single asset in case of 1 file uploaded
+    //   - assets become array of assets in case of 2+ files
+    //   - ?? how do we respond to Uppy for errors in just 1 of several?
     const asset = req.files["file"];
     if (asset.size > MAX_FILE_SIZE) {
       return fail(res, "file too large");
     }
 
-    console.log('asset', asset.name, asset)
     const extension = path.extname(asset.name).toLowerCase();
     if (extension.length > MAX_FILE_EXTENSION_LENGTH) {
       return fail(res, "file extension too long");
