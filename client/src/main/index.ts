@@ -63,7 +63,10 @@ export const relmProgram = {
       }
 
       case "worldDidReset": {
-        return [state, getRelmPermitsAndMetadata(state.relmName)];
+        return [
+          { ...state, worldDoc: null },
+          getRelmPermitsAndMetadata(state.relmName),
+        ];
       }
 
       case "gotParticipantAndRelm": {

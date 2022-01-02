@@ -111,7 +111,6 @@ export class AVConnection {
 
   getTrackStore(participantId: string, kind: TrackKind) {
     const storage = this.getTrackMemberByKind(kind);
-    console.log("storage", storage);
     if (!this[storage][participantId]) {
       this[storage][participantId] = writable(null);
     }
