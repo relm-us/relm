@@ -34,7 +34,8 @@ const logEnabled = (localStorage.getItem("debug") || "")
 export const relmProgram = {
   init: [{ screen: "initial" }, Cmd.ofMsg({ id: "pageLoaded" })],
   update(msg: RelmMessage, state: RelmState): [RelmState, any?] {
-    if (logEnabled) console.log(`relmProgram msg '${msg.id}': %o`, { state });
+    if (logEnabled)
+      console.log(`program msg '${msg.id}' (${state.relmName}): %o`, { state });
 
     switch (msg.id) {
       case "pageLoaded": {

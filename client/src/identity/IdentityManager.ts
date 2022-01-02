@@ -17,6 +17,10 @@ const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
   .includes("identity");
 
+const identityPreload = (localStorage.getItem("debug") || "")
+  .split(":")
+  .includes("preload");
+
 export class IdentityManager extends EventEmitter {
   ydoc: Y.Doc;
   ecsWorld: DecoratedECSWorld;
@@ -161,11 +165,15 @@ export class IdentityManager extends EventEmitter {
   }
 
   observeFields() {
-    if (logEnabled) {
-      this.yfields.forEach((value, key, map) => {
-        console.log("ignoring fields", key, value);
-      });
-    }
+    this.yfields.forEach((value, key, map) => {
+      if (identityPreload) {
+        this.updateSharedFields(key, value);
+        if (logEnabled)
+          console.log("IdentityManager observeFields PRELOADING:", key, value);
+      } else if (logEnabled) {
+        console.log("IdentityManager observeFields ignoring:", key, value);
+      }
+    });
 
     this._observeFields = (
       event: Y.YMapEvent<IdentityData>,
