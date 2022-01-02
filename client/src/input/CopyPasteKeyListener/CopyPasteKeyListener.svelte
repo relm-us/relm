@@ -7,13 +7,19 @@
 
     const isTextHighlighted = window.getSelection().type == "Range";
 
-    if (event.key === "c" && (event.ctrlKey || event.metaKey)) {
+    if (
+      (event.key === "c" || event.key === "V") &&
+      (event.ctrlKey || event.metaKey)
+    ) {
       if (isTextHighlighted) return;
       event.preventDefault();
 
       // "copy" event includes key repetition events
       globalEvents.emit("copy");
-    } else if (event.key === "v" && (event.ctrlKey || event.metaKey)) {
+    } else if (
+      (event.key === "v" || event.key === "V") &&
+      (event.ctrlKey || event.metaKey)
+    ) {
       if (isTextHighlighted) return;
       event.preventDefault();
 
