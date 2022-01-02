@@ -5,7 +5,7 @@ import { makeAvatar } from "~/prefab/makeAvatar";
 import { playerId } from "~/identity/playerId";
 
 import { World, Entity } from "~/ecs/base";
-import { Presentation, Transform, WorldTransform } from "~/ecs/plugins/core";
+import { Transform, WorldTransform } from "~/ecs/plugins/core";
 import { ModelRef } from "~/ecs/plugins/model";
 import { Html2d, Oculus, OculusRef } from "~/ecs/plugins/html2d";
 import { Animation } from "~/ecs/plugins/animation";
@@ -49,16 +49,28 @@ export class Avatar {
   headAngle: number;
   _editableName: boolean;
 
+  unsubs: Function[] = [];
+
   constructor(identity: Identity, world: World) {
     this.identity = identity;
     this.world = world;
 
     // By default, the avatar's name is allowed to be edited (but can be changed by JWT)
     this._editableName = this.identity.isLocal;
+  }
 
+  init() {
     if (this.identity.isLocal) {
       this.makeLocalAvatar();
     }
+  }
+
+  deinit() {
+    this.unsubs.forEach((f) => f());
+    this.unsubs.length = 0;
+
+    this.entity?.destroy();
+    this.entity = null;
   }
 
   // Remove Avatar's distance to participant's Avatar
@@ -109,12 +121,12 @@ export class Avatar {
       opts,
       this.identity.playerId
     );
-    this.entity = avatar;
     this.headEntity = head;
     this.emojiEntity = emoji;
     callback?.(avatar);
     avatar.traverse((entity) => entity.activate());
-    return avatar;
+
+    this.entity = avatar;
   }
 
   makeLocalAvatar() {
@@ -127,13 +139,15 @@ export class Avatar {
 
     // Local participant name is hidden in build mode so the label does
     // not obstruct clicking / dragging etc.
-    worldUIMode.subscribe(($mode) => {
-      const label = this.entity.get(Html2d);
-      if (label) {
-        label.visible = $mode === "play";
-        label.modified();
-      }
-    });
+    this.unsubs.push(
+      worldUIMode.subscribe(($mode) => {
+        const label = this.entity.get(Html2d);
+        if (label) {
+          label.visible = $mode === "play";
+          label.modified();
+        }
+      })
+    );
   }
 
   makeRemoteAvatar() {
@@ -147,11 +161,6 @@ export class Avatar {
           target: playerId,
         });
     });
-  }
-
-  destroy() {
-    this.entity?.destroy();
-    this.entity = null;
   }
 
   syncEntity() {
@@ -333,8 +342,7 @@ export class Avatar {
   }
 
   moveTo(coords: Vector3) {
-    const presentation = (this.world as any).presentation;
-    moveAvatarTo(coords, presentation, this.entity);
+    moveAvatarTo(coords, this.entity);
   }
 
   getTransformData() {
@@ -439,11 +447,7 @@ export class Avatar {
   }
 }
 
-export function moveAvatarTo(
-  newCoords: Vector3,
-  presentation: Presentation,
-  entity: Entity
-) {
+export function moveAvatarTo(newCoords: Vector3, entity: Entity) {
   const transform = entity.get(Transform);
   // How much to move Avatar by to arrive at newCoords
   const delta = new Vector3().copy(newCoords).sub(transform.position);

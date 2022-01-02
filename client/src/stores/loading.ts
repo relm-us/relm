@@ -74,6 +74,7 @@ function countAssets(wdoc: WorldDoc) {
 }
 
 const intervals = [];
+const unsubs = [];
 let syntheticStep = 0;
 
 export function startPollingLoadingState(wdoc, onDone?: Function) {
@@ -93,16 +94,20 @@ export function startPollingLoadingState(wdoc, onDone?: Function) {
       entitiesLoaded.update(($loaded) => Math.max($loaded, syntheticLoaded));
     }, 500)
   );
-  let unsub;
-  unsub = loaded.subscribe(($loaded) => {
-    if ($loaded >= get(maximum) * MAX_THRESHOLD) {
-      stopPollingLoadingState();
-      unsub?.();
-      onDone?.();
-    }
-  });
+  unsubs.push(
+    loaded.subscribe(($loaded) => {
+      if ($loaded >= get(maximum) * MAX_THRESHOLD) {
+        stopPollingLoadingState();
+        onDone?.();
+      }
+    })
+  );
 }
 
 export function stopPollingLoadingState() {
+  unsubs.forEach((f) => f());
+  unsubs.length = 0;
+
   intervals.forEach(clearInterval);
+  intervals.length = 0;
 }

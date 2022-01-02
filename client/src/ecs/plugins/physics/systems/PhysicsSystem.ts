@@ -67,10 +67,9 @@ export class PhysicsSystem extends System {
   }
 
   onFixedUpdate(accum) {
-    const {
-      world,
-      eventQueue,
-    }: { world: World; eventQueue: EventQueue } = this.physics;
+    if (!this.active) return;
+    const { world, eventQueue }: { world: World; eventQueue: EventQueue } =
+      this.physics;
 
     /**
      * We re-apply forces and torques during each fixedUpdate, so that

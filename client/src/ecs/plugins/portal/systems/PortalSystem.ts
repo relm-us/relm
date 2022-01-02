@@ -44,11 +44,7 @@ export class PortalSystem extends System {
               .normalize();
             newCoords.add(bodyFacing);
 
-            moveAvatarTo(
-              newCoords,
-              (this.world as any).presentation,
-              otherEntity
-            );
+            moveAvatarTo(newCoords, otherEntity);
           } else if (portal.kind === "REMOTE") {
             // TODO
           }

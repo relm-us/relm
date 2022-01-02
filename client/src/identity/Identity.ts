@@ -43,6 +43,14 @@ export class Identity {
     this.avatar = new Avatar(this, ecsWorld);
   }
 
+  init() {
+    this.avatar.init();
+  }
+
+  deinit() {
+    this.avatar?.deinit();
+  }
+
   // Number of milliseconds since last seen
   get seenAgo(): number {
     const lastSeen = this.lastSeen;

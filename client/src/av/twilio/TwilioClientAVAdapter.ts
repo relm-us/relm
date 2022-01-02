@@ -72,6 +72,13 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
     );
   }
 
+  disconnect(): Promise<void> {
+    return new Promise((resolve) => {
+      this.room.disconnect();
+      resolve();
+    });
+  }
+
   _participantConnected(participant: RemoteParticipant) {
     const participantId = participant.identity;
 
@@ -166,27 +173,28 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
   _enableMedia(kind = "audio", enable = true) {
     // TODO: sync with audo/video desired
     if (!this.room) return;
-    
-    const publications = this.room.localParticipant[
-      kind == "audio" ? "audioTracks" : "videoTracks"
-    ];
+
+    const publications =
+      this.room.localParticipant[
+        kind == "audio" ? "audioTracks" : "videoTracks"
+      ];
     publications.forEach(function (publication) {
-      publication.track[enable ? 'enable' : 'disable']();
+      publication.track[enable ? "enable" : "disable"]();
     });
   }
 
   enableMic() {
-    this._enableMedia('audio', true);
+    this._enableMedia("audio", true);
   }
   disableMic(pause: boolean = false) {
-    this._enableMedia('audio', false);
+    this._enableMedia("audio", false);
   }
 
   enableCam() {
-    this._enableMedia('video', true);
+    this._enableMedia("video", true);
   }
   disableCam(pause: boolean = false) {
-    this._enableMedia('video', false);
+    this._enableMedia("video", false);
   }
 }
 

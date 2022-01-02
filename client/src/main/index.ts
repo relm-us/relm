@@ -30,11 +30,31 @@ import { worldManager } from "~/world";
 export const relmProgram = {
   init: [{ screen: "initial" }, Cmd.ofMsg({ id: "pageLoaded" })],
   update(msg: RelmMessage, state: RelmState): [RelmState, any?] {
-    // console.log("got RelmMessage:", msg);
+    // console.log(`got RelmMessage ${msg.id}: %o`, { state });
 
     switch (msg.id) {
       case "pageLoaded": {
         return [state, getParticipantAndRelm];
+      }
+
+      case "enterPortal": {
+        return [
+          { ...state, relmName: msg.relmName, entryway: msg.entryway },
+          (dispatch) => {
+            worldManager
+              .deinit()
+              .then(() => {
+                dispatch({ id: "worldDidReset" });
+              })
+              .catch((err) => {
+                dispatch({ id: "error", msg: err.message });
+              });
+          },
+        ];
+      }
+
+      case "worldDidReset": {
+        return [state, getRelmPermitsAndMetadata(state.relmName)];
       }
 
       case "gotParticipantAndRelm": {

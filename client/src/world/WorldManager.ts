@@ -49,7 +49,7 @@ export class WorldManager {
   connectOpts;
 
   selection: SelectionManager;
-  identities: IdentityManager = new IdentityManager();
+  identities: IdentityManager;
   chat: ChatManager;
   camera: CameraManager;
 
@@ -82,7 +82,8 @@ export class WorldManager {
     );
 
     this.selection = new SelectionManager(this.worldDoc);
-    this.identities.init(this.worldDoc.ydoc, this.world);
+    this.identities = new IdentityManager(this.worldDoc.ydoc, this.world);
+    this.identities.init();
     this.chat = new ChatManager(this.identities);
     this.chat.setMessages(this.worldDoc.messages);
     this.camera = new CameraManager(
@@ -93,7 +94,7 @@ export class WorldManager {
 
     const token = new URL(window.location.href).searchParams.get("t");
 
-    this.mount();
+    this.world.perspective.setAvatar(this.avatar.entity);
     this.populate();
 
     this.camera.init();
@@ -209,8 +210,21 @@ export class WorldManager {
     this.start();
   }
 
-  mount() {
-    this.world.perspective.setAvatar(this.avatar.entity);
+  async deinit() {
+    this.started = false;
+
+    this.unsubs.forEach((f) => f());
+    this.unsubs.length = 0;
+
+    this.worldDoc.unsubscribe();
+    this.worldDoc.disconnect();
+    this.world.reset();
+    this.scene.traverse((node) => {
+      if (node.removeFromParent) node.removeFromParent();
+    });
+
+    this.identities.deinit();
+    this.camera.deinit();
   }
 
   // TODO: restore JWT override of name, make it uneditable
@@ -219,22 +233,6 @@ export class WorldManager {
   //     this.identities.me.set({ name: connectOpts.username });
   //     this.identities.me.avatar.editableName = false;
   //   }
-
-  reset() {
-    this.stop();
-    this.unsubscribe();
-    this.worldDoc.unsubscribe();
-    this.worldDoc.disconnect();
-    this.world.reset();
-    this.scene.traverse((node) => {
-      if (node.removeFromParent) node.removeFromParent();
-    });
-  }
-
-  unsubscribe() {
-    this.unsubs.forEach((f) => f());
-    this.unsubs.length = 0;
-  }
 
   populate() {
     if (!this.world) {
@@ -246,10 +244,6 @@ export class WorldManager {
 
     const light = makeLight(this.world, this.avatar.entity).activate();
     this.light = light;
-  }
-
-  depopulate() {
-    this.world.reset();
   }
 
   enableNonInteractiveGround(enabled = true) {
@@ -301,7 +295,7 @@ export class WorldManager {
   }
 
   step() {
-    if (get(playState) === "playing") {
+    if (get(playState) === "playing" || !this.started) {
       this.stop();
     }
     requestAnimationFrame(this.loop.bind(this));

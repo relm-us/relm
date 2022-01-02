@@ -22,16 +22,36 @@ export class IdentityManager extends EventEmitter {
 
   me: Identity;
 
+  unsubs: Function[] = [];
+  _observeFields: any;
+  _observeChat: any;
+
   activeCache: Identity[] = [];
 
-  init(ydoc: Y.Doc, ecsWorld: DecoratedECSWorld) {
+  constructor(ydoc: Y.Doc, ecsWorld: DecoratedECSWorld) {
+    super();
     this.ydoc = ydoc;
     this.ecsWorld = ecsWorld;
+  }
 
+  init() {
     this.registerMe();
 
     this.observeFields();
     this.observeChat();
+  }
+
+  deinit() {
+    this.unsubs.forEach((f) => f());
+    this.unsubs.length = 0;
+
+    this.identities.forEach((identity, playerId) => {
+      identity.deinit();
+    });
+    this.identities.clear();
+
+    this.unobserveFields();
+    this.unobserveChat();
   }
 
   get yfields(): Y.Map<IdentityData> {
@@ -52,8 +72,12 @@ export class IdentityManager extends EventEmitter {
     };
     identity.set(data);
 
-    audioDesired.subscribe((showAudio) => identity.set({ showAudio }));
-    videoDesired.subscribe((showVideo) => identity.set({ showVideo }));
+    this.unsubs.push(
+      audioDesired.subscribe((showAudio) => identity.set({ showAudio }))
+    );
+    this.unsubs.push(
+      videoDesired.subscribe((showVideo) => identity.set({ showVideo }))
+    );
 
     this.me = identity;
   }
@@ -63,6 +87,7 @@ export class IdentityManager extends EventEmitter {
 
     if (!identity) {
       identity = new Identity(this, this.ecsWorld, playerId, isLocal);
+      identity.init();
       this.identities.set(playerId, identity);
     }
 
@@ -89,7 +114,7 @@ export class IdentityManager extends EventEmitter {
   }
 
   remove(playerId: PlayerID) {
-    this.get(playerId)?.avatar.destroy();
+    this.get(playerId)?.avatar.deinit();
   }
 
   removeByClientId(clientId: number) {
@@ -133,44 +158,60 @@ export class IdentityManager extends EventEmitter {
     this.yfields.forEach((value, key, map) => {
       console.log("ignoring fields", key, value);
     });
-    this.yfields.observe(
-      (event: Y.YMapEvent<IdentityData>, transaction: Y.Transaction) => {
-        if (transaction.local) return;
-        withMapEdits(
-          event,
-          {
-            onAdd: this.updateSharedFields.bind(this),
-            onUpdate: this.updateSharedFields.bind(this),
-            onDelete: (playerId, fields) => {
-              this.identities.delete(playerId);
-            },
+
+    this._observeFields = (
+      event: Y.YMapEvent<IdentityData>,
+      transaction: Y.Transaction
+    ) => {
+      if (transaction.local) return;
+      withMapEdits(
+        event,
+        {
+          onAdd: this.updateSharedFields.bind(this),
+          onUpdate: this.updateSharedFields.bind(this),
+          onDelete: (playerId, fields) => {
+            this.identities.delete(playerId);
           },
-          true /* log for debug */
-        );
-      }
-    );
+        },
+        true /* log for debug */
+      );
+    };
+
+    this.yfields.observe(this._observeFields);
+  }
+
+  unobserveFields() {
+    if (!this._observeFields) return;
+    this.yfields.unobserve(this._observeFields);
   }
 
   /**
    * This observes both local and remote changes to the chat log ('append' operations).
    */
   observeChat() {
-    this.ymessages.observe(
-      (event: Y.YArrayEvent<ChatMessage>, transaction: Y.Transaction) => {
-        withArrayEdits(event, {
-          onAdd: (msg: ChatMessage) => {
-            const playerId = msg.u;
-            const identity = this.getOrCreateIdentity(playerId);
+    this._observeChat = (
+      event: Y.YArrayEvent<ChatMessage>,
+      transaction: Y.Transaction
+    ) => {
+      withArrayEdits(event, {
+        onAdd: (msg: ChatMessage) => {
+          const playerId = msg.u;
+          const identity = this.getOrCreateIdentity(playerId);
 
-            const emoji = getEmojiFromMessage(msg);
-            if (emoji) {
-              identity.set({ emoji: emoji }, false);
-            } else {
-              identity.set({ message: msg.c }, false);
-            }
-          },
-        });
-      }
-    );
+          const emoji = getEmojiFromMessage(msg);
+          if (emoji) {
+            identity.set({ emoji: emoji }, false);
+          } else {
+            identity.set({ message: msg.c }, false);
+          }
+        },
+      });
+    };
+    this.ymessages.observe(this._observeChat);
+  }
+
+  unobserveChat() {
+    if (!this._observeChat) return;
+    this.ymessages.unobserve(this._observeChat);
   }
 }

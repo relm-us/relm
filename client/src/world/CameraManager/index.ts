@@ -63,18 +63,20 @@ export class CameraManager {
   avatar: Entity;
 
   // Track what we're doing with the camera right now
-  state: CameraState = { type: "following" };
+  state: CameraState;
 
   // How much the camera is "off-center" from the participant
   pan: Vector3 = new Vector3();
 
   // 0: zoomed all the way in; 1: zoomed all the way out
-  zoom: number = 0.5;
+  zoom: number;
 
-  followOffset: Vector3 = new Vector3();
-  lookAtOffset: Vector3 = new Vector3();
+  followOffset: Vector3;
+  lookAtOffset: Vector3;
   zoomedInOffset: Vector3 = new Vector3(0, 5.5, 5.0);
   zoomedOutOffset: Vector3 = new Vector3(0, 25.5, 25.0);
+
+  unsubs: Function[] = [];
 
   constructor(ecsWorld: DecoratedECSWorld, avatar: Entity) {
     this.ecsWorld = ecsWorld;
@@ -82,6 +84,12 @@ export class CameraManager {
   }
 
   init() {
+    this.state = { type: "following" };
+    this.zoom = 0.5;
+
+    this.followOffset = new Vector3();
+    this.lookAtOffset = new Vector3();
+
     // Create the ECS camera entity that holds the ThreeJS camera
     this.entity = makeCamera(this.ecsWorld)
       .add(Follow, {
@@ -92,11 +100,20 @@ export class CameraManager {
       .activate();
 
     // Listen to the mousewheel for zoom events
-    viewportScale.subscribe(($scale) => {
-      if (this.state.type === "following") {
-        this.zoom = $scale / 100;
-      }
-    });
+    this.unsubs.push(
+      viewportScale.subscribe(($scale) => {
+        if (this.state.type === "following") {
+          this.zoom = $scale / 100;
+        }
+      })
+    );
+  }
+
+  deinit() {
+    this.unsubs.forEach((f) => f());
+    this.unsubs.length = 0;
+
+    this.entity.destroy();
   }
 
   moveTo(position: Vector3) {

@@ -53,6 +53,8 @@ export type RelmState = {
 
 export type RelmMessage =
   | { id: "pageLoaded" }
+  | { id: "enterPortal"; relmName: string; entryway: string }
+  | { id: "worldDidReset" }
   | {
       id: "gotParticipantAndRelm";
       participantId: string;
