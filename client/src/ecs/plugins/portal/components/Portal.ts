@@ -33,6 +33,7 @@ export class Portal extends Component {
 
     entryway: {
       type: StringType,
+      default: "default",
       editor: {
         label: "Entry Name",
         requires: [{ prop: "kind", value: "REMOTE" }],
@@ -41,7 +42,6 @@ export class Portal extends Component {
 
     relm: {
       type: StringType,
-      default: "default",
       editor: {
         label: "Relm Name",
         requires: [{ prop: "kind", value: "REMOTE" }],
