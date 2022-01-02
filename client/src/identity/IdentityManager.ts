@@ -3,7 +3,7 @@ import EventEmitter from "eventemitter3";
 
 import { withArrayEdits, withMapEdits } from "relm-common/yrelm/observeUtils";
 
-import { IdentityData, PlayerID, YClientID } from "./types";
+import { IdentityData, PlayerID, TransformData, YClientID } from "./types";
 
 import { playerId } from "./playerId";
 import { Identity } from "./Identity";
@@ -13,8 +13,6 @@ import { audioDesired } from "~/stores/audioDesired";
 import { videoDesired } from "~/stores/videoDesired";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
-type ClientUpdateFunction = (data: any[]) => void;
-
 export class IdentityManager extends EventEmitter {
   ydoc: Y.Doc;
   ecsWorld: DecoratedECSWorld;
@@ -22,17 +20,13 @@ export class IdentityManager extends EventEmitter {
 
   identities: Map<PlayerID, Identity> = new Map();
 
-  clientLastSeen: Map<YClientID, number> = new Map();
-  clientUpdateFns: Map<YClientID, ClientUpdateFunction> = new Map();
-  clientUpdateIds: Map<YClientID, Identity> = new Map();
-
   me: Identity;
 
   init(ydoc: Y.Doc, ecsWorld: DecoratedECSWorld) {
     this.ydoc = ydoc;
     this.ecsWorld = ecsWorld;
 
-    this.registerMe(this.ydoc.clientID);
+    this.registerMe();
 
     this.observeFields();
     this.observeChat();
@@ -46,12 +40,11 @@ export class IdentityManager extends EventEmitter {
     return this.ydoc.getArray("messages");
   }
 
-  registerMe(clientId: YClientID) {
+  registerMe() {
     const identity = this.getOrCreateIdentity(playerId, true);
 
     const data = {
       ...getLocalIdentityData(),
-      clientId,
       emoting: false,
       status: "initial",
     };
@@ -87,53 +80,26 @@ export class IdentityManager extends EventEmitter {
     return this.identities.get(playerId);
   }
 
-  // Find Identity by YClientID; may be undefined if peer hasn't announced its clientId yet
-  getByClientId(clientId: YClientID): Identity {
-    if (!clientId) return;
-    for (const identity of this.identities.values()) {
-      if (identity.sharedFields.clientId === clientId) {
-        return identity;
-      }
-    }
-  }
-
   remove(playerId: PlayerID) {
     this.get(playerId)?.avatar.destroy();
   }
 
-  removeByClientId(clientId: YClientID) {
-    const identity = this.getByClientId(clientId);
-    if (identity) this.remove(identity.playerId);
+  removeByClientId(clientId: number) {
+    for (let [playerId, identity] of this.identities.entries()) {
+      if (identity.clientId === clientId) this.remove(playerId);
+    }
   }
 
   getTransformData() {
     return this.me.avatar.getTransformData();
   }
 
-  setTransformData(clientId: YClientID, transformData: Array<number>) {
-    this.clientLastSeen.set(clientId, performance.now());
-    let update = this.clientUpdateFns.get(clientId);
-
-    // invalidate cached `update` function if identity doesn't match
-    if (++this.transformDataCounter % 61 === 60) {
-      if (this.clientUpdateIds.get(clientId) !== this.getByClientId(clientId)) {
-        console.log("cached clientUpdateFn invalidated");
-        update = null;
-      }
-    }
-
-    if (!update) {
-      const identity = this.getByClientId(clientId);
-
-      //  If we can't find the identity from a clientId yet, wait until we can
-      if (!identity) return;
-
-      update = identity.avatar.setTransformData.bind(identity.avatar);
-      this.clientUpdateFns.set(clientId, update);
-      this.clientUpdateIds.set(clientId, identity);
-    }
-
-    update(transformData);
+  setTransformData(clientId: number, transformData: TransformData) {
+    const playerId = transformData[0];
+    this.getOrCreateIdentity(playerId).setTransformData(
+      clientId,
+      transformData
+    );
   }
 
   sync() {
@@ -163,7 +129,6 @@ export class IdentityManager extends EventEmitter {
           onUpdate: this.updateSharedFields.bind(this),
           onDelete: (playerId, fields) => {
             this.identities.delete(playerId);
-            console.log("identity removed:", playerId, fields.clientId);
           },
         });
       }

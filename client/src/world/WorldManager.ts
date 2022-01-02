@@ -28,13 +28,13 @@ import { CameraManager } from "./CameraManager";
 import { Avatar } from "~/identity/Avatar";
 
 import { GROUND_INTERACTION } from "~/config/colliderInteractions";
-import { config } from "~/config";
 
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import type { Dispatch, RelmState } from "~/main/RelmStateAndMessage";
 import { AVConnection } from "~/av";
 import { Identity } from "~/identity/Identity";
 import { playerId } from "~/identity/playerId";
+import { PlayerID, TransformData } from "~/identity/types";
 
 export class WorldManager {
   dispatch: Dispatch;
@@ -185,14 +185,16 @@ export class WorldManager {
     const updateParticipant = () => {
       const states = this.worldDoc.provider.awareness.getStates();
 
-      states.forEach(({ m }, clientId) => {
+      states.forEach(({ m: tdata }: { m: TransformData }, clientId) => {
         // Ignore updates that don't include matrix transform data
-        if (!m) return;
+        if (!tdata) return;
+
+        const participantId: PlayerID = tdata[0];
 
         // Ignore updates about ourselves
-        if (clientId === this.worldDoc.ydoc.clientID) return;
+        if (participantId === playerId) return;
 
-        this.identities.setTransformData(clientId, m);
+        this.identities.setTransformData(clientId, tdata);
       });
     };
     this.worldDoc.provider.awareness.on("update", updateParticipant);

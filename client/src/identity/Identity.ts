@@ -3,7 +3,7 @@ import { Avatar } from "./Avatar";
 
 import type { IdentityManager } from "./IdentityManager";
 import { worldManager } from "~/world";
-import { IdentityData, PlayerID } from "./types";
+import { IdentityData, PlayerID, TransformData } from "./types";
 import { defaultIdentityData, localIdentityData } from "./identityData";
 import { getSecureParams, secureParamsAsHeaders } from "./secureParams";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
@@ -15,11 +15,14 @@ export class Identity {
   manager: IdentityManager;
 
   playerId: PlayerID;
+  clientId: number;
 
   isLocal: boolean;
 
   sharedFields: IdentityData;
   sharedFieldsUpdated: boolean;
+
+  lastSeen: number;
 
   // Avatar is responsible for all visuals/rendering of this identity
   avatar: Avatar;
@@ -40,10 +43,6 @@ export class Identity {
     this.avatar = new Avatar(this, ecsWorld);
   }
 
-  get lastSeen() {
-    return this.manager.clientLastSeen.get(this.sharedFields.clientId);
-  }
-
   get seenAgo() {
     const lastSeen = this.lastSeen;
     return lastSeen === undefined
@@ -59,6 +58,12 @@ export class Identity {
 
   wasRecentlySeen() {
     return this.seenAgo < LAST_SEEN_TIMEOUT;
+  }
+
+  setTransformData(clientId, transformData: TransformData) {
+    this.clientId = clientId;
+    this.lastSeen = performance.now();
+    this.avatar.setTransformData(transformData);
   }
 
   set(fields: object, propagate: boolean = true) {

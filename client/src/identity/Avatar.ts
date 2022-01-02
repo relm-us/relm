@@ -31,6 +31,7 @@ import {
   AVATAR_INTERACTION,
 } from "~/config/colliderInteractions";
 import { worldUIMode } from "~/stores/worldUIMode";
+import { TransformData } from "./types";
 
 const OCULUS_HEIGHT = 2.4;
 const DEFAULT_LABEL_COLOR = "#D0D0D0";
@@ -339,31 +340,39 @@ export class Avatar {
   getTransformData() {
     if (!this.entity) return;
 
-    const transformData = [];
+    const transformData: any[] = [this.identity.playerId];
     const transform = this.entity.get(Transform);
     if (!transform) return;
 
     // Get position of body
-    transform.position.toArray(transformData, 0);
+    transform.position.toArray(transformData, 1);
 
     // Get angle of body
     e1.setFromQuaternion(transform.rotation);
-    transformData[3] = e1.y;
+    transformData[4] = e1.y;
 
     // Get angle of head
-    transformData[4] = this.headAngle;
+    transformData[5] = this.headAngle;
 
     const clips: AnimationClip[] = this.entity.get(ModelRef)?.animations;
     const clipName: string = this.entity.get(Animation)?.clipName;
     if (clips && clipName) {
       const index = clips.findIndex((c) => c.name === clipName);
-      transformData[5] = index;
+      transformData[6] = index;
     }
 
-    return transformData;
+    return transformData as TransformData;
   }
 
-  setTransformData([x, y, z, theta, headTheta, clipIndex]) {
+  setTransformData([
+    _playerId,
+    x,
+    y,
+    z,
+    theta,
+    headTheta,
+    clipIndex,
+  ]: TransformData) {
     if (!this.entity) return;
 
     const transform = this.entity.get(Transform);
