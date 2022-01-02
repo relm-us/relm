@@ -9,7 +9,7 @@
 <style>
   r-map-participant {
     display: block;
-    position: relative;
+    position: absolute;
     width: 8px;
     height: 8px;
     border-radius: 100%;
