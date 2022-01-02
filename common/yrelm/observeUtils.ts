@@ -45,9 +45,13 @@ export function withMapEdits<T>(
     onAdd?: (key: string, content: T) => void;
     onUpdate?: (key: string, content: T, oldContent: T) => void;
     onDelete?: (key: string, content: T, oldContent: T) => void;
-  }
+  },
+  log = false
 ) {
   for (const [key, change] of event.changes.keys.entries()) {
+    if (log) {
+      console.log("withMapEdits", key, change.action);
+    }
     const value: T = (event.target as Y.Map<T>).get(key);
     if (change.action === "add" && callbacks.onAdd) {
       callbacks.onAdd(key, value);

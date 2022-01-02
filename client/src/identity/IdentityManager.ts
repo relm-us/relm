@@ -70,6 +70,12 @@ export class IdentityManager extends EventEmitter {
   }
 
   updateSharedFields(playerId: PlayerID, sharedFields: IdentityData) {
+    console.log(
+      "updateSharedFields playerId:",
+      playerId,
+      ", skip because is me?",
+      playerId === this.me.playerId
+    );
     // Don't allow the network to override my own shared fields prior to sync
     if (playerId === this.me.playerId) return;
 
@@ -124,16 +130,23 @@ export class IdentityManager extends EventEmitter {
   }
 
   observeFields() {
+    this.yfields.forEach((value, key, map) => {
+      console.log("ignoring fields", key, value);
+    });
     this.yfields.observe(
       (event: Y.YMapEvent<IdentityData>, transaction: Y.Transaction) => {
         if (transaction.local) return;
-        withMapEdits(event, {
-          onAdd: this.updateSharedFields.bind(this),
-          onUpdate: this.updateSharedFields.bind(this),
-          onDelete: (playerId, fields) => {
-            this.identities.delete(playerId);
+        withMapEdits(
+          event,
+          {
+            onAdd: this.updateSharedFields.bind(this),
+            onUpdate: this.updateSharedFields.bind(this),
+            onDelete: (playerId, fields) => {
+              this.identities.delete(playerId);
+            },
           },
-        });
+          true /* log for debug */
+        );
       }
     );
   }
