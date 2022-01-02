@@ -51,8 +51,8 @@
     const interval = setInterval(() => {
       if (minimized) return;
 
-      if (worldManager.identities.active !== idActive)
-        idActive = worldManager.identities.active;
+      if (worldManager.identities.active.length !== idActive)
+        idActive = worldManager.identities.active.length;
 
       if (worldManager.identities.total !== idTotal)
         idTotal = worldManager.identities.total;

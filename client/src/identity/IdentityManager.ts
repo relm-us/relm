@@ -22,6 +22,8 @@ export class IdentityManager extends EventEmitter {
 
   me: Identity;
 
+  activeCache: Identity[] = [];
+
   init(ydoc: Y.Doc, ecsWorld: DecoratedECSWorld) {
     this.ydoc = ydoc;
     this.ecsWorld = ecsWorld;
@@ -108,12 +110,13 @@ export class IdentityManager extends EventEmitter {
     }
   }
 
-  get active() {
-    let count = 0;
+  get active(): Identity[] {
+    this.activeCache.length = 0;
     for (const identity of this.identities.values()) {
-      if (identity.avatar.entity) count++;
+      if (identity.isActive && identity.avatar.position)
+        this.activeCache.push(identity);
     }
-    return count;
+    return this.activeCache;
   }
 
   get total() {

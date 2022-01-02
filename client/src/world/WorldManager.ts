@@ -1,4 +1,4 @@
-import { Color } from "three";
+import { Color, Box3 } from "three";
 import { derived, get, writable, Writable } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
@@ -60,10 +60,6 @@ export class WorldManager {
   started: boolean = false;
 
   unsubs: Function[] = [];
-
-  get participantId() {
-    return playerId;
-  }
 
   async init(dispatch: Dispatch, state: RelmState) {
     this.dispatch = dispatch;
@@ -220,66 +216,12 @@ export class WorldManager {
     this.world.perspective.setAvatar(this.avatar.entity);
   }
 
-  // connect(connectOpts: ConnectOptions) {
-  //   this.connectOpts = connectOpts;
-
+  // TODO: restore JWT override of name, make it uneditable
   //   // set name from server, if available (overrides localstorage)
   //   if (connectOpts.username) {
   //     this.identities.me.set({ name: connectOpts.username });
   //     this.identities.me.avatar.editableName = false;
   //   }
-
-  //   derived(
-  //     [setupState, mediaDesired],
-  //     ([$setupState, $mediaDesired]: any[], set) => {
-  //       set({
-  //         ready: $setupState === "done",
-  //         audio: $mediaDesired.audio,
-  //         video: $mediaDesired.video,
-  //       });
-  //     }
-  //   ).subscribe(async ({ ready, audio, video }) => {
-  //     if (ready) {
-  //       await this.avConnection.connect({
-  //         roomId: connectOpts.room,
-  //         token: connectOpts.twilio,
-  //         displayName: connectOpts.username || this.identities.me.get("name"),
-  //         produceAudio: audio,
-  //         produceVideo: video,
-  //       });
-  //     }
-  //   });
-
-  //   // Poll for loading state info such as entities and assets loaded
-  //   loadingState.set("loading");
-  //   startPollingLoadingState(this.worldDoc, () => {
-  //     loadingState.set("loaded");
-  //   });
-
-  //   // Connect & show loading progress
-  //   resetLoading(connectOpts.assetsCount, connectOpts.entitiesCount);
-  //   this.worldDoc.connect(this.connectOpts);
-
-  //   this.worldDoc.provider.awareness.on("change", (changes) => {
-  //     for (let id of changes.removed) {
-  //       this.identities.removeByClientId(id);
-  //     }
-  //   });
-
-  //   this.worldDoc.provider.awareness.on("update", () => {
-  //     const states = this.worldDoc.provider.awareness.getStates();
-
-  //     states.forEach(({ m }, clientId) => {
-  //       // Ignore updates that don't include matrix transform data
-  //       if (!m) return;
-
-  //       // Ignore updates about ourselves
-  //       if (clientId === this.worldDoc.ydoc.clientID) return;
-
-  //       this.identities.setTransformData(clientId, m);
-  //     });
-  //   });
-  // }
 
   reset() {
     this.stop();
@@ -295,10 +237,6 @@ export class WorldManager {
   unsubscribe() {
     this.unsubs.forEach((f) => f());
     this.unsubs.length = 0;
-  }
-
-  get avatar(): Avatar {
-    return this.identities.me.avatar;
   }
 
   populate() {
@@ -423,6 +361,14 @@ export class WorldManager {
    * Convenience Accessors
    */
 
+  get participantId() {
+    return playerId;
+  }
+
+  get avatar(): Avatar {
+    return this.identities.me.avatar;
+  }
+
   get scene() {
     return this.world.presentation.scene;
   }
@@ -442,5 +388,11 @@ export class WorldManager {
 
   get copyBuffer(): CopyBuffer {
     return get(copyBuffer);
+  }
+
+  get boundingBox(): Box3 {
+    const box = new Box3();
+    box.setFromObject(this.scene);
+    return box;
   }
 }

@@ -19,6 +19,7 @@
   import WorldStatePane from "~/ui/WorldStatePane";
   import ResetWorldButton from "~/ui/ResetWorldButton";
   import Chat from "~/ui/Chat";
+  import MiniMap from "~/ui/MiniMap";
 
   import { PauseAutomatically, PauseMessage } from "~/ui/Pause";
 
@@ -57,6 +58,8 @@
 {#if $playState === "paused"}
   <PauseMessage />
 {/if}
+
+<MiniMap />
 
 <overlay class:open={buildMode}>
   <overlay-panel class="interactive">

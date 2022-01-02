@@ -66,7 +66,7 @@ export class Avatar {
     return this.entity?.get(DistanceRef)?.value;
   }
 
-  get position() {
+  get position(): Vector3 {
     return this.entity?.get(Transform)?.position;
   }
 

@@ -43,11 +43,16 @@ export class Identity {
     this.avatar = new Avatar(this, ecsWorld);
   }
 
-  get seenAgo() {
+  // Number of milliseconds since last seen
+  get seenAgo(): number {
     const lastSeen = this.lastSeen;
     return lastSeen === undefined
       ? LONG_TIME_AGO
       : performance.now() - this.lastSeen;
+  }
+
+  get isActive(): boolean {
+    return this.seenAgo < 2500;
   }
 
   async getPrivateKey() {
