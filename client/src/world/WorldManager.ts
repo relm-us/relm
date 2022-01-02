@@ -50,7 +50,6 @@ export class WorldManager {
 
   selection: SelectionManager;
   identities: IdentityManager = new IdentityManager();
-  meStore: Writable<Identity> = writable(null);
   chat: ChatManager;
   camera: CameraManager;
 
@@ -84,8 +83,6 @@ export class WorldManager {
 
     this.selection = new SelectionManager(this.worldDoc);
     this.identities.init(this.worldDoc.ydoc, this.world);
-    // TODO: should we follow this store pattern everywhere?
-    this.meStore.set(this.identities.me);
     this.chat = new ChatManager(this.identities);
     this.chat.setMessages(this.worldDoc.messages);
     this.camera = new CameraManager(

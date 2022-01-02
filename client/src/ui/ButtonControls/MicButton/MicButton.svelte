@@ -1,21 +1,14 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import CircleButton from "~/ui/lib/CircleButton";
   import { AudioIcon } from "video-mirror";
   import { worldManager } from "~/world";
   import { Identity } from "~/identity/Identity";
 
-  let identity: Identity;
-
   export let enabled = false;
 
   function toggle() {
-    enabled = identity.toggleShowAudio();
+    enabled = worldManager.identities.me.toggleShowAudio();
   }
-
-  onMount(() => {
-    return worldManager.meStore.subscribe(($me) => (identity = $me));
-  });
 </script>
 
 <CircleButton on:click={toggle}>
