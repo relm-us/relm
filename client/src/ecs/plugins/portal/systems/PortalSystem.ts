@@ -1,10 +1,14 @@
+import { Vector3 } from "three";
+
 import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
-import { Portal } from "../components";
 import { Impact, Impactable } from "~/ecs/plugins/physics";
 import { Controller } from "~/ecs/plugins/player-control";
-import { Vector3 } from "three";
+
 import { moveAvatarTo } from "~/identity/Avatar";
+import { worldManager } from "~/world";
+
+import { Portal } from "../components";
 
 const bodyFacing = new Vector3();
 const vOut = new Vector3(0, 0, 1);
@@ -32,6 +36,7 @@ export class PortalSystem extends System {
       const others: Map<Entity, number> = entity.get(Impact).others;
       for (const [otherEntity, magnitude] of others) {
         if (otherEntity.has(Controller)) {
+          console.log("portal triggered", portal);
           if (portal.kind === "LOCAL") {
             const transform = otherEntity.get(Transform);
             const newCoords = new Vector3().copy(portal.coords);
@@ -46,7 +51,11 @@ export class PortalSystem extends System {
 
             moveAvatarTo(newCoords, otherEntity);
           } else if (portal.kind === "REMOTE") {
-            // TODO
+            worldManager.dispatch({
+              id: "enterPortal",
+              relmName: portal.relm,
+              entryway: portal.entryway,
+            });
           }
         }
       }

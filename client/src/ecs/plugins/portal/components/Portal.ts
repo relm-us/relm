@@ -3,6 +3,11 @@ import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
 export class Portal extends Component {
+  kind: "LOCAL" | "REMOTE";
+  coords: Vector3;
+  entry: string;
+  relm: string;
+
   static props = {
     kind: {
       type: StringType,
@@ -26,7 +31,7 @@ export class Portal extends Component {
       },
     },
 
-    entry: {
+    entryway: {
       type: StringType,
       editor: {
         label: "Entry Name",
@@ -34,11 +39,11 @@ export class Portal extends Component {
       },
     },
 
-    subrelm: {
+    relm: {
       type: StringType,
-      default: "relm",
+      default: "default",
       editor: {
-        label: "Subrelm Name",
+        label: "Relm Name",
         requires: [{ prop: "kind", value: "REMOTE" }],
       },
     },

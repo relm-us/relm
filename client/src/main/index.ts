@@ -39,7 +39,12 @@ export const relmProgram = {
 
       case "enterPortal": {
         return [
-          { ...state, relmName: msg.relmName, entryway: msg.entryway },
+          {
+            ...state,
+            screen: "loading-screen",
+            relmName: msg.relmName,
+            entryway: msg.entryway,
+          },
           (dispatch) => {
             worldManager
               .deinit()
