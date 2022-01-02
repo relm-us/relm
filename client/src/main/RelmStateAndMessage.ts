@@ -41,6 +41,7 @@ export type RelmState = {
   // other
   doneLoading?: boolean;
   errorMessage?: string;
+  overlayScreen?: "portal";
   screen?:
     | "error"
     | "initial"

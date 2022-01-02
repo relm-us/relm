@@ -3,9 +3,12 @@
   import Overlay from "~/ui/Overlay";
   import Input from "~/input";
 
+  import BlankWithLogo from "./BlankWithLogo.svelte";
+
   export let ecsWorld;
   export let dispatch;
   export let permits;
+  export let overlayScreen;
 
   $$props;
 </script>
@@ -16,3 +19,7 @@
 
 <!-- Keyboard, Mouse input -->
 <Input world={ecsWorld} {permits} />
+
+{#if overlayScreen}
+  <BlankWithLogo />
+{/if}

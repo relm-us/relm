@@ -41,7 +41,7 @@ export const relmProgram = {
         return [
           {
             ...state,
-            screen: "loading-screen",
+            overlayScreen: "portal",
             relmName: msg.relmName,
             entryway: msg.entryway,
           },
@@ -243,7 +243,7 @@ export const relmProgram = {
       }
 
       case "startPlaying":
-        return [{ ...state, screen: "game-world" }];
+        return [{ ...state, overlayScreen: null, screen: "game-world" }];
 
       case "error":
         return [{ ...state, screen: "error", errorMessage: msg.message }];
@@ -288,6 +288,7 @@ export const relmProgram = {
               dispatch,
               ecsWorld: state.ecsWorld,
               permits: state.permits,
+              overlayScreen: state.overlayScreen,
             },
           ];
         default:

@@ -3,7 +3,6 @@
 
   export let zIndex = 3;
   export let justify = "flex-start";
-
 </script>
 
 <page-overlay out:fade style="z-index: {zIndex}; justify-content: {justify}">
@@ -17,6 +16,7 @@
     align-items: center;
 
     position: fixed;
+    top: 0;
     overflow-y: auto;
     width: 100%;
     height: 100%;
@@ -24,5 +24,4 @@
     background: rgba(45, 45, 45, 1);
     color: white;
   }
-
 </style>
