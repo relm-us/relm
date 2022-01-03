@@ -7,6 +7,7 @@ import { IdentityData, PlayerID, TransformData } from "./types";
 import { defaultIdentityData, localIdentityData } from "./identityData";
 import { getSecureParams, secureParamsAsHeaders } from "./secureParams";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
+import * as avatarTransform from "./Avatar/transform";
 
 const LONG_TIME_AGO = 600000; // 5 minutes ago
 const LAST_SEEN_TIMEOUT = 15000;
@@ -76,7 +77,10 @@ export class Identity {
   setTransformData(clientId, transformData: TransformData) {
     this.clientId = clientId;
     this.lastSeen = performance.now();
-    this.avatar.setTransformData(transformData);
+    return avatarTransform.setTransformData(
+      this.avatar.entities,
+      transformData
+    );
   }
 
   set(fields: object, propagate: boolean = true) {

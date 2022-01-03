@@ -1,4 +1,6 @@
+import type { Avatar } from "./Avatar";
 import type { Entity } from "~/ecs/base";
+
 export type PlayerStatus = "initial" | "present" | "away";
 export type YClientID = number;
 export type PlayerID = string;
@@ -99,6 +101,7 @@ export type TransformData = [
 
 export type AvatarEntities = {
   head: Entity;
+  headAngle: number;
   body: Entity;
   emoji: Entity;
 };

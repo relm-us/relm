@@ -12,6 +12,7 @@ import { ChatMessage, getEmojiFromMessage } from "~/world/ChatManager";
 import { audioDesired } from "~/stores/audioDesired";
 import { videoDesired } from "~/stores/videoDesired";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
+import * as avatarTransform from "./Avatar/transform";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -133,8 +134,12 @@ export class IdentityManager extends EventEmitter {
     }
   }
 
+  // TODO: Change name to `getMyTransformData()`
   getTransformData() {
-    return this.me.avatar.getTransformData();
+    return avatarTransform.getTransformData(
+      this.me.playerId,
+      this.me.avatar.entities
+    );
   }
 
   setTransformData(clientId: number, transformData: TransformData) {

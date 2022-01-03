@@ -1,4 +1,4 @@
-import { Vector3, Euler, AnimationClip } from "three";
+import { Vector3 } from "three";
 
 import type { Identity } from "./Identity";
 import { makeAvatar } from "~/prefab/makeAvatar";
@@ -6,9 +6,7 @@ import { playerId } from "~/identity/playerId";
 
 import { Entity } from "~/ecs/base";
 import { Transform, WorldTransform } from "~/ecs/plugins/core";
-import { ModelRef } from "~/ecs/plugins/model";
 import { Html2d } from "~/ecs/plugins/html2d";
-import { Animation } from "~/ecs/plugins/animation";
 import { Distance, DistanceRef } from "~/ecs/plugins/distance";
 import { Controller } from "~/ecs/plugins/player-control";
 import { Collider } from "~/ecs/plugins/physics";
@@ -27,7 +25,7 @@ import {
   AVATAR_INTERACTION,
 } from "~/config/colliderInteractions";
 import { worldUIMode } from "~/stores/worldUIMode";
-import { Appearance, AvatarEntities, TransformData } from "./types";
+import { AvatarEntities } from "./types";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import { changeLabel, setLabel } from "./Avatar/label";
 import { setSpeech } from "./Avatar/speech";
@@ -35,16 +33,12 @@ import { setEmoji } from "./Avatar/emoji";
 import { setOculus } from "./Avatar/oculus";
 import { setAppearance } from "./Avatar/appearance";
 
-const e1 = new Euler(0, 0, 0, "YXZ");
-const v1 = new Vector3();
-
 export class Avatar {
   identity: Identity;
   ecsWorld: DecoratedECSWorld;
 
   entities: AvatarEntities;
 
-  headAngle: number;
   _editableName: boolean;
 
   unsubs: Function[] = [];
@@ -57,6 +51,7 @@ export class Avatar {
     this._editableName = this.identity.isLocal;
     this.entities = {
       head: null,
+      headAngle: 0,
       body: null,
       emoji: null,
     };
@@ -124,7 +119,9 @@ export class Avatar {
     this.makeAvatar(false, (avatar) => {
       avatar.add(Controller).add(TwistBone, {
         boneName: "mixamorigHead",
-        function: headFollowsPointer((angle) => (this.headAngle = angle)),
+        function: headFollowsPointer(
+          (angle) => (this.entities.headAngle = angle)
+        ),
       });
     });
 
@@ -146,7 +143,7 @@ export class Avatar {
       avatar
         .add(TwistBone, {
           boneName: "mixamorigHead",
-          function: headFollowsAngle(() => this.headAngle),
+          function: headFollowsAngle(() => this.entities.headAngle),
         })
         .add(Distance, {
           target: playerId,
@@ -200,70 +197,6 @@ export class Avatar {
 
   moveTo(coords: Vector3) {
     moveAvatarTo(coords, this.entities.body);
-  }
-
-  getTransformData() {
-    if (!this.entities.body) return;
-
-    const transformData: any[] = [this.identity.playerId];
-    const transform = this.entities.body.get(Transform);
-    if (!transform) return;
-
-    // Get position of body
-    transform.position.toArray(transformData, 1);
-
-    // Get angle of body
-    e1.setFromQuaternion(transform.rotation);
-    transformData[4] = e1.y;
-
-    // Get angle of head
-    transformData[5] = this.headAngle;
-
-    const clips: AnimationClip[] = this.entities.body.get(ModelRef)?.animations;
-    const clipName: string = this.entities.body.get(Animation)?.clipName;
-    if (clips && clipName) {
-      const index = clips.findIndex((c) => c.name === clipName);
-      transformData[6] = index;
-    }
-
-    return transformData as TransformData;
-  }
-
-  setTransformData([
-    _playerId,
-    x,
-    y,
-    z,
-    theta,
-    headTheta,
-    clipIndex,
-  ]: TransformData) {
-    if (!this.entities.body) return;
-
-    const transform = this.entities.body.get(Transform);
-
-    // Set position of body
-    // transform.position.set(x, y, z);
-    v1.set(x, y, z);
-    (transform.position as Vector3).lerp(v1, 0.3333);
-
-    // Set angle of body
-    e1.setFromQuaternion(transform.rotation);
-    e1.y = theta;
-    transform.rotation.setFromEuler(e1);
-
-    // Set angle of head
-    this.headAngle = headTheta;
-
-    const clips = this.entities.body.get(ModelRef)?.animations;
-    const animation = this.entities.body.get(Animation);
-    if (clips && clipIndex >= 0 && clipIndex < clips.length) {
-      const newClipName = clips[clipIndex].name;
-      if (animation.clipName !== newClipName) {
-        animation.clipName = newClipName;
-        animation.modified();
-      }
-    }
   }
 
   enableCanFly(enabled = true) {
