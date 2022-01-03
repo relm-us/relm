@@ -4,7 +4,7 @@ import type { Identity } from "./Identity";
 import { makeAvatar } from "~/prefab/makeAvatar";
 import { playerId } from "~/identity/playerId";
 
-import { World, Entity } from "~/ecs/base";
+import { Entity } from "~/ecs/base";
 import { Transform, WorldTransform } from "~/ecs/plugins/core";
 import { ModelRef } from "~/ecs/plugins/model";
 import { Html2d, Oculus, OculusRef } from "~/ecs/plugins/html2d";
@@ -31,32 +31,44 @@ import {
   AVATAR_INTERACTION,
 } from "~/config/colliderInteractions";
 import { worldUIMode } from "~/stores/worldUIMode";
-import { TransformData } from "./types";
+import { Appearance, TransformData } from "./types";
+import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
 const OCULUS_HEIGHT = 2.4;
 const DEFAULT_LABEL_COLOR = "#D0D0D0";
 const e1 = new Euler(0, 0, 0, "YXZ");
 const v1 = new Vector3();
 
+type AvatarEntities = {
+  head: Entity;
+  body: Entity;
+  emoji: Entity;
+};
 export class Avatar {
   identity: Identity;
-  world: World;
+  ecsWorld: DecoratedECSWorld;
 
-  entity: Entity = null;
-  headEntity: Entity;
-  emojiEntity: Entity;
+  entities: AvatarEntities;
+  // entity: Entity = null;
+  // entities.head: Entity;
+  // entities.emoji: Entity;
 
   headAngle: number;
   _editableName: boolean;
 
   unsubs: Function[] = [];
 
-  constructor(identity: Identity, world: World) {
+  constructor(identity: Identity, ecsWorld: DecoratedECSWorld) {
     this.identity = identity;
-    this.world = world;
+    this.ecsWorld = ecsWorld;
 
     // By default, the avatar's name is allowed to be edited (but can be changed by JWT)
     this._editableName = this.identity.isLocal;
+    this.entities = {
+      head: null,
+      body: null,
+      emoji: null,
+    };
   }
 
   init() {
@@ -69,17 +81,19 @@ export class Avatar {
     this.unsubs.forEach((f) => f());
     this.unsubs.length = 0;
 
-    this.entity?.destroy();
-    this.entity = null;
+    for (let key in this.entities) {
+      this.entities[key]?.destroy();
+      this.entities[key] = null;
+    }
   }
 
   // Remove Avatar's distance to participant's Avatar
   get distance() {
-    return this.entity?.get(DistanceRef)?.value;
+    return this.entities.body?.get(DistanceRef)?.value;
   }
 
   get position(): Vector3 {
-    return this.entity?.get(Transform)?.position;
+    return this.entities.body?.get(WorldTransform)?.position;
   }
 
   get editableName() {
@@ -96,37 +110,23 @@ export class Avatar {
   // This function is called regularly (each loop) and brings the ECS state
   // up to date with the Identity state, as needed.
   syncFromIdentityState() {
-    if (this.identity.sharedFieldsUpdated) {
-      this.maybeMakeRemoteAvatar();
-      this.syncEntity();
-      this.identity.sharedFieldsUpdated = false;
-    }
-  }
-
-  maybeMakeRemoteAvatar() {
-    if (
-      !this.entity &&
-      !this.identity.isLocal &&
-      this.identity.wasRecentlySeen() &&
-      this.identity.get("status") !== "initial"
-    ) {
-      this.makeRemoteAvatar();
-    }
+    this.maybeMakeRemoteAvatar();
+    this.maybeSyncEntity();
   }
 
   makeAvatar(kinematic: boolean, callback?: (entity: Entity) => void) {
     const opts = { kinematic };
     const { avatar, head, emoji } = makeAvatar(
-      this.world,
+      this.ecsWorld,
       opts,
       this.identity.playerId
     );
-    this.headEntity = head;
-    this.emojiEntity = emoji;
+    this.entities.head = head;
+    this.entities.emoji = emoji;
     callback?.(avatar);
     avatar.traverse((entity) => entity.activate());
 
-    this.entity = avatar;
+    this.entities.body = avatar;
   }
 
   makeLocalAvatar() {
@@ -141,7 +141,7 @@ export class Avatar {
     // not obstruct clicking / dragging etc.
     this.unsubs.push(
       worldUIMode.subscribe(($mode) => {
-        const label = this.entity.get(Html2d);
+        const label = this.entities.body.get(Html2d);
         if (label) {
           label.visible = $mode === "play";
           label.modified();
@@ -163,98 +163,108 @@ export class Avatar {
     });
   }
 
-  syncEntity() {
-    if (!this.entity) return;
-    this.syncLabel();
-    this.syncSpeech();
-    this.syncEmoji();
-    this.syncOculus();
-    this.syncAppearance();
+  maybeMakeRemoteAvatar() {
+    if (
+      !this.entities.body &&
+      !this.identity.isLocal &&
+      this.identity.wasRecentlySeen() &&
+      this.identity.get("status") !== "initial" &&
+      this.identity.avatarStatusUpdated
+    ) {
+      this.makeRemoteAvatar();
+      this.identity.avatarStatusUpdated = false;
+    }
   }
 
-  syncLabel() {
-    const identity = this.identity;
-    const name = identity.get("name");
-    const color = identity.get("color");
-    if (name && !this.entity.has(Html2d)) {
+  maybeSyncEntity() {
+    if (this.entities.body && this.identity.sharedFieldsUpdated) {
+      this.setLabel(this.identity.get("name"), this.identity.get("color"));
+      this.setSpeech(
+        this.identity.get("message"),
+        this.identity.get("speaking"),
+        this.identity.isLocal
+      );
+      this.setEmoji(this.identity.get("emoji"), this.identity.get("emoting"));
+      this.setOculus(
+        this.identity.get("showAudio"),
+        this.identity.get("showVideo")
+      );
+      this.setAppearance(this.identity.get("appearance"));
+
+      this.identity.sharedFieldsUpdated = false;
+    }
+  }
+
+  setLabel(name: string, color: string) {
+    if (name && !this.entities.body.has(Html2d)) {
       this.addLabel(name, color, this.editableName);
-    } else if (name && this.entity.has(Html2d)) {
+    } else if (name && this.entities.body.has(Html2d)) {
       this.changeLabel(name, color, this.editableName);
-    } else if (!name && this.entity.has(Html2d)) {
-      this.entity.remove(Html2d);
+    } else if (!name && this.entities.body.has(Html2d)) {
+      this.entities.body.remove(Html2d);
     }
   }
 
-  syncSpeech() {
-    const identity = this.identity;
-    const message = identity.get("message");
-    const visible = !!message && identity.get("speaking");
-    if (visible && !this.headEntity.has(Html2d)) {
-      this.addSpeech(message, identity.isLocal);
-    } else if (visible && this.headEntity.has(Html2d)) {
+  setSpeech(message: string, isSpeaking: boolean, isLocal: boolean) {
+    const visible = !!message && isSpeaking;
+    if (visible && !this.entities.head.has(Html2d)) {
+      this.addSpeech(message, isLocal);
+    } else if (visible && this.entities.head.has(Html2d)) {
       this.changeSpeech(message);
-    } else if (!visible && this.headEntity.has(Html2d)) {
-      this.headEntity.remove(Html2d);
+    } else if (!visible && this.entities.head.has(Html2d)) {
+      this.entities.head.remove(Html2d);
     }
   }
 
-  syncEmoji() {
-    const identity = this.identity;
-    const emoji = identity.get("emoji");
-    const visible = emoji && identity.get("emoting");
-    if (visible && !this.emojiEntity.has(Html2d)) {
+  setEmoji(emoji: string, isEmoting: boolean) {
+    const visible = emoji && isEmoting;
+    if (visible && !this.entities.emoji.has(Html2d)) {
       this.addEmote(emoji);
-    } else if (visible && this.emojiEntity.has(Html2d)) {
+    } else if (visible && this.entities.emoji.has(Html2d)) {
       this.changeEmote(emoji);
-    } else if (!visible && this.emojiEntity.has(Html2d)) {
-      this.emojiEntity.remove(Html2d);
+    } else if (!visible && this.entities.emoji.has(Html2d)) {
+      this.entities.emoji.remove(Html2d);
     }
   }
 
-  syncOculus() {
+  setOculus(showAudio: boolean, showVideo: boolean) {
     const identity = this.identity;
-    if (!this.entity.has(Oculus)) {
-      this.entity.add(Oculus, {
+    if (!this.entities.body.has(Oculus)) {
+      this.entities.body.add(Oculus, {
         playerId: identity.playerId,
         hanchor: 0,
         vanchor: 2,
-        showAudio: identity.get("showAudio"),
-        showVideo: identity.get("showVideo"),
+        showAudio,
+        showVideo,
         offset: new Vector3(0, OCULUS_HEIGHT, 0),
       });
     } else {
-      const component = this.entity.get(OculusRef)?.component;
+      const component = this.entities.body.get(OculusRef)?.component;
 
       if (component) {
-        component.$set({
-          showAudio: identity.get("showAudio"),
-          showVideo: identity.get("showVideo"),
-        });
+        component.$set({ showAudio, showVideo });
       }
     }
   }
 
-  syncAppearance() {
-    const identity = this.identity;
-    const appearance = identity.get("appearance");
-
+  setAppearance(appearance: Appearance) {
     const { morphs, colors } = appearanceToCharacterTraits(appearance);
 
     if (morphs) {
-      if (!this.entity.has(Morph)) {
-        this.entity.add(Morph, { influences: morphs });
+      if (!this.entities.body.has(Morph)) {
+        this.entities.body.add(Morph, { influences: morphs });
       } else {
-        const morph = this.entity.get(Morph);
+        const morph = this.entities.body.get(Morph);
         morph.influences = morphs;
         morph.modified();
       }
     }
 
     if (colors) {
-      if (!this.entity.has(FaceMapColors)) {
-        this.entity.add(FaceMapColors, { colors });
+      if (!this.entities.body.has(FaceMapColors)) {
+        this.entities.body.add(FaceMapColors, { colors });
       } else {
-        const facemap = this.entity.get(FaceMapColors);
+        const facemap = this.entities.body.get(FaceMapColors);
         facemap.colors = colors;
         facemap.modified();
       }
@@ -262,7 +272,7 @@ export class Avatar {
   }
 
   addEmote(content: string) {
-    this.emojiEntity.add(Html2d, {
+    this.entities.emoji.add(Html2d, {
       kind: "EMOJI",
       content,
       hanchor: 2,
@@ -271,7 +281,7 @@ export class Avatar {
   }
 
   changeEmote(content: string) {
-    const html2d = this.emojiEntity.get(Html2d);
+    const html2d = this.entities.emoji.get(Html2d);
     if (!html2d) return;
 
     if (html2d.content !== content) {
@@ -281,12 +291,13 @@ export class Avatar {
   }
 
   removeEmote() {
-    this.emojiEntity.maybeRemove(Html2d);
+    this.entities.emoji.maybeRemove(Html2d);
   }
 
   addSpeech(message: string, isLocal: boolean = false) {
+    // TODO: Change this to a dispatch?
     const onClose = isLocal ? () => chatOpen.set(false) : null;
-    this.headEntity.add(Html2d, {
+    this.entities.head.add(Html2d, {
       kind: "SPEECH",
       content: message,
       offset: new Vector3(0.5, 0, 0),
@@ -297,7 +308,7 @@ export class Avatar {
   }
 
   changeSpeech(message: string) {
-    const label = this.headEntity.get(Html2d);
+    const label = this.entities.head.get(Html2d);
     if (!label) return;
 
     if (label.content !== message) {
@@ -315,11 +326,11 @@ export class Avatar {
       vanchor: 1,
       editable,
     };
-    this.entity.add(Html2d, label);
+    this.entities.body.add(Html2d, label);
   }
 
   changeLabel(name: string, color: string, editable: boolean) {
-    const label = this.entity.get(Html2d);
+    const label = this.entities.body.get(Html2d);
     if (!label) return;
 
     let modified = false;
@@ -342,14 +353,14 @@ export class Avatar {
   }
 
   moveTo(coords: Vector3) {
-    moveAvatarTo(coords, this.entity);
+    moveAvatarTo(coords, this.entities.body);
   }
 
   getTransformData() {
-    if (!this.entity) return;
+    if (!this.entities.body) return;
 
     const transformData: any[] = [this.identity.playerId];
-    const transform = this.entity.get(Transform);
+    const transform = this.entities.body.get(Transform);
     if (!transform) return;
 
     // Get position of body
@@ -362,8 +373,8 @@ export class Avatar {
     // Get angle of head
     transformData[5] = this.headAngle;
 
-    const clips: AnimationClip[] = this.entity.get(ModelRef)?.animations;
-    const clipName: string = this.entity.get(Animation)?.clipName;
+    const clips: AnimationClip[] = this.entities.body.get(ModelRef)?.animations;
+    const clipName: string = this.entities.body.get(Animation)?.clipName;
     if (clips && clipName) {
       const index = clips.findIndex((c) => c.name === clipName);
       transformData[6] = index;
@@ -381,9 +392,9 @@ export class Avatar {
     headTheta,
     clipIndex,
   ]: TransformData) {
-    if (!this.entity) return;
+    if (!this.entities.body) return;
 
-    const transform = this.entity.get(Transform);
+    const transform = this.entities.body.get(Transform);
 
     // Set position of body
     // transform.position.set(x, y, z);
@@ -398,8 +409,8 @@ export class Avatar {
     // Set angle of head
     this.headAngle = headTheta;
 
-    const clips = this.entity.get(ModelRef)?.animations;
-    const animation = this.entity.get(Animation);
+    const clips = this.entities.body.get(ModelRef)?.animations;
+    const animation = this.entities.body.get(Animation);
     if (clips && clipIndex >= 0 && clipIndex < clips.length) {
       const newClipName = clips[clipIndex].name;
       if (animation.clipName !== newClipName) {
@@ -410,14 +421,14 @@ export class Avatar {
   }
 
   enableCanFly(enabled = true) {
-    const controller = this.entity.get(Controller);
+    const controller = this.entities.body.get(Controller);
     if (!controller) return;
     controller.canFly = enabled;
     controller.modified();
   }
 
   enablePhysics(enabled = true) {
-    this.entity.traverse((entity) => {
+    this.entities.body.traverse((entity) => {
       const collider = entity.components.get(Collider);
       if (!collider) return;
 
@@ -432,17 +443,17 @@ export class Avatar {
 
   enableTranslucency(enabled = true) {
     if (enabled) {
-      this.entity.add(Translucent, { opacity: 0.5 });
+      this.entities.body.add(Translucent, { opacity: 0.5 });
     } else {
-      this.entity.maybeRemove(Translucent);
+      this.entities.body.maybeRemove(Translucent);
     }
   }
 
   enableNonInteractive(enabled = true) {
     if (enabled) {
-      this.entity.add(NonInteractive);
+      this.entities.body.add(NonInteractive);
     } else {
-      this.entity.maybeRemove(NonInteractive);
+      this.entities.body.maybeRemove(NonInteractive);
     }
   }
 }

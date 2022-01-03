@@ -23,10 +23,10 @@ export const createPrefab = {
   },
   // TODO: remove first arg
   command: ({ name, src }, props) => {
-    const transform = worldManager.avatar.entity?.get(WorldTransform);
-    if (transform) {
-      const x = transform.position.x;
-      const z = transform.position.z;
+    const position = worldManager.identities.me.avatar.position;
+    if (position) {
+      const x = position.x;
+      const z = position.z;
 
       const prefab = directory.find((item) => item.name === name);
       if (prefab) {

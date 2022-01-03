@@ -88,13 +88,13 @@ export class WorldManager {
     this.chat.setMessages(this.worldDoc.messages);
     this.camera = new CameraManager(
       this.world,
-      this.identities.me.avatar.entity
+      this.identities.me.avatar.entities.body
     );
     this.avConnection = new AVConnection(this.identities.me.playerId);
 
     const token = new URL(window.location.href).searchParams.get("t");
 
-    this.world.perspective.setAvatar(this.avatar.entity);
+    this.world.perspective.setAvatar(this.avatar.entities.body);
     this.populate();
 
     this.camera.init();
@@ -141,7 +141,7 @@ export class WorldManager {
           set(false);
         }
       }).subscribe((wave: boolean) => {
-        const state = this.avatar.entity.get(ControllerState);
+        const state = this.avatar.entities.body.get(ControllerState);
         if (!state) return;
         state.animOverride = wave ? WAVING : null;
       })
@@ -238,11 +238,11 @@ export class WorldManager {
     if (!this.world) {
       throw new Error(`Can't populate when world is null`);
     }
-    if (!this.avatar.entity) {
+    if (!this.avatar.entities.body) {
       throw new Error(`Can't populate when avatar entity is null`);
     }
 
-    const light = makeLight(this.world, this.avatar.entity).activate();
+    const light = makeLight(this.world, this.avatar.entities.body).activate();
     this.light = light;
   }
 
