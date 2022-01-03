@@ -136,10 +136,10 @@ export class IdentityManager extends EventEmitter {
 
   // TODO: Change name to `getMyTransformData()`
   getTransformData() {
-    return avatarTransform.getTransformData(
-      this.me.playerId,
-      this.me.avatar.entities
-    );
+    // return avatarTransform.getTransformData(
+    //   this.me.playerId,
+    //   this.me.avatar.entities
+    // );
   }
 
   setTransformData(clientId: number, transformData: TransformData) {

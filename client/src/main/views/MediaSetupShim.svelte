@@ -1,6 +1,6 @@
 <script lang="ts">
   import MediaSetup from "~/ui/MediaSetup";
-  import type { Dispatch } from "./RelmStateAndMessage";
+  import type { Dispatch } from "../ProgramTypes";
   import type { DeviceIds } from "video-mirror";
 
   export let dispatch: Dispatch;
@@ -10,7 +10,7 @@
   export let preferredDeviceIds: DeviceIds;
 
   function done({ detail }) {
-    dispatch({ id: "configuredAudioVideo", state: detail });
+    dispatch({ id: "didSetUpAudioVideo", state: detail });
   }
 </script>
 

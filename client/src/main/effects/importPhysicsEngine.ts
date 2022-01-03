@@ -1,4 +1,4 @@
-import { Dispatch } from "../RelmStateAndMessage";
+import { Dispatch } from "../ProgramTypes";
 
 let rapier;
 

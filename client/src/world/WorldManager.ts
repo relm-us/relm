@@ -1,4 +1,4 @@
-import { Color, Box3 } from "three";
+import { Color, Vector3, Box3 } from "three";
 import { derived, get, writable, Writable } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
@@ -22,34 +22,38 @@ import { ControllerState } from "~/ecs/plugins/player-control";
 import { WAVING } from "~/ecs/plugins/player-control/constants";
 
 import { SelectionManager } from "./SelectionManager";
-import { IdentityManager } from "~/identity/IdentityManager";
 import { ChatManager } from "./ChatManager";
 import { CameraManager } from "./CameraManager";
-import { Avatar } from "~/identity/Avatar";
 
 import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
-import type { Dispatch, RelmState } from "~/main/RelmStateAndMessage";
+import type { Dispatch, State as RelmState } from "~/main/ProgramTypes";
 import { AVConnection } from "~/av";
-import { Identity } from "~/identity/Identity";
 import { playerId } from "~/identity/playerId";
-import { PlayerID, TransformData } from "~/identity/types";
+import { Avatar2 } from "~/identity/Avatar2";
+import { Participant } from "~/identity/types";
+import { ParticipantManager } from "~/identity/ParticipantManager";
+import { ParticipantYBroker } from "identity/ParticipantYBroker";
 
 export class WorldManager {
   dispatch: Dispatch;
-  state: RelmState;
+  // state: RelmState;
 
   world: DecoratedECSWorld;
   worldDoc: WorldDoc;
   subrelm: string;
   entryway: string;
+  relmDocId: string;
+  twilioToken: string;
+
+  me: Participant;
 
   light: Entity;
   connectOpts;
 
+  participants: ParticipantManager;
   selection: SelectionManager;
-  identities: IdentityManager;
   chat: ChatManager;
   camera: CameraManager;
 
@@ -60,14 +64,26 @@ export class WorldManager {
 
   unsubs: Function[] = [];
 
-  async init(dispatch: Dispatch, state: RelmState) {
+  async init(
+    dispatch: Dispatch,
+    broker: ParticipantYBroker,
+    ecsWorld: DecoratedECSWorld,
+    worldDoc: WorldDoc,
+    relmName: string,
+    entryway: string,
+    relmDocId: string,
+    twilioToken: string,
+    participants: Map<string, Participant>
+  ) {
     this.dispatch = dispatch;
-    this.state = state;
+    // this.state = state;
 
-    this.world = state.ecsWorld;
-    this.worldDoc = state.worldDoc;
-    this.subrelm = state.relmName;
-    this.entryway = state.entryway;
+    this.world = ecsWorld;
+    this.worldDoc = worldDoc;
+    this.subrelm = relmName;
+    this.entryway = entryway;
+    this.relmDocId = relmDocId;
+    this.twilioToken = twilioToken;
 
     this.unsubs.push(
       this.worldDoc.settings.subscribe(($settings) => {
@@ -82,15 +98,20 @@ export class WorldManager {
     );
 
     this.selection = new SelectionManager(this.worldDoc);
-    this.identities = new IdentityManager(this.worldDoc.ydoc, this.world);
-    this.identities.init();
-    this.chat = new ChatManager(this.identities);
-    this.chat.setMessages(this.worldDoc.messages);
+
+    this.participants = new ParticipantManager(dispatch, broker, participants);
+    // this.participants = new ParticipantManager(this.worldDoc, this.world);
+    // this.participants.init();
+
+    // this.chat = new ChatManager(this.identities);
+    // this.chat.setMessages(this.worldDoc.messages);
+
     this.camera = new CameraManager(
       this.world,
-      this.identities.me.avatar.entities.body
+      this.participants.local.avatar.entities.body
     );
-    this.avConnection = new AVConnection(this.identities.me.playerId);
+
+    this.avConnection = new AVConnection(playerId);
 
     const token = new URL(window.location.href).searchParams.get("t");
 
@@ -112,8 +133,8 @@ export class WorldManager {
     this.unsubs.push(
       worldUIMode.subscribe(($mode) => {
         const enabled = $mode === "build";
-        this.avatar.enableCanFly(enabled);
-        this.avatar.enableNonInteractive(enabled);
+        // this.avatar.enableCanFly(enabled);
+        // this.avatar.enableNonInteractive(enabled);
         this.enableNonInteractiveGround(enabled);
         this.enableCollidersVisible(enabled);
       })
@@ -161,46 +182,11 @@ export class WorldManager {
       })
     );
 
-    // Remove participant avatars when they disconnect
-    const removeDisconnectedIdentities = (changes) => {
-      for (let id of changes.removed) {
-        this.identities.removeByClientId(id);
-      }
-    };
-    this.worldDoc.provider.awareness.on("change", removeDisconnectedIdentities);
-    this.unsubs.push(() =>
-      this.worldDoc.provider.awareness.off(
-        "change",
-        removeDisconnectedIdentities
-      )
-    );
-
-    // Update participants' transform data (position, rotation, etc.)
-    const updateParticipant = () => {
-      const states = this.worldDoc.provider.awareness.getStates();
-
-      states.forEach(({ m: tdata }: { m: TransformData }, clientId) => {
-        // Ignore updates that don't include matrix transform data
-        if (!tdata) return;
-
-        const participantId: PlayerID = tdata[0];
-
-        // Ignore updates about ourselves
-        if (participantId === playerId) return;
-
-        this.identities.setTransformData(clientId, tdata);
-      });
-    };
-    this.worldDoc.provider.awareness.on("update", updateParticipant);
-    this.unsubs.push(() =>
-      this.worldDoc.provider.awareness.off("update", updateParticipant)
-    );
-
     const disconnect = await this.avConnection.connect({
-      roomId: this.state.relmDocId,
-      token: this.state.twilioToken,
+      roomId: this.relmDocId,
+      token: this.twilioToken,
       // displayName: connectOpts.username || this.identities.me.get("name"),
-      displayName: this.identities.me.get("name"),
+      displayName: this.participants.local.identityData.name,
       // TODO: take audioDesired, videoDesired as input here?
       produceAudio: true,
       produceVideo: true,
@@ -223,7 +209,7 @@ export class WorldManager {
       if (node.removeFromParent) node.removeFromParent();
     });
 
-    this.identities.deinit();
+    this.participants.deinit();
     this.camera.deinit();
   }
 
@@ -278,9 +264,6 @@ export class WorldManager {
     if (this.started) {
       playState.set("playing");
     } else {
-      // Signal to all participants we are "present" and our avatar can be shown
-      this.identities.me.set({ status: "present" });
-
       // Pre-compile assets to prevent some jank while exploring the world
       this.world.presentation.compile();
 
@@ -314,16 +297,11 @@ export class WorldManager {
     fpsTime.addData(1000 / delta);
 
     this.worldStep(delta);
-    this.identities.sync();
-    this.sendTransformData();
+    if (this.participants.local.identityData.status === "present")
+      this.participants.sendMyTransformData();
     this.camera.update(time);
 
     this.previousLoopTime = time;
-  }
-
-  sendTransformData() {
-    const data = this.identities.getTransformData();
-    if (data) this.worldDoc.provider?.awareness.setLocalStateField("m", data);
   }
 
   toJSON() {
@@ -348,6 +326,11 @@ export class WorldManager {
     return true;
   }
 
+  moveTo(position: Vector3) {
+    this.participants.local.avatar.position = position;
+    this.camera.moveTo(position);
+  }
+
   /**
    * Convenience Accessors
    */
@@ -356,8 +339,8 @@ export class WorldManager {
     return playerId;
   }
 
-  get avatar(): Avatar {
-    return this.identities.me.avatar;
+  get avatar(): Avatar2 {
+    return this.participants.local.avatar;
   }
 
   get scene() {

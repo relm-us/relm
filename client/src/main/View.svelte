@@ -12,7 +12,7 @@
   onMount(() => {
     const app = createApp($$props);
     programView = app.view;
-    const [_dispatch, end] = runtime({
+    const { end } = runtime({
       ...app,
       view: (state, dispatch) => {
         const result = programView(state, dispatch);

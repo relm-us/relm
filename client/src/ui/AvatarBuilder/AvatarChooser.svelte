@@ -7,7 +7,7 @@
 
   const pick = (gender: BinaryGender) => () => {
     const appearance = getDefaultAppearance(gender);
-    dispatch({ id: "choseAvatar", appearance });
+    dispatch({ id: "didSetUpAvatar", appearance });
   };
 
 </script>

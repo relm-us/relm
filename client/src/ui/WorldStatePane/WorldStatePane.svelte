@@ -3,7 +3,6 @@
   import Pane from "./Pane.svelte";
 
   import { localAudioTrack, localVideoTrack } from "video-mirror";
-  import { Identity } from "~/identity/Identity";
   import { audioDesired } from "~/stores/audioDesired";
   import { videoDesired } from "~/stores/videoDesired";
 
@@ -15,7 +14,6 @@
     viewportSize,
     viewport,
     yConnectState,
-    yLoadingState,
   } from "~/stores";
   import {
     loaded,
@@ -25,6 +23,7 @@
     assetsLoaded,
     assetsMaximum,
   } from "~/stores/loading";
+  import { Participant } from "~/identity/types";
 
   let minimized = true;
 
@@ -51,15 +50,15 @@
     const interval = setInterval(() => {
       if (minimized) return;
 
-      if (worldManager.identities.active.length !== idActive)
-        idActive = worldManager.identities.active.length;
+      if (worldManager.participants.active.length !== idActive)
+        idActive = worldManager.participants.active.length;
 
-      if (worldManager.identities.total !== idTotal)
-        idTotal = worldManager.identities.total;
+      if (worldManager.participants.participants.size !== idTotal)
+        idTotal = worldManager.participants.participants.size;
 
-      identities = [...worldManager.identities.identities.values()];
-      identities.sort((a: Identity, b: Identity) => {
-        return a.seenAgo - b.seenAgo;
+      identities = [...worldManager.participants.participants.values()];
+      identities.sort((a: Participant, b: Participant) => {
+        return a.lastSeen - b.lastSeen;
       });
     }, 1000);
     return () => clearInterval(interval);

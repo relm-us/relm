@@ -5,7 +5,6 @@ import { Presentation, Transform } from "~/ecs/plugins/core";
 import { Impact, Impactable } from "~/ecs/plugins/physics";
 import { Controller } from "~/ecs/plugins/player-control";
 
-import { moveAvatarTo } from "~/identity/Avatar";
 import { worldManager } from "~/world";
 
 import { Portal } from "../components";
@@ -49,7 +48,7 @@ export class PortalSystem extends System {
               .normalize();
             newCoords.add(bodyFacing);
 
-            moveAvatarTo(newCoords, otherEntity);
+            worldManager.moveTo(newCoords);
           } else if (portal.kind === "REMOTE") {
             worldManager.dispatch({
               id: "enterPortal",

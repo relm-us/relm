@@ -51,7 +51,6 @@ export class Avatar {
     this._editableName = this.identity.isLocal;
     this.entities = {
       head: null,
-      headAngle: 0,
       body: null,
       emoji: null,
     };
@@ -119,9 +118,7 @@ export class Avatar {
     this.makeAvatar(false, (avatar) => {
       avatar.add(Controller).add(TwistBone, {
         boneName: "mixamorigHead",
-        function: headFollowsPointer(
-          (angle) => (this.entities.headAngle = angle)
-        ),
+        function: headFollowsPointer((angle) => {}),
       });
     });
 
@@ -143,7 +140,7 @@ export class Avatar {
       avatar
         .add(TwistBone, {
           boneName: "mixamorigHead",
-          function: headFollowsAngle(() => this.entities.headAngle),
+          function: headFollowsAngle(() => 0),
         })
         .add(Distance, {
           target: playerId,

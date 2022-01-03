@@ -1,6 +1,6 @@
 import { config } from "~/config";
 
-import { Dispatch } from "../RelmStateAndMessage";
+import { Dispatch } from "../ProgramTypes";
 import { RelmRestAPI } from "../RelmRestAPI";
 
 export const getRelmPermitsAndMetadata = (relmName) => async (

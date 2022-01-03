@@ -2,8 +2,8 @@ import { PerspectiveCamera } from "three";
 
 import { World } from "~/ecs/base";
 
-import { createRenderer } from "./createRenderer";
-import { createScene } from "./createScene";
+import { createRenderer } from "../../world/createRenderer";
+import { createScene } from "../../world/createScene";
 
 import CorePlugin from "~/ecs/plugins/core";
 import ShapePlugin from "~/ecs/plugins/shape";
@@ -40,9 +40,11 @@ import TranslucentPlugin from "~/ecs/plugins/translucent";
 import TwistBonePlugin from "~/ecs/plugins/twist-bone";
 
 import { PerformanceStatsSystem } from "~/ecs/systems/PerformanceStatsSystem";
+import { Dispatch } from "../ProgramTypes";
+import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
-export function createECSWorld(rapier) {
-  const world = new World({
+export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
+  const ecsWorld = new World({
     getTime: performance.now.bind(performance),
     plugins: [
       CorePlugin({
@@ -87,6 +89,12 @@ export function createECSWorld(rapier) {
       TwistBonePlugin,
     ],
     systems: [PerformanceStatsSystem],
-  });
-  return world;
-}
+  }) as DecoratedECSWorld;
+
+  const interval = setInterval(() => {
+    ecsWorld.update(40);
+  }, 40);
+  const unsub = () => clearInterval(interval);
+
+  dispatch({ id: "createdECSWorld", ecsWorld, ecsWorldLoaderUnsub: unsub });
+};

@@ -154,8 +154,8 @@
       pointerPoint = pointerPointInSelection(worldManager.selection, pointerDownFound);
       if (pointerPoint) dragPlane.setOrigin(pointerPoint);
     } else if ($worldUIMode === "play") {
-      if (pointerDownFound.includes(worldManager.avatar.entity.id as string)) {
-        addTouchController(worldManager.avatar.entity);
+      if (pointerDownFound.includes(worldManager.avatar.entities.body.id as string)) {
+        addTouchController(worldManager.avatar.entities.body);
       } else {
         // At this point, at least a 'click' has started. TBD if it's a drag.
         setNextPointerState("click");
@@ -204,7 +204,7 @@
           }
         });
       } else {
-        removeTouchController(worldManager.avatar.entity);
+        removeTouchController(worldManager.avatar.entities.body);
       }
     }
 

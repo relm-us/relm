@@ -23,7 +23,7 @@ export const createPrefab = {
   },
   // TODO: remove first arg
   command: ({ name, src }, props) => {
-    const position = worldManager.identities.me.avatar.position;
+    const position = worldManager.participants.local.avatar.position;
     if (position) {
       const x = position.x;
       const z = position.z;

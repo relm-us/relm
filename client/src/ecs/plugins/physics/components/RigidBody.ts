@@ -1,7 +1,15 @@
+import { Vector3 } from "three";
 import { Component, StringType, NumberType } from "~/ecs/base";
 import { Vector3Type } from "~/ecs/plugins/core";
 
 export class RigidBody extends Component {
+  kind: string;
+  linearVelocity: Vector3;
+  angularVelocity: Vector3;
+  mass: number;
+  angularDamping: number;
+  linearDamping: number;
+
   // The `sync` property is transient; it allows us to tell the physics
   // system that the rigid body's translation (position) should be copied
   // from the WorldTransform. Useful when "warping" the Avatar to a new

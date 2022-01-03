@@ -3,7 +3,7 @@ import { getSecureParams } from "~/identity/secureParams";
 import { DEFAULT_RELM_ID, DEFAULT_ENTRYWAY } from "~/config/constants";
 import { canonicalIdentifier } from "~/utils/canonicalIdentifier";
 
-import { Dispatch } from "../RelmStateAndMessage";
+import { Dispatch } from "../ProgramTypes";
 
 export function getRelmAndEntryway(): { relmName: string; entryway: string } {
   const params = new URLSearchParams(window.location.search.substring(1));
@@ -26,7 +26,7 @@ export function getRelmAndEntryway(): { relmName: string; entryway: string } {
 export async function getParticipantAndRelm(dispatch: Dispatch) {
   const { relmName, entryway } = getRelmAndEntryway();
   dispatch({
-    id: "gotParticipantAndRelm",
+    id: "gotSecureParamsAndRelm",
     participantId: playerId,
     secureParams: await getSecureParams(window.location.href),
     relmName,

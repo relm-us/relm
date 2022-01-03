@@ -23,7 +23,7 @@ export const maximum: Readable<number> = derived(
   [entitiesMaximum, assetsMaximum],
   ([$entities, $assets], set) => {
     const newValue = $entities + $assets;
-    set(newValue > 0 ? newValue : 1);
+    set(newValue > 0 ? newValue : 0);
   },
   0
 );

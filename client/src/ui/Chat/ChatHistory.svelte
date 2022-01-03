@@ -10,10 +10,6 @@
   let div;
   let autoscroll;
 
-  function getIdentity(playerId) {
-    return worldManager.identities.get(playerId);
-  }
-
   beforeUpdate(() => {
     autoscroll =
       div && div.offsetHeight + div.scrollTop > div.scrollHeight - 20;
@@ -24,7 +20,6 @@
       div.scrollTo(0, div.scrollHeight);
     }
   });
-
 </script>
 
 <container bind:this={div}>
@@ -36,7 +31,10 @@
         {#if message.u === myID}
           <message class:mine={true}>{@html cleanHtml(message.c)}</message>
         {:else}
-          <Message identity={getIdentity(message.u)} content={message.c} />
+          <Message
+            identity={worldManager.participants.get(message.u)}
+            content={message.c}
+          />
         {/if}
       {/each}
     </scroll-container>
@@ -88,5 +86,4 @@
     padding: 6px 10px;
     margin: 3px;
   }
-
 </style>

@@ -13,13 +13,13 @@
   // TODO: add `size` var instead of hardcoding volume to be size
   let volume = 1;
 
-  let localPlayerId = worldManager.identities.me.playerId;
+  let localPlayerId = worldManager.participants.local.participantId;
 
   let isLocal;
   $: isLocal = playerId === localPlayerId;
 
-  let identity;
-  $: identity = worldManager.identities.identities.get(playerId);
+  let participant;
+  $: participant = worldManager.participants.participants.get(playerId);
 
   let videoStore;
   $: videoStore = worldManager.avConnection.getTrackStore(playerId, "video");
@@ -28,7 +28,10 @@
   $: audioStore = worldManager.avConnection.getTrackStore(playerId, "audio");
 
   let localVideoStore;
-  $: localVideoStore = worldManager.avConnection.getTrackStore(localPlayerId, "video");
+  $: localVideoStore = worldManager.avConnection.getTrackStore(
+    localPlayerId,
+    "video"
+  );
 
   function exitFullscreen() {
     fullscreen = false;
@@ -40,7 +43,7 @@
     interval = setInterval(() => {
       const falloffStart = 3;
       const falloffEnd = 6;
-      const distance = identity.avatar.distance;
+      const distance = participant.avatar.distance;
       if (distance >= 0 && distance < falloffStart) {
         volume = 1;
       } else if (distance < falloffEnd) {

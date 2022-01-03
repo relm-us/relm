@@ -1,11 +1,18 @@
-import { WorldDoc } from "~/y-integration/WorldDoc";
-import type { SecureParams } from "~/identity/secureParams";
-import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
-import type { DeviceIds } from "video-mirror";
-import type { Appearance } from "~/identity/types";
 import { Vector3 } from "three";
+import type { DeviceIds } from "video-mirror";
 
-export type RelmState = {
+import type { WorldDoc } from "~/y-integration/WorldDoc";
+import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
+
+import type { Appearance, Participant } from "~/identity/types";
+import type { SecureParams } from "~/identity/secureParams";
+
+import type {
+  State as ParticipantState,
+  Message as ParticipantMessage,
+} from "~/identity/ProgramTypes";
+
+export type State = {
   // initialization
   participantId?: string;
   secureParams?: SecureParams;
@@ -36,7 +43,9 @@ export type RelmState = {
   // create worldDoc & establish yjs connection
   physicsEngine?: any;
   ecsWorld?: DecoratedECSWorld;
+  ecsWorldLoaderUnsub?: Function;
   worldDoc?: WorldDoc;
+  initializedWorldManager?: boolean;
 
   // other
   doneLoading?: boolean;
@@ -50,14 +59,17 @@ export type RelmState = {
     | "loading-screen"
     | "loading-failed"
     | "game-world";
+
+  // composed state
+  participantState: ParticipantState;
 };
 
-export type RelmMessage =
+export type Message =
   | { id: "pageLoaded" }
   | { id: "enterPortal"; relmName: string; entryway: string }
-  | { id: "worldDidReset" }
+  | { id: "didResetWorld" }
   | {
-      id: "gotParticipantAndRelm";
+      id: "gotSecureParamsAndRelm";
       participantId: string;
       secureParams: SecureParams;
       relmName: string;
@@ -72,18 +84,28 @@ export type RelmMessage =
       twilioToken: string;
     }
   | { id: "importedPhysicsEngine"; physicsEngine: any }
-  | { id: "createdWorldDoc"; ecsWorld: DecoratedECSWorld; worldDoc: WorldDoc }
-  | { id: "gotEntrywayPosition"; entrywayPosition: Vector3 }
+  | { id: "createdWorldDoc"; worldDoc: WorldDoc }
+  | {
+      id: "createdECSWorld";
+      ecsWorld: DecoratedECSWorld;
+      ecsWorldLoaderUnsub: Function;
+    }
   | { id: "gotEntrywayUnsub"; entrywayUnsub: Function }
-  | { id: "configureAudioVideo" }
-  | { id: "configuredAudioVideo"; state: any }
-  | { id: "chooseAvatar" }
-  | { id: "choseAvatar"; appearance?: Appearance }
+  | { id: "gotPositionFromEntryway"; entrywayPosition: Vector3 }
+  | { id: "assumeOriginAsEntryway" }
+  | { id: "gotEntrywayPosition"}
+  | { id: "didMakeLocalParticipant"; localParticipant: Participant }
+  | { id: "setUpAudioVideo" }
+  | { id: "didSetUpAudioVideo"; state: any }
+  | { id: "setUpAvatar" }
+  | { id: "didSetUpAvatar"; appearance?: Appearance }
+  | { id: "initWorldManager" }
+  | { id: "didInitWorldManager" }
   | { id: "loading" }
   | { id: "loaded" }
   | { id: "loadedAndReady" }
-  | { id: "assumeOriginAsEntryway" }
   | { id: "startPlaying" }
+  | { id: "participantMessage"; message: ParticipantMessage }
   | { id: "error"; message: string; stack?: any };
 
-export type Dispatch = (message: RelmMessage) => void;
+export type Dispatch = (message: Message) => void;

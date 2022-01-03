@@ -32,7 +32,7 @@ export function runtime(program) {
 
   change(program.init);
 
-  return [dispatch, end];
+  return { end, dispatch, state };
 }
 
 // from https://www.npmjs.com/package/raj-commands
@@ -44,7 +44,7 @@ export const Cmd = {
   },
 
   // A command that dispaches messages on demand
-  ofMsg(msg) {
+  ofMsg<T>(msg: T) {
     return function (dispatch) {
       dispatch(msg);
     };
@@ -97,25 +97,25 @@ export const Cmd = {
     };
   },
 
-  batch(commands) {
+  batch<T extends Function>(commands: T[]) {
     return function (dispatch) {
       for (var i = 0; i < commands.length; i++) {
         const effect = commands[i];
-        effect(dispatch);
+        if (effect) effect(dispatch);
       }
     };
   },
 
-  // adapted from mapEffect from raj-compose
-  // https://github.com/andrejewski/raj-compose#mapeffect
-  map(cmd, f) {
-    return function (dispatch) {
-      const outerDispatch = function (msg) {
-        const transformed = f(msg);
-        dispatch(transformed);
-      };
+  mapEffect(effect, callback) {
+    if (!effect) {
+      return effect;
+    }
+    return function _mapEffect(dispatch) {
+      function intercept(message) {
+        dispatch(callback(message));
+      }
 
-      cmd(outerDispatch);
+      return effect(intercept);
     };
   },
 };

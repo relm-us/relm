@@ -1,24 +1,24 @@
 import { get } from "svelte/store";
 import { askMediaSetup } from "~/stores/askMediaSetup";
 import { askAvatarSetup } from "~/stores/askAvatarSetup";
-import { Dispatch, RelmState } from "../RelmStateAndMessage";
+import { Dispatch, State } from "../ProgramTypes";
 
-export const nextSetupStep = (state: RelmState) => async (
+export const nextSetupStep = (state: State) => async (
   dispatch: Dispatch
 ) => {
   if (!state.audioVideoSetupDone) {
     const skipAudioVideoSetup = get(askMediaSetup) === false;
     if (!skipAudioVideoSetup) {
-      dispatch({ id: "configureAudioVideo" });
+      dispatch({ id: "setUpAudioVideo" });
     } else {
-      dispatch({ id: "configuredAudioVideo", state: null });
+      dispatch({ id: "didSetUpAudioVideo", state: null });
     }
   } else if (!state.avatarSetupDone) {
     const skipAvatarSetup = get(askAvatarSetup) === false;
     if (!skipAvatarSetup) {
-      dispatch({ id: "chooseAvatar" });
+      dispatch({ id: "setUpAvatar" });
     } else {
-      dispatch({ id: "choseAvatar", appearance: null });
+      dispatch({ id: "didSetUpAvatar", appearance: null });
     }
   } else {
     dispatch({ id: "loading" });

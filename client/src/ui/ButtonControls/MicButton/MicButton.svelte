@@ -2,12 +2,11 @@
   import CircleButton from "~/ui/lib/CircleButton";
   import { AudioIcon } from "video-mirror";
   import { worldManager } from "~/world";
-  import { Identity } from "~/identity/Identity";
 
   export let enabled = false;
 
   function toggle() {
-    enabled = worldManager.identities.me.toggleShowAudio();
+    enabled = worldManager.participants.toggleMic();
   }
 </script>
 

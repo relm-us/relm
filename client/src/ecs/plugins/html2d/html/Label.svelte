@@ -39,7 +39,7 @@
     if (worldManager.avatar.entity === entity) {
       // TODO: make a way for Avatar to subscribe to ECS component
       // changes instead of this hack:
-      worldManager.identities.me.set({ name: content });
+      worldManager.participants.setName(content);
     } else {
       // Broadcast changes
       worldManager.worldDoc.syncFrom(entity);

@@ -1,13 +1,13 @@
 <script lang="ts">
   import CircleButton from "~/ui/lib/CircleButton";
   import { VideoIcon } from "video-mirror";
-  import type { Dispatch } from "~/main/RelmStateAndMessage";
+  import type { Dispatch } from "~/main/ProgramTypes";
 
   export let enabled = false;
   export let dispatch: Dispatch;
 
   const onClick = () => {
-    dispatch({ id: "configureAudioVideo" });
+    dispatch({ id: "setUpAudioVideo" });
   };
 </script>
 

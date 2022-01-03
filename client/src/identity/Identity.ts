@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { Avatar } from "./Avatar";
+import { Avatar } from "./Avatar1";
 
 import type { IdentityManager } from "./IdentityManager";
 import { worldManager } from "~/world";
@@ -27,6 +27,7 @@ export class Identity {
 
   // Avatar is responsible for all visuals/rendering of this identity
   avatar: Avatar;
+  avatarStatusUpdated: boolean;
 
   constructor(
     manager: IdentityManager,
@@ -77,10 +78,10 @@ export class Identity {
   setTransformData(clientId, transformData: TransformData) {
     this.clientId = clientId;
     this.lastSeen = performance.now();
-    return avatarTransform.setTransformData(
-      this.avatar.entities,
-      transformData
-    );
+    // return avatarTransform.setTransformData(
+    //   this.avatar.entities,
+    //   transformData
+    // );
   }
 
   set(fields: object, propagate: boolean = true) {
@@ -111,6 +112,8 @@ export class Identity {
           }
         }
       }
+    } else if ("status" in fields) {
+      this.avatarStatusUpdated = true;
     }
 
     this.sharedFieldsUpdated = true;

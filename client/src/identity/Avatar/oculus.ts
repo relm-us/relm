@@ -9,13 +9,13 @@ const OCULUS_HEIGHT = 2.4;
 export function setOculus(
   this: void,
   entities: AvatarEntities,
-  playerId: PlayerID,
+  participantId: string,
   showAudio: boolean,
   showVideo: boolean
 ) {
   if (!entities.body.has(Oculus)) {
     entities.body.add(Oculus, {
-      playerId,
+      playerId: participantId,
       hanchor: 0,
       vanchor: 2,
       showAudio,

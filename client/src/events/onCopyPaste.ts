@@ -148,7 +148,7 @@ export function onPaste() {
   groupTree.mergeTree(buffer.groupTree);
 
   const targetPosition = new Vector3().copy(
-    worldManager.identities.me.avatar.position
+    worldManager.participants.local.avatar.position
   );
   targetPosition.y = buffer.center.y;
 

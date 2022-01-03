@@ -27,8 +27,7 @@
   <div class="builder" bind:this={builderEl}>
     <AvatarBuilder
       on:click={() => (showBuilder = false)}
-      {...worldManager.identities.me.get("appearance") ||
-        getDefaultAppearance("male")}
+      {...worldManager.participants.getAppearance()}
     />
   </div>
 {/if}

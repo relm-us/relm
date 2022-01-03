@@ -1,5 +1,5 @@
-import type { Avatar } from "./Avatar";
 import type { Entity } from "~/ecs/base";
+import { Avatar2 } from "./Avatar2";
 
 export type PlayerStatus = "initial" | "present" | "away";
 export type YClientID = number;
@@ -89,6 +89,19 @@ export type IdentityData = {
   emoji?: string;
 };
 
+export type UpdateData = {
+  name?: string;
+  color?: string;
+  status?: PlayerStatus;
+  speaking?: boolean;
+  emoting?: boolean;
+  showAudio?: boolean;
+  showVideo?: boolean;
+  appearance?: Appearance;
+  message?: string;
+  emoji?: string;
+};
+
 export type TransformData = [
   playerId: PlayerID,
   x: number,
@@ -99,9 +112,23 @@ export type TransformData = [
   clipIndex: number
 ];
 
+export type RecvTransformCallback = (transformArray: TransformData[]) => void;
+
 export type AvatarEntities = {
   head: Entity;
-  headAngle: number;
   body: Entity;
   emoji: Entity;
+};
+
+export type Participant = {
+  participantId: string;
+  identityData: IdentityData;
+  isLocal: boolean;
+  modified: boolean;
+
+  clientId?: number;
+  lastSeen?: number;
+
+  // Avatar is responsible for all visuals/rendering of this identity
+  avatar?: Avatar2;
 };

@@ -130,7 +130,7 @@
 
 <overlay-center>
   <play-buttons class="interactive">
-    <ChatButton unread={worldManager.chat.unreadCount} />
+    <!-- <ChatButton unread={worldManager.chat.unreadCount} /> -->
     <ShareScreenButton />
     <AudioModeButton />
     <MicButton enabled={$audioDesired} />
@@ -139,7 +139,7 @@
   </play-buttons>
 </overlay-center>
 
-<Chat />
+<!-- <Chat /> -->
 
 <!-- The virtual world! -->
 <style>

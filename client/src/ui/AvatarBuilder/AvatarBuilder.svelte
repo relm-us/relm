@@ -71,7 +71,7 @@
         shoeColor.indexOf("#") === 0 ? shoeColor.slice(0, 7) : shoeColor,
     };
 
-    worldManager.identities.me.set({ appearance });
+    worldManager.participants.setAppearance(appearance);
   }
 
   function onSlideGender({ detail }) {
