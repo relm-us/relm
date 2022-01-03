@@ -3,7 +3,7 @@
   import FaUserAlt from "svelte-icons/fa/FaUserAlt.svelte";
   import { worldManager } from "~/world";
   import { AvatarBuilder } from "~/ui/AvatarBuilder";
-  import { getDefaultAppearance } from "~/identity/appearance";
+  import { getDefaultAppearance } from "~/identity/Avatar/appearance";
 
   let showBuilder = false;
   let builderEl;

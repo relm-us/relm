@@ -1,7 +1,7 @@
 <script lang="ts">
   import { worldManager } from "~/world";
 
-  import { skinColors, hairColors } from "~/identity/appearance";
+  import { skinColors, hairColors } from "~/identity/Avatar/appearance";
   import type {
     HairType,
     TopType,
@@ -105,7 +105,6 @@
   const setHairColor = (color: string) => () => {
     hairColor = color;
   };
-
 </script>
 
 <container>
@@ -361,5 +360,4 @@
     margin-left: 8px;
     margin-right: 8px;
   }
-
 </style>

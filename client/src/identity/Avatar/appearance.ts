@@ -1,3 +1,46 @@
+import { Morph } from "~/ecs/plugins/morph";
+import { FaceMapColors } from "~/ecs/plugins/coloration";
+
+import { Appearance, BinaryGender, AvatarEntities } from "../types";
+
+// prettier-ignore
+export const skinColors = [
+    "#e3d0cf", "#d5b9ad", "#d08778", "#a56049", "#342723",
+  ];
+
+// prettier-ignore
+export const hairColors = [
+    "#debe99", "#aa8866", "#241c11", "#0a0a0a", "#9a3300"
+  ];
+
+export function setAppearance(
+  this: void,
+  entities: AvatarEntities,
+  appearance: Appearance
+) {
+  const { morphs, colors } = appearanceToCharacterTraits(appearance);
+
+  if (morphs) {
+    if (!entities.body.has(Morph)) {
+      entities.body.add(Morph, { influences: morphs });
+    } else {
+      const morph = entities.body.get(Morph);
+      morph.influences = morphs;
+      morph.modified();
+    }
+  }
+
+  if (colors) {
+    if (!entities.body.has(FaceMapColors)) {
+      entities.body.add(FaceMapColors, { colors });
+    } else {
+      const facemap = entities.body.get(FaceMapColors);
+      facemap.colors = colors;
+      facemap.modified();
+    }
+  }
+}
+
 /**
  * The character settings that make up an Avatar are as follows:
  *
@@ -25,18 +68,6 @@
  * - top-04 SHIRT/SKIN (forearm -> skin if half-sleeve)
  *
  */
-
-import { Appearance, BinaryGender } from "./types";
-
-// prettier-ignore
-export const skinColors = [
-    "#e3d0cf", "#d5b9ad", "#d08778", "#a56049", "#342723",
-  ];
-
-// prettier-ignore
-export const hairColors = [
-    "#debe99", "#aa8866", "#241c11", "#0a0a0a", "#9a3300"
-  ];
 
 export function getDefaultAppearance(gender: BinaryGender): Appearance {
   return {

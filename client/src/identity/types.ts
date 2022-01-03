@@ -1,3 +1,4 @@
+import type { Entity } from "~/ecs/base";
 export type PlayerStatus = "initial" | "present" | "away";
 export type YClientID = number;
 export type PlayerID = string;
@@ -95,3 +96,9 @@ export type TransformData = [
   headTheta: number,
   clipIndex: number
 ];
+
+export type AvatarEntities = {
+  head: Entity;
+  body: Entity;
+  emoji: Entity;
+};
