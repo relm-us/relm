@@ -2,7 +2,7 @@ import { get } from "svelte/store";
 import { Vector3 } from "three";
 
 import Program from "./Program.svelte";
-import * as Cmd from "./Cmd";
+import { Cmd } from "~/utils/runtime";
 import { RelmState, RelmMessage } from "./RelmStateAndMessage";
 
 import BlankWithLogo from "./BlankWithLogo.svelte";

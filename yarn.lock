@@ -9643,11 +9643,6 @@ queue-microtask@^1.2.2:
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
-raj-commands@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/raj-commands/-/raj-commands-1.3.0.tgz#23728c2e9fc0dd5c065e66c9caa4b472ce2ce5fb"
-  integrity sha512-EiIUg5yngEVHHQ8ctmgNuhqFatMo714ia9tY7J64d4gmLYO/vrGHHj/7wgRBn52/Ax7x9S2WNXbqeV5hSfLyIg==
-
 raj@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/raj/-/raj-1.0.0.tgz#6f96a9eb287c4327809c548816529596463e1322"

@@ -1,7 +1,7 @@
 <!-- This component converts the functional UI state machine (raj) to Svelte -->
 <script lang="ts">
   import { onMount } from "svelte";
-  import { runtime } from "raj";
+  import { runtime } from "~/utils/runtime";
 
   export let createApp;
 
@@ -12,7 +12,7 @@
   onMount(() => {
     const app = createApp($$props);
     programView = app.view;
-    return runtime({
+    const [_dispatch, end] = runtime({
       ...app,
       view: (state, dispatch) => {
         const result = programView(state, dispatch);
@@ -24,6 +24,7 @@
         }
       },
     });
+    return end;
   });
 </script>
 

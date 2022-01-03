@@ -1,0 +1,47 @@
+A basic functional UI template with types and makeProgram() call are as follows.
+
+To start such a program, you would call something like this:
+
+[js]
+import { runtime } from 'raj'
+runtime(makeProgram({...initialParams}))
+[js]
+
+Functional UI Template:
+
+[js]
+import * as Cmd from "~/utils/Cmd";
+
+export type State = {};
+
+export type Message = { id: "start" };
+
+export type Dispatch = (message: Message) => void;
+export type Effect = (dispatch: Dispatch) => void;
+export type Program = {
+  init: [State, Effect?];
+  update: (this: void, msg: Message, state: State) => [State, Effect?];
+  view: (this: void, state: State, dispatch: Dispatch) => void;
+};
+type InitialParams = {};
+
+export function makeProgram(this: void, initial: InitialParams): Program {
+  return {
+    init: [{}, Cmd.batch([])],
+    update(msg: Message, state: State) {
+      // switch (msg.id) {
+      //   case "start: {
+      //     return [state]
+      //   }
+      // }
+      return [state];
+    },
+
+    view(state: State, dispatch: Dispatch) {
+      // if (state.value) {
+      //   return /* thing that can be used to render the view */
+      // }
+    },
+  };
+}
+[js]

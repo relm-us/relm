@@ -37,8 +37,6 @@
     "mediasoup-client": "github:versatica/mediasoup-client#v3",
     "nanoid": "^3.1.20",
     "protoo-client": "^4.0.6",
-    "raj": "^1.0.0",
-    "raj-commands": "^1.3.0",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "regenerator-runtime": "^0.13.7",
