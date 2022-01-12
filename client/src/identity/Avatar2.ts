@@ -52,6 +52,17 @@ export class Avatar2 {
     );
   }
 
+  // get editableName() {
+  //   return this._editableName;
+  // }
+
+  // set editableName(value) {
+  //   this._editableName = value;
+  //   const name = this.identity.get("name");
+  //   const color = this.identity.get("color");
+  //   changeLabel(this.entities, name, color, this._editableName);
+  // }
+
   enableCanFly(enabled = true) {
     const controller = this.entities.body.get(Controller);
     if (!controller) return;

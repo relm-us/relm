@@ -2,7 +2,7 @@ import * as Y from "yjs";
 import { get, writable, derived, Readable, Writable } from "svelte/store";
 import { readableArray } from "svelt-yjs";
 import { chatOpen } from "~/stores/chatOpen";
-import { IdentityManager } from "~/identity/IdentityManager";
+// import { IdentityManager } from "identity/IdentityManager.txt";
 
 export type ChatMessage = {
   // Message ("C"ontent)
@@ -18,7 +18,7 @@ export function getEmojiFromMessage(msg) {
 }
 
 export class ChatManager {
-  identities: IdentityManager;
+  // identities: IdentityManager;
 
   /**
    * A store containing messages originating in Yjs doc
@@ -30,9 +30,9 @@ export class ChatManager {
   readCount: Writable<number> = writable(0);
   unreadCount: Readable<number>;
 
-  constructor(identities: IdentityManager) {
-    this.identities = identities;
-  }
+  // constructor(identities: IdentityManager) {
+  //   this.identities = identities;
+  // }
 
   setMessages(messages: Y.Array<ChatMessage>) {
     this.messages = readableArray(messages);
@@ -71,8 +71,7 @@ export class ChatManager {
   }
 
   setActingState(key: string, value: boolean) {
-    this.identities.me.set({ [key]: value });
-    // get(myIdentity).set({ [key]: value });
+    // this.identities.me.set({ [key]: value });
   }
 
   addMessage(msg: ChatMessage) {

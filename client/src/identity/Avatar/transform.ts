@@ -52,9 +52,18 @@ export function participantToTransformData(
 export function setTransformDataOnParticipant(
   this: void,
   participant: Participant,
-  [_playerId, x, y, z, theta, headTheta, clipIndex]: TransformData
+  [playerId, x, y, z, theta, headTheta, clipIndex]: TransformData
 ) {
-  if (!participant?.avatar) return;
+  if (!participant) {
+    console.warn("expecting participant, got null", playerId);
+    return;
+  }
+
+  // Record that we've seen this participant now, so we can know which
+  // participants are currently active
+  participant.lastSeen = performance.now();
+
+  if (!participant.avatar) return;
 
   const entities = participant.avatar.entities;
 

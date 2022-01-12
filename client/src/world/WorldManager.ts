@@ -209,7 +209,7 @@ export class WorldManager {
       if (node.removeFromParent) node.removeFromParent();
     });
 
-    this.participants.deinit();
+    // this.participants.deinit();
     this.camera.deinit();
   }
 

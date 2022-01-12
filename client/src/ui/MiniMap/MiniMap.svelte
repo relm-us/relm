@@ -22,10 +22,11 @@
 
   onMount(() => {
     const interval = setInterval(() => {
-      otherPositions = worldManager.participants.active.map((identity) => {
-        return identity.avatar.position;
+      otherPositions = worldManager.participants.actives.map((pt) => {
+        return pt.avatar.position;
       });
-      myPosition = worldManager.participants.local.avatar.position;
+      if (worldManager.participants.local.avatar)
+        myPosition = worldManager.participants.local.avatar.position;
     }, 75);
     return () => clearInterval(interval);
   });

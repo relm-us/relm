@@ -82,6 +82,9 @@ export type IdentityData = {
   // Avatar appearance, based on Avatar Builder settings
   appearance: Appearance;
 
+  // Last known yjs clientId for this participant
+  clientId?: number;
+
   // Most recent chat message (used for chat bubble)
   message?: string;
 
@@ -98,6 +101,7 @@ export type UpdateData = {
   showAudio?: boolean;
   showVideo?: boolean;
   appearance?: Appearance;
+  clientId?: number;
   message?: string;
   emoji?: string;
 };
@@ -126,7 +130,6 @@ export type Participant = {
   isLocal: boolean;
   modified: boolean;
 
-  clientId?: number;
   lastSeen?: number;
 
   // Avatar is responsible for all visuals/rendering of this identity

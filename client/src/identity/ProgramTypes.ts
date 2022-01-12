@@ -7,7 +7,7 @@ import type {
   UpdateData,
   Appearance,
 } from "./types";
-import type { Identity } from "./Identity";
+// import type { Identity } from "./Identity";
 import type { WorldDoc } from "~/y-integration/WorldDoc";
 import type { ParticipantYBroker } from "./ParticipantYBroker";
 
@@ -23,7 +23,7 @@ export type State = {
   observeFieldsFn?: any;
   observeChatFn?: any;
 
-  activeCache: Identity[];
+  // activeCache: Identity[];
 };
 
 export type Message =

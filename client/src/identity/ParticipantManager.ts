@@ -13,14 +13,15 @@ export class ParticipantManager {
   dispatch: Dispatch;
   broker: ParticipantYBroker;
   participants: Map<string, Participant>;
+  // activeCache: Participant[] = [];
 
   get local(): Participant {
     return this.participants.get(playerId);
   }
 
-  get active(): Participant[] {
-    // TODO
-    return [];
+  get actives(): Participant[] {
+    const participants = Array.from(this.participants.values());
+    return participants.filter((p) => p.avatar && participantIsActive(p));
   }
 
   constructor(
@@ -33,10 +34,6 @@ export class ParticipantManager {
     this.participants = participants;
   }
 
-  init() {}
-
-  deinit() {}
-
   sendMyTransformData() {
     if (!this.local.avatar) return;
 
@@ -47,6 +44,7 @@ export class ParticipantManager {
   getAppearance(): Appearance {
     return this.local.identityData.appearance;
   }
+
   setAppearance(appearance: Appearance) {
     console.log("PM.setAppearance", appearance);
     this.dispatch({
@@ -62,6 +60,7 @@ export class ParticipantManager {
   getName(): string {
     return this.local.identityData.name;
   }
+
   setName(name: string) {
     console.log("PM.setName", name);
     this.dispatch({
@@ -86,4 +85,34 @@ export class ParticipantManager {
       },
     });
   }
+}
+
+const LONG_TIME_AGO = 600000; // 5 minutes ago
+const LAST_SEEN_TIMEOUT = 5000; // 5 seconds ago
+
+// Number of milliseconds since last seen
+export function participantSeenAgo(
+  this: void,
+  participant: Participant
+): number {
+  const lastSeen = participant.lastSeen;
+  return lastSeen === undefined
+    ? LONG_TIME_AGO
+    : performance.now() - participant.lastSeen;
+}
+
+export function participantIsActive(
+  this: void,
+  participant: Participant
+): boolean {
+  return participantSeenAgo(participant) < LAST_SEEN_TIMEOUT;
+}
+
+export function participantRemoveAvatar(this: void, participant: Participant) {
+  if (participant.avatar?.entities) {
+    Object.values(participant.avatar.entities).forEach((entity) =>
+      entity?.destroy()
+    );
+  }
+  participant.avatar = null;
 }

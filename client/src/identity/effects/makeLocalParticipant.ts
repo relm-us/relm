@@ -11,11 +11,21 @@ import { Avatar2 } from "../Avatar2";
 import { setAvatarFromParticipant } from "../Avatar";
 
 export const makeLocalParticipant =
-  (ecsWorld: DecoratedECSWorld, position: Vector3, appearance: Appearance) =>
+  (
+    ecsWorld: DecoratedECSWorld,
+    position: Vector3,
+    clientId: number,
+    appearance: Appearance
+  ) =>
   (dispatch: Dispatch) => {
     const entities = makeLocalAvatar(ecsWorld, position, () => {});
+
     const identityData = get(localIdentityData);
+    identityData.clientId = clientId;
+
+    // Participant may have chosen appearance from 'quick start' avatar screen
     if (appearance) identityData.appearance = appearance;
+
     const localParticipant: Participant = {
       participantId: playerId,
       isLocal: true,

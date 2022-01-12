@@ -1,19 +1,15 @@
 import { Cmd } from "~/utils/runtime";
-import { Vector3 } from "three";
 
 import { Participant } from "./types";
 import { playerId } from "./playerId";
 // import { ChatMessage } from "~/world/ChatManager";
-import { Avatar2 } from "./Avatar2";
-import { setAppearance, setAvatarFromParticipant } from "./Avatar";
 
 import { makeLocalParticipant } from "./effects/makeLocalParticipant";
 import { subscribeBroker } from "./effects/subscribeBroker";
 
 import { Program, State, Message, Effect, Dispatch } from "./ProgramTypes";
-import { setTransformArrayOnParticipants } from "./Avatar/transform";
-import { makeRemoteAvatar } from "./Avatar/makeAvatar";
 import { exists } from "~/utils/exists";
+import { participantRemoveAvatar } from "./ParticipantManager";
 
 export function makeProgram(this: void): Program {
   return {
@@ -21,14 +17,16 @@ export function makeProgram(this: void): Program {
       {
         participants: new Map(),
         unsubs: [],
-        activeCache: [],
+        // activeCache: [],
       },
     ],
     update(msg: Message, state: State) {
       switch (msg.id) {
         case "init": {
           exists(state.participants, "participants");
+          exists(msg.worldDoc, "worldDoc");
           exists(msg.ecsWorld, "ecsWorld");
+          exists(msg.entrywayPosition, "entrywayPosition");
 
           return [
             {
@@ -42,6 +40,7 @@ export function makeProgram(this: void): Program {
               makeLocalParticipant(
                 msg.ecsWorld,
                 msg.entrywayPosition,
+                msg.worldDoc.ydoc.clientID,
                 msg.appearance
               ),
             ]),
@@ -50,6 +49,15 @@ export function makeProgram(this: void): Program {
 
         case "join": {
           state.localParticipant.identityData.status = "present";
+          return [state];
+        }
+
+        case "removeParticipant": {
+          for (let [participantId, participant] of state.participants) {
+            if (participant.identityData.clientId === msg.clientId) {
+              participantRemoveAvatar(participant);
+            }
+          }
           return [state];
         }
 
