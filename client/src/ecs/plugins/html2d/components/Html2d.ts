@@ -9,6 +9,23 @@ import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
 export class Html2d extends Component {
+  kind: string;
+  offset: Vector3;
+  width: number;
+  vanchor: number;
+  hanchor: number;
+  color: string;
+  shadowColor: string;
+  underlineColor: string;
+  title: string;
+  link: string;
+  content: string;
+  draggable: boolean;
+  editable: boolean;
+  visible: boolean;
+  onChange: Function;
+  onClose: Function;
+
   static props = {
     kind: {
       type: StringType,
@@ -144,6 +161,11 @@ export class Html2d extends Component {
       editor: {
         label: "Visible",
       },
+    },
+
+    // Called when done editing
+    onChange: {
+      type: RefType,
     },
 
     onClose: {

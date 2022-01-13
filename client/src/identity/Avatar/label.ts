@@ -11,12 +11,12 @@ export function setLabel(
   entities: AvatarEntities,
   name: string,
   color: string,
-  isNameEditable: boolean
+  onDidEdit: (content: string) => void
 ) {
   if (name && !entities.body.has(Html2d)) {
-    addLabel(entities, name, color, isNameEditable);
+    addLabel(entities, name, color, onDidEdit);
   } else if (name && entities.body.has(Html2d)) {
-    changeLabel(entities, name, color, isNameEditable);
+    changeLabel(entities, name, color, onDidEdit);
   } else if (!name && entities.body.has(Html2d)) {
     entities.body.remove(Html2d);
   }
@@ -27,17 +27,17 @@ function addLabel(
   entities: AvatarEntities,
   name: string,
   color: string,
-  editable: boolean
+  onDidEdit: (content: string) => void
 ) {
-  const label = {
+  entities.body.add(Html2d, {
     kind: "LABEL",
     content: name,
     underlineColor: color || DEFAULT_LABEL_COLOR,
     offset: new Vector3(0, -0.2, 0),
     vanchor: 1,
-    editable,
-  };
-  entities.body.add(Html2d, label);
+    editable: !!onDidEdit,
+    onChange: onDidEdit,
+  });
 }
 
 export function changeLabel(
@@ -45,7 +45,7 @@ export function changeLabel(
   entities: AvatarEntities,
   name: string,
   color: string,
-  editable: boolean
+  onDidEdit: (content: string) => void
 ) {
   const label = entities.body.get(Html2d);
   if (!label) return;
@@ -56,8 +56,9 @@ export function changeLabel(
     modified = true;
   }
 
-  if (label.editable !== editable) {
-    label.editable = editable;
+  if (label.editable !== Boolean(onDidEdit)) {
+    label.editable = Boolean(onDidEdit);
+    label.onChange = onDidEdit;
     modified = true;
   }
 

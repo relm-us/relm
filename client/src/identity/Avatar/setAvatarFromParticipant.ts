@@ -1,3 +1,4 @@
+import { worldManager } from "~/world";
 import { Participant } from "~/identity/types";
 
 import { setAppearance } from "./appearance";
@@ -11,11 +12,20 @@ export function setAvatarFromParticipant(this: void, participant: Participant) {
   if (!participant.avatar)
     throw Error(`participant requires avatar: ${participant.participantId}`);
 
+  const onDidEditName = (name: string) => {
+    worldManager.participants.setName(name);
+  };
+
   const entities = participant.avatar.entities;
   const data = participant.identityData;
   setAppearance(entities, data.appearance);
   setEmoji(entities, data.emoji, data.emoting);
-  setLabel(entities, data.name, data.color, participant.isLocal);
+  setLabel(
+    entities,
+    data.name,
+    data.color,
+    participant.isLocal ? onDidEditName : null
+  );
   setOculus(
     entities,
     participant.participantId,

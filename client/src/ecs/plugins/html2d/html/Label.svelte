@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { Vector2, Vector3 } from "three";
   import { cleanHtml } from "~/utils/cleanHtml";
 
@@ -33,13 +33,11 @@
     if (!editing) return;
 
     content = labelEl.innerHTML;
-    const component = entity.get(Html2d);
-    component.content = content;
+    const html2d: Html2d = entity.get(Html2d);
+    html2d.content = content;
 
-    if (worldManager.avatar.entity === entity) {
-      // TODO: make a way for Avatar to subscribe to ECS component
-      // changes instead of this hack:
-      worldManager.participants.setName(content);
+    if (html2d.onChange) {
+      html2d.onChange(content);
     } else {
       // Broadcast changes
       worldManager.worldDoc.syncFrom(entity);
@@ -117,7 +115,8 @@
 
     if (!dragging) return;
 
-    const drag = worldManager.world.perspective.getWorldFromScreen(mouse2d);
+    const drag = new Vector3();
+    worldManager.world.perspective.getWorldFromScreen(mouse2d, drag);
     drag.x -= initialEntityPos.x;
     drag.z -= initialEntityPos.z;
 

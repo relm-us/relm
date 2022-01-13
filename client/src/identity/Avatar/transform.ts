@@ -114,7 +114,7 @@ export function setTransformArrayOnParticipants(
     }
     const participant: Participant = participants.get(participantId);
     if (!participant || participant.isLocal) continue;
-    // if (!participant.isLocal) console.log(participantId);
+
     if (!participant.avatar) {
       const position = new Vector3().fromArray(transformData, 1);
       const entities = makeRemoteAvatar(ecsWorld, position, () => {
@@ -123,7 +123,6 @@ export function setTransformArrayOnParticipants(
       });
       participant.avatar = new Avatar2(ecsWorld, entities);
     }
-    // if (!participant.isLocal) console.log(transformData);
     setTransformDataOnParticipant(participant, transformData);
     if (participant.modified) {
       setAvatarFromParticipant(participant);

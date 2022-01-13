@@ -25,7 +25,7 @@ import { playerId } from "../playerId";
 
 const UNSCALED_CHARACTER_HEIGHT = 7;
 
-export function makeAvatar(
+function makeAvatar(
   world: DecoratedECSWorld,
   position: Vector3,
   kinematic: boolean
@@ -76,25 +76,6 @@ export function makeAvatar(
 
   return { body, head, emoji };
 }
-
-// function makeAvatar(
-//   this: void,
-//   kinematic: boolean,
-//   callback?: (entity: Entity) => void
-// ) {
-//   const opts = { kinematic };
-//   const { avatar, head, emoji } = makeAvatar(
-//     this.ecsWorld,
-//     opts,
-//     this.identity.playerId
-//   );
-//   this.entities.head = head;
-//   this.entities.emoji = emoji;
-//   callback?.(avatar);
-//   avatar.traverse((entity) => entity.activate());
-
-//   this.entities.body = avatar;
-// }
 
 export function makeLocalAvatar(
   this: void,
