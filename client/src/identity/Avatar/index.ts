@@ -26,6 +26,8 @@ export class Avatar {
 
   entities: AvatarEntities;
 
+  headAngle: number;
+
   constructor(ecsWorld: DecoratedECSWorld, entities: AvatarEntities) {
     this.ecsWorld = ecsWorld;
     this.entities = entities;

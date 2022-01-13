@@ -18,8 +18,6 @@ export const makeLocalParticipant =
     appearance: Appearance
   ) =>
   (dispatch: Dispatch) => {
-    const entities = makeLocalAvatar(ecsWorld, position, () => {});
-
     const identityData = get(localIdentityData);
     identityData.clientId = clientId;
 
@@ -31,8 +29,15 @@ export const makeLocalParticipant =
       isLocal: true,
       modified: false,
       identityData,
-      avatar: new Avatar(ecsWorld, entities),
     };
+
+    localParticipant.avatar = new Avatar(
+      ecsWorld,
+      makeLocalAvatar(ecsWorld, position, (angle) => {
+        const avatar = localParticipant.avatar;
+        if (avatar) avatar.headAngle = angle;
+      })
+    );
 
     setAvatarFromParticipant(localParticipant);
 

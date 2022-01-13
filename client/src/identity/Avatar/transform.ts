@@ -37,7 +37,7 @@ export function participantToTransformData(
   transformData[4] = e1.y;
 
   // Get angle of head
-  // transformData[5] = entities.headAngle;
+  transformData[5] = participant.avatar?.headAngle;
 
   const clips: AnimationClip[] = entities.body.get(ModelRef)?.animations;
   const clipName: string = entities.body.get(Animation)?.clipName;
@@ -85,7 +85,9 @@ export function setTransformDataOnParticipant(
   transform.rotation.setFromEuler(e1);
 
   // Set angle of head
-  // entities.headAngle = headTheta;
+  if (participant.avatar) {
+    participant.avatar.headAngle = headTheta;
+  }
 
   const clips = entities.body.get(ModelRef)?.animations;
   const animation = entities.body.get(Animation);
@@ -118,8 +120,7 @@ export function setTransformArrayOnParticipants(
     if (!participant.avatar) {
       const position = new Vector3().fromArray(transformData, 1);
       const entities = makeRemoteAvatar(ecsWorld, position, () => {
-        return 0;
-        // TODO: head angle
+        return participant.avatar?.headAngle;
       });
       participant.avatar = new Avatar(ecsWorld, entities);
     }
