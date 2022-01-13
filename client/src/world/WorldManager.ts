@@ -31,7 +31,7 @@ import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import type { Dispatch, State as RelmState } from "~/main/ProgramTypes";
 import { AVConnection } from "~/av";
 import { playerId } from "~/identity/playerId";
-import { Avatar2 } from "~/identity/Avatar2";
+import { Avatar } from "~/identity/Avatar";
 import { Participant } from "~/identity/types";
 import { ParticipantManager } from "~/identity/ParticipantManager";
 import { ParticipantYBroker } from "identity/ParticipantYBroker";
@@ -339,7 +339,7 @@ export class WorldManager {
     return playerId;
   }
 
-  get avatar(): Avatar2 {
+  get avatar(): Avatar {
     return this.participants.local.avatar;
   }
 

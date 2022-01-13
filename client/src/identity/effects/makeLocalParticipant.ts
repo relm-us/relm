@@ -7,7 +7,7 @@ import { localIdentityData } from "../identityData";
 import { playerId } from "../playerId";
 import { Dispatch } from "../ProgramTypes";
 import { Appearance, Participant } from "../types";
-import { Avatar2 } from "../Avatar2";
+import { Avatar } from "../Avatar";
 import { setAvatarFromParticipant } from "../Avatar";
 
 export const makeLocalParticipant =
@@ -31,7 +31,7 @@ export const makeLocalParticipant =
       isLocal: true,
       modified: false,
       identityData,
-      avatar: new Avatar2(ecsWorld, entities),
+      avatar: new Avatar(ecsWorld, entities),
     };
 
     setAvatarFromParticipant(localParticipant);

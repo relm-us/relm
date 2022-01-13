@@ -1,5 +1,5 @@
 import type { Entity } from "~/ecs/base";
-import { Avatar2 } from "./Avatar2";
+import { Avatar } from "./Avatar";
 
 export type PlayerStatus = "initial" | "present" | "away";
 export type YClientID = number;
@@ -133,5 +133,5 @@ export type Participant = {
   lastSeen?: number;
 
   // Avatar is responsible for all visuals/rendering of this identity
-  avatar?: Avatar2;
+  avatar?: Avatar;
 };

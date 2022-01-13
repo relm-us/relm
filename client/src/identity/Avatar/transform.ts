@@ -6,7 +6,7 @@ import { Animation } from "~/ecs/plugins/animation";
 import { RigidBody } from "~/ecs/plugins/physics";
 
 import { PlayerID, TransformData, AvatarEntities, Participant } from "../types";
-import { Avatar2 } from "../Avatar2";
+import { Avatar } from "../Avatar";
 import { makeRemoteAvatar } from "./makeAvatar";
 import { setAvatarFromParticipant } from "./setAvatarFromParticipant";
 import { DecoratedECSWorld } from "types/DecoratedECSWorld";
@@ -121,7 +121,7 @@ export function setTransformArrayOnParticipants(
         return 0;
         // TODO: head angle
       });
-      participant.avatar = new Avatar2(ecsWorld, entities);
+      participant.avatar = new Avatar(ecsWorld, entities);
     }
     setTransformDataOnParticipant(participant, transformData);
     if (participant.modified) {
