@@ -45,7 +45,7 @@ export class WorldManager {
   subrelm: string;
   entryway: string;
   relmDocId: string;
-  twilioToken: string;
+  avConnection: AVConnection;
 
   me: Participant;
 
@@ -56,8 +56,6 @@ export class WorldManager {
   selection: SelectionManager;
   chat: ChatManager;
   camera: CameraManager;
-
-  avConnection: AVConnection;
 
   previousLoopTime: number = 0;
   started: boolean = false;
@@ -72,7 +70,7 @@ export class WorldManager {
     relmName: string,
     entryway: string,
     relmDocId: string,
-    twilioToken: string,
+    avConnection: AVConnection,
     participants: Map<string, Participant>
   ) {
     this.dispatch = dispatch;
@@ -83,7 +81,7 @@ export class WorldManager {
     this.subrelm = relmName;
     this.entryway = entryway;
     this.relmDocId = relmDocId;
-    this.twilioToken = twilioToken;
+    this.avConnection = avConnection;
 
     this.unsubs.push(
       this.worldDoc.settings.subscribe(($settings) => {
@@ -110,8 +108,6 @@ export class WorldManager {
       this.world,
       this.participants.local.avatar.entities.body
     );
-
-    this.avConnection = new AVConnection(playerId);
 
     const token = new URL(window.location.href).searchParams.get("t");
 
@@ -181,17 +177,6 @@ export class WorldManager {
         }
       })
     );
-
-    const disconnect = await this.avConnection.connect({
-      roomId: this.relmDocId,
-      token: this.twilioToken,
-      // displayName: connectOpts.username || this.identities.me.get("name"),
-      displayName: this.participants.local.identityData.name,
-      // TODO: take audioDesired, videoDesired as input here?
-      produceAudio: true,
-      produceVideo: true,
-    });
-    this.unsubs.push(disconnect);
 
     this.start();
   }

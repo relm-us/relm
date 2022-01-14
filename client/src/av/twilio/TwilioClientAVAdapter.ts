@@ -73,9 +73,13 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
   }
 
   disconnect(): Promise<void> {
-    return new Promise((resolve) => {
-      this.room.disconnect();
-      resolve();
+    return new Promise((resolve, reject) => {
+      try {
+        this.room.disconnect();
+        resolve();
+      } catch (err) {
+        reject(err);
+      }
     });
   }
 

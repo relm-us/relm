@@ -1,19 +1,13 @@
 import type { Vector3 } from "three";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
-import type {
-  Participant,
-  IdentityData,
-  TransformData,
-  UpdateData,
-  Appearance,
-} from "./types";
-// import type { Identity } from "./Identity";
+import type { Participant, IdentityData, Appearance } from "./types";
 import type { WorldDoc } from "~/y-integration/WorldDoc";
 import type { ParticipantYBroker } from "./ParticipantYBroker";
+import { Avatar } from "./Avatar";
 
 export type State = {
   participants: Map<string, Participant>;
-  localParticipant?: Participant;
+  localAvatarInitialized: boolean;
 
   worldDoc?: WorldDoc;
   ecsWorld?: DecoratedECSWorld;
@@ -29,13 +23,13 @@ export type State = {
 export type Message =
   | {
       id: "init";
-      appearance: Appearance;
       worldDoc: WorldDoc;
       ecsWorld: DecoratedECSWorld;
       entrywayPosition: Vector3;
     }
   | { id: "didSubscribeBroker"; broker: ParticipantYBroker; unsub: Function }
-  | { id: "didMakeLocalParticipant"; localParticipant: Participant }
+  | { id: "makeLocalAvatar"; entrywayPosition: Vector3 }
+  | { id: "didMakeLocalAvatar"; avatar: Avatar }
   | {
       id: "recvParticipantData";
       participantId: string;
@@ -43,9 +37,8 @@ export type Message =
       isLocal: boolean;
     }
   | {
-      id: "sendParticipantData";
-      participantId: string;
-      updateData: UpdateData;
+      id: "sendLocalParticipantData";
+      identityData: IdentityData;
     }
   | {
       id: "removeParticipant";

@@ -40,8 +40,8 @@ export class AVConnection {
     this.watchLocalTrackChanges();
     this.watchRemoteTrackChanges();
 
-    return () => {
-      this.disconnect();
+    return async () => {
+      await this.adapter.disconnect();
     };
   }
 

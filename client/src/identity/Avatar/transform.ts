@@ -7,7 +7,7 @@ import { RigidBody } from "~/ecs/plugins/physics";
 
 import { PlayerID, TransformData, AvatarEntities, Participant } from "../types";
 import { Avatar } from "../Avatar";
-import { makeRemoteAvatar } from "./makeAvatar";
+import { makeRemoteAvatarEntities } from "./makeRemoteAvatarEntities";
 import { setAvatarFromParticipant } from "./setAvatarFromParticipant";
 import { DecoratedECSWorld } from "types/DecoratedECSWorld";
 
@@ -49,7 +49,7 @@ export function participantToTransformData(
   return transformData as TransformData;
 }
 
-export function setTransformDataOnParticipant(
+function setTransformDataOnParticipant(
   this: void,
   participant: Participant,
   [playerId, x, y, z, theta, headTheta, clipIndex]: TransformData
@@ -119,12 +119,17 @@ export function setTransformArrayOnParticipants(
 
     if (!participant.avatar) {
       const position = new Vector3().fromArray(transformData, 1);
-      const entities = makeRemoteAvatar(ecsWorld, position, () => {
+      const entities = makeRemoteAvatarEntities(ecsWorld, position, () => {
         return participant.avatar?.headAngle;
       });
       participant.avatar = new Avatar(ecsWorld, entities);
     }
     setTransformDataOnParticipant(participant, transformData);
+
+    // If the remote participant is active (if we've reached this point,
+    // they are), and some IdentityData has been modified, then take the
+    // opportunity to update the remote participant's label, appearance,
+    // etc.
     if (participant.modified) {
       setAvatarFromParticipant(participant);
       participant.modified = false;

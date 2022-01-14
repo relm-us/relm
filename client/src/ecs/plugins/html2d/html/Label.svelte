@@ -102,6 +102,8 @@
 
     if (!event.target.parentElement) return;
 
+    if (!worldManager.world) return;
+
     const mouse2d = worldManager.world.presentation.mouse2d;
 
     if (

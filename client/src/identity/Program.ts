@@ -1,23 +1,26 @@
+import { get } from "svelte/store";
 import { Cmd } from "~/utils/runtime";
 
-import { Participant } from "./types";
 import { playerId } from "./playerId";
 // import { ChatMessage } from "~/world/ChatManager";
 
-import { makeLocalParticipant } from "./effects/makeLocalParticipant";
+import { makeLocalAvatar } from "./effects/makeLocalAvatar";
+import { updateLocalParticipant } from "./effects/updateLocalParticipant";
 import { subscribeBroker } from "./effects/subscribeBroker";
 
 import { Program, State, Message, Effect, Dispatch } from "./ProgramTypes";
 import { exists } from "~/utils/exists";
 import { participantRemoveAvatar } from "./ParticipantManager";
+import { Participant } from "./types";
+import { localIdentityData } from "./identityData";
 
 export function makeProgram(this: void): Program {
   return {
     init: [
       {
-        participants: new Map(),
+        participants: initParticipants(),
+        localAvatarInitialized: false,
         unsubs: [],
-        // activeCache: [],
       },
     ],
     update(msg: Message, state: State) {
@@ -26,29 +29,21 @@ export function makeProgram(this: void): Program {
           exists(state.participants, "participants");
           exists(msg.worldDoc, "worldDoc");
           exists(msg.ecsWorld, "ecsWorld");
-          exists(msg.entrywayPosition, "entrywayPosition");
-
           return [
             {
               ...state,
               worldDoc: msg.worldDoc,
               ecsWorld: msg.ecsWorld,
-              entrywayPosition: msg.entrywayPosition,
             },
             Cmd.batch<Effect>([
               subscribeBroker(msg.worldDoc, msg.ecsWorld, state.participants),
-              makeLocalParticipant(
-                msg.ecsWorld,
-                msg.entrywayPosition,
-                msg.worldDoc.ydoc.clientID,
-                msg.appearance
-              ),
             ]),
           ];
         }
 
         case "join": {
-          state.localParticipant.identityData.status = "present";
+          const localParticipant = state.participants.get(playerId);
+          localParticipant.identityData.status = "present";
           return [state];
         }
 
@@ -67,15 +62,25 @@ export function makeProgram(this: void): Program {
           return [newState];
         }
 
-        case "didMakeLocalParticipant": {
-          state.participants.set(playerId, msg.localParticipant);
+        case "makeLocalAvatar": {
+          exists(msg.entrywayPosition, "entrywayPosition");
+
+          return [state, makeLocalAvatar(state.ecsWorld, msg.entrywayPosition)];
+        }
+
+        case "didMakeLocalAvatar": {
+          const localParticipant = state.participants.get(playerId);
+          localParticipant.avatar = msg.avatar;
+          localParticipant.identityData.appearance;
+          // msg.worldDoc.ydoc.clientID,
+          // msg.appearance
+
           return [
-            { ...state, localParticipant: msg.localParticipant },
-            Cmd.ofMsg<Message>({
-              id: "sendParticipantData",
-              participantId: playerId,
-              updateData: msg.localParticipant.identityData,
-            }),
+            { ...state, localAvatarInitialized: true },
+            updateLocalParticipant(
+              localParticipant,
+              localParticipant.identityData
+            ),
           ];
         }
 
@@ -86,45 +91,21 @@ export function makeProgram(this: void): Program {
             participant = state.participants.get(msg.participantId);
             participant.identityData = msg.identityData;
             participant.modified = true;
-            // console.log(
-            //   "recvParticipantData (exists)",
-            //   msg.participantId,
-            //   msg.identityData
-            // );
           } else {
-            participant = {
+            state.participants.set(msg.participantId, {
               participantId: msg.participantId,
               identityData: msg.identityData,
               isLocal: msg.isLocal,
               modified: true,
-              /* no avatar yet, because this may be a stale participant */
-            };
-            state.participants.set(msg.participantId, participant);
-            // console.log(
-            //   "recvParticipantData (new)",
-            //   msg.participantId,
-            //   msg.identityData
-            // );
+              /* no avatar yet, because this may be an inactive (stale) participant */
+            });
           }
 
           return [state];
         }
 
-        case "sendParticipantData": {
-          const participant: Participant = state.participants.get(
-            msg.participantId
-          );
-          // console.log(
-          //   "sendParticipantData",
-          //   msg.participantId,
-          //   msg.updateData,
-          //   state.participants
-          // );
-          const identityData = {
-            ...participant.identityData,
-            ...msg.updateData,
-          };
-          state.broker.setIdentityData(msg.participantId, identityData);
+        case "sendLocalParticipantData": {
+          state.broker.setIdentityData(playerId, msg.identityData);
           return [state];
         }
 
@@ -135,4 +116,16 @@ export function makeProgram(this: void): Program {
 
     view(state: State, dispatch: Dispatch) {},
   } as Program;
+}
+
+function initParticipants() {
+  const participants = new Map<string, Participant>();
+  const identityData = get(localIdentityData);
+  participants.set(playerId, {
+    participantId: playerId,
+    isLocal: true,
+    modified: false,
+    identityData,
+  });
+  return participants;
 }

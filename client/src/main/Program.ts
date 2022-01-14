@@ -10,6 +10,7 @@ import AvatarChooser from "~/ui/AvatarBuilder/AvatarChooser.svelte";
 import { LoadingScreen, LoadingFailed } from "~/ui/LoadingScreen";
 
 import { loadPreferredDeviceIds } from "~/av/loadPreferredDeviceIds";
+import { AVConnection } from "~/av/AVConnection";
 
 import { audioDesired } from "~/stores/audioDesired";
 import { videoDesired } from "~/stores/videoDesired";
@@ -30,7 +31,11 @@ import { nextSetupStep } from "./effects/nextSetupStep";
 import { createWorldDoc } from "./effects/createWorldDoc";
 
 import { makeProgram as makeParticipantProgram } from "~/identity/Program";
-import { State as RelmState, Message as RelmMessage } from "./ProgramTypes";
+import { State, Message } from "./ProgramTypes";
+import { joinAudioVideo } from "./effects/joinAudioVideo";
+import { mapParticipantEffect } from "./mapParticipantEffect";
+import { playerId } from "~/identity/playerId";
+import { updateLocalParticipant } from "./effects/updateLocalParticipant";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -46,7 +51,7 @@ export function makeProgram() {
       { screen: "initial", participantState: participantProgram.init[0] },
       Cmd.ofMsg({ id: "pageLoaded" }),
     ],
-    update(msg: RelmMessage, state: RelmState): [RelmState, any?] {
+    update(msg: Message, state: State): [State, any?] {
       if (logEnabled) {
         console.log(`program msg '${msg.id}' (${state.relmName}): %o`, {
           msg,
@@ -61,21 +66,18 @@ export function makeProgram() {
           state.participantState
         );
 
-        let newEffect = Cmd.mapEffect(participantEffect, (message) => ({
-          id: "participantMessage",
-          message,
-        }));
-        // console.log("got ParticipantMessage", msg.message);
+        // Map the Participant Program's effect into an effect for our "main" Program
+        let mainEffect = mapParticipantEffect(participantEffect);
 
         // Once we have a local participant initialized, we can initialize the
         // WorldManager, which depends on knowing where the avatar is in the world
-        if (msg.message.id === "didMakeLocalParticipant") {
+        if (msg.message.id === "didMakeLocalAvatar") {
           return [
             { ...state, participantState },
-            Cmd.batch([newEffect, Cmd.ofMsg({ id: "initWorldManager" })]),
+            Cmd.batch([mainEffect, Cmd.ofMsg({ id: "initWorldManager" })]),
           ];
         } else {
-          return [{ ...state, participantState }, newEffect];
+          return [{ ...state, participantState }, mainEffect];
         }
       }
 
@@ -131,6 +133,7 @@ export function makeProgram() {
               secureParams: msg.secureParams,
               relmName: msg.relmName,
               entryway: msg.entryway,
+              avConnection: new AVConnection(msg.participantId),
             },
             getRelmPermitsAndMetadata(msg.relmName),
           ];
@@ -153,9 +156,9 @@ export function makeProgram() {
           // Set the "max values" for the loading progress bar
           resetLoading(msg.assetsMax, msg.entitiesMax);
 
-          console.log(
-            `relm entities: ${msg.entitiesMax}, assets: ${msg.assetsMax}`
-          );
+          // console.log(
+          //   `relm entities: ${msg.entitiesMax}, assets: ${msg.assetsMax}`
+          // );
 
           return [
             {
@@ -166,8 +169,17 @@ export function makeProgram() {
               assetsMax: msg.assetsMax,
               twilioToken: msg.twilioToken,
             },
-            // Kick off parallel loading physics->ECS->worldDoc;
-            // meanwhile, set up audio/video and avatar if needed
+
+            // Kick off parallel tasks:
+            //
+            // physics      audio/video
+            //    v              v
+            //   ECS           avatar
+            //    v              |
+            // worldDoc          |
+            //    \             /
+            //     `> loading <'
+            //
             Cmd.batch([importPhysicsEngine, nextSetupStep(state)]),
           ];
         }
@@ -206,7 +218,19 @@ export function makeProgram() {
 
           return [
             { ...state, worldDoc: msg.worldDoc },
-            Cmd.ofMsg({ id: "loading" }),
+            Cmd.batch([
+              Cmd.ofMsg({ id: "loading" }),
+
+              // Initialize the Participant Program
+              Cmd.ofMsg({
+                id: "participantMessage",
+                message: {
+                  id: "init",
+                  worldDoc: msg.worldDoc,
+                  ecsWorld: state.ecsWorld,
+                },
+              }),
+            ]),
           ];
         }
 
@@ -241,20 +265,56 @@ export function makeProgram() {
             JSON.stringify(newState.preferredDeviceIds)
           );
 
-          return [newState, nextSetupStep(newState)];
+          const effects = [
+            joinAudioVideo(
+              newState.participantState.participants.get(playerId),
+              newState.avConnection,
+              newState.avDisconnect,
+              newState.audioDesired,
+              newState.videoDesired,
+              newState.relmDocId,
+              newState.twilioToken
+            ) as Function,
+          ];
+
+          if (newState.initializedWorldManager) {
+            effects.push(Cmd.ofMsg({ id: "startPlaying" }));
+          } else {
+            effects.push(nextSetupStep(newState));
+          }
+
+          return [newState, Cmd.batch(effects)];
+        }
+
+        case "didJoinAudioVideo": {
+          return [{ ...state, avDisconnect: msg.avDisconnect }];
         }
 
         case "setUpAvatar": {
           return [{ ...state, screen: "choose-avatar" }];
         }
 
-        case "didSetUpAvatar":
-          const newState: RelmState = {
+        case "didSetUpAvatar": {
+          const localParticipant =
+            state.participantState.participants.get(playerId);
+
+          const newState: State = {
             ...state,
             avatarSetupDone: true,
-            appearance: msg.appearance,
           };
-          return [newState, nextSetupStep(newState)];
+
+          return [
+            newState,
+            Cmd.batch([
+              msg.appearance
+                ? updateLocalParticipant(localParticipant, {
+                    appearance: msg.appearance,
+                  })
+                : null,
+              nextSetupStep(newState),
+            ]),
+          ];
+        }
 
         case "loading": {
           if (
@@ -318,13 +378,10 @@ export function makeProgram() {
         case "gotEntrywayPosition": {
           return [
             state,
-            Cmd.ofMsg({
+            Cmd.ofMsg<Message>({
               id: "participantMessage",
               message: {
-                id: "init",
-                appearance: state.appearance,
-                worldDoc: state.worldDoc,
-                ecsWorld: state.ecsWorld,
+                id: "makeLocalAvatar",
                 entrywayPosition: state.entrywayPosition,
               },
             }),
@@ -335,11 +392,13 @@ export function makeProgram() {
           if (
             // Command sent from gotEntrywayPosition
             state.entrywayPosition &&
-            // .. and also sent from our intercepted `didMakeLocalParticipant` updater
-            state.participantState.localParticipant
+            // .. and also sent from our intercepted `didMakeLocalAvatar` updater
+            state.participantState.localAvatarInitialized
           ) {
             // Stop making the world "tick" just for loading
             state.ecsWorldLoaderUnsub?.();
+
+            exists(state.avConnection, "avConnection");
 
             return [
               state,
@@ -350,7 +409,7 @@ export function makeProgram() {
                 state.relmName,
                 state.entryway,
                 state.relmDocId,
-                state.twilioToken,
+                state.avConnection,
                 state.participantState.participants
               ),
             ];

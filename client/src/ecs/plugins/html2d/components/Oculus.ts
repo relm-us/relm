@@ -3,6 +3,14 @@ import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
 export class Oculus extends LocalComponent {
+  offset: Vector3;
+  size: number;
+  vanchor: number;
+  hanchor: number;
+  showAudio: boolean;
+  showVideo: boolean;
+  playerId: string;
+
   static props = {
     offset: {
       type: Vector3Type,

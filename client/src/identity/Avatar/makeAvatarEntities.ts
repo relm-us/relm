@@ -11,21 +11,14 @@ import { Model } from "~/ecs/plugins/model";
 import { PointerPosition } from "~/ecs/plugins/pointer-position";
 import { RigidBody, Collider, Impactable } from "~/ecs/plugins/physics";
 import { Animation } from "~/ecs/plugins/animation";
-import { Controller, Repulsive } from "~/ecs/plugins/player-control";
+import { Repulsive } from "~/ecs/plugins/player-control";
 import { IDLE } from "~/ecs/plugins/player-control/constants";
-import {
-  TwistBone,
-  headFollowsPointer,
-  headFollowsAngle,
-} from "~/ecs/plugins/twist-bone";
 
 import { AvatarEntities } from "../types";
-import { Distance } from "~/ecs/plugins/distance";
-import { playerId } from "../playerId";
 
 const UNSCALED_CHARACTER_HEIGHT = 7;
 
-function makeAvatar(
+export function makeAvatarEntities(
   world: DecoratedECSWorld,
   position: Vector3,
   kinematic: boolean
@@ -77,53 +70,31 @@ function makeAvatar(
   return { body, head, emoji };
 }
 
-export function makeLocalAvatar(
-  this: void,
-  ecsWorld: DecoratedECSWorld,
-  position: Vector3,
-  storeHeadAngle: (angle: number) => void
-): AvatarEntities {
-  const entities = makeAvatar(ecsWorld, position, false);
+// export function makeLocalAvatar(
+//   this: void,
+//   ecsWorld: DecoratedECSWorld,
+//   position: Vector3,
+//   storeHeadAngle: (angle: number) => void
+// ): AvatarEntities {
+//   const entities = makeAvatar(ecsWorld, position, false);
 
-  entities.body.add(Controller).add(TwistBone, {
-    boneName: "mixamorigHead",
-    function: headFollowsPointer(storeHeadAngle),
-  });
+//   entities.body.add(Controller).add(TwistBone, {
+//     boneName: "mixamorigHead",
+//     function: headFollowsPointer(storeHeadAngle),
+//   });
 
-  Object.values(entities).forEach((entity) => entity.activate());
+//   Object.values(entities).forEach((entity) => entity.activate());
 
-  // // Local participant name is hidden in build mode so the label does
-  // // not obstruct clicking / dragging etc.
-  // this.unsubs.push(
-  //   worldUIMode.subscribe(($mode) => {
-  //     const label = this.entities.body.get(Html2d);
-  //     if (label) {
-  //       label.visible = $mode === "play";
-  //       label.modified();
-  //     }
-  //   })
-  // );
-  return entities;
-}
-
-export function makeRemoteAvatar(
-  this: void,
-  ecsWorld: DecoratedECSWorld,
-  position: Vector3,
-  getHeadAngle: () => number
-): AvatarEntities {
-  const entities = makeAvatar(ecsWorld, position, false);
-
-  entities.body
-    .add(TwistBone, {
-      boneName: "mixamorigHead",
-      function: headFollowsAngle(getHeadAngle),
-    })
-    .add(Distance, {
-      target: playerId,
-    });
-
-  Object.values(entities).forEach((entity) => entity.activate());
-
-  return entities;
-}
+// // Local participant name is hidden in build mode so the label does
+// // not obstruct clicking / dragging etc.
+// this.unsubs.push(
+//   worldUIMode.subscribe(($mode) => {
+//     const label = this.entities.body.get(Html2d);
+//     if (label) {
+//       label.visible = $mode === "play";
+//       label.modified();
+//     }
+//   })
+// );
+//   return entities;
+// }

@@ -52,7 +52,7 @@ export class Avatar {
         transform.position.add(delta);
 
         const world = e.get(WorldTransform);
-        world.position.add(delta);
+        world?.position.add(delta);
 
         // Physics engine keeps a copy of position, update it too
         const rigidBody = (entity.getByName("RigidBody").sync = true);

@@ -5,6 +5,7 @@ import { worldManager } from "~/world";
 
 import { Dispatch } from "../ProgramTypes";
 import { ParticipantYBroker } from "identity/ParticipantYBroker";
+import { AVConnection } from "~/av";
 
 export const initWorldManager =
   (
@@ -14,7 +15,7 @@ export const initWorldManager =
     relmName: string,
     entryway: string,
     relmDocId: string,
-    twilioToken: string,
+    avConnection: AVConnection,
     participants: Map<string, Participant>
   ) =>
   async (dispatch: Dispatch) => {
@@ -26,7 +27,7 @@ export const initWorldManager =
       relmName,
       entryway,
       relmDocId,
-      twilioToken,
+      avConnection,
       participants
     );
     dispatch({ id: "didInitWorldManager" });

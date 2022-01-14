@@ -3,6 +3,7 @@ import type { DeviceIds } from "video-mirror";
 
 import type { WorldDoc } from "~/y-integration/WorldDoc";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
+import { AVConnection } from "~/av/AVConnection";
 
 import type { Appearance, Participant } from "~/identity/types";
 import type { SecureParams } from "~/identity/secureParams";
@@ -35,10 +36,11 @@ export type State = {
   audioDesired?: boolean;
   videoDesired?: boolean;
   preferredDeviceIds?: DeviceIds;
+  avConnection?: AVConnection;
+  avDisconnect?: Function;
 
   // avatar setup
   avatarSetupDone?: boolean;
-  appearance?: Appearance;
 
   // create worldDoc & establish yjs connection
   physicsEngine?: any;
@@ -93,10 +95,11 @@ export type Message =
   | { id: "gotEntrywayUnsub"; entrywayUnsub: Function }
   | { id: "gotPositionFromEntryway"; entrywayPosition: Vector3 }
   | { id: "assumeOriginAsEntryway" }
-  | { id: "gotEntrywayPosition"}
+  | { id: "gotEntrywayPosition" }
   | { id: "didMakeLocalParticipant"; localParticipant: Participant }
   | { id: "setUpAudioVideo" }
   | { id: "didSetUpAudioVideo"; state: any }
+  | { id: "didJoinAudioVideo"; avDisconnect: Function }
   | { id: "setUpAvatar" }
   | { id: "didSetUpAvatar"; appearance?: Appearance }
   | { id: "initWorldManager" }
