@@ -112,13 +112,6 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
     publications: RemoteTrackPublication[],
     participant: RemoteParticipant
   ) {
-    console.log(
-      "tracksPublished publications",
-      participant.identity,
-      publications,
-      publications.map((pub) => pub.track)
-    );
-
     for (const publication of publications) {
       // if (publication.isSubscribed) {
       const track = publication.track;

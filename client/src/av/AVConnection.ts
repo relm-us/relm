@@ -83,7 +83,6 @@ export class AVConnection {
     // of our internal stream stores.
     this.adapter.on("resources-added", (resources: AVResource[]) => {
       const groups = groupBy(resources, "participantId");
-      console.log("resources-added groups", groups);
 
       for (const [participantId, resources] of Object.entries(groups)) {
         const tracks = resources.map((r) => r.track);

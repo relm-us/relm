@@ -24,7 +24,6 @@ export function setOculus(
     });
   } else {
     const component = entities.body.get(OculusRef)?.component;
-    console.log("setOculus update", showVideo, component);
 
     if (component) {
       component.$set({ showAudio, showVideo });
