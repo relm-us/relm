@@ -15,7 +15,7 @@ export function setOculus(
 ) {
   if (!entities.body.has(Oculus)) {
     entities.body.add(Oculus, {
-      playerId: participantId,
+      participantId,
       hanchor: 0,
       vanchor: 2,
       showAudio,

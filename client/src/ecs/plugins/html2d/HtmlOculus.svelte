@@ -4,28 +4,33 @@
   import { audioMode } from "~/stores/audioMode";
   import Fullscreen from "./Fullscreen.svelte";
   import shineImg from "./shine.svg";
+  import { playerId as localPlayerId } from "~/identity/playerId";
 
   export let showAudio;
   export let showVideo;
-  export let playerId;
+  export let participantId;
 
   let fullscreen = false;
   // TODO: add `size` var instead of hardcoding volume to be size
   let volume = 1;
 
-  let localPlayerId = worldManager.participants.local.participantId;
-
   let isLocal;
-  $: isLocal = playerId === localPlayerId;
+  $: isLocal = participantId === localPlayerId;
 
   let participant;
-  $: participant = worldManager.participants.participants.get(playerId);
+  $: participant = worldManager.participants.participants.get(participantId);
 
   let videoStore;
-  $: videoStore = worldManager.avConnection.getTrackStore(playerId, "video");
+  $: videoStore = worldManager.avConnection.getTrackStore(
+    participantId,
+    "video"
+  );
 
   let audioStore;
-  $: audioStore = worldManager.avConnection.getTrackStore(playerId, "audio");
+  $: audioStore = worldManager.avConnection.getTrackStore(
+    participantId,
+    "audio"
+  );
 
   let localVideoStore;
   $: localVideoStore = worldManager.avConnection.getTrackStore(

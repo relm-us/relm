@@ -9,7 +9,7 @@ export class Oculus extends LocalComponent {
   hanchor: number;
   showAudio: boolean;
   showVideo: boolean;
-  playerId: string;
+  participantId: string;
 
   static props = {
     offset: {
@@ -73,7 +73,7 @@ export class Oculus extends LocalComponent {
     },
 
     // Set automatically. If equal to local playerId, Oculus will show own video stream.
-    playerId: {
+    participantId: {
       type: StringType,
       default: null,
     },

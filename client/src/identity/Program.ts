@@ -57,9 +57,8 @@ export function makeProgram(this: void): Program {
         }
 
         case "didSubscribeBroker": {
-          const newState = { ...state, broker: msg.broker };
-          newState.unsubs.push(msg.unsub);
-          return [newState];
+          state.unsubs.push(msg.unsub);
+          return [{ ...state, broker: msg.broker }];
         }
 
         case "makeLocalAvatar": {
@@ -72,8 +71,7 @@ export function makeProgram(this: void): Program {
           const localParticipant = state.participants.get(playerId);
           localParticipant.avatar = msg.avatar;
           localParticipant.identityData.appearance;
-          // msg.worldDoc.ydoc.clientID,
-          // msg.appearance
+          localParticipant.identityData.clientId = state.worldDoc.ydoc.clientID;
 
           return [
             { ...state, localAvatarInitialized: true },

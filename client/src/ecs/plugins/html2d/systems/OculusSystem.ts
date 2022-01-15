@@ -4,8 +4,6 @@ import { System, Groups, Not, Entity, Modified } from "~/ecs/base";
 import { WorldTransform, Presentation } from "~/ecs/plugins/core";
 import { Perspective } from "~/ecs/plugins/perspective";
 
-import { playerId } from "~/identity/playerId";
-
 import HtmlOculus from "../HtmlOculus.svelte";
 import { Oculus, OculusRef } from "../components";
 import { HtmlPresentation } from "../HtmlPresentation";
@@ -53,9 +51,6 @@ export class OculusSystem extends System {
 
   build(entity: Entity) {
     const spec = entity.get(Oculus);
-    const isLocal = spec.playerId === playerId;
-    // const localStream = getLocalStreamStore();
-    // const stream = isLocal ? localStream : getStreamStore(spec.playerId);
 
     // Prepare a container for Svelte
     const container = this.htmlPresentation.createContainer(
