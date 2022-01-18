@@ -3,10 +3,14 @@ import type { DeviceIds } from "video-mirror";
 
 import type { WorldDoc } from "~/y-integration/WorldDoc";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
+import { PageParams } from "~/types/PageParams";
 import { AVConnection } from "~/av/AVConnection";
 
-import type { Appearance, Participant } from "~/identity/types";
-import type { SecureParams } from "~/identity/secureParams";
+import type {
+  Appearance,
+  AuthenticationHeaders,
+  Participant,
+} from "~/identity/types";
 
 import type {
   State as ParticipantState,
@@ -16,9 +20,8 @@ import type {
 export type State = {
   // initialization
   participantId?: string;
-  secureParams?: SecureParams;
-  relmName?: string; // unique human name for the relm
-  entryway?: string;
+  pageParams?: PageParams;
+  authHeaders?: AuthenticationHeaders;
   entrywayPosition: Vector3;
   entrywayUnsub: Function;
 
@@ -67,16 +70,10 @@ export type State = {
 };
 
 export type Message =
-  | { id: "pageLoaded" }
+  | { id: "gotPageParams"; pageParams: PageParams }
+  | { id: "gotAuthenticationHeaders"; authHeaders: AuthenticationHeaders }
   | { id: "enterPortal"; relmName: string; entryway: string }
   | { id: "didResetWorld" }
-  | {
-      id: "gotSecureParamsAndRelm";
-      participantId: string;
-      secureParams: SecureParams;
-      relmName: string;
-      entryway: string;
-    }
   | {
       id: "gotRelmPermitsAndMetadata";
       permits: string[];

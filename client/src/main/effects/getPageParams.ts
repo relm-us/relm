@@ -1,12 +1,13 @@
-import { playerId } from "~/identity/playerId";
-import { getSecureParams } from "~/identity/secureParams";
 import { DEFAULT_RELM_ID, DEFAULT_ENTRYWAY } from "~/config/constants";
 import { canonicalIdentifier } from "~/utils/canonicalIdentifier";
 
 import { Dispatch } from "../ProgramTypes";
 
-export function getRelmAndEntryway(): { relmName: string; entryway: string } {
-  const params = new URLSearchParams(window.location.search.substring(1));
+export async function getPageParams(dispatch: Dispatch) {
+  const params = new URL(window.location.href).searchParams;
+
+  const invitationToken = params.get("t");
+  const jsonWebToken = (window as any).jwt || params.get("jwt");
 
   const pathParts = window.location.pathname
     .split("/")
@@ -17,19 +18,12 @@ export function getRelmAndEntryway(): { relmName: string; entryway: string } {
   const relmName = params.get("relm") || pathParts[1] || DEFAULT_RELM_ID;
   const entryway = params.get("entryway") || pathParts[2] || DEFAULT_ENTRYWAY;
 
-  return {
+  const pageParams = {
     relmName: canonicalIdentifier(relmName),
     entryway: canonicalIdentifier(entryway),
+    invitationToken,
+    jsonWebToken,
   };
-}
 
-export async function getParticipantAndRelm(dispatch: Dispatch) {
-  const { relmName, entryway } = getRelmAndEntryway();
-  dispatch({
-    id: "gotSecureParamsAndRelm",
-    participantId: playerId,
-    secureParams: await getSecureParams(window.location.href),
-    relmName,
-    entryway,
-  });
+  dispatch({ id: "gotPageParams", pageParams });
 }

@@ -24,7 +24,6 @@ import MediaSetupShim from "./views/MediaSetupShim.svelte";
 import { createECSWorld } from "./effects/createECSWorld";
 import { getPositionFromEntryway } from "./effects/getPositionFromEntryway";
 import { initWorldManager } from "./effects/initWorldManager";
-import { getParticipantAndRelm } from "./effects/getParticipantAndRelmName";
 import { getRelmPermitsAndMetadata } from "./effects/getRelmPermitsAndMetadata";
 import { importPhysicsEngine } from "./effects/importPhysicsEngine";
 import { nextSetupStep } from "./effects/nextSetupStep";
@@ -36,6 +35,8 @@ import { joinAudioVideo } from "./effects/joinAudioVideo";
 import { mapParticipantEffect } from "./mapParticipantEffect";
 import { playerId } from "~/identity/playerId";
 import { updateLocalParticipant } from "./effects/updateLocalParticipant";
+import { getPageParams } from "./effects/getPageParams";
+import { getAuthenticationHeaders } from "./effects/getAuthenticationHeaders";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -48,15 +49,22 @@ export function makeProgram() {
   const participantProgram = makeParticipantProgram();
   return {
     init: [
-      { screen: "initial", participantState: participantProgram.init[0] },
-      Cmd.ofMsg({ id: "pageLoaded" }),
+      {
+        screen: "initial",
+        participantId: playerId,
+        participantState: participantProgram.init[0],
+      },
+      getPageParams,
     ],
     update(msg: Message, state: State): [State, any?] {
       if (logEnabled) {
-        console.log(`program msg '${msg.id}' (${state.relmName}): %o`, {
-          msg,
-          state,
-        });
+        console.log(
+          `program msg '${msg.id}' (${state.pageParams.relmName}): %o`,
+          {
+            msg,
+            state,
+          }
+        );
       }
 
       // Handle composed ParticipantProgram's updates
@@ -83,59 +91,25 @@ export function makeProgram() {
 
       // Handle top-level relm Program's updates
       switch (msg.id) {
-        case "pageLoaded": {
-          return [state, getParticipantAndRelm];
-        }
-
-        // does not happen on initial page load; `enterPortal` is
-        // used as the first stage of re-initializing everything for
-        // a new relm, without reloading the web page
-        case "enterPortal": {
-          exists(msg.relmName, "relmName");
-          exists(msg.entryway, "entryway");
+        case "gotPageParams": {
+          exists(msg.pageParams);
 
           return [
-            {
-              ...state,
-              overlayScreen: "portal",
-              relmName: msg.relmName,
-              entryway: msg.entryway,
-              entrywayPosition: null,
-              initializedWorldManager: false,
-              worldDoc: null,
-              ecsWorld: null,
-            },
-            (dispatch) => {
-              worldManager
-                .deinit()
-                .then(() => {
-                  dispatch({ id: "didResetWorld" });
-                })
-                .catch((err) => {
-                  dispatch({ id: "error", msg: err.message });
-                });
-            },
+            { ...state, pageParams: msg.pageParams },
+            getAuthenticationHeaders(msg.pageParams),
           ];
         }
 
-        case "didResetWorld": {
-          exists(state.relmName, "relmName");
-          exists(state.entryway, "entryway");
+        case "gotAuthenticationHeaders": {
+          exists(msg.authHeaders);
 
-          return [state, getRelmPermitsAndMetadata(state.relmName)];
-        }
-
-        case "gotSecureParamsAndRelm": {
           return [
             {
               ...state,
-              participantId: msg.participantId,
-              secureParams: msg.secureParams,
-              relmName: msg.relmName,
-              entryway: msg.entryway,
-              avConnection: new AVConnection(msg.participantId),
+              authHeaders: msg.authHeaders,
+              avConnection: new AVConnection(state.participantId),
             },
-            getRelmPermitsAndMetadata(msg.relmName),
+            getRelmPermitsAndMetadata(state.pageParams, msg.authHeaders),
           ];
         }
 
@@ -177,6 +151,50 @@ export function makeProgram() {
           ];
         }
 
+        // does not happen on initial page load; `enterPortal` is
+        // used as the first stage of re-initializing everything for
+        // a new relm, without reloading the web page
+        case "enterPortal": {
+          exists(msg.relmName, "relmName");
+          exists(msg.entryway, "entryway");
+
+          return [
+            {
+              ...state,
+              overlayScreen: "portal",
+              pageParams: {
+                ...state.pageParams,
+                relmName: msg.relmName,
+                entryway: msg.entryway,
+              },
+              entrywayPosition: null,
+              initializedWorldManager: false,
+              worldDoc: null,
+              ecsWorld: null,
+            },
+            (dispatch) => {
+              worldManager
+                .deinit()
+                .then(() => {
+                  dispatch({ id: "didResetWorld" });
+                })
+                .catch((err) => {
+                  dispatch({ id: "error", msg: err.message });
+                });
+            },
+          ];
+        }
+
+        case "didResetWorld": {
+          exists(state.pageParams, "pageParams");
+          exists(state.authHeaders, "authHeaders");
+
+          return [
+            state,
+            getRelmPermitsAndMetadata(state.pageParams, state.authHeaders),
+          ];
+        }
+
         case "importedPhysicsEngine": {
           exists(msg.physicsEngine, "physicsEngine");
 
@@ -191,7 +209,7 @@ export function makeProgram() {
 
         case "createdECSWorld": {
           exists(state.relmDocId, "relmDocId");
-          exists(state.secureParams, "secureParams");
+          exists(state.authHeaders, "authHeaders");
           exists(msg.ecsWorld, "ecsWorld");
           exists(msg.ecsWorldLoaderUnsub, "ecsWorldLoaderUnsub");
 
@@ -201,7 +219,7 @@ export function makeProgram() {
               ecsWorld: msg.ecsWorld,
               ecsWorldLoaderUnsub: msg.ecsWorldLoaderUnsub,
             },
-            createWorldDoc(msg.ecsWorld, state.relmDocId, state.secureParams),
+            createWorldDoc(msg.ecsWorld, state.relmDocId, state.authHeaders),
           ];
         }
 
@@ -332,7 +350,7 @@ export function makeProgram() {
           return [
             { ...state, doneLoading: true },
             Cmd.batch([
-              getPositionFromEntryway(state.worldDoc, state.entryway),
+              getPositionFromEntryway(state.worldDoc, state.pageParams.entryway),
               (dispatch) => {
                 // If we can't find the entryway in 1.5 sec, assume there is
                 // no entryway data to be found, and use 0,0,0 as entryway
@@ -399,8 +417,7 @@ export function makeProgram() {
                 state.participantState.broker,
                 state.ecsWorld,
                 state.worldDoc,
-                state.relmName,
-                state.entryway,
+                state.pageParams,
                 state.relmDocId,
                 state.avConnection,
                 state.participantState.participants

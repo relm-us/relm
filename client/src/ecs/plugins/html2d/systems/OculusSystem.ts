@@ -7,6 +7,7 @@ import { Perspective } from "~/ecs/plugins/perspective";
 import HtmlOculus from "../HtmlOculus.svelte";
 import { Oculus, OculusRef } from "../components";
 import { HtmlPresentation } from "../HtmlPresentation";
+import { worldManager } from "~/world";
 
 const v1 = new Vector3();
 /**
@@ -51,6 +52,9 @@ export class OculusSystem extends System {
 
   build(entity: Entity) {
     const spec = entity.get(Oculus);
+
+    // Need avConnection to exist for Oculus to work
+    if (!worldManager.avConnection) return;
 
     // Prepare a container for Svelte
     const container = this.htmlPresentation.createContainer(

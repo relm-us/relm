@@ -1,77 +1,24 @@
 import axios from "axios";
 
-import { Security } from "~/identity/Security";
-import { playerId } from "~/identity/playerId";
-import { SecureParams } from "~/identity/secureParams";
+import type { AuthenticationHeaders } from "~/identity/types";
 
 export class RelmRestAPI {
-  _authenticationParams: SecureParams;
-  _token: string;
-  _jwt: string;
   url: string;
-  security: Security = new Security();
+  authHeaders: AuthenticationHeaders;
 
-  constructor(url, { token, jwt }: { token?: string; jwt?: string } = {}) {
-    if (!window.crypto.subtle) {
-      throw new Error(
-        `Unable to authenticate: please use a browser that ` +
-          `supports signing with public keys, such as Firefox or Chrome.`
-      );
-    }
-
+  constructor(url, authHeaders: AuthenticationHeaders) {
     this.url = url;
-
-    this._token = token;
-    this._jwt = jwt;
-  }
-
-  async getAuthenticationParams() {
-    if (!this._authenticationParams) {
-      const pubkey = await this.security.exportPublicKey();
-      const signature = await this.security.sign(playerId);
-
-      const params: SecureParams = {
-        id: playerId,
-        s: signature,
-        x: pubkey.x,
-        y: pubkey.y,
-      };
-      if (this._token) params.t = this._token;
-      if (this._jwt) params.jwt = this._jwt;
-
-      this._authenticationParams = params;
-    }
-    return this._authenticationParams;
-  }
-
-  async getHeaders() {
-    const params = await this.getAuthenticationParams();
-
-    let headers = {
-      "x-relm-id": params.id,
-      "x-relm-s": params.s,
-      "x-relm-x": params.x,
-      "x-relm-y": params.y,
-    };
-    if (params.jwt) {
-      headers["x-relm-jwt"] = params.jwt;
-    }
-    if (params.t) {
-      headers["x-relm-t"] = params.t;
-    }
-    return headers;
+    this.authHeaders = authHeaders;
   }
 
   async get(path, params = {}) {
     const url = `${this.url}${path}`;
-    const headers = await this.getHeaders();
-    return await axios.get(url, { headers });
+    return await axios.get(url, { headers: this.authHeaders });
   }
 
   async post(path, body = {}) {
     const url = `${this.url}${path}`;
-    const headers = await this.getHeaders();
-    return await axios.post(url, body, { headers });
+    return await axios.post(url, body, { headers: this.authHeaders });
   }
 
   async getMetadata(relm: string) {

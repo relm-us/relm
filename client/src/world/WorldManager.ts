@@ -28,13 +28,14 @@ import { CameraManager } from "./CameraManager";
 import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
+import type { PageParams } from "~/types/PageParams";
 import type { Dispatch, State as RelmState } from "~/main/ProgramTypes";
 import { AVConnection } from "~/av";
 import { playerId } from "~/identity/playerId";
 import { Avatar } from "~/identity/Avatar";
 import { Participant } from "~/identity/types";
 import { ParticipantManager } from "~/identity/ParticipantManager";
-import { ParticipantYBroker } from "identity/ParticipantYBroker";
+import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 
 export class WorldManager {
   dispatch: Dispatch;
@@ -67,8 +68,7 @@ export class WorldManager {
     broker: ParticipantYBroker,
     ecsWorld: DecoratedECSWorld,
     worldDoc: WorldDoc,
-    relmName: string,
-    entryway: string,
+    pageParams: PageParams,
     relmDocId: string,
     avConnection: AVConnection,
     participants: Map<string, Participant>
@@ -78,8 +78,8 @@ export class WorldManager {
 
     this.world = ecsWorld;
     this.worldDoc = worldDoc;
-    this.subrelm = relmName;
-    this.entryway = entryway;
+    this.subrelm = pageParams.relmName;
+    this.entryway = pageParams.entryway;
     this.relmDocId = relmDocId;
     this.avConnection = avConnection;
 

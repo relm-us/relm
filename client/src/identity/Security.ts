@@ -14,6 +14,15 @@ export class Security {
   secret;
   keypair;
 
+  constructor() {
+    if (!window.crypto.subtle) {
+      throw new Error(
+        `Unable to authenticate: please use a browser that ` +
+          `supports signing with public keys, such as Firefox or Chrome.`
+      );
+    }
+  }
+
   async getOrCreateSecret() {
     if (!this.secret) {
       const secretJson = localStorage.getItem("secret");

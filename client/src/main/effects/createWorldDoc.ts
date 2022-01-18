@@ -1,7 +1,7 @@
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import { config } from "~/config";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
-import { SecureParams } from "~/identity/secureParams";
+import { AuthenticationHeaders } from "~/identity/types";
 
 import { Dispatch } from "../ProgramTypes";
 
@@ -11,15 +11,15 @@ export const createWorldDoc =
   (
     ecsWorld: DecoratedECSWorld,
     relmDocId: string,
-    secureParams: SecureParams
+    authHeaders: AuthenticationHeaders
   ) =>
   async (dispatch: Dispatch) => {
     const worldDoc = new WorldDoc(ecsWorld);
 
-    const connection = worldDoc.justConnect(
+    const connection = worldDoc.connect(
       config.serverYjsUrl,
       relmDocId,
-      secureParams
+      authHeaders
     );
 
     connection.once("status", ({ status }: { status: YConnectState }) => {

@@ -57,6 +57,15 @@ export type Appearance = {
   shoeColor: string;
 };
 
+export type AuthenticationHeaders = {
+  "x-relm-id": string;
+  "x-relm-s": string;
+  "x-relm-x": string;
+  "x-relm-y": string;
+  "x-relm-jwt"?: string;
+  "x-relm-t"?: string;
+};
+
 export type IdentityData = {
   // Participant's name (chosen randomly at first, "Guest-xyz")
   name: string;

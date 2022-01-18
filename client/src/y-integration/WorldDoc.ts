@@ -28,12 +28,9 @@ import {
 import EventEmitter from "eventemitter3";
 import { applyDiffToYEntity } from "./applyDiff";
 
-import { ConnectOptions } from "~/types/ConnectOptions";
-import { yConnectState, YConnectState } from "~/stores/yConnectState";
-import { yLoadingState } from "~/stores/yLoadingState";
 import { selectedEntities } from "~/stores/selection";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
-import { SecureParams } from "~/identity/secureParams";
+import { AuthenticationHeaders } from "~/identity/types";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
 
@@ -93,40 +90,22 @@ export class WorldDoc extends EventEmitter {
     });
   }
 
-  justConnect(url: string, subrelmDocId: string, secureParams: SecureParams) {
+  connect(
+    url: string,
+    subrelmDocId: string,
+    authHeaders: AuthenticationHeaders
+  ) {
     this.provider = new WebsocketProvider(url, subrelmDocId, this.ydoc, {
-      params: secureParams,
+      params: {
+        id: authHeaders["x-relm-id"],
+        s: authHeaders["x-relm-s"],
+        x: authHeaders["x-relm-x"],
+        y: authHeaders["x-relm-y"],
+        t: authHeaders["x-relm-t"],
+        jwt: authHeaders["x-relm-jwt"],
+      },
     });
     return this.provider;
-  }
-
-  connect(connectOpts: ConnectOptions) {
-    this.provider = new WebsocketProvider(
-      connectOpts.url,
-      connectOpts.room,
-      this.ydoc,
-      { params: connectOpts.params } as { params: any }
-    );
-
-    yLoadingState.set("loading");
-
-    if (connectOpts.entitiesCount === 0) {
-      yLoadingState.set("loaded");
-    } else {
-      let interval = setInterval(() => {
-        if (this.ydoc.store.clients.size > 1) {
-          yLoadingState.set("loaded");
-          clearInterval(interval);
-        }
-      }, 50);
-    }
-
-    this.provider.on("status", ({ status }: { status: YConnectState }) => {
-      if (status === "error") {
-        console.warn("error connecting to y-websocket");
-      }
-      yConnectState.set(status);
-    });
   }
 
   disconnect() {
@@ -328,9 +307,11 @@ export class WorldDoc extends EventEmitter {
 
         withMapEdits(event as Y.YMapEvent<YValues>, {
           onUpdate: (key, content, oldContent) => {
-            const componentName = (this.entities
-              .get(event.path[0] as number)
-              .get("components") as YComponents)
+            const componentName = (
+              this.entities
+                .get(event.path[0] as number)
+                .get("components") as YComponents
+            )
               .get(event.path[2] as number)
               .get("name") as string;
             const component = entity.getByName(componentName);

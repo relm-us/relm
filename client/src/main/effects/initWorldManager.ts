@@ -4,16 +4,16 @@ import { WorldDoc } from "~/y-integration/WorldDoc";
 import { worldManager } from "~/world";
 
 import { Dispatch } from "../ProgramTypes";
-import { ParticipantYBroker } from "identity/ParticipantYBroker";
+import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 import { AVConnection } from "~/av";
+import { PageParams } from "~/types/PageParams";
 
 export const initWorldManager =
   (
     broker: ParticipantYBroker,
     ecsWorld: DecoratedECSWorld,
     worldDoc: WorldDoc,
-    relmName: string,
-    entryway: string,
+    pageParams: PageParams,
     relmDocId: string,
     avConnection: AVConnection,
     participants: Map<string, Participant>
@@ -24,8 +24,7 @@ export const initWorldManager =
       broker,
       ecsWorld,
       worldDoc,
-      relmName,
-      entryway,
+      pageParams,
       relmDocId,
       avConnection,
       participants
