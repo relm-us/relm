@@ -1,6 +1,8 @@
-import { respond, joinError } from "./utils";
+import { respond, joinError, decodedValidJwt } from "./utils";
 import { Player, Permission, Relm, useToken } from "./db";
+import { JWTSECRET } from "./config";
 import createError from "http-errors";
+import { unabbreviatedPermissions } from "./utils/unabbreviatedPermissions";
 
 function getParam(req, key) {
   if (key in req.query) {
@@ -85,6 +87,36 @@ export function acceptToken() {
       } else {
         next(err);
       }
+    }
+  };
+}
+
+export function acceptJwt() {
+  return async (req, _res, next) => {
+    if (JWTSECRET && req.headers["x-relm-jwt"]) {
+      const result = decodedValidJwt(req.headers["x-relm-jwt"], JWTSECRET);
+      if (result) {
+        req.jwtRaw = result;
+
+        for (let relm in result.relms) {
+          const permits = unabbreviatedPermissions(result.relms[relm]);
+          await Permission.setPermissions({
+            playerId: req.authenticatedPlayerId,
+            relmId: req.relm.relmId,
+            permits,
+            // This ensures that a JWT token can also delete permits when needed:
+            union: false
+          });
+        }
+
+        // Success
+        next();
+      } else {
+        next(createError(401, "JWT unauthorized"));
+      }
+    } else {
+      // Not configured for JWT; OK
+      next();
     }
   };
 }

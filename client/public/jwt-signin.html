@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/hmac-sha256.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/enc-base64-min.js"
+    ></script>
+
+    <style>
+      .login {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+      }
+      .login label {
+        position: absolute;
+        right: 0;
+        margin-right: 180px;
+      }
+      .login input {
+        width: 170px;
+      }
+      .field {
+        margin-bottom: 1em;
+        position: relative;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login">
+      <h1>JWT Sign In</h1>
+
+      <div class="field">
+        <label for="username">Username:</label>
+        <input id="username" name="username" placeholder="username" />
+      </div>
+
+      <div class="field">
+        <label for="relm">Relm:</label>
+        <input id="relm" name="relm" value="default" />
+      </div>
+
+      <div class="field">
+        <label for="secret">Secret:</label>
+        <input id="secret" name="secret" value="conf3D-secret-key" />
+      </div>
+
+      <button id="submit">Sign In</button>
+    </div>
+
+    <script>
+      const defaultSecret = "conf3D-secret-key";
+
+      function login(username, relm, secret = defaultSecret) {
+        const jwt = makeToken(username, { [relm]: "ae" });
+        window.location = "/?relm=" + relm + "&jwt=" + jwt;
+      }
+
+      // Example Payload:
+
+      // {
+      //   "username": "Duane",
+      //   "relms": {
+      //     "default": "a",
+      //     "comete": "ae",
+      //     "terre": "aeix"
+      //   }
+      //   "iat": 1642436812,
+      // }
+      function makeToken(username, relms, secret = defaultSecret) {
+        const payload = {
+          username,
+          relms,
+          iat: Math.floor(new Date() / 1000),
+        };
+        return generateJWT(payload, secret);
+      }
+
+      function generateJWT(payload, secret) {
+        var token = [];
+        token[0] = base64url(JSON.stringify({ typ: "JWT", alg: "HS256" }));
+        token[1] = base64url(JSON.stringify(payload));
+        token[2] = genTokenSign(token, secret);
+        return token.join(".");
+      }
+
+      function genTokenSign(token, secret) {
+        var hash = CryptoJS.HmacSHA256(token.join("."), secret); // generate the hash of (token[0] + "." + token[1])
+        var base64Hash = CryptoJS.enc.Base64.stringify(hash); // convert the hash to base64
+        return urlConvertBase64(base64Hash); // convert the base64 string into an url safe string
+      }
+
+      function base64url(input) {
+        return urlConvertBase64(btoa(input));
+      }
+
+      function urlConvertBase64(input) {
+        var output = input.replace(/=+$/, ""); // Remove padding equal characters
+        output = output.replace(/\+/g, "-"); // Replace characters according to base64url specifications
+        output = output.replace(/\//g, "_"); // Replace characters according to base64url specifications
+        return output;
+      }
+
+      document.getElementById("submit").addEventListener("click", () => {
+        const username = document.getElementById("username").value;
+        const relm = document.getElementById("relm").value;
+        let secret = document.getElementById("secret").value;
+        if (secret === "") secret = defaultSecret;
+
+        login(username, relm, secret);
+      });
+    </script>
+  </body>
+</html>

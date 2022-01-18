@@ -1,4 +1,4 @@
-import { db, sql, VALUES, INSERT, IN, raw } from "./db";
+import { db, sql, INSERT, IN, raw, value } from "./db";
 import * as set from "../utils/set";
 
 export type Permission = "admin" | "access" | "invite" | "edit";
@@ -8,6 +8,9 @@ export function filteredPermits(permits) {
   return new Set(permits.filter((permit) => acceptable.has(permit)));
 }
 
+function arrayToObj(arr: string[]) {
+  return Object.fromEntries(arr.map((value) => [value, true]));
+}
 /**
  * @param {UUID} playerId - the UUID of the player to set permissions for
  * @param {string} relm - the relm to which the permissions pertain, or '*' if for all relms
@@ -17,22 +20,41 @@ export async function setPermissions({
   playerId,
   relmId,
   permits = ["access"],
+  union = true,
 }: {
   playerId: string;
   relmId?: string;
   permits?: Array<Permission>;
+  union?: boolean;
 }) {
   const attrs = {
     relm_id: relmId,
     player_id: playerId,
-    permits: JSON.stringify([...permits]),
+    permits: JSON.stringify(arrayToObj(permits)),
   };
-  const row = await db.one(sql`
+
+  let row;
+  if (union) {
+    row = await db.one(sql`
       ${INSERT("permissions", attrs)}
+      ON CONFLICT(relm_id, player_id)
+      DO UPDATE SET
+        updated_at = CURRENT_TIMESTAMP,
+        permits = (permissions.permits || ${attrs.permits})::jsonb
       RETURNING permits
     `);
+  } else {
+    row = await db.one(sql`
+      ${INSERT("permissions", attrs)}
+      ON CONFLICT(relm_id, player_id)
+      DO UPDATE SET
+        updated_at = CURRENT_TIMESTAMP,
+        permits = ${attrs.permits}
+      RETURNING permits
+    `);
+  }
 
-  return new Set(row.permits);
+  return new Set(Object.keys(row.permits));
 }
 
 export async function getPermissions({
@@ -47,7 +69,6 @@ export async function getPermissions({
   if (empty(relmNames) && empty(relmIds)) return {};
 
   const relms = relmNames ? relmNames : relmIds;
-  // TODO: add CHECK relm_name <> '*' in table defn
   const rows = await db.manyOrNone(sql`
       --
       -- Check for wildcard permission (e.g. admin)
@@ -66,8 +87,8 @@ export async function getPermissions({
         r.relm_${raw(relmNames ? "name" : "id")}::text AS relm,
         CASE
           WHEN p.permits IS NOT NULL THEN p.permits
-          WHEN r.is_public = 't' THEN '["access"]'::jsonb
-          WHEN p.permits IS NULL THEN '[]'::jsonb
+          WHEN r.is_public = 't' THEN '{"access":true}'::jsonb
+          WHEN p.permits IS NULL THEN '{}'::jsonb
         END AS permits
       FROM relms AS r
       LEFT JOIN (
@@ -84,18 +105,22 @@ export async function getPermissions({
   // For each relm, add permits that have been granted to the playerId
   for (const row of rows) {
     const permits = permitsByRelm.get(row.relm);
-    for (const permit of row.permits) {
-      permits.add(permit);
+    for (const permit in row.permits) {
+      if (row.permits[permit]) {
+        permits.add(permit);
+      }
     }
   }
 
   const wildcardPermits = permitsByRelm.get("*") || new Set();
 
-  // Convert Map<string, Set> to Record<string, Array>:
+  // Convert Map<string, Set> to Record<string, Array>, adding wildcard permits, if any:
   let result = Object.create(null);
-  for (let [k, v] of permitsByRelm) {
-    result[k] = [...set.union(v, wildcardPermits)];
+  if (permitsByRelm.has("*")) result["*"] = [...permitsByRelm.get("*")];
+  for (let relm of relms) {
+    result[relm] = [...set.union(permitsByRelm.get(relm), wildcardPermits)];
   }
+
   return result;
 }
 

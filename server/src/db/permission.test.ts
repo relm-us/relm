@@ -36,11 +36,11 @@ describe("Permission model tests", () => {
     expect(permitsByRelm["*"]).not.toBeDefined();
     expect(permitsByRelm[relmName]).toEqual(["access"]);
 
-    // We requested a relm that doesn't exist, so permissions should be undefined
-    expect(permitsByRelm["doesnotexist"]).not.toBeDefined();
+    // We requested a relm that doesn't exist, so permissions should be empty
+    expect(permitsByRelm["doesnotexist"]).toEqual([]);
   });
 
-  it("gets unioned permissions", async () => {
+  it("gets union of permits that includes wildcard relm", async () => {
     const playerId = uuidv4();
     const relmId1 = uuidv4();
     const relmName1 = uuidv4();
@@ -58,12 +58,14 @@ describe("Permission model tests", () => {
       isPublic: false,
     });
 
-    // Wildcard permission for this user
+    // Wildcard permits for this participant
     await Permission.setPermissions({
       playerId,
       relmId: null,
       permits: ["admin"],
     });
+
+    // Relm-specific permits for this participant
     await Permission.setPermissions({
       playerId,
       relmId: relmId1,
@@ -88,8 +90,63 @@ describe("Permission model tests", () => {
     expect(permitsByRelm[relmName1].sort()).toEqual(
       ["admin", "access", "edit"].sort()
     );
-    expect(permitsByRelm[relmName2].sort()).toEqual(
-      ["admin", "access"].sort()
+    expect(permitsByRelm[relmName2].sort()).toEqual(["admin", "access"].sort());
+  });
+
+  it("sets permissions", async () => {
+    const playerId = uuidv4();
+    const relmId1 = uuidv4();
+    const relmName1 = uuidv4();
+
+    await Relm.createRelm({
+      relmId: relmId1,
+      relmName: relmName1,
+      isPublic: false,
+    });
+
+    for (let permit of ["access", "invite", "edit"]) {
+      await Permission.setPermissions({
+        playerId,
+        relmId: relmId1,
+        permits: [permit as Permission.Permission],
+        union: false,
+      });
+    }
+
+    const permitsByRelm = await Permission.getPermissions({
+      playerId,
+      relmNames: [relmName1],
+    });
+
+    expect(permitsByRelm[relmName1].sort()).toEqual(["edit"].sort());
+  });
+
+  it("sets unioned permissions", async () => {
+    const playerId = uuidv4();
+    const relmId1 = uuidv4();
+    const relmName1 = uuidv4();
+
+    await Relm.createRelm({
+      relmId: relmId1,
+      relmName: relmName1,
+      isPublic: false,
+    });
+
+    for (let permit of ["access", "invite", "invite"]) {
+      await Permission.setPermissions({
+        playerId,
+        relmId: relmId1,
+        permits: [permit as Permission.Permission],
+      });
+    }
+
+    const permitsByRelm = await Permission.getPermissions({
+      playerId,
+      relmNames: [relmName1],
+    });
+
+    expect(permitsByRelm[relmName1].sort()).toEqual(
+      ["access", "invite"].sort()
     );
   });
 });

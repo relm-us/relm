@@ -3,7 +3,6 @@ import cors from "cors";
 import createError from "http-errors";
 import * as Y from "yjs";
 import * as yws from "y-websocket/bin/utils";
-import * as crypto from "crypto";
 
 import * as config from "../config";
 import * as util from "../utils";
@@ -12,31 +11,12 @@ import * as twilio from "../lib/twilio";
 import { Invitation, Permission, Relm, Doc } from "../db";
 import exportRelm from "relm-common/serialize/export";
 import importRelm from "relm-common/serialize/import";
+import { decodedValidJwt } from "../utils/decodedValidJwt";
+import { respond } from "../utils";
 
 const { wrapAsync, uuidv4 } = util;
 
 export const relm = express.Router();
-
-function JWT_is_valid(jwt, secretkey) {
-  const jwtHeader = jwt.split(".")[0];
-  const jwtPayload = jwt.split(".")[1];
-  const jwtSignature = jwt.split(".")[2];
-  const signature = crypto
-    .createHmac("RSA-SHA256", secretkey)
-    .update(jwtHeader + "." + jwtPayload)
-    .digest("base64");
-  var isValid =
-    jwtSignature ==
-    signature.replace(/\+/g, "-").replace(/=/g, "").replace(/\//g, "_");
-  var decoded;
-  try {
-    decoded = JSON.parse(Buffer.from(jwtPayload, "base64").toString("utf8"));
-  } catch (e) {
-    return { isValid: false, decoded: {} };
-  }
-  if (Math.abs(decoded.iat - new Date().getTime() / 1000) > 60) isValid = false; // chek jwt "issued at" time is less than 1 minute
-  return { isValid: isValid, decoded: decoded };
-}
 
 // Create a new relm
 relm.post(
@@ -288,6 +268,7 @@ relm.get(
   middleware.relmExists(),
   middleware.authenticated(),
   middleware.acceptToken(),
+  middleware.acceptJwt(),
   wrapAsync(async (req, res) => {
     const permissions = await Permission.getPermissions({
       playerId: req.authenticatedPlayerId,
@@ -295,56 +276,7 @@ relm.get(
     });
     util.respond(res, 200, {
       status: "success",
-      permits: permissions[req.relmName],
-    });
-  })
-);
-
-// Check permission for player in an existing relm
-relm.get(
-  "/can/:permission",
-  cors(),
-  middleware.relmExists(),
-  middleware.authenticated(),
-  middleware.acceptToken(),
-  wrapAsync(async (req, res) => {
-    const auth = middleware.authorized(req.params.permission);
-    await auth(req, res, (err) => {
-      if (!err) {
-        if (config.JWTSECRET === undefined) {
-          util.respond(res, 200, {
-            status: "success",
-            action: "permit",
-            authmode: "public",
-            twilio: twilio.getToken(req.authenticatedPlayerId),
-            relm: req.relm,
-          });
-        } else {
-          const jwtresult = JWT_is_valid(
-            req.headers[`x-relm-jwt`],
-            config.JWTSECRET.toString()
-          );
-          if (
-            jwtresult.isValid &&
-            req.relmName === jwtresult.decoded.allowedrelm
-          ) {
-            // if jwt check that the jwt token payload matches the relmName
-            util.respond(res, 200, {
-              status: "success",
-              action: "permit",
-              authmode: "jwt",
-              twilio: twilio.getToken(req.authenticatedPlayerId),
-              relm: req.relm,
-              user: { name: jwtresult.decoded.username },
-            });
-          } else {
-            throw createError(401, "access denied");
-          }
-        }
-      } else {
-        console.warn("permission err", err);
-        throw err;
-      }
+      permits: permissions[req.relmName] || [],
     });
   })
 );

@@ -1,5 +1,7 @@
-export { getDefinedKeys } from "./getDefinedKeys";
+export { decodedValidJwt } from "./decodedValidJwt";
 export { encrypt, compareEncryptedPassword } from "./encryption";
+export { getDefinedKeys } from "./getDefinedKeys";
+export { isArray } from "./isArray";
 export { joinError } from "./joinError";
 export { nullOr } from "./nullOr";
 export { required, req } from "./required";

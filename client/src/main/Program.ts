@@ -146,13 +146,6 @@ export function makeProgram() {
           exists(msg.assetsMax, "assetsMax");
           exists(msg.twilioToken, "twilioToken");
 
-          if (!msg.permits.includes("access")) {
-            return [
-              state,
-              Cmd.ofMsg({ id: "error", message: `Permission not granted` }),
-            ];
-          }
-
           // Set the "max values" for the loading progress bar
           resetLoading(msg.assetsMax, msg.entitiesMax);
 

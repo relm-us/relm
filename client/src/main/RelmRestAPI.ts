@@ -7,10 +7,11 @@ import { SecureParams } from "~/identity/secureParams";
 export class RelmRestAPI {
   _authenticationParams: SecureParams;
   _token: string;
+  _jwt: string;
   url: string;
   security: Security = new Security();
 
-  constructor(url, { token }: { token?: string } = {}) {
+  constructor(url, { token, jwt }: { token?: string; jwt?: string } = {}) {
     if (!window.crypto.subtle) {
       throw new Error(
         `Unable to authenticate: please use a browser that ` +
@@ -20,7 +21,8 @@ export class RelmRestAPI {
 
     this.url = url;
 
-    if (token) this._token = token;
+    this._token = token;
+    this._jwt = jwt;
   }
 
   async getAuthenticationParams() {
@@ -35,7 +37,7 @@ export class RelmRestAPI {
         y: pubkey.y,
       };
       if (this._token) params.t = this._token;
-      if ((window as any).jwt) params.jwt = (window as any).jwt;
+      if (this._jwt) params.jwt = this._jwt;
 
       this._authenticationParams = params;
     }
@@ -101,23 +103,23 @@ export class RelmRestAPI {
       if (res.data.status === "success") {
         return res.data.permits;
       } else {
-        throw Error(`can't get permissions (${res.data.status})`);
+        throw Error(`can't get permissions (${res.data?.status})`);
       }
     } else {
-      throw Error(`can't get permissions (${res.status})`);
+      throw Error(`can't get permissions (${res?.status})`);
     }
   }
 
   async getPermitsForManyRelms(relms: string[]) {
     const res = await this.post("/auth/permissions", { relms });
     if (res.status === 200) {
-      if (res.data.status === "success") {
+      if (res.data?.status === "success") {
         return res.data.permits;
       } else {
-        throw Error(`can't get permissions (${res.data.status})`);
+        throw Error(`can't get permissions (${res.data?.status})`);
       }
     } else {
-      throw Error(`can't get permissions (${res.status})`);
+      throw Error(`can't get permissions (${res?.status})`);
     }
   }
 }
