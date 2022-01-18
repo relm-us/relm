@@ -84,7 +84,7 @@ server.on("upgrade", async (req, socket, head) => {
       y,
     });
   } catch (err) {
-    console.warn(err);
+    console.warn("can't upgrade", err);
     return;
   }
 
