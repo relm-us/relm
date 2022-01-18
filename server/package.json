@@ -62,11 +62,5 @@
   },
   "resolutions": {
     "bl": "4.0.3"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "coveragePathIgnorePatterns": [
-      "/node_modules/"
-    ]
   }
 }
