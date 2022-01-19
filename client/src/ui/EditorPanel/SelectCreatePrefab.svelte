@@ -1,7 +1,6 @@
 <script lang="ts">
   import Button from "~/ui/lib/Button";
   import { worldManager } from "~/world";
-  import { WorldTransform } from "~/ecs/plugins/core";
   import { directory } from "~/prefab";
 
   const PLAYER_CENTER_HEIGHT = 0.755;
@@ -15,11 +14,11 @@
   };
 
   const create = (prefab) => () => {
-    const transform = worldManager.avatar.entity?.get(WorldTransform);
-    if (transform) {
-      const x = transform.position.x;
-      const y = transform.position.y - PLAYER_CENTER_HEIGHT;
-      const z = transform.position.z;
+    const position = worldManager.avatar?.position;
+    if (position) {
+      const x = position.x;
+      const y = position.y - PLAYER_CENTER_HEIGHT;
+      const z = position.z;
       let entities = prefab.prefab(worldManager.world, { x, yOffset: y, z });
       if (!(entities instanceof Array)) entities = [entities];
 
