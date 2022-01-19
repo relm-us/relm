@@ -70,7 +70,6 @@ function setTransformDataOnParticipant(
   if (!entities.body) return;
 
   const transform = entities.body.get(Transform);
-  const rigidBody = entities.body.get(RigidBody);
 
   // Set position of body
   v1.set(x, y, z);

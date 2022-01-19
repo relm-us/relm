@@ -8,27 +8,35 @@
   import FaMap from "svelte-icons/fa/FaMap.svelte";
 
   let center = new Vector3();
-  worldManager.boundingBox.getCenter(center);
 
   let size = new Vector3();
-  worldManager.boundingBox.getSize(size);
 
   let enabled = true;
 
   let mapDiameter = 150;
-  let worldDiameter = size.x > size.z ? size.x : size.z;
+  let worldDiameter;
   let otherPositions = [];
   let myPosition = null;
 
   onMount(() => {
-    const interval = setInterval(() => {
+    const interval1 = setInterval(() => {
       otherPositions = worldManager.participants.actives.map((pt) => {
         return pt.avatar.position;
       });
       if (worldManager.participants.local.avatar)
         myPosition = worldManager.participants.local.avatar.position;
     }, 75);
-    return () => clearInterval(interval);
+
+    const interval2 = setInterval(() => {
+      worldManager.boundingBox.getCenter(center);
+      worldManager.boundingBox.getSize(size);
+      worldDiameter = size.x > size.z ? size.x : size.z;
+    }, 1500);
+
+    return () => {
+      clearInterval(interval1);
+      clearInterval(interval2);
+    };
   });
 </script>
 
