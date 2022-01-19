@@ -96,10 +96,11 @@ export class SelectionManager {
 
   moveRelativeToSavedPositions(vector) {
     for (const entity of this.entities) {
-      const position = entity.get(Transform).position;
+      const transform = entity.get(Transform);
       const savedPos = (entity as any).savedPosition;
       if (savedPos) {
-        position.copy(savedPos).add(vector);
+        transform.position.copy(savedPos).add(vector);
+        transform.modified(); // update physics engine
       }
     }
   }

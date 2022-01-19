@@ -33,8 +33,12 @@ export class Avatar {
     this.entities = entities;
   }
 
+  get transform(): Transform {
+    return this.entities.body.get(Transform);
+  }
+
   get position(): Vector3 {
-    return this.entities.body.get(Transform).position;
+    return this.transform.position;
   }
 
   set position(newCoords: Vector3) {

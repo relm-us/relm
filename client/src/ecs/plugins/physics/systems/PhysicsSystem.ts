@@ -1,9 +1,9 @@
-import { System, Groups } from "~/ecs/base";
 import type {
   EventQueue,
   RigidBody as RapierRigidBody,
   World,
 } from "@dimforge/rapier3d";
+import { System, Modified, Groups } from "~/ecs/base";
 import { RigidBody, RigidBodyRef } from "../components";
 import { Transform, WorldTransform } from "~/ecs/plugins/core";
 import { Matrix4, Vector3, Quaternion } from "three";
@@ -45,6 +45,7 @@ export class PhysicsSystem extends System {
 
   static queries = {
     default: [RigidBodyRef, Transform, WorldTransform],
+    modified: [RigidBodyRef, Modified(Transform)],
   };
 
   init({ physics }) {
@@ -81,6 +82,12 @@ export class PhysicsSystem extends System {
 
     world.step(eventQueue);
 
+    this.queries.modified.forEach((entity) => {
+      const body = entity.get(RigidBodyRef).value;
+      const world = entity.get(WorldTransform);
+      body.setTranslation(world.position, true);
+    });
+
     this.queries.default.forEach((entity) => {
       const parent = entity.getParent();
       const local = entity.get(Transform);
@@ -88,14 +95,22 @@ export class PhysicsSystem extends System {
       const spec = entity.get(RigidBody);
       const body = entity.get(RigidBodyRef).value;
 
-      if (spec.sync) {
-        if (spec.sync === true) {
-          spec.sync = this.physics.hecsWorld.version;
-        } else if (this.physics.hecsWorld.version > spec.sync + 1) {
-          spec.sync = false;
-        }
-        body.setTranslation(world.position, true);
-      } else if (spec.kind === "DYNAMIC") {
+      // if (spec.sync) {
+      //   if (spec.sync === true) {
+      //     spec.sync = this.physics.hecsWorld.version;
+      //   } else if (this.physics.hecsWorld.version > spec.sync + 1) {
+      //     spec.sync = false;
+      //   }
+      //   body.setTranslation(world.position, true);
+      // if (local.modified) {
+      //   if (spec.sync === true) {
+      //     spec.sync = this.physics.hecsWorld.version;
+      //   } else if (this.physics.hecsWorld.version > spec.sync + 1) {
+      //     spec.sync = false;
+      //   }
+      //   body.setTranslation(world.position, true);
+      // } else 
+      if (spec.kind === "DYNAMIC") {
         if (!parent) {
           // if (entity.name === "Avatar") return;
           local.position.copy(body.translation());

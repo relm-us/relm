@@ -309,7 +309,9 @@ export class WorldManager {
   }
 
   moveTo(position: Vector3) {
-    this.participants.local.avatar.position = position;
+    const transform = this.participants.local.avatar.transform;
+    transform.position.copy(position);
+    transform.modified(); // update physics engine
     this.camera.moveTo(position);
   }
 

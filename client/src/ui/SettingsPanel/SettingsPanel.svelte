@@ -30,7 +30,7 @@
   }
 
   function addEntryway(entrywayName) {
-    const coords: Vector3 = worldManager.avatar.entity.get(Transform).position;
+    const coords: Vector3 = worldManager.avatar.position;
     worldManager.worldDoc.entryways.y.set(entrywayName, [
       coords.x,
       coords.y,
@@ -54,9 +54,8 @@
 
   function setSkybox(imageUrl) {
     // Delete any previous Skybox object
-    const entities: Entity[] = worldManager.world.entities.getAllByComponent(
-      Skybox
-    );
+    const entities: Entity[] =
+      worldManager.world.entities.getAllByComponent(Skybox);
     for (let entity of entities) {
       worldManager.worldDoc.deleteById(entity.id.toString());
     }
