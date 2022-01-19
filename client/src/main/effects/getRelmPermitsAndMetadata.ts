@@ -11,8 +11,11 @@ export const getRelmPermitsAndMetadata =
     const api = new RelmRestAPI(config.serverUrl, authHeaders);
 
     let permits;
+    let participantName;
     try {
-      permits = await api.getPermits(pageParams.relmName);
+      const result = await api.getPermits(pageParams.relmName);
+      permits = result.permits;
+      participantName = result.jwt?.username;
     } catch (err) {
       return dispatch({ id: "error", message: err.message });
     }
@@ -33,6 +36,7 @@ export const getRelmPermitsAndMetadata =
         relmDocId: permanentDocId,
         entitiesMax: entitiesCount, // TODO: Change metadata API to return 'entitiesMax'
         assetsMax: assetsCount,
+        participantName,
         twilioToken,
       });
     } catch (err) {

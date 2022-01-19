@@ -16,19 +16,16 @@ auth.post(
     if (!req.body.relms) {
       fail(res, "relms required");
     } else {
-      let permits = {};
-      let participantNameOverride = null;
+      let permissions = {};
 
-      if (req.jwtData) {
-        participantNameOverride = req.jwtData.username;
-
+      if (req.jwtRaw) {
         const relmsRequested = new Set(req.body.relms);
-        const relmsDecoded = new Set(Object.keys(req.jwtData.relms));
+        const relmsDecoded = new Set(Object.keys(req.jwtRaw.relms));
         for (let relmName in intersection(relmsRequested, relmsDecoded)) {
-          permits[relmName] = relmsDecoded[relmName];
+          permissions[relmName] = relmsDecoded[relmName];
         }
       } else {
-        permits = await Permission.getPermissions({
+        permissions = await Permission.getPermissions({
           playerId: req.authenticatedPlayerId,
           relmNames: req.body.relms,
         });
@@ -36,8 +33,8 @@ auth.post(
 
       respond(res, 200, {
         status: "success",
-        permits,
-        participantNameOverride,
+        permissions,
+        jwt: req.jwtRaw,
       });
     }
   })

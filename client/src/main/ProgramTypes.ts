@@ -20,6 +20,7 @@ import type {
 export type State = {
   // initialization
   participantId?: string;
+  participantName?: string; // override used by JWT
   pageParams?: PageParams;
   authHeaders?: AuthenticationHeaders;
   entrywayPosition: Vector3;
@@ -80,6 +81,7 @@ export type Message =
       relmDocId: string;
       entitiesMax: number;
       assetsMax: number;
+      participantName: string;
       twilioToken: string;
     }
   | { id: "importedPhysicsEngine"; physicsEngine: any }

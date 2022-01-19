@@ -94,6 +94,7 @@ export function makeProgram(this: void): Program {
               participantId: msg.participantId,
               identityData: msg.identityData,
               isLocal: msg.isLocal,
+              editable: false, // can't edit other participants
               modified: true,
               /* no avatar yet, because this may be an inactive (stale) participant */
             });
@@ -122,6 +123,7 @@ function initParticipants() {
   participants.set(playerId, {
     participantId: playerId,
     isLocal: true,
+    editable: true,
     modified: false,
     identityData,
   });

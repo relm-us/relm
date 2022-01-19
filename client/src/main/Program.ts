@@ -103,6 +103,7 @@ export function makeProgram() {
         case "gotAuthenticationHeaders": {
           exists(msg.authHeaders);
 
+
           return [
             {
               ...state,
@@ -123,13 +124,10 @@ export function makeProgram() {
           // Set the "max values" for the loading progress bar
           resetLoading(msg.assetsMax, msg.entitiesMax);
 
-          // console.log(
-          //   `relm entities: ${msg.entitiesMax}, assets: ${msg.assetsMax}`
-          // );
-
           return [
             {
               ...state,
+              participantName: msg.participantName,
               permits: msg.permits,
               relmDocId: msg.relmDocId,
               entitiesMax: msg.entitiesMax,
@@ -314,17 +312,26 @@ export function makeProgram() {
             avatarSetupDone: true,
           };
 
-          return [
-            newState,
-            Cmd.batch([
-              msg.appearance
-                ? updateLocalParticipant(localParticipant, {
-                    appearance: msg.appearance,
-                  })
-                : null,
-              nextSetupStep(newState),
-            ]),
-          ];
+          const effects = [nextSetupStep(newState)];
+
+          if (state.participantName) {
+            localParticipant.editable = false;
+            effects.push(
+              updateLocalParticipant(localParticipant, {
+                name: state.participantName,
+              }) as any
+            );
+          }
+
+          if (msg.appearance) {
+            effects.push(
+              updateLocalParticipant(localParticipant, {
+                appearance: msg.appearance,
+              }) as any
+            );
+          }
+
+          return [newState, Cmd.batch(effects)];
         }
 
         case "loading": {
@@ -350,7 +357,10 @@ export function makeProgram() {
           return [
             { ...state, doneLoading: true },
             Cmd.batch([
-              getPositionFromEntryway(state.worldDoc, state.pageParams.entryway),
+              getPositionFromEntryway(
+                state.worldDoc,
+                state.pageParams.entryway
+              ),
               (dispatch) => {
                 // If we can't find the entryway in 1.5 sec, assume there is
                 // no entryway data to be found, and use 0,0,0 as entryway

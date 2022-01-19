@@ -24,7 +24,7 @@ export function setAvatarFromParticipant(this: void, participant: Participant) {
     entities,
     data.name,
     data.color,
-    participant.isLocal ? onDidEditName : null
+    participant.editable && participant.isLocal ? onDidEditName : null
   );
   setOculus(
     entities,

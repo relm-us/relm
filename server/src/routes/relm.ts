@@ -263,7 +263,7 @@ relm.put(
 );
 
 relm.get(
-  "/permissions",
+  "/permits",
   cors(),
   middleware.relmExists(),
   middleware.authenticated(),
@@ -277,6 +277,7 @@ relm.get(
     util.respond(res, 200, {
       status: "success",
       permits: permissions[req.relmName] || [],
+      jwt: req.jwtRaw,
     });
   })
 );

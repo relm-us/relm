@@ -74,7 +74,6 @@ export class WorldManager {
     participants: Map<string, Participant>
   ) {
     this.dispatch = dispatch;
-    // this.state = state;
 
     this.world = ecsWorld;
     this.worldDoc = worldDoc;
@@ -98,8 +97,6 @@ export class WorldManager {
     this.selection = new SelectionManager(this.worldDoc);
 
     this.participants = new ParticipantManager(dispatch, broker, participants);
-    // this.participants = new ParticipantManager(this.worldDoc, this.world);
-    // this.participants.init();
 
     // this.chat = new ChatManager(this.identities);
     // this.chat.setMessages(this.worldDoc.messages);
