@@ -74,15 +74,15 @@ function setTransformDataOnParticipant(
 
   // Set position of body
   v1.set(x, y, z);
-  (transform.position as Vector3).lerp(v1, 0.3333);
-  // transform.position.set(x, y, z);
-  // Update physics
-  rigidBody.sync = true;
+  transform.position.lerp(v1, 0.3333);
 
   // Set angle of body
   e1.setFromQuaternion(transform.rotation);
   e1.y = theta;
   transform.rotation.setFromEuler(e1);
+
+  // Update physics engine to accept position & rotation transformations
+  transform.modified();
 
   // Set angle of head
   if (participant.avatar) {
