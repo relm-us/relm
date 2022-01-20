@@ -1,3 +1,4 @@
+export { arrayToBooleanObject, booleanObjectToArray } from "./booleanObjects";
 export { decodedValidJwt } from "./decodedValidJwt";
 export { encrypt, compareEncryptedPassword } from "./encryption";
 export { getDefinedKeys } from "./getDefinedKeys";

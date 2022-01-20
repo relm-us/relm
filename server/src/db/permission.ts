@@ -1,5 +1,6 @@
 import { db, sql, INSERT, IN, raw } from "./db";
 import * as set from "../utils/set";
+import { arrayToBooleanObject } from "../utils";
 
 export type Permission = "admin" | "access" | "invite" | "edit";
 
@@ -8,9 +9,6 @@ export function filteredPermits(permits) {
   return new Set(permits.filter((permit) => acceptable.has(permit)));
 }
 
-function arrayToObj(arr: string[]) {
-  return Object.fromEntries(arr.map((value) => [value, true]));
-}
 /**
  * @param {UUID} playerId - the UUID of the player to set permissions for
  * @param {string} relm - the relm to which the permissions pertain, or '*' if for all relms
@@ -30,7 +28,7 @@ export async function setPermissions({
   const attrs = {
     relm_id: relmId,
     player_id: playerId,
-    permits: JSON.stringify(arrayToObj(permits)),
+    permits: JSON.stringify(arrayToBooleanObject(permits)),
   };
 
   let row;

@@ -88,7 +88,7 @@ export async function getInvitation(
         return mkInvitation(row);
       } else {
         throw Error(
-          `token not valid for relm '${row.relm_name}' ('${invitationRelmId}')`
+          `token not valid for this relm (try '${row.relm_name}')`
         );
       }
     } else {

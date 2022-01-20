@@ -47,9 +47,6 @@ async function addLatestDocs(relm) {
 
   const docs = await Doc.getLatestDocs({ relmId: relm.relmId });
 
-  if (docs.transient) {
-    relm.transientDocId = docs.transient.docId;
-  }
   if (docs.permanent) {
     relm.permanentDocId = docs.permanent.docId;
     relm.entitiesCount = docs.permanent.entitiesCount;

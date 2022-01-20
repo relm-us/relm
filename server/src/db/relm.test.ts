@@ -28,11 +28,11 @@ describe("Relm model tests", () => {
       const relm = await Relm.createRelm({ relmName });
       expect(relm).toEqual({
         relmId: expect.stringMatching(UUID_RE),
+        seedRelmId: null,
         relmName: "relm-being-created",
         isPublic: false,
         createdBy: null,
         createdAt: expect.any(Date),
-        transientDocId: expect.stringMatching(UUID_RE),
         permanentDocId: expect.stringMatching(UUID_RE),
       });
     });
@@ -42,7 +42,6 @@ describe("Relm model tests", () => {
     await Relm.createRelm({ relmName });
     const relm = await Relm.getRelm({ relmName });
     expect(relm.relmName).toEqual(relmName);
-    expect(relm.transientDocId).toBeDefined();
     expect(relm.permanentDocId).toBeDefined();
   });
 
