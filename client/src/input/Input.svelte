@@ -1,34 +1,55 @@
 <script lang="ts">
-  import ArrowKeyListener from "./ArrowKeyListener";
-  import CopyPasteKeyListener from "./CopyPasteKeyListener";
-  import SpaceKeyListener from "./SpaceKeyListener";
-  import ShiftKeyListener from "./ShiftKeyListener";
-  import DeleteKeyListener from "./DeleteKeyListener";
-  import EscapeKeyListener from "./EscapeKeyListener";
-  import SwitchModeKeyListener from "./SwitchModeKeyListener";
-  import PauseKeyListener from "./PauseKeyListener";
-  import UndoRedoKeyListener from "./UndoRedoKeyListener";
-  import EnterChatKeyListener from "./EnterChatKeyListener";
+  import { isInputEvent } from "~/input/isInputEvent";
 
   import PointerListener from "./PointerListener";
   import WheelListener from "./WheelListener";
 
   export let world;
   export let permits;
+
+  import * as arrowKeys from "./handlers/arrowKeys";
+  import * as copyPasteKeys from "./handlers/copyPasteKeys";
+  import * as deleteKey from "./handlers/deleteKey";
+  import * as enterKey from "./handlers/enterKey";
+  import * as escapeKey from "./handlers/escapeKey";
+  import * as pauseKey from "./handlers/pauseKey";
+  import * as shiftKey from "./handlers/shiftKey";
+  import * as spaceKey from "./handlers/spaceKey";
+  import * as tabKey from "./handlers/tabKey";
+  import * as undoRedoKeys from "./handlers/undoRedoKeys";
+
+  function onKeydown(event) {
+    if (isInputEvent(event)) return;
+
+    arrowKeys.onKeydown(event);
+    copyPasteKeys.onKeydown(event);
+    deleteKey.onKeydown(event);
+    enterKey.onKeydown(event);
+    escapeKey.onKeydown(event);
+    pauseKey.onKeydown(event);
+    shiftKey.onKeydown(event);
+    spaceKey.onKeydown(event);
+    if (permits.includes("edit")) {
+      tabKey.onKeydown(event);
+    }
+    undoRedoKeys.onKeydown(event);
+  }
+
+  function onKeyup(event) {
+    arrowKeys.onKeyup(event);
+    copyPasteKeys.onKeyup(event);
+    deleteKey.onKeyup(event);
+    enterKey.onKeyup(event);
+    escapeKey.onKeyup(event);
+    pauseKey.onKeyup(event);
+    shiftKey.onKeyup(event);
+    spaceKey.onKeyup(event);
+    tabKey.onKeyup(event);
+    undoRedoKeys.onKeyup(event);
+  }
 </script>
 
-<ArrowKeyListener />
-<CopyPasteKeyListener />
-<SpaceKeyListener />
-<ShiftKeyListener />
-<DeleteKeyListener />
-<EscapeKeyListener />
-{#if permits.includes("edit")}
-  <SwitchModeKeyListener />
-{/if}
-<PauseKeyListener />
-<UndoRedoKeyListener />
-<EnterChatKeyListener />
+<svelte:window on:keydown={onKeydown} on:keyup={onKeyup} />
 
 <PointerListener {world} />
 <WheelListener {world} />
