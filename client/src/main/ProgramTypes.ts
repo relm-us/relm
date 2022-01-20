@@ -3,7 +3,7 @@ import type { DeviceIds } from "video-mirror";
 
 import type { WorldDoc } from "~/y-integration/WorldDoc";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
-import { PageParams } from "~/types/PageParams";
+import { PageParams, WorldDocStatus } from "~/types";
 import { AVConnection } from "~/av/AVConnection";
 
 import type {
@@ -23,8 +23,8 @@ export type State = {
   participantName?: string; // override used by JWT
   pageParams?: PageParams;
   authHeaders?: AuthenticationHeaders;
-  entrywayPosition: Vector3;
-  entrywayUnsub: Function;
+  entrywayPosition?: Vector3;
+  entrywayUnsub?: Function;
 
   // relm metadata
   relmDocId?: string; // server-assigned UUID for the relm
@@ -51,6 +51,7 @@ export type State = {
   ecsWorld?: DecoratedECSWorld;
   ecsWorldLoaderUnsub?: Function;
   worldDoc?: WorldDoc;
+  worldDocStatus: WorldDocStatus;
   initializedWorldManager?: boolean;
 
   // other
@@ -91,6 +92,7 @@ export type Message =
       ecsWorld: DecoratedECSWorld;
       ecsWorldLoaderUnsub: Function;
     }
+  | { id: "gotWorldDocStatus"; status: WorldDocStatus }
   | { id: "gotEntrywayUnsub"; entrywayUnsub: Function }
   | { id: "gotPositionFromEntryway"; entrywayPosition: Vector3 }
   | { id: "assumeOriginAsEntryway" }
@@ -111,3 +113,9 @@ export type Message =
   | { id: "error"; message: string; stack?: any };
 
 export type Dispatch = (message: Message) => void;
+export type Effect = (dispatch: Dispatch) => void;
+export type Program = {
+  init: [State, Effect?];
+  update: (this: void, msg: Message, state: State) => [State, Effect?];
+  view: (this: void, state: State, dispatch: Dispatch) => void;
+};

@@ -30,7 +30,7 @@ import { nextSetupStep } from "./effects/nextSetupStep";
 import { createWorldDoc } from "./effects/createWorldDoc";
 
 import { makeProgram as makeParticipantProgram } from "~/identity/Program";
-import { State, Message } from "./ProgramTypes";
+import type { State, Message, Program } from "./ProgramTypes";
 import { joinAudioVideo } from "./effects/joinAudioVideo";
 import { mapParticipantEffect } from "./mapParticipantEffect";
 import { playerId } from "~/identity/playerId";
@@ -45,21 +45,22 @@ const logEnabled = (localStorage.getItem("debug") || "")
 /**
  * The main Relm program
  */
-export function makeProgram() {
+export function makeProgram(): Program {
   const participantProgram = makeParticipantProgram();
   return {
     init: [
       {
-        screen: "initial",
         participantId: playerId,
         participantState: participantProgram.init[0],
+        worldDocStatus: "disconnected",
+        screen: "initial",
       },
       getPageParams,
     ],
     update(msg: Message, state: State): [State, any?] {
       if (logEnabled) {
         console.log(
-          `program msg '${msg.id}' (${state.pageParams.relmName}): %o`,
+          `program msg '${msg.id}' (${state.pageParams?.relmName}): %o`,
           {
             msg,
             state,
@@ -102,7 +103,6 @@ export function makeProgram() {
 
         case "gotAuthenticationHeaders": {
           exists(msg.authHeaders);
-
 
           return [
             {
@@ -241,6 +241,12 @@ export function makeProgram() {
               }),
             ]),
           ];
+        }
+
+        case "gotWorldDocStatus": {
+          exists(msg.status, "status");
+
+          return [{ ...state, worldDocStatus: msg.status }];
         }
 
         case "setUpAudioVideo": {
@@ -518,6 +524,7 @@ export function makeProgram() {
                 ecsWorld: state.ecsWorld,
                 permits: state.permits,
                 overlayScreen: state.overlayScreen,
+                state,
               },
             ];
           default:
@@ -526,5 +533,3 @@ export function makeProgram() {
     },
   };
 }
-
-export const Program = makeProgram();

@@ -1,5 +1,5 @@
 import { AuthenticationHeaders } from "~/identity/types";
-import { PageParams } from "~/types/PageParams";
+import { PageParams } from "~/types";
 import { config } from "~/config";
 
 import { Dispatch } from "../ProgramTypes";

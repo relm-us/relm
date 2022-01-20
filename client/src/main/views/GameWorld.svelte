@@ -9,13 +9,14 @@
   export let dispatch;
   export let permits;
   export let overlayScreen;
+  export let state
 
   $$props;
 </script>
 
 <Viewport {ecsWorld} />
 
-<Overlay {dispatch} {permits} />
+<Overlay {dispatch} {permits} {state} />
 
 <!-- Keyboard, Mouse input -->
 <Input world={ecsWorld} {permits} />

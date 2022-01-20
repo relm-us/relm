@@ -1,9 +1,9 @@
 import View from "./View.svelte";
-import { Program } from "./Program";
+import { makeProgram } from "./Program";
 
 const app = new View({
   target: document.body,
-  props: { createApp: (props) => Program },
+  props: { createApp: (props) => makeProgram() },
 });
 
 export default app;

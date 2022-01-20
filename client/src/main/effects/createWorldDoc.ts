@@ -4,8 +4,7 @@ import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import { AuthenticationHeaders } from "~/identity/types";
 
 import { Dispatch } from "../ProgramTypes";
-
-type YConnectState = "disconnected" | "connecting" | "connected" | "error";
+import { WorldDocStatus } from "types";
 
 export const createWorldDoc =
   (
@@ -22,15 +21,13 @@ export const createWorldDoc =
       authHeaders
     );
 
-    connection.once("status", ({ status }: { status: YConnectState }) => {
-      switch (status) {
-        case "connected":
-          return dispatch({ id: "createdWorldDoc", worldDoc });
-        case "error":
-          return dispatch({
-            id: "error",
-            message: "error connecting to y-websocket",
-          });
+    let connected = false;
+    connection.on("status", ({ status }: { status: WorldDocStatus }) => {
+      dispatch({ id: "gotWorldDocStatus", status });
+
+      if (status === "connected" && !connected) {
+        connected = true;
+        dispatch({ id: "createdWorldDoc", worldDoc });
       }
     });
   };

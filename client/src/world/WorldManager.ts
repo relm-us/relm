@@ -28,7 +28,7 @@ import { CameraManager } from "./CameraManager";
 import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
-import type { PageParams } from "~/types/PageParams";
+import type { PageParams } from "~/types";
 import type { Dispatch, State as RelmState } from "~/main/ProgramTypes";
 import { AVConnection } from "~/av";
 import { playerId } from "~/identity/playerId";

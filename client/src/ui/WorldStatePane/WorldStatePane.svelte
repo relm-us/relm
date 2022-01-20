@@ -13,7 +13,7 @@
     setupState,
     viewportSize,
     viewport,
-    yConnectState,
+    playState,
   } from "~/stores";
   import {
     loaded,
@@ -24,8 +24,14 @@
     assetsMaximum,
   } from "~/stores/loading";
   import { Participant } from "~/identity/types";
+  import { State } from "~/main/ProgramTypes";
+
+  export let state: State;
 
   let minimized = true;
+  let subtitle;
+
+  $: subtitle = state.worldDocStatus;
 
   let vw;
   $: vw = $viewportSize
@@ -65,13 +71,8 @@
   });
 </script>
 
-<container class:connected={$yConnectState === "connected"}>
-  <Pane
-    title="Status"
-    subtitle={$yConnectState}
-    showMinimize={true}
-    bind:minimized
-  >
+<container class:connected={Boolean(state.worldDoc)}>
+  <Pane title="Status" {subtitle} showMinimize={true} bind:minimized>
     <inner-scroll>
       <table>
         <!-- <tr><th>app state:</th><td>{$appState}</td></tr> -->

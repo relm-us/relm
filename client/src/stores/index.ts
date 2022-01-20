@@ -22,7 +22,5 @@ export { viewport } from "./viewport";
 export { viewportScale } from "./viewportScale";
 export { viewportSize } from "./viewportSize";
 export { worldUIMode } from "./worldUIMode";
-export { yConnectState } from "./yConnectState";
-export type { YConnectState } from "./yConnectState";
 export { yLoadingState } from "./yLoadingState";
 export type { YLoadingState } from "./yLoadingState";

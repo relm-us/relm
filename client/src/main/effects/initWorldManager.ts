@@ -6,7 +6,7 @@ import { worldManager } from "~/world";
 import { Dispatch } from "../ProgramTypes";
 import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 import { AVConnection } from "~/av";
-import { PageParams } from "~/types/PageParams";
+import { PageParams } from "~/types";
 
 export const initWorldManager =
   (

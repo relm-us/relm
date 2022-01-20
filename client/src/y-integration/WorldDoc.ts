@@ -104,6 +104,7 @@ export class WorldDoc extends EventEmitter {
         t: authHeaders["x-relm-t"],
         jwt: authHeaders["x-relm-jwt"],
       },
+      resyncInterval: 10000
     });
     return this.provider;
   }

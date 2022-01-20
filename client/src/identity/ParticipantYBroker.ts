@@ -36,15 +36,6 @@ export class ParticipantYBroker {
     return this.worldDoc.provider.awareness;
   }
 
-  // get(participantId: string, key: string): IdentityData {
-  //   return this.yidentities.get(participantId)[key];
-  // }
-
-  // set(participantId: string, key: string, value: any) {
-  //   const sharedData = this.yidentities.get(participantId);
-  //   this.yidentities.set(participantId, { ...sharedData, [key]: value });
-  // }
-
   setIdentityData(participantId: string, identityData: IdentityData) {
     this.yidentities.set(participantId, identityData);
   }
