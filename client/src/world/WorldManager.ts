@@ -126,8 +126,8 @@ export class WorldManager {
     this.unsubs.push(
       worldUIMode.subscribe(($mode) => {
         const enabled = $mode === "build";
-        // this.avatar.enableCanFly(enabled);
-        // this.avatar.enableNonInteractive(enabled);
+        this.avatar.enableCanFly(enabled);
+        this.avatar.enableNonInteractive(enabled);
         this.enableNonInteractiveGround(enabled);
         this.enableCollidersVisible(enabled);
       })

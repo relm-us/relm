@@ -18,7 +18,7 @@ export const makeLocalAvatar =
       if (avatar) avatar.headAngle = angle;
     };
 
-    entities.body.add(Controller, { canFly: true }).add(TwistBone, {
+    entities.body.add(Controller).add(TwistBone, {
       boneName: "mixamorigHead",
       function: headFollowsPointer(storeHeadAngle),
     });
