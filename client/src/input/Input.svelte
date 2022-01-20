@@ -9,6 +9,7 @@
 
   import * as arrowKeys from "./handlers/arrowKeys";
   import * as copyPasteKeys from "./handlers/copyPasteKeys";
+  import * as debugKey from "./handlers/debugKey";
   import * as deleteKey from "./handlers/deleteKey";
   import * as enterKey from "./handlers/enterKey";
   import * as escapeKey from "./handlers/escapeKey";
@@ -23,6 +24,7 @@
 
     arrowKeys.onKeydown(event);
     copyPasteKeys.onKeydown(event);
+    debugKey.onKeydown(event);
     deleteKey.onKeydown(event);
     enterKey.onKeydown(event);
     escapeKey.onKeydown(event);
@@ -38,6 +40,7 @@
   function onKeyup(event) {
     arrowKeys.onKeyup(event);
     copyPasteKeys.onKeyup(event);
+    debugKey.onKeyup(event);
     deleteKey.onKeyup(event);
     enterKey.onKeyup(event);
     escapeKey.onKeyup(event);

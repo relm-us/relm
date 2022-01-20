@@ -29,10 +29,11 @@
   import { worldUIMode, openPanel, playState } from "~/stores";
   import { audioDesired } from "~/stores/audioDesired";
   import { videoDesired } from "~/stores/videoDesired";
-  import { worldManager } from "~/world";
+  import { debugMode } from "~/stores/debugMode";
 
   export let dispatch;
   export let permits;
+  export let state;
 
   let buildMode = false;
   $: buildMode = permits.includes("edit") && $worldUIMode === "build";
@@ -111,8 +112,8 @@
 
   <overlay-content>
     <overlay-left class="interactive">
-      {#if $playState === "paused"}
-        <WorldStatePane />
+      {#if $playState === "paused" || $debugMode}
+        <WorldStatePane {state} />
       {/if}
       {#if buildMode}
         <GroupUngroupButton />

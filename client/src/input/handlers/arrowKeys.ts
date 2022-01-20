@@ -1,25 +1,19 @@
 import { keyUp, keyDown, keyLeft, keyRight, keyQ, keyE } from "../store";
 
-const KEY_Q = 81;
-const KEY_E = 69;
+function setKeyStore(key, value) {
+  const keyLower = key.toLowerCase();
 
-const KEY_W = 87;
-const KEY_A = 65;
-const KEY_S = 83;
-const KEY_D = 68;
-
-function setKeyStore(key, keyCode, value) {
-  if (key === "ArrowUp" || keyCode === KEY_W) {
+  if (key == "ArrowUp" || keyLower == "w" || keyLower == "k") {
     keyUp.set(value);
-  } else if (key === "ArrowDown" || keyCode === KEY_S) {
+  } else if (key == "ArrowDown" || keyLower == "s" || keyLower == "j") {
     keyDown.set(value);
-  } else if (key === "ArrowLeft" || keyCode === KEY_A) {
+  } else if (key == "ArrowLeft" || keyLower == "a" || keyLower == "h") {
     keyLeft.set(value);
-  } else if (key === "ArrowRight" || keyCode === KEY_D) {
+  } else if (key == "ArrowRight" || keyLower == "d" || keyLower == "l") {
     keyRight.set(value);
-  } else if (keyCode === KEY_Q) {
+  } else if (keyLower == "q") {
     keyQ.set(value);
-  } else if (keyCode === KEY_E) {
+  } else if (keyLower == "e") {
     keyE.set(value);
   } else {
     return false;
@@ -29,11 +23,11 @@ function setKeyStore(key, keyCode, value) {
 
 export function onKeydown(event) {
   if (event.repeat) return;
-  if (setKeyStore(event.key, event.keyCode, true)) {
+  if (setKeyStore(event.key, true)) {
     event.preventDefault();
   }
 }
 
 export function onKeyup(event) {
-  setKeyStore(event.key, event.keyCode, false);
+  setKeyStore(event.key, false);
 }

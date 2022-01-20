@@ -1,8 +1,8 @@
-import { globalEvents } from "~/events";
+import { playState } from "~/stores/playState";
 
 export function onKeydown(event) {
   if (event.key.toLowerCase() === "p") {
-    globalEvents.emit("toggle-pause");
+    playState.update(($state) => ($state === "paused" ? "playing" : "paused"));
   }
 }
 
