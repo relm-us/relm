@@ -121,7 +121,7 @@
       {/if}
     </overlay-left>
 
-    {#if permits.includes("edit")}
+    {#if $worldUIMode === "build"}
       <overlay-right class="interactive">
         <UploadButton on:uploaded={onUpload} />
       </overlay-right>
