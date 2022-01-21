@@ -46,9 +46,9 @@
   const onUpload = ({ detail }) => {
     for (const result of detail.results) {
       if (result.types.webp) {
-        createPrefab("Image", result.types.webp);
+        createPrefab("Image", { url: result.types.webp });
       } else if (result.types.gltf) {
-        createPrefab("Thing", result.types.gltf);
+        createPrefab("Thing", { url: result.types.gltf });
       }
     }
   };

@@ -11,8 +11,12 @@ export function makeTv(
   const linearColor = new Color(color);
   linearColor.convertSRGBToLinear();
 
+  const w = 3.2;
+  const h = 1.888;
+  const d = 0.6;
+
   const tvBox = makeBox(world, {
-    ...{ x: x, y: y, z: z, w: 3.2, h: 1.888, d: 0.6 },
+    ...{ x, y, z, w, h, d },
     color: `#${linearColor.getHexString()}`,
     name: "BlueBox",
   });

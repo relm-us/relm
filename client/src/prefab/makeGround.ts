@@ -9,16 +9,16 @@ import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 
 import { makeEntity } from "./makeEntity";
 
-export function makeGround(world, { x = 0, y = 0, z = 0, yOffset = -0.5 }) {
+export function makeGround(world, { x = 0, y = 0, z = 0, h = 1 }) {
   const color = new Color("#55814e");
 
   return makeEntity(world, "Ground")
-    .add(Transform, { position: new Vector3(x, y + yOffset, z) })
+    .add(Transform, { position: new Vector3(x, y - h / 2, z) })
     .add(Shape, {
       color: "#" + color.getHexString(),
       kind: "CYLINDER",
       cylinderRadius: 15,
-      cylinderHeight: 1,
+      cylinderHeight: h,
       cylinderSegments: 60,
       metalness: 0.2,
       roughness: 0.8,
@@ -30,7 +30,7 @@ export function makeGround(world, { x = 0, y = 0, z = 0, yOffset = -0.5 }) {
     .add(Collider, {
       shape: "CYLINDER",
       cylinderRadius: 15,
-      cylinderHeight: 1,
+      cylinderHeight: h,
       interaction: GROUND_INTERACTION,
     })
     .add(NonInteractive);

@@ -35,16 +35,16 @@ function activate(entity) {
   }
 }
 
-export function createPrefab(name, src, props = {}) {
+export function createPrefab(name, props = {}) {
   const position = worldManager.participants.local.avatar.position;
   if (position) {
     const prefab = directory.find((item) => item.name === name);
     if (prefab) {
       let entities = prefab.make(worldManager.world, {
-        ...props,
         x: position.x,
+        y: position.y,
         z: position.z,
-        url: src,
+        ...props,
       } as any);
       if (!(entities instanceof Array)) entities = [entities];
 

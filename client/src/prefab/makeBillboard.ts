@@ -9,9 +9,8 @@ export function makeBillboard(
   world,
   {
     x = 0,
-    y = 1.5,
+    y = 0,
     z = 0,
-    yOffset = 0,
     text,
     editable = false,
     fontSize,
@@ -21,7 +20,7 @@ export function makeBillboard(
 ) {
   const label = makeEntity(world, "Billboard")
     .add(Transform, {
-      position: new Vector3(x, y + yOffset, z),
+      position: new Vector3(x, y + height/2, z),
     })
     .add(Renderable, {
       kind: "LABEL",

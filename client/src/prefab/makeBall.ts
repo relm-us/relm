@@ -13,10 +13,9 @@ export function makeBall(
   {
     name = "Ball",
     x = 0,
-    y = 0.5,
+    y = 0,
     z = 0,
     r = 0.5,
-    yOffset = 0,
     color = "red",
     dynamic = true,
     linearDamping = 0,
@@ -35,7 +34,7 @@ export function makeBall(
 
   const entity = makeEntity(world, name)
     .add(Transform, {
-      position: new Vector3(x, y + yOffset, z),
+      position: new Vector3(x, y + r, z),
     })
     .add(Shape, {
       kind: "SPHERE",

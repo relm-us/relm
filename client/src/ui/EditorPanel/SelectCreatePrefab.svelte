@@ -1,39 +1,15 @@
 <script lang="ts">
   import Button from "~/ui/lib/Button";
-  import { worldManager } from "~/world";
-  import { directory } from "~/prefab";
+  import { createPrefab, directory } from "~/prefab";
 
-  const PLAYER_CENTER_HEIGHT = 0.755;
-
-  const activate = (entity) => {
-    entity.activate();
-    worldManager.worldDoc.syncFrom(entity);
-    for (const child of entity.getChildren()) {
-      activate(child);
-    }
-  };
-
-  const create = (prefab) => () => {
-    const position = worldManager.avatar?.position;
-    if (position) {
-      const x = position.x;
-      const y = position.y - PLAYER_CENTER_HEIGHT;
-      const z = position.z;
-      let entities = prefab.prefab(worldManager.world, { x, yOffset: y, z });
-      if (!(entities instanceof Array)) entities = [entities];
-
-      for (const entity of entities) {
-        activate(entity);
-      }
-    } else {
-      console.error(`Can't create prefab, avatar not found`);
-    }
+  const create = (name) => () => {
+    createPrefab(name);
   };
 </script>
 
 <h2>Click to Create:</h2>
 {#each directory as prefab}
-  <Button style="margin-top:8px" on:click={create(prefab)}>
+  <Button style="margin-top:8px" on:click={create(prefab.name)}>
     {prefab.name}
   </Button>
 {/each}

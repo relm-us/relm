@@ -14,7 +14,6 @@ export function makeWall(
     w = 2,
     h = 2,
     d = 0.25,
-    yOffset = 0,
     color = "white",
     name = "Wall",
     metalness = 0.2,
@@ -28,9 +27,7 @@ export function makeWall(
   // linearColor.convertSRGBToLinear();
 
   const entity = makeEntity(world, name)
-    .add(Transform, {
-      position: new Vector3(x, y + yOffset, z),
-    })
+    .add(Transform, { position: new Vector3(x, y, z) })
     .add(Wall, {
       color: "#" + linearColor.getHexString(),
       size: new Vector3(w, h, d),
