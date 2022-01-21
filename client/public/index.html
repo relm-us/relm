@@ -7,10 +7,12 @@
     <title>Relm</title>
 
     <link rel="icon" type="image/png" href="/favicon.png" />
-    <link rel="preload" href="/loading.png" as="image">
+    <link rel="preload" href="/loading.png" as="image" />
 
     <link rel="stylesheet" href="/build/bundle.css" />
-    <script> window.jwt='' // for third party integration, populate window.jwt with server-side generated jwt token </script>
+    <script>
+      window.jwt = ""; // for third party integration, populate window.jwt with server-side generated jwt token
+    </script>
     <script defer src="/build/bundle.js"></script>
   </head>
   <body>
