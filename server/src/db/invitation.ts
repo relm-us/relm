@@ -1,6 +1,6 @@
 import { Permission } from "./permission";
 
-import { db, sql, INSERT, UPDATE } from "./db";
+import { db, sql, INSERT, UPDATE, WHERE } from "./db";
 import { uuidv4 } from "../utils";
 
 function randomToken() {
@@ -68,6 +68,38 @@ export async function createInvitation(
   );
 }
 
+export async function updateInvitation(
+  {
+    token = randomToken(),
+    relmId,
+    maxUses = 1,
+    permits = ["access"],
+  }: {
+    token: string;
+    relmId?: string;
+    maxUses?: number;
+    permits?: Array<Permission>;
+  },
+  db = database
+) {
+  const attrs = {
+    used: 0,
+    max_uses: maxUses,
+    permits: JSON.stringify(permits),
+  };
+  const query: any = {
+    token: token,
+    relm_id: relmId,
+  };
+  return mkInvitation(
+    await db.one(sql`
+        ${UPDATE("invitations", attrs)}
+        ${WHERE(query)}
+        RETURNING *
+      `)
+  );
+}
+
 export async function getInvitation(
   { token, relmId }: { token: string; relmId?: string },
   db = database
@@ -76,7 +108,7 @@ export async function getInvitation(
       SELECT i.*, r.relm_name
       FROM invitations i
       LEFT JOIN relms r USING (relm_id)
-      WHERE token = ${token}
+      WHERE token = ${token} AND max_uses > 0
     `);
 
   if (row === null) {
@@ -87,13 +119,33 @@ export async function getInvitation(
       if (invitationRelmId === relmId || invitationRelmId === null) {
         return mkInvitation(row);
       } else {
-        throw Error(
-          `token not valid for this relm (try '${row.relm_name}')`
-        );
+        throw Error(`token not valid for this relm (try '${row.relm_name}')`);
       }
     } else {
       return mkInvitation(row);
     }
+  }
+}
+
+export async function getInvitations(
+  { token, relmId }: { token: string; relmId?: string },
+  db = database
+) {
+  const query: any = { max_uses: { gt: 0 } };
+  if (token) query.token = token;
+  if (relmId) query.relm_id = relmId;
+
+  const rows = await db.manyOrNone(sql`
+      SELECT i.*, r.relm_name
+      FROM invitations i
+      LEFT JOIN relms r USING (relm_id)
+      ${WHERE(query)}
+    `);
+
+  if (rows.length === 0) {
+    return [];
+  } else {
+    return rows.map((row) => mkInvitation(row));
   }
 }
 
@@ -159,4 +211,23 @@ export async function useInvitation(
       throw Error("invitation not found");
     }
   });
+}
+
+export async function deleteInvitation(
+  {
+    token,
+    relmId,
+  }: {
+    token: string;
+    relmId: string;
+  },
+  db = database
+) {
+  const rows = await db.manyOrNone(sql`
+    ${UPDATE("invitations", { max_uses: 0 })}
+    ${WHERE({ token, relm_id: relmId, max_uses: { gt: 0 } } as any)}
+    RETURNING *
+  `);
+
+  return rows.map((row) => mkInvitation(row));
 }

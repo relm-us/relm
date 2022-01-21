@@ -237,101 +237,128 @@
 			]
 		},
 		{
-			"name": "Relm",
+			"name": "Invitations",
 			"item": [
 				{
-					"name": "Invitations",
-					"item": [
-						{
-							"name": "Create Invitation",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "X-Relm-S",
-										"type": "text",
-										"value": "{{relmSig}}"
-									},
-									{
-										"key": "X-Relm-Id",
-										"type": "text",
-										"value": "{{relmId}}"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"token\": \"welcome\",\n    \"maxUses\": 3,\n    \"permits\": [\"access\", \"edit\"]\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{serverUrl}}/relm/default/invitation",
-									"host": [
-										"{{serverUrl}}"
-									],
-									"path": [
-										"relm",
-										"default",
-										"invitation"
-									]
-								}
+					"name": "Make Invitation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"type": "text",
+								"value": "{{relmSig}}"
 							},
-							"response": []
+							{
+								"key": "X-Relm-Id",
+								"type": "text",
+								"value": "{{relmId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"maxUses\": 3,\n    \"permits\": [\"access\", \"edit\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
-						{
-							"name": "Accept Invitation",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "X-Relm-S",
-										"value": "{{relmSig}}",
-										"type": "text"
-									},
-									{
-										"key": "X-Relm-Id",
-										"value": "{{relmId}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{serverUrl}}/relm/default/can/access?t=welcome-token",
-									"host": [
-										"{{serverUrl}}"
-									],
-									"path": [
-										"relm",
-										"default",
-										"can",
-										"access"
-									],
-									"query": [
-										{
-											"key": "t",
-											"value": "welcome-token"
-										}
-									]
-								}
-							},
-							"response": []
+						"url": {
+							"raw": "{{serverUrl}}/invite/default/make",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"invite",
+								"default",
+								"make"
+							]
 						}
-					]
+					},
+					"response": []
 				},
+				{
+					"name": "Revoke Invitation",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"welcome1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/invite/default/delete",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"invite",
+								"default",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Invitations by Relm",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{serverUrl}}/invite/default/query",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"invite",
+								"default",
+								"query"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "welcome1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Relm",
+			"item": [
 				{
 					"name": "Create Relm",
 					"request": {
@@ -372,9 +399,9 @@
 					"response": []
 				},
 				{
-					"name": "Get Relm Permission [DEPRECATED]",
+					"name": "Delete Relm",
 					"request": {
-						"method": "GET",
+						"method": "DELETE",
 						"header": [
 							{
 								"key": "X-Relm-S",
@@ -387,16 +414,24 @@
 								"type": "text"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"isPublic\": true,\n    \"password\": \"welcome\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{serverUrl}}/relm/default/can/access",
+							"raw": "{{serverUrl}}/relm/default/delete",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"relm",
 								"default",
-								"can",
-								"access"
+								"delete"
 							]
 						}
 					},
@@ -493,7 +528,7 @@
 					"response": []
 				},
 				{
-					"name": "Update Relm Metadata",
+					"name": "Set Relm Metadata",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -526,45 +561,6 @@
 								"relm",
 								"default",
 								"meta"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Relm",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"isPublic\": true,\n    \"password\": \"welcome\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{serverUrl}}/relm/default/delete",
-							"host": [
-								"{{serverUrl}}"
-							],
-							"path": [
-								"relm",
-								"default",
-								"delete"
 							]
 						}
 					},
@@ -705,8 +701,7 @@
 					"name": "Get Website Screenshot",
 					"request": {
 						"method": "GET",
-						"header": [],
-						"url": null
+						"header": []
 					},
 					"response": []
 				}

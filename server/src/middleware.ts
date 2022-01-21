@@ -105,7 +105,7 @@ export function acceptJwt() {
             relmId: req.relm.relmId,
             permits,
             // This ensures that a JWT token can also delete permits when needed:
-            union: false
+            union: false,
           });
         }
 
@@ -121,9 +121,13 @@ export function acceptJwt() {
   };
 }
 
-export function authorized(permission) {
+export function authorized(requestedPermission) {
   return async (req, _res, next) => {
-    if (req.relm && req.relm.isPublic === true && permission === "access") {
+    if (
+      req.relm &&
+      req.relm.isPublic === true &&
+      requestedPermission === "access"
+    ) {
       // Public relms don't need special permission to access
       next();
     } else {
@@ -136,9 +140,9 @@ export function authorized(permission) {
         });
 
         if (req.relmName in permissions) {
-          permitted = permissions[req.relmName].includes(permission);
+          permitted = isAllowed(permissions[req.relmName], requestedPermission);
         } else if ("*" in permissions) {
-          permitted = permissions["*"].includes(permission);
+          permitted = isAllowed(permissions["*"], requestedPermission);
         } else {
           permitted = false;
         }
@@ -153,4 +157,37 @@ export function authorized(permission) {
       }
     }
   };
+}
+
+/**
+ * A venn diagram of what is allowed:
+ * 
+ *     /-----------------------\
+ *     |         admin         |
+ *     | /----------\ /------\ |
+ *     | |   edit   | |invite| |
+ *     | | /------\ | \------/ |
+ *     | | |access| |          |
+ *     | | \------/ |          |
+ *     | \----------/          |
+ *     \-----------------------/
+ */
+function isAllowed(permits, requestedPermission) {
+  switch (requestedPermission) {
+    case "access":
+      return (
+        permits.includes("access") ||
+        permits.includes("edit") ||
+        permits.includes("admin")
+      );
+    case "edit":
+      return permits.includes("edit") || permits.includes("admin");
+    case "invite":
+      return permits.includes("invite") || permits.includes("admin");
+
+    case "admin":
+      return permits.includes("admin");
+    default:
+      return false;
+  }
 }

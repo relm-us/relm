@@ -22,6 +22,7 @@ app.get("/", function (_req, res) {
 app.use("/admin", routes.admin);
 app.use("/asset", routes.asset);
 app.use("/auth", routes.auth);
+app.use("/invite/:relmName", middleware.relmName(), routes.invite);
 app.use("/relm/:relmName", middleware.relmName(), routes.relm);
 app.use("/relms", routes.relms);
 app.use("/screenshot", routes.screenshot);
@@ -43,9 +44,9 @@ app.use((error, req, res, next) => {
   const errorId = uuidv4().split("-")[0];
   const code = error.status || 400;
   console.warn(
-    `[${getRemoteIP(req)}] ${req.originalUrl} ${code} (${errorId}): ${error.message}\n${
-      error.stack
-    }`
+    `[${getRemoteIP(req)}] ${req.originalUrl} ${code} (${errorId}): ${
+      error.message
+    }\n${error.stack}`
   );
   respond(res, code, {
     status: "error",

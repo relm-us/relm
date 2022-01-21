@@ -1,6 +1,5 @@
 import * as express from "express";
 import cors from "cors";
-import createError from "http-errors";
 import * as Y from "yjs";
 import * as yws from "y-websocket/bin/utils";
 
@@ -8,11 +7,9 @@ import * as config from "../config";
 import * as util from "../utils";
 import * as middleware from "../middleware";
 import * as twilio from "../lib/twilio";
-import { Invitation, Permission, Relm, Doc } from "../db";
+import { Permission, Relm, Doc } from "../db";
 import exportRelm from "relm-common/serialize/export";
 import importRelm from "relm-common/serialize/import";
-import { decodedValidJwt } from "../utils/decodedValidJwt";
-import { respond } from "../utils";
 
 const { wrapAsync, uuidv4 } = util;
 
@@ -278,49 +275,6 @@ relm.get(
       status: "success",
       permits: permissions[req.relmName] || [],
       jwt: req.jwtRaw,
-    });
-  })
-);
-
-// Create an invitation to a relm
-relm.post(
-  "/invitation",
-  cors(),
-  middleware.relmExists(),
-  middleware.authenticated(),
-  middleware.authorized("invite"),
-  wrapAsync(async (req, res) => {
-    const attrs: any = {
-      relmId: req.relm.relmId,
-      createdBy: req.authenticatedPlayerId,
-      permits: ["access"],
-    };
-
-    if (req.body) {
-      if ("token" in req.body) {
-        attrs.token = req.body.token;
-      }
-      if ("maxUses" in req.body) {
-        attrs.maxUses = req.body.maxUses;
-      }
-      if ("permits" in req.body) {
-        attrs.permits = [...Permission.filteredPermits(req.body.permits)];
-      }
-    }
-
-    let invitation;
-    try {
-      invitation = await Invitation.createInvitation(attrs);
-    } catch (err) {
-      if (err.message.match(/duplicate key/)) {
-        throw createError(400, "an invitation with that token already exists");
-      }
-    }
-
-    util.respond(res, 200, {
-      status: "success",
-      action: "create",
-      invitation: Invitation.toJSON(invitation),
     });
   })
 );
