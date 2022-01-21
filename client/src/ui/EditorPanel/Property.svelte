@@ -50,17 +50,17 @@
   }
 </script>
 
+{#if typeof Type === "string"}
+  {Type}
+{:else if component}
+  <div>
+    <svelte:component this={Type} {key} {component} {prop} on:modified />
+  </div>
+{/if}
+
 <style>
   div {
     margin-top: 4px;
     margin-bottom: 2px;
   }
 </style>
-
-{#if typeof Type === 'string'}
-  {Type}
-{:else}
-  <div>
-    <svelte:component this={Type} {key} {component} {prop} on:modified />
-  </div>
-{/if}
