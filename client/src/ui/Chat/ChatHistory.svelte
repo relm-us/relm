@@ -30,9 +30,10 @@
       {#each $messages as message}
         {#if message.u === myID}
           <message class:mine={true}>{@html cleanHtml(message.c)}</message>
-        {:else}
+        {:else if worldManager.participants.participants}
           <Message
-            identity={worldManager.participants.participants.get(message.u).identityData}
+            identity={worldManager.participants.participants.get(message.u)
+              .identityData}
             content={message.c}
           />
         {/if}
