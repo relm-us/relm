@@ -88,7 +88,7 @@ export class WorldManager {
         if ($settings.get("fogColor")) {
           fog.color = new Color($settings.get("fogColor"));
         }
-        if ($settings.get("fogDensity")) {
+        if (typeof $settings.get("fogDensity") == 'number') {
           fog.density = $settings.get("fogDensity");
         }
       })
