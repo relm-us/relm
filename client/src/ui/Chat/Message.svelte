@@ -1,10 +1,28 @@
 <script lang="ts">
+  import { onMount } from "svelte/internal";
+  import { worldManager } from "~/world";
+
   import type { IdentityData } from "~/identity/types";
   import { cleanHtml } from "~/utils/cleanHtml";
 
-  export let identity: IdentityData;
+  export let participantId: string;
   export let content: string;
 
+  let identity: IdentityData;
+
+  // Poll for participant data
+  // TODO: Make a more elegant way to send the fact that participant data is ready
+  onMount(() => {
+    let interval = setInterval(() => {
+      const participants = worldManager.participants.participants;
+      if (identity) clearInterval(interval);
+      else if (participants) {
+        const participant = participants.get(participantId);
+        if (participant) identity = participant.identityData;
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  });
 </script>
 
 {#if identity}
@@ -56,5 +74,4 @@
     margin-left: 0px;
     margin-right: 0px;
   }
-
 </style>

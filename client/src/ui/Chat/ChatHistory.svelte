@@ -30,12 +30,8 @@
       {#each $messages as message}
         {#if message.u === myID}
           <message class:mine={true}>{@html cleanHtml(message.c)}</message>
-        {:else if worldManager.participants.participants}
-          <Message
-            identity={worldManager.participants.participants.get(message.u)
-              .identityData}
-            content={message.c}
-          />
+        {:else}
+          <Message participantId={message.u} content={message.c} />
         {/if}
       {/each}
     </scroll-container>
