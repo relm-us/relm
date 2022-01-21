@@ -1,7 +1,7 @@
 <script type="ts">
   import Viewport from "~/ui/Viewport";
   import Overlay from "~/ui/Overlay";
-  import Input from "~/input";
+  import Input from "~/events/input/Input.svelte";
 
   import BlankWithLogo from "./BlankWithLogo.svelte";
 

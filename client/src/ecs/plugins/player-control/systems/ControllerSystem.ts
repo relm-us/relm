@@ -11,7 +11,7 @@ import { Animation } from "~/ecs/plugins/animation";
 import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
 import { isMakingContactWithGround } from "~/ecs/shared/isMakingContactWithGround";
 
-import { keyUp, keyDown, keyLeft, keyRight, keySpace } from "~/input";
+import { keyUp, keyDown, keyLeft, keyRight, keySpace } from "~/stores/keys";
 
 import { Controller, ControllerState, Repulsive } from "../components";
 

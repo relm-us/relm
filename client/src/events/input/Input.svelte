@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { isInputEvent } from "~/input/isInputEvent";
+  import { isInputEvent } from "./isInputEvent";
 
   import PointerListener from "./PointerListener";
   import WheelListener from "./WheelListener";
