@@ -1,4 +1,4 @@
-import { keySpace } from "../store";
+import { keySpace } from "~/stores/keys";
 import { globalEvents } from "~/events";
 
 export function onKeydown(event) {

@@ -7,4 +7,4 @@ export {
   keySpace,
   keyQ,
   keyE,
-} from "./store";
+} from "~/stores/keys";

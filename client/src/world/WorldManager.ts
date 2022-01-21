@@ -3,7 +3,6 @@ import { derived, get, writable, Writable } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
-import { keyShift, keySpace } from "~/input/store";
 import { exportRelm, importRelm } from "./Export";
 
 import { worldUIMode } from "~/stores/worldUIMode";
@@ -11,6 +10,7 @@ import { deltaTime, fpsTime } from "~/stores/stats";
 import { playState, PlayState } from "~/stores/playState";
 import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 import { shadowsEnabled } from "~/stores/shadowsEnabled";
+import { keyShift, keySpace } from "~/stores/keys";
 
 import { makeLight } from "~/prefab/makeLight";
 

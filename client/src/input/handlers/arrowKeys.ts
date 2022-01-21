@@ -1,4 +1,4 @@
-import { keyUp, keyDown, keyLeft, keyRight, keyQ, keyE } from "../store";
+import { keyUp, keyDown, keyLeft, keyRight, keyQ, keyE } from "~/stores/keys";
 
 function setKeyStore(key, value) {
   const keyLower = key.toLowerCase();
