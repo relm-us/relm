@@ -18,7 +18,6 @@
   import Button from "~/ui/lib/Button";
   import { onMount } from "svelte";
   import debounce from "lodash/debounce";
-  import { migrateToCDN } from "~/commands/migrateToCDN";
   import SkyboxOption from "./SkyboxOption.svelte";
 
   let newEntrywayName = "";
@@ -97,11 +96,6 @@
     fogDensity = fog.density / 0.05;
     fogColor = "#" + fog.color.getHexString();
   });
-
-  function startMigrationAndReport() {
-    const migrated = migrateToCDN(worldManager.world, worldManager.worldDoc);
-    alert(`Migrated ${migrated} entities in this world to CDN`);
-  }
 
   function chooseSkybox({ detail }) {
     setSkybox(assetUrl(detail));
@@ -183,19 +177,6 @@
         />
       </setting>
     </Pane>
-
-    <!-- <Pane title="Migration">
-      <setting>
-        <div class="upload">
-          <Button
-            on:click={startMigrationAndReport}
-            style="border: 1px solid #999;"
-          >
-            Migrate Assets to CDN
-          </Button>
-        </div>
-      </setting>
-    </Pane> -->
   </container>
 </LeftPanel>
 

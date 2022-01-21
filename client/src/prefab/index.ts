@@ -11,16 +11,48 @@ import { makeTv } from "./makeTv";
 import { makeWall } from "./makeWall";
 import { makeWebBox } from "./makeWebBox";
 
+import { worldManager } from "~/world";
+
 export const directory = [
-  { name: "Ball", prefab: makeBall },
-  { name: "Billboard", prefab: makeBillboard },
-  { name: "Box", prefab: makeBox },
-  { name: "Diamond", prefab: makeDiamond },
-  { name: "Ground", prefab: makeGround },
-  { name: "Image", prefab: makeImage },
-  { name: "Label", prefab: makeLabel },
-  { name: "Thing", prefab: makeThing },
-  { name: "Wall", prefab: makeWall },
-  { name: "Web Page", prefab: makeWebBox },
-  { name: "YouTube TV", prefab: makeTv },
+  { name: "Ball", make: makeBall },
+  { name: "Billboard", make: makeBillboard },
+  { name: "Box", make: makeBox },
+  { name: "Diamond", make: makeDiamond },
+  { name: "Ground", make: makeGround },
+  { name: "Image", make: makeImage },
+  { name: "Label", make: makeLabel },
+  { name: "Thing", make: makeThing },
+  { name: "Wall", make: makeWall },
+  { name: "Web Page", make: makeWebBox },
+  { name: "YouTube TV", make: makeTv },
 ];
+
+function activate(entity) {
+  entity.activate();
+  worldManager.worldDoc.syncFrom(entity);
+  for (const child of entity.getChildren()) {
+    activate(child);
+  }
+}
+
+export function createPrefab(name, src, props = {}) {
+  const position = worldManager.participants.local.avatar.position;
+  if (position) {
+    const prefab = directory.find((item) => item.name === name);
+    if (prefab) {
+      let entities = prefab.make(worldManager.world, {
+        ...props,
+        x: position.x,
+        z: position.z,
+        url: src,
+      } as any);
+      if (!(entities instanceof Array)) entities = [entities];
+
+      for (const entity of entities) activate(entity);
+    } else {
+      console.error(`Prefab not found: '${name}'`);
+    }
+  } else {
+    console.error(`Can't create prefab, avatar not found`);
+  }
+}

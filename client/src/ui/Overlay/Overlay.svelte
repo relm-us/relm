@@ -23,7 +23,6 @@
 
   import { PauseAutomatically, PauseMessage } from "~/ui/Pause";
 
-  import { runCommand } from "~/commands";
   import { globalEvents } from "~/events";
 
   import { worldUIMode, openPanel, playState } from "~/stores";
@@ -31,6 +30,7 @@
   import { videoDesired } from "~/stores/videoDesired";
   import { unreadCount } from "~/stores/unreadCount";
   import { debugMode } from "~/stores/debugMode";
+  import { createPrefab } from "~/prefab";
 
   export let dispatch;
   export let permits;
@@ -46,9 +46,9 @@
   const onUpload = ({ detail }) => {
     for (const result of detail.results) {
       if (result.types.webp) {
-        runCommand("createPrefab", { name: "Image", src: result.types.webp });
+        createPrefab("Image", result.types.webp);
       } else if (result.types.gltf) {
-        runCommand("createPrefab", { name: "Thing", src: result.types.gltf });
+        createPrefab("Thing", result.types.gltf);
       }
     }
   };
