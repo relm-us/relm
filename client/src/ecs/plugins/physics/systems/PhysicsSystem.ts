@@ -80,13 +80,36 @@ export class PhysicsSystem extends System {
       ref.value[name].apply(ref.value, args);
     });
 
-    world.step(eventQueue);
-
     this.queries.modified.forEach((entity) => {
-      const body = entity.get(RigidBodyRef).value;
-      const world = entity.get(WorldTransform);
-      body.setTranslation(world.position, true);
+      const body: RapierRigidBody = entity.get(RigidBodyRef).value;
+      const local = entity.get(Transform);
+      body.setTranslation(local.position, true);
+      body.setRotation(local.rotation, true);
     });
+
+    // this.queries.default.forEach((entity) => {
+    //   const world = entity.get(WorldTransform);
+    //   const spec = entity.get(RigidBody);
+    //   const body = entity.get(RigidBodyRef).value as RapierRigidBody;
+    //   const transform = entity.get(Transform);
+
+    //   // @todo Should we teleport if the distance is huge?
+
+    //   if (spec.kind === "KINEMATIC") {
+    //     body.setNextKinematicTranslation(transform.position);
+    //     body.setNextKinematicRotation(transform.rotation);
+    //   }
+    //   if (spec.kind === "STATIC" || spec.kind === "DYNAMIC") {
+    //     body.setTranslation(world.position, false);
+    //     body.setRotation(world.rotation, false);
+    //   }
+    //   if (spec.kind === "DYNAMIC") {
+    //     body.setAngvel(spec.angularVelocity, false);
+    //     body.setLinvel(spec.linearVelocity, false);
+    //   }
+    // });
+
+    world.step(eventQueue);
 
     this.queries.default.forEach((entity) => {
       const parent = entity.getParent();
@@ -109,7 +132,7 @@ export class PhysicsSystem extends System {
       //     spec.sync = false;
       //   }
       //   body.setTranslation(world.position, true);
-      // } else 
+      // } else
       if (spec.kind === "DYNAMIC") {
         if (!parent) {
           // if (entity.name === "Avatar") return;

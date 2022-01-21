@@ -73,7 +73,8 @@ function setTransformDataOnParticipant(
 
   // Set position of body
   v1.set(x, y, z);
-  transform.position.lerp(v1, 0.3333);
+  // transform.position.lerp(v1, 0.3333);
+  transform.position.copy(v1);
 
   // Set angle of body
   e1.setFromQuaternion(transform.rotation);
