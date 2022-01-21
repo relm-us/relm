@@ -481,6 +481,7 @@ export function makeProgram(): Program {
 
         // Error page to show what went wrong
         case "error":
+          console.warn(msg.message, msg.stack);
           return [{ ...state, screen: "error", errorMessage: msg.message }];
 
         default:

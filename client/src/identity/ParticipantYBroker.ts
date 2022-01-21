@@ -5,15 +5,8 @@ import { withMapEdits } from "relm-common/yrelm";
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
 import { Dispatch } from "./ProgramTypes";
-import {
-  IdentityData,
-  Participant,
-  RecvTransformCallback,
-  TransformData,
-} from "./types";
+import { IdentityData, RecvTransformCallback } from "./types";
 import { playerId } from "./playerId";
-import { setTransformArrayOnParticipants } from "./Avatar/transform";
-import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
 const transformArray = [];
 
