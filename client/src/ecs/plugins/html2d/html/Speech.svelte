@@ -6,7 +6,8 @@
   import IoMdEasel from "svelte-icons/io/IoMdEasel.svelte";
 
   import { worldManager } from "~/world";
-  import { makeDiamond, makeBillboard } from "~/prefab";
+  import { makeDiamond } from "~/prefab/makeDiamond";
+  import { makeBillboard } from "~/prefab/makeBillboard";
   import { cleanHtml } from "~/utils/cleanHtml";
   import { WorldTransform } from "~/ecs/plugins/core";
 

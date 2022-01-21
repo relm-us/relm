@@ -3,32 +3,13 @@ import { makeBall } from "./makeBall";
 import { makeBillboard } from "./makeBillboard";
 import { makeBox } from "./makeBox";
 import { makeDiamond } from "./makeDiamond";
-import { makeEntity } from "./makeEntity";
 import { makeGround } from "./makeGround";
 import { makeImage } from "./makeImage";
 import { makeLabel } from "./makeLabel";
 import { makeThing } from "./makeThing";
 import { makeTv } from "./makeTv";
 import { makeWall } from "./makeWall";
-import { makeWebPage } from "./makeWebPage";
 import { makeWebBox } from "./makeWebBox";
-import { makeYoutube } from "./makeYoutube";
-
-export {
-  makeBall,
-  makeBillboard,
-  makeBox,
-  makeDiamond,
-  makeEntity,
-  makeGround,
-  makeLabel,
-  makeImage,
-  makeThing,
-  makeTv,
-  makeWall,
-  makeWebPage,
-  makeYoutube,
-};
 
 export const directory = [
   { name: "Ball", prefab: makeBall },

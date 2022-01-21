@@ -1,5 +1,6 @@
 import { Color } from "three";
-import { makeBox, makeYoutube } from "~/prefab";
+import { makeBox } from "./makeBox";
+import { makeYoutube } from "./makeYoutube";
 
 // The Boy Who Tricked the Devil : 4nZ9gNGZwO0
 

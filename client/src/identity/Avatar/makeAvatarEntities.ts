@@ -3,7 +3,7 @@ import { Vector3 } from "three";
 import { AVATAR_INTERACTION } from "~/config/colliderInteractions";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
-import { makeEntity } from "~/prefab";
+import { makeEntity } from "~/prefab/makeEntity";
 
 import { Entity } from "~/ecs/base";
 import { Asset, Transform } from "~/ecs/plugins/core";

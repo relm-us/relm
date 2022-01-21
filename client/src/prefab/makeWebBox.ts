@@ -1,6 +1,7 @@
 import { Color } from "three";
 
-import { makeBox, makeWebPage } from "~/prefab";
+import { makeBox } from "./makeBox";
+import { makeWebPage } from "./makeWebPage";
 
 export function makeWebBox(
   world,
