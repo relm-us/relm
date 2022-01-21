@@ -23,6 +23,8 @@ function setKeyStore(key, value) {
 
 export function onKeydown(event) {
   if (event.repeat) return;
+  if (event.ctrlKey || event.metaKey) return;
+
   if (setKeyStore(event.key, true)) {
     event.preventDefault();
   }
