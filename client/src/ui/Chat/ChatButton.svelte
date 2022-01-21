@@ -15,9 +15,9 @@
   <icon>
     <IoIosText />
   </icon>
-  {#if unread && $unread > 0}
+  {#if unread > 0}
     <counter>
-      {$unread}
+      {unread}
     </counter>
   {/if}
 </CircleButton>

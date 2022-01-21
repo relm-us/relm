@@ -88,7 +88,7 @@ export class WorldManager {
         if ($settings.get("fogColor")) {
           fog.color = new Color($settings.get("fogColor"));
         }
-        if (typeof $settings.get("fogDensity") == 'number') {
+        if (typeof $settings.get("fogDensity") == "number") {
           fog.density = $settings.get("fogDensity");
         }
       })
@@ -98,7 +98,11 @@ export class WorldManager {
 
     this.participants = new ParticipantManager(dispatch, broker, participants);
 
-    // this.chat = new ChatManager(this.identities);
+    this.chat = new ChatManager();
+    this.chat.init(this.worldDoc.messages, (msg, state, value) => {
+      this.participants.setCommunicatingState(msg, state, value);
+    });
+
     // this.chat.setMessages(this.worldDoc.messages);
 
     this.camera = new CameraManager(

@@ -62,6 +62,18 @@ export class ParticipantManager {
     this.updateMe({ showVideo });
   }
 
+  getCommunicatingState(state: "speaking" | "emoting") {
+    return this.local.identityData[state];
+  }
+
+  setCommunicatingState(
+    message: string,
+    state: "speaking" | "emoting",
+    value: boolean
+  ) {
+    this.updateMe({ [state]: value, message: value ? message : null });
+  }
+
   toggleMic() {
     const showAudio = !this.local.identityData.showAudio;
     this.updateMe({ showAudio });

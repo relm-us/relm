@@ -29,6 +29,7 @@
   import { worldUIMode, openPanel, playState } from "~/stores";
   import { audioDesired } from "~/stores/audioDesired";
   import { videoDesired } from "~/stores/videoDesired";
+  import { unreadCount } from "~/stores/unreadCount";
   import { debugMode } from "~/stores/debugMode";
 
   export let dispatch;
@@ -131,7 +132,7 @@
 
 <overlay-center>
   <play-buttons class="interactive">
-    <!-- <ChatButton unread={worldManager.chat.unreadCount} /> -->
+    <ChatButton unread={$unreadCount} />
     <ShareScreenButton />
     <AudioModeButton />
     <MicButton enabled={$audioDesired} />
@@ -140,7 +141,7 @@
   </play-buttons>
 </overlay-center>
 
-<!-- <Chat /> -->
+<Chat />
 
 <!-- The virtual world! -->
 <style>

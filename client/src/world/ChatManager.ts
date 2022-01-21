@@ -2,7 +2,7 @@ import * as Y from "yjs";
 import { get, writable, derived, Readable, Writable } from "svelte/store";
 import { readableArray } from "svelt-yjs";
 import { chatOpen } from "~/stores/chatOpen";
-// import { IdentityManager } from "identity/IdentityManager.txt";
+import { unreadCount } from "~/stores/unreadCount";
 
 export type ChatMessage = {
   // Message ("C"ontent)
@@ -18,33 +18,40 @@ export function getEmojiFromMessage(msg) {
 }
 
 export class ChatManager {
-  // identities: IdentityManager;
-
   /**
    * A store containing messages originating in Yjs doc
    */
   messages: Readable<Array<ChatMessage>> & { y: any };
+  setCommunicatingState: (
+    message: string,
+    state: "speaking" | "emoting",
+    value: boolean
+  ) => void;
 
   processed: Writable<number> = writable(0);
 
   readCount: Writable<number> = writable(0);
-  unreadCount: Readable<number>;
 
-  // constructor(identities: IdentityManager) {
-  //   this.identities = identities;
-  // }
+  init(
+    messages: Y.Array<ChatMessage>,
+    setCommunicatingState: (
+      message: string,
+      state: "speaking" | "emoting",
+      value: boolean
+    ) => void
+  ) {
+    this.setCommunicatingState = setCommunicatingState;
+    this.setMessages(messages);
+  }
 
   setMessages(messages: Y.Array<ChatMessage>) {
     this.messages = readableArray(messages);
 
-    this.unreadCount = derived(
-      [this.messages, this.readCount],
-      ([$messages, $readCount], set) => {
-        const count = $messages.length - $readCount;
-        // Negative count can happen when we update readCount first, then messages
-        set(count >= 0 ? count : 0);
-      }
-    );
+    derived([this.messages, this.readCount], ([$messages, $readCount], set) => {
+      const count = $messages.length - $readCount;
+      // Negative count can happen when we update readCount first, then messages
+      unreadCount.set(count >= 0 ? count : 0);
+    }).subscribe(() => {});
 
     // Consider all past chat history as "read" when entering the relm
     let doneFirstPass = false;
@@ -65,13 +72,9 @@ export class ChatManager {
 
       // Broadcast speech state to all players
       if (!$open) {
-        this.setActingState("speaking", false);
+        this.setCommunicatingState(null, "speaking", false);
       }
     });
-  }
-
-  setActingState(key: string, value: boolean) {
-    // this.identities.me.set({ [key]: value });
   }
 
   addMessage(msg: ChatMessage) {
@@ -83,12 +86,12 @@ export class ChatManager {
     this.messages.y.push([msg]);
 
     if (getEmojiFromMessage(msg)) {
-      this.setActingState("emoting", true);
+      this.setCommunicatingState(msg.c, "emoting", true);
       setTimeout(() => {
-        this.setActingState("emoting", false);
+        this.setCommunicatingState(msg.c, "emoting", false);
       }, 6000);
     } else {
-      this.setActingState("speaking", true);
+      this.setCommunicatingState(msg.c, "speaking", true);
     }
   }
 }

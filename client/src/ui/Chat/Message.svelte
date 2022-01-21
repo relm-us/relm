@@ -1,17 +1,17 @@
 <script lang="ts">
-  import type { Identity } from "~/identity/Identity";
+  import type { IdentityData } from "~/identity/types";
   import { cleanHtml } from "~/utils/cleanHtml";
 
-  export let identity: Identity;
+  export let identity: IdentityData;
   export let content: string;
 
 </script>
 
 {#if identity}
   <message>
-    <id-circle style="background-color:{identity.get('color')}" />
+    <id-circle style="background-color:{identity.color}" />
     <container>
-      <who>{identity.get("name")}</who>
+      <who>{identity.name}</who>
       <content>{@html cleanHtml(content)}</content>
     </container>
   </message>

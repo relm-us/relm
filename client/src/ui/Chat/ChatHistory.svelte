@@ -32,7 +32,7 @@
           <message class:mine={true}>{@html cleanHtml(message.c)}</message>
         {:else}
           <Message
-            identity={worldManager.participants.get(message.u)}
+            identity={worldManager.participants.participants.get(message.u).identityData}
             content={message.c}
           />
         {/if}
