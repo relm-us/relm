@@ -96,6 +96,9 @@ export class SelectionManager {
 
   moveRelativeToSavedPositions(vector) {
     for (const entity of this.entities) {
+      // Only move root entities:
+      if (entity.getParent()) continue;
+
       const transform = entity.get(Transform);
       const savedPos = (entity as any).savedPosition;
       if (savedPos) {

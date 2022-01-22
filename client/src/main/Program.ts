@@ -430,6 +430,7 @@ export function makeProgram(): Program {
             return [
               state,
               initWorldManager(
+                state,
                 state.participantState.broker,
                 state.ecsWorld,
                 state.worldDoc,

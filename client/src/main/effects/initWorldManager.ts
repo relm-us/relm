@@ -3,13 +3,14 @@ import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import { worldManager } from "~/world";
 
-import { Dispatch } from "../ProgramTypes";
+import { Dispatch, State } from "../ProgramTypes";
 import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 import { AVConnection } from "~/av";
 import { PageParams } from "~/types";
 
 export const initWorldManager =
   (
+    state: State,
     broker: ParticipantYBroker,
     ecsWorld: DecoratedECSWorld,
     worldDoc: WorldDoc,
@@ -21,6 +22,7 @@ export const initWorldManager =
   async (dispatch: Dispatch) => {
     await worldManager.init(
       dispatch,
+      state,
       broker,
       ecsWorld,
       worldDoc,

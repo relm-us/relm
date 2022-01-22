@@ -29,7 +29,7 @@ import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import type { PageParams } from "~/types";
-import type { Dispatch, State as RelmState } from "~/main/ProgramTypes";
+import type { Dispatch, State as RelmState, State } from "~/main/ProgramTypes";
 import { AVConnection } from "~/av";
 import { playerId } from "~/identity/playerId";
 import { Avatar } from "~/identity/Avatar";
@@ -39,7 +39,7 @@ import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 
 export class WorldManager {
   dispatch: Dispatch;
-  // state: RelmState;
+  state: State;
 
   world: DecoratedECSWorld;
   worldDoc: WorldDoc;
@@ -65,6 +65,7 @@ export class WorldManager {
 
   async init(
     dispatch: Dispatch,
+    state: State,
     broker: ParticipantYBroker,
     ecsWorld: DecoratedECSWorld,
     worldDoc: WorldDoc,
@@ -74,6 +75,7 @@ export class WorldManager {
     participants: Map<string, Participant>
   ) {
     this.dispatch = dispatch;
+    this.state = state;
 
     this.world = ecsWorld;
     this.worldDoc = worldDoc;
