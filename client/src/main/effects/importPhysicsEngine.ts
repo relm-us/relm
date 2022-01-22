@@ -7,7 +7,7 @@ export async function importPhysicsEngine(dispatch: Dispatch) {
     try {
       rapier = await import("@dimforge/rapier3d");
     } catch (err) {
-      const message = `Can't load physics engine rapier3d`;
+      const message = `Can't load physics engine (${err.message})`;
       dispatch({ id: "error", message, stack: err.stack });
       return;
     }

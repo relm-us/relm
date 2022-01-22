@@ -4,6 +4,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const Preprocess = require("svelte-preprocess");
 const DuplicatePackageCheckerPlugin = require("duplicate-package-checker-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const mode = process.env.NODE_ENV || "development";
 const prod = mode === "production";
@@ -152,6 +153,14 @@ module.exports = {
       filename: "[name].css",
     }),
     new DuplicatePackageCheckerPlugin(),
+    new HtmlWebpackPlugin({
+      // `filename` is relative to the "./public/build" dir,
+      // so we need ".." here to output to "./public/index.html":
+      filename: "../index.html",
+      template: "src/index.html",
+      title: "Relm",
+      minify: false,
+    }),
   ],
   optimization: {
     minimizer: [],
@@ -166,9 +175,9 @@ module.exports = {
         dimforge: {
           test: /[\\/]node_modules[\\/](@dimforge)[\\/]/,
           name: "dimforge",
-          chunks: "all",
         },
       },
+      chunks: "all",
     },
     /**
      * For HECS to work, we need to prevent module concatenation from mangling

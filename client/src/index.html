@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <title>Relm</title>
+    <title><%= htmlWebpackPlugin.options.title %></title>
 
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="preload" href="/loading.png" as="image" />
@@ -13,10 +13,14 @@
     <script>
       window.jwt = ""; // for third party integration, populate window.jwt with server-side generated jwt token
     </script>
-    
-  <link href="/build/vendors~bundle.css" rel="stylesheet"><link href="/build/bundle.css" rel="stylesheet"></head>
+    <%
+    // Note: html-webpack-plugin will insert CSS here
+    %>
+  </head>
   <body>
     <noscript>Please enable JavaScript to view this application.</noscript>
-    
-  <script src="/build/vendors~bundle.3.js"></script><script src="/build/bundle.js"></script></body>
+    <%
+    // Note: html-webpack-plugin will insert JS here
+    %>
+  </body>
 </html>
