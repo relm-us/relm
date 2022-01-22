@@ -6,11 +6,11 @@ import type { RigidBodyDesc as RapierRigidBodyDesc } from "@dimforge/rapier3d";
 function getBodyStatus(rapier, kind) {
   switch (kind) {
     case "STATIC":
-      return rapier.BodyStatus.Static;
+      return rapier.RigidBodyType.Static;
     case "DYNAMIC":
-      return rapier.BodyStatus.Dynamic;
+      return rapier.RigidBodyType.Dynamic;
     case "KINEMATIC":
-      return rapier.BodyStatus.Kinematic;
+      return rapier.RigidBodyType.Kinematic;
     default:
       throw new Error(`Kind of body status unknown: '${kind}'`);
   }
@@ -65,7 +65,7 @@ export class RigidBodySystem extends System {
       rigidBodyDesc.restrictRotations(false, true, false);
     }
 
-    if (spec.mass) rigidBodyDesc.setMass(spec.mass);
+    if (spec.mass) rigidBodyDesc.setAdditionalMass(spec.mass);
 
     let rigidBody = world.createRigidBody(rigidBodyDesc);
 

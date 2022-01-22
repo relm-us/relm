@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@braintree/browser-detection": "^1.11.0",
-    "@dimforge/rapier3d": "0.5.3",
+    "@dimforge/rapier3d": "0.7.0",
     "@types/resize-observer-browser": "^0.1.5",
     "@uppy/core": "2.1.4",
     "@uppy/dashboard": "2.1.3",

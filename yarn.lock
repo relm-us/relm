@@ -951,10 +951,10 @@
   dependencies:
     "@cspotcode/source-map-consumer" "0.8.0"
 
-"@dimforge/rapier3d@0.5.3":
-  version "0.5.3"
-  resolved "https://registry.yarnpkg.com/@dimforge/rapier3d/-/rapier3d-0.5.3.tgz#443c5c457cb71ea301fe9d9e591b10bebc122084"
-  integrity sha512-QyL88DsGGS1PorCbuXiG1GAvdVzKeVqrKefOkivyoDaKDtMS80GDIu7a99PA+MTzHC5GNq0p/CAn9s5Pp/EGBA==
+"@dimforge/rapier3d@0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@dimforge/rapier3d/-/rapier3d-0.7.0.tgz#f368a86a06299eac24a9a6a1363c257edac67970"
+  integrity sha512-sgCPKqyyJQqPi9Pi6uw1Y45qLOFaRZn+rj+eumDBswncTI4I3aExMIPiRXfT3oW0Agl6tBV/5cOoruRcJ2LBeg==
 
 "@discoveryjs/json-ext@^0.5.0":
   version "0.5.6"
@@ -2929,7 +2929,7 @@ bindings@^1.5.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
-bl@4.0.3, bl@^4.0.3:
+bl@^4.0.3:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/bl/-/bl-4.0.3.tgz#12d6287adc29080e22a705e5764b2a9522cdc489"
   integrity sha512-fs4G6/Hu4/EE+F75J8DuN/0IpQqNjAdC7aEQv7Qt8MHGUH7Ckv2MwTEEeN9QehD0pfIDkMI1bkHYkKy7xHyKIg==

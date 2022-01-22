@@ -44,7 +44,6 @@ export function makeAvatarEntities(
       kind: kinematic ? "KINEMATIC" : "DYNAMIC",
       linearDamping: 20,
       angularDamping: 25,
-      mass: 0.0,
     })
     .add(Collider, {
       shape: "CAPSULE",
