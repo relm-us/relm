@@ -2,7 +2,7 @@ export { askAvatarSetup } from "./askAvatarSetup";
 export { askMediaSetup } from "./askMediaSetup";
 export { audioMode } from "./audioMode";
 export { autoPause } from "./autoPause";
-export { chatOpen, chatFocused } from "./chatOpen";
+export { chatOpen, chatFocused, unreadCount } from "./chat";
 // TODO: collections
 export { copyBuffer } from "./copyBuffer";
 export type { CopyBuffer } from "./copyBuffer";

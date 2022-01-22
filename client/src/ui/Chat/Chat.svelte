@@ -3,7 +3,7 @@
   import ChatHistory from "./ChatHistory.svelte";
 
   import { worldManager } from "~/world";
-  import { chatOpen, chatFocused } from "~/stores/chatOpen";
+  import { chatOpen, chatFocused } from "~/stores/chat";
   import { playerId } from "~/identity/playerId";
 
   function closeChat() {

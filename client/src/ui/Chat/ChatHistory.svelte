@@ -1,6 +1,5 @@
 <script>
   import { beforeUpdate, afterUpdate } from "svelte";
-  import { worldManager } from "~/world";
   import { cleanHtml } from "~/utils/cleanHtml";
   import Message from "./Message.svelte";
 

@@ -1,4 +1,4 @@
-import { chatOpen, chatFocused } from "~/stores/chatOpen";
+import { chatOpen, chatFocused } from "~/stores/chat";
 
 export function onKeydown(event) {
   if (event.key === "Enter" || event.key === "Return") {

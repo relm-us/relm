@@ -28,7 +28,7 @@
   import { worldUIMode, openPanel, playState } from "~/stores";
   import { audioDesired } from "~/stores/audioDesired";
   import { videoDesired } from "~/stores/videoDesired";
-  import { unreadCount } from "~/stores/unreadCount";
+  import { unreadCount } from "~/stores/chat";
   import { debugMode } from "~/stores/debugMode";
   import { createPrefab } from "~/prefab";
 

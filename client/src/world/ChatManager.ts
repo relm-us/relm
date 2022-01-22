@@ -1,8 +1,7 @@
 import * as Y from "yjs";
 import { get, writable, derived, Readable, Writable } from "svelte/store";
 import { readableArray } from "svelt-yjs";
-import { chatOpen } from "~/stores/chatOpen";
-import { unreadCount } from "~/stores/unreadCount";
+import { chatOpen, unreadCount } from "~/stores/chat";
 
 export type ChatMessage = {
   // Message ("C"ontent)
@@ -42,6 +41,7 @@ export class ChatManager {
   ) {
     this.setCommunicatingState = setCommunicatingState;
     this.setMessages(messages);
+    this.readCount.set(messages.length);
   }
 
   setMessages(messages: Y.Array<ChatMessage>) {

@@ -2,7 +2,7 @@ import { get } from "svelte/store";
 import { worldManager } from "~/world";
 
 import { selectedEntities } from "~/stores/selection";
-import { chatOpen } from "~/stores/chatOpen";
+import { chatOpen } from "~/stores/chat";
 import { worldUIMode } from "~/stores/worldUIMode";
 import { playState } from "~/stores";
 

@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher, onMount } from "svelte";
   import { worldManager } from "~/world";
-  import { chatFocused, chatOpen } from "~/stores/chatOpen";
+  import { chatFocused, chatOpen } from "~/stores/chat";
   import { playerId } from "~/identity/playerId";
 
   const dispatch = createEventDispatcher();

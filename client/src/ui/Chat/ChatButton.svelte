@@ -1,7 +1,7 @@
 <script>
   import IoIosText from "svelte-icons/io/IoIosText.svelte";
   import CircleButton from "~/ui/lib/CircleButton";
-  import { chatOpen, chatFocused } from "~/stores/chatOpen";
+  import { chatOpen, chatFocused } from "~/stores/chat";
 
   export let unread = null;
 
