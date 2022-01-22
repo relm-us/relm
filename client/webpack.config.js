@@ -5,6 +5,7 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const Preprocess = require("svelte-preprocess");
 const DuplicatePackageCheckerPlugin = require("duplicate-package-checker-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 const mode = process.env.NODE_ENV || "development";
 const prod = mode === "production";
@@ -42,6 +43,14 @@ const useBabelInDevelopment = false;
 const stylesheets = ["./styles/index.scss"];
 
 module.exports = {
+  // Production or Development mode
+  mode,
+
+  /**
+   * The "entry" is where webpack starts looking for imports and other parts of the
+   * app. It produces a bundle.js file (or in our case, multiple chunked bundles
+   * due to our needing async wasm support).
+   */
   entry: {
     bundle: [
       // Note: Paths in the `stylesheets` variable will be added here
@@ -49,6 +58,32 @@ module.exports = {
       "./src/main/index.ts",
     ],
   },
+
+  /**
+   * When building for production, follow the output pattern to generate bundled js.
+   */
+  output: {
+    filename: "[name].js",
+    chunkFilename: "[name].[id].js",
+    path: __dirname + "/dist",
+  },
+
+  /**
+   * The DevServer is used only in development. It's purpose is to speed up the dev
+   * cycle by making it easier to cache parts of the app so that load time is faster.
+   */
+  devServer: {
+    hot: false,
+    port: 8080,
+    stats: "minimal", // use "normal" to show what chunks are built and what files are copied
+    contentBase: "public", // direct the DevServer to serve static files from public/
+    watchContentBase: true,
+  },
+
+  /**
+   * Direct webpack to understand our app's internal patterns for imports. For example,
+   * we use the `~/` prefix to denote the "root" of the project.
+   */
   resolve: {
     alias: {
       "~": path.resolve(__dirname, "src"),
@@ -58,12 +93,10 @@ module.exports = {
     extensions: [".mjs", ".js", ".ts", ".svelte"],
     mainFields: ["svelte", "browser", "module", "main"],
   },
-  output: {
-    publicPath: "/build/",
-    path: __dirname + "/public/build",
-    filename: "[name].js",
-    chunkFilename: "[name].[id].js",
-  },
+
+  /**
+   * Modules are like plugins, but for specific file types.
+   */
   module: {
     rules: [
       {
@@ -141,26 +174,34 @@ module.exports = {
       },
     ],
   },
-  devServer: {
-    hot: false,
-    stats: "minimal",
-    contentBase: "public",
-    watchContentBase: true,
-  },
-  mode,
+
   plugins: [
     new MiniCssExtractPlugin({
       filename: "[name].css",
     }),
+
+    /**
+     * Useful for detecting issues with svelte components, for example, which sometimes
+     * try to sneak in another copy of the svelte compiler's prolog
+     */
     new DuplicatePackageCheckerPlugin(),
+
+    /**
+     * This plugin analyzes all of our imports & chunks, and produces an HTML
+     * file that suitably loads the initial resources (e.g. CSS) and chunks
+     * (i.e. chunked JS bundles)
+     */
     new HtmlWebpackPlugin({
-      // `filename` is relative to the "./public/build" dir,
-      // so we need ".." here to output to "./public/index.html":
-      filename: "../index.html",
-      template: "src/index.html",
       title: "Relm",
-      minify: false,
+      // Use the template at src/index.html to produce dist/index.html
+      template: "src/index.html",
+      minify: false, // for aesthetics; makes index.html stay formatted
     }),
+
+    /**
+     * In production: Copy our static files from public/ to dist/
+     */
+    new CopyWebpackPlugin([{ from: "public", to: "dist" }]),
   ],
   optimization: {
     minimizer: [],
@@ -179,13 +220,12 @@ module.exports = {
       },
       chunks: "all",
     },
+
     /**
      * For HECS to work, we need to prevent module concatenation from mangling
      * class names. See https://github.com/gohyperr/hecs/issues/31
      */
     concatenateModules: false,
-    // checkWasmTypes: false,
-    // mangleWasmImports: false,
   },
   devtool: prod && !sourceMapsInProduction ? false : "source-map",
 };
