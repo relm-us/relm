@@ -2,7 +2,6 @@
 **/public/build/
 **/yarn-error.log
 **/.DS_Store
+**/dist/
 server/data/
-server/dist/
-common/dist/
 deploy/
