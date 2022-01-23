@@ -422,6 +422,9 @@ export function makeProgram(): Program {
             // .. and also sent from our intercepted `didMakeLocalAvatar` updater
             state.participantState.localAvatarInitialized
           ) {
+            const localParticipant =
+              state.participantState.participants.get(playerId);
+
             // Stop making the world "tick" just for loading
             state.ecsWorldLoaderUnsub?.();
 
@@ -429,16 +432,22 @@ export function makeProgram(): Program {
 
             return [
               state,
-              initWorldManager(
-                state,
-                state.participantState.broker,
-                state.ecsWorld,
-                state.worldDoc,
-                state.pageParams,
-                state.relmDocId,
-                state.avConnection,
-                state.participantState.participants
-              ),
+              Cmd.batch([
+                updateLocalParticipant(localParticipant, {
+                  showVideo: state.videoDesired,
+                  showAudio: state.audioDesired,
+                }),
+                initWorldManager(
+                  state,
+                  state.participantState.broker,
+                  state.ecsWorld,
+                  state.worldDoc,
+                  state.pageParams,
+                  state.relmDocId,
+                  state.avConnection,
+                  state.participantState.participants
+                ),
+              ]),
             ];
           } else {
             return [state];

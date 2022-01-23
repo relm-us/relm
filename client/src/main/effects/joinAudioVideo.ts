@@ -31,10 +31,5 @@ export const joinAudioVideo =
       produceVideo: videoDesired,
     });
 
-    updateLocalParticipant(localParticipant, {
-      showVideo: videoDesired,
-      showAudio: audioDesired,
-    })(dispatch);
-
     dispatch({ id: "didJoinAudioVideo", avDisconnect: disconnect });
   };
