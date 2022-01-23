@@ -13,6 +13,7 @@ import { AVConnection } from "~/av/AVConnection";
 
 import { audioDesired } from "~/stores/audioDesired";
 import { videoDesired } from "~/stores/videoDesired";
+import { askAvatarSetup } from "~/stores/askAvatarSetup";
 
 import GameWorld from "./views/GameWorld.svelte";
 import ErrorScreen from "./views/ErrorScreen.svelte";
@@ -28,16 +29,16 @@ import { getRelmPermitsAndMetadata } from "./effects/getRelmPermitsAndMetadata";
 import { importPhysicsEngine } from "./effects/importPhysicsEngine";
 import { nextSetupStep } from "./effects/nextSetupStep";
 import { createWorldDoc } from "./effects/createWorldDoc";
+import { getPageParams } from "./effects/getPageParams";
+import { joinAudioVideo } from "./effects/joinAudioVideo";
+import { updateLocalParticipant } from "./effects/updateLocalParticipant";
+import { getAuthenticationHeaders } from "./effects/getAuthenticationHeaders";
+import { pollLoadingState } from "./effects/pollLoadingState";
 
 import { makeProgram as makeParticipantProgram } from "~/identity/Program";
 import type { State, Message, Program } from "./ProgramTypes";
-import { joinAudioVideo } from "./effects/joinAudioVideo";
 import { mapParticipantEffect } from "./mapParticipantEffect";
 import { playerId } from "~/identity/playerId";
-import { updateLocalParticipant } from "./effects/updateLocalParticipant";
-import { getPageParams } from "./effects/getPageParams";
-import { getAuthenticationHeaders } from "./effects/getAuthenticationHeaders";
-import { pollLoadingState } from "./effects/pollLoadingState";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -320,6 +321,8 @@ export function makeProgram(): Program {
             ...state,
             avatarSetupDone: true,
           };
+
+          askAvatarSetup.set(false);
 
           const effects = [nextSetupStep(newState)];
 
