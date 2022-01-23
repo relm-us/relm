@@ -98,9 +98,6 @@
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
   },
-  "resolutions": {
-    "@uppy/utils": "3.5.0"
-  },
   "browserslist": [
     "defaults"
   ],
