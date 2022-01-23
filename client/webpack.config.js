@@ -78,6 +78,7 @@ module.exports = {
     stats: "minimal", // use "normal" to show what chunks are built and what files are copied
     contentBase: "public", // direct the DevServer to serve static files from public/
     watchContentBase: true,
+    compress: true,
   },
 
   /**
@@ -201,7 +202,7 @@ module.exports = {
     /**
      * In production: Copy our static files from public/ to dist/
      */
-    new CopyWebpackPlugin([{ from: "public", to: "dist" }]),
+    new CopyWebpackPlugin([{ from: "public", to: "." }]),
   ],
   optimization: {
     minimizer: [],
@@ -218,7 +219,7 @@ module.exports = {
           name: "dimforge",
         },
       },
-      chunks: "all",
+      chunks: "async",
     },
 
     /**
