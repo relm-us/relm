@@ -1,7 +1,8 @@
 <!-- This component converts the functional UI state machine (raj) to Svelte -->
-<script lang="ts">
+<script>
   import { onMount } from "svelte";
   import { runtime } from "~/utils/runtime";
+  import Notifications from "svelte-notifications";
 
   export let createApp;
 
@@ -28,4 +29,6 @@
   });
 </script>
 
-<svelte:component this={programComponent} {...programProps} />
+<Notifications>
+  <svelte:component this={programComponent} {...programProps} />
+</Notifications>

@@ -8,7 +8,8 @@
   --unselected-gray: rgba(50, 50, 50, 0.25);
   --unselected-gray-hover: rgba(20, 20, 20, 0.25);
 
-  --background-transparent-gray: rgba(0, 0, 0, 0.85);
+  --background-transparent-black: rgba(0, 0, 0, 0.85);
+  --background-transparent-gray: rgba(40, 40, 40, 0.85);
   --background-gray: #1a1e23;
   --foreground-white: #ddd;
   --foreground-gray: #999;
@@ -20,7 +21,22 @@
 
   --select-bg-color: rgba(50, 50, 50, 1);
   --select-hover-bg-color: rgba(70, 70, 70, 1);
-  --select-fg-color: #ddd;;
+  --select-fg-color: #ddd;
+}
+
+.notifications > div {
+  z-index: 2;
+}
+.default-notification-style {
+  background: var(--background-transparent-gray) !important;
+  color: var(--foreground-white) !important;
+}
+.default-notification-style-button {
+  border-left: 1px solid var(--foreground-dark-gray) !important;
+  color: var(--foreground-white) !important;
+}
+.default-position-style-bottom-center {
+  bottom: 62px !important;
 }
 
 html,

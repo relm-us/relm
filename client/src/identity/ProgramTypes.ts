@@ -44,6 +44,7 @@ export type Message =
       id: "removeParticipant";
       clientId: number;
     }
+  | { id: "participantJoined"; participant: Participant }
   | { id: "join" };
 
 export type Dispatch = (message: Message) => void;

@@ -104,7 +104,8 @@ export function setTransformArrayOnParticipants(
   this: void,
   ecsWorld: DecoratedECSWorld,
   participants: Map<string, Participant>,
-  transformArray: TransformData[]
+  transformArray: TransformData[],
+  onAddParticipant: (participant: Participant) => void
 ) {
   for (let transformData of transformArray) {
     let participantId;
@@ -123,6 +124,9 @@ export function setTransformArrayOnParticipants(
         return participant.avatar?.headAngle;
       });
       participant.avatar = new Avatar(ecsWorld, entities);
+
+      // Let caller handle anything that should happen when the participant first arrives
+      onAddParticipant(participant);
     }
     setTransformDataOnParticipant(participant, transformData);
 

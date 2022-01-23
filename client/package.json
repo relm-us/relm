@@ -49,6 +49,7 @@
     "svelte-dnd-action": "^0.7.3",
     "svelte-icons": "^2.1.0",
     "svelte-local-storage-store": "^0.1.6",
+    "svelte-notifications": "^0.9.93",
     "svelte-select": "^3.16.1",
     "three": "0.129.0",
     "three-nebula": "^10.0.0",

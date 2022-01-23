@@ -35,7 +35,7 @@
     color: white;
 
     padding: 16px 32px 24px 32px;
-    background: rgba(40, 40, 40, 0.9);
+    background: var(--background-transparent-gray, rgba(40, 40, 40, 0.9));
     border-radius: 5px;
   }
 

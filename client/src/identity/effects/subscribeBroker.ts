@@ -14,7 +14,14 @@ export const subscribeBroker =
   (dispatch: Dispatch) => {
     const broker = new ParticipantYBroker(worldDoc);
     const unsub = broker.subscribe(dispatch, (transformArray) => {
-      setTransformArrayOnParticipants(ecsWorld, participants, transformArray);
+      setTransformArrayOnParticipants(
+        ecsWorld,
+        participants,
+        transformArray,
+        (participant) => {
+          dispatch({ id: "participantJoined", participant });
+        }
+      );
     });
     dispatch({ id: "didSubscribeBroker", broker, unsub });
   };

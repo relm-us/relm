@@ -2,7 +2,6 @@ import { get } from "svelte/store";
 import { Cmd } from "~/utils/runtime";
 
 import { playerId } from "./playerId";
-// import { ChatMessage } from "~/world/ChatManager";
 
 import { makeLocalAvatar } from "./effects/makeLocalAvatar";
 import { updateLocalParticipant } from "./effects/updateLocalParticipant";

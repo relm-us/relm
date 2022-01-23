@@ -87,6 +87,15 @@ export function makeProgram(): Program {
             { ...state, participantState },
             Cmd.batch([mainEffect, Cmd.ofMsg({ id: "initWorldManager" })]),
           ];
+        } else if (msg.message.id === "participantJoined") {
+          if (state.notifyContext) {
+            state.notifyContext.addNotification({
+              text: `${msg.message.participant.identityData.name} joined.`,
+              position: "bottom-center",
+              removeAfter: 5000,
+            });
+            return [{ ...state, participantState }, mainEffect];
+          }
         } else {
           return [{ ...state, participantState }, mainEffect];
         }
@@ -499,6 +508,10 @@ export function makeProgram(): Program {
         // We store entrywayUnsub for later when we may need it for a portal
         case "gotEntrywayUnsub": {
           return [{ ...state, entrywayUnsub: msg.entrywayUnsub }];
+        }
+
+        case "gotNotificationContext": {
+          return [{ ...state, notifyContext: msg.notifyContext }];
         }
 
         // Error page to show what went wrong
