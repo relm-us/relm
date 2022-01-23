@@ -7,19 +7,19 @@ import { Cmd } from "~/utils/runtime";
 import { exists } from "~/utils/exists";
 
 import AvatarChooser from "~/ui/AvatarBuilder/AvatarChooser.svelte";
-import { LoadingScreen, LoadingFailed } from "~/ui/LoadingScreen";
 
 import { loadPreferredDeviceIds } from "~/av/loadPreferredDeviceIds";
 import { AVConnection } from "~/av/AVConnection";
 
 import { audioDesired } from "~/stores/audioDesired";
 import { videoDesired } from "~/stores/videoDesired";
-import { resetLoading, startPollingLoadingState } from "~/stores/loading";
 
 import GameWorld from "./views/GameWorld.svelte";
 import ErrorScreen from "./views/ErrorScreen.svelte";
 import BlankWithLogo from "./views/BlankWithLogo.svelte";
 import MediaSetupShim from "./views/MediaSetupShim.svelte";
+import LoadingScreen from "./views/LoadingScreen.svelte";
+import LoadingFailed from "./views/LoadingFailed.svelte";
 
 import { createECSWorld } from "./effects/createECSWorld";
 import { getPositionFromEntryway } from "./effects/getPositionFromEntryway";
@@ -37,6 +37,7 @@ import { playerId } from "~/identity/playerId";
 import { updateLocalParticipant } from "./effects/updateLocalParticipant";
 import { getPageParams } from "./effects/getPageParams";
 import { getAuthenticationHeaders } from "./effects/getAuthenticationHeaders";
+import { pollLoadingState } from "./effects/pollLoadingState";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -120,9 +121,6 @@ export function makeProgram(): Program {
           exists(msg.entitiesMax, "entitiesMax");
           exists(msg.assetsMax, "assetsMax");
           exists(msg.twilioToken, "twilioToken");
-
-          // Set the "max values" for the loading progress bar
-          resetLoading(msg.assetsMax, msg.entitiesMax);
 
           return [
             {
@@ -226,7 +224,12 @@ export function makeProgram(): Program {
           exists(msg.worldDoc, "worldDoc");
 
           return [
-            { ...state, worldDoc: msg.worldDoc },
+            {
+              ...state,
+              worldDoc: msg.worldDoc,
+              entitiesCount: 0,
+              assetsCount: 0,
+            },
             Cmd.batch([
               Cmd.ofMsg({ id: "loading" }),
 
@@ -348,15 +351,21 @@ export function makeProgram(): Program {
           ) {
             return [
               { ...state, doneLoading: false, screen: "loading-screen" },
-              (dispatch) => {
-                startPollingLoadingState(state.worldDoc, () => {
-                  dispatch({ id: "loaded" });
-                });
-              },
+              pollLoadingState(state),
             ];
           } else {
             return [state];
           }
+        }
+
+        case "gotLoadingState": {
+          return [
+            {
+              ...state,
+              assetsCount: msg.assetsCount,
+              entitiesCount: msg.entitiesCount,
+            },
+          ];
         }
 
         case "loaded": {
@@ -524,7 +533,16 @@ export function makeProgram(): Program {
           case "choose-avatar":
             return [AvatarChooser, { dispatch }];
           case "loading-screen":
-            return [LoadingScreen, { dispatch }];
+            return [
+              LoadingScreen,
+              {
+                dispatch,
+                entitiesCount: state.entitiesCount,
+                entitiesMax: state.entitiesMax,
+                assetsCount: state.assetsCount,
+                assetsMax: state.assetsMax,
+              },
+            ];
           case "loading-failed":
             return [LoadingFailed];
           case "game-world":

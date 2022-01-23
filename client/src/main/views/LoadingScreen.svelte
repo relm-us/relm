@@ -1,12 +1,24 @@
 <script lang="ts">
   import PageOverlay from "~/ui/lib/PageOverlay";
-  import { loaded, maximum } from "~/stores/loading";
 
   export let dispatch;
+  export let assetsCount;
+  export let assetsMax;
+  export let entitiesCount;
+  export let entitiesMax;
 
-  let count = 0;
+  let progress;
+  $: progress = (entitiesCount / entitiesMax + assetsCount / assetsMax) / 2;
+
+  let showCounts = false;
+
+  let clickCount = 0;
   function click() {
-    if (++count >= 5) {
+    ++clickCount;
+
+    if (clickCount == 1) {
+      showCounts = true;
+    } else if (clickCount == 5) {
       dispatch({ id: "loaded" });
       dispatch({ id: "assumeOriginAsEntryway" });
     }
@@ -16,8 +28,14 @@
 <PageOverlay zIndex={3} justify="center">
   <container on:click={click}>
     <img src="/loading.png" alt="Loading" />
-    <progress-bar style="--percent:{($loaded / $maximum) * 140}%" />
+    <progress-bar style="--percent:{progress * 140}%" />
   </container>
+  {#if showCounts}
+    <r-stats>
+      <r-stat>{entitiesCount} / {entitiesMax}</r-stat>
+      <r-stat>{assetsCount} / {assetsMax}</r-stat>
+    </r-stats>
+  {/if}
 </PageOverlay>
 
 <style>
@@ -51,5 +69,16 @@
     clip-path: circle(var(--percent) at left);
     border-radius: 16px;
     z-index: -1;
+  }
+
+  r-stats {
+    display: flex;
+    width: 263px;
+    justify-content: space-between;
+    margin-top: 6px;
+  }
+  r-stat {
+    color: #bbb;
+    font-size: 9px;
   }
 </style>

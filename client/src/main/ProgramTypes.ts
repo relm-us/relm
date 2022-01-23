@@ -106,6 +106,7 @@ export type Message =
   | { id: "initWorldManager" }
   | { id: "didInitWorldManager" }
   | { id: "loading" }
+  | { id: "gotLoadingState"; assetsCount: number; entitiesCount: number }
   | { id: "loaded" }
   | { id: "loadedAndReady" }
   | { id: "startPlaying" }

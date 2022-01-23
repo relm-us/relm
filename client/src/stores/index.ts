@@ -8,7 +8,6 @@ export { copyBuffer } from "./copyBuffer";
 export type { CopyBuffer } from "./copyBuffer";
 // export type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 // TODO: loading
-export { loadingState } from "./loadingState";
 export { mouse } from "./mouse";
 export { openPanel } from "./openPanel";
 export { playState } from "./playState";

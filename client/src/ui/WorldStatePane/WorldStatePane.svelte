@@ -8,21 +8,7 @@
 
   import { worldManager } from "~/world";
 
-  import {
-    loadingState,
-    setupState,
-    viewportSize,
-    viewport,
-    playState,
-  } from "~/stores";
-  import {
-    loaded,
-    maximum,
-    entitiesLoaded,
-    entitiesMaximum,
-    assetsLoaded,
-    assetsMaximum,
-  } from "~/stores/loading";
+  import { setupState, viewportSize, viewport } from "~/stores";
   import { Participant } from "~/identity/types";
   import { State } from "~/main/ProgramTypes";
 
@@ -116,10 +102,8 @@
         <tr>
           <th>loading:</th>
           <td>
-            {$loadingState}
-            {$loaded}/{$maximum}
-            <div>(Ent: {$entitiesLoaded}/{$entitiesMaximum})</div>
-            <div>(Ast: {$assetsLoaded}/{$assetsMaximum})</div>
+            <div>(Ent: {state.entitiesCount}/{state.entitiesMax})</div>
+            <div>(Ast: {state.assetsCount}/{state.assetsMax})</div>
           </td>
         </tr>
         <!-- <tr><th>physics:</th><td>{$ecsWorld !== null}</td></tr> -->
