@@ -158,84 +158,6 @@ relm.get(
   })
 );
 
-// Get a Twilio access token within a relm
-relm.get(
-  "/twilio",
-  cors(),
-  middleware.relmExists(),
-  middleware.authenticated(),
-  middleware.authorized("access"),
-  wrapAsync(async (req, res) => {
-    const token = twilio.getToken(req.authenticatedPlayerId);
-
-    return util.respond(res, 200, {
-      status: "success",
-      action: "token",
-      relm: req.relm,
-      token,
-    });
-  })
-);
-
-relm.post(
-  "/truncate",
-  cors(),
-  middleware.relmExists(),
-  middleware.authenticated(),
-  middleware.authorized("admin"),
-  wrapAsync(async (req, res) => {
-    const relm = req.relm;
-
-    const permanentDoc = await yws.getYDoc(req.relm.permanentDocId);
-
-    const newDocName = uuidv4();
-    truncateYDoc(permanentDoc, newDocName);
-
-    await Doc.setDoc({
-      docId: newDocName,
-      docType: "permanent",
-      relmId: relm.relmId,
-    });
-
-    return util.respond(res, 200, {
-      status: "success",
-      action: "truncate",
-    });
-  })
-);
-
-function relmCopyObjects(src, dest) {
-  for (const [uuid, attrs] of Object.entries(src.toJSON())) {
-    const objectYMap = new Y.Map();
-
-    for (const [key, values] of Object.entries(attrs)) {
-      if (key.indexOf("@") === 0) {
-        objectYMap.set(key, values);
-      } else {
-        const attrYMap = new Y.Map();
-        for (const [k, v] of Object.entries(values)) {
-          attrYMap.set(k, v);
-        }
-        objectYMap.set(key, attrYMap);
-      }
-    }
-
-    dest.set(uuid, objectYMap);
-  }
-}
-
-function truncateYDoc(ydoc, newDocName) {
-  const truncatedYDoc = yws.getYDoc(newDocName);
-
-  const objects = ydoc.getMap("objects");
-
-  const truncatedObjects = truncatedYDoc.getMap("objects");
-
-  relmCopyObjects(objects, truncatedObjects);
-
-  return truncatedYDoc;
-}
-
 // Update an existing relm
 relm.put(
   "/meta",
@@ -274,6 +196,35 @@ relm.get(
     util.respond(res, 200, {
       status: "success",
       permits: permissions[req.relmName] || [],
+      jwt: req.jwtRaw,
+    });
+  })
+);
+
+relm.get(
+  "/permitsAndMeta",
+  cors(),
+  middleware.relmExists(),
+  middleware.authenticated(),
+  middleware.acceptToken(),
+  middleware.acceptJwt(),
+  middleware.authorized("access"),
+  wrapAsync(async (req, res) => {
+    const doc: Y.Doc = await yws.getYDoc(req.relm.permanentDocId);
+    req.relm.permanentDocSize = Y.encodeStateAsUpdate(doc).byteLength;
+    
+    const twilioToken = twilio.getToken(req.authenticatedPlayerId);
+    const permissions = await Permission.getPermissions({
+      playerId: req.authenticatedPlayerId,
+      relmNames: [req.relmName],
+    });
+
+    return util.respond(res, 200, {
+      status: "success",
+      action: "read",
+      relm: req.relm,
+      permits: permissions[req.relmName] || [],
+      twilioToken,
       jwt: req.jwtRaw,
     });
   })

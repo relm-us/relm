@@ -21,24 +21,24 @@ export class RelmRestAPI {
     return await axios.post(url, body, { headers: this.authHeaders });
   }
 
-  async getMetadata(relm: string) {
-    const res = await this.get(`/relm/${relm}/meta`);
-    if (res?.status === 200) {
-      if (res.data.status === "success") {
-        const r = res.data.relm;
-        return { ...res.data.relm, twilioToken: res.data.twilioToken };
-      } else {
-        throw Error(`can't get metadata for ${relm} (${res.data.status})`);
-      }
-    } else {
-      throw Error(`can't get metadata for ${relm} (${res.status})`);
-    }
-  }
+  // async getMetadata(relm: string) {
+  //   const res = await this.get(`/relm/${relm}/meta`);
+  //   if (res?.status === 200) {
+  //     if (res.data.status === "success") {
+  //       const r = res.data.relm;
+  //       return { ...res.data.relm, twilioToken: res.data.twilioToken };
+  //     } else {
+  //       throw Error(`can't get metadata for ${relm} (${res.data.status})`);
+  //     }
+  //   } else {
+  //     throw Error(`can't get metadata for ${relm} (${res.status})`);
+  //   }
+  // }
 
-  async getPermits(relm: string): Promise<{ permits: string[]; jwt: any }> {
+  async getPermitsAndMeta(relm: string): Promise<{ permits: string[]; jwt: any }> {
     let res;
     try {
-      res = await this.get(`/relm/${relm}/permits`);
+      res = await this.get(`/relm/${relm}/permitsAndMeta`);
     } catch (err) {
       if (err.response) {
         if (err.response.status === 404) {
