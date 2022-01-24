@@ -10,8 +10,6 @@ export type { CopyBuffer } from "./copyBuffer";
 // TODO: loading
 export { mouse } from "./mouse";
 export { openPanel } from "./openPanel";
-export { playState } from "./playState";
-export type { PlayState } from "./playState";
 export { rapier } from "./rapier";
 // TODO: selection
 export { setupState } from "./setupState";

@@ -25,7 +25,8 @@
 
   import { globalEvents } from "~/events";
 
-  import { worldUIMode, openPanel, playState } from "~/stores";
+  import { worldUIMode, openPanel } from "~/stores";
+  import { playState } from "~/stores/playState";
   import { audioDesired } from "~/stores/audioDesired";
   import { videoDesired } from "~/stores/videoDesired";
   import { unreadCount } from "~/stores/chat";

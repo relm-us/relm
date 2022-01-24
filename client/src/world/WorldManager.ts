@@ -7,7 +7,7 @@ import { exportRelm, importRelm } from "./Export";
 
 import { worldUIMode } from "~/stores/worldUIMode";
 import { deltaTime, fpsTime } from "~/stores/stats";
-import { playState, PlayState } from "~/stores/playState";
+import { playState } from "~/stores/playState";
 import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 import { shadowsEnabled } from "~/stores/shadowsEnabled";
 import { keyShift, keySpace } from "~/stores/keys";
@@ -37,6 +37,9 @@ import { Participant } from "~/identity/types";
 import { ParticipantManager } from "~/identity/ParticipantManager";
 import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 
+type LoopType =
+  | { type: "raf" }
+  | { type: "interval"; targetFps: number; interval?: NodeJS.Timer };
 export class WorldManager {
   dispatch: Dispatch;
   state: State;
@@ -47,6 +50,8 @@ export class WorldManager {
   entryway: string;
   relmDocId: string;
   avConnection: AVConnection;
+
+  loopType: LoopType = { type: "raf" };
 
   me: Participant;
 
@@ -112,8 +117,6 @@ export class WorldManager {
       this.participants.local.avatar.entities.body
     );
 
-    const token = new URL(window.location.href).searchParams.get("t");
-
     this.world.perspective.setAvatar(this.avatar.entities.body);
     this.populate();
 
@@ -167,19 +170,8 @@ export class WorldManager {
       })
     );
 
-    this.unsubs.push(
-      playState.subscribe(($state) => {
-        switch ($state) {
-          case "playing":
-            this.world.presentation.setLoop(this.loop.bind(this));
-            break;
-          case "paused":
-            this.world.presentation.setLoop(null);
-            // TODO: Make it so window resize events "step" a frame
-            break;
-        }
-      })
-    );
+    // Pre-compile assets to prevent some jank while exploring the world
+    this.world.presentation.compile();
 
     this.start();
   }
@@ -200,13 +192,6 @@ export class WorldManager {
     // this.participants.deinit();
     this.camera.deinit();
   }
-
-  // TODO: restore JWT override of name, make it uneditable
-  //   // set name from server, if available (overrides localstorage)
-  //   if (connectOpts.username) {
-  //     this.identities.me.set({ name: connectOpts.username });
-  //     this.identities.me.avatar.editableName = false;
-  //   }
 
   populate() {
     if (!this.world) {
@@ -249,37 +234,97 @@ export class WorldManager {
   }
 
   start() {
-    if (this.started) {
-      playState.set("playing");
-    } else {
-      // Pre-compile assets to prevent some jank while exploring the world
-      this.world.presentation.compile();
-
-      playState.set("playing");
-
+    if (!this.started) {
+      this._startLoop();
       this.started = true;
+
+      // Show via UI that we're playing
+      playState.set("playing");
+    }
+  }
+
+  _startLoop() {
+    const loop = this.loop.bind(this);
+
+    switch (this.loopType.type) {
+      case "raf":
+        this.world.presentation.setLoop(loop);
+        break;
+
+      case "interval":
+        this.loopType.interval = setInterval(
+          loop,
+          (1.0 / this.loopType.targetFps) * 1000
+        );
+        break;
+
+      default:
+        throw Error("invalid loopType");
     }
   }
 
   stop() {
-    playState.set("paused");
+    if (this.started) {
+      this._stopLoop();
+      this.started = false;
+
+      // Show via UI that we've paused
+      playState.set("paused");
+    }
+  }
+
+  _stopLoop() {
+    switch (this.loopType.type) {
+      case "raf":
+        this.world.presentation.setLoop(null);
+        break;
+
+      case "interval":
+        clearInterval(this.loopType.interval);
+        break;
+
+      default:
+        throw Error("invalid loopType");
+    }
+  }
+
+  togglePaused() {
+    if (this.started) {
+      this.stop();
+    } else {
+      this.start();
+    }
   }
 
   step() {
-    if (get(playState) === "playing" || !this.started) {
-      this.stop();
-    }
+    this.stop();
     requestAnimationFrame(this.loop.bind(this));
+  }
+
+  setFps(fps: number) {
+    if (fps < 0 || fps > 60) return;
+
+    this.stop();
+
+    if (fps === 60) {
+      this.loopType = { type: "raf" };
+    } else {
+      this.loopType = { type: "interval", targetFps: fps };
+    }
+
+    this.start();
   }
 
   worldStep(delta?: number) {
     if (this.world) {
-      const isRunning = get(playState) === "playing";
-      this.world.update(isRunning && delta !== undefined ? delta : 1000 / 60);
+      this.world.update(
+        this.started && delta !== undefined ? delta : 1000 / 60
+      );
     }
   }
 
-  loop(time: number) {
+  loop() {
+    const time = performance.now();
     const delta = time - this.previousLoopTime;
     deltaTime.addData(delta);
     fpsTime.addData(1000 / delta);
@@ -335,19 +380,6 @@ export class WorldManager {
 
   get scene() {
     return this.world.presentation.scene;
-  }
-
-  get playState(): PlayState {
-    return get(playState);
-  }
-
-  set playState(state: PlayState) {
-    const possibilities = ["playing", "paused"];
-    if (!possibilities.includes(state)) {
-      console.error("state must be one of", possibilities);
-    } else {
-      playState.set(state);
-    }
   }
 
   get copyBuffer(): CopyBuffer {

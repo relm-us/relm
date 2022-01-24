@@ -1,8 +1,8 @@
-import { playState } from "~/stores/playState";
+import { worldManager } from "~/world";
 
 export function onKeydown(event) {
   if (event.key.toLowerCase() === "p") {
-    playState.update(($state) => ($state === "paused" ? "playing" : "paused"));
+    worldManager.togglePaused();
   }
 }
 
