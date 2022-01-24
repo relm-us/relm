@@ -10,17 +10,19 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="preload" href="/loading.png" as="image" />
 
+    <style>
+      body {
+        background-color: #1a1e23;
+      }
+    </style>
+
     <script>
       window.jwt = ""; // for third party integration, populate window.jwt with server-side generated jwt token
     </script>
-    <%
-    // Note: html-webpack-plugin will insert CSS here
-    %>
+    <% // Note: html-webpack-plugin will insert CSS here %>
   </head>
   <body>
     <noscript>Please enable JavaScript to view this application.</noscript>
-    <%
-    // Note: html-webpack-plugin will insert JS here
-    %>
+    <% // Note: html-webpack-plugin will insert JS here %>
   </body>
 </html>
