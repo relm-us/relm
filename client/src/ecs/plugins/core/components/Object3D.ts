@@ -10,7 +10,7 @@ import { StateComponent, RefType } from "~/ecs/base";
  * The `value` is a reference to a threejs Object3D.
  */
 export class Object3D extends StateComponent {
-  value: THREE.Object3d;
+  value: THREE.Object3D;
 
   static props = {
     value: {

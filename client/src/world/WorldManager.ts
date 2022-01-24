@@ -1,5 +1,5 @@
 import { Color, Vector3, Box3 } from "three";
-import { derived, get, writable, Writable } from "svelte/store";
+import { derived, get } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
@@ -29,7 +29,7 @@ import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import type { PageParams } from "~/types";
-import type { Dispatch, State as RelmState, State } from "~/main/ProgramTypes";
+import type { Dispatch, State } from "~/main/ProgramTypes";
 import { AVConnection } from "~/av";
 import { playerId } from "~/identity/playerId";
 import { Avatar } from "~/identity/Avatar";

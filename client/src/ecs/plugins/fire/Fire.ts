@@ -80,7 +80,7 @@ export class Fire extends Mesh {
     this.material.uniforms.scale.value = (this as Object3D).scale;
   }
 
-  clone(recursive?: boolean): Object3D {
+  clone(recursive): this {
     const fire = new Fire(
       this.fireTex,
       this.color,
@@ -88,6 +88,6 @@ export class Fire extends Mesh {
       this.blaze,
       this.octaves
     );
-    return (fire as Object3D).copy(this, recursive);
+    return fire.copy(this, recursive) as any;
   }
 }

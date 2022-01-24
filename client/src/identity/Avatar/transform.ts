@@ -119,7 +119,7 @@ export function setTransformArrayOnParticipants(
     if (!participant || participant.isLocal) continue;
 
     if (!participant.avatar) {
-      const position = new Vector3().fromArray(transformData, 1);
+      const position = new Vector3().fromArray(transformData as number[], 1);
       const entities = makeRemoteAvatarEntities(ecsWorld, position, () => {
         return participant.avatar?.headAngle;
       });

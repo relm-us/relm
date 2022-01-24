@@ -1,7 +1,7 @@
 import {
   Mesh,
   MeshStandardMaterial,
-  Geometry,
+  BufferGeometry,
   SphereGeometry,
   Color,
 } from "three";
@@ -13,7 +13,7 @@ import { GlowShader } from "../GlowShader";
 const PI_THIRDS = Math.PI / 3.0;
 
 export class DiamondSystem extends System {
-  diamondGeometry: Geometry;
+  diamondGeometry: BufferGeometry;
   loaded: boolean = false;
 
   order = Groups.Simulation + 1;
