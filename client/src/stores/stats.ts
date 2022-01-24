@@ -1,11 +1,11 @@
-import { writable, Writable, derived } from "svelte/store";
+import { Readable, writable, Writable } from "svelte/store";
 
 export const DATA_WINDOW_SIZE = 100;
 
-type StatsStore = {
-  subscribe: Function;
+interface StatsStore extends Readable<Array<number>> {
+  subscribe: (run: (value: number[]) => any, invalidate?: any) => any;
   addData: (data: number) => void;
-};
+}
 
 export function createStatsStore(dataWindowSize): StatsStore {
   const store: Writable<Array<number>> = writable([]);
@@ -28,7 +28,6 @@ export function createStatsStore(dataWindowSize): StatsStore {
 
 // Gathered from clocking the render loop
 export const totalTime = createStatsStore(DATA_WINDOW_SIZE);
-export const deltaTime = createStatsStore(DATA_WINDOW_SIZE);
 export const fpsTime = createStatsStore(DATA_WINDOW_SIZE);
 
 // Gathered from renderer.info (https://threejs.org/docs/#api/en/renderers/WebGLRenderer.info)

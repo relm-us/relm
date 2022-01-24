@@ -6,7 +6,8 @@ import { WorldDoc } from "~/y-integration/WorldDoc";
 import { exportRelm, importRelm } from "./Export";
 
 import { worldUIMode } from "~/stores/worldUIMode";
-import { deltaTime, fpsTime } from "~/stores/stats";
+import { fpsTime } from "~/stores/stats";
+import { targetFps } from "~/stores/targetFps";
 import { playState } from "~/stores/playState";
 import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 import { shadowsEnabled } from "~/stores/shadowsEnabled";
@@ -306,6 +307,7 @@ export class WorldManager {
 
     this.stop();
 
+    targetFps.set(fps);
     if (fps === 60) {
       this.loopType = { type: "raf" };
     } else {
@@ -326,7 +328,6 @@ export class WorldManager {
   loop() {
     const time = performance.now();
     const delta = time - this.previousLoopTime;
-    deltaTime.addData(delta);
     fpsTime.addData(1000 / delta);
 
     this.worldStep(delta);

@@ -9,6 +9,9 @@
   import { worldManager } from "~/world";
 
   import { setupState, viewportSize, viewport } from "~/stores";
+  import { targetFps } from "~/stores/targetFps";
+  import { fpsTime } from "~/stores/stats";
+  import { playState } from "~/stores/playState";
   import { Participant } from "~/identity/types";
   import { State } from "~/main/ProgramTypes";
 
@@ -17,7 +20,11 @@
   let minimized = true;
   let subtitle;
 
-  $: subtitle = state.worldDocStatus;
+  $: subtitle =
+    state.worldDocStatus +
+    ` : ${Math.ceil(
+      $fpsTime.reduce((cumu, val) => cumu + val, 0) / $fpsTime.length
+    )} / ${Math.ceil($targetFps)} fps`;
 
   let vw;
   $: vw = $viewportSize
@@ -61,24 +68,6 @@
   <Pane title="Status" {subtitle} showMinimize={true} bind:minimized>
     <inner-scroll>
       <table>
-        <!-- <tr><th>app state:</th><td>{$appState}</td></tr> -->
-        <tr><th>setup state:</th><td>{$setupState}</td></tr>
-        <!-- <tr><th>conference:</th><td>{$roomConnectState}</td></tr> -->
-        <!-- <tr><th>yjs:</th><td>{$connection.state}<br />{$yLoadingState}</td></tr> -->
-        <!-- {#if $connection.state === "connected"}
-          <tr>
-            <th>yjs room:</th>
-            <td>
-              {#if showAbbreviatedRoom}
-                <button on:click={toggleRoom}>
-                  {$connection.room.split("-")[0]}...
-                </button>
-              {:else}
-                {$connection.room}
-              {/if}
-            </td>
-          </tr>
-        {/if} -->
         <tr>
           <th>audio</th>
           <td>

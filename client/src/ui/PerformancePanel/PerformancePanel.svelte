@@ -10,7 +10,6 @@
 
   import {
     fpsTime,
-    deltaTime,
     renderCalls,
     renderTriangles,
     memoryGeometries,
@@ -32,7 +31,6 @@
   $: secondarySystems = Object.entries($systems).filter(
     ([name, _]) => !name.match(primarySystemsRE)
   );
-
 </script>
 
 <LeftPanel on:minimize>
@@ -72,16 +70,6 @@
     {extendedStatsVisible ? "Hide" : "Show"}
     Extended Stats
   </Button>
-
-  {#if extendedStatsVisible}
-    <StatsPane
-      title="Millis"
-      dataStore={deltaTime}
-      value={($deltaTime[0] || 0).toFixed(1)}
-    />
-    <StatsPane title="Geometries" dataStore={memoryGeometries} />
-    <StatsPane title="Textures" dataStore={memoryTextures} />
-  {/if}
 
   <Button
     style="margin-top:8px"
@@ -147,5 +135,4 @@
   setting b {
     padding-right: 8px;
   }
-
 </style>
