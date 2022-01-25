@@ -1,4 +1,4 @@
-import { Participant } from "~/identity/types";
+import { Participant } from "types/identity";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import { worldManager } from "~/world";

@@ -1,4 +1,4 @@
-import { AuthenticationHeaders } from "~/identity/types";
+import { AuthenticationHeaders } from "types/identity";
 import { PageParams } from "~/types";
 import { config } from "~/config";
 

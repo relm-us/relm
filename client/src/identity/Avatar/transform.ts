@@ -3,9 +3,8 @@ import { Vector3, Euler, AnimationClip } from "three";
 import { Transform } from "~/ecs/plugins/core";
 import { ModelRef } from "~/ecs/plugins/model";
 import { Animation } from "~/ecs/plugins/animation";
-import { RigidBody } from "~/ecs/plugins/physics";
 
-import { PlayerID, TransformData, AvatarEntities, Participant } from "../types";
+import type { TransformData, Participant } from "~/types";
 import { Avatar } from "../Avatar";
 import { makeRemoteAvatarEntities } from "./makeRemoteAvatarEntities";
 import { setAvatarFromParticipant } from "./setAvatarFromParticipant";

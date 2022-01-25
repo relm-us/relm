@@ -1,4 +1,4 @@
 import { Writable } from "svelte/store";
-import { writable } from "svelte-local-storage-store";
+import { storedWritable } from "~/utils/storedWritable";
 
-export const autoPause: Writable<boolean> = writable("auto-pause", true);
+export const autoPause: Writable<boolean> = storedWritable("auto-pause", true);

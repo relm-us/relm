@@ -14,7 +14,7 @@ import { Animation } from "~/ecs/plugins/animation";
 import { Repulsive } from "~/ecs/plugins/player-control";
 import { IDLE } from "~/ecs/plugins/player-control/constants";
 
-import { AvatarEntities } from "../types";
+import { AvatarEntities } from "~/types";
 
 const UNSCALED_CHARACTER_HEIGHT = 7;
 

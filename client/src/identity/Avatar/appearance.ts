@@ -1,7 +1,7 @@
 import { Morph } from "~/ecs/plugins/morph";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
 
-import { Appearance, BinaryGender, AvatarEntities } from "../types";
+import { Appearance, BinaryGender, AvatarEntities } from "~/types";
 
 // prettier-ignore
 export const skinColors = [

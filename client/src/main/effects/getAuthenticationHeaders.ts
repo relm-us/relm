@@ -2,8 +2,7 @@ import { Dispatch } from "../ProgramTypes";
 
 import { playerId } from "~/identity/playerId";
 import { Security } from "~/identity/Security";
-import type { AuthenticationHeaders } from "~/identity/types";
-import type { PageParams } from "~/types";
+import type { AuthenticationHeaders, PageParams } from "~/types";
 
 export const getAuthenticationHeaders =
   (pageParams: PageParams) => async (dispatch: Dispatch) => {

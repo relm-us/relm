@@ -1,10 +1,12 @@
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import { config } from "~/config";
-import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
-import { AuthenticationHeaders } from "~/identity/types";
+import type {
+  AuthenticationHeaders,
+  DecoratedECSWorld,
+  WorldDocStatus,
+} from "~/types";
 
 import { Dispatch } from "../ProgramTypes";
-import { WorldDocStatus } from "types";
 
 export const createWorldDoc =
   (

@@ -1,9 +1,8 @@
-import { ParticipantYBroker } from "../ParticipantYBroker";
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import { Dispatch } from "../ProgramTypes";
-import { Participant, RecvTransformCallback } from "../types";
-import { DecoratedECSWorld } from "types/DecoratedECSWorld";
-import { setTransformArrayOnParticipants } from "../Avatar/transform";
+import type { Participant, DecoratedECSWorld } from "~/types";
+import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
+import { setTransformArrayOnParticipants } from "~/identity/Avatar/transform";
 
 export const subscribeBroker =
   (

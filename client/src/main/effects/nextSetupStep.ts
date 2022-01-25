@@ -3,15 +3,15 @@ import { askMediaSetup } from "~/stores/askMediaSetup";
 import { askAvatarSetup } from "~/stores/askAvatarSetup";
 import { Dispatch, State } from "../ProgramTypes";
 
-export const nextSetupStep = (state: State) => async (
-  dispatch: Dispatch
-) => {
+export const nextSetupStep = (state: State) => async (dispatch: Dispatch) => {
   if (!state.audioVideoSetupDone) {
     const skipAudioVideoSetup = get(askMediaSetup) === false;
     if (!skipAudioVideoSetup) {
       dispatch({ id: "setUpAudioVideo" });
     } else {
-      dispatch({ id: "didSetUpAudioVideo", state: null });
+      // By not dispatching `audioDesired`, `videoDesired`, `preferredDeviceIds`, we
+      // implicitly accept default settings from whatever was stored in localStorage:
+      dispatch({ id: "didSetUpAudioVideo" });
     }
   } else if (!state.avatarSetupDone) {
     const skipAvatarSetup = get(askAvatarSetup) === false;

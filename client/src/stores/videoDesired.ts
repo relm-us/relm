@@ -1,4 +1,5 @@
-import { Writable } from "svelte/store";
-import { writable } from "svelte-local-storage-store";
+import { Readable } from "svelte/store";
+import { storedWritable } from "~/utils/storedWritable";
 
-export const videoDesired: Writable<boolean> = writable("videoDesired", true);
+// Type is `Readable` to protect from writing through any means but `dispatch`
+export const videoDesired: Readable<boolean> = storedWritable("videoDesired", true);

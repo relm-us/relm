@@ -1,5 +1,5 @@
 import type { Entity } from "~/ecs/base";
-import { Avatar } from "./Avatar";
+import type { Avatar } from "~/identity/Avatar";
 
 export type PlayerStatus = "initial" | "present" | "away";
 export type YClientID = number;

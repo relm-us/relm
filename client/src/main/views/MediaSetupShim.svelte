@@ -5,12 +5,18 @@
 
   export let dispatch: Dispatch;
 
-  export let audioDesired = true;
-  export let videoDesired = true;
+  export let audioDesired;
+  export let videoDesired;
   export let preferredDeviceIds: DeviceIds;
 
   function done({ detail }) {
-    dispatch({ id: "didSetUpAudioVideo", state: detail });
+    console.log("done media setup detail", detail);
+    dispatch({
+      id: "didSetUpAudioVideo",
+      audioDesired: detail.audioDesired,
+      videoDesired: detail.videoDesired,
+      preferredDeviceIds: detail.preferredDeviceIds,
+    });
   }
 </script>
 

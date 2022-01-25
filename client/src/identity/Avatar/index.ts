@@ -5,7 +5,7 @@ import {
   AVATAR_BUILDER_INTERACTION,
   AVATAR_INTERACTION,
 } from "~/config/colliderInteractions";
-import { AvatarEntities } from "../types";
+import { AvatarEntities } from "~/types";
 
 import { Transform, WorldTransform } from "~/ecs/plugins/core";
 import { Controller } from "~/ecs/plugins/player-control";

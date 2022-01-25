@@ -8,11 +8,10 @@
 
   import { worldManager } from "~/world";
 
-  import { setupState, viewportSize, viewport } from "~/stores";
+  import { viewportSize, viewport } from "~/stores";
   import { targetFps } from "~/stores/targetFps";
   import { fpsTime } from "~/stores/stats";
-  import { playState } from "~/stores/playState";
-  import { Participant } from "~/identity/types";
+  import { Participant } from "~/types";
   import { State } from "~/main/ProgramTypes";
 
   export let state: State;

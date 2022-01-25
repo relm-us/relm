@@ -4,7 +4,7 @@ import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import { TwistBone, headFollowsAngle } from "~/ecs/plugins/twist-bone";
 import { Distance } from "~/ecs/plugins/distance";
 
-import { AvatarEntities } from "../types";
+import { AvatarEntities } from "~/types";
 import { playerId } from "../playerId";
 import { makeAvatarEntities } from "./makeAvatarEntities";
 

@@ -1,4 +1,4 @@
 import { Writable } from "svelte/store";
-import { writable } from "svelte-local-storage-store";
+import { storedWritable } from "~/utils/storedWritable";
 
-export const debugMode: Writable<boolean> = writable("debugMode", false);
+export const debugMode: Writable<boolean> = storedWritable("debugMode", false);

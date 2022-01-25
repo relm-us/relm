@@ -1,7 +1,7 @@
 <script lang="ts">
   import PageOverlay from "~/ui/lib/PageOverlay";
   import { getDefaultAppearance } from "~/identity/Avatar/appearance";
-  import type { BinaryGender } from "~/identity/types";
+  import type { BinaryGender } from "~/types";
 
   export let dispatch
 

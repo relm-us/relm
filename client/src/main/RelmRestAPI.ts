@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import type { AuthenticationHeaders } from "~/identity/types";
+import type { AuthenticationHeaders } from "~/types";
 
 export class RelmRestAPI {
   url: string;

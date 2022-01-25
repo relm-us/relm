@@ -1,12 +1,29 @@
-import { Participant, UpdateData } from "~/identity/types";
-import { mapParticipantEffect } from "../mapParticipantEffect";
 import { Dispatch } from "../ProgramTypes";
-import { updateLocalParticipant as ulp } from "~/identity/effects/updateLocalParticipant";
+import { Participant, UpdateData } from "types/identity";
+import { setAvatarFromParticipant} from "~/identity/Avatar/setAvatarFromParticipant";
 
-// Wrap the Participant Program's `updateLocalParticipant` message, so we
-// can call it easily from the Main Program
 export const updateLocalParticipant =
   (localParticipant: Participant, updateData: UpdateData) =>
   (dispatch: Dispatch) => {
-    mapParticipantEffect(ulp(localParticipant, updateData))(dispatch);
+    // Merge existing IdentityData with UpdateData
+    const identityData = (localParticipant.identityData = {
+      ...localParticipant.identityData,
+      ...updateData,
+    });
+
+    console.log("updateLocalParticipant", updateData);
+
+    // Update locally
+    if (localParticipant.avatar) {
+      setAvatarFromParticipant(localParticipant);
+      console.log("set avatar");
+    } else {
+      console.log("no set avatar");
+    }
+
+    // Tell everyone else to update our avatar
+    dispatch({
+      id: "sendLocalParticipantData",
+      identityData,
+    });
   };

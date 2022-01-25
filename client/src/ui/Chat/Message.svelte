@@ -2,7 +2,7 @@
   import { onMount } from "svelte/internal";
   import { worldManager } from "~/world";
 
-  import type { IdentityData } from "~/identity/types";
+  import type { IdentityData } from "~/types";
   import { cleanHtml } from "~/utils/cleanHtml";
 
   export let participantId: string;

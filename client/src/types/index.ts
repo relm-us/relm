@@ -32,3 +32,5 @@ export type PageParams = {
 };
 
 export type WorldDocStatus = "connecting" | "connected" | "disconnected";
+
+export * from "./identity";

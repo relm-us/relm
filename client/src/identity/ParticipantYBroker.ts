@@ -4,8 +4,8 @@ import { withMapEdits } from "relm-common/yrelm";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
-import { Dispatch } from "./ProgramTypes";
-import { IdentityData, RecvTransformCallback } from "./types";
+import { Dispatch } from "~/main/ProgramTypes";
+import { IdentityData, RecvTransformCallback } from "~/types";
 import { playerId } from "./playerId";
 
 const transformArray = [];

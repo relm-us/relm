@@ -7,7 +7,7 @@
     TopType,
     BottomType,
     ShoeType,
-  } from "~/identity/types";
+  } from "~/types";
 
   import Slider from "~/ui/lib/Slider";
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";

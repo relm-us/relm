@@ -1,7 +1,6 @@
 import { AVConnection } from "av";
 
-import { Participant } from "~/identity/types";
-import { updateLocalParticipant } from "./updateLocalParticipant";
+import { Participant } from "~/types";
 
 import { Dispatch } from "../ProgramTypes";
 

@@ -28,13 +28,12 @@ import { CameraManager } from "./CameraManager";
 
 import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 
-import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
-import type { PageParams } from "~/types";
+import type { DecoratedECSWorld, PageParams } from "~/types";
 import type { Dispatch, State } from "~/main/ProgramTypes";
 import { AVConnection } from "~/av";
 import { playerId } from "~/identity/playerId";
 import { Avatar } from "~/identity/Avatar";
-import { Participant } from "~/identity/types";
+import { Participant } from "types/identity";
 import { ParticipantManager } from "~/identity/ParticipantManager";
 import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 

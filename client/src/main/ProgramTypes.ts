@@ -1,21 +1,21 @@
-import { Vector3 } from "three";
+import type { Vector3 } from "three";
 import type { DeviceIds } from "video-mirror";
+import type { Writable } from "svelte/store";
 
 import type { WorldDoc } from "~/y-integration/WorldDoc";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import { PageParams, WorldDocStatus } from "~/types";
 import { AVConnection } from "~/av/AVConnection";
 
+import type { IdentityData } from "~/types";
+import type { ParticipantYBroker } from "~/identity/ParticipantYBroker";
+import { Avatar } from "~/identity/Avatar";
+
 import type {
   Appearance,
   AuthenticationHeaders,
   Participant,
-} from "~/identity/types";
-
-import type {
-  State as ParticipantState,
-  Message as ParticipantMessage,
-} from "~/identity/ProgramTypes";
+} from "types/identity";
 
 export type State = {
   // initialization
@@ -35,11 +35,19 @@ export type State = {
   entitiesCount?: number;
   twilioToken?: string;
 
+  // participants
+  participants: Map<string, Participant>;
+  localAvatarInitialized: boolean;
+  broker?: ParticipantYBroker;
+  unsubs: Function[];
+  observeFieldsFn?: any;
+  observeChatFn?: any;
+
   // audio/video setup
   audioVideoSetupDone?: boolean;
-  audioDesired?: boolean;
-  videoDesired?: boolean;
-  preferredDeviceIds?: DeviceIds;
+  audioDesired: Writable<boolean>;
+  videoDesired: Writable<boolean>;
+  preferredDeviceIds: Writable<DeviceIds>;
   avConnection?: AVConnection;
   avDisconnect?: Function;
 
@@ -67,9 +75,6 @@ export type State = {
     | "loading-screen"
     | "loading-failed"
     | "game-world";
-
-  // composed state
-  participantState: ParticipantState;
 };
 
 export type Message =
@@ -86,6 +91,34 @@ export type Message =
       participantName: string;
       twilioToken: string;
     }
+
+  // Participants
+  | {
+      id: "ma";
+      worldDoc: WorldDoc;
+      ecsWorld: DecoratedECSWorld;
+      entrywayPosition: Vector3;
+    }
+  | { id: "didSubscribeBroker"; broker: ParticipantYBroker; unsub: Function }
+  | { id: "didMakeLocalAvatar"; avatar: Avatar }
+  | {
+      id: "recvParticipantData";
+      participantId: string;
+      identityData: IdentityData;
+      isLocal: boolean;
+    }
+  | {
+      id: "sendLocalParticipantData";
+      identityData: IdentityData;
+    }
+  | {
+      id: "removeParticipant";
+      clientId: number;
+    }
+  | { id: "participantJoined"; participant: Participant }
+  | { id: "join" }
+
+  // cont'd...
   | { id: "importedPhysicsEngine"; physicsEngine: any }
   | { id: "createdWorldDoc"; worldDoc: WorldDoc }
   | {
@@ -100,10 +133,16 @@ export type Message =
   | { id: "gotEntrywayPosition" }
   | { id: "didMakeLocalParticipant"; localParticipant: Participant }
   | { id: "setUpAudioVideo" }
-  | { id: "didSetUpAudioVideo"; state: any }
+  | {
+      id: "didSetUpAudioVideo";
+      audioDesired?: boolean;
+      videoDesired?: boolean;
+      preferredDeviceIds?: DeviceIds;
+    }
   | { id: "didJoinAudioVideo"; avDisconnect: Function }
   | { id: "setUpAvatar" }
   | { id: "didSetUpAvatar"; appearance?: Appearance }
+  | { id: "prepareLocalParticipantForWorld" }
   | { id: "initWorldManager" }
   | { id: "didInitWorldManager" }
   | { id: "loading" }
@@ -111,14 +150,22 @@ export type Message =
   | { id: "loaded" }
   | { id: "loadedAndReady" }
   | { id: "startPlaying" }
-  | { id: "participantMessage"; message: ParticipantMessage }
   | { id: "gotNotificationContext"; notifyContext: any }
   | { id: "error"; message: string; stack?: any };
 
 export type Dispatch = (message: Message) => void;
 export type Effect = (dispatch: Dispatch) => void;
+
+export type Init = [State, Effect?];
+export type Update = (
+  this: void,
+  msg: Message,
+  state: State
+) => [State, Effect?];
+export type View = (this: void, state: State, dispatch: Dispatch) => void;
+
 export type Program = {
-  init: [State, Effect?];
-  update: (this: void, msg: Message, state: State) => [State, Effect?];
-  view: (this: void, state: State, dispatch: Dispatch) => void;
+  init: Init;
+  update: Update;
+  view: View;
 };

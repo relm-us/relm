@@ -1,9 +1,9 @@
-import { writable } from "svelte-local-storage-store";
 import { get, Writable } from "svelte/store";
 
 import { playerId } from "./playerId";
 import { randomColor } from "~/utils/colors";
-import { IdentityData } from "./types";
+import { storedWritable } from "~/utils/storedWritable";
+import { IdentityData } from "~/types";
 
 /**
  * Generates a random name and color as default values.
@@ -19,7 +19,7 @@ export const defaultIdentityData: IdentityData = {
   appearance: undefined, // undefined allows to pick up default value later
 };
 
-export const localIdentityData: Writable<IdentityData> = writable(
+export const localIdentityData: Writable<IdentityData> = storedWritable(
   "identity",
   defaultIdentityData
 );

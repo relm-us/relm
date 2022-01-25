@@ -2,7 +2,7 @@ import { Vector3 } from "three";
 
 import { Oculus, OculusRef } from "~/ecs/plugins/html2d";
 
-import { AvatarEntities, PlayerID } from "../types";
+import { AvatarEntities } from "~/types";
 
 const OCULUS_HEIGHT = 2.4;
 
@@ -14,6 +14,7 @@ export function setOculus(
   showVideo: boolean
 ) {
   if (!entities.body.has(Oculus)) {
+    console.log("add oculus", showAudio, showVideo);
     entities.body.add(Oculus, {
       participantId,
       hanchor: 0,
@@ -23,6 +24,7 @@ export function setOculus(
       offset: new Vector3(0, OCULUS_HEIGHT, 0),
     });
   } else {
+    console.log("update oculus", showAudio, showVideo);
     const component = entities.body.get(OculusRef)?.component;
 
     if (component) {

@@ -1,8 +1,9 @@
 import { playerId } from "./playerId";
 
+import type { Appearance, Participant, UpdateData } from "~/types";
+
 import { Dispatch } from "~/main/ProgramTypes";
 import { participantToTransformData } from "./Avatar/transform";
-import { Appearance, Participant, UpdateData } from "./types";
 import { ParticipantYBroker } from "./ParticipantYBroker";
 import { updateLocalParticipant } from "~/main/effects/updateLocalParticipant";
 
@@ -77,6 +78,7 @@ export class ParticipantManager {
   toggleMic() {
     const showAudio = !this.local.identityData.showAudio;
     this.updateMe({ showAudio });
+    return showAudio;
   }
 }
 

@@ -1,5 +1,5 @@
 import { worldManager } from "~/world";
-import { Participant } from "~/identity/types";
+import { Participant } from "~/types";
 
 import { setAppearance } from "./appearance";
 import { setEmoji } from "./emoji";

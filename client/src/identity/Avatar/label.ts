@@ -2,7 +2,7 @@ import { Vector3 } from "three";
 
 import { Html2d } from "~/ecs/plugins/html2d";
 
-import { AvatarEntities } from "../types";
+import { AvatarEntities } from "~/types";
 
 const DEFAULT_LABEL_COLOR = "#D0D0D0";
 

@@ -29,8 +29,7 @@ import EventEmitter from "eventemitter3";
 import { applyDiffToYEntity } from "./applyDiff";
 
 import { selectedEntities } from "~/stores/selection";
-import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
-import { AuthenticationHeaders } from "~/identity/types";
+import { DecoratedECSWorld, AuthenticationHeaders } from "~/types";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
 
@@ -104,7 +103,7 @@ export class WorldDoc extends EventEmitter {
         t: authHeaders["x-relm-t"],
         jwt: authHeaders["x-relm-jwt"],
       },
-      resyncInterval: 10000
+      resyncInterval: 10000,
     });
     return this.provider;
   }

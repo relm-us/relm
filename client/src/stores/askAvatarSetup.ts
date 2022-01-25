@@ -1,8 +1,8 @@
 import { Writable } from "svelte/store";
-import { writable } from "svelte-local-storage-store";
+import { storedWritable } from "~/utils/storedWritable";
 
 // Participant will be asked to choose an avatar on first-time visit
-export const askAvatarSetup: Writable<boolean> = writable(
+export const askAvatarSetup: Writable<boolean> = storedWritable(
   "askAvatarSetup",
   true
 );
