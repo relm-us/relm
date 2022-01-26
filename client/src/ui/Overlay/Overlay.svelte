@@ -27,9 +27,8 @@
 
   import { worldUIMode, openPanel } from "~/stores";
   import { playState } from "~/stores/playState";
-  import { audioDesired } from "~/stores/audioDesired";
-  import { videoDesired } from "~/stores/videoDesired";
   import { unreadCount } from "~/stores/chat";
+  import { localIdentityData } from "~/stores/identityData";
   import { debugMode } from "~/stores/debugMode";
   import { createPrefab } from "~/prefab";
 
@@ -136,8 +135,8 @@
     <ChatButton unread={$unreadCount} />
     <ShareScreenButton />
     <AudioModeButton />
-    <MicButton enabled={$audioDesired} />
-    <VideoButton enabled={$videoDesired} {dispatch} />
+    <MicButton enabled={$localIdentityData.showAudio} />
+    <VideoButton enabled={$localIdentityData.showVideo} {dispatch} />
     <AvatarSetupButton />
   </play-buttons>
 </overlay-center>

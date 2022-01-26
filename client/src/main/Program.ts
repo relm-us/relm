@@ -11,8 +11,6 @@ import AvatarChooser from "~/ui/AvatarBuilder/AvatarChooser.svelte";
 
 import { AVConnection } from "~/av/AVConnection";
 
-import { audioDesired } from "~/stores/audioDesired";
-import { videoDesired } from "~/stores/videoDesired";
 import { preferredDeviceIds } from "~/stores/preferredDeviceIds";
 import { askAvatarSetup } from "~/stores/askAvatarSetup";
 
@@ -29,7 +27,6 @@ import { nextSetupStep } from "./effects/nextSetupStep";
 import { createWorldDoc } from "./effects/createWorldDoc";
 import { getPageParams } from "./effects/getPageParams";
 import { joinAudioVideo } from "./effects/joinAudioVideo";
-import { updateLocalParticipant } from "./effects/updateLocalParticipant";
 import { getAuthenticationHeaders } from "./effects/getAuthenticationHeaders";
 import { pollLoadingState } from "./effects/pollLoadingState";
 import { subscribeBroker } from "./effects/subscribeBroker";
@@ -44,10 +41,15 @@ import LoadingFailed from "./views/LoadingFailed.svelte";
 
 import { playerId } from "~/identity/playerId";
 import { participantRemoveAvatar } from "~/identity/ParticipantManager";
+import { setAvatarFromParticipant } from "~/identity/Avatar/setAvatarFromParticipant";
+import { localIdentityData } from "~/stores/identityData";
+import { IdentityData, UpdateData } from "~/types";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
   .includes("program");
+
+const send: (msg: Message) => Effect = Cmd.ofMsg;
 
 /**
  * The main Relm program
@@ -55,15 +57,13 @@ const logEnabled = (localStorage.getItem("debug") || "")
 export function makeProgram(): Program {
   const init: [State, Effect] = [
     {
-      participantId: playerId,
       worldDocStatus: "disconnected",
       screen: "initial",
-      participants: initParticipants(),
-      localAvatarInitialized: false,
       unsubs: [],
 
-      audioDesired: audioDesired as Writable<boolean>,
-      videoDesired: videoDesired as Writable<boolean>,
+      participants: initParticipants(),
+      localAvatarInitialized: false,
+      localIdentityData: localIdentityData as Writable<IdentityData>,
       preferredDeviceIds: preferredDeviceIds as Writable<DeviceIds>,
     },
     getPageParams,
@@ -98,7 +98,7 @@ export function makeProgram(): Program {
           {
             ...state,
             authHeaders: msg.authHeaders,
-            avConnection: new AVConnection(state.participantId),
+            avConnection: new AVConnection(playerId),
           },
           getRelmPermitsAndMetadata(state.pageParams, msg.authHeaders),
         ];
@@ -163,18 +163,6 @@ export function makeProgram(): Program {
         return [state];
       }
 
-      case "didMakeLocalAvatar": {
-        const localParticipant = state.participants.get(playerId);
-        localParticipant.avatar = msg.avatar;
-        localParticipant.identityData.appearance;
-        localParticipant.identityData.clientId = state.worldDoc.ydoc.clientID;
-
-        return [
-          { ...state, localAvatarInitialized: true },
-          Cmd.ofMsg<Message>({ id: "initWorldManager" }),
-        ];
-      }
-
       case "recvParticipantData": {
         let participant;
 
@@ -196,8 +184,30 @@ export function makeProgram(): Program {
         return [state];
       }
 
-      case "sendLocalParticipantData": {
-        state.broker.setIdentityData(playerId, msg.identityData);
+      // Update local participant's IdentityData and send to other participants
+      case "updateLocalIdentityData": {
+        const localParticipant = state.participants.get(playerId);
+
+        // If name is assigned (e.g. via JWT), it can't be changed
+        localParticipant.editable = state.participantName !== undefined;
+
+        const newIdentityData = {
+          ...get(state.localIdentityData),
+          ...msg.identityData,
+        };
+
+        // update identityData on participant
+        Object.assign(localParticipant.identityData, newIdentityData);
+
+        // update identityData in Program state & Svelte store
+        state.localIdentityData.set(newIdentityData);
+
+        // broadcast identityData to other participants
+        state.broker.setIdentityData(playerId, newIdentityData);
+
+        // sync identityData to HTML and ECS entities
+        setAvatarFromParticipant(localParticipant);
+
         return [state];
       }
 
@@ -285,7 +295,7 @@ export function makeProgram(): Program {
             assetsCount: 0,
           },
           Cmd.batch([
-            Cmd.ofMsg<Message>({ id: "loading" }),
+            send({ id: "loading" }),
 
             // Initialize the Participant Program
             subscribeBroker(msg.worldDoc, state.ecsWorld, state.participants),
@@ -309,32 +319,34 @@ export function makeProgram(): Program {
       }
 
       case "didSetUpAudioVideo": {
+        console.log("didSetUpAudioVideo", msg);
+
         if (msg.audioDesired !== undefined) {
-          state.audioDesired.set(msg.audioDesired);
+          state.initialAudioDesired = msg.audioDesired;
         }
         if (msg.videoDesired !== undefined) {
-          state.videoDesired.set(msg.videoDesired);
+          state.initialVideoDesired = msg.videoDesired;
         }
         if (msg.preferredDeviceIds !== undefined) {
           state.preferredDeviceIds.set(msg.preferredDeviceIds);
         }
 
-        const effects = [
+        const effects: Effect[] = [
           joinAudioVideo(
             state.participants.get(playerId),
             state.avConnection,
             state.avDisconnect,
-            get(state.audioDesired),
-            get(state.videoDesired),
+            msg.audioDesired,
+            msg.videoDesired,
             state.relmDocId,
             state.twilioToken
-          ) as Function,
+          ),
         ];
 
         const newState = { ...state, audioVideoSetupDone: true };
 
         if (state.initializedWorldManager) {
-          effects.push(Cmd.ofMsg<Message>({ id: "startPlaying" }));
+          effects.push(send({ id: "startPlaying" }));
         } else {
           effects.push(nextSetupStep(newState));
         }
@@ -351,35 +363,15 @@ export function makeProgram(): Program {
       }
 
       case "didSetUpAvatar": {
-        const localParticipant = state.participants.get(playerId);
-
         const newState: State = {
           ...state,
           avatarSetupDone: true,
+          participantQuickAppearance: msg.appearance,
         };
 
         askAvatarSetup.set(false);
 
-        const effects = [nextSetupStep(newState)];
-
-        if (state.participantName) {
-          localParticipant.editable = false;
-          effects.push(
-            updateLocalParticipant(localParticipant, {
-              name: state.participantName,
-            }) as any
-          );
-        }
-
-        if (msg.appearance) {
-          effects.push(
-            updateLocalParticipant(localParticipant, {
-              appearance: msg.appearance,
-            }) as any
-          );
-        }
-
-        return [newState, Cmd.batch(effects)];
+        return [newState, nextSetupStep(newState)];
       }
 
       case "loading": {
@@ -431,7 +423,7 @@ export function makeProgram(): Program {
             ...state,
             entrywayPosition: msg.entrywayPosition,
           },
-          Cmd.ofMsg<Message>({ id: "gotEntrywayPosition" }),
+          send({ id: "gotEntrywayPosition" }),
         ];
       }
 
@@ -440,7 +432,7 @@ export function makeProgram(): Program {
           alert("This relm's default entryway is not yet set.");
           return [
             { ...state, entrywayPosition: new Vector3(0, 0, 0) },
-            Cmd.ofMsg<Message>({ id: "gotEntrywayPosition" }),
+            send({ id: "gotEntrywayPosition" }),
           ];
         } else {
           return [state];
@@ -448,17 +440,17 @@ export function makeProgram(): Program {
       }
 
       case "gotEntrywayPosition": {
-        const localParticipant = state.participants.get(playerId);
+        return [state, makeLocalAvatar(state.ecsWorld, state.entrywayPosition)];
+      }
+
+      case "didMakeLocalAvatar": {
+        exists(msg.avatar, "avatar");
+
+        state.participants.get(playerId).avatar = msg.avatar;
+
         return [
-          state,
-          makeLocalAvatar(
-            localParticipant,
-            state.ecsWorld,
-            state.entrywayPosition,
-            state.worldDoc.ydoc.clientID,
-            get(state.videoDesired),
-            get(state.audioDesired)
-          ),
+          { ...state, localAvatarInitialized: true },
+          send({ id: "initWorldManager" }),
         ];
       }
 
@@ -495,7 +487,7 @@ export function makeProgram(): Program {
       case "didInitWorldManager": {
         return [
           { ...state, initializedWorldManager: true },
-          Cmd.ofMsg<Message>({ id: "loadedAndReady" }),
+          send({ id: "loadedAndReady" }),
         ];
       }
 
@@ -509,7 +501,7 @@ export function makeProgram(): Program {
 
           return [
             { ...state, entrywayUnsub: null },
-            Cmd.ofMsg<Message>({ id: "startPlaying" }),
+            send({ id: "startPlaying" }),
           ];
         } else {
           return [state];
@@ -517,9 +509,21 @@ export function makeProgram(): Program {
       }
 
       case "startPlaying":
+        const identityData: UpdateData = {
+          clientId: state.worldDoc.ydoc.clientID,
+          name: state.participantName,
+          showAudio: state.initialAudioDesired,
+          showVideo: state.initialVideoDesired,
+        };
+        if (state.participantQuickAppearance) {
+          identityData.appearance = state.participantQuickAppearance;
+        }
         return [
           { ...state, overlayScreen: null, screen: "game-world" },
-          Cmd.ofMsg<Message>({ id: "join" }),
+          Cmd.batch([
+            send({ id: "updateLocalIdentityData", identityData }),
+            send({ id: "join" }),
+          ]),
         ];
 
       // We store entrywayUnsub for later when we may need it for a portal
@@ -527,8 +531,15 @@ export function makeProgram(): Program {
         return [{ ...state, entrywayUnsub: msg.entrywayUnsub }];
       }
 
+      // Store context so Program can send notifications via svelte-notifications
       case "gotNotificationContext": {
         return [{ ...state, notifyContext: msg.notifyContext }];
+      }
+
+      // Send yjs a modification so that it triggers an assets/entities stats re-assessment
+      case "recomputeWorldDocStats": {
+        state.worldDoc?.recomputeStats();
+        return [state];
       }
 
       // Error page to show what went wrong

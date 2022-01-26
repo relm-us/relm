@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { Dispatch } from "~/main/ProgramTypes";
+
   import PageOverlay from "~/ui/lib/PageOverlay";
 
-  export let dispatch;
+  export let dispatch: Dispatch;
   export let assetsCount;
   export let assetsMax;
   export let entitiesCount;
@@ -19,6 +21,8 @@
     if (clickCount == 1) {
       showCounts = true;
     } else if (clickCount == 5) {
+      // Force entry; useful for debugging & getting relms with stale stats to load
+      dispatch({ id: "recomputeWorldDocStats" });
       dispatch({ id: "loaded" });
       dispatch({ id: "assumeOriginAsEntryway" });
     }

@@ -3,12 +3,11 @@
   import Pane from "./Pane.svelte";
 
   import { localAudioTrack, localVideoTrack } from "video-mirror";
-  import { audioDesired } from "~/stores/audioDesired";
-  import { videoDesired } from "~/stores/videoDesired";
 
   import { worldManager } from "~/world";
 
   import { viewportSize, viewport } from "~/stores";
+  import { localIdentityData } from "~/stores/identityData";
   import { targetFps } from "~/stores/targetFps";
   import { fpsTime } from "~/stores/stats";
   import { Participant } from "~/types";
@@ -70,7 +69,7 @@
         <tr>
           <th>audio</th>
           <td>
-            {$audioDesired ? "desired" : ""}
+            {$localIdentityData.showAudio ? "YES" : ""}
             {$localAudioTrack ? "recording" : ""}
             <!-- {$audioProducing ? "sending" : ""} -->
           </td>
@@ -78,7 +77,7 @@
         <tr>
           <th>video</th>
           <td>
-            {$videoDesired ? "desired" : ""}
+            {$localIdentityData.showVideo ? "YES" : ""}
             {$localVideoTrack ? "recording" : ""}
             <!-- {$videoProducing ? "sending" : ""} -->
           </td>

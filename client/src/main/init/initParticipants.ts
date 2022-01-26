@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
 import { playerId } from "~/identity/playerId";
-import { localIdentityData } from "~/identity/identityData";
+import { localIdentityData } from "~/stores/identityData";
 import { Participant } from "~/types";
 
 export function initParticipants() {

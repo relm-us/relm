@@ -6,12 +6,14 @@ import { Dispatch, State } from "../ProgramTypes";
 export const nextSetupStep = (state: State) => async (dispatch: Dispatch) => {
   if (!state.audioVideoSetupDone) {
     const skipAudioVideoSetup = get(askMediaSetup) === false;
-    if (!skipAudioVideoSetup) {
-      dispatch({ id: "setUpAudioVideo" });
+    if (skipAudioVideoSetup) {
+      dispatch({
+        id: "didSetUpAudioVideo",
+        audioDesired: false,
+        videoDesired: false,
+      });
     } else {
-      // By not dispatching `audioDesired`, `videoDesired`, `preferredDeviceIds`, we
-      // implicitly accept default settings from whatever was stored in localStorage:
-      dispatch({ id: "didSetUpAudioVideo" });
+      dispatch({ id: "setUpAudioVideo" });
     }
   } else if (!state.avatarSetupDone) {
     const skipAvatarSetup = get(askAvatarSetup) === false;

@@ -131,6 +131,10 @@ export class WorldDoc extends EventEmitter {
     });
   }
 
+  recomputeStats() {
+    this.messages.push([{ u: "system", c: "[recompute stats]" }]);
+  }
+
   syncFromJSON(json) {
     const hid = json.id;
     let entity;

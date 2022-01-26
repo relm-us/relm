@@ -11,12 +11,20 @@
 
   function done({ detail }) {
     console.log("done media setup detail", detail);
-    dispatch({
-      id: "didSetUpAudioVideo",
-      audioDesired: detail.audioDesired,
-      videoDesired: detail.videoDesired,
-      preferredDeviceIds: detail.preferredDeviceIds,
-    });
+    if (detail) {
+      dispatch({
+        id: "didSetUpAudioVideo",
+        audioDesired: detail.audioDesired,
+        videoDesired: detail.videoDesired,
+        preferredDeviceIds: detail.preferredDeviceIds,
+      });
+    } else {
+      dispatch({
+        id: "didSetUpAudioVideo",
+        audioDesired: false,
+        videoDesired: false,
+      });
+    }
   }
 </script>
 

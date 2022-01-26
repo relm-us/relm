@@ -5,13 +5,11 @@ import type { Appearance, Participant, UpdateData } from "~/types";
 import { Dispatch } from "~/main/ProgramTypes";
 import { participantToTransformData } from "./Avatar/transform";
 import { ParticipantYBroker } from "./ParticipantYBroker";
-import { updateLocalParticipant } from "~/main/effects/updateLocalParticipant";
 
 export class ParticipantManager {
   dispatch: Dispatch;
   broker: ParticipantYBroker;
   participants: Map<string, Participant>;
-  // activeCache: Participant[] = [];
 
   get local(): Participant {
     return this.participants.get(playerId);
@@ -39,8 +37,9 @@ export class ParticipantManager {
     this.broker.setAwareness("m", transformData);
   }
 
-  updateMe(updateData: UpdateData) {
-    updateLocalParticipant(this.local, updateData)(this.dispatch);
+  updateMe(identityData: UpdateData) {
+    console.log("updateMe", JSON.stringify(identityData));
+    this.dispatch({ id: "updateLocalIdentityData", identityData });
   }
 
   getAppearance(): Appearance {

@@ -7,7 +7,7 @@ import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import { PageParams, WorldDocStatus } from "~/types";
 import { AVConnection } from "~/av/AVConnection";
 
-import type { IdentityData } from "~/types";
+import type { IdentityData, UpdateData } from "~/types";
 import type { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 import { Avatar } from "~/identity/Avatar";
 
@@ -15,16 +15,15 @@ import type {
   Appearance,
   AuthenticationHeaders,
   Participant,
-} from "types/identity";
+} from "~/types/identity";
 
 export type State = {
   // initialization
-  participantId?: string;
-  participantName?: string; // override used by JWT
   pageParams?: PageParams;
   authHeaders?: AuthenticationHeaders;
   entrywayPosition?: Vector3;
   entrywayUnsub?: Function;
+  unsubs: Function[];
 
   // relm metadata
   relmDocId?: string; // server-assigned UUID for the relm
@@ -37,16 +36,18 @@ export type State = {
 
   // participants
   participants: Map<string, Participant>;
+  participantName?: string; // override used by JWT
+  participantQuickAppearance?: Appearance;
   localAvatarInitialized: boolean;
+  localIdentityData: Writable<IdentityData>;
   broker?: ParticipantYBroker;
-  unsubs: Function[];
   observeFieldsFn?: any;
   observeChatFn?: any;
 
   // audio/video setup
   audioVideoSetupDone?: boolean;
-  audioDesired: Writable<boolean>;
-  videoDesired: Writable<boolean>;
+  initialAudioDesired?: boolean;
+  initialVideoDesired?: boolean;
   preferredDeviceIds: Writable<DeviceIds>;
   avConnection?: AVConnection;
   avDisconnect?: Function;
@@ -67,7 +68,7 @@ export type State = {
   doneLoading?: boolean;
   errorMessage?: string;
   overlayScreen?: "portal";
-  screen?:
+  screen:
     | "error"
     | "initial"
     | "video-mirror"
@@ -108,8 +109,8 @@ export type Message =
       isLocal: boolean;
     }
   | {
-      id: "sendLocalParticipantData";
-      identityData: IdentityData;
+      id: "updateLocalIdentityData";
+      identityData: UpdateData;
     }
   | {
       id: "removeParticipant";
@@ -150,11 +151,12 @@ export type Message =
   | { id: "loaded" }
   | { id: "loadedAndReady" }
   | { id: "startPlaying" }
+  | { id: "recomputeWorldDocStats" }
   | { id: "gotNotificationContext"; notifyContext: any }
   | { id: "error"; message: string; stack?: any };
 
 export type Dispatch = (message: Message) => void;
-export type Effect = (dispatch: Dispatch) => void;
+export type Effect = (dispatch: Dispatch) => void | Promise<void>;
 
 export type Init = [State, Effect?];
 export type Update = (

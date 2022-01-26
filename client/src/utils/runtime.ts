@@ -35,6 +35,9 @@ export function runtime(program) {
   return { end, dispatch, state };
 }
 
+export type Dispatch<M> = (message: M) => void;
+export type Effect<M> = (dispatch: Dispatch<M>) => void | Promise<void>;
+
 // from https://www.npmjs.com/package/raj-commands
 export const Cmd = {
   none() {
@@ -44,48 +47,10 @@ export const Cmd = {
   },
 
   // A command that dispaches messages on demand
-  ofMsg<T>(msg: T) {
-    return function (dispatch) {
+  ofMsg<M>(msg: M) {
+    return function (dispatch: Dispatch<M>) {
       dispatch(msg);
     };
-  },
-
-  // props : { value: Promise<'T>, success: 'T -> Msg, error: exception -> Msg }
-  promise(props) {
-    return function (dispatch) {
-      return props.value
-        .then(function (result) {
-          return dispatch(props.resolved(result));
-        })
-        .catch(function (ex) {
-          return dispatch(props.rejected(ex));
-        });
-    };
-  },
-
-  // props : { url: string, success: obj -> Msg, error: exception -> Msg }
-  fetchJson(props) {
-    return Cmd.promise({
-      value: fetch(props.url).then(function (response) {
-        return response.json();
-      }),
-      resolved: props.success,
-      rejected: props.error,
-    });
-  },
-
-  // props : { url: string, data: any success: obj -> Msg, error: exception -> Msg }
-  postJson(props) {
-    return Cmd.promise({
-      value: fetch(props.url, {
-        method: "POST",
-        body: JSON.stringify(props.data),
-      }).then(function (response) {
-        return response.json();
-      }),
-      resolved: props.success,
-      rejected: props.error,
-    });
   },
 
   // Dispatches a message after the given ammount of milliseconds
@@ -97,7 +62,7 @@ export const Cmd = {
     };
   },
 
-  batch<T extends Function>(commands: T[]) {
+  batch<M>(commands: Effect<M>[]) {
     return function (dispatch) {
       for (var i = 0; i < commands.length; i++) {
         const effect = commands[i];

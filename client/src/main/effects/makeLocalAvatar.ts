@@ -8,17 +8,10 @@ import type { Dispatch } from "../ProgramTypes";
 
 import { makeAvatarEntities } from "~/identity/Avatar/makeAvatarEntities";
 import { Avatar, setAvatarFromParticipant } from "~/identity/Avatar";
+import { Entity } from "~/ecs/base";
 
 export const makeLocalAvatar =
-  (
-    localParticipant: Participant,
-    ecsWorld: DecoratedECSWorld,
-    position: Vector3,
-    clientId: number,
-    showAudio: boolean,
-    showVideo: boolean
-  ) =>
-  (dispatch: Dispatch) => {
+  (ecsWorld: DecoratedECSWorld, position: Vector3) => (dispatch: Dispatch) => {
     const entities = makeAvatarEntities(ecsWorld, position, false);
 
     const avatar = new Avatar(ecsWorld, entities);
@@ -32,20 +25,7 @@ export const makeLocalAvatar =
       function: headFollowsPointer(storeHeadAngle),
     });
 
-    Object.values(entities).forEach((entity) => entity.activate());
-
-    localParticipant.avatar = avatar;
-
-    localParticipant.identityData = {
-      ...localParticipant.identityData,
-      ...{
-        clientId,
-        showVideo,
-        showAudio,
-      },
-    };
-
-    setAvatarFromParticipant(localParticipant);
+    Object.values(entities).forEach((entity: Entity) => entity.activate());
 
     dispatch({ id: "didMakeLocalAvatar", avatar });
   };
