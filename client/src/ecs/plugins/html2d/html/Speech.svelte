@@ -2,14 +2,7 @@
   import { fade } from "svelte/transition";
 
   import IoMdCloseCircleOutline from "svelte-icons/io/IoMdCloseCircleOutline.svelte";
-  import IoMdPricetag from "svelte-icons/io/IoMdPricetag.svelte";
-  import IoMdEasel from "svelte-icons/io/IoMdEasel.svelte";
-
-  import { worldManager } from "~/world";
-  import { makeDiamond } from "~/prefab/makeDiamond";
-  import { makeBillboard } from "~/prefab/makeBillboard";
   import { cleanHtml } from "~/utils/cleanHtml";
-  import { WorldTransform } from "~/ecs/plugins/core";
 
   export let content;
   export let hanchor;
@@ -31,38 +24,6 @@
     if (onClose) onClose();
   }
 
-  function materializeLabel() {
-    visible = false;
-    createLabel(content);
-  }
-
-  function materializeBillboard() {
-    visible = false;
-    createBillboard(content);
-  }
-
-  function createLabel(text) {
-    const position = worldManager.avatar.entity.get(WorldTransform).position;
-    const diamond = makeDiamond(worldManager.world, {
-      x: position.x,
-      z: position.z,
-      content: text,
-    });
-    diamond.traverse((entity) => entity.activate());
-    worldManager.worldDoc.syncFrom(diamond);
-  }
-
-  function createBillboard(text) {
-    const position = worldManager.avatar.entity.get(WorldTransform).position;
-    const label = makeBillboard(worldManager.world, {
-      x: position.x,
-      z: position.z,
-      text: text,
-      editable: true,
-    }).activate();
-    worldManager.worldDoc.syncFrom(label);
-  }
-
   // ignore warning about missing props
   $$props;
 </script>
@@ -81,12 +42,6 @@
       <controls transition:fade={{ duration: 150 }}>
         <button on:click={close}>
           <IoMdCloseCircleOutline />
-        </button>
-        <button on:click={materializeLabel} style="margin-top:auto">
-          <IoMdPricetag />
-        </button>
-        <button on:click={materializeBillboard}>
-          <IoMdEasel />
         </button>
       </controls>
     {/if}
@@ -156,10 +111,12 @@
     width: 32px;
     height: 32px;
 
-    color: var(--foreground-white);
+    color: black;
+    background-color: white;
+    border-radius: 100%;
   }
 
   button:hover {
-    color: white;
+    color: #555;
   }
 </style>

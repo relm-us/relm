@@ -10,11 +10,11 @@ export function setSpeech(
   entities: AvatarEntities,
   message: string,
   isSpeaking: boolean,
-  isLocal: boolean
+  onClose: () => void
 ) {
   const visible = !!message && isSpeaking;
   if (visible && !entities.head.has(Html2d)) {
-    addSpeech(entities, message, isLocal);
+    addSpeech(entities, message, onClose);
   } else if (visible && entities.head.has(Html2d)) {
     changeSpeech(entities, message);
   } else if (!visible && entities.head.has(Html2d)) {
@@ -26,10 +26,8 @@ function addSpeech(
   this: void,
   entities: AvatarEntities,
   message: string,
-  isLocal: boolean = false
+  onClose: () => void
 ) {
-  // TODO: Change this to a dispatch?
-  const onClose = isLocal ? () => chatOpen.set(false) : null;
   entities.head.add(Html2d, {
     kind: "SPEECH",
     content: message,

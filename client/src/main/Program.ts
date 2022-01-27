@@ -514,6 +514,7 @@ export function makeProgram(): Program {
           name: state.participantName,
           showAudio: state.initialAudioDesired,
           showVideo: state.initialVideoDesired,
+          speaking: false,
         };
         if (state.participantQuickAppearance) {
           identityData.appearance = state.participantQuickAppearance;

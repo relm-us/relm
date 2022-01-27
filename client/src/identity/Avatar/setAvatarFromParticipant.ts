@@ -7,14 +7,18 @@ import { setLabel } from "./label";
 import { setOculus } from "./oculus";
 import { setSpeech } from "./speech";
 
+function onDidEditName(name: string) {
+  worldManager.participants.setName(name);
+}
+
+function onCloseSpeech() {
+  worldManager.participants.setCommunicatingState(null, "speaking", false);
+}
+
 export function setAvatarFromParticipant(this: void, participant: Participant) {
   if (!participant) return;
   if (!participant.avatar)
     throw Error(`participant requires avatar: ${participant.participantId}`);
-
-  const onDidEditName = (name: string) => {
-    worldManager.participants.setName(name);
-  };
 
   const entities = participant.avatar.entities;
   const data = participant.identityData;
@@ -32,7 +36,12 @@ export function setAvatarFromParticipant(this: void, participant: Participant) {
     data.showAudio,
     data.showVideo
   );
-  setSpeech(entities, data.message, data.speaking, participant.isLocal);
+  setSpeech(
+    entities,
+    data.message,
+    data.speaking,
+    participant.isLocal ? onCloseSpeech : null
+  );
 
   return true;
 }
