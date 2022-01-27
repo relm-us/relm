@@ -245,8 +245,8 @@ export class ControllerSystem extends System {
     this.queries.repulsive.forEach((repelEntity) => {
       if (repelEntity === entity) return;
       p2.copy(repelEntity.get(Transform).position);
-      const distance = Math.max(0.05, p1.distanceTo(p2));
-      if (distance <= 2) {
+      const distance = Math.max(0.5, p1.distanceTo(p2));
+      if (distance <= 1.25) {
         vDir
           .copy(p1)
           .sub(p2)
