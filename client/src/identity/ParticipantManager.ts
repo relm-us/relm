@@ -38,7 +38,6 @@ export class ParticipantManager {
   }
 
   updateMe(identityData: UpdateData) {
-    console.log("updateMe", JSON.stringify(identityData));
     this.dispatch({ id: "updateLocalIdentityData", identityData });
   }
 
