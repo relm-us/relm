@@ -31,7 +31,7 @@ export const getRelmPermitsAndMetadata =
         relmDocId: result.relm.permanentDocId,
         entitiesMax: result.relm.entitiesCount, // TODO: Change metadata API to return 'entitiesMax'
         assetsMax: result.relm.assetsCount,
-        participantName: result.jwt?.participantName,
+        overrideParticipantName: result.jwt?.overrideParticipantName,
         twilioToken: result.twilioToken,
       });
     } catch (err) {

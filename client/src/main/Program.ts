@@ -114,7 +114,7 @@ export function makeProgram(): Program {
         return [
           {
             ...state,
-            participantName: msg.participantName,
+            overrideParticipantName: msg.overrideParticipantName,
             permits: msg.permits,
             relmDocId: msg.relmDocId,
             entitiesMax: msg.entitiesMax,
@@ -189,7 +189,7 @@ export function makeProgram(): Program {
         const localParticipant = state.participants.get(playerId);
 
         // If name is assigned (e.g. via JWT), it can't be changed
-        localParticipant.editable = state.participantName !== undefined;
+        localParticipant.editable = state.overrideParticipantName === undefined;
 
         const newIdentityData = {
           ...get(state.localIdentityData),
@@ -511,7 +511,7 @@ export function makeProgram(): Program {
       case "startPlaying":
         const identityData: UpdateData = {
           clientId: state.worldDoc.ydoc.clientID,
-          name: state.participantName,
+          name: state.overrideParticipantName || get(state.localIdentityData).name,
           showAudio: state.initialAudioDesired,
           showVideo: state.initialVideoDesired,
           speaking: false,

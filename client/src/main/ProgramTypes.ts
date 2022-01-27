@@ -36,7 +36,7 @@ export type State = {
 
   // participants
   participants: Map<string, Participant>;
-  participantName?: string; // override used by JWT
+  overrideParticipantName?: string; // override used by JWT
   participantQuickAppearance?: Appearance;
   localAvatarInitialized: boolean;
   localIdentityData: Writable<IdentityData>;
@@ -89,7 +89,7 @@ export type Message =
       relmDocId: string;
       entitiesMax: number;
       assetsMax: number;
-      participantName: string;
+      overrideParticipantName: string;
       twilioToken: string;
     }
 
