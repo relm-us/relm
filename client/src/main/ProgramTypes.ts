@@ -106,7 +106,6 @@ export type Message =
       id: "recvParticipantData";
       participantId: string;
       identityData: IdentityData;
-      isLocal: boolean;
     }
   | {
       id: "updateLocalIdentityData";

@@ -136,7 +136,6 @@ export type AvatarEntities = {
 export type Participant = {
   participantId: string;
   identityData: IdentityData;
-  isLocal: boolean;
   editable: boolean;
   modified: boolean;
 

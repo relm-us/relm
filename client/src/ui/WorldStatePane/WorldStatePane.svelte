@@ -12,6 +12,7 @@
   import { fpsTime } from "~/stores/stats";
   import { Participant } from "~/types";
   import { State } from "~/main/ProgramTypes";
+  import { playerId } from "~/identity/playerId";
 
   export let state: State;
 
@@ -114,7 +115,7 @@
             <tr class="identity-row">
               <th>{identity.get("name")}</th>
               <td>
-                {#if identity.isLocal}
+                {#if identity.participantId === playerId}
                   (local)
                 {:else if identity.lastSeen === undefined}
                   (not seen)

@@ -8,7 +8,6 @@ export function initParticipants() {
   const identityData = get(localIdentityData);
   participants.set(playerId, {
     participantId: playerId,
-    isLocal: true,
     editable: true,
     modified: false,
     identityData,

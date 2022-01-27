@@ -174,7 +174,6 @@ export function makeProgram(): Program {
           state.participants.set(msg.participantId, {
             participantId: msg.participantId,
             identityData: msg.identityData,
-            isLocal: msg.isLocal,
             editable: false, // can't edit other participants
             modified: true,
             /* no avatar yet, because this may be an inactive (stale) participant */
@@ -511,7 +510,8 @@ export function makeProgram(): Program {
       case "startPlaying":
         const identityData: UpdateData = {
           clientId: state.worldDoc.ydoc.clientID,
-          name: state.overrideParticipantName || get(state.localIdentityData).name,
+          name:
+            state.overrideParticipantName || get(state.localIdentityData).name,
           showAudio: state.initialAudioDesired,
           showVideo: state.initialVideoDesired,
           speaking: false,

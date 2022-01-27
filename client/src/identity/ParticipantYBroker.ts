@@ -90,7 +90,6 @@ export class ParticipantYBroker {
         id: "recvParticipantData",
         participantId,
         identityData,
-        isLocal: participantId === playerId,
       });
     }
     const observer = (
@@ -103,14 +102,12 @@ export class ParticipantYBroker {
             id: "recvParticipantData",
             participantId,
             identityData,
-            isLocal: transaction.local,
           }),
         onUpdate: (participantId, identityData, _oldIdentityData) =>
           dispatch({
             id: "recvParticipantData",
             participantId,
             identityData,
-            isLocal: transaction.local,
           }),
         onDelete: (participantId, _identityData) => {
           throw Error(

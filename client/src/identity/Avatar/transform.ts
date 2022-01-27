@@ -9,6 +9,7 @@ import { Avatar } from "../Avatar";
 import { makeRemoteAvatarEntities } from "./makeRemoteAvatarEntities";
 import { setAvatarFromParticipant } from "./setAvatarFromParticipant";
 import { DecoratedECSWorld } from "types/DecoratedECSWorld";
+import { playerId } from "~/identity/playerId";
 
 const e1 = new Euler(0, 0, 0, "YXZ");
 const v1 = new Vector3();
@@ -115,7 +116,7 @@ export function setTransformArrayOnParticipants(
       continue;
     }
     const participant: Participant = participants.get(participantId);
-    if (!participant || participant.isLocal) continue;
+    if (!participant || participant.participantId === playerId) continue;
 
     if (!participant.avatar) {
       const position = new Vector3().fromArray(transformData as number[], 1);
