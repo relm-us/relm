@@ -94,12 +94,6 @@ export type Message =
     }
 
   // Participants
-  | {
-      id: "ma";
-      worldDoc: WorldDoc;
-      ecsWorld: DecoratedECSWorld;
-      entrywayPosition: Vector3;
-    }
   | { id: "didSubscribeBroker"; broker: ParticipantYBroker; unsub: Function }
   | { id: "didMakeLocalAvatar"; avatar: Avatar }
   | {
