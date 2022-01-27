@@ -36,6 +36,7 @@ import { Avatar } from "~/identity/Avatar";
 import { Participant } from "types/identity";
 import { ParticipantManager } from "~/identity/ParticipantManager";
 import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
+import { setTransformArrayOnParticipants } from "~/identity/Avatar/transform";
 
 type LoopType =
   | { type: "raf" }
@@ -50,6 +51,8 @@ export class WorldManager {
   entryway: string;
   relmDocId: string;
   avConnection: AVConnection;
+
+  transformArray: any[];
 
   loopType: LoopType = { type: "raf" };
 
@@ -329,12 +332,33 @@ export class WorldManager {
     const delta = time - this.previousLoopTime;
     fpsTime.addData(1000 / delta);
 
+    this.useTransformArray();
+
     this.worldStep(delta);
+
     if (this.participants.local.identityData.status === "present")
       this.participants.sendMyTransformData();
+
     this.camera.update(time);
 
     this.previousLoopTime = time;
+  }
+
+  setTransformArray(array) {
+    this.transformArray = array;
+  }
+
+  useTransformArray() {
+    if (!this.transformArray) return;
+
+    setTransformArrayOnParticipants(
+      this.world,
+      this.participants.participants,
+      this.transformArray,
+      (participant) => {
+        this.dispatch({ id: "participantJoined", participant });
+      }
+    );
   }
 
   toJSON() {

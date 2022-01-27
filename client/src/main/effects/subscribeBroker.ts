@@ -1,8 +1,9 @@
-import { WorldDoc } from "~/y-integration/WorldDoc";
-import { Dispatch } from "../ProgramTypes";
 import type { Participant, DecoratedECSWorld } from "~/types";
+import type { Dispatch } from "../ProgramTypes";
+
+import { WorldDoc } from "~/y-integration/WorldDoc";
 import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
-import { setTransformArrayOnParticipants } from "~/identity/Avatar/transform";
+import { worldManager } from "~/world";
 
 export const subscribeBroker =
   (
@@ -13,14 +14,9 @@ export const subscribeBroker =
   (dispatch: Dispatch) => {
     const broker = new ParticipantYBroker(worldDoc);
     const unsub = broker.subscribe(dispatch, (transformArray) => {
-      setTransformArrayOnParticipants(
-        ecsWorld,
-        participants,
-        transformArray,
-        (participant) => {
-          dispatch({ id: "participantJoined", participant });
-        }
-      );
+      // Store the transform array for later, when we can use it
+      // in a consistent manner within the ECS loop
+      worldManager.setTransformArray(transformArray);
     });
     dispatch({ id: "didSubscribeBroker", broker, unsub });
   };
