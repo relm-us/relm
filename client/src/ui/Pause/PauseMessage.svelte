@@ -1,14 +1,14 @@
 <script>
   import Button from "~/ui/lib/Button";
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
-  import { playState } from "~/stores/playState";
   import { autoPause } from "~/stores/autoPause";
+  import { worldManager } from "~/world";
 </script>
 
 <message>
   <div class="paused">Paused</div>
   <div class="button">
-    <Button on:click={() => ($playState = "playing")}>continue</Button>
+    <Button on:click={() => worldManager.start()}>continue</Button>
   </div>
   <div class="toggle-auto-pause">
     <ToggleSwitch
