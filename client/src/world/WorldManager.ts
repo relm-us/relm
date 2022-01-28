@@ -30,7 +30,12 @@ import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 
 import type { DecoratedECSWorld, PageParams } from "~/types";
 import type { Dispatch, State } from "~/main/ProgramTypes";
+
 import { AVConnection } from "~/av";
+import { localShareTrackStore } from "~/av/localVisualTrackStore";
+import { localVideoTrack } from "video-mirror";
+import { createScreenTrack } from "~/av/twilio/createScreenTrack";
+
 import { playerId } from "~/identity/playerId";
 import { Avatar } from "~/identity/Avatar";
 import { Participant } from "types/identity";
@@ -359,6 +364,25 @@ export class WorldManager {
         this.dispatch({ id: "participantJoined", participant });
       }
     );
+  }
+
+  async startScreenShare() {
+    // start screen sharing
+    const shareTrack = await createScreenTrack();
+    localShareTrackStore.set(shareTrack);
+
+    // TODO: this set-up logic should be somewhere else
+    this.participants.setShowVideo(true);
+  }
+
+  async stopScreenShare() {
+    // end screen sharing
+    localShareTrackStore.set(null);
+
+    // TODO: this clean-up logic should be somewhere else
+    if (!get(localVideoTrack)) {
+      this.participants.setShowVideo(false);
+    }
   }
 
   toJSON() {

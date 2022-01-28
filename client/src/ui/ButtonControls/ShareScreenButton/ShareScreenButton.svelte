@@ -2,8 +2,6 @@
   import CircleButton from "~/ui/lib/CircleButton";
   import MdScreenShare from "svelte-icons/md/MdScreenShare.svelte";
   import { localShareTrackStore } from "~/av/localVisualTrackStore";
-  import { localVideoTrack } from "video-mirror";
-  import { createScreenTrack } from "~/av/twilio/createScreenTrack";
   import { worldManager } from "~/world";
 
   let enabled = false;
@@ -11,20 +9,9 @@
 
   const onClick = async () => {
     if (!enabled) {
-      // start screen sharing
-      const shareTrack = await createScreenTrack();
-      localShareTrackStore.set(shareTrack);
-
-      // TODO: this set-up logic should be somewhere else
-      worldManager.participants.setShowVideo(true);
+      worldManager.startScreenShare();
     } else {
-      // end screen sharing
-      localShareTrackStore.set(null);
-
-      // TODO: this clean-up logic should be somewhere else
-      if (!$localVideoTrack) {
-        worldManager.participants.setShowVideo(false);
-      }
+      worldManager.stopScreenShare();
     }
   };
 </script>

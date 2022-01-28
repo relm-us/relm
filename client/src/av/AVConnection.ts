@@ -58,19 +58,14 @@ export class AVConnection {
     });
 
     // // Whenever local video source or settings change, update the adapter
+    let prevTrack;
     localVisualTrackStore.subscribe((track: MediaStreamTrack) => {
+      if (prevTrack) {
+        this.adapter.unpublishLocalTracks([prevTrack]);
+      }
       this.adapter.publishLocalTracks([track]);
+      prevTrack = track;
     });
-
-    // localAudioTrackStore.subscribe((localAudioTrack: MediaStreamTrack) => {
-    //   this.adapter.replaceLocalTracks([localAudioTrack]);
-    //   this.acceptTracks(this.participantId, [localAudioTrack]);
-    // });
-
-    // localVideoTrackStore.subscribe((localVideoTrack: MediaStreamTrack) => {
-    //   this.adapter.replaceLocalTracks([localVideoTrack]);
-    //   this.acceptTracks(this.participantId, [localVideoTrack]);
-    // });
   }
 
   // Reactively waits for remote participants' stream changes and updates
