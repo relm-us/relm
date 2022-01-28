@@ -9,8 +9,13 @@
   export let videoDesired;
   export let preferredDeviceIds: DeviceIds;
 
+  let didDispatch = false;
+
   function done({ detail }) {
-    console.log("done media setup detail", detail);
+    if (didDispatch) return;
+
+    didDispatch = true;
+
     if (detail) {
       dispatch({
         id: "didSetUpAudioVideo",
