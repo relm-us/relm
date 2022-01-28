@@ -341,8 +341,7 @@ export class WorldManager {
 
     this.worldStep(delta);
 
-    if (this.participants.local.identityData.status === "present")
-      this.participants.sendMyTransformData();
+    this.participants.sendMyTransformData();
 
     this.camera.update(time);
 
@@ -371,7 +370,6 @@ export class WorldManager {
     const shareTrack = await createScreenTrack();
     localShareTrackStore.set(shareTrack);
 
-    // TODO: this set-up logic should be somewhere else
     this.participants.setShowVideo(true);
   }
 
@@ -379,7 +377,6 @@ export class WorldManager {
     // end screen sharing
     localShareTrackStore.set(null);
 
-    // TODO: this clean-up logic should be somewhere else
     if (!get(localVideoTrack)) {
       this.participants.setShowVideo(false);
     }

@@ -145,13 +145,6 @@ export function makeProgram(): Program {
         ];
       }
 
-      // Participants program
-      case "join": {
-        const localParticipant = state.participants.get(playerId);
-        localParticipant.identityData.status = "present";
-        return [state];
-      }
-
       case "removeParticipant": {
         for (let [participantId, participant] of state.participants) {
           if (participant.identityData.clientId === msg.clientId) {
@@ -520,6 +513,7 @@ export function makeProgram(): Program {
         const data = get(state.localIdentityData);
         const identityData: UpdateData = {
           clientId: state.worldDoc.ydoc.clientID,
+          status: "present",
           name: state.overrideParticipantName || data.name,
           showAudio: state.initialAudioDesired,
           showVideo: state.initialVideoDesired,
@@ -536,10 +530,7 @@ export function makeProgram(): Program {
         }
         return [
           { ...state, overlayScreen: null, screen: "game-world" },
-          Cmd.batch([
-            send({ id: "updateLocalIdentityData", identityData }),
-            send({ id: "join" }),
-          ]),
+          send({ id: "updateLocalIdentityData", identityData }),
         ];
 
       // We store entrywayUnsub for later when we may need it for a portal
