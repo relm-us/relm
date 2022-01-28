@@ -14,7 +14,7 @@ export function makeRemoteAvatarEntities(
   position: Vector3,
   getHeadAngle: () => number
 ): AvatarEntities {
-  const entities = makeAvatarEntities(ecsWorld, position, false);
+  const entities = makeAvatarEntities(ecsWorld, position, true);
 
   entities.body
     .add(TwistBone, {

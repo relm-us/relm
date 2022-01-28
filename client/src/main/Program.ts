@@ -55,8 +55,11 @@ const send: (msg: Message) => Effect = Cmd.ofMsg;
  * The main Relm program
  */
 export function makeProgram(): Program {
+  const globalBroadcast = new BroadcastChannel("relm.us");
+
   const init: [State, Effect] = [
     {
+      globalBroadcast,
       worldDocStatus: "disconnected",
       screen: "initial",
       unsubs: [],
@@ -66,7 +69,7 @@ export function makeProgram(): Program {
       localIdentityData: localIdentityData as Writable<IdentityData>,
       preferredDeviceIds: preferredDeviceIds as Writable<DeviceIds>,
     },
-    getPageParams,
+    getPageParams(globalBroadcast),
   ];
 
   const update = (msg: Message, state: State): [State, any?] => {
@@ -78,6 +81,11 @@ export function makeProgram(): Program {
           state,
         }
       );
+    }
+
+    if (state.screen === 'error') {
+      // stay in error state
+      return;
     }
 
     // Handle Program updates

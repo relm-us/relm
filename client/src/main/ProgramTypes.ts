@@ -19,6 +19,7 @@ import type {
 
 export type State = {
   // initialization
+  globalBroadcast: BroadcastChannel;
   pageParams?: PageParams;
   authHeaders?: AuthenticationHeaders;
   entrywayPosition?: Vector3;
