@@ -132,6 +132,7 @@ export class WorldDoc extends EventEmitter {
   }
 
   recomputeStats() {
+    console.log("asking server to recompute stats");
     this.messages.push([{ u: "system", c: "[recompute stats]" }]);
   }
 

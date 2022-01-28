@@ -140,9 +140,10 @@ export type Message =
   | { id: "prepareLocalParticipantForWorld" }
   | { id: "initWorldManager" }
   | { id: "didInitWorldManager" }
-  | { id: "loading" }
+  | { id: "loadStart" }
+  | { id: "loadPoll" }
+  | { id: "loadComplete" }
   | { id: "gotLoadingState"; assetsCount: number; entitiesCount: number }
-  | { id: "loaded" }
   | { id: "loadedAndReady" }
   | { id: "startPlaying" }
   | { id: "recomputeWorldDocStats" }

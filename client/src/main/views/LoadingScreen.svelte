@@ -23,7 +23,7 @@
     } else if (clickCount == 5) {
       // Force entry; useful for debugging & getting relms with stale stats to load
       dispatch({ id: "recomputeWorldDocStats" });
-      dispatch({ id: "loaded" });
+      dispatch({ id: "loadComplete" });
       dispatch({ id: "assumeOriginAsEntryway" });
     }
   }

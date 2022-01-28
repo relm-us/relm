@@ -296,7 +296,7 @@ export function makeProgram(): Program {
             assetsCount: 0,
           },
           Cmd.batch([
-            send({ id: "loading" }),
+            send({ id: "loadStart" }),
 
             // Initialize the Participant Program
             subscribeBroker(msg.worldDoc, state.ecsWorld, state.participants),
@@ -375,7 +375,7 @@ export function makeProgram(): Program {
         return [newState, nextSetupStep(newState)];
       }
 
-      case "loading": {
+      case "loadStart": {
         if (
           state.worldDoc &&
           state.audioVideoSetupDone &&
@@ -383,24 +383,18 @@ export function makeProgram(): Program {
         ) {
           return [
             { ...state, doneLoading: false, screen: "loading-screen" },
-            pollLoadingState(state),
+            send({ id: "loadPoll" }),
           ];
         } else {
           return [state];
         }
       }
 
-      case "gotLoadingState": {
-        return [
-          {
-            ...state,
-            assetsCount: msg.assetsCount,
-            entitiesCount: msg.entitiesCount,
-          },
-        ];
+      case "loadPoll": {
+        return [state, pollLoadingState(state)];
       }
 
-      case "loaded": {
+      case "loadComplete": {
         return [
           { ...state, doneLoading: true },
           Cmd.batch([
@@ -413,6 +407,16 @@ export function makeProgram(): Program {
               }, 1500);
             },
           ]),
+        ];
+      }
+
+      case "gotLoadingState": {
+        return [
+          {
+            ...state,
+            assetsCount: msg.assetsCount,
+            entitiesCount: msg.entitiesCount,
+          },
         ];
       }
 

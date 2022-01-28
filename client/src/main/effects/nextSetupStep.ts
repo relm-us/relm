@@ -23,6 +23,6 @@ export const nextSetupStep = (state: State) => async (dispatch: Dispatch) => {
       dispatch({ id: "didSetUpAvatar", appearance: null });
     }
   } else {
-    dispatch({ id: "loading" });
+    dispatch({ id: "loadStart" });
   }
 };

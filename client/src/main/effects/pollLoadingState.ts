@@ -10,6 +10,9 @@ let lastEntitiesCount = 0;
 
 export const pollLoadingState =
   (state: State) => async (dispatch: Dispatch) => {
+    // If loading is interrupted, don't keep polling
+    if (state.doneLoading) return;
+
     dispatch({
       id: "gotLoadingState",
       assetsCount: Math.max(state.assetsCount, countAssets(state.ecsWorld)),
@@ -33,9 +36,9 @@ export const pollLoadingState =
         state.entitiesCount < state.entitiesMax ||
         state.assetsCount < state.assetsMax
       ) {
-        dispatch({ id: "loading" });
+        dispatch({ id: "loadPoll" });
       } else {
-        dispatch({ id: "loaded" });
+        dispatch({ id: "loadComplete" });
       }
     }, 100);
   };
