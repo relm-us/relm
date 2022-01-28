@@ -1,6 +1,6 @@
 <script lang="ts">
   import CircleButton from "~/ui/lib/CircleButton";
-  import { AudioIcon } from "video-mirror";
+  import { IconAudioEnabled, IconAudioDisabled } from "video-mirror";
   import { worldManager } from "~/world";
 
   export let enabled = false;
@@ -12,7 +12,11 @@
 
 <CircleButton on:click={toggle}>
   <icon class:muted={!enabled}>
-    <AudioIcon />
+    {#if enabled}
+      <IconAudioEnabled />
+    {:else}
+      <IconAudioDisabled />
+    {/if}
   </icon>
 </CircleButton>
 

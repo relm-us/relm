@@ -5,6 +5,7 @@
   import Fullscreen from "./Fullscreen.svelte";
   import shineImg from "./shine.svg";
   import { playerId as localPlayerId } from "~/identity/playerId";
+  import { localShareTrackStore } from "~/av/localVisualTrackStore";
 
   export let showAudio;
   export let showVideo;
@@ -13,6 +14,9 @@
   let fullscreen = false;
   // TODO: add `size` var instead of hardcoding volume to be size
   let volume = 1;
+
+  let isLocalSharing = false;
+  $: isLocalSharing = Boolean($localShareTrackStore);
 
   let isLocal;
   $: isLocal = participantId === localPlayerId;
@@ -37,6 +41,11 @@
     localPlayerId,
     "video"
   );
+
+  // TODO: (privacy) Make it so full screen is only possible when remote is sharing screen
+  function enterFullscreen() {
+    fullscreen = true;
+  }
 
   function exitFullscreen() {
     fullscreen = false;
@@ -73,7 +82,7 @@
       volume * 100
     ).toFixed(3)}%"
   >
-    <oculus class="round" on:click>
+    <oculus class="round" on:click={enterFullscreen}>
       {#if fullscreen}
         <Fullscreen on:close={exitFullscreen}>
           <Video track={$videoStore} mirror={false} class="oculus-video" />
@@ -86,7 +95,11 @@
           </picture-in-picture>
         </Fullscreen>
       {:else}
-        <Video track={$videoStore} mirror={isLocal} class="oculus-video" />
+        <Video
+          track={$videoStore}
+          mirror={isLocal && !isLocalSharing}
+          class="oculus-video"
+        />
       {/if}
       {#if showAudio && !isLocal}
         <Audio track={$audioStore} {volume} />

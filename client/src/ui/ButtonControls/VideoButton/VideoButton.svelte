@@ -1,6 +1,6 @@
 <script lang="ts">
   import CircleButton from "~/ui/lib/CircleButton";
-  import { VideoIcon } from "video-mirror";
+  import { IconVideoEnabled, IconVideoDisabled } from "video-mirror";
   import type { Dispatch } from "~/main/ProgramTypes";
 
   export let enabled = false;
@@ -13,7 +13,11 @@
 
 <CircleButton on:click={onClick}>
   <icon class:muted={!enabled}>
-    <VideoIcon />
+    {#if enabled}
+      <IconVideoEnabled />
+    {:else}
+      <IconVideoDisabled />
+    {/if}
   </icon>
 </CircleButton>
 

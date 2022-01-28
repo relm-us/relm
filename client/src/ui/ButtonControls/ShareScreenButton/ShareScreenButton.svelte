@@ -1,25 +1,42 @@
 <script lang="ts">
   import CircleButton from "~/ui/lib/CircleButton";
   import MdScreenShare from "svelte-icons/md/MdScreenShare.svelte";
-  import { getNotificationsContext } from "svelte-notifications";
+  import { localShareTrackStore } from "~/av/localVisualTrackStore";
+  import { localVideoTrack } from "video-mirror";
+  import { createScreenTrack } from "~/av/twilio/createScreenTrack";
+  import { worldManager } from "~/world";
 
-  const { addNotification } = getNotificationsContext();
+  let enabled = false;
+  $: enabled = Boolean($localShareTrackStore);
 
-  const onClick = () => {
-    addNotification({
-      text: "Sorry, share screen isn't ready yet!",
-      position: "bottom-center",
-      removeAfter: 3000,
-    });
+  const onClick = async () => {
+    if (!enabled) {
+      // start screen sharing
+      const shareTrack = await createScreenTrack();
+      localShareTrackStore.set(shareTrack);
+
+      // TODO: this set-up logic should be somewhere else
+      worldManager.participants.setShowVideo(true);
+    } else {
+      // end screen sharing
+      localShareTrackStore.set(null);
+
+      // TODO: this clean-up logic should be somewhere else
+      if (!$localVideoTrack) {
+        worldManager.participants.setShowVideo(false);
+      }
+    }
   };
 </script>
 
-<CircleButton on:click={onClick}>
-  <icon>
-    <MdScreenShare />
-  </icon>
-  <slot />
-</CircleButton>
+<r-button class:glowing={enabled}>
+  <CircleButton on:click={onClick}>
+    <icon>
+      <MdScreenShare />
+    </icon>
+    <slot />
+  </CircleButton>
+</r-button>
 
 <style>
   icon {
@@ -27,5 +44,14 @@
     width: 32px;
     height: 32px;
     margin: 0 auto;
+  }
+
+  r-button.glowing {
+    border: 3px solid yellow;
+    border-radius: 100%;
+  }
+  r-button.glowing > :global(button) {
+    box-shadow: white 0px 0px 15px;
+    color: white !important;
   }
 </style>

@@ -1,8 +1,7 @@
-import {
-  localAudioTrack as localAudioTrackStore,
-  localVideoTrack as localVideoTrackStore,
-} from "video-mirror";
 import { writable, Writable } from "svelte/store";
+
+import { localAudioTrack as localAudioTrackStore } from "video-mirror";
+import { localVisualTrackStore } from "./localVisualTrackStore";
 
 import { ClientAVAdapter } from "./base/ClientAVAdapter";
 import { TwilioClientAVAdapter } from "./twilio/TwilioClientAVAdapter";
@@ -32,7 +31,7 @@ export class AVConnection {
     // Assign the local audio/video stream to the local participant
     // TODO: Shouldn't assign a Readable to a Writable
     this.audioTrackStores[participantId] = localAudioTrackStore as any;
-    this.videoTrackStores[participantId] = localVideoTrackStore as any;
+    this.videoTrackStores[participantId] = localVisualTrackStore as any;
   }
 
   async connect({ roomId, token }: AVConnectOpts) {
@@ -59,7 +58,7 @@ export class AVConnection {
     });
 
     // // Whenever local video source or settings change, update the adapter
-    localVideoTrackStore.subscribe((track: MediaStreamTrack) => {
+    localVisualTrackStore.subscribe((track: MediaStreamTrack) => {
       this.adapter.publishLocalTracks([track]);
     });
 
