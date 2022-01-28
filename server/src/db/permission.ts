@@ -1,6 +1,7 @@
 import { db, sql, INSERT, IN, raw } from "./db";
 import * as set from "../utils/set";
 import { arrayToBooleanObject } from "../utils";
+import { getRelm } from "./relm";
 
 export type Permission = "admin" | "access" | "invite" | "edit";
 
@@ -17,14 +18,26 @@ export function filteredPermits(permits) {
 export async function setPermissions({
   playerId,
   relmId,
+  relmName,
   permits = ["access"],
   union = true,
 }: {
   playerId: string;
   relmId?: string;
+  relmName?: string;
   permits?: Array<Permission>;
   union?: boolean;
 }) {
+  let relm_id = relmId;
+  if (!relm_id) {
+    if (relmName) {
+      const relm = await getRelm({ relmName });
+      relm_id = relm.relmId;
+    } else {
+      throw Error(`relmId or relmName must be provided`);
+    }
+  }
+
   const attrs = {
     relm_id: relmId,
     player_id: playerId,

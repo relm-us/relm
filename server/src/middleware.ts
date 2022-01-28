@@ -102,7 +102,7 @@ export function acceptJwt() {
           const permits = unabbreviatedPermissions(result.relms[relm]);
           await Permission.setPermissions({
             playerId: req.authenticatedPlayerId,
-            relmId: req.relm.relmId,
+            relmName: relm,
             permits,
             // This ensures that a JWT token can also delete permits when needed:
             union: false,
@@ -161,7 +161,7 @@ export function authorized(requestedPermission) {
 
 /**
  * A venn diagram of what is allowed:
- * 
+ *
  *     /-----------------------\
  *     |         admin         |
  *     | /----------\ /------\ |
