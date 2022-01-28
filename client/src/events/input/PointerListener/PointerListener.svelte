@@ -127,6 +127,13 @@
     }
   }
 
+  function onRightClick(event: MouseEvent) {
+    if (!eventTargetsWorld(event, $worldUIMode)) return;
+
+    // Disable context menu when targeted at 3D world
+    event.preventDefault();
+  }
+
   function onMouseMove(event: MouseEvent) {
     if (!eventTargetsWorld(event, $worldUIMode)) return;
     onPointerMove(event.clientX, event.clientY, event.shiftKey);
@@ -230,4 +237,5 @@
   on:touchmove={onTouchMove}
   on:touchend={onPointerUp}
   on:touchcancel={onPointerUp}
+  on:contextmenu={onRightClick}
 />
