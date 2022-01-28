@@ -42,6 +42,7 @@ import LoadingFailed from "./views/LoadingFailed.svelte";
 import { playerId } from "~/identity/playerId";
 import { participantRemoveAvatar } from "~/identity/ParticipantManager";
 import { setAvatarFromParticipant } from "~/identity/Avatar/setAvatarFromParticipant";
+import { getDefaultAppearance } from "~/identity/Avatar/appearance";
 import { localIdentityData } from "~/stores/identityData";
 import { IdentityData, UpdateData } from "~/types";
 
@@ -83,7 +84,7 @@ export function makeProgram(): Program {
       );
     }
 
-    if (state.screen === 'error') {
+    if (state.screen === "error") {
       // stay in error state
       return;
     }
@@ -516,13 +517,19 @@ export function makeProgram(): Program {
       }
 
       case "startPlaying":
+        const data = get(state.localIdentityData);
         const identityData: UpdateData = {
           clientId: state.worldDoc.ydoc.clientID,
-          name:
-            state.overrideParticipantName || get(state.localIdentityData).name,
+          name: state.overrideParticipantName || data.name,
           showAudio: state.initialAudioDesired,
           showVideo: state.initialVideoDesired,
           speaking: false,
+          appearance:
+            state.participantQuickAppearance ||
+            data.appearance ||
+            // If we've completely lost appearance somehow, scrape
+            // a default together
+            getDefaultAppearance("male"),
         };
         if (state.participantQuickAppearance) {
           identityData.appearance = state.participantQuickAppearance;

@@ -1,15 +1,25 @@
 <script lang="ts">
   import CircleButton from "~/ui/lib/CircleButton";
   import FaUserAlt from "svelte-icons/fa/FaUserAlt.svelte";
-  import { worldManager } from "~/world";
   import { AvatarBuilder } from "~/ui/AvatarBuilder";
-  import { getDefaultAppearance } from "~/identity/Avatar/appearance";
+  import { localIdentityData } from "~/stores/identityData";
+  import { getNotificationsContext } from "svelte-notifications";
+
+  const notifyContext = getNotificationsContext();
 
   let showBuilder = false;
   let builderEl;
 
   const onClick = () => {
-    showBuilder = !showBuilder;
+    if ($localIdentityData.appearance) {
+      showBuilder = !showBuilder;
+    } else {
+      notifyContext.addNotification({
+        text: "Something went wrong",
+        position: "bottom-center",
+        removeAfter: 3000,
+      });
+    }
   };
 
   // escape absolute/relative positioned elements
@@ -27,7 +37,7 @@
   <div class="builder" bind:this={builderEl}>
     <AvatarBuilder
       on:click={() => (showBuilder = false)}
-      {...worldManager.participants.getAppearance()}
+      {...$localIdentityData.appearance}
     />
   </div>
 {/if}

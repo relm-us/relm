@@ -90,9 +90,12 @@ export function getDefaultAppearance(gender: BinaryGender): Appearance {
   };
 }
 
-export function appearanceToCharacterTraits(
-  appearance: Appearance = getDefaultAppearance("male")
-): { morphs: object; colors: object } {
+function appearanceToCharacterTraits(appearance: Appearance): {
+  morphs: object;
+  colors: object;
+} {
+  if (!appearance) throw Error("avatar appearance undefined");
+
   let genderSlider = appearance.genderSlider;
   let widthSlider = appearance.widthSlider;
   let hairSlider1 = 0.5;
