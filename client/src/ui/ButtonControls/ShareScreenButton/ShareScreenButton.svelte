@@ -9,7 +9,9 @@
 
   const onClick = async () => {
     if (!enabled) {
-      worldManager.startScreenShare();
+      worldManager.startScreenShare(function onStop() {
+        onClick();
+      });
     } else {
       worldManager.stopScreenShare();
     }

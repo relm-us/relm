@@ -365,9 +365,10 @@ export class WorldManager {
     );
   }
 
-  async startScreenShare() {
+  async startScreenShare(onStop) {
     // start screen sharing
     const shareTrack = await createScreenTrack();
+    if (onStop) shareTrack.on("stopped", onStop);
     localShareTrackStore.set(shareTrack);
 
     this.participants.setShowVideo(true);
