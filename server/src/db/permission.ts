@@ -27,12 +27,17 @@ export async function setPermissions({
   relmName?: string;
   permits?: Array<Permission>;
   union?: boolean;
-}) {
+}): Promise<boolean> {
   let relm_id = relmId;
   if (!relm_id) {
     if (relmName) {
       const relm = await getRelm({ relmName });
-      relm_id = relm.relmId;
+      if (relm) {
+        relm_id = relm.relmId;
+      } else {
+        // Relm does not exist, we won't set permissions on it
+        return false;
+      }
     } else {
       throw Error(`relmId or relmName must be provided`);
     }
@@ -44,9 +49,8 @@ export async function setPermissions({
     permits: JSON.stringify(arrayToBooleanObject(permits)),
   };
 
-  let row;
   if (union) {
-    row = await db.one(sql`
+    await db.one(sql`
       ${INSERT("permissions", attrs)}
       ON CONFLICT(relm_id, player_id)
       DO UPDATE SET
@@ -55,7 +59,7 @@ export async function setPermissions({
       RETURNING permits
     `);
   } else {
-    row = await db.one(sql`
+    await db.one(sql`
       ${INSERT("permissions", attrs)}
       ON CONFLICT(relm_id, player_id)
       DO UPDATE SET
@@ -65,7 +69,7 @@ export async function setPermissions({
     `);
   }
 
-  return new Set(Object.keys(row.permits));
+  return true;
 }
 
 export async function getPermissions({
