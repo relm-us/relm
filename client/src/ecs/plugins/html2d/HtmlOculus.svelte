@@ -44,7 +44,7 @@
 
   // TODO: (privacy) Make it so full screen is only possible when remote is sharing screen
   function enterFullscreen() {
-    fullscreen = true;
+    if (!isLocal) fullscreen = true;
   }
 
   function exitFullscreen() {
