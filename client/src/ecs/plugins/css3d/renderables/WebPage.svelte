@@ -39,7 +39,9 @@
 
   function onWindowFocus(event: FocusEvent) {
     highlighted = false;
-    worldManager.camera.followParticipant();
+    if (worldManager.camera) {
+      worldManager.camera.followParticipant();
+    }
   }
 
   function onFrameMouseout() {
