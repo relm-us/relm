@@ -4,53 +4,15 @@ import * as yws from "y-websocket/bin/utils";
 
 import { app } from "./server_http";
 import { Player, Permission, Doc } from "./db";
+import { ydocStats } from "./getYDoc";
 
 export const server = createServer();
 
 let wss = new WebSocket.Server({ noServer: true });
 
-const empty = (val) => val === null || val === undefined || val === "";
-
 wss.on("connection", (conn, req) => {
   yws.setupWSConnection(conn, req, {
-    callbackHandler: async (update, origin, doc) => {
-      const entities = doc.getArray("entities");
-
-      let assetsCount = 0;
-      entities.forEach((entity) => {
-        const components = entity.get("components").toArray();
-        if (
-          components.some((component) => {
-            const name = component.get("name");
-            return (
-              (name === "Model" &&
-                !empty(component.get("values").get("asset")?.url)) ||
-              (name === "Image" &&
-                !empty(component.get("values").get("asset")?.url)) ||
-              (name === "Shape" &&
-                !empty(component.get("values").get("texture")?.url)) ||
-              (name === "Skybox" &&
-                !empty(component.get("values").get("image")?.url))
-            );
-          })
-        )
-          assetsCount++;
-      });
-      const entitiesCount = entities.length;
-
-      const docBefore = await Doc.getDocWithRelmName({ docId: doc.name });
-      console.log(
-        `Storing stats for '${docBefore.relmName}':\n` +
-          `  entities: ${entitiesCount} (was ${docBefore.entitiesCount})\n` +
-          `  assets: ${assetsCount} (was ${docBefore.assetsCount})`
-      );
-
-      await Doc.updateStats({
-        docId: doc.name,
-        entitiesCount,
-        assetsCount,
-      });
-    },
+    callbackHandler: ydocStats,
   });
 });
 

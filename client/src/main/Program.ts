@@ -94,6 +94,9 @@ export function makeProgram(): Program {
       case "gotPageParams": {
         exists(msg.pageParams);
 
+        // Hack to make state available to worldManager as soon as possible (debugging)
+        worldManager.state = state;
+
         return [
           { ...state, pageParams: msg.pageParams },
           getAuthenticationHeaders(msg.pageParams),
@@ -549,7 +552,11 @@ export function makeProgram(): Program {
 
       // Send yjs a modification so that it triggers an assets/entities stats re-assessment
       case "recomputeWorldDocStats": {
-        state.worldDoc?.recomputeStats();
+        if (state.worldDoc) {
+          state.worldDoc.recomputeStats();
+        } else {
+          console.warn("Can't recompute stats, worldDoc not available");
+        }
         return [state];
       }
 

@@ -30,6 +30,7 @@ import { applyDiffToYEntity } from "./applyDiff";
 
 import { selectedEntities } from "~/stores/selection";
 import { DecoratedECSWorld, AuthenticationHeaders } from "~/types";
+import { uuidv4 } from "~/utils/uuid";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
 
@@ -57,6 +58,9 @@ export class WorldDoc extends EventEmitter {
   // A map of settings for the world
   settings: YReadableMap<any>;
 
+  // A map of recompute requests
+  recompute: YReadableMap<boolean>;
+
   // A table of Y.IDs (as strings) mapped to HECS IDs; used for deletion
   yids: Map<YIDSTR, EntityId> = new Map();
 
@@ -83,6 +87,7 @@ export class WorldDoc extends EventEmitter {
 
     this.entryways = readableMap(this.ydoc.getMap("entryways"));
     this.settings = readableMap(this.ydoc.getMap("settings"));
+    this.recompute = readableMap(this.ydoc.getMap("recompute"));
 
     this.undoManager = new Y.UndoManager([this.entities], {
       captureTimeout: UNDO_CAPTURE_TIMEOUT,
@@ -133,7 +138,7 @@ export class WorldDoc extends EventEmitter {
 
   recomputeStats() {
     console.log("asking server to recompute stats");
-    this.messages.push([{ u: "system", c: "[recompute stats]" }]);
+    this.recompute.y.set(uuidv4(), true);
   }
 
   syncFromJSON(json) {

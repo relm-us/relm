@@ -1,13 +1,13 @@
 import * as express from "express";
 import cors from "cors";
 import * as Y from "yjs";
-import * as yws from "y-websocket/bin/utils";
 
 import * as config from "../config";
 import * as util from "../utils";
 import * as middleware from "../middleware";
 import * as twilio from "../lib/twilio";
 import { Permission, Relm, Doc } from "../db";
+import { getYDoc } from "../getYDoc";
 import exportRelm from "relm-common/serialize/export";
 import importRelm from "relm-common/serialize/import";
 
@@ -63,14 +63,14 @@ relm.post(
         seedDocId = await Doc.getSeedDocId({
           docId: newRelmDocId,
         });
-        const seedRelmDoc: Y.Doc = await yws.getYDoc(seedDocId);
+        const seedRelmDoc: Y.Doc = await getYDoc(seedDocId);
 
         relmContent = exportRelm(seedRelmDoc);
       } else {
         relmContent = config.DEFAULT_RELM_CONTENT;
       }
 
-      const newRelmDoc: Y.Doc = await yws.getYDoc(newRelmDocId);
+      const newRelmDoc: Y.Doc = await getYDoc(newRelmDocId);
       importRelm(relmContent, newRelmDoc);
 
       if (seedDocId) {
@@ -125,7 +125,7 @@ relm.get(
   middleware.authenticated(),
   middleware.authorized("access"),
   wrapAsync(async (req, res) => {
-    const doc: Y.Doc = await yws.getYDoc(req.relm.permanentDocId);
+    const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
     req.relm.permanentDocSize = Y.encodeStateAsUpdate(doc).byteLength;
     const twilioToken = twilio.getToken(req.authenticatedPlayerId);
 
@@ -146,7 +146,7 @@ relm.get(
   middleware.authenticated(),
   middleware.authorized("access"),
   wrapAsync(async (req, res) => {
-    const permanentDoc = await yws.getYDoc(req.relm.permanentDocId);
+    const permanentDoc = await getYDoc(req.relm.permanentDocId);
     const objects = permanentDoc.getMap("objects");
     req.relm.permanentDoc = objects.toJSON();
 
@@ -210,9 +210,9 @@ relm.get(
   middleware.acceptJwt(),
   middleware.authorized("access"),
   wrapAsync(async (req, res) => {
-    const doc: Y.Doc = await yws.getYDoc(req.relm.permanentDocId);
+    const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
     req.relm.permanentDocSize = Y.encodeStateAsUpdate(doc).byteLength;
-    
+
     const twilioToken = twilio.getToken(req.authenticatedPlayerId);
     const permissions = await Permission.getPermissions({
       playerId: req.authenticatedPlayerId,
