@@ -57,7 +57,8 @@
     interval = setInterval(() => {
       const falloffStart = 3;
       const falloffEnd = 6;
-      const distance = participant.avatar.distance;
+      const distance =
+        participant.avatar.entities.body.getByName("DistanceRef").value;
       if (distance >= 0 && distance < falloffStart) {
         volume = 1;
       } else if (distance < falloffEnd) {

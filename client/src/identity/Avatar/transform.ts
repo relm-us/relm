@@ -120,9 +120,14 @@ export function setTransformArrayOnParticipants(
 
     if (!participant.avatar) {
       const position = new Vector3().fromArray(transformData as number[], 1);
-      const entities = makeRemoteAvatarEntities(ecsWorld, position, () => {
-        return participant.avatar?.headAngle;
-      });
+      const entities = makeRemoteAvatarEntities(
+        ecsWorld,
+        position,
+        participant.participantId,
+        () => {
+          return participant.avatar?.headAngle;
+        }
+      );
       participant.avatar = new Avatar(ecsWorld, entities);
 
       // Let caller handle anything that should happen when the participant first arrives

@@ -3,16 +3,17 @@ import { Vector3 } from "three";
 import { Controller } from "~/ecs/plugins/player-control";
 import { TwistBone, headFollowsPointer } from "~/ecs/plugins/twist-bone";
 
-import type { DecoratedECSWorld, Participant } from "~/types";
+import type { DecoratedECSWorld } from "~/types";
 import type { Dispatch } from "../ProgramTypes";
 
 import { makeAvatarEntities } from "~/identity/Avatar/makeAvatarEntities";
-import { Avatar, setAvatarFromParticipant } from "~/identity/Avatar";
+import { Avatar } from "~/identity/Avatar";
 import { Entity } from "~/ecs/base";
+import { playerId } from "~/identity/playerId";
 
 export const makeLocalAvatar =
   (ecsWorld: DecoratedECSWorld, position: Vector3) => (dispatch: Dispatch) => {
-    const entities = makeAvatarEntities(ecsWorld, position, false);
+    const entities = makeAvatarEntities(ecsWorld, position, false, playerId);
 
     const avatar = new Avatar(ecsWorld, entities);
 

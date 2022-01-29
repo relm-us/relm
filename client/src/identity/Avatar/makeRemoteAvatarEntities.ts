@@ -12,9 +12,10 @@ export function makeRemoteAvatarEntities(
   this: void,
   ecsWorld: DecoratedECSWorld,
   position: Vector3,
+  participantId: string,
   getHeadAngle: () => number
 ): AvatarEntities {
-  const entities = makeAvatarEntities(ecsWorld, position, true);
+  const entities = makeAvatarEntities(ecsWorld, position, true, participantId);
 
   entities.body
     .add(TwistBone, {

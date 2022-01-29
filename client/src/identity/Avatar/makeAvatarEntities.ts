@@ -21,10 +21,11 @@ const UNSCALED_CHARACTER_HEIGHT = 7;
 export function makeAvatarEntities(
   world: DecoratedECSWorld,
   position: Vector3,
-  kinematic: boolean
+  kinematic: boolean,
+  participantId: string
 ): AvatarEntities {
   // Create the avatar's torso, which we connect everything else to
-  const body: Entity = makeEntity(world, "Avatar")
+  const body: Entity = makeEntity(world, "Avatar", participantId)
     .add(PointerPosition, {
       offset: new Vector3(0, 1, 0),
     })

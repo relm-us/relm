@@ -27,7 +27,7 @@
     `@ ${x.toFixed(1)}, ${y.toFixed(1)}, ${z.toFixed(1)}`;
 
   let subtitle;
-  $: subtitle = state.worldDocStatus;
+  $: subtitle = state.worldDocStatus + " - " + playerId.split("-")[0];
 
   let vw;
   $: vw = $viewportSize
