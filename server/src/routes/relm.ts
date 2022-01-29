@@ -219,11 +219,16 @@ relm.get(
       relmNames: [req.relmName],
     });
 
+    let permits = new Set(permissions[req.relmName] || []);
+    if (permissions["*"]) {
+      permissions["*"].forEach((permit) => permits.add(permit));
+    }
+
     return util.respond(res, 200, {
       status: "success",
       action: "read",
       relm: req.relm,
-      permits: permissions[req.relmName] || [],
+      permits: [...permits],
       twilioToken,
       jwt: req.jwtRaw,
     });
