@@ -17,23 +17,22 @@
   export let state: State;
 
   let minimized = true;
-  let subtitle;
 
-  $: subtitle =
-    state.worldDocStatus +
-    ` : ${Math.ceil(
-      $fpsTime.reduce((cumu, val) => cumu + val, 0) / $fpsTime.length
-    )} / ${Math.ceil($targetFps)} fps`;
+  let fps;
+  $: fps = $fpsTime.reduce((cumu, val) => cumu + val, 0) / $fpsTime.length;
+
+  let title;
+  $: title =
+    `${Math.ceil(fps)} fps ` +
+    `@ ${x.toFixed(1)}, ${y.toFixed(1)}, ${z.toFixed(1)}`;
+
+  let subtitle;
+  $: subtitle = state.worldDocStatus;
 
   let vw;
   $: vw = $viewportSize
     ? `(${$viewportSize.width},${$viewportSize.height})`
     : "";
-
-  let showAbbreviatedRoom = true;
-  function toggleRoom() {
-    showAbbreviatedRoom = !showAbbreviatedRoom;
-  }
 
   let showAbbreviatedIdentities = true;
   function toggleIdentities() {
@@ -50,11 +49,11 @@
 
   onMount(() => {
     const interval = setInterval(() => {
-      if (minimized) return;
-
       x = worldManager.participants.local.avatar.position.x;
       y = worldManager.participants.local.avatar.position.y;
       z = worldManager.participants.local.avatar.position.z;
+
+      if (minimized) return;
 
       if (worldManager.participants.actives.length !== idActive)
         idActive = worldManager.participants.actives.length;
@@ -66,20 +65,15 @@
       identities.sort((a: Participant, b: Participant) => {
         return a.lastSeen - b.lastSeen;
       });
-    }, 1000);
+    }, 150);
     return () => clearInterval(interval);
   });
 </script>
 
 <container class:connected={Boolean(state.worldDoc)}>
-  <Pane title="Status" {subtitle} showMinimize={true} bind:minimized>
+  <Pane {title} {subtitle} showMinimize={true} bind:minimized>
     <inner-scroll>
       <table>
-        <tr>
-          <td colspan="2" style="text-align: center">
-            x: {x.toFixed(1)}, y: {y.toFixed(1)}, z: {z.toFixed(1)}
-          </td>
-        </tr>
         <tr>
           <th>audio</th>
           <td>
@@ -149,8 +143,8 @@
 <style>
   container {
     display: flex;
-    min-width: 180px;
-    --pane-width: 160px;
+    width: 260px;
+    --pane-width: 260px;
   }
   container.connected {
     --subtitle-color: rgba(0, 210, 24, 1);

@@ -57,7 +57,7 @@ export function importRelm(wdoc: WorldDoc, json) {
     try {
       wdoc.syncFromJSON(data);
     } catch (err) {
-      console.warn(err);
+      console.warn(data?.id, err);
     }
   });
 
