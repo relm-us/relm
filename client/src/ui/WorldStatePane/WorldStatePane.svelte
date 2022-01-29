@@ -76,24 +76,22 @@
     <inner-scroll>
       <table>
         <tr>
-          <td colspan="2" align="center">
+          <td colspan="2" style="text-align: center">
             x: {x.toFixed(1)}, y: {y.toFixed(1)}, z: {z.toFixed(1)}
           </td>
         </tr>
         <tr>
           <th>audio</th>
           <td>
-            {$localIdentityData.showAudio ? "YES" : ""}
-            {$localAudioTrack ? "recording" : ""}
-            <!-- {$audioProducing ? "sending" : ""} -->
+            {$localIdentityData.showAudio ? "show" : "(hide)"}
+            {$localAudioTrack ? "granted" : "(not granted)"}
           </td>
         </tr>
         <tr>
           <th>video</th>
           <td>
-            {$localIdentityData.showVideo ? "YES" : ""}
-            {$localVideoTrack ? "recording" : ""}
-            <!-- {$videoProducing ? "sending" : ""} -->
+            {$localIdentityData.showVideo ? "show" : "(hide)"}
+            {$localVideoTrack ? "granted" : "(not granted)"}
           </td>
         </tr>
         <!-- <tr>
