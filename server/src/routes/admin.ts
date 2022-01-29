@@ -32,7 +32,7 @@ admin.post(
       "invite",
       "edit",
     ];
-    await Permission.setPermissions({
+    await Permission.setPermits({
       playerId: req.body.playerId,
       permits,
     });

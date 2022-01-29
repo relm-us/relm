@@ -1,6 +1,6 @@
 import { Permission } from "../db";
 
-export function unabbreviatedPermissions(
+export function unabbreviatedPermits(
   abbrev: string
 ): Permission.Permission[] {
   const permits = [];

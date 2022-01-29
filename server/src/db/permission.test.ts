@@ -40,7 +40,7 @@ describe("Permission model tests", () => {
     expect(permitsByRelm["doesnotexist"]).toEqual([]);
   });
 
-  it("gets union of permits that includes wildcard relm", async () => {
+  it("getPermissions returns multiple permits including wildcard relm", async () => {
     const playerId = uuidv4();
     const relmId1 = uuidv4();
     const relmName1 = uuidv4();
@@ -59,21 +59,21 @@ describe("Permission model tests", () => {
     });
 
     // Wildcard permits for this participant
-    await Permission.setPermissions({
+    await Permission.setPermits({
       playerId,
       relmId: null,
       permits: ["admin"],
     });
 
     // Relm-specific permits for this participant
-    await Permission.setPermissions({
+    await Permission.setPermits({
       playerId,
       relmId: relmId1,
       permits: ["access", "edit"],
     });
-    await Permission.setPermissions({
+    await Permission.setPermits({
       playerId,
-      relmId: relmId2,
+      relmName: relmName2,
       permits: ["access"],
     });
 
@@ -87,10 +87,8 @@ describe("Permission model tests", () => {
     );
 
     expect(permitsByRelm["*"]).toEqual(["admin"]);
-    expect(permitsByRelm[relmName1].sort()).toEqual(
-      ["admin", "access", "edit"].sort()
-    );
-    expect(permitsByRelm[relmName2].sort()).toEqual(["admin", "access"].sort());
+    expect(permitsByRelm[relmName1].sort()).toEqual(["access", "edit"].sort());
+    expect(permitsByRelm[relmName2].sort()).toEqual(["access"].sort());
   });
 
   it("sets permissions", async () => {
@@ -105,7 +103,7 @@ describe("Permission model tests", () => {
     });
 
     for (let permit of ["access", "invite", "edit"]) {
-      await Permission.setPermissions({
+      await Permission.setPermits({
         playerId,
         relmId: relmId1,
         permits: [permit as Permission.Permission],
@@ -133,7 +131,7 @@ describe("Permission model tests", () => {
     });
 
     for (let permit of ["access", "invite", "invite"]) {
-      await Permission.setPermissions({
+      await Permission.setPermits({
         playerId,
         relmId: relmId1,
         permits: [permit as Permission.Permission],

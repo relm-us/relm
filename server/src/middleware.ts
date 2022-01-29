@@ -2,7 +2,7 @@ import { respond, joinError, decodedValidJwt } from "./utils";
 import { Player, Permission, Relm, useToken } from "./db";
 import { JWTSECRET } from "./config";
 import createError from "http-errors";
-import { unabbreviatedPermissions } from "./utils/unabbreviatedPermissions";
+import { unabbreviatedPermits } from "./utils/unabbreviatedPermits";
 
 function getParam(req, key) {
   if (key in req.query) {
@@ -94,15 +94,17 @@ export function acceptToken() {
 export function acceptJwt() {
   return async (req, _res, next) => {
     if (JWTSECRET && req.headers["x-relm-jwt"]) {
-      const result = decodedValidJwt(req.headers["x-relm-jwt"], JWTSECRET);
+      const result: { relms: Record<string, string> } = decodedValidJwt(
+        req.headers["x-relm-jwt"],
+        JWTSECRET
+      );
       if (result) {
         req.jwtRaw = result;
-
-        for (let relm in result.relms) {
-          const permits = unabbreviatedPermissions(result.relms[relm]);
-          await Permission.setPermissions({
+        for (let [relmName, abbrevPermits] of Object.entries(result.relms)) {
+          const permits = unabbreviatedPermits(abbrevPermits);
+          await Permission.setPermits({
             playerId: req.authenticatedPlayerId,
-            relmName: relm,
+            relmName,
             permits,
             // This ensures that a JWT token can also delete permits when needed:
             union: false,
@@ -139,7 +141,11 @@ export function authorized(requestedPermission) {
           relmNames,
         });
 
-        if (req.relmName in permissions) {
+        if ("*" in permissions && req.relmName in permissions) {
+          permitted =
+            isAllowed(permissions["*"], requestedPermission) ||
+            isAllowed(permissions[req.relmName], requestedPermission);
+        } else if (req.relmName in permissions) {
           permitted = isAllowed(permissions[req.relmName], requestedPermission);
         } else if ("*" in permissions) {
           permitted = isAllowed(permissions["*"], requestedPermission);

@@ -1,6 +1,6 @@
 import { db, sql, INSERT, IN, raw } from "./db";
 import * as set from "../utils/set";
-import { arrayToBooleanObject } from "../utils";
+import { arrayToBooleanObject, booleanObjectToArray } from "../utils";
 import { getRelm } from "./relm";
 
 export type Permission = "admin" | "access" | "invite" | "edit";
@@ -15,7 +15,7 @@ export function filteredPermits(permits) {
  * @param {string} relm - the relm to which the permissions pertain, or '*' if for all relms
  * @param {Array<PERMISSIONS>} permits - an array-like containing a list of permissions, e.g. PERMISSIONS.ACCESS
  */
-export async function setPermissions({
+export async function setPermits({
   playerId,
   relmId,
   relmName,
@@ -28,23 +28,25 @@ export async function setPermissions({
   permits?: Array<Permission>;
   union?: boolean;
 }): Promise<boolean> {
-  let relm_id = relmId;
-  if (!relm_id) {
-    if (relmName) {
-      const relm = await getRelm({ relmName });
-      if (relm) {
-        relm_id = relm.relmId;
-      } else {
-        // Relm does not exist, we won't set permissions on it
-        return false;
-      }
+  let relm_id;
+
+  if (relmId) {
+    relm_id = relmId;
+  } else if (relmName) {
+    const relm = await getRelm({ relmName });
+    if (relm) {
+      relm_id = relm.relmId;
     } else {
-      throw Error(`relmId or relmName must be provided`);
+      // Relm does not exist, we won't set permissions on it
+      return false;
     }
+  } else {
+    // special case: set permission on all relms
+    relm_id = null;
   }
 
   const attrs = {
-    relm_id: relmId,
+    relm_id,
     player_id: playerId,
     permits: JSON.stringify(arrayToBooleanObject(permits)),
   };
@@ -113,30 +115,15 @@ export async function getPermissions({
       WHERE r.relm_${raw(relmNames ? "name" : "id")} ${IN(relms)}
   `);
 
-  let permitsByRelm: Map<string, Set<string>> = new Map(
-    rows.map((row) => [row.relm, new Set()])
-  );
-
-  // For each relm, add permits that have been granted to the playerId
+  let permitsByRelm: Record<string, string[]> = {};
+  for (const relm of relms) {
+    permitsByRelm[relm] = [];
+  }
   for (const row of rows) {
-    const permits = permitsByRelm.get(row.relm);
-    for (const permit in row.permits) {
-      if (row.permits[permit]) {
-        permits.add(permit);
-      }
-    }
+    permitsByRelm[row.relm] = booleanObjectToArray(row.permits);
   }
 
-  const wildcardPermits = permitsByRelm.get("*") || new Set();
-
-  // Convert Map<string, Set> to Record<string, Array>, adding wildcard permits, if any:
-  let result = Object.create(null);
-  if (permitsByRelm.has("*")) result["*"] = [...permitsByRelm.get("*")];
-  for (let relm of relms) {
-    result[relm] = [...set.union(permitsByRelm.get(relm), wildcardPermits)];
-  }
-
-  return result;
+  return permitsByRelm;
 }
 
 function empty(arr) {
