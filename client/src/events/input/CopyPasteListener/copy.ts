@@ -2,13 +2,15 @@ import { worldManager } from "~/world";
 import { selectedEntities, groupTree, GroupTree } from "~/stores/selection";
 import { copyBuffer } from "~/stores/copyBuffer";
 import {
+  CopyBuffer,
   getCenter,
   getRootEntities,
   selfWithDescendants,
+  serializeCopyBuffer,
   serializeEntityWithOffset,
 } from "./common";
 
-export function copy() {
+export function copy(clipboardData?: DataTransfer) {
   const selectedIds = selectedEntities.get();
   if (selectedIds.size > 0) {
     const entities = [...selectedIds].map((id) =>
@@ -24,18 +26,28 @@ export function copy() {
     const roots = getRootEntities(entitiesWithDescendants);
     const center = getCenter(roots);
 
-    const serialized = entitiesWithDescendants.map((entity) => {
+    const serializedEntities = entitiesWithDescendants.map((entity) => {
       if (roots.includes(entity)) {
         return serializeEntityWithOffset(entity, center);
       } else {
         return entity.toJSON();
       }
     });
-    copyBuffer.set({
+
+    const buffer: CopyBuffer = {
       center,
-      entities: serialized,
+      entities: serializedEntities,
       groupTree: groupTree.cloneTree(),
-    });
+    };
+    copyBuffer.set(buffer);
+
+    if (clipboardData) {
+      const clipboard = "relm:" + serializeCopyBuffer(buffer);
+      clipboardData.setData("text/plain", clipboard);
+
+      // Let caller preventDefault on event
+      return true;
+    }
   } else {
     console.warn("Nothing copied (nothing selected)");
   }

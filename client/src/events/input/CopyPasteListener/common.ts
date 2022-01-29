@@ -4,6 +4,12 @@ import { nanoid } from "nanoid";
 import { GroupTree } from "~/stores/selection";
 import { Transform } from "~/ecs/plugins/core";
 
+export type CopyBuffer = {
+  center: Vector3;
+  entities: any;
+  groupTree: GroupTree;
+};
+
 export function getCenter(entities) {
   const center = new Vector3();
   let count = 0;
@@ -58,7 +64,10 @@ export function assignNewIds(serializedEntities: Array<any>) {
   return idMap;
 }
 
-export function assignNewGroupIds(groupTree: GroupTree, idMap: Map<string, string>) {
+export function assignNewGroupIds(
+  groupTree: GroupTree,
+  idMap: Map<string, string>
+) {
   // map from OLD IDs to NEW IDs
   const groupIdMap = new Map<string, string>();
 
@@ -88,4 +97,32 @@ export function selfWithDescendants(entity) {
   } else {
     return [entity];
   }
+}
+
+export function serializeCopyBuffer(buffer: CopyBuffer) {
+  return JSON.stringify(
+    {
+      center: buffer.center.toArray(),
+      entities: buffer.entities,
+      groupTree: {
+        entities: Object.fromEntries(buffer.groupTree.entities.entries()),
+        groups: Object.fromEntries(buffer.groupTree.groups.entries()),
+      },
+    },
+    null,
+    2
+  );
+}
+
+export function deserializeCopyBuffer(json: string): CopyBuffer {
+  const deserialized = JSON.parse(json);
+
+  return {
+    center: new Vector3().fromArray(deserialized.center),
+    entities: deserialized.entities,
+    groupTree: {
+      entities: new Map(Object.entries(deserialized.groupTree.entities)),
+      groups: new Map(Object.entries(deserialized.groupTree.groups)),
+    },
+  };
 }

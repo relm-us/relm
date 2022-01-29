@@ -5,12 +5,14 @@
 
   function onCopy(event: ClipboardEvent) {
     if ($worldUIMode === "build") {
-      copy();
+      if (copy(event.clipboardData)) {
+        event.preventDefault();
+      }
     }
   }
   function onPaste(event: ClipboardEvent) {
     if ($worldUIMode === "build") {
-      paste();
+      paste(event.clipboardData || (window as any).clipboardData);
     }
   }
 </script>

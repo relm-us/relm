@@ -6,17 +6,39 @@ import { worldUIMode } from "~/stores/worldUIMode";
 import { groupTree } from "~/stores/selection";
 import { copyBuffer } from "~/stores/copyBuffer";
 import { Transform } from "~/ecs/plugins/core";
-import { assignNewGroupIds, assignNewIds } from "./common";
+import {
+  assignNewGroupIds,
+  assignNewIds,
+  deserializeCopyBuffer,
+} from "./common";
 
-export function paste() {
+export function paste(clipboardData?: DataTransfer) {
   const offset = new Vector3();
   if (get(worldUIMode) !== "build") return;
 
-  const buffer = get(copyBuffer);
+  const cbdata = clipboardData?.getData("text");
+
+  let buffer;
+
+  if (cbdata.startsWith("relm:")) {
+    // clipboard paste?
+    try {
+      buffer = deserializeCopyBuffer(cbdata.slice(5));
+    } catch (err) {
+      console.warn("unable to parse clipboard data", err);
+    }
+  }
+
+  if (!buffer) {
+    // local paste?
+    buffer = get(copyBuffer);
+  }
+
   if (buffer.entities.length === 0) {
     console.warn("nothing to paste");
     return;
   }
+
   // Entities in copy buffer get new IDs on every paste
   const idMap = assignNewIds(buffer.entities);
 
