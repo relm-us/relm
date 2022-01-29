@@ -44,9 +44,17 @@
   let idTotal = 0;
   let identities = [];
 
+  let x = 0;
+  let y = 0;
+  let z = 0;
+
   onMount(() => {
     const interval = setInterval(() => {
       if (minimized) return;
+
+      x = worldManager.participants.local.avatar.position.x;
+      y = worldManager.participants.local.avatar.position.y;
+      z = worldManager.participants.local.avatar.position.z;
 
       if (worldManager.participants.actives.length !== idActive)
         idActive = worldManager.participants.actives.length;
@@ -67,6 +75,11 @@
   <Pane title="Status" {subtitle} showMinimize={true} bind:minimized>
     <inner-scroll>
       <table>
+        <tr>
+          <td colspan="2" align="center">
+            x: {x.toFixed(1)}, y: {y.toFixed(1)}, z: {z.toFixed(1)}
+          </td>
+        </tr>
         <tr>
           <th>audio</th>
           <td>
