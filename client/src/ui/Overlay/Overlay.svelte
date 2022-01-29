@@ -25,16 +25,21 @@
 
   import { globalEvents } from "~/events";
 
-  import { worldUIMode, openPanel } from "~/stores";
+  import { worldUIMode, openPanel, audioMode } from "~/stores";
   import { playState } from "~/stores/playState";
-  import { unreadCount } from "~/stores/chat";
+  import { chatOpen, unreadCount } from "~/stores/chat";
   import { localIdentityData } from "~/stores/identityData";
   import { debugMode } from "~/stores/debugMode";
   import { createPrefab } from "~/prefab";
+  import Tooltip from "~/ui/lib/Tooltip";
 
   export let dispatch;
   export let permits;
   export let state;
+  export let tr = {};
+
+  // i18n translations available, if passed in
+  const _ = (phrase, key) => tr[key] || tr[phrase] || phrase;
 
   let buildMode = false;
   $: buildMode = permits.includes("edit") && $worldUIMode === "build";
@@ -132,12 +137,42 @@
 
 <overlay-center>
   <play-buttons class="interactive">
-    <ChatButton unread={$unreadCount} />
-    <ShareScreenButton />
-    <AudioModeButton />
-    <MicButton enabled={$localIdentityData.showAudio} />
-    <VideoButton enabled={$localIdentityData.showVideo} {dispatch} />
-    <AvatarSetupButton />
+    <Tooltip tip={_("Set up video", "set_up_video")} top>
+      <VideoButton enabled={$localIdentityData.showVideo} {dispatch} />
+    </Tooltip>
+    <Tooltip
+      tip={$localIdentityData.showAudio
+        ? _("Mute", "mute")
+        : _("Unmute", "unmute")}
+      top
+    >
+      <MicButton enabled={$localIdentityData.showAudio} />
+    </Tooltip>
+    <Tooltip tip={_("Share screen", "share_screen")} top>
+      <ShareScreenButton />
+    </Tooltip>
+
+    <div style="width:16px" />
+
+    <Tooltip
+      tip={$audioMode === "world"
+        ? _("Hear nearby only", "audio_mode_near")
+        : _("Hear everyone", "audio_mode_global")}
+      top
+    >
+      <AudioModeButton />
+    </Tooltip>
+    <Tooltip
+      tip={$chatOpen
+        ? _("Close chat", "chat_close")
+        : _("Open chat", "chat_open")}
+      top
+    >
+      <ChatButton unread={$unreadCount} />
+    </Tooltip>
+    <Tooltip tip={_("Change how you look", "avatar_setup")} top>
+      <AvatarSetupButton />
+    </Tooltip>
   </play-buttons>
 </overlay-center>
 
