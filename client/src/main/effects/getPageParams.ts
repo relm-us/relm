@@ -22,16 +22,17 @@ export const getPageParams =
     // Check if we are the only tab open; prevent multiple tabs
     // from sending conflicting data re: avatar location
     globalBroadcast.onmessage = (event) => {
-      if (event.data === "first?") {
+      if (event.data === relmName) {
         globalBroadcast.postMessage(`no`);
-        // alert("Another tab of this site just got opened");
       }
       if (event.data === `no`) {
-        dispatch({ id: "error", message: "Another tab or window is already open" });
-        // alert("An instance of this site is already running");
+        dispatch({
+          id: "error",
+          message: "Another tab or window is already open",
+        });
       }
     };
-    globalBroadcast.postMessage("first?");
+    globalBroadcast.postMessage(relmName);
 
     const pageParams = {
       relmName: canonicalIdentifier(relmName),
