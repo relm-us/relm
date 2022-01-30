@@ -1,7 +1,6 @@
 import { Vector3 } from "three";
 
 import { Html2d } from "~/ecs/plugins/html2d";
-import { chatOpen } from "~/stores/chat";
 
 import { AvatarEntities } from "~/types";
 

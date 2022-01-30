@@ -7,12 +7,14 @@ import { setEmoji } from "./emoji";
 import { setLabel } from "./label";
 import { setOculus } from "./oculus";
 import { setSpeech } from "./speech";
+import { chatOpen } from "~/stores/chat";
 
 function onDidEditName(name: string) {
   worldManager.participants.setName(name);
 }
 
 function onCloseSpeech() {
+  chatOpen.set(false);
   worldManager.participants.setCommunicatingState(null, "speaking", false);
 }
 
