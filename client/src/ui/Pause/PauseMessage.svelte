@@ -12,9 +12,10 @@
   </div>
   <div class="toggle-auto-pause">
     <ToggleSwitch
-      bind:enabled={$autoPause}
+      enabled={$autoPause}
       labelOn="Autopause On"
       labelOff="Autopause Off"
+      on:change={({ detail }) => ($autoPause = detail)}
     />
   </div>
 </message>
