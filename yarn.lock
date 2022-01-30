@@ -11960,10 +11960,10 @@ vendors@^1.0.0:
   resolved "https://registry.yarnpkg.com/vendors/-/vendors-1.0.4.tgz#e2b800a53e7a29b93506c3cf41100d16c4c4ad8e"
   integrity sha512-/juG65kTL4Cy2su4P8HjtkTxk6VmJDiOPBufWniqQ6wknac6jNiXS9vU+hO3wgusiyqWlzTbVHi0dyJqRONg3w==
 
-video-mirror@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/video-mirror/-/video-mirror-4.2.0.tgz#96af42fb7a0bfb49fef7c75f11d9f99df831671c"
-  integrity sha512-zR3OwSxrVqXJ4bEM/9a/Lyc4eOdG3Idq314vh/Bi5NIMzk5F349Sk74OjQjajZp01eGaFmV6Sw63rmbygByY7Q==
+video-mirror@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/video-mirror/-/video-mirror-4.3.0.tgz#3084610faf5622205186c7186cd66bf6799f4e23"
+  integrity sha512-4wXzNmR4mTPO5jtLEaxl5/l0HvI8ekCiBOgD0jo4cC31jePHWQ1Rq5XdpDcbsuNE6b+nQE/oWw49AjAqngUWVw==
   dependencies:
     audio-activity "1.0.0"
     media-devices "0.2.0"

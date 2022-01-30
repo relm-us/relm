@@ -1,7 +1,8 @@
 <script lang="ts">
+  import type { DeviceIds } from "video-mirror";
+
   import { createEventDispatcher } from "svelte";
   import { VideoMirror } from "video-mirror";
-  import type { DeviceIds } from "video-mirror";
   import { askMediaSetup } from "~/stores/askMediaSetup";
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import PageOverlay from "~/ui/lib/PageOverlay";
@@ -22,12 +23,18 @@
   <logo>
     <img src={relmLogo} alt="logo" />
   </logo>
-  
+
   <message>
     You're about to join a social experience with audio & video.
   </message>
 
-  <VideoMirror on:done {audioDesired} {videoDesired} {preferredDeviceIds} />
+  <VideoMirror
+    on:done
+    {audioDesired}
+    {videoDesired}
+    {preferredDeviceIds}
+    autoFocus={true}
+  />
 
   <or>or</or>
   <button on:click={joinWithout}> Join without audio / video </button>
