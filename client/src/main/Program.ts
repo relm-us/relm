@@ -45,6 +45,7 @@ import { setAvatarFromParticipant } from "~/identity/Avatar/setAvatarFromPartici
 import { getDefaultAppearance } from "~/identity/Avatar/appearance";
 import { localIdentityData } from "~/stores/identityData";
 import { IdentityData, UpdateData } from "~/types";
+import { resetArrowKeys } from "./effects/resetArrowKeys";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -271,7 +272,13 @@ export function makeProgram(): Program {
         exists(state.pageParams, "pageParams");
         exists(state.authHeaders, "authHeaders");
 
-        return [state, getAuthenticationHeaders(state.pageParams)];
+        return [
+          state,
+          Cmd.batch([
+            getAuthenticationHeaders(state.pageParams),
+            resetArrowKeys,
+          ]),
+        ];
       }
 
       case "importedPhysicsEngine": {
