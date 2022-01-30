@@ -9,6 +9,10 @@ import { worldManager } from "~/world";
 
 import { Portal } from "../components";
 
+const portalsDisabled = (localStorage.getItem("debug") || "")
+  .split(":")
+  .includes("noportal");
+
 const bodyFacing = new Vector3();
 const vOut = new Vector3(0, 0, 1);
 export class PortalSystem extends System {
@@ -29,6 +33,8 @@ export class PortalSystem extends System {
     this.queries.setup.forEach((entity) => {
       entity.add(Impactable);
     });
+
+    if (portalsDisabled) return;
 
     this.queries.contact.forEach((entity) => {
       const portal = entity.get(Portal);
