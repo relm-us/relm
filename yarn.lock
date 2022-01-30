@@ -1437,10 +1437,10 @@
   resolved "https://registry.yarnpkg.com/@tsconfig/node16/-/node16-1.0.2.tgz#423c77877d0569db20e1fc80885ac4118314010e"
   integrity sha512-eZxlbI8GZscaGS7kkc/trHTT5xgrjH3/1n2JDwusC9iahPKWMRvRjJSAN5mCXviuTGQ/lHnhvv8Q1YTpnfz9gA==
 
-"@twilio/webrtc@4.5.1":
-  version "4.5.1"
-  resolved "https://registry.yarnpkg.com/@twilio/webrtc/-/webrtc-4.5.1.tgz#9a69b8f3709624b215e9481097626b1d3ae879ba"
-  integrity sha512-0GwnffxJ71jm/7sYD8MYHzZRCR59p7KYqiMO8/Fmny7S4L0s8Ms36ghUUfCE7x/XuWjAC4FU6L/DkFN1Ewuu8Q==
+"@twilio/webrtc@4.5.2":
+  version "4.5.2"
+  resolved "https://registry.yarnpkg.com/@twilio/webrtc/-/webrtc-4.5.2.tgz#9e3fd548f942d45f983268bd965d67da66484e9d"
+  integrity sha512-UPcepsAosWCnKvao28G+ErYX/ZLNqKKd9OzJx1LZ1DGkDyKRg2pHSO0PJ0bCMf7pu3Kv5ns0DYwxX3XCT6ZIlw==
 
 "@types/asn1js@^2.0.2":
   version "2.0.2"
@@ -11089,7 +11089,7 @@ supports-hyperlinks@^2.0.0:
     has-flag "^4.0.0"
     supports-color "^7.0.0"
 
-svelt-yjs@^1.1.0:
+svelt-yjs@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/svelt-yjs/-/svelt-yjs-1.1.0.tgz#e296ff3db76c048de68a6f5a768a890b726f01cb"
   integrity sha512-2cG19yT1/j3INP19TilDw8H3oyznCC1dyickRnfgs0Ecpdoa7y2yAQ21/7Qihy4m2OArxZRIaX1hmbMyYItFeA==
@@ -11127,7 +11127,7 @@ svelte-hmr@^0.10.3:
   resolved "https://registry.yarnpkg.com/svelte-hmr/-/svelte-hmr-0.10.3.tgz#6939a6ae483bb0180e0f3f120554d947e00d2223"
   integrity sha512-s90yAPnfGE6rTbq9Vvq73z1XqLJ2qGw0VjorpwKfDZRIsB0/Ozu+uF5cyC1fS3dCyQcS2sZDMt4zQ/qDjDwa/Q==
 
-svelte-icons@^2.1.0:
+svelte-icons@2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/svelte-icons/-/svelte-icons-2.1.0.tgz#6f2ec72f1d5c8b2de1a4b8a822c95bcb2f701aca"
   integrity sha512-rHPQjweEc9fGSnvM0/4gA3pDHwyZyYsC5KhttCZRhSMJfLttJST5Uq0B16Czhw+HQ+HbSOk8kLigMlPs7gZtfg==
@@ -11154,7 +11154,7 @@ svelte-loader@^2.13.6:
     loader-utils "^1.1.0"
     svelte-dev-helper "^1.1.9"
 
-svelte-notifications@^0.9.93:
+svelte-notifications@0.9.93:
   version "0.9.93"
   resolved "https://registry.yarnpkg.com/svelte-notifications/-/svelte-notifications-0.9.93.tgz#4e430b92ef3242d8354e6150d577c02826f038b2"
   integrity sha512-xtgBT653R8j3KzKhrRdnZKhdcgi22RbN27dvn4GSzf6Mw5ESOFj+j8tNe1FDaeA/dU+r2r2ZsG2rvCqLDsZ4ow==
@@ -11171,7 +11171,7 @@ svelte-preprocess@^4.0.0, svelte-preprocess@^4.2.0:
     sorcery "^0.10.0"
     strip-indent "^3.0.0"
 
-svelte-select@^3.16.1:
+svelte-select@3.17.0:
   version "3.17.0"
   resolved "https://registry.yarnpkg.com/svelte-select/-/svelte-select-3.17.0.tgz#6bea0cb8d0c9465d28a2bac562f2de8a61f48a9f"
   integrity sha512-ITmX/XUiSdkaILmsTviKRkZPaXckM5/FA7Y8BhiUPoamaZG/ZDyOo6ydjFu9fDVFTbwoAUGUi6HBjs+ZdK2AwA==
@@ -11331,7 +11331,7 @@ test-exclude@^6.0.0:
     glob "^7.1.4"
     minimatch "^3.0.4"
 
-three-nebula@^10.0.0:
+three-nebula@10.0.3:
   version "10.0.3"
   resolved "https://registry.yarnpkg.com/three-nebula/-/three-nebula-10.0.3.tgz#8da67911198893521d89a3d2ccd330e786f7a2bc"
   integrity sha512-cX0UVkCGKx1r36z/yo26HAjsMGa3NcSvGZlODTLo6lfNikpK7oYXgq5r4yVrjaGjhpeKnFalNTI8LsHiZ8KlYw==
@@ -11385,7 +11385,7 @@ timsort@^0.3.0:
   resolved "https://registry.yarnpkg.com/timsort/-/timsort-0.3.0.tgz#405411a8e7e6339fe64db9a234de11dc31e02bd4"
   integrity sha1-QFQRqOfmM5/mTbmiNN4R3DHgK9Q=
 
-tiny-typed-emitter@^2.1.0:
+tiny-typed-emitter@2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/tiny-typed-emitter/-/tiny-typed-emitter-2.1.0.tgz#b3b027fdd389ff81a152c8e847ee2f5be9fad7b5"
   integrity sha512-qVtvMxeXbVej0cQWKqVSSAHmKZEHAvxdF8HEUBFWts8h+xEo5m/lEiPakuyZ3BnCBjOD8i24kzNOiOLLgsSxhA==
@@ -11609,12 +11609,12 @@ tunnel-agent@^0.6.0:
   dependencies:
     safe-buffer "^5.0.1"
 
-twilio-video@^2.18.1:
-  version "2.18.2"
-  resolved "https://registry.yarnpkg.com/twilio-video/-/twilio-video-2.18.2.tgz#e138be2b42f959b323263c6239cf46a76e3c317c"
-  integrity sha512-1qdYyL2pfaHargGJ56Wz22LO432xJAUkUzvKSTxO5k8cn7DDULS5zU0FQQV2skFBig6YqrmHICmGkyKBaP9E9Q==
+twilio-video@2.18.3:
+  version "2.18.3"
+  resolved "https://registry.yarnpkg.com/twilio-video/-/twilio-video-2.18.3.tgz#8387503a822c79541a2a1dcfbe2b3b8fcf7c171e"
+  integrity sha512-S4Fq5QCBDXHAsITu3Kd1MHTBeFchLENUI9gAZrwYOQr+yJIclIHRNCUktym/G9rGGdJVQlG/nuyYYpOR3R9rvQ==
   dependencies:
-    "@twilio/webrtc" "4.5.1"
+    "@twilio/webrtc" "4.5.2"
     backoff "^2.5.0"
     ws "^7.4.6"
     xmlhttprequest "^1.8.0"
@@ -11960,7 +11960,7 @@ vendors@^1.0.0:
   resolved "https://registry.yarnpkg.com/vendors/-/vendors-1.0.4.tgz#e2b800a53e7a29b93506c3cf41100d16c4c4ad8e"
   integrity sha512-/juG65kTL4Cy2su4P8HjtkTxk6VmJDiOPBufWniqQ6wknac6jNiXS9vU+hO3wgusiyqWlzTbVHi0dyJqRONg3w==
 
-video-mirror@^4.3.0:
+video-mirror@4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/video-mirror/-/video-mirror-4.3.0.tgz#3084610faf5622205186c7186cd66bf6799f4e23"
   integrity sha512-4wXzNmR4mTPO5jtLEaxl5/l0HvI8ekCiBOgD0jo4cC31jePHWQ1Rq5XdpDcbsuNE6b+nQE/oWw49AjAqngUWVw==
@@ -12455,10 +12455,10 @@ xtend@^4.0.0, xtend@^4.0.2, xtend@~4.0.0, xtend@~4.0.1:
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.2.tgz#bb72779f5fa465186b1f438f674fa347fdb5db54"
   integrity sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==
 
-y-indexeddb@^9.0.6:
-  version "9.0.6"
-  resolved "https://registry.yarnpkg.com/y-indexeddb/-/y-indexeddb-9.0.6.tgz#49aecac11bc229571fb134e0ec0717c0330b731f"
-  integrity sha512-8mdCYdzZDWS2lGiB9Reaz67ZqvnV6EXH/F7L+TmBC+3mWjIBrPw4UcI79nOhEOh+y9lHXzNpSda4YJ06M13F1A==
+y-indexeddb@9.0.7:
+  version "9.0.7"
+  resolved "https://registry.yarnpkg.com/y-indexeddb/-/y-indexeddb-9.0.7.tgz#516f6a9dc2ca68a0cc280030141faecaae699ea9"
+  integrity sha512-58rDlwtRgXucgR9Kxc49AepAR6uGNGfcvPPAMrmMfSvRBQ/tPnx6NoHNyrRkhbALEAjV9tPEAIP0a/KkVqAIyA==
   dependencies:
     lib0 "^0.2.35"
 
