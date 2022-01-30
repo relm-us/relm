@@ -14,7 +14,7 @@ const vOut = new Vector3(0, 0, 1);
 export class PortalSystem extends System {
   presentation: Presentation;
 
-  order = Groups.Simulation - 1;
+  order = Groups.Simulation + 1;
 
   static queries = {
     setup: [Portal, Not(Impactable)],
@@ -32,30 +32,25 @@ export class PortalSystem extends System {
 
     this.queries.contact.forEach((entity) => {
       const portal = entity.get(Portal);
-      const others: Map<Entity, number> = entity.get(Impact).others;
-      for (const [otherEntity, magnitude] of others) {
-        if (otherEntity.has(Controller)) {
-          console.log("portal triggered", portal);
-          if (portal.kind === "LOCAL") {
-            const transform = otherEntity.get(Transform);
-            const newCoords = new Vector3().copy(portal.coords);
+      const otherEntity: Entity = entity.get(Impact).other;
+      if (otherEntity.has(Controller)) {
+        console.log("portal triggered", portal);
+        if (portal.kind === "LOCAL") {
+          const transform = otherEntity.get(Transform);
+          const newCoords = new Vector3().copy(portal.coords);
 
-            // Make participant show up on the "other side" of the
-            // portal destination, depending on movement direction.
-            bodyFacing
-              .copy(vOut)
-              .applyQuaternion(transform.rotation)
-              .normalize();
-            newCoords.add(bodyFacing);
+          // Make participant show up on the "other side" of the
+          // portal destination, depending on movement direction.
+          bodyFacing.copy(vOut).applyQuaternion(transform.rotation).normalize();
+          newCoords.add(bodyFacing);
 
-            worldManager.moveTo(newCoords);
-          } else if (portal.kind === "REMOTE") {
-            worldManager.dispatch({
-              id: "enterPortal",
-              relmName: portal.relm,
-              entryway: portal.entryway,
-            });
-          }
+          worldManager.moveTo(newCoords);
+        } else if (portal.kind === "REMOTE") {
+          worldManager.dispatch({
+            id: "enterPortal",
+            relmName: portal.relm,
+            entryway: portal.entryway,
+          });
         }
       }
     });

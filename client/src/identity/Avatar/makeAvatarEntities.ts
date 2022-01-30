@@ -69,32 +69,3 @@ export function makeAvatarEntities(
 
   return { body, head, emoji };
 }
-
-// export function makeLocalAvatar(
-//   this: void,
-//   ecsWorld: DecoratedECSWorld,
-//   position: Vector3,
-//   storeHeadAngle: (angle: number) => void
-// ): AvatarEntities {
-//   const entities = makeAvatar(ecsWorld, position, false);
-
-//   entities.body.add(Controller).add(TwistBone, {
-//     boneName: "mixamorigHead",
-//     function: headFollowsPointer(storeHeadAngle),
-//   });
-
-//   Object.values(entities).forEach((entity) => entity.activate());
-
-// // Local participant name is hidden in build mode so the label does
-// // not obstruct clicking / dragging etc.
-// this.unsubs.push(
-//   worldUIMode.subscribe(($mode) => {
-//     const label = this.entities.body.get(Html2d);
-//     if (label) {
-//       label.visible = $mode === "play";
-//       label.modified();
-//     }
-//   })
-// );
-//   return entities;
-// }

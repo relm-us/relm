@@ -8,7 +8,7 @@ import { Physics } from "../Physics";
 export class ColliderSystem extends System {
   physics: Physics;
 
-  order = Groups.Presentation + 250; // After WorldTransform
+  order = Groups.Presentation + 301; // After WorldTransform
 
   static queries = {
     added: [Collider, Not(ColliderRef), RigidBodyRef],
@@ -31,6 +31,7 @@ export class ColliderSystem extends System {
       this.remove(entity);
     });
     this.queries.modifiedTransform.forEach((entity) => {
+      // TODO: is this necessary?
       this.remove(entity);
     });
     // replace ColliderRef with new spec
@@ -46,7 +47,6 @@ export class ColliderSystem extends System {
   build(entity: Entity) {
     const spec = entity.get(Collider);
     const rigidBodyRef = entity.get(RigidBodyRef);
-    const colliderRef = entity.get(ColliderRef);
     const { world, rapier } = (this.world as any).physics;
 
     const worldTransform = entity.get(WorldTransform);
@@ -57,14 +57,28 @@ export class ColliderSystem extends System {
       worldTransform.scale
     );
 
+    colliderDesc.setActiveCollisionTypes(
+      rapier.ActiveCollisionTypes.DEFAULT |
+        // Participant is Dynamic, portals etc. are Static
+        rapier.ActiveCollisionTypes.DYNAMIC_STATIC
+    );
+    colliderDesc.setActiveEvents(
+      // Impact with non-sensors
+      rapier.ActiveEvents.CONTACT_EVENTS |
+        // Impact with sensors
+        rapier.ActiveEvents.INTERSECTION_EVENTS
+    );
+
     colliderDesc.setTranslation(
       spec.offset.x * worldTransform.scale.x,
       spec.offset.y * worldTransform.scale.y,
       spec.offset.z * worldTransform.scale.z
     );
+    colliderDesc.setSensor(spec.isSensor);
     colliderDesc.setDensity(spec.density);
     colliderDesc.setCollisionGroups(spec.interaction);
 
+    const colliderRef = entity.get(ColliderRef);
     if (colliderRef) {
       world.removeCollider(colliderRef.value);
       this.physics.handleToEntity.delete(colliderRef.value.handle);

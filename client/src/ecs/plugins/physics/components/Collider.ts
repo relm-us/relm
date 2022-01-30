@@ -1,4 +1,4 @@
-import { Component, StringType, NumberType } from "~/ecs/base";
+import { Component, StringType, NumberType, BooleanType } from "~/ecs/base";
 import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 import {
@@ -96,6 +96,14 @@ export class Collider extends Component {
     /**
      * General Properties
      */
+
+    isSensor: {
+      type: BooleanType,
+      default: false,
+      editor: {
+        label: "Sensor?",
+      },
+    },
 
     offset: {
       type: Vector3Type,

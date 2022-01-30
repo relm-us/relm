@@ -4,7 +4,7 @@ import type {
   World,
 } from "@dimforge/rapier3d";
 import { System, Modified, Groups } from "~/ecs/base";
-import { RigidBody, RigidBodyRef } from "../components";
+import { Impact, RigidBody, RigidBodyRef } from "../components";
 import { Transform, WorldTransform } from "~/ecs/plugins/core";
 import { Matrix4, Vector3, Quaternion } from "three";
 import { Physics } from "..";
@@ -87,29 +87,26 @@ export class PhysicsSystem extends System {
       body.setRotation(local.rotation, true);
     });
 
-    // this.queries.default.forEach((entity) => {
-    //   const world = entity.get(WorldTransform);
-    //   const spec = entity.get(RigidBody);
-    //   const body = entity.get(RigidBodyRef).value as RapierRigidBody;
-    //   const transform = entity.get(Transform);
-
-    //   // @todo Should we teleport if the distance is huge?
-
-    //   if (spec.kind === "KINEMATIC") {
-    //     body.setNextKinematicTranslation(transform.position);
-    //     body.setNextKinematicRotation(transform.rotation);
-    //   }
-    //   if (spec.kind === "STATIC" || spec.kind === "DYNAMIC") {
-    //     body.setTranslation(world.position, false);
-    //     body.setRotation(world.rotation, false);
-    //   }
-    //   if (spec.kind === "DYNAMIC") {
-    //     body.setAngvel(spec.angularVelocity, false);
-    //     body.setLinvel(spec.linearVelocity, false);
-    //   }
-    // });
-
     world.step(eventQueue);
+
+    // Add Impacts when contact or intersection takes place. We need to
+    // do this here, rather than in a separate system, because the Physics
+    // System is happening faster than the regular loop.
+    const handleContactEvent = (
+      handle1: number,
+      handle2: number,
+      contactStarted: boolean
+    ) => {
+      const entity1 = this.physics.handleToEntity.get(handle1);
+      const entity2 = this.physics.handleToEntity.get(handle2);
+
+      if (contactStarted) {
+        entity1.add(Impact, { other: entity2 });
+        entity2.add(Impact, { other: entity1 });
+      }
+    };
+    eventQueue.drainContactEvents(handleContactEvent);
+    eventQueue.drainIntersectionEvents(handleContactEvent);
 
     this.queries.default.forEach((entity) => {
       const parent = entity.getParent();
@@ -118,21 +115,6 @@ export class PhysicsSystem extends System {
       const spec = entity.get(RigidBody);
       const body = entity.get(RigidBodyRef).value;
 
-      // if (spec.sync) {
-      //   if (spec.sync === true) {
-      //     spec.sync = this.physics.hecsWorld.version;
-      //   } else if (this.physics.hecsWorld.version > spec.sync + 1) {
-      //     spec.sync = false;
-      //   }
-      //   body.setTranslation(world.position, true);
-      // if (local.modified) {
-      //   if (spec.sync === true) {
-      //     spec.sync = this.physics.hecsWorld.version;
-      //   } else if (this.physics.hecsWorld.version > spec.sync + 1) {
-      //     spec.sync = false;
-      //   }
-      //   body.setTranslation(world.position, true);
-      // } else
       if (spec.kind === "DYNAMIC") {
         if (!parent) {
           // if (entity.name === "Avatar") return;
