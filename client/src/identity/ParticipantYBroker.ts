@@ -16,9 +16,11 @@ const transformArray = [];
  */
 export class ParticipantYBroker {
   worldDoc: WorldDoc;
+  unsubs: Function[];
 
   constructor(worldDoc: WorldDoc) {
     this.worldDoc = worldDoc;
+    this.unsubs = [];
   }
 
   get yidentities(): Y.Map<IdentityData> {
@@ -38,14 +40,14 @@ export class ParticipantYBroker {
   }
 
   subscribe(dispatch: Dispatch, callback: RecvTransformCallback) {
-    const unsub1 = this.subscribeTransformData(callback);
-    const unsub2 = this.subscribeDisconnect(dispatch);
-    const unsub3 = this.subscribeIdentityData(dispatch);
-    return () => {
-      unsub1();
-      unsub2();
-      unsub3();
-    };
+    this.unsubs.push(this.subscribeTransformData(callback));
+    this.unsubs.push(this.subscribeDisconnect(dispatch));
+    this.unsubs.push(this.subscribeIdentityData(dispatch));
+  }
+
+  unsubscribe() {
+    this.unsubs.forEach((unsub) => unsub());
+    this.unsubs.length = 0;
   }
 
   subscribeTransformData(callback: RecvTransformCallback) {

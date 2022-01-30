@@ -38,10 +38,11 @@ import { createScreenTrack } from "~/av/twilio/createScreenTrack";
 
 import { playerId } from "~/identity/playerId";
 import { Avatar } from "~/identity/Avatar";
-import { Participant } from "types/identity";
+import { Participant } from "~/types/identity";
 import { ParticipantManager } from "~/identity/ParticipantManager";
 import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 import { setTransformArrayOnParticipants } from "~/identity/Avatar/transform";
+import { delay } from "~/utils/delay";
 
 type LoopType =
   | { type: "raf" }
@@ -49,6 +50,7 @@ type LoopType =
 export class WorldManager {
   dispatch: Dispatch;
   state: State;
+  broker: ParticipantYBroker;
 
   world: DecoratedECSWorld;
   worldDoc: WorldDoc;
@@ -89,6 +91,7 @@ export class WorldManager {
   ) {
     this.dispatch = dispatch;
     this.state = state;
+    this.broker = broker;
 
     this.world = ecsWorld;
     this.worldDoc = worldDoc;
@@ -185,7 +188,11 @@ export class WorldManager {
   }
 
   async deinit() {
-    this.started = false;
+    this.stop();
+
+    await delay(100);
+
+    this.broker.unsubscribe();
 
     this.unsubs.forEach((f) => f());
     this.unsubs.length = 0;

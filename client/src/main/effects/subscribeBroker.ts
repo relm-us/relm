@@ -13,10 +13,10 @@ export const subscribeBroker =
   ) =>
   (dispatch: Dispatch) => {
     const broker = new ParticipantYBroker(worldDoc);
-    const unsub = broker.subscribe(dispatch, (transformArray) => {
+    broker.subscribe(dispatch, (transformArray) => {
       // Store the transform array for later, when we can use it
       // in a consistent manner within the ECS loop
       worldManager.setTransformArray(transformArray);
     });
-    dispatch({ id: "didSubscribeBroker", broker, unsub });
+    dispatch({ id: "didSubscribeBroker", broker });
   };

@@ -63,7 +63,6 @@ export function makeProgram(): Program {
       globalBroadcast,
       worldDocStatus: "disconnected",
       screen: "initial",
-      unsubs: [],
 
       participants: initParticipants(),
       localAvatarInitialized: false,
@@ -222,20 +221,38 @@ export function makeProgram(): Program {
         exists(msg.relmName, "relmName");
         exists(msg.entryway, "entryway");
 
+        worldManager.stop();
+
         return [
           {
             ...state,
-            overlayScreen: "portal",
+            // Release all svelte timers etc.
+            screen: "loading-screen",
             pageParams: {
               ...state.pageParams,
               relmName: msg.relmName,
               entryway: msg.entryway,
             },
+
+            // Show empty progress bar; values to be updated later
+            entitiesCount: 0,
+            entitiesMax: 1,
+            assetsCount: 0,
+            assetsMax: 1,
+
             entrywayPosition: null,
             initializedWorldManager: false,
             worldDoc: null,
             ecsWorld: null,
           },
+          send({ id: "didEnterPortal" }),
+        ];
+      }
+
+      case "didEnterPortal": {
+        return [
+          state,
+
           (dispatch) => {
             worldManager
               .deinit()
@@ -243,7 +260,8 @@ export function makeProgram(): Program {
                 dispatch({ id: "didResetWorld" });
               })
               .catch((err) => {
-                dispatch({ id: "error", msg: err.message });
+                console.warn(err);
+                dispatch({ id: "error", msg: err.toString() });
               });
           },
         ];
@@ -253,10 +271,7 @@ export function makeProgram(): Program {
         exists(state.pageParams, "pageParams");
         exists(state.authHeaders, "authHeaders");
 
-        return [
-          state,
-          getRelmPermitsAndMetadata(state.pageParams, state.authHeaders),
-        ];
+        return [state, getAuthenticationHeaders(state.pageParams)];
       }
 
       case "importedPhysicsEngine": {
@@ -308,7 +323,6 @@ export function makeProgram(): Program {
       }
 
       case "didSubscribeBroker": {
-        state.unsubs.push(msg.unsub);
         return [{ ...state, broker: msg.broker }];
       }
 
@@ -536,7 +550,7 @@ export function makeProgram(): Program {
           identityData.appearance = state.participantQuickAppearance;
         }
         return [
-          { ...state, overlayScreen: null, screen: "game-world" },
+          { ...state, screen: "game-world" },
           send({ id: "updateLocalIdentityData", identityData }),
         ];
 
@@ -614,7 +628,6 @@ export function makeProgram(): Program {
               dispatch,
               ecsWorld: state.ecsWorld,
               permits: state.permits,
-              overlayScreen: state.overlayScreen,
               state,
             },
           ];

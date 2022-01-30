@@ -24,7 +24,6 @@ export type State = {
   authHeaders?: AuthenticationHeaders;
   entrywayPosition?: Vector3;
   entrywayUnsub?: Function;
-  unsubs: Function[];
 
   // relm metadata
   relmDocId?: string; // server-assigned UUID for the relm
@@ -83,6 +82,7 @@ export type Message =
   | { id: "gotPageParams"; pageParams: PageParams }
   | { id: "gotAuthenticationHeaders"; authHeaders: AuthenticationHeaders }
   | { id: "enterPortal"; relmName: string; entryway: string }
+  | { id: "didEnterPortal" }
   | { id: "didResetWorld" }
   | {
       id: "gotRelmPermitsAndMetadata";
@@ -95,7 +95,7 @@ export type Message =
     }
 
   // Participants
-  | { id: "didSubscribeBroker"; broker: ParticipantYBroker; unsub: Function }
+  | { id: "didSubscribeBroker"; broker: ParticipantYBroker }
   | { id: "didMakeLocalAvatar"; avatar: Avatar }
   | {
       id: "recvParticipantData";
