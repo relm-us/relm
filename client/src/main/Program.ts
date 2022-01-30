@@ -344,8 +344,6 @@ export function makeProgram(): Program {
       }
 
       case "didSetUpAudioVideo": {
-        console.log("didSetUpAudioVideo", msg);
-
         if (msg.audioDesired !== undefined) {
           state.initialAudioDesired = msg.audioDesired;
         }

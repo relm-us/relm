@@ -23,7 +23,6 @@ export function setOculus(
       offset: new Vector3(0, OCULUS_HEIGHT, 0),
     });
   } else {
-    console.log("update oculus", showAudio, showVideo);
     const component = entities.body.get(OculusRef)?.component;
 
     if (component) {
