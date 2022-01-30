@@ -188,11 +188,9 @@ export class WorldManager {
   }
 
   async deinit() {
-    this.stop();
-
-    await delay(100);
-
     this.broker.unsubscribe();
+
+    await delay(30);
 
     this.unsubs.forEach((f) => f());
     this.unsubs.length = 0;
@@ -204,8 +202,20 @@ export class WorldManager {
       if (node.removeFromParent) node.removeFromParent();
     });
 
-    // this.participants.deinit();
     this.camera.deinit();
+
+    this.dispatch = null;
+    this.participants = null;
+    this.state = null;
+    this.broker = null;
+
+    this.world = null;
+    this.worldDoc = null;
+    this.subrelm = null;
+    this.entryway = null;
+    this.relmDocId = null;
+    this.avConnection = null;
+    this.camera = null;
   }
 
   populate() {

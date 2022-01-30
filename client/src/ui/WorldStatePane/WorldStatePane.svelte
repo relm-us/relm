@@ -49,6 +49,9 @@
 
   onMount(() => {
     const interval = setInterval(() => {
+      if (!worldManager.participants || !worldManager.participants.local.avatar)
+        return;
+
       x = worldManager.participants.local.avatar.position.x;
       y = worldManager.participants.local.avatar.position.y;
       z = worldManager.participants.local.avatar.position.z;
