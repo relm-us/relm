@@ -79,8 +79,8 @@ export class ModelSystem extends System {
   build(entity: Entity) {
     const { scene, animations } = entity.get(AssetLoaded).value;
 
-    const invalidModel = this.invalidModel(scene);
-    if (invalidModel) return this.error(entity, "invalid model");
+    const invalidErrorMsg = this.invalidModel(scene);
+    if (invalidErrorMsg) return this.error(entity, invalidErrorMsg);
 
     const clonedScene = SkeletonUtils.clone(scene);
 
@@ -124,13 +124,16 @@ export class ModelSystem extends System {
 
   invalidModel(scene: Group): any {
     let maybeInvalid = undefined;
+    if (!scene) {
+      return `Invalid model: no scene`;
+    }
     scene.traverse((node) => {
       const geometry: BufferGeometry = (node as Mesh).geometry;
       if (geometry) {
         const attrs = Object.entries(geometry.attributes);
         for (const [attrName, attrVal] of attrs) {
           if (!attrVal) {
-            maybeInvalid = `Invalid model--attribute '${attrName}' is null`;
+            maybeInvalid = `Invalid model: attribute '${attrName}' is null`;
           }
         }
       }
