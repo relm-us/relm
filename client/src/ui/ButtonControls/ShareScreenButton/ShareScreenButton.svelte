@@ -35,6 +35,9 @@
     margin: 0 auto;
   }
 
+  r-button {
+    display: flex;
+  }
   r-button.glowing {
     border: 3px solid yellow;
     border-radius: 100%;
