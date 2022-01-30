@@ -16,5 +16,10 @@ export class PointerPositionRef extends StateComponent {
       type: NumberType,
       default: 0,
     },
+
+    acknowledgedAt: {
+      type: NumberType,
+      default: 0,
+    },
   };
 }

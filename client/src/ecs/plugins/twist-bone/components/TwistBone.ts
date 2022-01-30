@@ -42,7 +42,7 @@ export class TwistBone extends LocalComponent {
 
     speed: {
       type: NumberType,
-      default: 0.15,
+      default: 0.35,
       editor: {
         label: "Twist Speed",
       },
