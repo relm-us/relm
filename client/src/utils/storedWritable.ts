@@ -5,12 +5,13 @@ declare type StoreDict<T> = { [key: string]: Writable<T> };
 
 const stores: StoreDict<any> = {};
 
-function parse<T>(json, fallbackValue, key: string) {
+function parse<T>(json: string, fallbackValue: T, key: string) {
   let value: T;
   try {
     value = JSON.parse(json);
   } catch (err) {
     console.log(`unable to parse localStorage value at key '${key}'`, err);
+    console.trace(json);
     value = fallbackValue;
   }
   return value;
