@@ -26,10 +26,10 @@ export class FollowSystem extends System {
     const targetEntity = world.entities.getById(spec.target);
     if (!targetEntity) return;
 
-    const targetWorld = targetEntity.get(WorldTransform) as any;
-    if (!targetWorld) return;
+    const targetTransform = targetEntity.get(WorldTransform) as any;
+    if (!targetTransform) return;
 
-    targetPosition.copy(targetWorld.position);
+    targetPosition.copy(targetTransform.position);
     targetPosition.add(spec.offset);
 
     transform.position.lerp(targetPosition, spec.lerpAlpha);

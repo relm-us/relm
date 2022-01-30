@@ -5,6 +5,9 @@ export const DEFAULT_RELM_ID = "default";
 export const DEFAULT_ENTRYWAY = "default";
 export const DRAG_DISTANCE_THRESHOLD = 4;
 
+// 0 - 100, where 100 is completely zoomed out
+export const DEFAULT_VIEWPORT_ZOOM = 25.0;
+
 // Height of the avatar (GLB); TODO: make this a variable?
 export const AVATAR_HEIGHT = 1.5;
 

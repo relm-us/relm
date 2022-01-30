@@ -3,13 +3,14 @@ import { Vector3, Quaternion, Euler } from "three";
 
 import { makeEntity } from "./makeEntity";
 
-export function makeCamera(world) {
+// 5.6 radians is approx. looking at center of Avatar from above
+export function makeCamera(world, perspectiveAngle = 5.6) {
   // Create the singleton camera
   const camera = makeEntity(world, "Camera")
     .add(Transform, {
-      position: new Vector3(0, 5.5, 5),
-      // 5.6 radians is approx. looking at center of Avatar from above
-      rotation: new Quaternion().setFromEuler(new Euler(5.6, 0, 0, "XYZ")),
+      rotation: new Quaternion().setFromEuler(
+        new Euler(perspectiveAngle, 0, 0, "XYZ")
+      ),
     })
     .add(Camera);
 

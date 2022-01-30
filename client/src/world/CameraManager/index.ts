@@ -1,7 +1,7 @@
 import { Vector3 } from "three";
 
 import { Entity } from "~/ecs/base";
-import { Transform } from "~/ecs/plugins/core";
+import { Object3D, Transform } from "~/ecs/plugins/core";
 import { Follow } from "~/ecs/plugins/follow";
 import { LookAt } from "~/ecs/plugins/look-at";
 
@@ -87,14 +87,13 @@ export class CameraManager {
     this.state = { type: "following" };
     this.zoom = 0.5;
 
-    this.followOffset = new Vector3();
+    this.followOffset = new Vector3().copy(this.zoomedOutOffset);
     this.lookAtOffset = new Vector3();
 
     // Create the ECS camera entity that holds the ThreeJS camera
     this.entity = makeCamera(this.ecsWorld)
       .add(Follow, {
         target: this.avatar.id,
-        offset: new Vector3().copy(this.zoomedInOffset),
         lerpAlpha: CAMERA_LERP_ALPHA,
       })
       .activate();

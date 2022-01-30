@@ -1,5 +1,5 @@
 import { writable, Writable } from "svelte/store";
 
-const DEFAULT_SCALE = 25.0;
+import { DEFAULT_VIEWPORT_ZOOM } from "~/config/constants";
 
-export const viewportScale: Writable<number> = writable(DEFAULT_SCALE);
+export const viewportScale: Writable<number> = writable(DEFAULT_VIEWPORT_ZOOM);
