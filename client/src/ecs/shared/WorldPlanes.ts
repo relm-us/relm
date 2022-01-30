@@ -59,6 +59,9 @@ export class WorldPlanes {
     xy: new Vector3(),
   };
 
+  previousPoint: Vector2;
+  updatedAt: number;
+
   constructor(
     camera: PerspectiveCamera,
     screenSize: Vector2,
@@ -69,6 +72,8 @@ export class WorldPlanes {
     this.screenSize = screenSize;
     this.origin = origin;
     this.offset = offset || new Vector3();
+    this.previousPoint = new Vector2();
+    this.updatedAt = 0;
 
     this.recalculatePlanesConstants();
   }
@@ -106,6 +111,11 @@ export class WorldPlanes {
 
   update(point?: Vector2) {
     if (!this.origin) return;
+
+    if (point.equals(this.previousPoint)) return;
+
+    this.previousPoint.copy(point);
+    this.updatedAt = performance.now();
 
     this.recalculatePlanesConstants();
 

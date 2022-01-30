@@ -86,6 +86,9 @@ export class TwistBoneSystem extends System {
     }
     // Gently move head direction (rather than abruptly changing directions)
     bone.twistBoneQuaternion.slerp(qBoneTarget, spec.speed);
+    if (impossibleNeck(bone.twistBoneQuaternion)) {
+      bone.twistBoneQuaternion.copy(qBoneTarget);
+    }
     // Since animations move bones, we have to "override" the animation
     bone.quaternion.copy(bone.twistBoneQuaternion);
 
@@ -97,4 +100,8 @@ export class TwistBoneSystem extends System {
       bone.quaternion.premultiply(qBoneParent.invert());
     }
   }
+}
+
+function impossibleNeck(q: Quaternion) {
+  return false;
 }
