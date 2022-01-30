@@ -32,7 +32,7 @@
   function doneEditing() {
     if (!editing) return;
 
-    content = labelEl.innerHTML;
+    content = labelEl.innerText.trim();
     const html2d: Html2d = entity.get(Html2d);
     html2d.content = content;
 
