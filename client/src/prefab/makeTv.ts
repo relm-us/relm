@@ -16,7 +16,7 @@ export function makeTv(
   const d = 0.6;
 
   const tvBox = makeBox(world, {
-    ...{ x, y, z, w, h, d },
+    ...{ x, y, z, w, h, d, rx: -0.5 },
     color: `#${linearColor.getHexString()}`,
     name: "BlueBox",
   });

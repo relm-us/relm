@@ -1,5 +1,5 @@
 import { Transform } from "~/ecs/plugins/core";
-import { Color, Vector3 } from "three";
+import { Color, Vector3, Quaternion, Euler } from "three";
 
 import { Shape } from "~/ecs/plugins/shape";
 import { RigidBody, Collider } from "~/ecs/plugins/physics";
@@ -16,6 +16,9 @@ export function makeBox(
     w = 1,
     h = 1,
     d = 1,
+    rx = 0,
+    ry = 0,
+    rz = 0,
     color = "white",
     dynamic = false,
     name = "Box",
@@ -27,11 +30,11 @@ export function makeBox(
   }
 ) {
   const linearColor = new Color(color);
-  // linearColor.convertSRGBToLinear();
 
   const entity = makeEntity(world, name)
     .add(Transform, {
       position: new Vector3(x, y + h / 2, z),
+      rotation: new Quaternion().setFromEuler(new Euler(rx, ry, rz, "XYZ")),
     })
     .add(Shape, {
       color: "#" + linearColor.getHexString(),
