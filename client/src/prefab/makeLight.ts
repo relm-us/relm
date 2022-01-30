@@ -21,6 +21,7 @@ export function makeLight(world, avatar) {
     .add(Follow, {
       target: avatar.id,
       offset: lightOffset,
+      lerpAlpha: 1,
     })
     .add(DirectionalLight, {
       target: avatar.id,

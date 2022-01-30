@@ -63,6 +63,7 @@ export class PhysicsSystem extends System {
   update(delta: number) {
     const dt = 1 / (1000 / delta);
 
+    // Impact components last just one cycle; clean up old ones
     this.queries.impacts.forEach((entity) => {
       entity.remove(Impact);
     });
