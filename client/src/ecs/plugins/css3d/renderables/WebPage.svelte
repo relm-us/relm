@@ -84,6 +84,7 @@
 
 <svelte:window on:blur={onWindowBlur} on:focus={onWindowFocus} />
 
+<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <iframe
   bind:this={iframe}
   on:mouseout={onFrameMouseout}

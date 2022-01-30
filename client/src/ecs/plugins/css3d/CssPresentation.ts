@@ -4,7 +4,8 @@ import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer";
 const ResizeObserver = (window as any).ResizeObserver;
 
 export class CssPresentation {
-  FACTOR = 1000;
+  // Work around a bug in some browsers
+  FACTOR = 100;
 
   world: any;
   renderer: any;
@@ -19,8 +20,6 @@ export class CssPresentation {
     this.size = { width: 1, height: 1 };
 
     this.renderer = this.createRenderer();
-    // TODO: Remove this--not necessary?
-    // this.renderer.outputEncoding = sRGBEncoding;
     this.camera = this.createCamera();
     this.scene = world.presentation.scene;
 
@@ -65,10 +64,6 @@ export class CssPresentation {
 
     this.camera.quaternion.copy(camera.quaternion);
     this.camera.position.copy(camera.position).multiplyScalar(this.FACTOR);
-
-    // console.log("updateCamera", this.camera.position);
-    // this.camera.updateProjectionMatrix();
-    // this.camera.updateWorldMatrix();
   }
 
   render() {

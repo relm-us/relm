@@ -158,10 +158,17 @@
       shiftKeyOnClick = shiftKey;
 
       selectionLogic.mousedown(pointerDownFound, shiftKey);
-      pointerPoint = pointerPointInSelection(worldManager.selection, pointerDownFound);
+      pointerPoint = pointerPointInSelection(
+        worldManager.selection,
+        pointerDownFound
+      );
       if (pointerPoint) dragPlane.setOrigin(pointerPoint);
     } else if ($worldUIMode === "play") {
-      if (pointerDownFound.includes(worldManager.avatar.entities.body.id as string)) {
+      if (
+        pointerDownFound.includes(
+          worldManager.avatar.entities.body.id as string
+        )
+      ) {
         addTouchController(worldManager.avatar.entities.body);
       } else {
         // At this point, at least a 'click' has started. TBD if it's a drag.
@@ -171,7 +178,8 @@
           const position = clickedPosition(pointerDownFound[0], world);
           dragPlane.setOrigin(position);
         } else {
-          const planes: WorldPlanes = worldManager.world.perspective.getAvatarPlanes();
+          const planes: WorldPlanes =
+            worldManager.world.perspective.getAvatarPlanes();
           const position = new Vector3();
           planes.getWorldFromScreen(pointerPosition, position);
           dragPlane.setOrigin(position);

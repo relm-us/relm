@@ -68,6 +68,7 @@
 <svelte:window on:message={onMessage} on:blur={onWindowBlur} />
 
 {#if active}
+  <!-- svelte-ignore a11y-mouse-events-have-key-events -->
   <iframe
     class:invisible={state !== "LOADED"}
     bind:this={iframe}
