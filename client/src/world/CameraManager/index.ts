@@ -118,7 +118,7 @@ export class CameraManager {
 
   moveTo(position: Vector3) {
     const transform = this.entity.get(Transform);
-    transform.position.copy(position);
+    transform.position.copy(position).add(this.followOffset);
   }
 
   update(delta: number) {
