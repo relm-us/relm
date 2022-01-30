@@ -73,8 +73,13 @@ function setTransformDataOnParticipant(
 
   // Set position of body
   v1.set(x, y, z);
-  transform.position.lerp(v1, 0.3333);
-  // transform.position.copy(v1);
+  if (v1.distanceToSquared(transform.position) > 2) {
+    // Teleport over long distances
+    transform.position.copy(v1);
+  } else {
+    // Lerp over short distances
+    transform.position.lerp(v1, 0.3333);
+  }
 
   // Set angle of body
   e1.setFromQuaternion(transform.rotation);
