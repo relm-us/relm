@@ -22,7 +22,10 @@
   import MiniMap from "~/ui/MiniMap";
 
   import { PauseAutomatically, PauseMessage } from "~/ui/Pause";
+  import CenterCamera from "~/ui/CenterCamera";
+  import Tooltip from "~/ui/lib/Tooltip";
 
+  import { createPrefab } from "~/prefab";
   import { globalEvents } from "~/events";
 
   import { worldUIMode, openPanel, audioMode } from "~/stores";
@@ -30,8 +33,7 @@
   import { chatOpen, unreadCount } from "~/stores/chat";
   import { localIdentityData } from "~/stores/identityData";
   import { debugMode } from "~/stores/debugMode";
-  import { createPrefab } from "~/prefab";
-  import Tooltip from "~/ui/lib/Tooltip";
+  import { centerCameraVisible } from "~/stores/centerCameraVisible";
 
   export let dispatch;
   export let permits;
@@ -64,6 +66,10 @@
 
 {#if $playState === "paused"}
   <PauseMessage />
+{/if}
+
+{#if $centerCameraVisible}
+  <CenterCamera />
 {/if}
 
 <MiniMap />

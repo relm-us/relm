@@ -1,11 +1,12 @@
 import { Vector3 } from "three";
 
 import { Entity } from "~/ecs/base";
-import { Object3D, Transform } from "~/ecs/plugins/core";
+import { Transform } from "~/ecs/plugins/core";
 import { Follow } from "~/ecs/plugins/follow";
 import { LookAt } from "~/ecs/plugins/look-at";
 
 import { viewportScale } from "~/stores";
+import { centerCameraVisible } from "~/stores/centerCameraVisible";
 
 import { makeCamera } from "~/prefab/makeCamera";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
@@ -54,6 +55,8 @@ type CameraState =
   | CameraCircling;
 
 export class CameraManager {
+  counter: number = 0;
+
   ecsWorld: DecoratedECSWorld;
 
   // The ECS entity with a Camera component holding the ThreeJS PerspectiveCamera object
@@ -120,9 +123,15 @@ export class CameraManager {
     transform.position.copy(position).add(this.followOffset);
   }
 
+  isOffCenter(distance: number = 4) {
+    return this.pan.length() > distance;
+  }
+
   update(delta: number) {
     const camera = this.entity;
     if (!camera) return;
+
+    this.counter++;
 
     switch (this.state.type) {
       case "following": {
@@ -132,6 +141,12 @@ export class CameraManager {
           .add(this.pan);
         const follow = camera.get(Follow);
         follow?.offset.copy(this.followOffset);
+
+        // Make it easy to get back to avatar if camera not centered
+        if (this.counter % 60 === 0 && this.isOffCenter()) {
+          centerCameraVisible.set(true);
+        }
+
         break;
       }
       case "focusing": {
