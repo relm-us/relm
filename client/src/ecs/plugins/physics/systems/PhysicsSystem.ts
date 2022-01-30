@@ -46,6 +46,7 @@ export class PhysicsSystem extends System {
   static queries = {
     default: [RigidBodyRef, Transform, WorldTransform],
     modified: [RigidBodyRef, Modified(Transform)],
+    impacts: [Impact],
   };
 
   init({ physics }) {
@@ -61,6 +62,11 @@ export class PhysicsSystem extends System {
   // delta is number if milliseconds since last frame, e.g. 16.6ms if framerate is 60fps
   update(delta: number) {
     const dt = 1 / (1000 / delta);
+
+    this.queries.impacts.forEach((entity) => {
+      entity.remove(Impact);
+    });
+
     this.fixedUpdate(dt);
 
     // Clear the actions list, so that it can be re-filled during next ECS world step
