@@ -7,17 +7,9 @@
   export let myID;
 
   let div;
-  let autoscroll;
-
-  beforeUpdate(() => {
-    autoscroll =
-      div && div.offsetHeight + div.scrollTop > div.scrollHeight - 20;
-  });
 
   afterUpdate(() => {
-    if (autoscroll) {
-      div.scrollTo(0, div.scrollHeight);
-    }
+    if (div) div.scrollTo(0, div.scrollHeight);
   });
 </script>
 

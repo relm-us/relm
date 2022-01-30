@@ -14,7 +14,10 @@
 
 <container class="interactive" class:close={!$chatOpen} class:open={$chatOpen}>
   <slide-in>
-    <ChatHistory messages={worldManager.chat.messages} myID={playerId} />
+    <ChatHistory
+      messages={worldManager.chat.messages}
+      myID={playerId}
+    />
     <ChatBar on:close={closeChat} />
   </slide-in>
 </container>
