@@ -229,19 +229,13 @@ export class WorldManager {
     this.unsubs.forEach((f) => f());
     this.unsubs.length = 0;
 
-    this.worldDoc.unsubscribe();
     this.worldDoc.disconnect();
+    this.worldDoc.unsubscribe();
+
+    this.scene.traverse((node) => (node as any).dispose?.());
     this.world.reset();
-    this.scene.traverse((node) => {
-      if (node.removeFromParent) node.removeFromParent();
-    });
 
     this.camera.deinit();
-
-    this.dispatch = null;
-    this.participants = null;
-    this.state = null;
-    this.broker = null;
 
     this.world = null;
     this.worldDoc = null;
@@ -250,6 +244,7 @@ export class WorldManager {
     this.relmDocId = null;
     this.avConnection = null;
     this.camera = null;
+    this.participants = null;
   }
 
   enableNonInteractiveGround(enabled = true) {

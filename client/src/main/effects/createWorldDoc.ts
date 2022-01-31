@@ -14,17 +14,14 @@ export const createWorldDoc =
     relmDocId: string,
     authHeaders: AuthenticationHeaders
   ) =>
-  async (dispatch: Dispatch) => {
+  (dispatch: Dispatch) => {
     const worldDoc = new WorldDoc(ecsWorld);
 
-    const connection = worldDoc.connect(
-      config.serverYjsUrl,
-      relmDocId,
-      authHeaders
-    );
+    worldDoc.connect(config.serverYjsUrl, relmDocId, authHeaders);
 
     let connected = false;
-    connection.on("status", ({ status }: { status: WorldDocStatus }) => {
+
+    worldDoc.subscribeStatus((status: WorldDocStatus) => {
       dispatch({ id: "gotWorldDocStatus", status });
 
       if (status === "connected" && !connected) {

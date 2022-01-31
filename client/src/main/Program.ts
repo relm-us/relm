@@ -294,6 +294,9 @@ export function makeProgram(): Program {
       }
 
       case "createdECSWorld": {
+        if (state.worldDoc) {
+          console.warn("Creating new worldDoc, but one already exists");
+        }
         exists(state.relmDocId, "relmDocId");
         exists(state.authHeaders, "authHeaders");
         exists(msg.ecsWorld, "ecsWorld");

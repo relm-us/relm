@@ -1,9 +1,11 @@
-import { Entity, EntityId } from "~/ecs/base";
-import { DeepDiff } from "deep-diff";
-import { readableMap, YReadableMap } from "svelt-yjs";
+import type { WorldDocStatus } from "~/types";
 
 import * as Y from "yjs";
+import { readableMap, YReadableMap } from "svelt-yjs";
+import { DeepDiff } from "deep-diff";
 import { WebsocketProvider } from "y-websocket";
+
+import { Entity, EntityId } from "~/ecs/base";
 
 import {
   findInYArray,
@@ -123,6 +125,14 @@ export class WorldDoc extends EventEmitter {
   unsubscribe() {
     this.unsubs.forEach((f) => f());
     this.unsubs.length = 0;
+  }
+
+  subscribeStatus(sub: (status: WorldDocStatus) => void) {
+    const provider = this.provider;
+    if (provider) {
+      provider.on("status", ({ status }) => sub(status));
+      this.unsubs.push(() => provider.off("status", sub));
+    }
   }
 
   reapplyWorld() {
