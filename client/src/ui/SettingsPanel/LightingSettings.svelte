@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color, HemisphereLight } from "three";
+  import { Color } from "three";
 
   import { worldManager } from "~/world";
 
@@ -37,7 +37,7 @@
 <Pane title="Lighting">
   <r-setting>
     <r-title>
-      Ambient light:
+      Ambient:
       <r-right>
         <ColorPicker
           bind:value={ambientColor}
@@ -55,25 +55,29 @@
     </r-title>
   </r-setting>
   <r-setting>
-    <r-title>Hemisphere light:</r-title>
+    <r-title>
+      Hemisphere:
+      <r-right>
+        <r-compound>
+          Sky:
+          <ColorPicker
+            bind:value={hemisphereColor}
+            on:change={onChangeColor(
+              () => worldManager.hemisphereLight.color,
+              "hemisphereLightColor"
+            )}
+            enableSwatches={true}
+            enableAlpha={false}
+            open={false}
+            width="24px"
+            height="24px"
+          />
+        </r-compound>
+      </r-right>
+    </r-title>
     <r-row>
-      <div>
-        Sky
-        <ColorPicker
-          bind:value={hemisphereColor}
-          on:change={onChangeColor(
-            () => worldManager.hemisphereLight.color,
-            "hemisphereLightColor"
-          )}
-          enableSwatches={true}
-          enableAlpha={false}
-          open={false}
-          width="24px"
-          height="24px"
-        />
-      </div>
-      <div>
-        Ground
+      <r-compound>
+        Ground:
         <ColorPicker
           bind:value={hemisphereGroundColor}
           on:change={onChangeColor(
@@ -86,12 +90,12 @@
           width="24px"
           height="24px"
         />
-      </div>
+      </r-compound>
     </r-row>
   </r-setting>
-  <r-setting>
+  <r-setting style="border-bottom:0">
     <r-title>
-      Directional light:
+      Directional:
       <r-right>
         <ColorPicker
           bind:value={directionalColor}
@@ -114,25 +118,28 @@
   r-setting {
     display: flex;
     flex-direction: column;
-    padding: 8px;
-    margin: auto;
+    padding: 8px 8px 8px 16px;
+    border-bottom: 1px solid #999;
   }
   r-title {
     display: flex;
-    margin: 6px 0 6px 8px;
     justify-content: space-between;
     align-items: center;
   }
   r-row {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: flex-end;
+    margin-top: 8px;
   }
-  r-row > div {
+  r-compound {
     display: flex;
     align-items: center;
-    margin: 4px;
   }
-  r-row > div > :global(div) {
-    margin-left: 6px;
+
+  /* Add space between ColorPicker and left labels: */
+  r-compound > :global(div),
+  r-right > :global(div) {
+    margin-left: 8px;
+    margin-right: 8px;
   }
 </style>
