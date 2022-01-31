@@ -22,6 +22,7 @@ import { Collider, ColliderVisible } from "~/ecs/plugins/physics";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { BoundingHelper } from "~/ecs/plugins/bounding-helper";
 import { ControllerState } from "~/ecs/plugins/player-control";
+import { intersectionPointWithGround } from "~/ecs/shared/isMakingContactWithGround";
 import { WAVING } from "~/ecs/plugins/player-control/constants";
 
 import { SelectionManager } from "./SelectionManager";
@@ -433,6 +434,23 @@ export class WorldManager {
     transform.position.copy(position);
     transform.modified(); // update physics engine
     if (instantaneousCamera) this.camera.moveTo(position);
+  }
+
+  moveToXZ(x, z, instantaneousCamera = true) {
+    const skyPoint = new Vector3(x, 10, z);
+    const hitPoint = intersectionPointWithGround(this.world.physics, skyPoint);
+    if (hitPoint) {
+      this.moveTo(hitPoint, instantaneousCamera);
+    } else {
+      this.dispatch({
+        id: "notify",
+        notification: {
+          text: `No ground at that point`,
+          position: "bottom-center",
+          removeAfter: 5000,
+        },
+      });
+    }
   }
 
   /**

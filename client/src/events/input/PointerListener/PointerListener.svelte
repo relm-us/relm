@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { PerspectiveCamera, Vector2, Vector3 } from "three";
+  import { Vector2, Vector3 } from "three";
   import { hasAncestor } from "~/utils/hasAncestor";
   import { globalEvents } from "~/events";
   import { pointerPointInSelection } from "./selectionLogic";

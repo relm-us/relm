@@ -1,11 +1,14 @@
 <script lang="ts">
   import { Vector3 } from "three";
   import { onMount } from "svelte";
+  import FaMap from "svelte-icons/fa/FaMap.svelte";
+
   import { worldManager } from "~/world";
-  import MapParticipant from "./MapParticipant.svelte";
+  import { worldUIMode } from "~/stores";
 
   import CircleButton from "~/ui/lib/CircleButton";
-  import FaMap from "svelte-icons/fa/FaMap.svelte";
+
+  import MapParticipant from "./MapParticipant.svelte";
 
   let center = new Vector3();
 
@@ -17,6 +20,18 @@
   let worldDiameter;
   let otherPositions = [];
   let myPosition = null;
+
+  function onClick(event) {
+    if ($worldUIMode === "build") {
+      const x = event.clientX - event.target.offsetLeft - 1;
+      const y = event.clientY - event.target.offsetTop + 13;
+      const mR = mapDiameter / 2;
+      const wR = worldDiameter / 2;
+      worldManager.moveToXZ(((x - mR) / mR) * wR, ((y - mR) / mR) * wR);
+    } else {
+      enabled = false;
+    }
+  }
 
   onMount(() => {
     const interval1 = setInterval(() => {
@@ -41,7 +56,7 @@
 </script>
 
 {#if enabled}
-  <r-mini-map on:click={() => (enabled = false)}>
+  <r-mini-map on:click={onClick} class:extra-margin={$worldUIMode === "build"}>
     <r-centered>
       {#each otherPositions as pos}
         <MapParticipant
@@ -83,6 +98,9 @@
 
     background-color: var(--bg-color, rgba(0, 0, 0, 0.4));
     overflow: hidden;
+  }
+  r-mini-map.extra-margin {
+    margin-left: 300px;
   }
   r-centered {
     position: relative;
