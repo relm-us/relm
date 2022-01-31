@@ -36,6 +36,7 @@
   type PointerState = "initial" | "click" | "drag" | "drag-select";
 
   let pointerState: PointerState = "initial";
+  let isControllingAvatar: boolean = false;
   let pointerDownFound: string[] = [];
   let dragOffset: Vector3 = new Vector3();
   let pointerPoint: Vector3;
@@ -72,7 +73,7 @@
 
     globalEvents.emit("mouseActivity");
 
-    const found = finder.entityIdsAt(pointerPosition);
+    finder.entityIdsAt(pointerPosition);
 
     mouse.set(finder._normalizedCoord);
 
@@ -135,6 +136,11 @@
   }
 
   function onMouseMove(event: MouseEvent) {
+    if (isControllingAvatar) {
+      // Sometimes mouse movement will highlight text, e.g. avatar name
+      window.getSelection().removeAllRanges();
+      event.preventDefault();
+    }
     if (!eventTargetsWorld(event, $worldUIMode)) return;
     onPointerMove(event.clientX, event.clientY, event.shiftKey);
   }
@@ -170,6 +176,7 @@
         )
       ) {
         addTouchController(worldManager.avatar.entities.body);
+        isControllingAvatar = true;
       } else {
         // At this point, at least a 'click' has started. TBD if it's a drag.
         setNextPointerState("click");
@@ -201,8 +208,6 @@
   }
 
   function onPointerUp(event: MouseEvent | TouchEvent) {
-    if (!eventTargetsWorld(event, $worldUIMode)) return;
-
     if ($worldUIMode === "build") {
       if (pointerState === "click") {
         selectionLogic.mouseup(worldManager.selection);
@@ -220,6 +225,7 @@
         });
       } else {
         removeTouchController(worldManager.avatar.entities.body);
+        isControllingAvatar = false;
       }
     }
 
