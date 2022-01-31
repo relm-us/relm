@@ -148,25 +148,25 @@ export class WorldManager {
 
     // Make colliders visible in build mode
     this.unsubs.push(
-      worldUIMode.subscribe(($mode) => {
-        const enabled = $mode === "build";
-        this.avatar.enableCanFly(enabled);
-        this.avatar.enableNonInteractive(enabled);
-        this.enableNonInteractiveGround(enabled);
-        this.enableCollidersVisible(enabled);
-      })
-    );
-
-    this.unsubs.push(
       derived([worldUIMode, keyShift], ([$mode, $keyShift], set) => {
-        if ($mode === "build" && $keyShift) {
-          set(true);
-        } else {
-          set(false);
+        set({ buildMode: $mode === "build", overrideInvisible: $keyShift });
+      }).subscribe(({ buildMode, overrideInvisible }) => {
+        this.avatar.enableCanFly(buildMode);
+        this.avatar.enableNonInteractive(buildMode);
+        if (overrideInvisible) {
+          this.enableCollidersVisible(buildMode, true);
         }
-      }).subscribe((buildModeShift: boolean) => {
+
+        const buildModeShift = buildMode && overrideInvisible;
+
         this.enableNonInteractiveGround(!buildModeShift);
         this.enableBoundingVisible(buildModeShift);
+
+        // Need to call enableCollidersVisible after enableNonInteractiveGround
+        // because visible colliders test checks for NonInteractive component:
+        if (!overrideInvisible) {
+          this.enableCollidersVisible(buildMode, false);
+        }
       })
     );
 
@@ -245,12 +245,14 @@ export class WorldManager {
     }
   }
 
-  enableCollidersVisible(enabled = true) {
-    const action = enabled ? "add" : "maybeRemove";
+  enableCollidersVisible(enabled = true, includeNonInteractive = false) {
     const entities = this.world.entities.getAllByComponent(Collider);
     for (const entity of entities) {
       const interactive = !entity.get(NonInteractive);
-      if (interactive) entity[action](ColliderVisible);
+      entity.maybeRemove(ColliderVisible);
+      if (enabled && (interactive || includeNonInteractive)) {
+        entity.add(ColliderVisible);
+      }
     }
   }
 
