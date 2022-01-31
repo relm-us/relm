@@ -422,11 +422,11 @@ export class WorldManager {
     return true;
   }
 
-  moveTo(position: Vector3) {
+  moveTo(position: Vector3, instantaneousCamera = true) {
     const transform = this.participants.local.avatar.transform;
     transform.position.copy(position);
     transform.modified(); // update physics engine
-    this.camera.moveTo(position);
+    if (instantaneousCamera) this.camera.moveTo(position);
   }
 
   /**

@@ -4,6 +4,7 @@ import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
 import { Impact, Impactable } from "~/ecs/plugins/physics";
 import { Controller } from "~/ecs/plugins/player-control";
+import { Particles } from "~/ecs/plugins/particles";
 
 import { worldManager } from "~/world";
 
@@ -50,7 +51,34 @@ export class PortalSystem extends System {
           bodyFacing.copy(vOut).applyQuaternion(transform.rotation).normalize();
           newCoords.add(bodyFacing);
 
-          worldManager.moveTo(newCoords);
+          const sparklesEntrance = this.world.entities
+            .create("Portal Sparkle")
+            .add(Transform, {
+              position: new Vector3()
+                .copy(transform.position)
+                .add(new Vector3(0, 1.5, 0)),
+            })
+            .add(Particles, { prefab: "TELEPORT" })
+            .activate();
+
+          setTimeout(() => {
+            worldManager.moveTo(newCoords, false);
+            sparklesEntrance.destroy();
+
+            const sparklesExit = this.world.entities
+              .create("Portal Sparkle")
+              .add(Transform, {
+                position: new Vector3()
+                  .copy(newCoords)
+                  .add(new Vector3(0, 1.5, 0)),
+              })
+              .add(Particles, { prefab: "TELEPORT" })
+              .activate();
+
+            setTimeout(() => {
+              sparklesExit.destroy();
+            }, 1000);
+          }, 1000);
         } else if (portal.kind === "REMOTE") {
           worldManager.dispatch({
             id: "enterPortal",
