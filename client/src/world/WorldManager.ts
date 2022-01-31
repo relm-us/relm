@@ -1,4 +1,6 @@
 import { Color, Vector3, Box3 } from "three";
+import * as THREE from "three";
+
 import { derived, get } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
@@ -99,6 +101,8 @@ export class WorldManager {
     this.entryway = pageParams.entryway;
     this.relmDocId = relmDocId;
     this.avConnection = avConnection;
+
+    (window as any).THREE = THREE;
 
     this.unsubs.push(
       this.worldDoc.settings.subscribe(($settings) => {
