@@ -1,23 +1,32 @@
-<script>
-  import { beforeUpdate, afterUpdate } from "svelte";
+<script lang="ts">
+  import { afterUpdate } from "svelte";
   import { cleanHtml } from "~/utils/cleanHtml";
   import Message from "./Message.svelte";
 
   export let messages;
   export let myID;
 
-  let div;
+  let outerEl;
+
+  function scrollToBottom(_messages, outerEl) {
+    if (outerEl)
+      setTimeout(() => {
+        outerEl.scrollTop = outerEl.scrollHeight;
+      }, 500);
+  }
+
+  $: scrollToBottom($messages, outerEl);
 
   afterUpdate(() => {
-    if (div) div.scrollTo(0, div.scrollHeight);
+    scrollToBottom($messages, outerEl);
   });
 </script>
 
-<container bind:this={div}>
+<r-chat-hist bind:this={outerEl}>
   {#if $messages.length === 0}
     <note>Empty chat history</note>
   {:else}
-    <scroll-container>
+    <r-scrollable>
       {#each $messages as message}
         {#if message.u === myID}
           <message class:mine={true}>{@html cleanHtml(message.c)}</message>
@@ -25,12 +34,12 @@
           <Message participantId={message.u} content={message.c} />
         {/if}
       {/each}
-    </scroll-container>
+    </r-scrollable>
   {/if}
-</container>
+</r-chat-hist>
 
 <style>
-  container {
+  r-chat-hist {
     display: flex;
     flex-direction: column;
 
@@ -50,7 +59,7 @@
     color: yellow;
   }
 
-  scroll-container {
+  r-scrollable {
     display: flex;
     flex-direction: column;
   }
