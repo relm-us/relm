@@ -1,4 +1,11 @@
-import { Color, Vector3, Box3 } from "three";
+import {
+  Color,
+  Vector3,
+  Box3,
+  AmbientLight,
+  HemisphereLight,
+  DirectionalLight,
+} from "three";
 import * as THREE from "three";
 
 import { derived, get } from "svelte/store";
@@ -22,6 +29,7 @@ import { Collider, ColliderVisible } from "~/ecs/plugins/physics";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { BoundingHelper } from "~/ecs/plugins/bounding-helper";
 import { ControllerState } from "~/ecs/plugins/player-control";
+import { Follow } from "~/ecs/plugins/follow";
 import { intersectionPointWithGround } from "~/ecs/shared/isMakingContactWithGround";
 import { WAVING } from "~/ecs/plugins/player-control/constants";
 
@@ -105,18 +113,6 @@ export class WorldManager {
 
     (window as any).THREE = THREE;
 
-    this.unsubs.push(
-      this.worldDoc.settings.subscribe(($settings) => {
-        const fog = this.world.presentation.scene.fog;
-        if ($settings.get("fogColor")) {
-          fog.color = new Color($settings.get("fogColor"));
-        }
-        if (typeof $settings.get("fogDensity") == "number") {
-          (fog as any).density = $settings.get("fogDensity");
-        }
-      })
-    );
-
     this.selection = new SelectionManager(this.worldDoc);
 
     this.participants = new ParticipantManager(dispatch, broker, participants);
@@ -134,7 +130,39 @@ export class WorldManager {
     );
 
     this.world.perspective.setAvatar(this.avatar.entities.body);
-    this.populate();
+    const light = makeLight(this.world, this.avatar.entities.body).activate();
+    this.light = light;
+
+    this.unsubs.push(
+      this.worldDoc.settings.subscribe(($settings) => {
+        const fog = this.world.presentation.scene.fog;
+        if ($settings.get("fogColor")) {
+          fog.color = new Color($settings.get("fogColor"));
+        }
+        if (typeof $settings.get("fogDensity") == "number") {
+          (fog as any).density = $settings.get("fogDensity");
+        }
+
+        const ambient = $settings.get("ambientLightColor");
+        if (ambient) this.ambientLight.color = new Color(ambient);
+
+        const hemi1 = $settings.get("hemisphereLightColor");
+        if (hemi1) this.hemisphereLight.color = new Color(hemi1);
+
+        const hemi2 = $settings.get("hemisphereLightGroundColor");
+        if (hemi2) this.hemisphereLight.groundColor = new Color(hemi2);
+
+        const directional = $settings.get("directionalLightColor");
+        if (directional) {
+          if (this.directionalLight) {
+            this.directionalLight.color = new Color(directional);
+          } else {
+            // ECS may not have created it yet, so prepare the entity instead
+            this.light.getByName("DirectionalLight").color = directional;
+          }
+        }
+      })
+    );
 
     this.camera.init();
 
@@ -221,18 +249,6 @@ export class WorldManager {
     this.relmDocId = null;
     this.avConnection = null;
     this.camera = null;
-  }
-
-  populate() {
-    if (!this.world) {
-      throw new Error(`Can't populate when world is null`);
-    }
-    if (!this.avatar.entities.body) {
-      throw new Error(`Can't populate when avatar entity is null`);
-    }
-
-    const light = makeLight(this.world, this.avatar.entities.body).activate();
-    this.light = light;
   }
 
   enableNonInteractiveGround(enabled = true) {
@@ -477,5 +493,30 @@ export class WorldManager {
     const box = new Box3();
     box.setFromObject(this.scene);
     return box;
+  }
+
+  get ambientLight(): AmbientLight {
+    return this.scene.getObjectByProperty(
+      "type",
+      "AmbientLight"
+    ) as AmbientLight;
+  }
+
+  get hemisphereLight(): HemisphereLight {
+    return this.scene.getObjectByProperty(
+      "type",
+      "HemisphereLight"
+    ) as HemisphereLight;
+  }
+
+  get directionalLight(): DirectionalLight {
+    return this.scene.getObjectByProperty(
+      "type",
+      "DirectionalLight"
+    ) as DirectionalLight;
+  }
+
+  setLightPosition(position: Vector3) {
+    this.light.get(Follow).offset.copy(position);
   }
 }

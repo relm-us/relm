@@ -1,217 +1,35 @@
 <script lang="ts">
-  import { nanoid } from "nanoid";
-  import { Vector3, Color } from "three";
+  import { Color } from "three";
 
   import { worldManager } from "~/world";
-  import { assetUrl } from "~/config/assetUrl";
 
-  import { Entity } from "~/ecs/base";
-  import { Asset, Transform } from "~/ecs/plugins/core";
-  import { Skybox } from "~/ecs/plugins/skybox";
-
-  import EntrywayMap from "./EntrywayMap.svelte";
-  import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
-  import UploadButton from "~/ui/ButtonControls/UploadButton";
-  import Capsule from "~/ui/lib/Capsule";
-  import ColorPicker from "~/ui/lib/ColorPicker";
-  import Slider from "~/ui/lib/Slider";
-  import Button from "~/ui/lib/Button";
+  import LeftPanel, { Header } from "~/ui/LeftPanel";
   import { onMount } from "svelte";
-  import debounce from "lodash/debounce";
-  import SkyboxOption from "./SkyboxOption.svelte";
-
-  let newEntrywayName = "";
-  let fogColor;
-  let fogDensity;
-
-  function handleAddEntryway(event) {
-    addEntryway(event.target.value);
-  }
-
-  function addEntryway(entrywayName) {
-    const coords: Vector3 = worldManager.avatar.position;
-    worldManager.worldDoc.entryways.y.set(entrywayName, [
-      coords.x,
-      coords.y,
-      coords.z,
-    ]);
-  }
-
-  function setDefaultEntryway() {
-    addEntryway("default");
-  }
-
-  function onDeleteEntryway({ detail: name }) {
-    worldManager.worldDoc.entryways.y.delete(name);
-  }
-
-  function onUploadedSkybox({ detail }) {
-    if (detail.results.length === 0) return;
-    const result = detail.results[0];
-    setSkybox(assetUrl(result.types.webp));
-  }
-
-  function setSkybox(imageUrl) {
-    // Delete any previous Skybox object
-    const entities: Entity[] =
-      worldManager.world.entities.getAllByComponent(Skybox);
-    for (let entity of entities) {
-      worldManager.worldDoc.deleteById(entity.id.toString());
-    }
-
-    // Create a new Skybox
-    const skybox = worldManager.world.entities
-      .create("Skybox", nanoid())
-      .add(Skybox, { image: new Asset(imageUrl) })
-      .activate();
-    worldManager.worldDoc.syncFrom(skybox);
-  }
-
-  function onSlideFog({ detail }) {
-    const value = detail[1];
-    const fog = worldManager.world.presentation.scene.fog;
-    fog.density = value * 0.05;
-
-    saveFogDensity(fog.density);
-  }
-
-  const saveFogDensity = debounce((density) => {
-    worldManager.worldDoc.settings.y.set("fogDensity", density);
-  }, 500);
-
-  function onChangeFogColor({ detail }) {
-    const color = detail.slice(0, 7);
-    const fog = worldManager.world.presentation.scene.fog;
-    fog.color = new Color(color);
-
-    saveFogColor(color);
-  }
-
-  const saveFogColor = debounce((color) => {
-    worldManager.worldDoc.settings.y.set("fogColor", color);
-  }, 500);
-
-  onMount(() => {
-    const fog = worldManager.world.presentation.scene.fog;
-    fogDensity = fog.density / 0.05;
-    fogColor = "#" + fog.color.getHexString();
-  });
-
-  function chooseSkybox({ detail }) {
-    setSkybox(assetUrl(detail));
-  }
+  import EntrywaySettings from "./EntrywaySettings.svelte";
+  import SkyboxSettings from "./SkyboxSettings.svelte";
+  import FogSettings from "./FogSettings.svelte";
+  import LightingSettings from "./LightingSettings.svelte";
 </script>
 
 <LeftPanel on:minimize>
   <Header>Relm Settings</Header>
-  <container>
-    <Pane title="Entryways">
-      <setting>
-        <Button on:click={setDefaultEntryway} style="border: 1px solid #999;">
-          Set Default to Here
-        </Button>
-        <r-entryways-list>
-          <EntrywayMap
-            entryways={worldManager.worldDoc.entryways}
-            on:delete={onDeleteEntryway}
-          />
-        </r-entryways-list>
-        <Capsule
-          label="Add:"
-          value={newEntrywayName}
-          editable={true}
-          on:change={handleAddEntryway}
-        />
-      </setting>
-    </Pane>
+  <r-settings>
+    <EntrywaySettings />
 
-    <Pane title="Skybox">
-      <setting>
-        <div class="select-skyboxes">
-          <SkyboxOption
-            name="Blue Sky"
-            value="edc3d0040ef1e1feece33adef09b32c4-7496.webp"
-            thumbnail="5edd94b3d28b8a05c2858de0ae503e39-1586.webp"
-            on:choose={chooseSkybox}
-          />
-          <SkyboxOption
-            name="Stars"
-            value="42e9b44e8e2cce697d446c85809a378c-79050.webp"
-            thumbnail="fdeb9a7dab4c03b2befe637d55c8ea36-6908.webp"
-            on:choose={chooseSkybox}
-          />
-          <SkyboxOption
-            name="Pink Clouds"
-            value="6c798e8ce73d162955743af2dd2c27ff-22658.webp"
-            thumbnail="9f15e6be6c086594fbe8e389f4a209b1-4138.webp"
-            on:choose={chooseSkybox}
-          />
-          <SkyboxOption
-            name="Galaxy"
-            value="b0c5c961730f92fbd97d3b8f4ad73f53-31160.webp"
-            thumbnail="543ba08c91613b380a8c304bec4f11b5-4322.webp"
-            on:choose={chooseSkybox}
-          />
-        </div>
-        <div class="upload">
-          <UploadButton on:uploaded={onUploadedSkybox}>
-            <lbl>Upload</lbl>
-          </UploadButton>
-        </div>
-      </setting>
-    </Pane>
+    <SkyboxSettings />
 
-    <Pane title="Fog">
-      <setting>
-        <div style="width:100%; margin-bottom: 8px;">
-          <Slider on:change={onSlideFog} value={[0, fogDensity]} single />
-        </div>
-        <ColorPicker
-          bind:value={fogColor}
-          on:change={onChangeFogColor}
-          enableSwatches={true}
-          enableAlpha={false}
-          open={false}
-          width="24px"
-          height="24px"
-        />
-      </setting>
-    </Pane>
-  </container>
+    <FogSettings />
+
+    <LightingSettings />
+  </r-settings>
 </LeftPanel>
 
 <style>
-  container {
+  r-settings {
     display: flex;
     flex-direction: column;
 
     height: 100%;
     overflow: hidden;
-  }
-  setting {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 8px;
-    margin: auto;
-  }
-
-  .upload {
-    --direction: row;
-    --margin: 4px;
-    margin-bottom: 4px;
-  }
-  .upload lbl {
-    margin-left: 8px;
-  }
-
-  r-entryways-list {
-    margin: 16px 0;
-  }
-
-  .select-skyboxes {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
   }
 </style>

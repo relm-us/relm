@@ -1,14 +1,12 @@
 import { Transform } from "~/ecs/plugins/core";
-import { Camera } from "~/ecs/plugins/core";
-import { Vector3, Quaternion, Euler } from "three";
+import { Vector3 } from "three";
 
 import { Follow } from "~/ecs/plugins/follow";
-import { LookAt } from "~/ecs/plugins/look-at";
 import { DirectionalLight } from "~/ecs/plugins/lighting";
 
 import { makeEntity } from "./makeEntity";
 
-export function makeLight(world, avatar) {
+export function makeLight(world, avatar, color = 0xffffff) {
   const cameraPosition = new Vector3(0, 5.5, 5);
 
   const lightOffset = new Vector3(-5, 5, 2);
@@ -25,7 +23,7 @@ export function makeLight(world, avatar) {
     })
     .add(DirectionalLight, {
       target: avatar.id,
-      color: 0xffffff,
+      color,
       intensity: 2.5,
       shadow: true, // TODO: make this turn on/off based on FPS
       shadowLeft: -shadowSize,

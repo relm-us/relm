@@ -569,6 +569,11 @@ export function makeProgram(): Program {
         return [{ ...state, notifyContext: msg.notifyContext }];
       }
 
+      case "notify": {
+        state.notifyContext.addNotification(msg.notification);
+        return [state];
+      }
+
       // Send yjs a modification so that it triggers an assets/entities stats re-assessment
       case "recomputeWorldDocStats": {
         if (state.worldDoc) {

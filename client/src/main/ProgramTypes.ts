@@ -146,6 +146,7 @@ export type Message =
   | { id: "gotLoadingState"; assetsCount: number; entitiesCount: number }
   | { id: "loadedAndReady" }
   | { id: "startPlaying" }
+  | { id: "notify"; notification: any }
   | { id: "recomputeWorldDocStats" }
   | { id: "gotNotificationContext"; notifyContext: any }
   | { id: "error"; message: string; stack?: any };
