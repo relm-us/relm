@@ -152,14 +152,15 @@ export class WorldManager {
         const hemi2 = $settings.get("hemisphereLightGroundColor");
         if (hemi2) this.hemisphereLight.groundColor = new Color(hemi2);
 
-        const directional = $settings.get("directionalLightColor");
-        if (directional) {
-          if (this.directionalLight) {
-            this.directionalLight.color = new Color(directional);
-          } else {
-            // ECS may not have created it yet, so prepare the entity instead
-            this.light.getByName("DirectionalLight").color = directional;
-          }
+        const dirLC = $settings.get("directionalLightColor");
+        const dirLP = $settings.get("directionalLightPos");
+        if (this.directionalLight) {
+          if (dirLC) this.directionalLight.color = new Color(dirLC);
+          if (dirLP) this.directionalLight.position.fromArray(dirLP);
+        } else {
+          // ECS may not have created it yet, so prepare the entity instead
+          if (dirLC) this.light.getByName("DirectionalLight").color = dirLC;
+          if (dirLP) this.light.getByName("Follow").offset.fromArray(dirLP);
         }
       })
     );

@@ -1,18 +1,20 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import { Color } from "three";
 
   import { worldManager } from "~/world";
 
   import { Pane } from "~/ui/LeftPanel";
   import ColorPicker from "~/ui/lib/ColorPicker";
-  import { onMount } from "svelte";
+  import Button from "~/ui/lib/Button";
 
   let ambientColor;
   let hemisphereColor;
   let hemisphereGroundColor;
   let directionalColor;
+  let directionalPosition;
 
-  const onChangeColor =
+  const changeColor =
     (
       getColorProperty: () => { copy: (color: Color) => void },
       settingName: string
@@ -25,12 +27,58 @@
       worldManager.worldDoc.settings.y.set(settingName, color);
     };
 
+  const changeAmbientColor = changeColor(
+    () => worldManager.ambientLight.color,
+    "ambientLightColor"
+  );
+
+  const changeHemisphereColor = changeColor(
+    () => worldManager.hemisphereLight.color,
+    "hemisphereLightColor"
+  );
+
+  const changeHemisphereGroundColor = changeColor(
+    () => worldManager.hemisphereLight.groundColor,
+    "hemisphereLightGroundColor"
+  );
+
+  const changeDirectionalColor = changeColor(
+    () => worldManager.directionalLight.color,
+    "directionalLightColor"
+  );
+
+  $: {
+    let pos;
+    try {
+      pos = JSON.parse(`[${directionalPosition}]`);
+    } catch (err) {}
+    if (pos) {
+      console.log("pos", pos);
+      const follow = worldManager.light.getByName("Follow");
+      follow.offset.fromArray(pos);
+      follow.modified();
+      worldManager.worldDoc.settings.y.set("directionalLightPos", pos);
+    }
+  }
+
+  function resetLighting() {
+    changeAmbientColor({ detail: "#FFFFFF" });
+    changeHemisphereColor({ detail: "#FFFFBB" });
+    changeHemisphereGroundColor({ detail: "#080820" });
+    changeDirectionalColor({ detail: "#FFFFFF" });
+    directionalPosition = [-5, 5, 2];
+  }
+
   onMount(() => {
     ambientColor = "#" + worldManager.ambientLight.color.getHexString();
     hemisphereColor = "#" + worldManager.hemisphereLight.color.getHexString();
     hemisphereGroundColor =
       "#" + worldManager.hemisphereLight.groundColor.getHexString();
     directionalColor = "#" + worldManager.directionalLight.color.getHexString();
+
+    directionalPosition = JSON.stringify(
+      worldManager.light.getByName("Follow").offset.toArray()
+    ).slice(1, -1);
   });
 </script>
 
@@ -41,10 +89,7 @@
       <r-right>
         <ColorPicker
           bind:value={ambientColor}
-          on:change={onChangeColor(
-            () => worldManager.ambientLight.color,
-            "ambientLightColor"
-          )}
+          on:change={changeAmbientColor}
           enableSwatches={true}
           enableAlpha={false}
           open={false}
@@ -54,6 +99,7 @@
       </r-right>
     </r-title>
   </r-setting>
+
   <r-setting>
     <r-title>
       Hemisphere:
@@ -62,10 +108,7 @@
           Sky:
           <ColorPicker
             bind:value={hemisphereColor}
-            on:change={onChangeColor(
-              () => worldManager.hemisphereLight.color,
-              "hemisphereLightColor"
-            )}
+            on:change={changeHemisphereColor}
             enableSwatches={true}
             enableAlpha={false}
             open={false}
@@ -80,10 +123,7 @@
         Ground:
         <ColorPicker
           bind:value={hemisphereGroundColor}
-          on:change={onChangeColor(
-            () => worldManager.hemisphereLight.groundColor,
-            "hemisphereLightGroundColor"
-          )}
+          on:change={changeHemisphereGroundColor}
           enableSwatches={true}
           enableAlpha={false}
           open={false}
@@ -93,16 +133,14 @@
       </r-compound>
     </r-row>
   </r-setting>
-  <r-setting style="border-bottom:0">
+
+  <r-setting>
     <r-title>
       Directional:
       <r-right>
         <ColorPicker
           bind:value={directionalColor}
-          on:change={onChangeColor(
-            () => worldManager.directionalLight.color,
-            "directionalLightColor"
-          )}
+          on:change={changeDirectionalColor}
           enableSwatches={true}
           enableAlpha={false}
           open={false}
@@ -111,6 +149,16 @@
         />
       </r-right>
     </r-title>
+    <r-row-start>
+      Position:
+      <input type="text" bind:value={directionalPosition} />
+    </r-row-start>
+  </r-setting>
+
+  <r-setting style="border-bottom:0">
+    <Button on:click={resetLighting} style="border: 1px solid #999;">
+      Reset Lighting
+    </Button>
   </r-setting>
 </Pane>
 
@@ -131,6 +179,10 @@
     justify-content: flex-end;
     margin-top: 8px;
   }
+  r-row-start {
+    display: flex;
+    margin-top: 8px;
+  }
   r-compound {
     display: flex;
     align-items: center;
@@ -141,5 +193,14 @@
   r-right > :global(div) {
     margin-left: 8px;
     margin-right: 8px;
+  }
+
+  input {
+    width: 100px;
+    background-color: rgba(0, 0, 0, 0);
+    color: white;
+    border: 1px solid #999;
+    border-radius: 2px;
+    margin-left: 8px;
   }
 </style>
