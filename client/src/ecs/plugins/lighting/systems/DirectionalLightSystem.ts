@@ -160,8 +160,8 @@ export class DirectionalLightSystem extends System {
         break;
     }
 
-    light.helper = new THREE.CameraHelper(light.shadow.camera);
-    this.perspective.presentation.scene.add(light.helper);
+    // light.helper = new THREE.CameraHelper(light.shadow.camera);
+    // this.perspective.presentation.scene.add(light.helper);
   }
 
   getFrustumFromSpec(spec) {
