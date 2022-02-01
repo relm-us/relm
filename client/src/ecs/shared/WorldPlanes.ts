@@ -78,6 +78,11 @@ export class WorldPlanes {
     this.recalculatePlanesConstants();
   }
 
+  setOrigin(newOrigin: Vector3) {
+    this.origin.copy(newOrigin);
+    this.recalculatePlanesConstants();
+  }
+
   getWorldFromScreen(
     coord: Vector2,
     target: Vector3 = _intersect,

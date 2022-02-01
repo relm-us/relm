@@ -7,7 +7,7 @@ import {
   LinearEncoding,
 } from "three";
 
-import { shadowMapConfig } from "~/config/constants";
+import { SHADOW_MAP_TYPE } from "~/config/constants";
 
 export function createRenderer() {
   const renderer = new WebGLRenderer({
@@ -23,7 +23,7 @@ export function createRenderer() {
   renderer.physicallyCorrectLights = true;
   renderer.shadowMap.enabled = true;
   renderer.outputEncoding = LinearEncoding;
-  switch (shadowMapConfig) {
+  switch (SHADOW_MAP_TYPE) {
     case "BASIC":
       renderer.shadowMap.type = BasicShadowMap;
       break;

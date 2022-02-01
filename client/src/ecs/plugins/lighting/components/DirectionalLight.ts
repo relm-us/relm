@@ -1,6 +1,20 @@
 import { Component, StringType, BooleanType, NumberType } from "~/ecs/base";
 
 export class DirectionalLight extends Component {
+  target: string;
+  color: string;
+  intensity: number;
+  shadow: boolean;
+  shadowTop: number;
+  shadowBottom: number;
+  shadowLeft: number;
+  shadowRight: number;
+  shadowNear: number;
+  shadowFar: number;
+  shadowWidth: number;
+  shadowHeight: number;
+  shadowRadius: number;
+
   static props = {
     target: {
       type: StringType,

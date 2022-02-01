@@ -173,10 +173,6 @@ export class Presentation {
     renderer.shadowMap.type = VSMShadowMap;
     (renderer.domElement as any).style = "outline:0;";
 
-    // TODO: move to XRSystem?
-    renderer.xr.enabled = true;
-    renderer.xr.setReferenceSpaceType("local-floor");
-
     return renderer;
   }
 

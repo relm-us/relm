@@ -27,8 +27,7 @@ export class DragPlane {
 
   setOrigin(origin: Vector3) {
     this.camera.copy(this.world.presentation.camera);
-    this.planes.origin.copy(origin);
-    this.planes.recalculatePlanesConstants();
+    this.planes.setOrigin(origin);
   }
 
   getDelta(screenCoord: Vector2) {
@@ -36,7 +35,7 @@ export class DragPlane {
 
     this.planes.getWorldFromScreen(screenCoord, delta, {
       plane: this.orientation,
-      camera: this.camera
+      camera: this.camera,
     });
     delta.sub(this.planes.origin);
 

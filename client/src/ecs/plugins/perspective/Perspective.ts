@@ -1,4 +1,4 @@
-import { Box3, Vector2, Vector3 } from "three";
+import { Box3, Object3D as ThreeObject3D, Vector2, Vector3 } from "three";
 
 import { Entity } from "~/ecs/base";
 import { Presentation } from "~/ecs/plugins/core";
@@ -15,6 +15,7 @@ export class Perspective {
   presentation: Presentation;
 
   visibleBounds: Box3 = new Box3();
+  center: ThreeObject3D = new ThreeObject3D();
 
   constructor(presentation) {
     this.presentation = presentation;
@@ -59,5 +60,7 @@ export class Perspective {
         this.visibleBounds.expandByPoint(point);
       }
     }
+
+    this.visibleBounds.getCenter(this.center.position);
   }
 }

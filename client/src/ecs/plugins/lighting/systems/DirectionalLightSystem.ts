@@ -7,10 +7,8 @@ import { Perspective } from "~/ecs/plugins/perspective";
 
 import { DirectionalLight, DirectionalLightRef } from "../components";
 
-import { shadowMapConfig } from "~/config/constants";
-import { Vector3 } from "three";
+import { SHADOW_MAP_TYPE } from "~/config/constants";
 
-let helper;
 export class DirectionalLightSystem extends System {
   count: number;
   perspective: Perspective;
@@ -31,12 +29,7 @@ export class DirectionalLightSystem extends System {
   update() {
     this.queries.added.forEach((entity) => {
       const spec = entity.get(DirectionalLight);
-      const light = this.buildLight(
-        entity,
-        spec.color,
-        spec.intensity,
-        spec.target
-      );
+      const light = this.buildLight(entity);
       if (spec.shadow) {
         const resolution = {
           width: spec.shadowWidth,
@@ -52,10 +45,10 @@ export class DirectionalLightSystem extends System {
       entity.add(DirectionalLightRef, { value: light });
     });
 
+    const vb = this.perspective.visibleBounds;
     this.queries.active.forEach((entity) => {
       const light = entity.get(DirectionalLightRef).value;
-      const vb = this.perspective.visibleBounds;
-      const size = Math.max(vb.max.x - vb.min.x, vb.max.y - vb.min.y);
+      const size = Math.max(vb.max.x - vb.min.x, vb.max.z - vb.min.z);
 
       let zoom;
       if ((window as any).zoom) {
@@ -95,19 +88,15 @@ export class DirectionalLightSystem extends System {
     });
   }
 
-  buildLight(
-    entity,
-    color: string,
-    intensity: number,
-    targetEntityId?: string
-  ) {
+  buildLight(entity) {
+    const spec = entity.get(DirectionalLight);
     const object3d = entity.get(Object3D);
-    const light = new THREE.DirectionalLight(color, intensity);
+    const light = new THREE.DirectionalLight(spec.color, spec.intensity);
 
     object3d.value.add(light);
 
-    if (targetEntityId) {
-      const targetEntity: Entity = this.world.entities.getById(targetEntityId);
+    if (spec.target) {
+      const targetEntity: Entity = this.world.entities.getById(spec.target);
       if (targetEntity) {
         // DirectionalLight will point towards target entity, if provided
         const target = targetEntity.get(Object3D);
@@ -116,7 +105,7 @@ export class DirectionalLightSystem extends System {
         console.warn(
           `DirectionalLight's target entity is invalid; ` +
             `light will point towards origin`,
-          targetEntityId
+          spec.target
         );
       }
     } else {
@@ -148,12 +137,13 @@ export class DirectionalLightSystem extends System {
 
     light.shadow.radius = radius;
 
-    switch (shadowMapConfig) {
+    console.log("SHADOW_MAP_TYPE", SHADOW_MAP_TYPE);
+    switch (SHADOW_MAP_TYPE) {
       case "BASIC":
         break;
       case "PCF":
-        light.shadow.normalBias = 0.1;
-        light.shadow.bias = 0.0008;
+        light.shadow.normalBias = 0.005;
+        light.shadow.bias = -0.00005;
         break;
       case "VSM":
         light.shadow.bias = -0.0002;

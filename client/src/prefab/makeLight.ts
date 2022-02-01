@@ -8,18 +8,12 @@ import { makeEntity } from "./makeEntity";
 import { DEFAULT_DIRECTIONAL_LIGHT_POSITION } from "~/config/constants";
 
 export function makeLight(world, avatar, color = 0xffffff) {
-  const cameraPosition = new Vector3(0, 5.5, 5);
-
-  const lightOffset = new Vector3().fromArray(DEFAULT_DIRECTIONAL_LIGHT_POSITION);
-  const lightPosition = new Vector3().add(cameraPosition).add(lightOffset);
-  const shadowSize = 7.5;
+  const shadowSize = 6;
   const light = makeEntity(world, "DirectionalLight")
-    .add(Transform, {
-      position: lightPosition,
-    })
+    .add(Transform)
     .add(Follow, {
       target: avatar.id,
-      offset: lightOffset,
+      offset: new Vector3().fromArray(DEFAULT_DIRECTIONAL_LIGHT_POSITION),
       lerpAlpha: 1,
     })
     .add(DirectionalLight, {
@@ -27,13 +21,19 @@ export function makeLight(world, avatar, color = 0xffffff) {
       color,
       intensity: 2.5,
       shadow: true, // TODO: make this turn on/off based on FPS
+
       shadowLeft: -shadowSize,
       shadowRight: shadowSize,
       shadowTop: shadowSize,
       shadowBottom: -shadowSize,
-      shadowFar: 100,
+
+      shadowNear: 0.5,
+      shadowFar: 500,
+
+      shadowWidth: 512,
+      shadowHeight: 512,
+
       shadowRadius: 1.75,
-      shadowDistanceGrowthRatio: 12,
     });
 
   return light;

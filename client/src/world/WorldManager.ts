@@ -122,14 +122,8 @@ export class WorldManager {
       this.participants.setCommunicatingState(msg, state, value);
     });
 
-    // this.chat.setMessages(this.worldDoc.messages);
+    this.camera = new CameraManager(this.world, this.avatar.entities.body);
 
-    this.camera = new CameraManager(
-      this.world,
-      this.participants.local.avatar.entities.body
-    );
-
-    this.world.perspective.setAvatar(this.avatar.entities.body);
     const light = makeLight(this.world, this.avatar.entities.body).activate();
     this.light = light;
 
@@ -166,6 +160,9 @@ export class WorldManager {
     );
 
     this.camera.init();
+
+    this.world.perspective.setAvatar(this.avatar.entities.body);
+    // this.world.perspective.setCameraManager(this.camera);
 
     this.unsubs.push(
       shadowsEnabled.subscribe(($enabled) => {
