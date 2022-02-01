@@ -135,7 +135,7 @@ export function authorized(requestedPermission) {
     } else {
       let permitted = false;
       try {
-        const relmNames = req.relmName ? [req.relmName] : [];
+        const relmNames = req.relmName ? [req.relmName] : ["*"];
         const permissions = await Permission.getPermissions({
           playerId: req.authenticatedPlayerId,
           relmNames,
