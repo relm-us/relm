@@ -454,21 +454,21 @@
 							}
 						],
 						"url": {
-							"raw": "{{serverUrl}}/relm/default/permissions",
+							"raw": "{{serverUrl}}/relm/default/permits",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"relm",
 								"default",
-								"permissions"
+								"permits"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Get Relm Data",
+					"name": "Get Relm Content",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -484,14 +484,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{serverUrl}}/relm/default/data",
+							"raw": "{{serverUrl}}/relm/default/content",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"relm",
 								"default",
-								"data"
+								"content"
 							]
 						}
 					},

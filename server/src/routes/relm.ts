@@ -2,14 +2,15 @@ import * as express from "express";
 import cors from "cors";
 import * as Y from "yjs";
 
+import exportRelm from "relm-common/serialize/export";
+import importRelm from "relm-common/serialize/import";
+
 import * as config from "../config";
 import * as util from "../utils";
 import * as middleware from "../middleware";
 import * as twilio from "../lib/twilio";
 import { Permission, Relm, Doc } from "../db";
 import { getYDoc } from "../getYDoc";
-import exportRelm from "relm-common/serialize/export";
-import importRelm from "relm-common/serialize/import";
 
 const { wrapAsync, uuidv4 } = util;
 
@@ -119,6 +120,25 @@ relm.delete(
 
 // Get an existing relm
 relm.get(
+  "/content",
+  cors(),
+  middleware.relmExists(),
+  middleware.authenticated(),
+  middleware.authorized("access"),
+  wrapAsync(async (req, res) => {
+    const relmDoc = await getYDoc(req.relm.permanentDocId);
+    const content = exportRelm(relmDoc);
+
+    return util.respond(res, 200, {
+      status: "success",
+      action: "content",
+      relm: { ...req.relm, content },
+    });
+  })
+);
+
+// Get an existing relm
+relm.get(
   "/meta",
   cors(),
   middleware.relmExists(),
@@ -131,29 +151,9 @@ relm.get(
 
     return util.respond(res, 200, {
       status: "success",
-      action: "read",
+      action: "meta",
       relm: req.relm,
       twilioToken,
-    });
-  })
-);
-
-// Get an existing relm
-relm.get(
-  "/data",
-  cors(),
-  middleware.relmExists(),
-  middleware.authenticated(),
-  middleware.authorized("access"),
-  wrapAsync(async (req, res) => {
-    const permanentDoc = await getYDoc(req.relm.permanentDocId);
-    const objects = permanentDoc.getMap("objects");
-    req.relm.permanentDoc = objects.toJSON();
-
-    return util.respond(res, 200, {
-      status: "success",
-      action: "read",
-      relm: req.relm,
     });
   })
 );
