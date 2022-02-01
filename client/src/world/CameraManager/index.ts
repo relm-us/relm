@@ -75,7 +75,6 @@ export class CameraManager {
   zoom: number;
 
   followOffset: Vector3;
-  lookAtOffset: Vector3;
   zoomedInOffset: Vector3 = new Vector3(0, 5.5, 5.0);
   zoomedOutOffset: Vector3 = new Vector3(0, 25.5, 25.0);
 
@@ -91,7 +90,6 @@ export class CameraManager {
     this.zoom = 0.5;
 
     this.followOffset = new Vector3().copy(this.zoomedOutOffset);
-    this.lookAtOffset = new Vector3();
 
     // Create the ECS camera entity that holds the ThreeJS camera
     this.entity = makeCamera(this.ecsWorld)

@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { MathUtils } from "three";
 
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import { Object3D } from "~/ecs/plugins/core";
@@ -7,9 +8,11 @@ import { Perspective } from "~/ecs/plugins/perspective";
 import { DirectionalLight, DirectionalLightRef } from "../components";
 
 import { shadowMapConfig } from "~/config/constants";
+import { Vector3 } from "three";
 
 let helper;
 export class DirectionalLightSystem extends System {
+  count: number;
   perspective: Perspective;
 
   order = Groups.Initialization;
@@ -54,10 +57,22 @@ export class DirectionalLightSystem extends System {
       const vb = this.perspective.visibleBounds;
       const size = Math.max(vb.max.x - vb.min.x, vb.max.y - vb.min.y);
 
-      // size ranges from about 10 to 60
-      // zoom ranges from about 1 to 0.30
-      // light.shadow.camera.zoom = (1 - (size - 10) / 50) * 0.5 + 0.2;
+      let zoom;
+      if ((window as any).zoom) {
+        // manual override for testing
+        zoom = (window as any).zoom;
+      } else {
+        const size2 = 2 * Math.atan(size / (2 * 10)) * (180 / Math.PI);
+        const rangeZeroToOne =
+          (MathUtils.clamp(size2, 54, 140) - 54) / (140 - 54);
+        zoom = (1 - rangeZeroToOne) * 1.5 + 0.5;
+      }
+      light.shadow.camera.zoom = zoom;
       light.shadow.camera.updateProjectionMatrix();
+
+      if (light.helper) {
+        light.helper.update();
+      }
     });
 
     this.queries.modified.forEach((entity) => {
@@ -145,8 +160,8 @@ export class DirectionalLightSystem extends System {
         break;
     }
 
-    // helper = new THREE.CameraHelper(light.shadow.camera);
-    // this.perspective.presentation.scene.add(helper);
+    light.helper = new THREE.CameraHelper(light.shadow.camera);
+    this.perspective.presentation.scene.add(light.helper);
   }
 
   getFrustumFromSpec(spec) {
