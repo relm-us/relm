@@ -7,6 +7,7 @@
   import { Pane } from "~/ui/LeftPanel";
   import ColorPicker from "~/ui/lib/ColorPicker";
   import Button from "~/ui/lib/Button";
+  import { DEFAULT_DIRECTIONAL_LIGHT_POSITION } from "~/config/constants";
 
   let ambientColor;
   let hemisphereColor;
@@ -66,7 +67,7 @@
     changeHemisphereColor({ detail: "#FFFFBB" });
     changeHemisphereGroundColor({ detail: "#080820" });
     changeDirectionalColor({ detail: "#FFFFFF" });
-    directionalPosition = [-5, 5, 2];
+    directionalPosition = DEFAULT_DIRECTIONAL_LIGHT_POSITION;
   }
 
   onMount(() => {

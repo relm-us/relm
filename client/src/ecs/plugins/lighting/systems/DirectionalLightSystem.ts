@@ -65,7 +65,7 @@ export class DirectionalLightSystem extends System {
         const size2 = 2 * Math.atan(size / (2 * 10)) * (180 / Math.PI);
         const rangeZeroToOne =
           (MathUtils.clamp(size2, 54, 140) - 54) / (140 - 54);
-        zoom = (1 - rangeZeroToOne) * 1.5 + 0.5;
+        zoom = (1 - rangeZeroToOne) * 1.5 + 0.25;
       }
       light.shadow.camera.zoom = zoom;
       light.shadow.camera.updateProjectionMatrix();

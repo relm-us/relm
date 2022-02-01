@@ -5,11 +5,12 @@ import { Follow } from "~/ecs/plugins/follow";
 import { DirectionalLight } from "~/ecs/plugins/lighting";
 
 import { makeEntity } from "./makeEntity";
+import { DEFAULT_DIRECTIONAL_LIGHT_POSITION } from "~/config/constants";
 
 export function makeLight(world, avatar, color = 0xffffff) {
   const cameraPosition = new Vector3(0, 5.5, 5);
 
-  const lightOffset = new Vector3(-5, 5, 2);
+  const lightOffset = new Vector3().fromArray(DEFAULT_DIRECTIONAL_LIGHT_POSITION);
   const lightPosition = new Vector3().add(cameraPosition).add(lightOffset);
   const shadowSize = 7.5;
   const light = makeEntity(world, "DirectionalLight")

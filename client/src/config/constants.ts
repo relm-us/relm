@@ -3,6 +3,7 @@ export const shadowMapConfig: ShadowMapConfig = "PCF";
 
 export const DEFAULT_RELM_ID = "default";
 export const DEFAULT_ENTRYWAY = "default";
+export const DEFAULT_DIRECTIONAL_LIGHT_POSITION = [-20, 20, 8];
 export const DRAG_DISTANCE_THRESHOLD = 4;
 
 // 0 - 100, where 100 is completely zoomed out
