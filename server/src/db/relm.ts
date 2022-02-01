@@ -28,6 +28,9 @@ type RelmSummaryColumns = {
   seed_relm_id: string;
   is_public: boolean;
   created_at: string;
+  doc_id: string;
+  assets_count: number;
+  entities_count: number;
 };
 
 const mkRelmSummary = nullOr((cols: RelmSummaryColumns) => {
@@ -37,6 +40,9 @@ const mkRelmSummary = nullOr((cols: RelmSummaryColumns) => {
     seedRelmId: cols.seed_relm_id,
     isPublic: cols.is_public,
     createdAt: cols.created_at,
+    docId: cols.doc_id,
+    assetsCount: cols.assets_count,
+    entitiesCount: cols.entities_count,
   };
 });
 
@@ -85,19 +91,32 @@ export async function getRelm({
 export async function getAllRelms({
   prefix,
   isPublic = true,
+  excludeEmpty = true,
 }: {
   prefix?: string;
   isPublic?: boolean;
+  excludeEmpty?: boolean;
 }) {
   const filter: any = {
+    recent_rank: 1,
     is_public: isPublic,
   };
   if (prefix) {
     filter.relm_name = { like: `${prefix}%` };
   }
+  if (excludeEmpty) {
+    filter.entities_count = { gt: 0 };
+  }
   return (
     await db.manyOrNone(sql`
-        SELECT * FROM relms
+        SELECT r.*, d.doc_id, d.entities_count, d.assets_count
+        FROM relms r
+        LEFT JOIN docs d ON d.relm_id = r.relm_id
+        INNER JOIN (
+          SELECT doc_id, RANK() OVER (PARTITION BY relm_id ORDER BY updated_at DESC) recent_rank
+          FROM docs
+          WHERE doc_type = 'permanent'
+        ) z ON z.doc_id = d.doc_id
         ${WHERE(filter)}
       `)
   ).map((row) => mkRelmSummary(row));

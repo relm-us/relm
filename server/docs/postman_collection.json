@@ -672,7 +672,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"playerId\": \"0dce4601-0a92-4c52-ad4a-f355ede669c6\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -687,6 +687,13 @@
 							"path": [
 								"relms",
 								"all"
+							],
+							"query": [
+								{
+									"key": "excludeEmpty",
+									"value": "false",
+									"disabled": true
+								}
 							]
 						}
 					},
