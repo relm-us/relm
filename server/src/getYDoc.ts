@@ -9,7 +9,9 @@ import { Doc } from "./db";
 import * as yws from "y-websocket/bin/utils";
 
 export async function getYDoc(docId: string): Promise<Y.Doc> {
-  return await yws.getYDoc(docId, { callbackHandler: ydocStats });
+  const doc = await yws.getYDoc(docId, { callbackHandler: ydocStats });
+  await doc.whenSynced;
+  return doc;
 }
 
 export const ydocStats = async (update, origin, doc: Y.Doc) => {

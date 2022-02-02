@@ -37,7 +37,7 @@
     "twilio": "^3.71.2",
     "ws": "^7.2.3",
     "y-protocols": "1.0.5",
-    "y-websocket": "canadaduane/y-websocket#custom-callbacks2",
+    "y-websocket": "canadaduane/y-websocket#async-bind-state",
     "yjs": "13.5.23"
   },
   "devDependencies": {
