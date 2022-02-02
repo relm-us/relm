@@ -40,10 +40,11 @@ export function participantToTransformData(
   transformData[5] = participant.avatar?.headAngle;
 
   const clips: AnimationClip[] = entities.body.get(ModelRef)?.animations;
-  const clipName: string = entities.body.get(Animation)?.clipName;
-  if (clips && clipName) {
-    const index = clips.findIndex((c) => c.name === clipName);
+  const animation: Animation = entities.body.get(Animation);
+  if (clips && animation) {
+    const index = clips.findIndex((c) => c.name === animation.clipName);
     transformData[6] = index;
+    transformData[7] = animation.loop;
   }
 
   return transformData as TransformData;
@@ -52,7 +53,7 @@ export function participantToTransformData(
 function setTransformDataOnParticipant(
   this: void,
   participant: Participant,
-  [playerId, x, y, z, theta, headTheta, clipIndex]: TransformData
+  [playerId, x, y, z, theta, headTheta, clipIndex, animLoop]: TransformData
 ) {
   if (!participant) {
     console.warn("expecting participant, got null", playerId);
@@ -100,6 +101,7 @@ function setTransformDataOnParticipant(
     const newClipName = clips[clipIndex].name;
     if (animation.clipName !== newClipName) {
       animation.clipName = newClipName;
+      animation.loop = animLoop;
       animation.modified();
     }
   }

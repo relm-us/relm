@@ -122,7 +122,8 @@ export type TransformData = [
   z: number,
   theta: number,
   headTheta: number,
-  clipIndex: number
+  clipIndex: number,
+  animLoop: boolean
 ];
 
 export type RecvTransformCallback = (transformArray: TransformData[]) => void;
