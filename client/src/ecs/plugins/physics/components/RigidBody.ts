@@ -3,7 +3,7 @@ import { Component, StringType, NumberType } from "~/ecs/base";
 import { Vector3Type } from "~/ecs/plugins/core";
 
 export class RigidBody extends Component {
-  kind: string;
+  kind: "STATIC" | "KINEMATIC" | "DYNAMIC";
   linearVelocity: Vector3;
   angularVelocity: Vector3;
   mass: number;

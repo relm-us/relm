@@ -88,6 +88,6 @@ export class Fire extends Mesh {
       this.blaze,
       this.octaves
     );
-    return fire.copy(this, recursive) as any;
+    return (fire as any).copy(this, recursive) as any;
   }
 }
