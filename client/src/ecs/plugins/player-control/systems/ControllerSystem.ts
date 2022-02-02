@@ -141,7 +141,7 @@ export class ControllerSystem extends System {
 
       this.repelFromOthers(entity);
 
-      const anim = entity.get(Animation);
+      const anim: Animation = entity.get(Animation);
       if (anim) {
         if (state.animOverride) {
           anim.maybeChangeClip(state.animOverride);

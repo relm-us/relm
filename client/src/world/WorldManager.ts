@@ -20,7 +20,10 @@ import { targetFps } from "~/stores/targetFps";
 import { playState } from "~/stores/playState";
 import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 import { shadowsEnabled } from "~/stores/shadowsEnabled";
+
+// Animation keys
 import { keyShift, key1, key2, key3 } from "~/stores/keys";
+import { RAISING_HAND, STAND_SIT, WAVING } from "~/config/constants";
 
 import { makeLight } from "~/prefab/makeLight";
 
@@ -31,7 +34,6 @@ import { BoundingHelper } from "~/ecs/plugins/bounding-helper";
 import { ControllerState } from "~/ecs/plugins/player-control";
 import { Follow } from "~/ecs/plugins/follow";
 import { intersectionPointWithGround } from "~/ecs/shared/isMakingContactWithGround";
-import { STAND_SIT, WAVING } from "~/ecs/plugins/player-control/constants";
 
 import { SelectionManager } from "./SelectionManager";
 import { ChatManager } from "./ChatManager";
@@ -197,17 +199,29 @@ export class WorldManager {
       })
     );
 
+    let sitting = false;
     this.unsubs.push(
-      derived([worldUIMode, key1, key2], ([$mode, $key1, $key2], set) => {
-        // Number key "1" makes avatar wave
-        if ($mode === "play" && $key1) {
-          set(WAVING);
-        } else if ($mode === "play" && $key2) {
-          set(STAND_SIT);
-        } else {
-          set(null);
+      derived(
+        [worldUIMode, key1, key2, key3],
+        ([$mode, $key1, $key2, $key3], set) => {
+          if ($mode === "play" && $key1) {
+            set(WAVING);
+            sitting = false;
+          } else if ($mode === "play" && $key2) {
+            if (sitting) {
+              set(null);
+            } else {
+              set({ clipName: STAND_SIT, loop: false });
+            }
+            sitting = !sitting;
+          } else if ($mode === "play" && $key3) {
+            set({ clipName: RAISING_HAND, loop: false });
+            sitting = false;
+          } else if (!sitting) {
+            set(null);
+          }
         }
-      }).subscribe((anim) => {
+      ).subscribe((anim) => {
         const state = this.avatar.entities.body.get(ControllerState);
         if (!state) return;
         state.animOverride = anim;

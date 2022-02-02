@@ -1,7 +1,9 @@
+import { AnimationMixer, LoopOnce } from "three";
+
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
 import { ModelRef } from "~/ecs/plugins/model";
+
 import { Animation, MixerRef } from "../components";
-import { AnimationMixer } from "three";
 
 export class AnimationSystem extends System {
   order = Groups.Simulation + 1;
@@ -60,6 +62,10 @@ export class AnimationSystem extends System {
       const clip = animations.find((c) => c.name === spec.clipName);
       if (clip) {
         mixer.activeAction = mixer.clipAction(clip).reset().play();
+        if (!spec.loop) {
+          mixer.activeAction.setLoop(LoopOnce);
+          mixer.activeAction.clampWhenFinished = true;
+        }
       }
     } else {
       mixer.previousAction = mixer.activeAction;
@@ -78,6 +84,10 @@ export class AnimationSystem extends System {
         .setEffectiveWeight(1)
         .fadeIn(spec.transition)
         .play();
+      if (!spec.loop) {
+        mixer.activeAction.setLoop(LoopOnce);
+        mixer.activeAction.clampWhenFinished = true;
+      }
     }
   }
 

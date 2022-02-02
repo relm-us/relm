@@ -17,3 +17,16 @@ export const CAMERA_FOCUS_DISTANCE = 5.0;
 
 // How quickly to move the camera as it follows the participant
 export const CAMERA_LERP_ALPHA = 0.125;
+
+// Animation names from participant model GLB
+export const T_POSE = "a-pose";
+export const FLYING = "flying";
+export const IDLE = "idle-standing";
+export const JUMPING = "jumping";
+export const LOWERING_HAND = "lowering-hand";
+export const RAISING_HAND = "raising-hand-pose";
+export const RUNNING = "running";
+export const SCREEN_SHARING = "screen-sharing";
+export const WALKING = "walking";
+export const WAVING = "waving";
+export const STAND_SIT = "stand-to-sit-ground";

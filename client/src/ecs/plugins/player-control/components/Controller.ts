@@ -1,5 +1,5 @@
 import { LocalComponent, BooleanType, JSONType } from "~/ecs/base";
-import { IDLE, WALKING, RUNNING, FLYING } from "../constants";
+import { IDLE, WALKING, RUNNING, FLYING } from "~/config/constants";
 
 export class Controller extends LocalComponent {
   keysEnabled: boolean;

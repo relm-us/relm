@@ -12,7 +12,7 @@ import { PointerPosition } from "~/ecs/plugins/pointer-position";
 import { RigidBody, Collider, Impactable } from "~/ecs/plugins/physics";
 import { Animation } from "~/ecs/plugins/animation";
 import { Repulsive } from "~/ecs/plugins/player-control";
-import { IDLE } from "~/ecs/plugins/player-control/constants";
+import { IDLE } from "~/config/constants";
 
 import { AvatarEntities } from "~/types";
 
