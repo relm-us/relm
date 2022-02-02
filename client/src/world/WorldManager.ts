@@ -20,7 +20,7 @@ import { targetFps } from "~/stores/targetFps";
 import { playState } from "~/stores/playState";
 import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 import { shadowsEnabled } from "~/stores/shadowsEnabled";
-import { keyShift, keySpace } from "~/stores/keys";
+import { keyShift, key1, key2, key3 } from "~/stores/keys";
 
 import { makeLight } from "~/prefab/makeLight";
 
@@ -31,7 +31,7 @@ import { BoundingHelper } from "~/ecs/plugins/bounding-helper";
 import { ControllerState } from "~/ecs/plugins/player-control";
 import { Follow } from "~/ecs/plugins/follow";
 import { intersectionPointWithGround } from "~/ecs/shared/isMakingContactWithGround";
-import { WAVING } from "~/ecs/plugins/player-control/constants";
+import { STAND_SIT, WAVING } from "~/ecs/plugins/player-control/constants";
 
 import { SelectionManager } from "./SelectionManager";
 import { ChatManager } from "./ChatManager";
@@ -197,18 +197,20 @@ export class WorldManager {
       })
     );
 
-    // Temporary hack: spacebar makes avatar wave
     this.unsubs.push(
-      derived([worldUIMode, keySpace], ([$mode, $keySpace], set) => {
-        if ($mode === "play" && $keySpace) {
-          set(true);
+      derived([worldUIMode, key1, key2], ([$mode, $key1, $key2], set) => {
+        // Number key "1" makes avatar wave
+        if ($mode === "play" && $key1) {
+          set(WAVING);
+        } else if ($mode === "play" && $key2) {
+          set(STAND_SIT);
         } else {
-          set(false);
+          set(null);
         }
-      }).subscribe((wave: boolean) => {
+      }).subscribe((anim) => {
         const state = this.avatar.entities.body.get(ControllerState);
         if (!state) return;
-        state.animOverride = wave ? WAVING : null;
+        state.animOverride = anim;
       })
     );
 

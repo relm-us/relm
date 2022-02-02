@@ -8,3 +8,4 @@ export const RUNNING = "running";
 export const SCREEN_SHARING = "screen-sharing";
 export const WALKING = "walking";
 export const WAVING = "waving";
+export const STAND_SIT = "stand-to-sit-ground";

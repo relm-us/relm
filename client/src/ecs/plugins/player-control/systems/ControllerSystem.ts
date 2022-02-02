@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { Vector3, MathUtils } from "three";
+import { Vector3 } from "three";
 import type { RigidBody as RapierRigidBody } from "@dimforge/rapier3d";
 
 import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";

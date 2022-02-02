@@ -13,6 +13,7 @@
   import * as deleteKey from "./handlers/deleteKey";
   import * as enterKey from "./handlers/enterKey";
   import * as escapeKey from "./handlers/escapeKey";
+  import * as numberKeys from "./handlers/numberKeys";
   import * as pauseKey from "./handlers/pauseKey";
   import * as shiftKey from "./handlers/shiftKey";
   import * as spaceKey from "./handlers/spaceKey";
@@ -27,6 +28,7 @@
     deleteKey.onKeydown(event);
     enterKey.onKeydown(event);
     escapeKey.onKeydown(event);
+    numberKeys.onKeydown(event);
     pauseKey.onKeydown(event);
     shiftKey.onKeydown(event);
     spaceKey.onKeydown(event);
@@ -42,6 +44,7 @@
     deleteKey.onKeyup(event);
     enterKey.onKeyup(event);
     escapeKey.onKeyup(event);
+    numberKeys.onKeyup(event);
     pauseKey.onKeyup(event);
     shiftKey.onKeyup(event);
     spaceKey.onKeyup(event);
