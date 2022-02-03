@@ -9,7 +9,7 @@
   export let onClose;
   export let visible;
 
-  let controlsVisible = false;
+  let controlsVisible = true;
 
   function showControls() {
     controlsVisible = true;
@@ -100,7 +100,7 @@
 
     position: absolute;
     top: -17px;
-    right: -34px;
+    right: -17px;
     height: calc(100% + 16px);
 
     --margin: 0;
