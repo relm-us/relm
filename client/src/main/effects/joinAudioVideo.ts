@@ -9,8 +9,6 @@ export const joinAudioVideo =
     localParticipant: Participant,
     avConnection: AVConnection,
     avDisconnect: Function,
-    audioDesired: boolean,
-    videoDesired: boolean,
     relmDocId: string,
     twilioToken: string
   ) =>
@@ -21,14 +19,23 @@ export const joinAudioVideo =
       } catch {}
     }
 
-    // Join the room
-    const disconnect = await avConnection.connect({
+    const idData = {
       roomId: relmDocId,
+      displayName: localParticipant.identityData.name,
+    };
+
+    // Join the room
+    console.log("Joining video conference room", idData);
+    const disconnect = await avConnection.connect({
+      ...idData,
       token: twilioToken,
-      // displayName: localParticipant.identityData.name,
-      produceAudio: audioDesired,
-      produceVideo: videoDesired,
     });
 
-    dispatch({ id: "didJoinAudioVideo", avDisconnect: disconnect });
+    dispatch({
+      id: "didJoinAudioVideo",
+      avDisconnect: () => {
+        console.log("Leaving video conference room", idData);
+        disconnect();
+      },
+    });
   };

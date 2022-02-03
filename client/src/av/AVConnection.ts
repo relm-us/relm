@@ -34,8 +34,8 @@ export class AVConnection {
     this.videoTrackStores[participantId] = localVisualTrackStore as any;
   }
 
-  async connect({ roomId, token }: AVConnectOpts) {
-    await this.adapter.connect(roomId, token);
+  async connect({ roomId, token, displayName }: AVConnectOpts) {
+    await this.adapter.connect(roomId, token, { displayName });
     this.watchLocalTrackChanges();
     this.watchRemoteTrackChanges();
 

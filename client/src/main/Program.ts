@@ -154,6 +154,9 @@ export function makeProgram(): Program {
             participantRemoveAvatar(participant);
           }
         }
+
+        // TODO: leave video conference if participants <= 1
+
         return [state];
       }
 
@@ -165,7 +168,20 @@ export function makeProgram(): Program {
             removeAfter: 5000,
           });
         }
-        return [state];
+        console.log("participantJoined", state.participants.size);
+
+        return [
+          state,
+          state.avDisconnect
+            ? null /* We've already connected once, no need to do it again */
+            : joinAudioVideo(
+                state.participants.get(playerId),
+                state.avConnection,
+                state.avDisconnect,
+                state.relmDocId,
+                state.twilioToken
+              ),
+        ];
       }
 
       case "recvParticipantData": {
@@ -223,6 +239,7 @@ export function makeProgram(): Program {
         exists(msg.entryway, "entryway");
 
         worldManager.stop();
+        state.avDisconnect?.();
 
         return [
           {
@@ -245,6 +262,7 @@ export function makeProgram(): Program {
             initializedWorldManager: false,
             worldDoc: null,
             ecsWorld: null,
+            avDisconnect: null,
           },
           send({ id: "didEnterPortal" }),
         ];
@@ -357,17 +375,7 @@ export function makeProgram(): Program {
           state.preferredDeviceIds.set(msg.preferredDeviceIds);
         }
 
-        const effects: Effect[] = [
-          joinAudioVideo(
-            state.participants.get(playerId),
-            state.avConnection,
-            state.avDisconnect,
-            msg.audioDesired,
-            msg.videoDesired,
-            state.relmDocId,
-            state.twilioToken
-          ),
-        ];
+        const effects: Effect[] = [];
 
         const newState = { ...state, audioVideoSetupDone: true };
 
