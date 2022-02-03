@@ -56,4 +56,13 @@ export const IN = function (values) {
   )}${pgSql.raw(")")}`;
 };
 
-export { INSERT, UPDATE, VALUES, WHERE, AND, OR, LIMIT, OFFSET } from "pg-sql-helpers";
+export {
+  INSERT,
+  UPDATE,
+  VALUES,
+  WHERE,
+  AND,
+  OR,
+  LIMIT,
+  OFFSET,
+} from "./pgSqlHelpers";

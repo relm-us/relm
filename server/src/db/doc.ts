@@ -1,5 +1,5 @@
 import { db, sql, raw } from "./db";
-import { INSERT, UPDATE } from "pg-sql-helpers";
+import { INSERT, UPDATE } from "./pgSqlHelpers";
 
 import { getDefinedKeys, nullOr } from "../utils";
 

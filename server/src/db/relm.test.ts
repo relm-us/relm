@@ -17,25 +17,27 @@ describe("Relm model tests", () => {
     const relms = await Relm.getAllRelms({
       prefix: "allpub",
       isPublic: true,
+      excludeEmpty: false
     });
     const relmNames = new Set(relms.map((r) => r.relmName));
     expect(relmNames).toEqual(
       new Set(["allpub-public-relm-1", "allpub-public-relm-2"])
     );
-  }),
-    it("Creates a relm with defaults", async () => {
-      const relmName = "relm-being-created";
-      const relm = await Relm.createRelm({ relmName });
-      expect(relm).toEqual({
-        relmId: expect.stringMatching(UUID_RE),
-        seedRelmId: null,
-        relmName: "relm-being-created",
-        isPublic: false,
-        createdBy: null,
-        createdAt: expect.any(Date),
-        permanentDocId: expect.stringMatching(UUID_RE),
-      });
+  });
+
+  it("Creates a relm with defaults", async () => {
+    const relmName = "relm-being-created";
+    const relm = await Relm.createRelm({ relmName });
+    expect(relm).toEqual({
+      relmId: expect.stringMatching(UUID_RE),
+      seedRelmId: null,
+      relmName: "relm-being-created",
+      isPublic: false,
+      createdBy: null,
+      createdAt: expect.any(Date),
+      permanentDocId: expect.stringMatching(UUID_RE),
     });
+  });
 
   it("Gets a relm by relmName", async () => {
     const relmName = "relm-with-name";

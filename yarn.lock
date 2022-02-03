@@ -6429,7 +6429,7 @@ is-wsl@^2.2.0:
   dependencies:
     is-docker "^2.0.0"
 
-is@^3.2.1:
+is@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/is/-/is-3.3.0.tgz#61cff6dd3c4193db94a3d62582072b44e5645d79"
   integrity sha512-nW24QBoPcFGGHJGUwnfpI7Yc5CdqWNdsyHQszVE/z2pKHXzh7FZ5GWhJqSyaQ9wMkQnsTx+kAI8bHlCX4tKdbg==
@@ -8915,16 +8915,6 @@ pg-protocol@^1.5.0:
   resolved "https://registry.yarnpkg.com/pg-protocol/-/pg-protocol-1.5.0.tgz#b5dd452257314565e2d54ab3c132adc46565a6a0"
   integrity sha512-muRttij7H8TqRNu/DxrAJQITO4Ac7RmX3Klyr/9mJEOBeIpgnF8f9jAfRz5d3XwQZl5qBjF9gLsUtMPJE0vezQ==
 
-pg-sql-helpers@0.3.3:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/pg-sql-helpers/-/pg-sql-helpers-0.3.3.tgz#577a78b6757302047afa5b3246f61bc28e30bb2d"
-  integrity sha512-ZeBMbGqpb79JrLAGBKBzsVtV1N/sghcbpYD0xMH5OPsXnn1vv04tcxMHF1h5P/tLusdZZIliOWOts+APlwVJYg==
-  dependencies:
-    is "^3.2.1"
-    is-plain-object "^2.0.4"
-    pg-sql "^1.1.0"
-    prettier "^2.2.1"
-
 pg-sql@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/pg-sql/-/pg-sql-1.1.0.tgz#1271608aff8b1ecd87b4f63f413184d9fc345703"
@@ -9483,11 +9473,6 @@ prepend-http@^1.0.0:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/prepend-http/-/prepend-http-1.0.4.tgz#d4f4562b0ce3696e41ac52d0e002e57a635dc6dc"
   integrity sha1-1PRWKwzjaW5BrFLQ4ALlemNdxtw=
-
-prettier@^2.2.1:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.5.1.tgz#fff75fa9d519c54cf0fce328c1017d94546bc56a"
-  integrity sha512-vBZcPRUR5MZJwoyi3ZoyQlc1rXeEck8KgeC9AwwOn+exuxLxq5toTRDTSaVrXHxelDMHy9zlicw8u66yxoSUFg==
 
 pretty-error@^2.1.1:
   version "2.1.2"
