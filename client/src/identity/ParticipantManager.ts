@@ -30,6 +30,13 @@ export class ParticipantManager {
     this.participants = participants;
   }
 
+  deinit() {
+    for (let participant of this.participants.values()) {
+      participant.avatar = null;
+    }
+    this.participants.clear();
+  }
+
   sendMyTransformData() {
     if (!this.local.avatar) return;
 

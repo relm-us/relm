@@ -258,6 +258,7 @@ export function makeProgram(): Program {
             assetsCount: 0,
             assetsMax: 1,
 
+            participants: initParticipants(),
             entrywayPosition: null,
             initializedWorldManager: false,
             worldDoc: null,

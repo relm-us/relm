@@ -76,10 +76,7 @@ export class WorldManager {
 
   loopType: LoopType = { type: "raf" };
 
-  me: Participant;
-
   light: Entity;
-  connectOpts;
 
   participants: ParticipantManager;
   selection: SelectionManager;
@@ -249,6 +246,8 @@ export class WorldManager {
     this.world.reset();
 
     this.camera.deinit();
+    this.participants.deinit();
+    this.transformArray.length = 0;
 
     this.world = null;
     this.worldDoc = null;
