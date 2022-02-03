@@ -25,6 +25,7 @@ export function participantToTransformData(
   if (!entities.body) return;
 
   const transform = entities.body.get(Transform);
+
   if (!transform) return;
 
   const transformData: any[] = [participant.participantId];
@@ -71,6 +72,8 @@ function setTransformDataOnParticipant(
   if (!entities.body) return;
 
   const transform = entities.body.get(Transform);
+
+  if (!transform) return;
 
   // Set position of body
   v1.set(x, y, z);

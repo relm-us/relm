@@ -35,11 +35,16 @@
 
   onMount(() => {
     const interval1 = setInterval(() => {
-      otherPositions = worldManager.participants.actives.map((pt) => {
-        return pt.avatar.position;
-      });
-      if (worldManager.participants.local.avatar)
-        myPosition = worldManager.participants.local.avatar.position;
+      try {
+        otherPositions = worldManager.participants.actives.map((pt) => {
+          return pt.avatar.position;
+        });
+        if (worldManager.participants.local.avatar)
+          myPosition = worldManager.participants.local.avatar.position;
+      } catch (err) {
+        // When unloading the world, it's possible pt.avatar.position will
+        // fail, but we don't care
+      }
     }, 75);
 
     const interval2 = setInterval(() => {
