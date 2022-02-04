@@ -12,7 +12,6 @@
   import MiniMap from "~/ui/MiniMap";
 
   // Build Mode UI
-  import UploadButton from "~/ui/ButtonControls/UploadButton";
   import AddPanel from "~/ui/Build/AddPanel";
   import ModifyPanel from "~/ui/Build/ModifyPanel";
   import SettingsPanel from "~/ui/Build/SettingsPanel";
@@ -27,7 +26,6 @@
   import CenterCamera from "~/ui/CenterCamera";
   import Tooltip from "~/ui/lib/Tooltip";
 
-  import { createPrefab } from "~/prefab";
   import { globalEvents } from "~/events";
 
   import { worldUIMode, openPanel, audioMode } from "~/stores";
@@ -51,16 +49,6 @@
 
   const toPlayMode = () => {
     globalEvents.emit("switch-mode", "play");
-  };
-
-  const onUpload = ({ detail }) => {
-    for (const result of detail.results) {
-      if (result.types.webp) {
-        createPrefab("Image", { url: result.types.webp });
-      } else if (result.types.gltf) {
-        createPrefab("Thing", { url: result.types.gltf });
-      }
-    }
   };
 </script>
 
@@ -128,12 +116,6 @@
         <GroupUngroupButton />
       {/if}
     </overlay-left>
-
-    {#if $worldUIMode === "build"}
-      <overlay-right class="interactive">
-        <UploadButton on:uploaded={onUpload} />
-      </overlay-right>
-    {/if}
   </overlay-content>
 </overlay>
 

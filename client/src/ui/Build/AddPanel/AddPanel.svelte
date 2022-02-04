@@ -7,6 +7,8 @@
   import { worldManager } from "~/world";
   import SearchResult from "./SearchResult.svelte";
   import { Transform } from "~/ecs/plugins/core";
+  import UploadButton from "~/ui/Build/shared/UploadButton";
+  import { createPrefab } from "~/prefab";
 
   let search;
   let results: LibraryAsset[] = [];
@@ -44,6 +46,16 @@
   }
 
   $: query(empty(search) ? null : search);
+
+  const onUpload = ({ detail }) => {
+    for (const result of detail.results) {
+      if (result.types.webp) {
+        createPrefab("Image", { url: result.types.webp });
+      } else if (result.types.gltf) {
+        createPrefab("Thing", { url: result.types.gltf });
+      }
+    }
+  };
 </script>
 
 <LeftPanel on:minimize>
@@ -57,6 +69,7 @@
         <SearchResult {result} on:click={addAsset(result)} />
       {/each}
     </r-results>
+    <UploadButton on:upload={onUpload} />
   </r-column>
 </LeftPanel>
 

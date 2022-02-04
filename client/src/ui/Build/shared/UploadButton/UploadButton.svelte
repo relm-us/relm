@@ -2,7 +2,7 @@
   import IoIosCloudUpload from "svelte-icons/io/IoIosCloudUpload.svelte";
 
   import Button from "~/ui/lib/Button";
-  import Uploader from "~/ui/ButtonControls/UploadButton/Uploader";
+  import Uploader from "./Uploader";
 
   let uploader;
 

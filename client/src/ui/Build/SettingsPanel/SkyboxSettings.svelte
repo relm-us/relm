@@ -3,14 +3,15 @@
 
   import { worldManager } from "~/world";
   import { assetUrl } from "~/config/assetUrl";
-
+  
   import { Entity } from "~/ecs/base";
   import { Asset } from "~/ecs/plugins/core";
   import { Skybox } from "~/ecs/plugins/skybox";
 
   import { Pane } from "~/ui/lib/LeftPanel";
   import SkyboxOption from "./SkyboxOption.svelte";
-  import SkyboxUploadButton from "./SkyboxUploadButton.svelte";
+  // import SkyboxUploadButton from "./SkyboxUploadButton.svelte";
+  import SkyboxUploadButton from "~/ui/Build/shared/UploadButton";
 
   function onUploadedSkybox({ detail }) {
     if (detail.results.length === 0) return;
