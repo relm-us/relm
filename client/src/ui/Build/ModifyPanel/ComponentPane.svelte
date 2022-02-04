@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { createEventDispatcher } from "svelte";
 
-  import { Pane } from "~/ui/LeftPanel";
+  import { Pane } from "~/ui/lib/LeftPanel";
   import Capsule from "~/ui/lib/Capsule";
   import Property from "./Property.svelte";
 

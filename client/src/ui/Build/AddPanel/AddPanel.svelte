@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { LibraryAsset } from "~/types";
 
-  import LeftPanel, { Header } from "~/ui/LeftPanel";
+  import LeftPanel, { Header } from "~/ui/lib/LeftPanel";
   import Search from "svelte-search";
   import debounce from "lodash/debounce";
   import { worldManager } from "~/world";

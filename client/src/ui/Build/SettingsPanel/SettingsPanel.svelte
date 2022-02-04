@@ -1,5 +1,5 @@
 <script lang="ts">
-  import LeftPanel, { Header } from "~/ui/LeftPanel";
+  import LeftPanel, { Header } from "~/ui/lib/LeftPanel";
   import EntrywaySettings from "./EntrywaySettings.svelte";
   import SkyboxSettings from "./SkyboxSettings.svelte";
   import FogSettings from "./FogSettings.svelte";

@@ -11,7 +11,7 @@
   import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
 
   import Button from "~/ui/lib/Button";
-  import LeftPanel, { Header } from "~/ui/LeftPanel";
+  import LeftPanel, { Header } from "~/ui/lib/LeftPanel";
 
   let text;
   let errorState = false;
@@ -24,7 +24,7 @@
   onMount(() => {
     const meta: FormatOpts = {
       // TODO: use whatever is the current relm
-      relm: config.initialSubrelm,
+      relm: worldManager.state.pageParams.relmName,
       server: config.serverUrl,
     };
     let exported;

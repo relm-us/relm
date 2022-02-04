@@ -87,8 +87,8 @@
 }
 
 {
-  "name": "Stout Green Tree",
-  "description": "A wide green oak tree",
+  "name": "Green Oak Tree",
+  "description": "A wide, green oak tree",
   "tags": ["furniture"],
   "thumbnail": "2a2545dd9143ebffcef254f010c9a5c3-2502.webp",
   "ecsProperties": {

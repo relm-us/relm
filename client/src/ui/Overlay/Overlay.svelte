@@ -1,13 +1,6 @@
 <script lang="ts">
-  import CollectionsPanel from "~/ui/CollectionsPanel";
-  import EditorPanel from "~/ui/EditorPanel";
-  import ExportPanel from "~/ui/ExportPanel";
-  import SettingsPanel from "~/ui/SettingsPanel";
-  import PerformancePanel from "~/ui/PerformancePanel";
-
   import Button from "~/ui/lib/Button";
 
-  import UploadButton from "~/ui/ButtonControls/UploadButton";
   import AudioModeButton from "~/ui/ButtonControls/AudioModeButton";
   import MicButton from "~/ui/ButtonControls/MicButton";
   import VideoButton from "~/ui/ButtonControls/VideoButton";
@@ -15,11 +8,21 @@
   import ShareScreenButton from "~/ui/ButtonControls/ShareScreenButton";
   import ChatButton from "~/ui/Chat/ChatButton.svelte";
 
-  import GroupUngroupButton from "~/ui/GroupUngroupButton";
-  import WorldStatePane from "~/ui/WorldStatePane";
-  import ResetWorldButton from "~/ui/ResetWorldButton";
   import Chat from "~/ui/Chat";
   import MiniMap from "~/ui/MiniMap";
+
+  // Build Mode UI
+  import UploadButton from "~/ui/ButtonControls/UploadButton";
+  import AddPanel from "~/ui/Build/AddPanel";
+  import ModifyPanel from "~/ui/Build/ModifyPanel";
+  import SettingsPanel from "~/ui/Build/SettingsPanel";
+  import ExportPanel from "~/ui/Build/ExportPanel";
+  import GroupUngroupButton from "~/ui/Build/GroupUngroupButton";
+  import ResetWorldButton from "~/ui/ResetWorldButton";
+
+  // Debug UI
+  import WorldStatePane from "~/ui/Debug/WorldStatePane";
+  import PerformancePanel from "~/ui/Debug/PerformancePanel";
 
   import { PauseAutomatically, PauseMessage } from "~/ui/Pause";
   import CenterCamera from "~/ui/CenterCamera";
@@ -78,11 +81,11 @@
   <overlay-panel class="interactive">
     {#if buildMode}
       {#if $openPanel === "library"}
-        <CollectionsPanel on:minimize={toPlayMode} />
+        <AddPanel on:minimize={toPlayMode} />
       {/if}
 
       {#if $openPanel === "editor"}
-        <EditorPanel on:minimize={toPlayMode} />
+        <ModifyPanel on:minimize={toPlayMode} />
       {/if}
 
       <!-- Export panel opens from button in SettingsPanel -->

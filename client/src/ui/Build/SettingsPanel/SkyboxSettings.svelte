@@ -8,7 +8,7 @@
   import { Asset } from "~/ecs/plugins/core";
   import { Skybox } from "~/ecs/plugins/skybox";
 
-  import { Pane } from "~/ui/LeftPanel";
+  import { Pane } from "~/ui/lib/LeftPanel";
   import SkyboxOption from "./SkyboxOption.svelte";
   import SkyboxUploadButton from "./SkyboxUploadButton.svelte";
 

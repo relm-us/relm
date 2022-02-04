@@ -1,5 +1,5 @@
 <script lang="ts">
-  import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
+  import LeftPanel, { Header, Pane } from "~/ui/lib/LeftPanel";
   import { selectedEntities, selectedGroups } from "~/stores/selection";
   import { worldManager } from "~/world";
   import SelectCreatePrefab from "./SelectCreatePrefab.svelte";

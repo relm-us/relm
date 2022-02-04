@@ -1,5 +1,5 @@
 <script type="ts">
-  import { Pane } from "../LeftPanel";
+  import { Pane } from "~/ui/lib/LeftPanel";
   import Chart from "./Chart.svelte";
 
   export let title: string;

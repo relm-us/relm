@@ -3,7 +3,7 @@
 
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import Button from "~/ui/lib/Button";
-  import LeftPanel, { Header, Pane } from "~/ui/LeftPanel";
+  import LeftPanel, { Header, Pane } from "~/ui/lib/LeftPanel";
 
   import StatsPane from "./StatsPane.svelte";
   import SystemToggle from "./SystemToggle.svelte";
