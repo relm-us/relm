@@ -464,9 +464,14 @@ export class WorldManager {
     if (instantaneousCamera) this.camera.moveTo(position);
   }
 
-  moveToXZ(x, z, instantaneousCamera = true) {
-    const skyPoint = new Vector3(x, 10, z);
+  findGroundAtXZ(x, z) {
+    const skyPoint = new Vector3(x, 100, z);
     const hitPoint = intersectionPointWithGround(this.world.physics, skyPoint);
+    return hitPoint;
+  }
+
+  moveToXZ(x, z, instantaneousCamera = true) {
+    const hitPoint = this.findGroundAtXZ(x, z);
     if (hitPoint) {
       this.moveTo(hitPoint, instantaneousCamera);
     } else {

@@ -6,6 +6,7 @@
   import debounce from "lodash/debounce";
   import { worldManager } from "~/world";
   import SearchResult from "./SearchResult.svelte";
+  import { Transform } from "~/ecs/plugins/core";
 
   let search;
   let results: LibraryAsset[] = [];
@@ -14,14 +15,35 @@
     return term.startsWith("#") === booleanValue;
   };
 
-  const query: (search: string) => void = debounce(async (search) => {
-    const terms = search.trim().split(/\s+/);
+  const query: (search?: string) => void = debounce(async (search) => {
+    const terms = search ? search.trim().split(/\s+/) : [];
     const tags = terms.filter(isTag(true)).map((tag) => tag.slice(1));
     const keywords = terms.filter(isTag(false));
     results = await worldManager.api.queryAssets({ keywords, tags });
   }, 500);
 
-  $: query(search);
+  const addAsset = (result) => () => {
+    if (!result.ecsProperties || !result.ecsProperties.entities) {
+      console.warn("Asset has no ECS properties to add", result);
+      return;
+    }
+    for (let data of result.ecsProperties.entities) {
+      const entity = worldManager.world.entities.create().fromJSON(data);
+      const transform = entity.get(Transform);
+      if (transform) {
+        transform.position.add(worldManager.avatar.position);
+      }
+      entity.activate();
+      worldManager.worldDoc.syncFrom(entity);
+    }
+  };
+
+  function empty(str: string) {
+    if (!str) return true;
+    else return str.match(/^\s*$/);
+  }
+
+  $: query(empty(search) ? null : search);
 </script>
 
 <LeftPanel on:minimize>
@@ -32,7 +54,7 @@
     </r-search>
     <r-results>
       {#each results as result}
-        <SearchResult {result} />
+        <SearchResult {result} on:click={addAsset(result)} />
       {/each}
     </r-results>
   </r-column>
@@ -57,5 +79,7 @@
   r-results {
     display: flex;
     margin: 8px auto;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 </style>

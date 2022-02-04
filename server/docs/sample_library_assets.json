@@ -1,0 +1,137 @@
+{
+  "name": "Stone Path",
+  "description": "A section of stone path composed of several rocks",
+  "tags": ["paths", "nature"],
+  "thumbnail": "44095a14af3ce8ca35c07af453c63084-5628.webp",
+  "ecsProperties": {
+    "entities": [
+      {
+        "id": "DNLP_ypPP9Cxvo9AAACVQ",
+        "name": "Thing",
+        "parent": null,
+        "children": [],
+        "meta": {},
+        "Transform": {
+          "position": [ 0, -0.17, 0 ],
+          "rotation": [ 0, 0, 0, 1 ],
+          "scale": [ 3, 0.3, 3 ]
+        },
+        "Model": {
+          "asset": {
+            "name": "",
+            "filename": "",
+            "url": "eddc3befe2123e52d8641c37a8328fb1-25608.glb"
+          }
+        },
+        "RigidBody": {
+          "kind": "STATIC",
+          "linearVelocity": [ 0, 0, 0 ],
+          "angularVelocity": [ 0, 0, 0 ],
+          "mass": 1,
+          "angularDamping": 0,
+          "linearDamping": 0
+        }
+      }
+    ]
+  }
+}
+
+{
+  "name": "Yellow Sofa",
+  "description": "A garrish yellow sofa or couch",
+  "tags": ["furniture"],
+  "thumbnail": "8294bf0ca88e8c1e393375a80959111c-1308.webp",
+  "ecsProperties": {
+    "entities": [
+      {
+        "id": "NLtMLwSDA52M1lm-1DVEi",
+        "name": "Thing",
+        "parent": null,
+        "children": [],
+        "meta": {},
+        "Transform": {
+          "position": [ 0, 0.43, 0 ],
+          "rotation": [ 0, 0, 0, 1 ],
+          "scale": [ 4, 4, 4 ]
+        },
+        "Model": {
+          "asset": {
+            "name": "",
+            "filename": "",
+            "url": "cbdc1b7c2001fd9c363009ef782943c4-166148.glb"
+          }
+        },
+        "RigidBody": {
+          "kind": "STATIC",
+          "linearVelocity": [ 0, 0, 0 ],
+          "angularVelocity": [ 0, 0, 0 ],
+          "mass": 1,
+          "angularDamping": 0,
+          "linearDamping": 0
+        },
+        "Collider": {
+          "shape": "BOX",
+          "boxSize": [ 0.9, 0.0999, 0.5 ],
+          "sphereRadius": 0.5,
+          "cylinderRadius": 0.5,
+          "cylinderHeight": 1,
+          "capsuleRadius": 0.5,
+          "capsuleHeight": 1,
+          "offset": [ 0, -0.06, 0 ],
+          "density": 1,
+          "interaction": 65543
+        }
+      }
+    ]
+  }
+}
+
+{
+  "name": "Stout Green Tree",
+  "description": "A wide green oak tree",
+  "tags": ["furniture"],
+  "thumbnail": "2a2545dd9143ebffcef254f010c9a5c3-2502.webp",
+  "ecsProperties": {
+    "entities": [
+      {
+        "id": "CicA59maCFvhPHm2rvCIq",
+        "name": "Thing",
+        "parent": null,
+        "children": [],
+        "meta": {},
+        "Transform": {
+          "position": [ 0, 5.69, 0.0 ],
+          "rotation": [ 0, 0.19376653496242194, 0, 0.9810476695495772 ],
+          "scale": [ 12, 12, 12 ]
+        },
+        "Model": {
+          "asset": {
+            "name": "",
+            "filename": "",
+            "url": "c81ffa043ec48dbfd92505126bdbb9fa-283272.glb"
+          }
+        },
+        "RigidBody": {
+          "kind": "STATIC",
+          "linearVelocity": [ 0, 0, 0 ],
+          "angularVelocity": [ 0, 0, 0 ],
+          "mass": 1,
+          "angularDamping": 0,
+          "linearDamping": 0
+        },
+        "Collider": {
+          "shape": "CYLINDER",
+          "boxSize": [ 1, 1, 1 ],
+          "sphereRadius": 0.5,
+          "cylinderRadius": 0.12999,
+          "cylinderHeight": 1,
+          "capsuleRadius": 0.5,
+          "capsuleHeight": 1,
+          "offset": [ 0.04, 0, 0.0399 ],
+          "density": 1,
+          "interaction": 65543
+        }
+      }
+    ]
+  }
+}

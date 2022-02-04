@@ -1,10 +1,10 @@
 import { writable, Writable } from "svelte/store";
 
 type PanelType =
-  | "collections"
+  | "library"
   | "editor"
   | "export"
   | "performance"
   | "settings";
 
-export const openPanel: Writable<PanelType> = writable("collections");
+export const openPanel: Writable<PanelType> = writable("library");

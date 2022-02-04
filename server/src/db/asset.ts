@@ -101,13 +101,21 @@ export async function queryAssets({
       SELECT *
       FROM assets
       ${WHERE(filter)}
-      ${ORDER_BY(['-created_at'])}
+      ${ORDER_BY(["-created_at"])}
       ${LIMIT(limit)}
       ${OFFSET(offset)}
     `;
   // console.log("asset query sql", s);
   const rows = await db.manyOrNone(s);
   return rows.map((row) => mkAsset(row));
+}
+
+export async function deleteAsset({ assetId }: { assetId: string }) {
+  await db.none(sql`
+      DELETE FROM assets
+      WHERE asset_id = ${assetId}
+    `);
+  return true;
 }
 
 export async function deleteAllAssets() {

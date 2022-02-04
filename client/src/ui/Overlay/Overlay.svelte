@@ -77,7 +77,7 @@
 <overlay class:open={buildMode}>
   <overlay-panel class="interactive">
     {#if buildMode}
-      {#if $openPanel === "collections"}
+      {#if $openPanel === "library"}
         <CollectionsPanel on:minimize={toPlayMode} />
       {/if}
 
@@ -85,10 +85,12 @@
         <EditorPanel on:minimize={toPlayMode} />
       {/if}
 
+      <!-- Export panel opens from button in SettingsPanel -->
       {#if $openPanel === "export"}
         <ExportPanel on:minimize={toPlayMode} />
       {/if}
 
+      <!-- Performance panel opens from button in SettingsPanel -->
       {#if $openPanel === "performance"}
         <PerformancePanel on:minimize={toPlayMode} />
       {/if}
@@ -99,20 +101,12 @@
 
       <panel-tabs>
         <Button
-          active={$openPanel === "collections"}
-          on:click={() => ($openPanel = "collections")}>Collections</Button
+          active={$openPanel === "library"}
+          on:click={() => ($openPanel = "library")}>Add</Button
         >
         <Button
           active={$openPanel === "editor"}
-          on:click={() => ($openPanel = "editor")}>Editor</Button
-        >
-        <Button
-          active={$openPanel === "export"}
-          on:click={() => ($openPanel = "export")}>Export</Button
-        >
-        <Button
-          active={$openPanel === "performance"}
-          on:click={() => ($openPanel = "performance")}>Performance</Button
+          on:click={() => ($openPanel = "editor")}>Modify</Button
         >
         <Button
           active={$openPanel === "settings"}

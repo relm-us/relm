@@ -184,13 +184,130 @@
 							]
 						},
 						"url": {
-							"raw": "{{serverUrl}}/asset/",
+							"raw": "{{serverUrl}}/asset/upload",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"asset",
-								""
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Asset to Library",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n  \"name\": \"Stout Green Tree\",\n  \"description\": \"A wide green oak tree\",\n  \"tags\": [\"furniture\"],\n  \"thumbnail\": \"2a2545dd9143ebffcef254f010c9a5c3-2502.webp\",\n  \"ecsProperties\": {\n    \"entities\": [\n      {\n        \"id\": \"CicA59maCFvhPHm2rvCIq\",\n        \"name\": \"Thing\",\n        \"parent\": null,\n        \"children\": [],\n        \"meta\": {},\n        \"Transform\": {\n          \"position\": [ -0.10751120293617794, 5.69, -9.739551020349131 ],\n          \"rotation\": [ 0, 0.19376653496242194, 0, 0.9810476695495772 ],\n          \"scale\": [ 12, 12, 12 ]\n        },\n        \"Model\": {\n          \"asset\": {\n            \"name\": \"\",\n            \"filename\": \"\",\n            \"url\": \"c81ffa043ec48dbfd92505126bdbb9fa-283272.glb\"\n          }\n        },\n        \"RigidBody\": {\n          \"kind\": \"STATIC\",\n          \"linearVelocity\": [ 0, 0, 0 ],\n          \"angularVelocity\": [ 0, 0, 0 ],\n          \"mass\": 1,\n          \"angularDamping\": 0,\n          \"linearDamping\": 0\n        },\n        \"Collider\": {\n          \"shape\": \"CYLINDER\",\n          \"boxSize\": [ 1, 1, 1 ],\n          \"sphereRadius\": 0.5,\n          \"cylinderRadius\": 0.12999,\n          \"cylinderHeight\": 1,\n          \"capsuleRadius\": 0.5,\n          \"capsuleHeight\": 1,\n          \"offset\": [ 0.04, 0, 0.0399 ],\n          \"density\": 1,\n          \"interaction\": 65543\n        }\n      }\n    ]\n  }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/asset/library/create",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"asset",
+								"library",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Asset from Library",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n    \"assetId\": \"42512d9b-44f1-406e-ad5b-9f8c2e942020\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/asset/library/delete",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"asset",
+								"library",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Query Asset Library",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"keywords\": [\"tree\"],\n    \"tags\": [\"nature\"],\n    \"page\": 0,\n    \"per_page\": 100\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/asset/library/query",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"asset",
+								"library",
+								"query"
 							]
 						}
 					},
