@@ -18,7 +18,6 @@
   import SettingsPanel from "~/ui/Build/SettingsPanel";
   import ExportPanel from "~/ui/Build/ExportPanel";
   import GroupUngroupButton from "~/ui/Build/GroupUngroupButton";
-  import ResetWorldButton from "~/ui/ResetWorldButton";
 
   // Debug UI
   import WorldStatePane from "~/ui/Debug/WorldStatePane";
@@ -37,6 +36,7 @@
   import { localIdentityData } from "~/stores/identityData";
   import { debugMode } from "~/stores/debugMode";
   import { centerCameraVisible } from "~/stores/centerCameraVisible";
+  import { selectedEntities } from "~/stores/selection";
 
   export let dispatch;
   export let permits;
@@ -124,9 +124,8 @@
       {#if $playState === "paused" || $debugMode}
         <WorldStatePane {state} />
       {/if}
-      {#if buildMode}
+      {#if buildMode && $selectedEntities.size > 0}
         <GroupUngroupButton />
-        <ResetWorldButton />
       {/if}
     </overlay-left>
 
