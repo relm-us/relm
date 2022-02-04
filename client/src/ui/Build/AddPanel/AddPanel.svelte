@@ -48,6 +48,7 @@
   $: query(empty(search) ? null : search);
 
   const onUpload = ({ detail }) => {
+    console.log("onUpload", detail);
     for (const result of detail.results) {
       if (result.types.webp) {
         createPrefab("Image", { url: result.types.webp });
@@ -69,7 +70,7 @@
         <SearchResult {result} on:click={addAsset(result)} />
       {/each}
     </r-results>
-    <UploadButton on:upload={onUpload} />
+    <UploadButton on:uploaded={onUpload} />
   </r-column>
 </LeftPanel>
 

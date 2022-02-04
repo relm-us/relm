@@ -135,3 +135,112 @@
     ]
   }
 }
+
+{
+  "name": "Red Ball",
+  "description": "A red ball to kick around",
+  "tags": ["toy"],
+  "thumbnail": "cf385988e4a5277d25507b22fe83f449-1088.webp",
+  "ecsProperties": {
+    "entities": [
+      {
+        "id": "glK38JQMuyDCPOumbIgfI",
+        "name": "Ball",
+        "parent": null,
+        "children": [],
+        "meta": {},
+        "Transform": {
+          "position": [ 0, 0.3, 0 ],
+          "rotation": [ 0, 0, 0, 1 ],
+          "scale": [ 1, 1, 1 ]
+        },
+        "Shape": {
+          "kind": "SPHERE",
+          "boxSize": [ 1, 1, 1 ],
+          "sphereRadius": 0.25,
+          "sphereWidthSegments": 16,
+          "sphereHeightSegments": 12,
+          "cylinderRadius": 0.5,
+          "cylinderHeight": 1,
+          "cylinderSegments": 6,
+          "capsuleRadius": 0.5,
+          "capsuleHeight": 1,
+          "capsuleSegments": 5,
+          "color": "#ff0000",
+          "emissive": "#000000",
+          "roughness": 0.8,
+          "metalness": 0.2,
+          "texture": {
+            "name": "",
+            "filename": "",
+            "url": ""
+          },
+          "textureScale": 1
+        },
+        "RigidBody": {
+          "kind": "DYNAMIC",
+          "linearVelocity": [ 0, 0, 0 ],
+          "angularVelocity": [ 0, 0, 0 ],
+          "mass": 0,
+          "angularDamping": 0,
+          "linearDamping": 0
+        },
+        "Collider": {
+          "shape": "SPHERE",
+          "boxSize": [ 1, 1, 1 ],
+          "sphereRadius": 0.25,
+          "cylinderRadius": 0.5,
+          "cylinderHeight": 1,
+          "capsuleRadius": 0.5,
+          "capsuleHeight": 1,
+          "isSensor": false,
+          "offset": [ 0, 0, 0 ],
+          "density": 0.4,
+          "interaction": 65543
+        }
+      }
+    ]
+  }
+}
+
+
+{
+  "name": "Billboard",
+  "description": "A billboard with text that you can write on",
+  "tags": ["tool"],
+  "thumbnail": "0757d8df2f80afb202fbebd963791101-656.webp",
+  "ecsProperties": {
+    "entities": [
+      {
+        "id": "h9tyP9_EPKDZ_95BI09o8",
+        "name": "Billboard",
+        "parent": null,
+        "children": [],
+        "meta": {},
+        "Transform": {
+          "position": [ 0, 0.6, 0 ],
+          "rotation": [ 0, 0, 0, 1 ],
+          "scale": [ 1, 1, 1 ]
+        },
+        "Renderable": {
+          "kind": "LABEL",
+          "embedId": "U_u91SjrEOE",
+          "url": "https://google.com?igu=1",
+          "text": "hello",
+          "fontSize": 32,
+          "fontColor": "#151515",
+          "bgColor": "#fbfbfb",
+          "borderColor": "#8b8b8b",
+          "scale": 0.005,
+          "editable": false,
+          "alwaysOn": false
+        },
+        "CssPlane": {
+          "kind": "RECTANGLE",
+          "rectangleSize": [ 2, 1.5 ],
+          "circleRadius": 0.5
+        }
+      }
+    ]
+  }
+}

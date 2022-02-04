@@ -1,4 +1,8 @@
 <script lang="ts">
+  import { forceIsInputMode } from "~/stores/forceIsInputMode";
+
+  import { onMount } from "svelte";
+
   import { config } from "~/config";
   import Uppy from "./Uppy.svelte";
 
@@ -11,6 +15,13 @@
   export function close() {
     visible = false;
   }
+
+  onMount(() => {
+    $forceIsInputMode = true;
+    return () => {
+      $forceIsInputMode = false;
+    };
+  });
 </script>
 
 {#if visible}

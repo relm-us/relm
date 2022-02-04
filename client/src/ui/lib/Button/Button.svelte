@@ -4,9 +4,9 @@
   export let enabled = true;
   export let active: boolean = undefined;
   export let style: string = undefined;
+  export let tabindex: number = undefined;
 
   let dispatch = createEventDispatcher();
-
 </script>
 
 <button
@@ -16,6 +16,7 @@
   on:mousedown|stopPropagation={() => {
     dispatch("click");
   }}
+  {tabindex}
 >
   <slot />
 </button>
@@ -60,5 +61,4 @@
   button:active {
     transform: translateY(1px);
   }
-
 </style>

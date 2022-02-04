@@ -4,6 +4,7 @@
   import { worldManager } from "~/world";
   import SelectCreatePrefab from "./SelectCreatePrefab.svelte";
   import EditorShowSingleEntity from "./EditorShowSingleEntity.svelte";
+  import AdminAddToLibrary from "./AdminAddToLibrary.svelte";
 </script>
 
 <LeftPanel on:minimize>
@@ -17,6 +18,7 @@
     <EditorShowSingleEntity
       entity={worldManager.selection.getFirst($selectedEntities)}
     />
+    <AdminAddToLibrary />
   {:else}
     <Pane title="Selected">
       {#each [...$selectedEntities] as entityId}
