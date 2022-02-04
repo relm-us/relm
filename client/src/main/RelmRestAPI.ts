@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import type { AuthenticationHeaders } from "~/types";
+import type { LibraryAsset } from "~/types";
 
 export class RelmRestAPI {
   url: string;
@@ -11,7 +12,7 @@ export class RelmRestAPI {
     this.authHeaders = authHeaders;
   }
 
-  async get(path, params = {}) {
+  async get(path) {
     const url = `${this.url}${path}`;
     return await axios.get(url, { headers: this.authHeaders });
   }
@@ -21,21 +22,9 @@ export class RelmRestAPI {
     return await axios.post(url, body, { headers: this.authHeaders });
   }
 
-  // async getMetadata(relm: string) {
-  //   const res = await this.get(`/relm/${relm}/meta`);
-  //   if (res?.status === 200) {
-  //     if (res.data.status === "success") {
-  //       const r = res.data.relm;
-  //       return { ...res.data.relm, twilioToken: res.data.twilioToken };
-  //     } else {
-  //       throw Error(`can't get metadata for ${relm} (${res.data.status})`);
-  //     }
-  //   } else {
-  //     throw Error(`can't get metadata for ${relm} (${res.status})`);
-  //   }
-  // }
-
-  async getPermitsAndMeta(relm: string): Promise<{ permits: string[]; jwt: any }> {
+  async getPermitsAndMeta(
+    relm: string
+  ): Promise<{ permits: string[]; jwt: any }> {
     let res;
     try {
       res = await this.get(`/relm/${relm}/permitsAndMeta`);
@@ -49,7 +38,7 @@ export class RelmRestAPI {
       }
       throw Error(`not allowed`);
     }
-    
+
     if (res?.status === 200) {
       if (res.data.status === "success") {
         return res.data;
@@ -71,6 +60,34 @@ export class RelmRestAPI {
       }
     } else {
       throw Error(`can't get permissions (${res?.status})`);
+    }
+  }
+
+  async queryAssets({
+    keywords,
+    tags,
+    page,
+    per_page,
+  }: {
+    keywords?: string[];
+    tags?: string[];
+    page?: number;
+    per_page?: number;
+  }): Promise<LibraryAsset[]> {
+    const res = await this.post("/asset/library/query", {
+      keywords,
+      tags,
+      page,
+      per_page,
+    });
+    if (res?.status === 200) {
+      if (res.data?.status === "success") {
+        return res.data.assets;
+      } else {
+        throw Error(`can't get assets (${res.data?.status})`);
+      }
+    } else {
+      throw Error(`can't get assets (${res?.status})`);
     }
   }
 }

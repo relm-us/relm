@@ -6,7 +6,10 @@ import sharp from "sharp";
 
 import * as middleware from "../middleware";
 import * as conversion from "../conversion";
+import * as util from "../utils";
 import { fail, wrapAsync } from "../utils";
+
+import { Asset } from "../db";
 
 export const asset = express.Router();
 
@@ -26,12 +29,54 @@ asset.use(
   }) as any
 );
 
-asset.get(
-  "/query",
+asset.post(
+  "/library",
+  cors(),
+  middleware.authenticated(),
+  middleware.authorized("admin"),
+  wrapAsync(async (req, res) => {
+    let name: string = req.body.name;
+    let description: string = req.body.description;
+    let tags: string[] = req.body.tags;
+    let ecsProperties: any = req.body.ecsProperties;
+
+    const asset = await Asset.createAsset({
+      name,
+      description,
+      tags: tags,
+      ecsProperties,
+      createdBy: req.authenticatedPlayerId,
+    });
+
+    return util.respond(res, 200, {
+      status: "success",
+      action: "create",
+      asset,
+    });
+  })
+);
+
+asset.post(
+  "/library/query",
   cors(),
   // middleware.authenticated(),
   wrapAsync(async (req, res) => {
-    const asset = req.files["files[]"];
+    let keywords: string[] = req.body.keywords;
+    let tags: string[] = req.body.tags;
+    let page: number = req.body.page ?? 0;
+    let per_page: number = req.body.per_page ?? 10;
+
+    if (page < 0) page = 0;
+    if (per_page < 0) per_page = 0;
+    if (per_page > 100) per_page = 100;
+
+    const assets = await Asset.queryAssets({ keywords, tags, page, per_page });
+
+    return util.respond(res, 200, {
+      status: "success",
+      action: "query",
+      assets,
+    });
   })
 );
 
@@ -48,13 +93,13 @@ asset.use(
 
 // Upload images and 3D assets
 asset.post(
-  "/",
+  "/upload",
   cors(),
   // middleware.authenticated(),
   // middleware.authorized("edit"),
   wrapAsync(async (req, res) => {
-    if (!('file' in req.files)) {
-      return fail(res, "expecting file form-data")
+    if (!("file" in req.files)) {
+      return fail(res, "expecting file form-data");
     }
 
     // TODO: turn on `batch: true` and change this to one-or-many

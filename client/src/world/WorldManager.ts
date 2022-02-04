@@ -25,6 +25,9 @@ import { shadowsEnabled } from "~/stores/shadowsEnabled";
 import { keyShift, key1, key2, key3 } from "~/stores/keys";
 import { RAISING_HAND, STAND_SIT, WAVING } from "~/config/constants";
 
+import { config } from "~/config";
+import { GROUND_INTERACTION } from "~/config/colliderInteractions";
+
 import { makeLight } from "~/prefab/makeLight";
 
 import { Entity } from "~/ecs/base";
@@ -38,8 +41,6 @@ import { intersectionPointWithGround } from "~/ecs/shared/isMakingContactWithGro
 import { SelectionManager } from "./SelectionManager";
 import { ChatManager } from "./ChatManager";
 import { CameraManager } from "./CameraManager";
-
-import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 
 import type { DecoratedECSWorld, PageParams } from "~/types";
 import type { Dispatch, State } from "~/main/ProgramTypes";
@@ -56,6 +57,7 @@ import { ParticipantManager } from "~/identity/ParticipantManager";
 import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 import { setTransformArrayOnParticipants } from "~/identity/Avatar/transform";
 import { delay } from "~/utils/delay";
+import { RelmRestAPI } from "~/main/RelmRestAPI";
 
 type LoopType =
   | { type: "raf" }
@@ -64,6 +66,7 @@ export class WorldManager {
   dispatch: Dispatch;
   state: State;
   broker: ParticipantYBroker;
+  api: RelmRestAPI;
 
   world: DecoratedECSWorld;
   worldDoc: WorldDoc;
@@ -102,6 +105,7 @@ export class WorldManager {
     this.dispatch = dispatch;
     this.state = state;
     this.broker = broker;
+    this.api = new RelmRestAPI(config.serverUrl, state.authHeaders);
 
     this.world = ecsWorld;
     this.worldDoc = worldDoc;

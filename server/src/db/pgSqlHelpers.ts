@@ -6,15 +6,17 @@ import { sql } from "pg-sql";
  * A map of operators shorthands to PostgreSQL operators.
  */
 const WHERE_OPERATORS = {
-  eq: "=",
-  gt: ">",
-  gte: ">=",
-  lt: "<",
-  lte: "<=",
-  ne: "!=",
-  neq: "!=",
-  like: "LIKE",
-  ilike: "ILIKE",
+  "eq": "=",
+  "gt": ">",
+  "gte": ">=",
+  "lt": "<",
+  "lte": "<=",
+  "ne": "!=",
+  "neq": "!=",
+  "like": "LIKE",
+  "ilike": "ILIKE",
+  "search": "@@",
+  "@>": "@>",
 };
 
 /**
@@ -210,23 +212,28 @@ export function OFFSET(number: number, options: { max?: number } = {}): any {
  *
  * @return {sql}
  */
-export function ORDER_BY(table: string, sorts: any[]): any {
+export function ORDER_BY(table: string | any[], sorts?: any[]): any {
+  let table_;
+  let sorts_;
   if (Array.isArray(table)) {
-    sorts = table;
-    table = null;
+    table_ = null;
+    sorts_ = table;
+  } else {
+    table_ = table;
+    sorts_ = sorts;
   }
 
-  if (!Array.isArray(sorts)) {
+  if (!Array.isArray(sorts_)) {
     throw new Error(
-      `The \`ORDER_BY\` SQL helper must be passed an array of sorting parameters, but you passed: ${sorts}`
+      `The \`ORDER_BY\` SQL helper must be passed an array of sorting parameters, but you passed: ${sorts_}`
     );
   }
 
-  if (!sorts.length) {
+  if (!sorts_.length) {
     return sql``;
   }
 
-  const values = sorts.map((sort) => SORT(table, sort));
+  const values = sorts_.map((sort) => SORT(table_, sort));
   const query = sql`ORDER BY ${sql.join(values, ", ")}`;
   return query;
 }

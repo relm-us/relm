@@ -28,7 +28,7 @@ function getServerConfig(
     serverUrl = `http://${location.hostname}:3000`;
     serverYjsUrl = `ws://${location.hostname}:3000`;
   }
-  serverUploadUrl = `${serverUrl}/asset`;
+  serverUploadUrl = `${serverUrl}/asset/upload`;
 
   return {
     serverUrl,
