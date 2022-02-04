@@ -7,7 +7,7 @@
 </script>
 
 <LeftPanel on:minimize>
-  <Header>Entity Editor</Header>
+  <Header>Modify</Header>
 
   {#if $selectedEntities.size === 0}
     <info>Nothing selected</info>
