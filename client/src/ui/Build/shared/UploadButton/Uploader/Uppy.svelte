@@ -6,7 +6,6 @@
   import XHRUpload from "@uppy/xhr-upload";
 
   import { uploadingDialogOpen } from "~/stores/uploadingDialogOpen";
-  import { forceIsInputMode } from "~/stores/forceIsInputMode";
 
   export let endpoint = "http://localhost:3000/asset";
 
@@ -58,15 +57,27 @@
     });
 
     const dashboard = uppy.getPlugin("Dashboard") as Dashboard;
+    uppy.on("dashboard:modal-open", () => {
+      const el: Element = document.getElementsByClassName(
+        "uppy-Dashboard-inner"
+      )[0];
+      if (el) {
+        setTimeout(() => {
+          (el as HTMLElement).click();
+          (el as HTMLElement).focus();
+        }, 500);
+      }
+    });
     uppy.on("dashboard:modal-closed", () => {
       dispatch("close");
-      $forceIsInputMode = false;
     });
 
     dashboard.openModal();
   });
 
-  onDestroy(() => ($uploadingDialogOpen = false));
+  onDestroy(() => {
+    $uploadingDialogOpen = false;
+  });
 </script>
 
 <dashboard bind:this={dashboardElement} />

@@ -7,12 +7,12 @@
   export let result: LibraryAsset;
 </script>
 
-<r-result on:click>
-  <Tooltip tip={result.name} bottom>
+<Tooltip tip={result.name} bottom>
+  <r-result on:click>
     <img src={`${config.assetUrl}/${result.thumbnail}`} alt={result.name} />
-  </Tooltip>
-  {@html `<!-- assetId: ${result.assetId} -->`}
-</r-result>
+    {@html `<!-- assetId: ${result.assetId} -->`}
+  </r-result>
+</Tooltip>
 
 <style>
   r-result {

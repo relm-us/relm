@@ -9,6 +9,9 @@
   import { Transform } from "~/ecs/plugins/core";
   import UploadButton from "~/ui/Build/shared/UploadButton";
   import { createPrefab } from "~/prefab";
+  import { copyBuffer } from "~/stores/copyBuffer";
+  import { paste } from "~/events/input/CopyPasteListener/paste";
+  import { deserializeCopyBuffer } from "~/events/input/CopyPasteListener/common";
 
   let search;
   let results: LibraryAsset[] = [];
@@ -25,19 +28,8 @@
   }, 500);
 
   const addAsset = (result) => () => {
-    if (!result.ecsProperties || !result.ecsProperties.entities) {
-      console.warn("Asset has no ECS properties to add", result);
-      return;
-    }
-    for (let data of result.ecsProperties.entities) {
-      const entity = worldManager.world.entities.create().fromJSON(data);
-      const transform = entity.get(Transform);
-      if (transform) {
-        transform.position.add(worldManager.avatar.position);
-      }
-      entity.activate();
-      worldManager.worldDoc.syncFrom(entity);
-    }
+    copyBuffer.set(deserializeCopyBuffer(JSON.stringify(result.ecsProperties)));
+    paste();
   };
 
   function empty(str: string) {

@@ -1,9 +1,9 @@
 import { get } from "svelte/store";
-import { forceIsInputMode } from "~/stores/forceIsInputMode";
+import { uploadingDialogOpen } from "~/stores/uploadingDialogOpen";
 
 export function isInputEvent(event) {
   // e.g. Upload dialog needs to be able to accept paste events
-  if (get(forceIsInputMode)) return true;
+  if (get(uploadingDialogOpen)) return true;
 
   if (!event.target || !event.target.getAttribute) return false;
   else

@@ -90,4 +90,35 @@ export class RelmRestAPI {
       throw Error(`can't get assets (${res?.status})`);
     }
   }
+
+  async addAsset({
+    name,
+    description,
+    tags,
+    thumbnail,
+    ecsProperties,
+  }: {
+    name: string;
+    description: string;
+    tags: string[];
+    thumbnail: string;
+    ecsProperties: any;
+  }): Promise<boolean> {
+    const res = await this.post("/asset/library/create", {
+      name,
+      description,
+      tags,
+      thumbnail,
+      ecsProperties,
+    });
+    if (res?.status === 200) {
+      if (res.data?.status === "success") {
+        return true;
+      } else {
+        throw Error(`can't get assets (${res.data?.status})`);
+      }
+    } else {
+      throw Error(`can't get assets (${res?.status})`);
+    }
+  }
 }

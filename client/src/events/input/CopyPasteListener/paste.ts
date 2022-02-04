@@ -20,7 +20,7 @@ export function paste(clipboardData?: DataTransfer) {
 
   let buffer;
 
-  if (cbdata.startsWith("relm:")) {
+  if (cbdata?.startsWith("relm:")) {
     // clipboard paste?
     try {
       buffer = deserializeCopyBuffer(cbdata.slice(5));
@@ -30,7 +30,7 @@ export function paste(clipboardData?: DataTransfer) {
   }
 
   if (!buffer) {
-    // local paste?
+    // local paste; could be from asset library
     buffer = get(copyBuffer);
   }
 

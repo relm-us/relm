@@ -7,6 +7,7 @@
   export let editable: boolean = true;
   export let editing: boolean = false;
   export let cursor = "default";
+  export let showNull = true;
 
   let inputElement;
 
@@ -42,14 +43,24 @@
     tabindex="0"
   >
     {#if editable && editing}
-      <input
-        bind:this={inputElement}
-        {value}
-        {type}
-        on:change
-        on:blur={onBlur}
-      />
-    {:else}{value}{/if}
+      {#if type === "number"}
+        <input
+          bind:this={inputElement}
+          bind:value
+          type="number"
+          on:change
+          on:blur={onBlur}
+        />
+      {:else}
+        <input
+          bind:this={inputElement}
+          bind:value
+          type="text"
+          on:change
+          on:blur={onBlur}
+        />
+      {/if}
+    {:else if showNull}{value}{/if}
   </value>
 </capsule>
 

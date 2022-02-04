@@ -48,6 +48,7 @@
     opacity: 0;
     visibility: hidden;
     transition: opacity 150ms, visibility 150ms;
+    z-index: 3;
   }
 
   .default-tip {
