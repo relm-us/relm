@@ -29,13 +29,13 @@ export class Html2d extends Component {
   static props = {
     kind: {
       type: StringType,
-      default: "LABEL",
+      default: "INFO",
       editor: {
         label: "Kind",
         input: "Select",
         options: [
-          { label: "Label", value: "LABEL" },
           { label: "Info", value: "INFO" },
+          { label: "Label", value: "LABEL" },
           { label: "Speech", value: "SPEECH" },
           { label: "Emoji", value: "EMOJI" },
         ],
