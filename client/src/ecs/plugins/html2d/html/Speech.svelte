@@ -1,7 +1,7 @@
 <script>
   import { fade } from "svelte/transition";
 
-  import IoMdCloseCircleOutline from "svelte-icons/io/IoMdCloseCircleOutline.svelte";
+  import IoMdClose from "svelte-icons/io/IoMdClose.svelte";
   import { cleanHtml } from "~/utils/cleanHtml";
 
   export let content;
@@ -38,13 +38,12 @@
     on:blur={hideControls}
   >
     {@html cleanHtml(content)}
-    {#if controlsVisible}
-      <controls transition:fade={{ duration: 150 }}>
-        <button on:click={close}>
-          <IoMdCloseCircleOutline />
-        </button>
-      </controls>
-    {/if}
+    <div class="outline" />
+    <button class="close" on:click={close}>
+      <div>
+        <IoMdClose />
+      </div>
+    </button>
   </div>
 {/if}
 
@@ -94,26 +93,34 @@
     // For "think" and "yell" see https://codepen.io/quatmo/pen/jVoXQe
   }
 
-  controls {
-    display: flex;
-    flex-direction: column;
+  button.close {
+    all: unset;
 
     position: absolute;
-    top: -17px;
-    right: -17px;
-    height: calc(100% + 16px);
+    top: -5px;
+    right: -5px;
 
-    --margin: 0;
-  }
-  button {
-    all: unset;
     display: block;
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
 
-    color: black;
+    color: var(--foreground-gray);
     background-color: white;
     border-radius: 100%;
+  }
+  button.close > div {
+    padding: 3px;
+  }
+
+  .outline {
+    position: absolute;
+    z-index: -1;
+    top: -7px;
+    right: -7px;
+    width: 28px;
+    height: 28px;
+    border-radius: 100%;
+    background-color: black;
   }
 
   button:hover {
