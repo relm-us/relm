@@ -13,7 +13,8 @@ export class Clickable extends Component {
         label: "Action",
         input: "Select",
         options: [
-          { label: "Open URL", value: "LINK" },
+          { label: "Open URL", value: "OPEN" },
+          { label: "Open URL (other tab)", value: "LINK" },
           { label: "Toggle Property", value: "TOGGLE" },
         ],
       },

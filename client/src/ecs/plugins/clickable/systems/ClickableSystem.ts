@@ -36,6 +36,10 @@ export class ClickableSystem extends System {
     const clickable = entity.get(Clickable);
 
     switch (clickable.action) {
+      case "OPEN":
+        window.open(clickable.link);
+        break;
+
       case "LINK":
         window.open(clickable.link, "_blank");
         break;
