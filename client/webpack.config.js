@@ -64,7 +64,7 @@ module.exports = {
    */
   output: {
     filename: "[name].js",
-    chunkFilename: "[name].[id].js",
+    chunkFilename: "[name].[id].[contenthash].js",
     path: __dirname + "/dist",
     publicPath: "/",
   },
