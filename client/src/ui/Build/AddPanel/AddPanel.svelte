@@ -89,8 +89,8 @@
           />
         </r-thumb>
       {:else}
-        <r-quick-search>Quick search:</r-quick-search>
         <div>
+          e.g.
           <Tag value="nature" on:click={searchTag("nature")} />
           <Tag value="furniture" on:click={searchTag("furniture")} />
           <Tag value="path" on:click={searchTag("path")} />
@@ -99,7 +99,10 @@
       {#if selectedAsset}
         <r-details transition:slide>
           <r-add-button>
-            <Button on:click={addAsset(selectedAsset)}>
+            <Button
+              on:click={addAsset(selectedAsset)}
+              style="border: 1px solid #999;"
+            >
               Add {selectedAsset.name}
             </Button>
           </r-add-button>
@@ -136,11 +139,7 @@
   }
 
   r-search-wrap {
-    padding: 16px;
-  }
-
-  r-quick-search {
-    margin-bottom: 8px;
+    padding: 16px 16px 8px 16px;
   }
 
   r-selected {

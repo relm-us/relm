@@ -2,7 +2,7 @@
   export let value: string;
 </script>
 
-<button on:click>#{value}</button>
+<button on:click><span>#</span>{value}</button>
 
 <style>
   button {
@@ -12,5 +12,9 @@
     border-radius: 4px;
 
     cursor: pointer;
+  }
+  span {
+    color: var(--foreground-gray);
+    padding-right: 2px;
   }
 </style>
