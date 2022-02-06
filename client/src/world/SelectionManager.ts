@@ -122,7 +122,7 @@ export class SelectionManager {
       const removed = difference(previouslySelected, $selected);
 
       if ($selected.size === 1 && added.size === 1) {
-        openPanel.set("editor");
+        openPanel.set("modify");
       }
 
       for (const entityId of removed) {

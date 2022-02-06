@@ -14,6 +14,7 @@
   // Build Mode UI
   import AddPanel from "~/ui/Build/AddPanel";
   import ModifyPanel from "~/ui/Build/ModifyPanel";
+  import ActionsPanel from "~/ui/Build/ActionsPanel";
   import SettingsPanel from "~/ui/Build/SettingsPanel";
   import ExportPanel from "~/ui/Build/ExportPanel";
   import GroupUngroupButton from "~/ui/Build/GroupUngroupButton";
@@ -68,12 +69,16 @@
 <overlay class:open={buildMode}>
   <overlay-panel class="interactive">
     {#if buildMode}
-      {#if $openPanel === "library"}
+      {#if $openPanel === "add"}
         <AddPanel on:minimize={toPlayMode} />
       {/if}
 
-      {#if $openPanel === "editor"}
+      {#if $openPanel === "modify"}
         <ModifyPanel on:minimize={toPlayMode} />
+      {/if}
+
+      {#if $openPanel === "actions"}
+        <ActionsPanel on:minimize={toPlayMode} />
       {/if}
 
       <!-- Export panel opens from button in SettingsPanel -->
@@ -92,12 +97,16 @@
 
       <panel-tabs>
         <Button
-          active={$openPanel === "library"}
-          on:click={() => ($openPanel = "library")}>Add</Button
+          active={$openPanel === "add"}
+          on:click={() => ($openPanel = "add")}>Add</Button
         >
         <Button
-          active={$openPanel === "editor"}
-          on:click={() => ($openPanel = "editor")}>Modify</Button
+          active={$openPanel === "modify"}
+          on:click={() => ($openPanel = "modify")}>Modify</Button
+        >
+        <Button
+          active={$openPanel === "actions"}
+          on:click={() => ($openPanel = "actions")}>Actions</Button
         >
         <Button
           active={$openPanel === "settings"}
