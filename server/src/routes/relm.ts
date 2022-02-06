@@ -9,10 +9,19 @@ import * as config from "../config";
 import * as util from "../utils";
 import * as middleware from "../middleware";
 import * as twilio from "../lib/twilio";
-import { Permission, Relm, Doc } from "../db";
+import { Permission, Relm, Doc, Variable } from "../db";
 import { getYDoc } from "../getYDoc";
+import mkConscript from "conscript";
+import {
+  findInYArray,
+  YComponents,
+  YEntities,
+  YEntity,
+  YValues,
+} from "relm-common/yrelm";
 
 const { wrapAsync, uuidv4 } = util;
+const conscript = mkConscript();
 
 export const relm = express.Router();
 
@@ -234,3 +243,89 @@ relm.get(
     });
   })
 );
+
+type Action = {
+  type: "setProperty";
+  entity: string;
+  component: string;
+  property: string;
+  value: any;
+};
+
+type Possibility = {
+  compare: string;
+  action: Action;
+  timeout: number;
+};
+
+relm.post(
+  "/variable",
+  cors(),
+  middleware.relmExists(),
+  middleware.authenticated(),
+  middleware.acceptToken(),
+  middleware.acceptJwt(),
+  middleware.authorized("access"),
+  wrapAsync(async (req, res) => {
+    const relmId = req.relm.relmId;
+
+    const name = req.body.name;
+    if (!name) return util.fail(res, "name required");
+
+    const operation = req.body.operation;
+    if (!operation) return util.fail(res, "operation required");
+
+    if (operation === "set") {
+      if (!("value" in req.body))
+        return util.fail(res, "value required to set");
+
+      await Variable.setVariable({
+        relmId,
+        name,
+        value: req.body.value,
+      });
+
+      const values = await Variable.getVariables({ relmId });
+
+      const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
+      const possibilities = doc.getMap("actions")?.get(name) as Possibility[];
+      for (let possible of possibilities) {
+        const test = conscript(possible.compare);
+        if (test(values)) applyAction(doc, possible.action);
+      }
+
+      return util.respond(res, 200, {
+        status: "success",
+        action: operation,
+      });
+    }
+  })
+);
+
+function applyAction(doc: Y.Doc, action: Action) {
+  switch (action.type) {
+    case "setProperty": {
+      const entities = doc.getArray("entities") as YEntities;
+      const entity = findInYArray(
+        entities,
+        (yentity: YEntity) => yentity.get("id") === action.entity
+      );
+      if (entity) {
+        const components = entity.get("components") as YComponents;
+        if (components) {
+          const component = findInYArray(
+            components,
+            (ycomponent) => ycomponent.get("name") === action.component
+          );
+          if (component) {
+            const values = component.get("values") as YValues;
+            values.set(action.property, action.value);
+          }
+        } else {
+          console.log("entity not found", action.entity);
+        }
+      }
+      break;
+    }
+  }
+}

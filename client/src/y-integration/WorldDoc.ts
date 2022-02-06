@@ -61,8 +61,8 @@ export class WorldDoc extends EventEmitter {
   // A map of settings for the world
   settings: YReadableMap<any>;
 
-  // A map of recompute requests
-  recompute: YReadableMap<boolean>;
+  // A map of state actions to be performed by the server on the world
+  actions: YReadableMap<any>;
 
   // A table of Y.IDs (as strings) mapped to HECS IDs; used for deletion
   yids: Map<YIDSTR, EntityId> = new Map();
@@ -90,7 +90,7 @@ export class WorldDoc extends EventEmitter {
 
     this.entryways = readableMap(this.ydoc.getMap("entryways"));
     this.settings = readableMap(this.ydoc.getMap("settings"));
-    this.recompute = readableMap(this.ydoc.getMap("recompute"));
+    this.actions = readableMap(this.ydoc.getMap("actions"));
 
     this.undoManager = new Y.UndoManager([this.entities], {
       captureTimeout: UNDO_CAPTURE_TIMEOUT,
@@ -149,7 +149,7 @@ export class WorldDoc extends EventEmitter {
 
   recomputeStats() {
     console.log("asking server to recompute stats");
-    this.recompute.y.set(uuidv4(), true);
+    this.settings.y.set("recompute", uuidv4());
   }
 
   syncFromJSON(json) {

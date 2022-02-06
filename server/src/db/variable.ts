@@ -1,0 +1,95 @@
+import { db, sql, raw } from "./db";
+import { INSERT, UPDATE } from "./pgSqlHelpers";
+
+import { nullOr } from "../utils";
+
+type VariableColumns = {
+  relm_id: string;
+  variable_name: string;
+  description: string;
+  value_str: string;
+  value_num: number;
+  created_by: string;
+  created_at: Date;
+  updated_at: Date;
+};
+
+const mkVariable = nullOr((cols: VariableColumns) => {
+  return {
+    relmId: cols.relm_id,
+    name: cols.variable_name,
+    description: cols.description,
+    value: cols.value_str || cols.value_num,
+    createdBy: cols.created_by,
+    createdAt: cols.created_at,
+    updatedAt: cols.updated_at,
+  };
+});
+
+export async function getVariable({
+  relmId,
+  name,
+}: {
+  relmId: string;
+  name: string;
+}) {
+  return mkVariable(
+    await db.oneOrNone(sql`
+    SELECT *
+      FROM variables
+     WHERE relm_id = ${relmId}
+       AND variable_name = ${name}
+  `)
+  );
+}
+
+export async function getVariables({ relmId }: { relmId: string }) {
+  const rows = await db.manyOrNone(sql`
+    SELECT *
+      FROM variables
+     WHERE relm_id = ${relmId}
+  `);
+
+  const vars = {};
+  for (let row of rows) {
+    vars[row.variable_name] = row.value_str || parseFloat(row.value_num);
+  }
+
+  return vars;
+}
+
+export async function setVariable({
+  relmId,
+  name,
+  value,
+  description = null,
+}: {
+  relmId: string;
+  name: string;
+  value: string | number;
+  description?: string;
+}) {
+  const attrs: any = {
+    relm_id: relmId,
+    variable_name: name,
+  };
+  if (typeof value === "string") {
+    attrs.value_str = value;
+  } else {
+    attrs.value_num = value;
+  }
+  if (description !== null) {
+    attrs.description = description;
+  }
+  return mkVariable(
+    await db.one(sql`
+      ${INSERT("variables", attrs)}
+      ON CONFLICT(relm_id, variable_name)
+      DO UPDATE SET
+        updated_at = CURRENT_TIMESTAMP,
+        value_str = ${attrs.value_str},
+        value_num = ${attrs.value_num}
+      RETURNING *
+    `)
+  );
+}
