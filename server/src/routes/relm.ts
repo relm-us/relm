@@ -254,7 +254,7 @@ type Action = {
 
 type Possibility = {
   compare: string;
-  action: Action;
+  actions: Action[];
   timeout: number;
 };
 
@@ -369,25 +369,21 @@ async function setVariable(doc, variables, relmId, name, value) {
     const test = conscript(possible.compare);
     if (test(variables)) {
       if (possible.timeout > 0) {
-        setTimeout(() => applyAction(doc, possible.action), possible.timeout);
+        setTimeout(() => applyActions(doc, possible.actions), possible.timeout);
       } else {
-        applyAction(doc, possible.action);
+        applyActions(doc, possible.actions);
       }
     }
   }
 }
 
-function applyAction(doc: Y.Doc, action: Action) {
-  switch (action.type) {
-    case "setProperty": {
-      setProperty(
-        doc,
-        action.entity,
-        action.component,
-        action.property,
-        action.value
-      );
-      break;
+function applyActions(doc: Y.Doc, actions: Action[]) {
+  for (let { type, entity, component, property, value } of actions || []) {
+    switch (type) {
+      case "setProperty": {
+        setProperty(doc, entity, component, property, value);
+        break;
+      }
     }
   }
 }

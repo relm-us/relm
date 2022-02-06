@@ -57,6 +57,7 @@ export class TransitionSystem extends System {
       spec.scaleSpeed == 0
     ) {
       this.remove(entity);
+      // TODO: Figure out why the collider isn't solid until the end
       // Let physics engine catch up with new position
       transform.modified();
     }

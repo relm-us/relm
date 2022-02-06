@@ -18,7 +18,7 @@ export class Clickable extends Component {
         input: "Select",
         options: [
           { label: "Open URL", value: "OPEN" },
-          { label: "Open URL (other tab)", value: "LINK" },
+          { label: "Open URL (new tab)", value: "LINK" },
           { label: "Change Variables", value: "CHANGES" },
         ],
       },
@@ -39,11 +39,6 @@ export class Clickable extends Component {
         label: "Changes",
         requires: [{ prop: "action", value: "CHANGES" }],
       },
-    },
-
-    idx: {
-      type: NumberType,
-      default: 0,
     },
 
     // deprecated
