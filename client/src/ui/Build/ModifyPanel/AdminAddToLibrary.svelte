@@ -31,7 +31,7 @@
     const asset = {
       name,
       description,
-      tags: tags.split(/\s*,\s*/),
+      tags: (tags || "").split(/\s*,\s*/),
       thumbnail,
       ecsProperties: { ...buffer },
     };
@@ -72,9 +72,24 @@
         </r-upload>
       {/if}
     </div>
-    <Capsule label="Name" bind:value={name} showNull={false} />
-    <Capsule label="Description" bind:value={description} showNull={false} />
-    <Capsule label="Tags (,)" bind:value={tags} showNull={false} />
+    <Capsule
+      label="Name"
+      value={name}
+      on:change={({ detail }) => (name = detail)}
+      showNull={false}
+    />
+    <Capsule
+      label="Description"
+      value={description}
+      on:change={({ detail }) => (description = detail)}
+      showNull={false}
+    />
+    <Capsule
+      label="Tags (,)"
+      value={tags}
+      on:change={({ detail }) => (tags = detail)}
+      showNull={false}
+    />
     <Button on:click={addAsset}>Add</Button>
   </r-form>
 </Pane>

@@ -10,8 +10,8 @@
 
   let newEntrywayName = "";
 
-  function handleAddEntryway(event) {
-    addEntryway(event.target.value);
+  function handleAddEntryway({detail}) {
+    addEntryway(detail);
   }
 
   function addEntryway(entrywayName) {

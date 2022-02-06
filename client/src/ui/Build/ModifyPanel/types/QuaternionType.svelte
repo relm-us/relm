@@ -27,18 +27,20 @@
     return n === undefined ? "un" : n.toFixed(1);
   }
 
-  const onInputChange = (dimension) => (event) => {
-    const newValue = parseFloat(event.target.value);
-    if (!Number.isNaN(newValue)) {
-      value[dimension] = newValue;
-      q1.setFromEuler(value);
-      component[key].copy(q1);
+  const onInputChange =
+    (dimension) =>
+    ({ detail }) => {
+      const newValue = parseFloat(detail);
+      if (!Number.isNaN(newValue)) {
+        value[dimension] = newValue;
+        q1.setFromEuler(value);
+        component[key].copy(q1);
 
-      component.modified();
-      dispatch("modified");
-      editing[dimension] = false;
-    }
-  };
+        component.modified();
+        dispatch("modified");
+        editing[dimension] = false;
+      }
+    };
 
   const onInputCancel = (dimension) => (event) => {
     editing[dimension] = false;

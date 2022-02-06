@@ -15,8 +15,8 @@
   let value;
   $: value = component[key];
 
-  const onInputChange = (event) => {
-    const newValue = parseFloat(event.target.value);
+  const onInputChange = ({ detail }) => {
+    const newValue = parseFloat(detail);
     if (!Number.isNaN(newValue)) {
       component[key] = newValue;
       component.modified();

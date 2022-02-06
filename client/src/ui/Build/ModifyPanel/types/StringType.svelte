@@ -13,8 +13,8 @@
   let value: string;
   $: value = component[key];
 
-  const onInputChange = (event) => {
-    component[key] = event.target.value;
+  const onInputChange = ({ detail }) => {
+    component[key] = detail;
     component.modified();
     dispatch("modified");
     editing = false;

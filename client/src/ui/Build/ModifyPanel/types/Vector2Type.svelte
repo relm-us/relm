@@ -19,15 +19,17 @@
   let value: { x: number; y: number };
   $: value = component[key];
 
-  const onInputChange = (dimension) => (event) => {
-    const newValue = parseFloat(event.target.value);
-    if (!Number.isNaN(newValue) && component[key][dimension] !== newValue) {
-      component[key][dimension] = newValue;
-      component.modified();
-      dispatch("modified");
-      editing[dimension] = false;
-    }
-  };
+  const onInputChange =
+    (dimension) =>
+    ({ detail }) => {
+      const newValue = parseFloat(detail);
+      if (!Number.isNaN(newValue) && component[key][dimension] !== newValue) {
+        component[key][dimension] = newValue;
+        component.modified();
+        dispatch("modified");
+        editing[dimension] = false;
+      }
+    };
 
   const onInputCancel = (dimension) => (event) => {
     editing[dimension] = false;

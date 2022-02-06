@@ -18,6 +18,10 @@
     inputElement.select();
   }
 
+  const onChange = (event) => {
+    dispatch("change", event.target.value);
+  };
+
   const onBlur = () => {
     if (editable) {
       dispatch("cancel");
@@ -46,9 +50,9 @@
       {#if type === "number"}
         <input
           bind:this={inputElement}
-          bind:value
+          {value}
           type="number"
-          on:change
+          on:change={onChange}
           on:blur={onBlur}
         />
       {:else}
@@ -56,7 +60,7 @@
           bind:this={inputElement}
           bind:value
           type="text"
-          on:change
+          on:change={onChange}
           on:blur={onBlur}
         />
       {/if}
