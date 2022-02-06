@@ -35,6 +35,7 @@ import PointerPositionPlugin from "~/ecs/plugins/pointer-position";
 import PortalPlugin from "~/ecs/plugins/portal";
 import PhysicsPlugin from "~/ecs/plugins/physics";
 import SkyboxPlugin from "~/ecs/plugins/skybox";
+import TransitionPlugin from "~/ecs/plugins/transition";
 import TransformEffectsPlugin from "~/ecs/plugins/transform-effects";
 import TranslucentPlugin from "~/ecs/plugins/translucent";
 import TwistBonePlugin from "~/ecs/plugins/twist-bone";
@@ -84,6 +85,7 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       PointerPositionPlugin,
       PortalPlugin,
       SkyboxPlugin,
+      TransitionPlugin,
       TransformEffectsPlugin,
       TranslucentPlugin,
       TwistBonePlugin,

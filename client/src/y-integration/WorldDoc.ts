@@ -33,6 +33,7 @@ import { applyDiffToYEntity } from "./applyDiff";
 import { selectedEntities } from "~/stores/selection";
 import { DecoratedECSWorld, AuthenticationHeaders } from "~/types";
 import { uuidv4 } from "~/utils/uuid";
+import { Transition } from "~/ecs/plugins/transition";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
 
@@ -334,7 +335,20 @@ export class WorldDoc extends EventEmitter {
             )
               .get(event.path[2] as number)
               .get("name") as string;
-            const component = entity.getByName(componentName);
+            let component = entity.getByName(componentName);
+
+            // Exceptional case is the "Transform" component which controls position, rotation, scale
+            // In this case, rather than jumping immediately to the new orientation, we ease gently to it.
+            if (componentName === "Transform") {
+              if (!entity.has(Transition)) {
+                entity.add(Transition);
+              }
+              component = entity.get(Transition);
+
+              if (key === "position") component.positionSpeed = 0.1;
+              if (key === "rotation") component.rotationSpeed = 0.1;
+              if (key === "scale") component.scaleSpeed = 0.1;
+            }
 
             // Similar to HECS Component.fromJSON, but for just one prop
             const prop = component.constructor.props[key];

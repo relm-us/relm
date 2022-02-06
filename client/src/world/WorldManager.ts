@@ -37,6 +37,7 @@ import { BoundingHelper } from "~/ecs/plugins/bounding-helper";
 import { ControllerState } from "~/ecs/plugins/player-control";
 import { Follow } from "~/ecs/plugins/follow";
 import { intersectionPointWithGround } from "~/ecs/shared/isMakingContactWithGround";
+import { Transition } from "~/ecs/plugins/transition";
 
 import { SelectionManager } from "./SelectionManager";
 import { ChatManager } from "./ChatManager";
@@ -483,6 +484,17 @@ export class WorldManager {
           removeAfter: 5000,
         },
       });
+    }
+  }
+
+  moveThingLocally(entityId: string, position: Vector3) {
+    const entity: Entity = this.world.entities.getById(entityId);
+    if (entity.has(Transition)) {
+      const transition = entity.get(Transition);
+      transition.position.copy(position);
+      transition.positionSpeed = 0.1;
+    } else {
+      entity.add(Transition, { position, positionSpeed: 0.1 });
     }
   }
 
