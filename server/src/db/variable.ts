@@ -7,8 +7,7 @@ type VariableColumns = {
   relm_id: string;
   variable_name: string;
   description: string;
-  value_str: string;
-  value_num: number;
+  value: string; // JSONB
   created_by: string;
   created_at: Date;
   updated_at: Date;
@@ -19,7 +18,7 @@ const mkVariable = nullOr((cols: VariableColumns) => {
     relmId: cols.relm_id,
     name: cols.variable_name,
     description: cols.description,
-    value: cols.value_str || cols.value_num,
+    value: cols.value,
     createdBy: cols.created_by,
     createdAt: cols.created_at,
     updatedAt: cols.updated_at,
@@ -52,7 +51,7 @@ export async function getVariables({ relmId }: { relmId: string }) {
 
   const vars = {};
   for (let row of rows) {
-    vars[row.variable_name] = row.value_str || parseFloat(row.value_num);
+    vars[row.variable_name] = row.value;
   }
 
   return vars;
@@ -66,30 +65,30 @@ export async function setVariable({
 }: {
   relmId: string;
   name: string;
-  value: string | number;
+  value: any;
   description?: string;
 }) {
   const attrs: any = {
     relm_id: relmId,
     variable_name: name,
+    value:
+      value === null
+        ? "null"
+        : typeof value === "string"
+        ? JSON.stringify(value)
+        : value,
   };
-  if (typeof value === "string") {
-    attrs.value_str = value;
-  } else {
-    attrs.value_num = value;
-  }
   if (description !== null) {
     attrs.description = description;
   }
-  return mkVariable(
-    await db.one(sql`
+  let s = sql`
       ${INSERT("variables", attrs)}
       ON CONFLICT(relm_id, variable_name)
       DO UPDATE SET
         updated_at = CURRENT_TIMESTAMP,
-        value_str = ${attrs.value_str},
-        value_num = ${attrs.value_num}
+        value = ${attrs.value}
       RETURNING *
-    `)
-  );
+    `;
+  // console.log("setVariable sql", s);
+  return mkVariable(await db.one(s));
 }

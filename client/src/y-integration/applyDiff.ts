@@ -97,6 +97,10 @@ export function applyChangeToYEntity(change: Change, yentity: YEntity) {
             withYComponentValues(yentity, componentName, (yvalues) => {
               yvalues.set(propertyName, change.rhs);
             });
+          } else if (change.kind === ChangeKind.Delete) {
+            withYComponentValues(yentity, componentName, (yvalues) => {
+              yvalues.delete(propertyName);
+            });
           } else {
             throw new Error(`Change not implemented: '${change.kind}'`);
           }

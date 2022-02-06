@@ -8,11 +8,15 @@ import { RelmRestAPI } from "../RelmRestAPI";
 export const getRelmPermitsAndMetadata =
   (pageParams: PageParams, authHeaders: AuthenticationHeaders) =>
   async (dispatch: Dispatch) => {
-    const api = new RelmRestAPI(config.serverUrl, authHeaders);
+    const api = new RelmRestAPI(
+      config.serverUrl,
+      pageParams.relmName,
+      authHeaders
+    );
 
     let result;
     try {
-      result = await api.getPermitsAndMeta(pageParams.relmName);
+      result = await api.getPermitsAndMeta();
     } catch (err) {
       return dispatch({ id: "error", message: err.message });
     }

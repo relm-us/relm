@@ -13,7 +13,7 @@ describe("Variable model tests", () => {
     await Variable.setVariable({
       relmId,
       name,
-      value: "hi",
+      value: { greeting: "hi" },
       description: "greeting",
     });
 
@@ -21,7 +21,7 @@ describe("Variable model tests", () => {
     expect(variable).toEqual({
       relmId,
       name,
-      value: "hi",
+      value: { greeting: "hi" },
       description: "greeting",
       createdBy: null,
       createdAt: expect.any(Date),
@@ -33,12 +33,14 @@ describe("Variable model tests", () => {
     const relmId = uuidv4();
 
     const name1 = uuidv4();
-    await Variable.setVariable({ relmId, name: name1, value: "hi" });
+    await Variable.setVariable({ relmId, name: name1, value: null });
     const name2 = uuidv4();
     await Variable.setVariable({ relmId, name: name2, value: 1 });
+    const name3 = uuidv4();
+    await Variable.setVariable({ relmId, name: name3, value: "test" });
 
     const vars = await Variable.getVariables({ relmId });
 
-    expect(vars).toEqual({ [name1]: "hi", [name2]: 1 });
+    expect(vars).toEqual({ [name1]: null, [name2]: 1, [name3]: "test" });
   });
 });

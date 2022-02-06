@@ -39,7 +39,7 @@ export class Transition extends LocalComponent {
       default: null,
     },
 
-    scaleLerp: {
+    scaleSpeed: {
       type: NumberType,
       default: 0,
     },

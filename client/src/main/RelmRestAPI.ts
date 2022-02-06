@@ -5,10 +5,12 @@ import type { LibraryAsset } from "~/types";
 
 export class RelmRestAPI {
   url: string;
+  relmName: string;
   authHeaders: AuthenticationHeaders;
 
-  constructor(url, authHeaders: AuthenticationHeaders) {
+  constructor(url, relmName, authHeaders: AuthenticationHeaders) {
     this.url = url;
+    this.relmName = relmName;
     this.authHeaders = authHeaders;
   }
 
@@ -22,16 +24,14 @@ export class RelmRestAPI {
     return await axios.post(url, body, { headers: this.authHeaders });
   }
 
-  async getPermitsAndMeta(
-    relm: string
-  ): Promise<{ permits: string[]; jwt: any }> {
+  async getPermitsAndMeta(): Promise<{ permits: string[]; jwt: any }> {
     let res;
     try {
-      res = await this.get(`/relm/${relm}/permitsAndMeta`);
+      res = await this.get(`/relm/${this.relmName}/permitsAndMeta`);
     } catch (err) {
       if (err.response) {
         if (err.response.status === 404) {
-          throw Error(`relm named "${relm}" not found`);
+          throw Error(`relm named "${this.relmName}" not found`);
         } else if (err.response.status === 401 || err.response.status === 400) {
           throw Error(`permission denied: ${err.response.data.reason}`);
         }
@@ -119,6 +119,30 @@ export class RelmRestAPI {
       }
     } else {
       throw Error(`can't get assets (${res?.status})`);
+    }
+  }
+
+  /**
+   * changes require a form as follows:
+   * {
+   *   [operation]: {
+   *     [variableName]: ...
+   *   }
+   * }
+   *
+   * where `operation` may be 'add', 'set', or 'map'
+   */
+  async changeVariables({ changes }: { changes: any }): Promise<boolean> {
+    const url = `/relm/${this.relmName}/variables`;
+    const res = await this.post(url, { changes });
+    if (res?.status === 200) {
+      if (res.data?.status === "success") {
+        return true;
+      } else {
+        throw Error(`can't set variables (${res.data?.status})`);
+      }
+    } else {
+      throw Error(`can't set variables (${res?.status})`);
     }
   }
 }

@@ -259,7 +259,7 @@ type Possibility = {
 };
 
 relm.post(
-  "/variable",
+  "/variables",
   cors(),
   middleware.relmExists(),
   middleware.authenticated(),
@@ -269,63 +269,162 @@ relm.post(
   wrapAsync(async (req, res) => {
     const relmId = req.relm.relmId;
 
-    const name = req.body.name;
-    if (!name) return util.fail(res, "name required");
+    const changes = req.body.changes;
+    if (!changes) return util.fail(res, "changes required");
 
-    const operation = req.body.operation;
-    if (!operation) return util.fail(res, "operation required");
+    const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
+    // console.log("doc.actions", doc.getMap("actions").toJSON());
 
-    if (operation === "set") {
-      if (!("value" in req.body))
-        return util.fail(res, "value required to set");
+    const variables = await Variable.getVariables({ relmId });
+    // console.log("values", values);
+    const results = {};
 
-      await Variable.setVariable({
-        relmId,
-        name,
-        value: req.body.value,
-      });
+    for (let [operation, opValues] of Object.entries(changes)) {
+      if (operation === "add") {
+        /**
+         * opValues will be in the form:
+         * {
+         *   "counter": 5,
+         *   "secretCount": 1
+         * }
+         */
+        for (let [name, value] of Object.entries(opValues)) {
+          // Force conversion to number
+          if (typeof variables[name] !== "number") {
+            variables[name] = 0;
+          }
+          const newValue = variables[name] + value;
+          setVariable(doc, variables, relmId, name, newValue);
+          results[name] = newValue;
+        }
+      } else if (operation === "set") {
+        /**
+         * opValues will be in the form:
+         * {
+         *   "door": "closed",
+         *   "secretCount": 1
+         * }
+         */
+        for (let [name, value] of Object.entries(opValues)) {
+          setVariable(doc, variables, relmId, name, value);
+          results[name] = value;
+        }
+      } else if (operation === "map") {
+        /**
+         * opValues will be in the form:
+         * {
+         *   "door": {
+         *     "open": "closed",
+         *     "closed": "open",
+         *     "*": "closed"      // catch-all state, including null
+         *   }
+         * }
+         */
+        for (let [name, mappings] of Object.entries(opValues)) {
+          let currentValue = null;
+          if (name in variables) {
+            currentValue = variables[name];
+          }
 
-      const values = await Variable.getVariables({ relmId });
+          let toValue = undefined;
+          if (currentValue in (mappings as object)) {
+            toValue = mappings[currentValue];
+          } else if ("*" in (mappings as object)) {
+            toValue = mappings["*"];
+          }
 
-      const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
-      const possibilities = doc.getMap("actions")?.get(name) as Possibility[];
-      for (let possible of possibilities) {
-        const test = conscript(possible.compare);
-        if (test(values)) applyAction(doc, possible.action);
+          if (toValue !== undefined) {
+            setVariable(doc, variables, relmId, name, toValue);
+            results[name] = toValue;
+          }
+        }
       }
-
-      return util.respond(res, 200, {
-        status: "success",
-        action: operation,
-      });
     }
+
+    return util.respond(res, 200, {
+      status: "success",
+      results,
+    });
   })
 );
+
+async function setVariable(doc, variables, relmId, name, value) {
+  console.log("setVariable", name, value, variables);
+  await Variable.setVariable({ relmId, name, value });
+  variables[name] = value;
+
+  const actions = doc.getMap("actions");
+  const possibilities = actions.get(name) as Possibility[];
+
+  if (!possibilities) {
+    // TODO: figure out why actions are sometimes not available by now??
+    console.warn(
+      `Unable to load possible actions for relm ${relmId};` +
+        ` not setting variable ${name}`
+    );
+    return;
+  }
+
+  for (let possible of possibilities) {
+    const test = conscript(possible.compare);
+    if (test(variables)) {
+      if (possible.timeout > 0) {
+        setTimeout(() => applyAction(doc, possible.action), possible.timeout);
+      } else {
+        applyAction(doc, possible.action);
+      }
+    }
+  }
+}
 
 function applyAction(doc: Y.Doc, action: Action) {
   switch (action.type) {
     case "setProperty": {
-      const entities = doc.getArray("entities") as YEntities;
-      const entity = findInYArray(
-        entities,
-        (yentity: YEntity) => yentity.get("id") === action.entity
+      setProperty(
+        doc,
+        action.entity,
+        action.component,
+        action.property,
+        action.value
       );
-      if (entity) {
-        const components = entity.get("components") as YComponents;
-        if (components) {
-          const component = findInYArray(
-            components,
-            (ycomponent) => ycomponent.get("name") === action.component
-          );
-          if (component) {
-            const values = component.get("values") as YValues;
-            values.set(action.property, action.value);
-          }
-        } else {
-          console.log("entity not found", action.entity);
-        }
-      }
       break;
     }
+  }
+}
+
+function setProperty(
+  doc: Y.Doc,
+  entityId: string,
+  componentName: string,
+  propertyName: string,
+  value: any
+) {
+  const entities = doc.getArray("entities") as YEntities;
+  const entity = findInYArray(
+    entities,
+    (yentity: YEntity) => yentity.get("id") === entityId
+  );
+  if (entity) {
+    const components = entity.get("components") as YComponents;
+    if (components) {
+      const component = findInYArray(
+        components,
+        (ycomponent) => ycomponent.get("name") === componentName
+      );
+      if (component) {
+        const values = component.get("values") as YValues;
+        values.set(propertyName, value);
+      } else {
+        console.log(
+          "setProperty: component not found",
+          entityId,
+          componentName
+        );
+      }
+    } else {
+      console.log("setProperty: components not found", entityId);
+    }
+  } else {
+    console.log("setProperty: entity not found", entityId);
   }
 }

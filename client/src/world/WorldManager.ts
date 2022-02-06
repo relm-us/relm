@@ -106,7 +106,11 @@ export class WorldManager {
     this.dispatch = dispatch;
     this.state = state;
     this.broker = broker;
-    this.api = new RelmRestAPI(config.serverUrl, state.authHeaders);
+    this.api = new RelmRestAPI(
+      config.serverUrl,
+      state.pageParams.relmName,
+      state.authHeaders
+    );
 
     this.world = ecsWorld;
     this.worldDoc = worldDoc;

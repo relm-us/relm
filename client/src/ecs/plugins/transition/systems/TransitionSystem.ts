@@ -55,8 +55,11 @@ export class TransitionSystem extends System {
       spec.positionSpeed == 0 &&
       spec.rotationSpeed == 0 &&
       spec.scaleSpeed == 0
-    )
+    ) {
       this.remove(entity);
+      // Let physics engine catch up with new position
+      transform.modified();
+    }
   }
 
   remove(entity: Entity) {
