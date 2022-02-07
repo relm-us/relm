@@ -12,10 +12,3 @@
     {prefab.name}
   </Button>
 {/each}
-
-<style>
-  h2 {
-    text-align: center;
-    margin: 4px;
-  }
-</style>
