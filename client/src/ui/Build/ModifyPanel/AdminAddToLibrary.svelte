@@ -13,9 +13,9 @@
   const notifyContext = getNotificationsContext();
 
   let thumbnail;
-  let name = null;
-  let description = null;
-  let tags = null;
+  let name = "";
+  let description = "";
+  let tags = "";
 
   const onUpload = ({ detail }) => {
     // console.log("onUpload image for library", detail);
@@ -75,20 +75,20 @@
     <Capsule
       label="Name"
       value={name}
+      maxWidth={false}
       on:change={({ detail }) => (name = detail)}
-      showNull={false}
     />
     <Capsule
       label="Description"
       value={description}
+      maxWidth={false}
       on:change={({ detail }) => (description = detail)}
-      showNull={false}
     />
     <Capsule
       label="Tags (,)"
       value={tags}
+      maxWidth={false}
       on:change={({ detail }) => (tags = detail)}
-      showNull={false}
     />
     <Button on:click={addAsset}>Add</Button>
   </r-form>
@@ -98,7 +98,7 @@
   r-form {
     display: flex;
     flex-direction: column;
-    padding: 4px 8px;
+    --input-width: 100%;
   }
   r-form > :global(*) {
     margin: 4px;

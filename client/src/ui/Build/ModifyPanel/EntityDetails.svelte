@@ -48,9 +48,9 @@
   };
 </script>
 
-<div>
+<r-entity-details>
   <info>
-    <Capsule editable={false} label="ID" value={entity.id} />
+    <Capsule editable={false} label="ID" value={entity.id} maxWidth={false} />
   </info>
   <select-container>
     <Select
@@ -61,12 +61,13 @@
       on:select={onSelectNewComponent}
     />
   </select-container>
-</div>
+</r-entity-details>
 
 <style>
-  div {
-    width: 268px;
-    margin: 8px 16px;
+  r-entity-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   info {
     display: flex;
@@ -77,7 +78,8 @@
   }
   select-container {
     display: block;
-    margin: 16px 8px 0px 8px;
+    width: 250px;
+    margin-top: 16px;
 
     --itemColor: #333;
     --background: none;

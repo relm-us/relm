@@ -25,7 +25,7 @@
   };
 </script>
 
-<div>
+<r-string-type>
   {(prop.editor && prop.editor.label) || key}:
 
   <Capsule
@@ -35,11 +35,10 @@
     on:cancel={onInputCancel}
     {value}
   />
-</div>
+</r-string-type>
 
 <style>
-  div {
-    margin: 8px 0px 6px 16px;
+  r-string-type {
     --value-width: 100%;
   }
 </style>

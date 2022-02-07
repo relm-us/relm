@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Button from "~/ui/lib/Button";
+  import type { State } from "~/main/ProgramTypes";
 
   import AudioModeButton from "~/ui/ButtonControls/AudioModeButton";
   import MicButton from "~/ui/ButtonControls/MicButton";
@@ -7,6 +7,7 @@
   import AvatarSetupButton from "~/ui/ButtonControls/AvatarSetupButton";
   import ShareScreenButton from "~/ui/ButtonControls/ShareScreenButton";
   import ChatButton from "~/ui/Chat/ChatButton.svelte";
+  import Button from "~/ui/lib/Button";
 
   import Chat from "~/ui/Chat";
   import MiniMap from "~/ui/MiniMap";
@@ -39,7 +40,7 @@
 
   export let dispatch;
   export let permits;
-  export let state;
+  export let state: State;
   export let tr = {};
 
   // i18n translations available, if passed in
@@ -78,7 +79,10 @@
       {/if}
 
       {#if $openPanel === "actions"}
-        <ActionsPanel on:minimize={toPlayMode} />
+        <ActionsPanel
+          on:minimize={toPlayMode}
+          actions={state.worldDoc.actions}
+        />
       {/if}
 
       <!-- Export panel opens from button in SettingsPanel -->

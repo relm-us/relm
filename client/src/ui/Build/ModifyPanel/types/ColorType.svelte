@@ -17,10 +17,9 @@
 
   // ignore warning about missing props
   $$props;
-
 </script>
 
-<div>
+<r-color-type>
   <lbl>{(prop.editor && prop.editor.label) || key}:</lbl>
 
   <color>
@@ -44,14 +43,13 @@
       }}
     />
   </color>
-</div>
+</r-color-type>
 
 <style>
-  div {
+  r-color-type {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 2px 16px 8px 16px;
   }
   lbl {
     padding-right: 8px;
@@ -66,5 +64,4 @@
       monospace;
     font-size: 12px;
   }
-
 </style>

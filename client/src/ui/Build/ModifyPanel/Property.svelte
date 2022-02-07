@@ -60,7 +60,6 @@
 
 <style>
   div {
-    margin-top: 4px;
-    margin-bottom: 2px;
+    margin: 8px 0px;
   }
 </style>

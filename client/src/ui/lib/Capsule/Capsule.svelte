@@ -7,7 +7,7 @@
   export let editable: boolean = true;
   export let editing: boolean = false;
   export let cursor = "default";
-  export let showNull = true;
+  export let maxWidth = true;
 
   let inputElement;
 
@@ -40,7 +40,8 @@
     <lbl>{label}</lbl>
   {/if}
   <value
-    class:tag={!label}
+    class:no-label={!label}
+    class:max-width={maxWidth}
     on:mousedown
     on:focus={onFocus}
     style={`cursor: ${cursor}`}
@@ -64,7 +65,7 @@
           on:blur={onBlur}
         />
       {/if}
-    {:else if showNull}{value}{/if}
+    {:else if value !== undefined}{value}{/if}
   </value>
 </capsule>
 
@@ -75,6 +76,8 @@
     font-size: 12px;
   }
   lbl {
+    flex-shrink: 0;
+
     padding: 2px 6px 2px 8px;
 
     border-top-left-radius: 4px;
@@ -89,6 +92,7 @@
     min-width: 30px;
     min-height: 15px;
     padding: 2px 8px 2px 4px;
+    flex-grow: 1;
 
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
@@ -101,7 +105,10 @@
     cursor: var(--cursor);
     width: var(--value-width, inherit);
   }
-  value.tag {
+  value.max-width {
+    max-width: var(--value-width, 45px);
+  }
+  value.no-label {
     min-width: 48px;
     margin: 4px 8px 4px 0px;
     padding: 2px 8px;
@@ -113,5 +120,18 @@
     color: white;
     width: var(--input-width, 100%);
     border: 0;
+    font-size: 12px;
+  }
+
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
   }
 </style>

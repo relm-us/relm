@@ -46,20 +46,19 @@
   };
 </script>
 
-<container>
+<r-boolean-type>
   {(prop.editor && prop.editor.label) || key}:
 
-  <div class="switch">
+  <div>
     <ToggleSwitch enabled={value} on:change={onChange} />
   </div>
-</container>
+</r-boolean-type>
 
 <style>
-  container {
+  r-boolean-type {
     display: block;
-    margin: 8px 0px 6px 16px;
   }
-  div.switch {
+  div {
     display: flex;
     justify-content: center;
     margin-top: 4px;

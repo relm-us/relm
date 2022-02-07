@@ -8,14 +8,14 @@
   $$props;
 </script>
 
-<div>
+<r-ref-type>
   {(prop.editor && prop.editor.label) || key}:
 
   <Capsule editable={false} value="[Reference]" />
-</div>
+</r-ref-type>
 
 <style>
-  div {
-    margin: 8px 0px 6px 16px;
+  r-ref-type {
+    display: block;
   }
 </style>

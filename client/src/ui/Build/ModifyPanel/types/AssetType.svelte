@@ -17,9 +17,7 @@
   $: value = component[key].url;
 
   const onInputChange = (event) => {
-    const value = event.target.value.match(/^\s*$/)
-      ? ""
-      : event.target.value;
+    const value = event.target.value.match(/^\s*$/) ? "" : event.target.value;
     Object.assign(component[key], {
       name: "",
       filename: "",
@@ -47,7 +45,7 @@
   }
 </script>
 
-<div>
+<r-asset-type>
   {(prop.editor && prop.editor.label) || key}:
 
   <Capsule
@@ -59,19 +57,16 @@
   />
 
   {#if formatSizeInKb(value)}
-    <size>
+    <div>
       Size:
       {formatSizeInKb(value)}
-    </size>
+    </div>
   {/if}
-</div>
+</r-asset-type>
 
 <style>
-  div {
-    margin: 8px 0px 6px 16px;
-    --value-width: 100%;
-  }
-  size {
+  r-asset-type {
     display: block;
+    --value-width: 100%;
   }
 </style>

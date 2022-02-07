@@ -52,7 +52,7 @@
   };
 
   if (Component.name === "Transform") {
-    const UPDATE_FREQUENCY_MS = 100;
+    const UPDATE_FREQUENCY_MS = 400;
     // Regularly update our panel data
     onMount(() => {
       const interval = setInterval(() => {

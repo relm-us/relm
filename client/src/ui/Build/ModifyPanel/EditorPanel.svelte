@@ -59,6 +59,5 @@
     margin-top: 8px;
     padding-top: 4px;
     --margin: 8px;
-    /* border-top: 1px solid #555; */
   }
 </style>

@@ -7,11 +7,13 @@
   $: value = component[key];
 </script>
 
+<r-misc-type>
+  <div>{(prop.editor && prop.editor.label) || key}:</div>
+  <div>{JSON.stringify(value)}</div>
+</r-misc-type>
+
 <style>
-  div {
-    margin-left: 16px;
+  r-misc-type {
+    display: block;
   }
 </style>
-
-<div>{(prop.editor && prop.editor.label) || key}:</div>
-<div>{JSON.stringify(value)}</div>

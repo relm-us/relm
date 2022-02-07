@@ -46,7 +46,7 @@
   });
 </script>
 
-<container>
+<r-number-type>
   <div class="label">
     {(prop.editor && prop.editor.label) || key}:
   </div>
@@ -61,22 +61,15 @@
       type="number"
     />
   </div>
-</container>
+</r-number-type>
 
 <svelte:window on:mousemove={dragger.mousemove} on:mouseup={dragger.mouseup} />
 
 <style>
-  container {
+  r-number-type {
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
     justify-content: space-between;
-  }
-
-  div.label {
-    margin-left: 16px;
-  }
-  div.capsule {
-    margin-left: 8px;
   }
 </style>

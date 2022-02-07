@@ -18,7 +18,7 @@
   const dispatch = createEventDispatcher();
 </script>
 
-<pane>
+<r-pane>
   <icon-bar>
     {#if showClose}
       <icon on:mousedown|preventDefault={() => dispatch("close")}>
@@ -59,18 +59,24 @@
     </lbl>
   {/if}
   {#if !minimized}
-    <slot />
+    <r-content>
+      <slot />
+    </r-content>
   {/if}
-</pane>
+</r-pane>
 
 <style>
-  pane {
+  r-pane {
     position: relative;
 
     border: 1px solid var(--border-color, rgba(255, 255, 255, 0.35));
     border-radius: 5px;
 
     margin: 8px 16px;
+  }
+  r-content {
+    display: block;
+    padding: var(--pane-padding, 12px);
   }
 
   lbl {

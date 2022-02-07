@@ -22,7 +22,7 @@
   }
 </script>
 
-<div>
+<r-select-type>
   <lbl>{(prop.editor && prop.editor.label) || key}:</lbl>
 
   <!-- https://github.com/rob-balfre/svelte-select -->
@@ -32,13 +32,12 @@
     selectedValue={getLabelForKey(key)}
     on:select={onSelect}
   />
-</div>
+</r-select-type>
 
 <style>
-  div {
+  r-select-type {
     display: flex;
     align-items: center;
-    margin: 8px 0px 6px 16px;
 
     /* Select box */
     --itemColor: #333;

@@ -21,19 +21,23 @@
   };
 </script>
 
-<div>{(prop.editor && prop.editor.label) || key}:</div>
-<div class="fixed-width">
-  <textarea spellcheck="false" on:change={handleChange}>{JSON.stringify(value)}</textarea>
-</div>
+<r-json-type>
+  <div>{(prop.editor && prop.editor.label) || key}:</div>
+  <div class="fixed-width">
+    <textarea spellcheck="false" on:change={handleChange}
+      >{JSON.stringify(value)}</textarea
+    >
+  </div>
+</r-json-type>
 
 <style>
-  div {
-    margin-left: 16px;
-    overflow-wrap: anywhere;
+  r-json-type {
+    display: block;
   }
   textarea {
     width: 228px;
     margin: 8px 0;
+    overflow-wrap: anywhere;
   }
   .fixed-width {
     font-family: monospace;

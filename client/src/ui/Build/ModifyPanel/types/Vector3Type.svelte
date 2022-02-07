@@ -72,31 +72,36 @@
   };
 </script>
 
-<div>{(prop.editor && prop.editor.label) || key}:</div>
-<div class="capsules">
-  {#each ["x", "y", "z"] as dim}
-    <Capsule
-      editing={editing[dim]}
-      on:mousedown={draggers[dim].mousedown}
-      on:change={onInputChange(dim)}
-      on:cancel={onInputCancel(dim)}
-      label={dim.toUpperCase()}
-      value={formatNumber(value[dim], editing[dim])}
-      type="number"
-    />
-  {/each}
-</div>
+<r-vector3-type>
+  <div>{(prop.editor && prop.editor.label) || key}:</div>
+  <div class="capsules">
+    {#each ["x", "y", "z"] as dim}
+      <Capsule
+        editing={editing[dim]}
+        on:mousedown={draggers[dim].mousedown}
+        on:change={onInputChange(dim)}
+        on:cancel={onInputCancel(dim)}
+        label={dim.toUpperCase()}
+        value={formatNumber(value[dim], editing[dim])}
+        type="number"
+      />
+    {/each}
+  </div>
+</r-vector3-type>
 
 <svelte:window on:mousemove={mousemove} on:mouseup={mouseup} />
 
 <style>
-  div {
-    margin-left: 16px;
-    display: flex;
+  r-vector3-type {
+    display: block;
   }
   div.capsules {
+    display: flex;
     margin-top: 4px;
     margin-bottom: 6px;
-    justify-content: center;
+    justify-content: space-around;
+  }
+  div.capsules > :global(capsule) {
+    flex-shrink: 0;
   }
 </style>
