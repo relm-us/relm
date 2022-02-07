@@ -9,6 +9,7 @@ import { Particles } from "~/ecs/plugins/particles";
 import { worldManager } from "~/world";
 
 import { Portal } from "../components";
+import { makeSparkles } from "../makeSparkles";
 
 const portalsDisabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -51,40 +52,26 @@ export class PortalSystem extends System {
           bodyFacing.copy(vOut).applyQuaternion(transform.rotation).normalize();
           newCoords.add(bodyFacing);
 
-          const sparklesEntrance = this.world.entities
-            .create("Portal Sparkle")
-            .add(Transform, {
-              position: new Vector3()
-                .copy(transform.position)
-                .add(new Vector3(0, 1.5, 0)),
-            })
-            .add(Particles, { prefab: "TELEPORT" })
-            .activate();
+          const sparklesEntrance = makeSparkles(this.world, transform.position);
 
           setTimeout(() => {
             worldManager.moveTo(newCoords, false);
             sparklesEntrance.destroy();
 
-            const sparklesExit = this.world.entities
-              .create("Portal Sparkle")
-              .add(Transform, {
-                position: new Vector3()
-                  .copy(newCoords)
-                  .add(new Vector3(0, 1.5, 0)),
-              })
-              .add(Particles, { prefab: "TELEPORT" })
-              .activate();
-
-            setTimeout(() => {
-              sparklesExit.destroy();
-            }, 1000);
+            const sparklesExit = makeSparkles(this.world, newCoords);
+            setTimeout(() => sparklesExit.destroy(), 1000);
           }, 1000);
         } else if (portal.kind === "REMOTE") {
-          worldManager.dispatch({
-            id: "enterPortal",
-            relmName: portal.relm,
-            entryway: portal.entryway,
-          });
+          const transform = otherEntity.get(Transform);
+          const sparklesEntrance = makeSparkles(this.world, transform.position);
+          setTimeout(() => {
+            sparklesEntrance.destroy();
+            worldManager.dispatch({
+              id: "enterPortal",
+              relmName: portal.relm,
+              entryway: portal.entryway,
+            });
+          }, 1000);
         }
       }
     });
