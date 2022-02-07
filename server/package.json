@@ -39,7 +39,7 @@
     "ws": "^7.2.3",
     "y-protocols": "1.0.5",
     "y-websocket": "canadaduane/y-websocket#async-bind-state",
-    "yjs": "13.5.23"
+    "yjs": "13.5.27"
   },
   "devDependencies": {
     "@jest-mock/express": "^1.4.0",

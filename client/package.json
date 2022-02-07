@@ -56,8 +56,8 @@
     "twilio-video": "2.18.3",
     "video-mirror": "4.3.0",
     "y-indexeddb": "9.0.7",
-    "y-websocket": "canadaduane/y-websocket#custom-callbacks2",
-    "yjs": "13.5.23"
+    "y-websocket": "canadaduane/y-websocket#async-bind-state",
+    "yjs": "13.5.27"
   },
   "devDependencies": {
     "@babel/core": "^7.11.5",
