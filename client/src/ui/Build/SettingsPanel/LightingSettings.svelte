@@ -84,7 +84,7 @@
 </script>
 
 <Pane title="Lighting">
-  <r-setting>
+  <r-setting style="padding-top: 4px">
     <r-title>
       Ambient:
       <r-right>
@@ -156,7 +156,7 @@
     </r-row-start>
   </r-setting>
 
-  <r-setting style="border-bottom:0">
+  <r-setting style="border-bottom:0; padding-bottom: 3px">
     <Button on:click={resetLighting} style="border: 1px solid #999;">
       Reset Lighting
     </Button>
@@ -167,8 +167,8 @@
   r-setting {
     display: flex;
     flex-direction: column;
-    padding: 8px 8px 8px 16px;
-    border-bottom: 1px solid #999;
+    padding: 16px 0;
+    border-bottom: 1px solid #555;
   }
   r-title {
     display: flex;

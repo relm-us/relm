@@ -64,7 +64,7 @@
   r-setting {
     display: flex;
     align-items: center;
-    margin: 8px 16px 8px 8px;
+    margin: 8px 8px 8px 0px;
   }
   r-slider {
     flex-grow: 1;

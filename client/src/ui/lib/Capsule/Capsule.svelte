@@ -65,14 +65,14 @@
           on:blur={onBlur}
         />
       {/if}
-    {:else if value !== undefined}{value}{/if}
+    {:else if value !== undefined}<span class="value-text">{value}</span>{/if}
   </value>
 </capsule>
 
 <style>
   capsule {
-    margin: 0px 8px 0px 0px;
     display: flex;
+    align-items: center;
     font-size: 12px;
   }
   lbl {
@@ -89,9 +89,12 @@
     font-weight: bold;
   }
   value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
     min-width: 30px;
-    min-height: 15px;
-    padding: 2px 8px 2px 4px;
+    min-height: 18px;
     flex-grow: 1;
 
     border-top-right-radius: 4px;
@@ -105,13 +108,15 @@
     cursor: var(--cursor);
     width: var(--value-width, inherit);
   }
+  .value-text {
+    padding: 2px 8px;
+  }
   value.max-width {
     max-width: var(--value-width, 45px);
   }
   value.no-label {
     min-width: 48px;
-    margin: 4px 8px 4px 0px;
-    padding: 2px 8px;
+    margin: 4px 0px;
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
   }

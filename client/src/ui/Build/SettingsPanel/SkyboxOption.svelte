@@ -21,7 +21,7 @@
   button {
     display: flex;
     padding: 0;
-    margin: 6px;
+    margin: 4px;
     border-radius: 5px;
   }
 

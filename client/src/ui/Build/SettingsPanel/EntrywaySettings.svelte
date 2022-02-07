@@ -10,8 +10,10 @@
 
   let newEntrywayName = "";
 
-  function handleAddEntryway({detail}) {
+  function handleAddEntryway({ detail }) {
     addEntryway(detail);
+    newEntrywayName = detail;
+    setTimeout(() => (newEntrywayName = ""), 100);
   }
 
   function addEntryway(entrywayName) {
@@ -43,10 +45,11 @@
         on:delete={onDeleteEntryway}
       />
     </r-entryways-list>
+    <div>New Entryway Name:</div>
     <Capsule
-      label="Add:"
       value={newEntrywayName}
       editable={true}
+      maxWidth={false}
       on:change={handleAddEntryway}
     />
   </r-setting>
@@ -61,7 +64,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 8px;
     margin: auto;
+    --value-width: 200px;
   }
 </style>

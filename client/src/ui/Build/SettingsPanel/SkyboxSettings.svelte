@@ -79,7 +79,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 8px;
     margin: auto;
   }
 
