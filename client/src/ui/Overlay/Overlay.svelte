@@ -74,7 +74,7 @@
       {/if}
 
       {#if $openPanel === "modify"}
-        <ModifyPanel on:minimize={toPlayMode} />
+        <ModifyPanel on:minimize={toPlayMode} {permits} />
       {/if}
 
       {#if $openPanel === "actions"}

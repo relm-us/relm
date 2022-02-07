@@ -19,6 +19,7 @@
   import { deserializeCopyBuffer } from "~/events/input/CopyPasteListener/common";
 
   import SearchResult from "./SearchResult.svelte";
+  import SelectCreatePrefab from "./SelectCreatePrefab.svelte";
   import Tag from "./Tag.svelte";
 
   let search;
@@ -75,7 +76,7 @@
 </script>
 
 <LeftPanel on:minimize>
-  <Header>Library</Header>
+  <Header>Add</Header>
   <r-column>
     <r-search-wrap>
       <Search bind:value={search} placeholder="Search Assets..." />
@@ -129,6 +130,7 @@
     </r-results>
     <r-spacer />
     <UploadButton on:uploaded={onUpload} />
+    <SelectCreatePrefab />
   </r-column>
 </LeftPanel>
 

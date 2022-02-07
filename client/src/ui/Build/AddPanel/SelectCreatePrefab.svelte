@@ -7,7 +7,6 @@
   };
 </script>
 
-<h2>Click to Create:</h2>
 {#each directory as prefab}
   <Button style="margin-top:8px" on:click={create(prefab.name)}>
     {prefab.name}

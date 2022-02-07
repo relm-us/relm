@@ -2,10 +2,7 @@
   import { createEventDispatcher } from "svelte";
   import Select from "svelte-select";
 
-  import { RigidBodyRef } from "~/ecs/plugins/physics";
-
   import Capsule from "~/ui/lib/Capsule";
-  import Button from "~/ui/lib/Button";
   import { worldManager } from "~/world";
   import { sortAlphabetically } from "~/utils/sortAlphabetically";
 
@@ -38,34 +35,6 @@
     return components;
   };
 
-  function isSleeping(entity) {
-    const body = entity.get(RigidBodyRef);
-    if (body) {
-      return body.value.isSleeping();
-    }
-  }
-
-  function hasRigidBody(entity) {
-    return !!entity.get(RigidBodyRef);
-  }
-
-  const awaken = () => {
-    const body = entity.get(RigidBodyRef);
-    if (body) {
-      body.value.wakeUp();
-    }
-  };
-  const asleepen = () => {
-    const body = entity.get(RigidBodyRef);
-    if (body) {
-      body.value.sleep();
-    }
-  };
-
-  const destroy = () => {
-    dispatch("destroy");
-  };
-
   const onSelectNewComponent = ({ detail }) => {
     const componentName = detail.value;
     setTimeout(() => {
@@ -82,18 +51,7 @@
 <div>
   <info>
     <Capsule editable={false} label="ID" value={entity.id} />
-    <Capsule label="Name" value={entity.name} />
   </info>
-  <toolbar>
-    <Button on:click={destroy}>Delete</Button>
-    {#if hasRigidBody(entity)}
-      {#if isSleeping(entity)}
-        <Button on:click={awaken}>Wake</Button>
-      {:else}
-        <Button on:click={asleepen}>Sleep</Button>
-      {/if}
-    {/if}
-  </toolbar>
   <select-container>
     <Select
       bind:selectedValue
@@ -116,15 +74,6 @@
     justify-content: center;
 
     margin: 0px 8px;
-  }
-  toolbar {
-    display: flex;
-    justify-content: center;
-
-    margin-top: 8px;
-    padding-top: 4px;
-    --margin: 8px;
-    /* border-top: 1px solid #555; */
   }
   select-container {
     display: block;

@@ -66,10 +66,6 @@
     secondaryComponents = secondaryComponents;
   };
 
-  const destroyEntity = () => {
-    worldManager.worldDoc.delete(entity);
-  };
-
   onMount(() => {
     worldManager.world.on("entity-inactive", detectInactive);
     worldManager.world.on("entity-active", detectActive);
@@ -81,7 +77,7 @@
   });
 </script>
 
-<EntityDetails {entity} on:destroy={destroyEntity} on:modified={onModified} />
+<EntityDetails {entity} on:modified={onModified} />
 
 {#if active}
   <!-- Components meant to be edited -->
