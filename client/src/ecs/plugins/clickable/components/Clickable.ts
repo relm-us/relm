@@ -1,4 +1,4 @@
-import { Component, StringType, JSONType, NumberType } from "~/ecs/base";
+import { Component, StringType, JSONType, NumberType, BooleanType } from "~/ecs/base";
 
 export class Clickable extends Component {
   action: string;
@@ -20,6 +20,7 @@ export class Clickable extends Component {
           { label: "Open URL", value: "OPEN" },
           { label: "Open URL (new tab)", value: "LINK" },
           { label: "Change Variables", value: "CHANGES" },
+          { label: "Toggle Html2d", value: "TOGGLE" },
         ],
       },
     },
@@ -38,16 +39,6 @@ export class Clickable extends Component {
       editor: {
         label: "Changes",
         requires: [{ prop: "action", value: "CHANGES" }],
-      },
-    },
-
-    // deprecated
-    toggle: {
-      type: JSONType,
-      default: {},
-      editor: {
-        label: "Toggle Script",
-        requires: [{ prop: "action", value: "TOGGLE" }],
       },
     },
   };

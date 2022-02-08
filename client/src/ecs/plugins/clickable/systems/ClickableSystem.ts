@@ -53,6 +53,7 @@ export class ClickableSystem extends System {
           const html2d = entity.getByName("Html2d");
           html2d.visible = !html2d.visible;
           html2d.modified();
+          worldManager.worldDoc.syncFrom(entity);
         }
 
         break;
