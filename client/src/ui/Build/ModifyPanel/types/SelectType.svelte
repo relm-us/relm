@@ -29,7 +29,7 @@
   <Select
     isClearable={false}
     items={prop.editor.options}
-    selectedValue={getLabelForKey(key)}
+    value={getLabelForKey(key)}
     on:select={onSelect}
   />
 </r-select-type>
@@ -40,9 +40,11 @@
     align-items: center;
 
     /* Select box */
-    --itemColor: #333;
     --background: none;
     --height: 24px;
+  }
+  r-select-type > :global(div) {
+    flex-grow: 1;
   }
   lbl {
     margin-right: 8px;

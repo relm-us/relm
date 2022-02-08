@@ -1,39 +1,19 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import Select from "svelte-select";
+  import { getComponentOptions } from "~/utils/getComponentOptions";
 
   import Capsule from "~/ui/lib/Capsule";
   import { worldManager } from "~/world";
-  import { sortAlphabetically } from "~/utils/sortAlphabetically";
 
   export let entity;
 
   const dispatch = createEventDispatcher();
 
   let componentOptions;
-  $: componentOptions = getComponents(worldManager, entity);
+  $: componentOptions = getComponentOptions(worldManager.world, entity);
 
   let selectedValue;
-
-  const getComponents = (worldManager, entity) => {
-    const entityComponentNames = entity.Components.map((c) => c.name);
-    const components = Object.values(
-      worldManager.world.components.componentsByName
-    )
-      .filter((Component: any) => {
-        return (
-          Component.editor &&
-          !Component.isStateComponent &&
-          !entityComponentNames.includes(Component.name)
-        );
-      })
-      .map((Component: any) => ({
-        label: Component.editor?.label || Component.name,
-        value: Component.name,
-      }));
-    sortAlphabetically(components, (c) => c.label);
-    return components;
-  };
 
   const onSelectNewComponent = ({ detail }) => {
     const componentName = detail.value;
@@ -42,7 +22,7 @@
       worldManager.worldDoc.syncFrom(entity);
       dispatch("modified");
 
-      componentOptions = getComponents(worldManager, entity);
+      componentOptions = getComponentOptions(worldManager.world, entity);
       selectedValue = undefined;
     }, 300);
   };
@@ -54,7 +34,7 @@
   </info>
   <select-container>
     <Select
-      bind:selectedValue
+      bind:value={selectedValue}
       placeholder="Add Component..."
       isClearable={false}
       items={componentOptions}
@@ -81,10 +61,7 @@
     width: 250px;
     margin-top: 16px;
 
-    --itemColor: #333;
     --background: none;
     --height: 24px;
-    --inputLeft: 0;
-    --inputPadding: 0px 0px 0px 16px;
   }
 </style>

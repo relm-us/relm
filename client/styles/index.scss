@@ -23,7 +23,15 @@
   --select-hover-bg-color: rgba(70, 70, 70, 1);
   --select-fg-color: #ddd;
 
+  /* svelte-select */
   --selectedItemPadding: 0;
+  --borderFocusColor: #eb4;
+  --listBackground: #1a1e23;
+  --itemColor: #ddd;
+  --itemHoverBG: rgba(70, 70, 70, 1);
+  --itemHoverColor: #ddd;
+  --itemIsActiveBG: #eb4;
+  --itemIsActiveColor: #1a1e23;
 }
 
 .notifications > div {

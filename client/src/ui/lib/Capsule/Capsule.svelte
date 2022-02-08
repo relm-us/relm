@@ -2,7 +2,7 @@
   import { createEventDispatcher } from "svelte";
 
   export let label: string = null;
-  export let value: any;
+  export let value: any = "";
   export let type: "text" | "number" = "text";
   export let editable: boolean = true;
   export let editing: boolean = false;
