@@ -258,6 +258,25 @@ type Possibility = {
   timeout: number;
 };
 
+relm.get(
+  "/variables",
+  cors(),
+  middleware.relmExists(),
+  middleware.authenticated(),
+  middleware.acceptToken(),
+  middleware.acceptJwt(),
+  middleware.authorized("edit"),
+  wrapAsync(async (req, res) => {
+    const relmId = req.relm.relmId;
+    const variables = await Variable.getVariables({ relmId });
+
+    return util.respond(res, 200, {
+      status: "success",
+      variables,
+    });
+  })
+);
+
 relm.post(
   "/variables",
   cors(),
@@ -343,7 +362,7 @@ relm.post(
 
     return util.respond(res, 200, {
       status: "success",
-      results,
+      variables: results,
     });
   })
 );
