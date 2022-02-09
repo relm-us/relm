@@ -1,5 +1,5 @@
 <script>
-  import BaseSvg from "./BaseSvg.svelte";
+  import BaseSvg from "~/ui/lib/BaseSvg.svelte";
 </script>
 
 <BaseSvg viewBox="0 0 1735 1735" {...$$props}>
