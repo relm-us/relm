@@ -1,7 +1,10 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import Capsule from "~/ui/lib/Capsule";
   import byteSize from "byte-size";
+
+  // import Capsule from "~/ui/lib/Capsule";
+  import TextInput from "~/ui/lib/TextInput/TextInput.svelte";
+  import UploadButton from "~/ui/Build/shared/UploadButton";
 
   export let key: string;
   export let component;
@@ -11,27 +14,41 @@
 
   const FILENAME_WITH_SIZE_RE = /^.+-([^\.]+)\..{1,5}$/;
 
-  let editing = false;
+  let initialValue = component[key].url;
 
   let value: string;
   $: value = component[key].url;
 
+  const onUpload = ({ detail }) => {
+    console.log("onUpload", detail);
+    for (const result of detail.results) {
+      if (result.types.webp) {
+        setAssetUrl(result.types.webp);
+      } else if (result.types.gltf) {
+        setAssetUrl(result.types.gltf);
+      }
+    }
+  };
+
   const onInputChange = (event) => {
-    const value = event.target.value.match(/^\s*$/) ? "" : event.target.value;
+    let url = event.target.value;
+    if (url.match(/^\s*$/)) value = "";
+    setAssetUrl(url);
+  };
+
+  function setAssetUrl(value) {
     Object.assign(component[key], {
       name: "",
       filename: "",
       url: value,
     });
     component[key].url = value;
-    console.log("modified", value);
     component.modified();
     dispatch("modified");
-    editing = false;
-  };
+  }
 
   const onInputCancel = (event) => {
-    editing = false;
+    value = initialValue;
   };
 
   function formatSizeInKb(filename) {
@@ -48,25 +65,43 @@
 <r-asset-type>
   {(prop.editor && prop.editor.label) || key}:
 
-  <Capsule
-    {editing}
-    on:mousedown={() => (editing = true)}
-    on:change={onInputChange}
-    on:cancel={onInputCancel}
-    {value}
-  />
+  <r-text>
+    <TextInput {value} on:change={onInputChange} on:cancel={onInputCancel} />
+  </r-text>
 
   {#if formatSizeInKb(value)}
-    <div>
+    <r-size>
       Size:
-      {formatSizeInKb(value)}
-    </div>
+      <div>{formatSizeInKb(value)}</div>
+    </r-size>
   {/if}
+
+  <r-upload-button>
+    <UploadButton on:uploaded={onUpload} />
+  </r-upload-button>
 </r-asset-type>
 
 <style>
   r-asset-type {
     display: block;
     --value-width: 100%;
+  }
+  r-text {
+    display: block;
+    margin-top: 4px;
+  }
+  r-size {
+    display: flex;
+    margin-top: 8px;
+  }
+  r-size > div {
+    flex-grow: 1;
+    font-weight: bold;
+    text-align: center;
+  }
+  r-upload-button {
+    display: flex;
+    justify-content: center;
+    margin: 12px 0;
   }
 </style>

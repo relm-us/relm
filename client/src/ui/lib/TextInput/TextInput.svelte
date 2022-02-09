@@ -85,6 +85,10 @@
     width: var(--value-width, inherit);
     padding: 0 6px;
   }
+  r-input.no-label {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+  }
   input {
     background-color: rgba(0, 0, 0, 0);
     color: white;

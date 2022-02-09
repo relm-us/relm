@@ -60,7 +60,7 @@ export class ModelSystem extends System {
   update() {
     this.queries.missingAsset.forEach((entity) => {
       const model = entity.get(Model);
-      entity.add(Asset, { model: model.asset });
+      if (model.asset.url !== "") entity.add(Asset, { model: model.asset });
     });
 
     this.queries.added.forEach((entity) => this.build(entity));
@@ -104,6 +104,9 @@ export class ModelSystem extends System {
     scene.geometry?.dispose();
     scene.material?.dispose();
     scene.dispose?.();
+
+    // Notify outline to rebuild if necessary
+    entity.getByName("Outline")?.modified();
 
     entity.remove(ModelRef);
     entity.maybeRemove(Asset);

@@ -97,14 +97,6 @@ export class Collider extends Component {
      * General Properties
      */
 
-    isSensor: {
-      type: BooleanType,
-      default: false,
-      editor: {
-        label: "Sensor?",
-      },
-    },
-
     offset: {
       type: Vector3Type,
       default: new Vector3(0, 0, 0),
@@ -131,6 +123,14 @@ export class Collider extends Component {
         input: "Boolean",
         inputTrue: GROUND_INTERACTION,
         inputFalse: OBJECT_INTERACTION,
+      },
+    },
+
+    isSensor: {
+      type: BooleanType,
+      default: false,
+      editor: {
+        label: "Sensor?",
       },
     },
   };

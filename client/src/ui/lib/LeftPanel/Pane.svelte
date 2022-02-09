@@ -76,7 +76,7 @@
   }
   r-content {
     display: block;
-    padding: var(--pane-padding, 12px);
+    padding: var(--pane-padding, 4px 12px);
   }
 
   lbl {
