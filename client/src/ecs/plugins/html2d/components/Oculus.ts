@@ -1,9 +1,15 @@
-import { BooleanType, LocalComponent, NumberType, StringType } from "~/ecs/base";
+import {
+  BooleanType,
+  LocalComponent,
+  NumberType,
+  StringType,
+} from "~/ecs/base";
 import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
 export class Oculus extends LocalComponent {
   offset: Vector3;
+  targetOffset: Vector3;
   size: number;
   vanchor: number;
   hanchor: number;
@@ -18,6 +24,11 @@ export class Oculus extends LocalComponent {
       editor: {
         label: "Position Offset",
       },
+    },
+
+    targetOffset: {
+      type: Vector3Type,
+      default: new Vector3(),
     },
 
     size: {
@@ -60,16 +71,16 @@ export class Oculus extends LocalComponent {
       type: BooleanType,
       default: true,
       editor: {
-        label: "Show Audio?"
-      }
+        label: "Show Audio?",
+      },
     },
 
     showVideo: {
       type: BooleanType,
       default: true,
       editor: {
-        label: "Show Video?"
-      }
+        label: "Show Video?",
+      },
     },
 
     // Set automatically. If equal to local playerId, Oculus will show own video stream.

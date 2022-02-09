@@ -123,7 +123,8 @@ export type TransformData = [
   theta: number,
   headTheta: number,
   clipIndex: number,
-  animLoop: boolean
+  animLoop: boolean,
+  oculusOffset: number
 ];
 
 export type RecvTransformCallback = (transformArray: TransformData[]) => void;

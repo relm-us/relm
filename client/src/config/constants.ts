@@ -6,6 +6,9 @@ export const DEFAULT_ENTRYWAY = "default";
 export const DEFAULT_DIRECTIONAL_LIGHT_POSITION = [-5, 5, 2.5];
 export const DRAG_DISTANCE_THRESHOLD = 4;
 
+export const OCULUS_HEIGHT_STAND = 2.4;
+export const OCULUS_HEIGHT_SIT = 1.5;
+
 // 0 - 100, where 100 is completely zoomed out
 export const DEFAULT_VIEWPORT_ZOOM = 25.0;
 

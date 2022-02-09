@@ -23,7 +23,13 @@ import { shadowsEnabled } from "~/stores/shadowsEnabled";
 
 // Animation keys
 import { keyShift, key1, key2, key3 } from "~/stores/keys";
-import { RAISING_HAND, STAND_SIT, WAVING } from "~/config/constants";
+import {
+  OCULUS_HEIGHT_SIT,
+  OCULUS_HEIGHT_STAND,
+  RAISING_HAND,
+  STAND_SIT,
+  WAVING,
+} from "~/config/constants";
 
 import { config } from "~/config";
 import { GROUND_INTERACTION } from "~/config/colliderInteractions";
@@ -227,7 +233,15 @@ export class WorldManager {
             set(null);
           }
         }
-      ).subscribe((anim) => {
+      ).subscribe((anim: { clipName: string; loop: boolean }) => {
+        const oculus = this.avatar?.entities.body.getByName("Oculus");
+        if (oculus) {
+          if (anim?.clipName === STAND_SIT) {
+            oculus.targetOffset.y = OCULUS_HEIGHT_SIT;
+          } else {
+            oculus.targetOffset.y = OCULUS_HEIGHT_STAND;
+          }
+        }
         const state = this.avatar.entities.body.get(ControllerState);
         if (!state) return;
         state.animOverride = anim;

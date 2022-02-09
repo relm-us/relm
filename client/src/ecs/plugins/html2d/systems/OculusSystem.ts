@@ -1,4 +1,5 @@
 import { Vector3 } from "three";
+import { Tween, Easing } from "@tweenjs/tween.js";
 
 import { System, Groups, Not, Entity, Modified } from "~/ecs/base";
 import { WorldTransform, Presentation } from "~/ecs/plugins/core";
@@ -93,6 +94,31 @@ export class OculusSystem extends System {
     const dist = this.presentation.camera.parent.position.distanceTo(
       entity.get(WorldTransform).position
     );
+
+    if (spec.tween && spec.tweenedTargetOffset) {
+      if (spec.tweenedTargetOffset.distanceTo(spec.targetOffset) <= 0.001) {
+        spec.tween.update();
+      } else {
+        spec.tweenedTargetOffset = null;
+        spec.tween = null;
+      }
+    } else if (spec.offset.distanceTo(spec.targetOffset) >= 0.001) {
+      let time;
+      if (spec.offset.y > spec.targetOffset.y) {
+        time = 2200;
+      } else {
+        time = 100;
+      }
+      spec.tweenedTargetOffset = new Vector3().copy(spec.targetOffset);
+      spec.tween = new Tween(spec.offset)
+        .to(spec.targetOffset, time)
+        .easing(Easing.Sinusoidal.InOut)
+        .onComplete(() => {
+          spec.tweenedTargetOffset = null;
+          spec.tween = null;
+        })
+        .start();
+    }
 
     // calculate left, top
     v1.copy(world.position);

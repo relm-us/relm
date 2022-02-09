@@ -10,6 +10,7 @@ import { makeRemoteAvatarEntities } from "./makeRemoteAvatarEntities";
 import { setAvatarFromParticipant } from "./setAvatarFromParticipant";
 import { DecoratedECSWorld } from "types/DecoratedECSWorld";
 import { playerId } from "~/identity/playerId";
+import { Oculus } from "~/ecs/plugins/html2d";
 
 const e1 = new Euler(0, 0, 0, "YXZ");
 const v1 = new Vector3();
@@ -48,13 +49,28 @@ export function participantToTransformData(
     transformData[7] = animation.loop;
   }
 
+  const oculus = entities.body.get(Oculus);
+  if (oculus) {
+    transformData[8] = oculus.targetOffset.y;
+  }
+
   return transformData as TransformData;
 }
 
 function setTransformDataOnParticipant(
   this: void,
   participant: Participant,
-  [playerId, x, y, z, theta, headTheta, clipIndex, animLoop]: TransformData
+  [
+    playerId,
+    x,
+    y,
+    z,
+    theta,
+    headTheta,
+    clipIndex,
+    animLoop,
+    oculusOffset,
+  ]: TransformData
 ) {
   if (!participant) {
     console.warn("expecting participant, got null", playerId);
@@ -101,13 +117,16 @@ function setTransformDataOnParticipant(
   const clips = entities.body.get(ModelRef)?.animations;
   const animation = entities.body.get(Animation);
   if (clips && clipIndex >= 0 && clipIndex < clips.length) {
-    const newClipName = clips[clipIndex].name;
+    const newClipName = clips[clipIndex]?.name;
     if (animation.clipName !== newClipName) {
       animation.clipName = newClipName;
       animation.loop = animLoop;
       animation.modified();
     }
   }
+
+  const oculus = entities.body.get(Oculus);
+  if (oculus) oculus.targetOffset.y = oculusOffset;
 }
 
 export function setTransformArrayOnParticipants(

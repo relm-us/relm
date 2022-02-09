@@ -1,10 +1,9 @@
+import type { AvatarEntities } from "~/types";
+
 import { Vector3 } from "three";
 
+import { OCULUS_HEIGHT_STAND } from "~/config/constants";
 import { Oculus, OculusRef } from "~/ecs/plugins/html2d";
-
-import { AvatarEntities } from "~/types";
-
-const OCULUS_HEIGHT = 2.4;
 
 export function setOculus(
   this: void,
@@ -20,7 +19,8 @@ export function setOculus(
       vanchor: 2,
       showAudio,
       showVideo,
-      offset: new Vector3(0, OCULUS_HEIGHT, 0),
+      offset: new Vector3(0, OCULUS_HEIGHT_STAND, 0),
+      targetOffset: new Vector3(0, OCULUS_HEIGHT_STAND, 0),
     });
   } else {
     const component = entities.body.get(OculusRef)?.component;
