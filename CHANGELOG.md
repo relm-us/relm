@@ -1,3 +1,256 @@
+2022-02-09
+- NEW: When sitting / standing, the video oculus eases to a correct height above the avatar.
+- NEW (Build Mode): Model assets and other assets (eg. shape textures) can be uploaded directly.
+- FIXED (Build Mode): Model assets can be changed
+- FIXED (Build Mode): A few minor styling issues
+
+2022-02-08
+- NEW (Server API): Added a new API endpoint at `GET /relm/[relm]/variables` to retrieve all scripting variables (must have edit / build mode permission).
+- FIXED: Clickable / TOGGLE was not working. Clarified in build mode that it is now only for toggling Html2d visibility.
+- IMPROVED: Various styling of Add / Modified / Settings panels.
+
+2022-02-07
+- NEW (Build Mode): "Actions" tab for scripting actions. It's pretty barebones right now, but eventually we'll get a better UI on it.
+- NEW (Build Mode): Clickable component can make Changes to variables. For instance, if a variable named "door" can have values "open" or "closed", Clickable can set these states.
+- NEW: Remote portal shows sparkles when used.
+- FIXED (Build Mode): Modify panel was preventing numbers from being entered as values.
+- CHANGED (Build Mode): Add panel title is now "Add" instead of "Library"
+- CHANGED (Build Mode): Add panel has prefab items listed at the bottom (e.g. Youtube TV, Box, Ball, etc.) Moved from "Modify" panel.
+- CHANGED (Build Mode): Modify panel is cleaner; top no longer shows useless name; "Sleep" button has been removed. "Delete" button has been moved to bottom.
+
+2022-02-06
+- NEW (Build Mode): Clickable component has a "Cycle" type which can do advanced actions when a participant clicks the object, such as moving it around, changing the image/glb, or modifying other components. Currently requires advanced JSON knowledge.
+- NEW (Build Mode): Clickable component option to open in current tab or another tab.
+- CHANGED (Build Mode): Html2d component now defaults to the "Info" type since we are using Label less and less.
+- CHANGED: Speech bubble "close" icon looks nicer.
+
+2022-02-05
+- NEW (Build Mode): The "Add" panel now shows a preview of the selected asset with name, description, & tags. Clicking the "Add [name]" button adds the asset to the relm.
+- FIXED: An issue with WASM and browser caching. We should no longer see "physics engine unable to load" error messages.
+
+2022-02-04
+- NEW (Build Mode): Asset library! Admins can now add assets to the library via API calls, and creators can use the assets with one click to add to a relm.
+- CHANGED: The build mode tabs have changed:
+  "Collections" -> "Add"
+  "Editor" -> "Modify"
+  "Export" has moved to a sub-section in the Settings panel
+  "Performance" has also moved to the Settings panel
+- CHANGED (Build Mode): Upload button is now in Add Panel
+- CHANGED (Build Mode): "Group" and "Ungroup" button now shows up only when 1 or more objects is selected
+- CHANGED (Build Mode): "Entity Editor" has been renamed to "Modify"
+- REMOVED (Build Mode): Reset Physics button has been removed
+
+2022-02-03
+- NEW: Sitting-on-ground animation happens when you press number key 2
+- NEW: Raising-hand animation happens when you press number key 3
+- FIXED: Remote portals! (I think they really work this time)
+- FIXED: Video conference room is joined only if 2+ participants present (saves $$)
+- FIXED: Vertical scroll in Settings panel when there are more settings than fit in the window
+- CHANGED: Close speech bubble button is visible by default.
+- CHANGED: Waving animation happens when you press number key 1
+- Release version 3.1.0 to production
+
+2022-02-02
+- NEW (API): You can export a relm via the API '/relm/[relmname]/content`.
+
+2022-02-01
+- NEW: Shadow maps enabled by default, with better dynamic coverage as you zoom 
+UPDATE: Disabled shadows again. Not quite good enough yet.
+
+2022-01-31
+- NEW: Re-center camera button. Appears when your camera is off-center by about 4 units.
+- NEW: Sparkle effect on enter/exit local portal
+- NEW: Brighter world with HemisphereLight
+- NEW (Build Mode): Click on the mini-map to teleport anywhere there is ground.
+- NEW (Build Mode): Settings panel now includes ambient, hemisphere, and directional light color options.
+- NEW (Build Mode): Lighting Settings pane now includes Directional Light position. It must be entered as "x, y, z", e.g. "-5, 5, 2"
+- NEW (Build Mode): Lighting Settings pane has a "Reset Lighting" button 
+- FIXED (Build Mode): Non-interactive colliders ("collide-in-build-mode only" colliders) can now be selected while Shift key is held.
+- FIXED: Chat history properly scrolls to bottom so you can see the newest message
+- FIXED: Mouse Up event over text when controlling your avatar via mouse/touchpad no longer gets you stuck in "Avatar control mode" 
+- FIXED: participants teleport (not lerp) when entering local portal
+- FIXED: no more camera lurch/zoom on local portal entry
+- CHANGED: TV prefab default to "tipped up" for viewability
+- CHANGED: Camera starts zoomed out (overview) and zooms in gently.
+- DEBUG: Added 'THREE' global to access three.js constructors etc.
+
+2022-01-30
+- NEW (Build Mode): Relm now uses the system clipboard for copy/paste. This means you can copy/paste between browsers or tabs.
+- NEW: "Continue" button in video-mirror screen now has focus so you can easily press "enter" to start
+- NEW (Debugging): Added a 'noportal' debug option to make it possible to enter relms where portals are at the entryway
+- FIXED: Issue with 'auto pause' in JS console; you may need to choose your auto pause preference again
+- FIXED: When setting avatar name, it could include HTML spans and other tags
+- FIXED: When opening chat pane, it now shows the most recent chat message at bottom of scroll list
+- FIXED: When closing a speech bubble, the chat pane also closes 
+- FIXED: Multiple tabs with different relms can be open
+- FIXED: Remote portals are working again
+- FIXED: Sticky arrow keys when exiting a portal (key states are now released)
+- FIXED: Portal contact is now predictable rather than intermittent. (We thought the reason we sometimes couldn't enter a portal was because we needed to "run at" the portal, but this was not the case: it was randomly choosing to do it every once in a while. This is fixed.)
+- FIXED: Copy/paste inside text input fields within build mode now behave as normal 
+- FIXED: Neck movements are more natural; only follows active mouse movement
+- FIXED: Local portals don't freeze motion
+- Deployed everything above to production
+
+2022-01-29
+- NEW: Hover tooltips for main icons at bottom of screen.
+- NEW: Debug pane shows x, y, z coords.
+- CHANGED: Icon order is different. Icons are separated into 2 groups: video conferencing, other.
+- FIXED: Sometimes loading stats were not properly re-computed on worlds, making loading take forever.
+- FIXED: JWT permissions are now respected when set.
+- FIXED: You can no longer go "full screen" on yourself 🙂
+- FIXED: Context menu (right-click) no longer works in 3D world zones. (still works on text/html areas)
+- FIXED: Permission issue preventing users with all-relms permits from entering build mode
+- FIXED: Assets that failed to load due to an error were not counted in the loading screen, which sometimes resulted in 'forever loading'. 
+- FIXED: Proximity audio works again when enabled via the "radio" button
+
+2022-01-28
+- NEW: Screen sharing (shows up inside oculus--in future, it will be shared in front of avatar)
+- NEW: Click oculus when screen sharing to see full screen
+- FIXED: Autopause wasn't actually pausing the world
+- FIXED: Avatar name was being overwritten by undefined
+- FIXED: Some redundant data signifying which participant isLocal. May be part of inconsistent participant location issue.
+- FIXED: two tabs open at the same time causes animation and position mismatch issues. Only one tab open allowed (for now).
+- FIXED: Avatar Builder pane was not working
+
+2022-01-27
+- FIXED: Avatars don't launch far away when spawning on top of each other
+- FIXED: Speech bubble close icon is more visible
+- FIXED: Oculus state is more reliable between reloads & between video-mirror config screens
+- REMOVED: Speech bubble icons unrelated to speech
+
+2022-01-24
+- NEW: A notification when another participant joins the relm you're in
+- FIXED: A bug that caused model/image uploads to throw an error
+- FIXED: Non-default entryway URLs (e.g. /town/myhouse) work again
+- tagged above fixes & improvements to release to prod
+
+2022-01-23
+- FIXED: Chat icon no longer resets "missed chat" indicator number every time  you load. 
+- FIXED: For new participants, only ask them to choose an avatar once, assume the same on revisit.
+- FIXED: Loading screen reliability issue.
+- IMPROVED: Loading time is faster due to combining permits & metadata API calls into one.
+- NOTE: Deploy directory has changed from public to dist in order to work with WebPack standard. This doesn't affect anyone except those re-distributing relm.
+
+2022-01-22
+- FIXED (Build Mode): Prefab items are now created "on the ground" wherever the avatar is located. Items no longer start halfway inside the ground 
+- UPDATED: Rapier3D physics engine to 0.7.6.
+
+2022-01-21
+- NEW: Debug Mode (Ctrl+D) shows the connection status & world state info (more to come). This used to be accessible only when 'paused'.
+- FIXED: Minimap size & positions were not updated in some cases.
+- FIXED (Build Mode): Flying is working again.
+- FIXED (Build Mode): Prefabs are working again (e.g. buttons to create ground etc.)
+- FIXED: Connection status is accurately reflected in pause/debug mode.
+- FIXED: Chat function has been restored
+- FIXED: When sliding fog all the way to zero, it treated it as if no fog setting had been set
+- CHANGED: "Upload" button has been set to build-only mode for now
+
+2022-01-19
+- NEW: JWT test page at /jwt-signin.html can be used to test the JWT integration (note: requires server to have JWTSECRET env variable set to match the test page).
+- FIXED: JWT logins now support permissions, e.g. access, edit, invite, admin; depending on permissions, participant will experience different UI (e.g. build mode)
+- FIXED (Build Mode): Objects could not be moved/rotated.
+- FIXED: Presence bug!
+- IMPROVED: Audio/video setup page results in more consistent outcomes when revisited to change preferences.
+- IMPROVED: Server errors and client error messages.
+- NOTES: Another big refactor, this time in the authentication/authorization/identity area of the code. Shouldn't affect anything, but there may be regressions.
+
+2022-01-02
+- NEW: Remote portals! Now you can set a Portal component to "Remote" with relm name and entryway, and participants can hop from one world to another without reloading the page.
+- NEW: Pressing ESC when the game is paused will unpause it.
+- NEW: Mini map! Shows where you are (yellow dot) and where others are relative to you. Click to disable (turns into a map button).
+- NOTE: Added some debug info to try to track down the presence bug.
+- FIXED (probably!): Sometimes participants could not see each other even though they were in the same relm.
+- FIXED: Upload button has been restored for participants with edit permission.
+- IMPROVED (Build Mode): Updated the file uploader to latest code (Uppy 2.x, 25% reduced size) and simplified the uploading flow. Upload now starts automatically once you've chosen a file, but you still get a chance to see the file upload response at the end. 
+
+2022-01-01
+- NEW: Relms can now be cloned! (admin only). The /relm/[relmName]/create API takes a seedRelmId or seedRelmName parameter that is used as the clone source.
+- NEW: Newly created relms (that are not cloned) start from a basic template with grass and skybox, rather than an empty world with an invisible initial collider.
+- CHANGED: No more invisible initial collider!
+- CHANGED: Buttons are all at bottom center of screen (for now).
+- CHANGED: Removed "gear icon". Video icon now goes to video setup screen.
+- FIXED: Pause message was missing when game paused; it's back now.
+- FIXED: After switching tabs or focusing on an iframe, sometimes the zoom / scroll wheel would behave strangely by accidentally allowing more of a 3D perspective. This is fixed.
+- FIXED: When audio & video are not used, the camera and mic are turned off.
+- FIXED: First-time visitors would see an error due to assuming a localStorage variable exists (preferredDeviceIds).
+
+2021-12-31
+- NEW (Build Mode): Settings -> Skybox now has 4 presets
+- NEW (Build Mode): The Settings panel now has a "Set Default to Here" button to set the default entryway to your avatar's location.
+- NEW (Build Mode): Your avatar's name is hidden in build mode so it doesn't get in the way of clicking/dragging.
+- NEW: If a relm is slow to load, click 5 times on the loading image to skip.
+- FIXED (Build Mode): Skybox preset images in chrome should look correct
+- FIXED: When loading a relm that doesn't exist, the error message now indicates the problem
+- FIXED: Loading screen is back! It's more reliable, too--in addition to models, it now counts objects such as skybox, textured shapes, and images. NOTE: If you are the first to load a relm since this change, the progress bar may not complete. Just refresh the page.
+- FIXED: When a relm was configured to have the participant start at an entryway, the avatar sometimes did not heed the location and would start at origin instead (i.e. the 0,0,0 location).
+- IMPROVED: Render speed should be faster due to a physics engine tweak.
+- REMOVED (Build Mode): The "Migrate to CDN" button has been removed from the Settings panel.
+- CHANGED: All relms are now required to have a default entryway configured! If not set, there will be a warning message.
+
+2021-12-30
+- FIXED: In public relms where a participant had permission above "access" level, the participant was still unable to use that permission (e.g. build mode)
+- FIXED: When participant does not have "edit" permission, pressing "TAB" would still show some aspects of build mode (e.g. colliders)
+- FIXED: Several issues around video / audio setup including:
+  - cam/mic choices are stored and used to re-populate the dropdown
+  - relm mute buttons (mic/cam) and mic/cam buttons in video / audio setup screen is are better synchronized
+  - going back and forth between setup screen and relm world is more reliable
+  - experimenting with choices in video / audio setup screen does not immediately affect what other people see / hear, until you click "Continue"
+  - some cosmetic changes, e.g. a "checkmark" next to the currently selected device, dropdown boxes look better, there are some sliding and fading animations for settings
+
+2021-12-28
+- FIXED: Invitations were not working
+- IMPROVED: Initial screen and error screen (if shown) include Relm logo and match color of video-mirror page
+
+2021-12-23
+- NOTE: Server backend had a big refactor; I don't expect anything to break, but keep an eye out for things like permissions not working or uploads failing.
+- FIXED: Permissions issue on server side that prevented people from visiting private relms when more than 1 person had private access.
+
+2021-12-22
+- FIXED: Face Map Colors component was not working on some GLTFs whose facemap data was contained in a Group node.
+
+2021-12-21
+- NEW: There is a new Html2D type called "Info" that allows you to attach information including a link & expandable content to any object
+- NEW: (Build Mode) There is now a "Clickable" component. When attached to an object, it can be configured to do one of the following when the object is clicked:
+  (a) Open a URL in another tab
+  (b) Toggle a property on one or more objects, such as the new visible property of the Html2d component.
+- NEW: Html2d Info box can be set to editable: false.
+- NEW: Html2d Info box can have an image in its content section. Just prefix an image URL with "image:" e.g. "image: https://website.com/image.png"
+- NEW: (Build Mode) Diamond component now has a color picker.
+- NEW: (Build Mode) Diamond component now has an Offset property. This allows you to add a Diamond to existing objects and move it away from the center of the object.
+- NEW: When editing fields in the Info box, text is automatically saved (previously, it was saved only when ESC was pressed, or the down arrow icon was clicked)
+- CHANGED: When toggling visibility of an Info box (e.g. via Clickable), everyone will see the Info box appear or disappear. State is also saved for when you visit next time.
+- FIXED: Speech bubbles' visibility setting is now respected (e.g. when toggled with Clickable)
+- FIXED: (Build Mode) Diamond prefab was showing up under the ground.
+- FIXED: A couple of minor problems with the Info overlay, such as growing too big with very long text.
+
+2021-12-19
+- NEW: Twilio video integration! Yikes.
+- NEW: Assets are now uploaded to a Content Delivery Network (CDN) making load time faster. The CDN asset server is now shared between staging and prod, so it's now possible to export a relm from staging and import to prod (or vice versa).
+- NEW: There is a "Migrate to CDN" button in the Settings pane of the Build panel. Clicking this button will migrate all assets in the current world to the CDN server (Note: it does NOT upload to the server; however, I've manually copied all of our assets to the CDN as of yesterday, so it should be fine).
+- FIXED: Image assets were not uploading to CDN correctly
+- FIXED: Assets that were not found or were otherwise broken now report the URL and error code in JS console
+- FIXED: Assets in CDN should now be shareable across staging/prod (We were seeing some cross origin request caching issues).
+
+2021-09-01
+- CHANGED: [Build Mode] Objects more accurately follow the mouse/pointer when dragging and dropping. Previously, the object sometimes drifted away from the pointer after some distance.
+- FIXED: [Build Mode] Interactive HTML no longer interferes with drag-drop pointer movements. For example, if the side-panel or chat panels are open, or if you drag over top of a label or a button, these no longer block/pause the drag sequence. 
+- FIXED: In-world video state now corresponds to state set during welcome screen (video-mirror).
+
+2021-08-31
+- FIXED: [Build Mode] Bottom 50 pixels of screen no longer prevent drag/drop from dropping objects when mouse release happens there.
+- FIXED: [Build Mode] Shapes show textures when added, and changing the texture shows a result.
+
+2021-08-30
+- NEW: Diamonds are used when creating text "labels" from speech bubbles
+- NEW: Diamonds have optional text "above" the diamond that can be edited. A note icon is shown when the text above is blank.
+- NEW: [Build Mode]: Volumetric selection--a box now shows what you are selecting when selecting multiple objects. Use "Shift" key to increase height of box.
+- NEW: [Build Mode] When copying and pasting a group of objects, the new group remains a group. (Note: groups are not yet saved between browser reloads)
+- CHANGED: Pause screen now has a slate gray background (easier to read).
+
+2021-07-28
+- FIXED: Mute button shows correct state
+- NEW: The paused-mode "Status" pane now shows 3 pieces of information regarding audio & video state: "desired" means the participant has indicated they want audio/video, "recording" means the mic/webcam is on, and "sending" indicates the data stream is being produced and sent to mediasoup.
+
 2021-07-15
 - NEW: Automatically pause when focus is not in window to save battery/CPU
 - NEW: Press 'P' key to pause or unpause
