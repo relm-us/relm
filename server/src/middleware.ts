@@ -3,6 +3,7 @@ import { Player, Permission, Relm, useToken } from "./db";
 import { JWTSECRET } from "./config";
 import createError from "http-errors";
 import { unabbreviatedPermits } from "./utils/unabbreviatedPermits";
+import { hasPermission } from "./utils/hasPermission";
 
 function getParam(req, key) {
   if (key in req.query) {
@@ -141,17 +142,11 @@ export function authorized(requestedPermission) {
           relmNames,
         });
 
-        if ("*" in permissions && req.relmName in permissions) {
-          permitted =
-            isAllowed(permissions["*"], requestedPermission) ||
-            isAllowed(permissions[req.relmName], requestedPermission);
-        } else if (req.relmName in permissions) {
-          permitted = isAllowed(permissions[req.relmName], requestedPermission);
-        } else if ("*" in permissions) {
-          permitted = isAllowed(permissions["*"], requestedPermission);
-        } else {
-          permitted = false;
-        }
+        permitted = hasPermission(
+          requestedPermission,
+          permissions,
+          req.relmName
+        );
       } catch (err) {
         next(err);
       }
@@ -163,37 +158,4 @@ export function authorized(requestedPermission) {
       }
     }
   };
-}
-
-/**
- * A venn diagram of what is allowed:
- *
- *     /-----------------------\
- *     |         admin         |
- *     | /----------\ /------\ |
- *     | |   edit   | |invite| |
- *     | | /------\ | \------/ |
- *     | | |access| |          |
- *     | | \------/ |          |
- *     | \----------/          |
- *     \-----------------------/
- */
-function isAllowed(permits, requestedPermission) {
-  switch (requestedPermission) {
-    case "access":
-      return (
-        permits.includes("access") ||
-        permits.includes("edit") ||
-        permits.includes("admin")
-      );
-    case "edit":
-      return permits.includes("edit") || permits.includes("admin");
-    case "invite":
-      return permits.includes("invite") || permits.includes("admin");
-
-    case "admin":
-      return permits.includes("admin");
-    default:
-      return false;
-  }
 }

@@ -5,6 +5,7 @@ import * as yws from "y-websocket/bin/utils";
 import { app } from "./server_http";
 import { Player, Permission, Doc } from "./db";
 import { ydocStats } from "./getYDoc";
+import { hasPermission } from "./utils/hasPermission";
 
 export const server = createServer();
 
@@ -60,14 +61,7 @@ server.on("upgrade", async (req, socket, head) => {
       relmIds: [doc.relmId],
     });
 
-    let permitted;
-    if (doc.relmId in permissions) {
-      permitted = permissions[doc.relmId].includes("access");
-    } else if ("*" in permissions) {
-      permitted = permissions["*"].includes("access");
-    } else {
-      permitted = false;
-    }
+    const permitted = hasPermission("access", permissions, doc.relmId);
 
     if (permitted) {
       if (doc === null) {
@@ -84,7 +78,8 @@ server.on("upgrade", async (req, socket, head) => {
     } else {
       console.log(
         `Participant '${playerId}' sought to enter '${docId}' but was rejected because unauthorized`,
-        params
+        params,
+        permissions
       );
       socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
       socket.destroy();
