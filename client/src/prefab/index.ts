@@ -12,11 +12,13 @@ import { makeWall } from "./makeWall";
 import { makeWebBox } from "./makeWebBox";
 
 import { worldManager } from "~/world";
+import { makeCard } from "./makeCard";
 
 export const directory = [
   { name: "Ball", make: makeBall },
   { name: "Billboard", make: makeBillboard },
   { name: "Box", make: makeBox },
+  { name: "Card", make: makeCard },
   { name: "Diamond", make: makeDiamond },
   { name: "Ground", make: makeGround },
   { name: "Image", make: makeImage },

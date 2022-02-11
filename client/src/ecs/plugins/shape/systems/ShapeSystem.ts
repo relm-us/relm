@@ -132,7 +132,8 @@ export class ShapeSystem extends System {
   }
 
   attach(entity: Entity) {
-    const parent = entity.get(Object3D).value;
+    const parent = entity.get(Object3D)?.value;
+    if (!parent) return;
     const child = entity.get(ShapeMesh).value;
     parent.add(child);
   }
