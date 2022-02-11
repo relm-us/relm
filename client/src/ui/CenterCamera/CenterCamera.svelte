@@ -1,6 +1,7 @@
 <script>
   import { worldManager } from "~/world";
   import { centerCameraVisible } from "~/stores/centerCameraVisible";
+  import { autoPause } from "~/stores/autoPause";
   import Button from "~/ui/lib/Button";
 
   function onClick() {
@@ -9,11 +10,13 @@
   }
 </script>
 
-<r-center-cam>
-  <div class="button">
-    <Button on:click={onClick}>re-center camera</Button>
-  </div>
-</r-center-cam>
+{#if $autoPause}
+  <r-center-cam>
+    <div class="button">
+      <Button on:click={onClick}>re-center camera</Button>
+    </div>
+  </r-center-cam>
+{/if}
 
 <style>
   r-center-cam {
