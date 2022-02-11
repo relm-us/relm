@@ -21,6 +21,7 @@ export class Clickable extends Component {
           { label: "Open URL (new tab)", value: "LINK" },
           { label: "Change Variables", value: "CHANGES" },
           { label: "Toggle Html2d", value: "TOGGLE" },
+          { label: "Flip Over", value: "FLIP" },
         ],
       },
     },
