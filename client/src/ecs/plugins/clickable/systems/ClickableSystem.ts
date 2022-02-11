@@ -3,9 +3,9 @@ import { Quaternion, Vector3 } from "three";
 import { worldManager } from "~/world";
 import { System, Groups, Entity } from "~/ecs/base";
 import { Presentation } from "~/ecs/plugins/core";
+import { Transition } from "~/ecs/plugins/transition";
 
 import { Clickable, Clicked } from "../components";
-import { Transition } from "~/ecs/plugins/transition";
 
 export class ClickableSystem extends System {
   presentation: Presentation;
