@@ -1,3 +1,8 @@
+2022-02-10
+- NEW (Build Mode): There is a new "Card" prefab option in the "Add" panel.
+- NEW (Build Mode): The Clickable component has a "Flip Over" option. When clicked in play mode, the object will flip over.
+- NEW: When the auto-pause feature is disabled, the "re-center camera" pop-up is also disabled.
+
 2022-02-09
 - NEW: When sitting / standing, the video oculus eases to a correct height above the avatar.
 - NEW (Build Mode): Model assets and other assets (eg. shape textures) can be uploaded directly.
