@@ -71,6 +71,7 @@ export class TranslucentSystem extends System {
     const tweening = entity.get(TranslucentTweening);
 
     if (tweening) {
+      startOpacity = tweening.tween._object.opacity;
       tweening.tween?.stop();
       tweening.tween = null;
       entity.remove(TranslucentTweening);
