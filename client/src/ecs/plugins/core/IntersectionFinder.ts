@@ -63,6 +63,7 @@ export class IntersectionFinder {
 
   findBetween(source: Vector3, target: Vector3): Set<Object3D> {
     direction.copy(target).sub(source).normalize();
+    this.raycaster.camera = this.camera;
     this.raycaster.far = source.distanceTo(target);
     this.raycaster.set(source, direction);
     return this.find();
