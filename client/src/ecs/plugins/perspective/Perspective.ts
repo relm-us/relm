@@ -1,9 +1,10 @@
 import { Box3, Object3D as ThreeObject3D, Vector2, Vector3 } from "three";
 
 import { Entity } from "~/ecs/base";
-import { Presentation } from "~/ecs/plugins/core";
+import { Presentation, Transform, Object3D } from "~/ecs/plugins/core";
 import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
 import { GetWorldFromScreenOpts, WorldPlanes } from "~/ecs/shared/WorldPlanes";
+import { Translucent } from "../translucent";
 
 const BOUNDS_EXTENT = [-1, 1];
 
@@ -11,6 +12,7 @@ const _intersect = new Vector3();
 const _v2 = new Vector2();
 
 export class Perspective {
+  count: number = 0;
   avatar: Entity;
   presentation: Presentation;
 

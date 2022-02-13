@@ -5,7 +5,10 @@ import {
   Vector2,
   Raycaster,
   Scene,
+  Vector3,
 } from "three";
+
+const direction = new Vector3();
 
 export class IntersectionFinder {
   raycaster: Raycaster;
@@ -33,6 +36,7 @@ export class IntersectionFinder {
   }
 
   castRay(screenCoord) {
+    this.raycaster.far = Infinity;
     this.raycaster.setFromCamera(
       this.getNormalizedCoord(screenCoord),
       this.camera
@@ -54,7 +58,14 @@ export class IntersectionFinder {
         }
       }
       return acc;
-    }, new Set<Object3D>());
+    }, new Set<Object3D>() /* TODO: don't alloc new Set every time */);
+  }
+
+  findBetween(source: Vector3, target: Vector3): Set<Object3D> {
+    direction.copy(target).sub(source).normalize();
+    this.raycaster.far = source.distanceTo(target);
+    this.raycaster.set(source, direction);
+    return this.find();
   }
 
   entityIdsAt(screenCoord: Vector2) {

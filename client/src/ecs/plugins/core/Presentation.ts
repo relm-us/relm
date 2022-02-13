@@ -18,6 +18,7 @@ import {
 } from "three";
 
 import { World } from "~/ecs/base";
+import { IntersectionFinder } from "./IntersectionFinder";
 
 export type PlaneOrientation = "xz" | "xy";
 
@@ -46,6 +47,8 @@ export class Presentation {
   camera: PerspectiveCamera;
   cameraTarget: Vector3;
   resizeObserver: ResizeObserver;
+  intersectionFinder: IntersectionFinder;
+
   skipUpdate: number;
   mouse2d: Vector2;
   mouseMoveListener: (event: MouseEvent) => void;
@@ -61,6 +64,8 @@ export class Presentation {
     this.camera = options.camera || this.createCamera();
     this.cameraTarget = null; // can be set later with setCameraTarget
     this.resizeObserver = new ResizeObserver(this.resize.bind(this));
+    this.intersectionFinder = new IntersectionFinder(this.camera, this.scene);
+
     this.skipUpdate = 0;
     this.mouse2d = new Vector2();
     this.mouseMoveListener = this.handleMouseMove.bind(this);

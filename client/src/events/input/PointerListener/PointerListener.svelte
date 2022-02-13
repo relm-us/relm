@@ -5,8 +5,6 @@
   import { pointerPointInSelection } from "./selectionLogic";
   import * as selectionLogic from "./selectionLogic";
 
-  import { IntersectionFinder } from "./IntersectionFinder";
-
   import {
     addTouchController,
     removeTouchController,
@@ -51,10 +49,7 @@
     pointerState = nextState;
   }
 
-  const finder = new IntersectionFinder(
-    world.presentation.camera,
-    world.presentation.scene
-  );
+  const finder = world.presentation.intersectionFinder;
 
   function eventTargetsWorld(event, $mode) {
     // Allow dragging Html2d objects, as well as selecting text
