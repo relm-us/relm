@@ -4,6 +4,7 @@ import { Tween, Easing } from "@tweenjs/tween.js";
 import { System, Groups, Entity, Not, Modified } from "~/ecs/base";
 import { Object3D } from "~/ecs/plugins/core";
 import {
+  Opaque,
   Translucent,
   TranslucentApplied,
   TranslucentTweening,
@@ -13,7 +14,7 @@ export class TranslucentSystem extends System {
   order = Groups.Initialization + 1;
 
   static queries = {
-    new: [Object3D, Translucent, Not(TranslucentApplied)],
+    new: [Object3D, Translucent, Not(Opaque), Not(TranslucentApplied)],
     active: [Object3D, TranslucentTweening],
     modified: [Modified(Translucent)],
     removed: [Not(Translucent), TranslucentApplied],
@@ -49,7 +50,7 @@ export class TranslucentSystem extends System {
         };
         node.material.transparent = true;
         // node.material.opacity = translucent.opacity;
-        node.material.side = FrontSide;
+        // node.material.side = FrontSide;
       }
     });
 
