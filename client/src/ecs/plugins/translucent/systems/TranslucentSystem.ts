@@ -4,9 +4,9 @@ import { Tween, Easing } from "@tweenjs/tween.js";
 import { System, Groups, Entity, Not, Modified } from "~/ecs/base";
 import { Object3D } from "~/ecs/plugins/core";
 import {
-  Opaque,
   Translucent,
   TranslucentApplied,
+  TranslucentOptions,
   TranslucentTweening,
 } from "../components";
 
@@ -14,7 +14,7 @@ export class TranslucentSystem extends System {
   order = Groups.Initialization + 1;
 
   static queries = {
-    new: [Object3D, Translucent, Not(Opaque), Not(TranslucentApplied)],
+    new: [Object3D, Translucent, Not(TranslucentApplied)],
     active: [Object3D, TranslucentTweening],
     modified: [Modified(Translucent)],
     removed: [Not(Translucent), TranslucentApplied],
@@ -39,27 +39,32 @@ export class TranslucentSystem extends System {
   build(entity: Entity) {
     const object3d = entity.get(Object3D);
     const translucent = entity.get(Translucent);
-    // console.log("build translucent");
+    const options =
+      entity.get(TranslucentOptions) || new TranslucentOptions(this.world);
 
-    object3d.value.traverse((node) => {
-      if (node.isMesh && !node.material.transparent) {
-        node.userData.translucent = {
-          transparent: node.material.transparent,
-          opacity: node.material.opacity,
-          side: node.material.side,
-        };
-        node.material.transparent = true;
-        // node.material.opacity = translucent.opacity;
-        // node.material.side = FrontSide;
-      }
-    });
+    if (!options.opaque) {
+      object3d.value.traverse((node) => {
+        if (node.isMesh && !node.material.transparent) {
+          node.userData.translucent = {
+            transparent: node.material.transparent,
+            opacity: node.material.opacity,
+            side: node.material.side,
+          };
+          node.material.transparent = true;
+          if (!options.twoSided) node.material.side = FrontSide;
+        }
+      });
 
-    this.startTween(entity, 1, translucent.opacity);
+      this.startTween(entity, 1, translucent.opacity);
 
-    entity.add(TranslucentApplied, {
-      value: object3d,
-      opacity: translucent.opacity,
-    });
+      entity.add(TranslucentApplied, {
+        value: object3d,
+        opacity: translucent.opacity,
+      });
+    } else {
+      // Add without `value`, means we won't touch it later, just remove it
+      entity.add(TranslucentApplied);
+    }
   }
 
   startTween(
@@ -105,19 +110,21 @@ export class TranslucentSystem extends System {
     const applied = entity.get(TranslucentApplied);
     const object3d = applied.value;
 
-    this.startTween(entity, applied.opacity, 1, () => {
-      object3d.value.traverse((node) => {
-        if (node.isMesh) {
-          const former = node.userData.translucent;
-          if (former) {
-            node.material.transparent = former.transparent;
-            node.material.side = former.side;
-            node.material.opacity = former.opacity;
+    if (object3d) {
+      this.startTween(entity, applied.opacity, 1, () => {
+        object3d.value.traverse((node) => {
+          if (node.isMesh) {
+            const former = node.userData.translucent;
+            if (former) {
+              node.material.transparent = former.transparent;
+              node.material.side = former.side;
+              node.material.opacity = former.opacity;
+            }
+            delete node.userData.translucent;
           }
-          delete node.userData.translucent;
-        }
+        });
       });
-    });
+    }
 
     entity.remove(TranslucentApplied);
   }
