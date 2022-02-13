@@ -13,7 +13,7 @@ export class PerspectiveSystem extends System {
   perspective: Perspective;
   presentation: Presentation;
 
-  translucentsBefore: Set<Entity> = new Set();
+  entitiesWeMadeTranslucent: Set<Entity> = new Set();
   target: Vector3 = new Vector3();
 
   init({ perspective, presentation }) {
@@ -28,25 +28,31 @@ export class PerspectiveSystem extends System {
 
   updateTranslucentObjectsBlockingView() {
     const blocking = this.getVisuallyBlockingObjects();
-    const translucents: Set<Entity> = new Set();
+
+    const blockingEntites: Set<Entity> = new Set();
     for (let object of blocking) {
       const entityId = object.userData.entityId;
       const entity: Entity = this.world.entities.getById(entityId);
-      if (entity) {
+      blockingEntites.add(entity);
+    }
+
+    for (let object of blocking) {
+      const entityId = object.userData.entityId;
+      const entity: Entity = this.world.entities.getById(entityId);
+      if (entity && !this.entitiesWeMadeTranslucent.has(entity)) {
         entity.add(Translucent);
-        translucents.add(entity);
+        this.entitiesWeMadeTranslucent.add(entity);
       }
     }
 
     const noLongerTranslucents: Set<Entity> = difference(
-      this.translucentsBefore,
-      translucents
+      this.entitiesWeMadeTranslucent,
+      blockingEntites
     );
     for (let entity of noLongerTranslucents) {
       entity.remove(Translucent);
+      this.entitiesWeMadeTranslucent.delete(entity);
     }
-
-    this.translucentsBefore = translucents;
   }
 
   getVisuallyBlockingObjects(): Set<ThreeObject3D> {
@@ -61,7 +67,7 @@ export class PerspectiveSystem extends System {
               source,
               this.target
             );
-          objects.delete(this.perspective.avatar?.get(Object3D).value);
+          objects.delete(this.perspective.avatar?.get(Object3D)?.value);
           return objects;
         }
       }
