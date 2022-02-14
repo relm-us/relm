@@ -1,9 +1,15 @@
-import { Vector2, Vector3, Box3, Object3D as ThreeObject3D } from "three";
+import {
+  Vector2,
+  Vector3,
+  Box3,
+  Object3D as ThreeObject3D,
+  Mesh,
+  BoxBufferGeometry,
+  MeshStandardMaterial,
+  Color,
+} from "three";
 
-import { Entity } from "~/ecs/base";
-import { Object3D, Transform } from "~/ecs/plugins/core";
-import { Shape } from "~/ecs/plugins/shape";
-import { Translucent } from "~/ecs/plugins/translucent";
+import { Object3D } from "~/ecs/plugins/core";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
 
@@ -15,7 +21,7 @@ const limit: Vector3 = new Vector3();
 
 export class SelectionBox {
   world: DecoratedECSWorld;
-  entity: Entity;
+  object: Mesh;
   box: Box3 = new Box3();
   center: Vector3 = new Vector3();
 
@@ -27,14 +33,15 @@ export class SelectionBox {
 
   constructor(world: DecoratedECSWorld) {
     this.world = world;
-    this.entity = this.world.entities
-      .create("SelectionBox")
-      .add(Transform, { position: new Vector3() })
-      .add(Shape, {
-        kind: "BOX",
-        color: "#ffff00",
-      })
-      .add(Translucent);
+    const geometry = new BoxBufferGeometry(1, 1, 1);
+    const material = new MeshStandardMaterial({
+      transparent: true,
+      opacity: 0.4,
+      color: new Color("#ffff00"),
+    });
+    this.object = new Mesh(geometry, material);
+    this.object.visible = false;
+    this.world.presentation.scene.add(this.object);
   }
 
   reset() {
@@ -96,13 +103,11 @@ export class SelectionBox {
   }
 
   applyRange() {
-    const transform: Transform = this.entity.get(Transform);
-    const shape: Shape = this.entity.get(Shape);
-    const translucent: Translucent = this.entity.get(Translucent);
-    transform.position.copy(this.center);
-    this.box.getSize(shape.boxSize);
-    shape.modified();
-    translucent.modified();
+    const size = new Vector3();
+    this.box.getSize(size);
+    const geometry = new BoxBufferGeometry(size.x, size.y, size.z);
+    this.object.position.copy(this.center);
+    this.object.geometry = geometry;
   }
 
   getContainedEntityIds() {
@@ -110,8 +115,6 @@ export class SelectionBox {
     const objectSize = new Vector3();
     const contained = [];
     for (const entity of this.world.entities.entities.values()) {
-      if (entity.id === this.entity.id) continue;
-
       const object3d: ThreeObject3D = entity.get(Object3D)?.value;
       if (!object3d) continue;
 
@@ -129,12 +132,12 @@ export class SelectionBox {
   }
 
   show() {
-    this.entity.activate();
+    this.object.visible = true;
     this.reset();
   }
 
   hide() {
-    this.entity.deactivate();
+    this.object.visible = false;
   }
 }
 
