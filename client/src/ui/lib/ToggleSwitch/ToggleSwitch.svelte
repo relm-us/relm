@@ -11,17 +11,16 @@
     enabled = !enabled;
     dispatch("change", enabled);
   };
-
 </script>
 
 <container on:mousedown|stopPropagation={toggle}>
-  <toggle class:enabled>
-    <knob class:enabled />
-  </toggle>
-
   <lbl on:mousedown|preventDefault>
     {#if enabled}{labelOn}{:else}{labelOff}{/if}
   </lbl>
+
+  <toggle class:enabled>
+    <knob class:enabled />
+  </toggle>
 </container>
 
 <style>
@@ -62,8 +61,7 @@
   }
 
   lbl {
-    margin-left: 12px;
+    margin-right: 12px;
     cursor: default;
   }
-
 </style>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import Capsule from "~/ui/lib/Capsule";
+  import TextInput from "~/ui/lib/TextInput";
 
   export let key: string;
   export let component;
@@ -8,7 +8,7 @@
 
   const dispatch = createEventDispatcher();
 
-  let editing = false;
+  let initialValue = component[key].url;
 
   let value: string;
   $: value = component[key];
@@ -17,28 +17,27 @@
     component[key] = detail;
     component.modified();
     dispatch("modified");
-    editing = false;
   };
 
   const onInputCancel = (event) => {
-    editing = false;
+    value = initialValue;
   };
 </script>
 
 <r-string-type>
-  {(prop.editor && prop.editor.label) || key}:
+  <r-label>
+    {(prop.editor && prop.editor.label) || key}:
+  </r-label>
 
-  <Capsule
-    {editing}
-    on:mousedown={() => (editing = true)}
-    on:change={onInputChange}
-    on:cancel={onInputCancel}
-    {value}
-  />
+  <TextInput {value} on:change={onInputChange} on:cancel={onInputCancel} />
 </r-string-type>
 
 <style>
   r-string-type {
     --value-width: 100%;
+  }
+  r-label {
+    display: block;
+    margin: 4px 0;
   }
 </style>

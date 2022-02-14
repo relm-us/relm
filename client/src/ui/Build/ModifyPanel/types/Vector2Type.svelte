@@ -89,12 +89,16 @@
 
 <style>
   r-vector2-type {
-    display: block;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
   }
   div.capsules {
     display: flex;
+    justify-content: space-around;
+    flex-grow: 1;
+
     margin-top: 4px;
     margin-bottom: 6px;
-    justify-content: center;
   }
 </style>

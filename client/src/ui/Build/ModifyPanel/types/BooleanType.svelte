@@ -56,11 +56,15 @@
 
 <style>
   r-boolean-type {
-    display: block;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
   }
   div {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
+    flex-grow: 1;
+
     margin-top: 4px;
   }
 </style>

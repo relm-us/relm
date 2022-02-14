@@ -18,7 +18,7 @@ export class Renderable extends Component {
       type: StringType,
       default: "AVATAR_HEAD",
       editor: {
-        label: "Renderable Type",
+        label: "Type",
         input: "Select",
         options: [
           { label: "Avatar Head", value: "AVATAR_HEAD" },
@@ -116,12 +116,12 @@ export class Renderable extends Component {
       type: BooleanType,
       default: false,
       editor: {
-        label: "Always On",
+        label: "Force Embed",
       },
     },
   };
 
   static editor = {
-    name: "Renderable",
+    label: "Renderable",
   };
 }
