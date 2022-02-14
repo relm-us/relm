@@ -19,20 +19,23 @@ export const getPageParams =
     const relmName = params.get("relm") || pathParts[1] || DEFAULT_RELM_ID;
     const entryway = params.get("entryway") || pathParts[2] || DEFAULT_ENTRYWAY;
 
-    // Check if we are the only tab open; prevent multiple tabs
-    // from sending conflicting data re: avatar location
-    globalBroadcast.onmessage = (event) => {
-      if (event.data === relmName) {
-        globalBroadcast.postMessage(`no`);
-      }
-      if (event.data === `no`) {
-        dispatch({
-          id: "error",
-          message: "Another tab or window is already open",
-        });
-      }
-    };
-    globalBroadcast.postMessage(relmName);
+    // Safari doesn't support BroadcastChannel, so globalBroadcast may be null
+    if (globalBroadcast) {
+      // Check if we are the only tab open; prevent multiple tabs
+      // from sending conflicting data re: avatar location
+      globalBroadcast.onmessage = (event) => {
+        if (event.data === relmName) {
+          globalBroadcast.postMessage(`no`);
+        }
+        if (event.data === `no`) {
+          dispatch({
+            id: "error",
+            message: "Another tab or window is already open",
+          });
+        }
+      };
+      globalBroadcast.postMessage(relmName);
+    }
 
     const pageParams = {
       relmName: canonicalIdentifier(relmName),

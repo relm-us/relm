@@ -57,7 +57,7 @@ const send: (msg: Message) => Effect = Cmd.ofMsg;
  * The main Relm program
  */
 export function makeProgram(): Program {
-  const globalBroadcast = new BroadcastChannel("relm.us");
+  const globalBroadcast = window.BroadcastChannel ? new BroadcastChannel("relm.us") : null;
 
   const init: [State, Effect] = [
     {
