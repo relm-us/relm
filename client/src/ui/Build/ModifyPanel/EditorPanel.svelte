@@ -3,7 +3,7 @@
   import Button from "~/ui/lib/Button";
   import { selectedEntities, selectedGroups } from "~/stores/selection";
   import { worldManager } from "~/world";
-  import EditorShowSingleEntity from "./EditorShowSingleEntity.svelte";
+  import EntityComponents from "./EntityComponents.svelte";
   import AdminAddToLibrary from "./AdminAddToLibrary.svelte";
 
   export let permits;
@@ -24,7 +24,7 @@
     <info>Click on an object to select</info>
   {:else if $selectedEntities.size === 1}
     <!-- Must pass in $selectedEntities so svelte knows to re-render on new selection -->
-    <EditorShowSingleEntity {entity} />
+    <EntityComponents {entity} />
     <toolbar>
       <Button on:click={destroyEntity}>Delete this Object</Button>
     </toolbar>
