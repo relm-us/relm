@@ -57,19 +57,15 @@ export class PerspectiveSystem extends System {
 
   getVisuallyBlockingObjects(): Set<ThreeObject3D> {
     const source = this.presentation.camera.parent?.position;
-    if (source) {
-      if (this.perspective.avatar) {
-        this.target.copy(this.perspective.avatar?.get(Transform).position);
-        this.target.y += AVATAR_HEIGHT / 2;
-        if (source) {
-          const objects: Set<ThreeObject3D> =
-            this.presentation.intersectionFinder.findBetween(
-              source,
-              this.target
-            );
-          objects.delete(this.perspective.avatar?.get(Object3D)?.value);
-          return objects;
-        }
+    const transform = this.perspective.avatar?.get(Transform);
+    if (source && transform) {
+      this.target.copy(transform.position);
+      this.target.y += AVATAR_HEIGHT / 2;
+      if (source) {
+        const objects: Set<ThreeObject3D> =
+          this.presentation.intersectionFinder.findBetween(source, this.target);
+        objects.delete(this.perspective.avatar?.get(Object3D)?.value);
+        return objects;
       }
     }
     return new Set();

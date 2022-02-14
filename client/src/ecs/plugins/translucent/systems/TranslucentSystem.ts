@@ -55,7 +55,7 @@ export class TranslucentSystem extends System {
         }
       });
 
-      this.startTween(entity, 1, translucent.opacity);
+      this.startTween(entity, 1, translucent.opacity, options.time);
 
       entity.add(TranslucentApplied, {
         value: object3d,
@@ -71,7 +71,8 @@ export class TranslucentSystem extends System {
     entity: Entity,
     startOpacity: number,
     endOpacity: number,
-    onComplete?: () => void
+    time: number = 500,
+    onComplete: () => void = null
   ) {
     const object3d = entity.get(Object3D);
     const tweening = entity.get(TranslucentTweening);
@@ -83,23 +84,30 @@ export class TranslucentSystem extends System {
       entity.remove(TranslucentTweening);
     }
 
-    const tween = new Tween({ opacity: startOpacity })
-      .to({ opacity: endOpacity }, 500)
-      .easing(Easing.Sinusoidal.InOut)
-      .onUpdate(({ opacity }) => {
-        object3d.value.traverse((node) => {
-          if (node.isMesh && node.userData.translucent) {
-            node.material.opacity = opacity;
-          }
-        });
-      })
-      .onComplete(() => {
-        entity.remove(TranslucentTweening);
-        onComplete?.();
-      })
-      .start();
+    const setOpacity = (opacity) => {
+      object3d.value.traverse((node) => {
+        if (node.isMesh && node.userData.translucent) {
+          node.material.opacity = opacity;
+        }
+      });
+    };
 
-    entity.add(TranslucentTweening, { tween });
+    if (time === 0) {
+      setOpacity(endOpacity);
+      onComplete?.();
+    } else {
+      const tween = new Tween({ opacity: startOpacity })
+        .to({ opacity: endOpacity }, time)
+        .easing(Easing.Sinusoidal.InOut)
+        .onUpdate(({ opacity }) => setOpacity(opacity))
+        .onComplete(() => {
+          entity.remove(TranslucentTweening);
+          onComplete?.();
+        })
+        .start();
+
+      entity.add(TranslucentTweening, { tween });
+    }
   }
 
   tween(entity: Entity) {
@@ -108,10 +116,12 @@ export class TranslucentSystem extends System {
 
   remove(entity: Entity) {
     const applied = entity.get(TranslucentApplied);
+    const options =
+      entity.get(TranslucentOptions) || new TranslucentOptions(this.world);
     const object3d = applied.value;
 
     if (object3d) {
-      this.startTween(entity, applied.opacity, 1, () => {
+      this.startTween(entity, applied.opacity, 1, options.time, () => {
         object3d.value.traverse((node) => {
           if (node.isMesh) {
             const former = node.userData.translucent;
