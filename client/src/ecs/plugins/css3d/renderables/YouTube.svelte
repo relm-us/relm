@@ -4,6 +4,7 @@
   export let width: number;
   export let height: number;
   export let embedId: string;
+  export let alwaysOn: boolean;
   export let title = "YouTube Video";
   export let active = false;
 
@@ -14,7 +15,7 @@
 
   const HOST = "https://www.youtube.com";
 
-  $: src = `${HOST}/embed/${embedId}?enablejsapi=1&rel=0&autoplay=1`;
+  $: src = `${HOST}/embed/${embedId}?enablejsapi=1&rel=0` /* &autoplay=1 works in FF only */;
 
   // Return keyboard focus to Relm when user clicks on a youtube iframe
   function onWindowBlur() {
@@ -67,7 +68,7 @@
 
 <svelte:window on:message={onMessage} on:blur={onWindowBlur} />
 
-{#if active}
+{#if active || alwaysOn}
   <!-- svelte-ignore a11y-mouse-events-have-key-events -->
   <iframe
     class:invisible={state !== "LOADED"}
