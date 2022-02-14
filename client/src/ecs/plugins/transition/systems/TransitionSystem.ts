@@ -4,7 +4,7 @@ import { System, Entity } from "~/ecs/base";
 import { Transform, Presentation } from "~/ecs/plugins/core";
 import { Transition } from "../components";
 
-const EQUAL_THRESHOLD = 0.0001;
+const EQUAL_THRESHOLD = 0.01;
 
 export class TransitionSystem extends System {
   presentation: Presentation;
@@ -34,6 +34,7 @@ export class TransitionSystem extends System {
       transform.position.lerp(spec.position, spec.positionSpeed);
       if (transform.position.distanceTo(spec.position) < EQUAL_THRESHOLD) {
         spec.positionSpeed = 0;
+        transform.position.copy(spec.position);
       }
     }
 
@@ -41,6 +42,7 @@ export class TransitionSystem extends System {
       transform.rotation.slerp(spec.rotation, spec.rotationSpeed);
       if (transform.rotation.angleTo(spec.rotation) < EQUAL_THRESHOLD) {
         spec.rotationSpeed = 0;
+        transform.rotation.copy(spec.rotation);
       }
     }
 
@@ -48,6 +50,7 @@ export class TransitionSystem extends System {
       transform.scale.lerp(spec.scale, spec.scaleSpeed);
       if (transform.scale.distanceTo(spec.scale) < EQUAL_THRESHOLD) {
         spec.scaleSpeed = 0;
+        transform.scale.copy(spec.scale);
       }
     }
 
