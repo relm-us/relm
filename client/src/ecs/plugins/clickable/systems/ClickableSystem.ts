@@ -2,8 +2,9 @@ import { Quaternion, Vector3 } from "three";
 
 import { worldManager } from "~/world";
 import { System, Groups, Entity } from "~/ecs/base";
-import { Presentation } from "~/ecs/plugins/core";
+import { Presentation, Transform } from "~/ecs/plugins/core";
 import { Transition } from "~/ecs/plugins/transition";
+import { Html2d } from "~/ecs/plugins/html2d";
 
 import { Clickable, Clicked } from "../components";
 
@@ -52,7 +53,7 @@ export class ClickableSystem extends System {
       }
 
       case "TOGGLE": {
-        const html2d = entity.getByName("Html2d");
+        const html2d = entity.get(Html2d);
         if (html2d) {
           html2d.visible = !html2d.visible;
           html2d.modified();
@@ -64,7 +65,8 @@ export class ClickableSystem extends System {
       }
 
       case "FLIP": {
-        const transform = entity.getByName("Transform");
+        if (entity.has(Transition)) break;
+        const transform = entity.get(Transform);
         const rotation = new Quaternion();
         const axis = new Vector3(
           clickable.axis === "X" ? 1 : 0,
@@ -94,7 +96,7 @@ function transition(
     scale?: Vector3;
   }
 ) {
-  const transform = entity.getByName("Transform");
+  const transform = entity.get(Transform);
   const prePosition = transform.position;
   const preRotation = transform.rotation;
   const preScale = transform.scale;
