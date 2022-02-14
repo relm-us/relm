@@ -53,17 +53,25 @@ export class ClickableSystem extends System {
 
       case "TOGGLE": {
         const html2d = entity.getByName("Html2d");
-        html2d.visible = !html2d.visible;
-        html2d.modified();
-        worldManager.worldDoc.syncFrom(entity);
+        if (html2d) {
+          html2d.visible = !html2d.visible;
+          html2d.modified();
+          worldManager.worldDoc.syncFrom(entity);
+        } else {
+          console.warn("Can't toggle: no Html2d component");
+        }
         break;
       }
 
       case "FLIP": {
         const transform = entity.getByName("Transform");
         const rotation = new Quaternion();
-        const direction = Math.abs(transform.rotation.w) < 0.5 ? -1 : 1;
-        rotation.setFromAxisAngle(new Vector3(0, 0, direction), Math.PI);
+        const axis = new Vector3(
+          clickable.axis === "X" ? 1 : 0,
+          clickable.axis === "Y" ? 1 : 0,
+          clickable.axis === "Z" ? 1 : 0
+        );
+        rotation.setFromAxisAngle(axis, (clickable.rotate / 180) * Math.PI);
         rotation.multiply(transform.rotation);
         transition(worldManager.worldDoc, entity, { rotation });
         break;
