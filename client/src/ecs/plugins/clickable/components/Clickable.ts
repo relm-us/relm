@@ -1,9 +1,11 @@
-import { Component, StringType, JSONType, NumberType, BooleanType } from "~/ecs/base";
+import { Component, StringType, JSONType, NumberType } from "~/ecs/base";
 
 export class Clickable extends Component {
   action: string;
   link: string;
   cycle: any;
+  axis: "X" | "Y" | "Z";
+  rotate: number;
   idx: number;
 
   // deprecated
@@ -40,6 +42,24 @@ export class Clickable extends Component {
       editor: {
         label: "Changes",
         requires: [{ prop: "action", value: "CHANGES" }],
+      },
+    },
+
+    axis: {
+      type: StringType,
+      default: "Z",
+      editor: {
+        label: "Axis",
+        requires: [{ prop: "action", value: "FLIP" }],
+      },
+    },
+
+    rotate: {
+      type: NumberType,
+      default: 180,
+      editor: {
+        label: "Rotate (deg)",
+        requires: [{ prop: "action", value: "FLIP" }],
       },
     },
   };
