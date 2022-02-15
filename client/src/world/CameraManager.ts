@@ -48,11 +48,17 @@ type CameraCircling = {
   radianStep: number;
 };
 
+type CameraAbove = {
+  type: "above";
+  height: number;
+};
+
 type CameraState =
   | CameraFollowingParticipant
   | CameraFocusing
   | CameraDefocusing
-  | CameraCircling;
+  | CameraCircling
+  | CameraAbove;
 
 export class CameraManager {
   counter: number = 0;
@@ -168,12 +174,34 @@ export class CameraManager {
           ),
         });
       }
+
+      case "above": {
+        this.followOffset.set(0, this.state.height, 0);
+        const follow = camera.get(Follow);
+        follow?.offset.copy(this.followOffset);
+      }
     }
   }
 
   setPan(x, z) {
     this.pan.x = x;
     this.pan.z = z;
+  }
+
+  above(height: number = 30) {
+    this.state = {
+      type: "above",
+      height,
+    };
+
+    const camera = this.entity;
+    updateComponent(camera, LookAt, {
+      target: this.avatar.id,
+      offset: new Vector3(0, 0, 0),
+      limit: "NONE",
+      stepRadians: Math.PI / 32,
+      oneShot: false,
+    });
   }
 
   focus(target: Entity, done: Function) {

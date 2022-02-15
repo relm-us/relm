@@ -58,7 +58,7 @@ import { localVideoTrack } from "video-mirror";
 import { createScreenTrack } from "~/av/twilio/createScreenTrack";
 
 import { playerId } from "~/identity/playerId";
-import { Avatar } from "~/identity/Avatar";
+import { Avatar, setLabel } from "~/identity/Avatar";
 import { Participant } from "~/types/identity";
 import { ParticipantManager } from "~/identity/ParticipantManager";
 import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
@@ -310,6 +310,19 @@ export class WorldManager {
     for (const entity of entities) {
       entity[action](BoundingHelper);
     }
+  }
+
+  topView(height: number = 40, hideAvatar: boolean = true) {
+    const avatar = this.participants.local.avatar;
+
+    this.camera.above(height);
+    if (avatar && hideAvatar) {
+      avatar.entities.body.traverse((e) => {
+        e.getByName("Object3D").value.visible = false;
+      });
+      setLabel(avatar.entities, "", "", null);
+    }
+    (this.world.presentation.scene.fog as any).density = 0;
   }
 
   start() {
