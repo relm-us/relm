@@ -42,7 +42,7 @@
     active = true;
   }
 
-  $: console.log("playerState", playerState);
+  $: if ($worldUIMode === "build") pauseVideo();
 
   function ytCommand(func, args = []) {
     iframe.contentWindow.postMessage(
@@ -58,14 +58,15 @@
   }
 
   function playVideo() {
-    console.log("playVideo");
+    if (!iframe) return;
     ytCommand("playVideo");
-    // TODO: check if we've been granted autoplay
-    // ytCommand("unMute");
+    overlayHovered = false;
   }
 
   function pauseVideo() {
+    if (!iframe) return;
     ytCommand("pauseVideo");
+    overlayHovered = true;
   }
 
   // Return keyboard focus to Relm when user clicks on a youtube iframe
@@ -106,7 +107,6 @@
     iframe.contentWindow.postMessage(JSON.stringify(listenEvent), "*");
 
     ytCommand("addEventListener", ["onReady"]);
-    // ytCommand("mute");
   }
 
   function onClickPlay() {
@@ -143,13 +143,22 @@
     allow="autoplay"
   />
 
-  {#if state !== "LOADED" || $worldUIMode === "build"}
+  {#if $worldUIMode === "build"}
+    <r-overlay
+      on:click={onClickPlay}
+      on:pointerenter={() => (overlayHovered = true)}
+      on:pointerleave={() => (overlayHovered = false)}
+    >
+      <img
+        src="https://img.youtube.com/vi/{embedId}/hqdefault.jpg"
+        alt={title}
+      />
+    </r-overlay>
+  {:else if state !== "LOADED"}
     <r-overlay>
-      {#if state !== "LOADED"}
-        <r-centered>
-          <div>Loading...</div>
-        </r-centered>
-      {/if}
+      <r-centered>
+        <div>Loading...</div>
+      </r-centered>
     </r-overlay>
   {:else if useAltControls}
     <r-overlay
@@ -157,7 +166,7 @@
       on:pointerenter={() => (overlayHovered = true)}
       on:pointerleave={() => (overlayHovered = false)}
     >
-      {#if overlayHovered}
+      {#if overlayHovered && playerState !== PLAYING}
         <PlayButtonIcon active={overlayHovered} />
       {/if}
     </r-overlay>
@@ -197,6 +206,11 @@
     height: 100%;
   }
 
+  r-overlay img {
+    width: 100%;
+    object-fit: cover;
+  }
+
   r-centered {
     display: flex;
     justify-content: center;
@@ -215,32 +229,5 @@
 
   .invisible {
     visibility: hidden;
-  }
-
-  image-frame {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-  }
-  /* image-frame :global(path) {
-    -webkit-transition: fill 0.1s cubic-bezier(0.4, 0, 1, 1),
-      fill-opacity 0.1s cubic-bezier(0.4, 0, 1, 1);
-    transition: fill 0.1s cubic-bezier(0.4, 0, 1, 1),
-      fill-opacity 0.1s cubic-bezier(0.4, 0, 1, 1);
-    fill: #212121;
-    fill-opacity: 0.8;
-  }
-  image-frame:hover :global(path) {
-    -webkit-transition: fill 0.1s cubic-bezier(0, 0, 0.2, 1),
-      fill-opacity 0.1s cubic-bezier(0, 0, 0.2, 1);
-    transition: fill 0.1s cubic-bezier(0, 0, 0.2, 1),
-      fill-opacity 0.1s cubic-bezier(0, 0, 0.2, 1);
-    fill: #f00;
-    fill-opacity: 1;
-  } */
-  img {
-    width: 100%;
-    object-fit: cover;
   }
 </style>
