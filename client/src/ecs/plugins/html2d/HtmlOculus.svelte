@@ -6,6 +6,10 @@
   import shineImg from "./shine.svg";
   import { playerId as localPlayerId } from "~/identity/playerId";
   import { localShareTrackStore } from "~/av/localVisualTrackStore";
+  import {
+    PROXIMITY_AUDIO_INNER_RADIUS,
+    PROXIMITY_AUDIO_OUTER_RADIUS,
+  } from "~/config/constants";
 
   export let showAudio;
   export let showVideo;
@@ -55,8 +59,8 @@
   $: if ($audioMode === "proximity" && !isLocal) {
     if (interval) clearInterval(interval);
     interval = setInterval(() => {
-      const falloffStart = 3;
-      const falloffEnd = 6;
+      const falloffStart = PROXIMITY_AUDIO_INNER_RADIUS;
+      const falloffEnd = PROXIMITY_AUDIO_OUTER_RADIUS;
       const distance =
         participant.avatar.entities.body.getByName("DistanceRef").value;
       if (distance >= 0 && distance < falloffStart) {

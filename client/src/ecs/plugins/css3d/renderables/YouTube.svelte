@@ -1,5 +1,13 @@
 <script lang="ts">
+  import { worldManager } from "~/world";
+  import {
+    PROXIMITY_AUDIO_INNER_RADIUS,
+    PROXIMITY_AUDIO_OUTER_RADIUS,
+  } from "~/config/constants";
+
   import { worldUIMode } from "~/stores/worldUIMode";
+  import { audioMode } from "~/stores/audioMode";
+  import { Transform, WorldTransform } from "~/ecs/plugins/core";
   import { isFirefox } from "~/utils/isFirefox";
 
   import PlayButtonIcon from "./shared/PlayButtonIcon.svelte";
@@ -9,6 +17,7 @@
   export let embedId: string;
   export let alwaysOn: boolean;
   export let title = "YouTube Video";
+  export let entity;
 
   let src;
   let iframe;
@@ -118,6 +127,37 @@
         else active = true;
       }
     }
+  }
+
+  const falloffStart = PROXIMITY_AUDIO_INNER_RADIUS;
+  const falloffEnd = PROXIMITY_AUDIO_OUTER_RADIUS;
+
+  let volume = 1;
+  $: if (active && playerState === PLAYING) {
+    ytCommand("setVolume", [volume * 100]);
+  }
+
+  let interval;
+  $: if ($audioMode === "proximity") {
+    if (interval) clearInterval(interval);
+    interval = setInterval(() => {
+      const transform = entity.get(WorldTransform);
+      const avatar = worldManager.avatar;
+      if (avatar && transform) {
+        const distance = avatar.position.distanceTo(transform.position);
+        if (distance >= 0 && distance < falloffStart) {
+          volume = 1;
+        } else if (distance < falloffEnd) {
+          const delta = falloffEnd - falloffStart;
+          volume = (delta - (distance - falloffStart)) / delta;
+        } else {
+          volume = 0;
+        }
+      }
+    }, 100);
+  } else if (interval) {
+    clearInterval(interval);
+    volume = 1;
   }
 
   // ignore warning about missing props
