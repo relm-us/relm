@@ -29,16 +29,14 @@ export class PerspectiveSystem extends System {
   updateTranslucentObjectsBlockingView() {
     const blocking = this.getVisuallyBlockingObjects();
 
-    const blockingEntites: Set<Entity> = new Set();
+    const blockingEntities: Set<Entity> = new Set();
     for (let object of blocking) {
       const entityId = object.userData.entityId;
       const entity: Entity = this.world.entities.getById(entityId);
-      blockingEntites.add(entity);
+      blockingEntities.add(entity);
     }
 
-    for (let object of blocking) {
-      const entityId = object.userData.entityId;
-      const entity: Entity = this.world.entities.getById(entityId);
+    for (let entity of blockingEntities) {
       if (entity && !this.entitiesWeMadeTranslucent.has(entity)) {
         entity.add(Translucent);
         this.entitiesWeMadeTranslucent.add(entity);
@@ -47,7 +45,7 @@ export class PerspectiveSystem extends System {
 
     const noLongerTranslucents: Set<Entity> = difference(
       this.entitiesWeMadeTranslucent,
-      blockingEntites
+      blockingEntities
     );
     for (let entity of noLongerTranslucents) {
       entity.remove(Translucent);

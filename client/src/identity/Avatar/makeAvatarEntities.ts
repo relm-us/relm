@@ -12,6 +12,7 @@ import { PointerPosition } from "~/ecs/plugins/pointer-position";
 import { RigidBody, Collider, Impactable } from "~/ecs/plugins/physics";
 import { Animation } from "~/ecs/plugins/animation";
 import { Repulsive } from "~/ecs/plugins/player-control";
+import { TranslucentOptions } from "~/ecs/plugins/translucent";
 import { IDLE } from "~/config/constants";
 
 import { AvatarEntities } from "~/types";
@@ -38,6 +39,7 @@ export function makeAvatarEntities(
     .add(Model, {
       asset: new Asset("/humanoid-003.glb"),
     })
+    .add(TranslucentOptions, { time: 100 })
     .add(Animation, {
       clipName: IDLE,
     })

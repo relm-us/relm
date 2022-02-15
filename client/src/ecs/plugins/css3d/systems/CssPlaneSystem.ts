@@ -12,7 +12,6 @@ export class CssPlaneSystem extends System {
   static queries = {
     added: [Object3D, CssPlane, Not(CssShapeMesh)],
     modified: [Object3D, Modified(CssPlane), CssShapeMesh],
-    // removedObj: [Not(Object3D), ShapeMesh],
     removed: [Object3D, Not(CssPlane), CssShapeMesh],
   };
 
@@ -24,22 +23,14 @@ export class CssPlaneSystem extends System {
     this.queries.modified.forEach((entity) => {
       this.remove(entity);
       this.build(entity);
-      
+
       // Notify outline to rebuild if necessary
       entity.getByName("Outline")?.modified();
     });
 
-    // this.queries.removedObj.forEach((entity) => {
-    //   const mesh = entity.get(ShapeMesh).value;
-    //   mesh.parent.remove(mesh);
-    //   mesh.geometry.dispose();
-    //   mesh.material.dispose();
-    //   entity.remove(ShapeMesh);
-    // });
-
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
-    })
+    });
   }
 
   build(entity) {
@@ -83,7 +74,7 @@ export class CssPlaneSystem extends System {
     mesh.geometry.dispose();
     mesh.material.dispose();
     object3d.remove(mesh);
-    
+
     entity.remove(CssShapeMesh);
   }
 }

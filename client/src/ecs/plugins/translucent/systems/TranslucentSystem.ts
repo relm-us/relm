@@ -1,4 +1,4 @@
-import { FrontSide } from "three";
+import { FrontSide, NoBlending } from "three";
 import { Tween, Easing } from "@tweenjs/tween.js";
 
 import { System, Groups, Entity, Not, Modified } from "~/ecs/base";
@@ -86,7 +86,12 @@ export class TranslucentSystem extends System {
 
     const setOpacity = (opacity) => {
       object3d.value.traverse((node) => {
-        if (node.isMesh && node.userData.translucent) {
+        if (
+          node.isMesh &&
+          node.userData.translucent &&
+          /* Don't set transparency on CSS Planes */
+          node.material.blending !== NoBlending
+        ) {
           node.material.opacity = opacity;
         }
       });

@@ -51,10 +51,11 @@ export class RenderableSystem extends System {
     });
 
     this.queries.active.forEach((entity) => {
-      const spec = entity.get(Renderable);
-      const ref = entity.get(RenderableRef);
       const transform = entity.get(WorldTransform);
       if (!transform) return;
+
+      const spec = entity.get(Renderable);
+      const ref = entity.get(RenderableRef);
 
       this.copyTransform(ref.value, transform, spec.scale);
     });

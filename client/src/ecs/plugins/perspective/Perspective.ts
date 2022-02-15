@@ -4,7 +4,6 @@ import { Entity } from "~/ecs/base";
 import { Presentation, Transform, Object3D } from "~/ecs/plugins/core";
 import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
 import { GetWorldFromScreenOpts, WorldPlanes } from "~/ecs/shared/WorldPlanes";
-import { Translucent } from "../translucent";
 
 const BOUNDS_EXTENT = [-1, 1];
 
