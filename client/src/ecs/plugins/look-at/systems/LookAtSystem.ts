@@ -15,6 +15,7 @@ const delta = new Vector3();
 export class LookAtSystem extends System {
   presentation: Presentation;
   cameraId: string;
+  frames: number = 0;
 
   order = 3001;
 
@@ -85,8 +86,15 @@ export class LookAtSystem extends System {
     }
 
     if (lookAt.oneShot) {
-      lookAt.oneShot = false;
-      entity.remove(LookAt);
+      if (
+        this.frames > 30 &&
+        transform.rotation.angleTo(targetRotation) < 0.001
+      ) {
+        lookAt.oneShot = false;
+        this.frames = 0;
+        entity.remove(LookAt);
+      }
+      this.frames++;
     }
   }
 }

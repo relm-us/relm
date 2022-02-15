@@ -176,7 +176,7 @@ export class CameraManager {
       }
 
       case "above": {
-        this.followOffset.set(0, this.state.height, 0);
+        this.followOffset.set(0, this.state.height, 0).add(this.pan);
         const follow = camera.get(Follow);
         follow?.offset.copy(this.followOffset);
       }
@@ -200,7 +200,7 @@ export class CameraManager {
       offset: new Vector3(0, 0, 0),
       limit: "NONE",
       stepRadians: Math.PI / 32,
-      oneShot: false,
+      oneShot: true,
     });
   }
 
