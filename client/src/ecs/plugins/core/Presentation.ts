@@ -170,7 +170,7 @@ export class Presentation {
     const renderer = new WebGLRenderer({
       antialias: true,
     });
-    // renderer.setPixelRatio(window.devicePixelRatio)
+    renderer.setPixelRatio(window.devicePixelRatio)
     renderer.setSize(this.size.x, this.size.y);
     renderer.physicallyCorrectLights = true;
     renderer.outputEncoding = sRGBEncoding;
