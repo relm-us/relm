@@ -59,9 +59,9 @@ export class Presentation {
     this.viewport = null;
     this.size = new Vector2(1, 1);
     this.object3ds = [];
-    this.scene = options.scene || this.createScene();
-    this.renderer = options.renderer || this.createRenderer();
-    this.camera = options.camera || this.createCamera();
+    this.scene = options.scene;
+    this.renderer = options.renderer;
+    this.camera = options.camera;
     this.cameraTarget = null; // can be set later with setCameraTarget
     this.resizeObserver = new ResizeObserver(this.resize.bind(this));
     this.intersectionFinder = new IntersectionFinder(this.camera, this.scene);
@@ -137,52 +137,6 @@ export class Presentation {
     if (this.viewport) {
       this.renderer.render(this.scene, this.camera);
     }
-  }
-
-  createScene() {
-    const scene = new Scene();
-    scene.background = new Color(0xaec7ed);
-    scene.name = "scene";
-
-    const hemiLight = new HemisphereLight(0x444444, 0xffffff);
-    hemiLight.position.set(0, 20, 0);
-    scene.add(hemiLight);
-
-    const dirLight = new DirectionalLight(0xffffff, 6);
-    dirLight.position.set(-3, 20, -40);
-    dirLight.castShadow = true;
-    dirLight.shadow.mapSize.height = 1024;
-    dirLight.shadow.mapSize.width = 1024;
-    dirLight.shadow.camera.top = 15;
-    dirLight.shadow.camera.bottom = -15;
-    dirLight.shadow.camera.left = -15;
-    dirLight.shadow.camera.right = 15;
-    dirLight.shadow.camera.near = 20;
-    dirLight.shadow.camera.far = 60;
-    dirLight.shadow.radius = 1;
-    dirLight.shadow.bias = -0.01;
-    scene.add(dirLight);
-
-    return scene;
-  }
-
-  createRenderer() {
-    const renderer = new WebGLRenderer({
-      antialias: true,
-    });
-    renderer.setPixelRatio(window.devicePixelRatio)
-    renderer.setSize(this.size.x, this.size.y);
-    renderer.physicallyCorrectLights = true;
-    renderer.outputEncoding = sRGBEncoding;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = VSMShadowMap;
-    (renderer.domElement as any).style = "outline:0;";
-
-    return renderer;
-  }
-
-  createCamera() {
-    return new PerspectiveCamera(75, this.size.x / this.size.y, 0.1, 1000);
   }
 
   setCameraTarget(target: Vector3) {

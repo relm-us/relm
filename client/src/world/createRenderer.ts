@@ -17,6 +17,7 @@ export function createRenderer() {
     powerPreference: "high-performance",
   });
 
+  // renderer.setPixelRatio(window.devicePixelRatio)
   renderer.setClearColor(0x000000, 1.0);
   renderer.toneMapping = LinearToneMapping;
   renderer.toneMappingExposure = 1.1;
