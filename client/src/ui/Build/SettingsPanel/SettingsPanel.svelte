@@ -1,11 +1,13 @@
 <script lang="ts">
   import LeftPanel, { Header } from "~/ui/lib/LeftPanel";
+  import Button from "~/ui/lib/Button";
+  import { openPanel } from "~/stores/openPanel";
+
   import EntrywaySettings from "./EntrywaySettings.svelte";
   import SkyboxSettings from "./SkyboxSettings.svelte";
   import FogSettings from "./FogSettings.svelte";
+  import CameraSettings from "./CameraSettings.svelte";
   import LightingSettings from "./LightingSettings.svelte";
-  import Button from "~/ui/lib/Button";
-  import { openPanel } from "~/stores/openPanel";
 </script>
 
 <LeftPanel on:minimize>
@@ -16,6 +18,8 @@
     <SkyboxSettings />
 
     <FogSettings />
+
+    <CameraSettings />
 
     <LightingSettings />
 

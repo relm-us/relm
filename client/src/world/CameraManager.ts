@@ -188,6 +188,17 @@ export class CameraManager {
     this.pan.z = z;
   }
 
+  setFov(fov) {
+    this.ecsWorld.presentation.camera.fov = fov;
+    this.ecsWorld.presentation.camera.updateProjectionMatrix();
+    this.ecsWorld.cssPresentation.camera.fov = fov;
+    this.ecsWorld.cssPresentation.camera.updateProjectionMatrix();
+  }
+
+  getFov() {
+    return this.ecsWorld.presentation.camera.fov;
+  }
+
   above(height: number = 30) {
     this.state = {
       type: "above",

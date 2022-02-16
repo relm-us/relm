@@ -170,6 +170,9 @@ export class WorldManager {
           if (dirLC) this.light.getByName("DirectionalLight").color = dirLC;
           if (dirLP) this.light.getByName("Follow").offset.fromArray(dirLP);
         }
+
+        const fov = $settings.get("cameraFov");
+        if (fov) this.camera.setFov(fov);
       })
     );
 
