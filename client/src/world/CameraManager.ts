@@ -1,4 +1,4 @@
-import { Vector3 } from "three";
+import { Euler, Quaternion, Vector3 } from "three";
 
 import { Entity } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
@@ -195,13 +195,12 @@ export class CameraManager {
     };
 
     const camera = this.entity;
-    updateComponent(camera, LookAt, {
-      target: this.avatar.id,
-      offset: new Vector3(0, 0, 0),
-      limit: "NONE",
-      stepRadians: Math.PI / 32,
-      oneShot: true,
-    });
+
+    camera
+      .get(Transform)
+      .rotation.copy(
+        new Quaternion().setFromEuler(new Euler((Math.PI * 3) / 2, 0, 0, "XYZ"))
+      );
   }
 
   focus(target: Entity, done: Function) {
