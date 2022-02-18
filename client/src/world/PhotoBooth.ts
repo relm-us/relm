@@ -35,14 +35,6 @@ export class PhotoBooth {
     this.light.position.set(-5 * 10, 5 * 10, 2.5 * 10);
     scene.add(this.light);
 
-    this.container1 = new Object3D();
-    this.container2 = new Object3D();
-    this.container3 = new Object3D();
-
-    scene.add(this.container1);
-    this.container1.add(this.container2);
-    this.container2.add(this.container3);
-
     this.camera = new PerspectiveCamera(
       35,
       1 /* aspect to be updated later */,
@@ -64,12 +56,25 @@ export class PhotoBooth {
     // Save parent for restore step (last step)
     const parent = object.parent;
 
+    if (this.container1) this.scene.remove(this.container1);
+
+    this.container1 = new Object3D();
+    this.container2 = new Object3D();
+    this.container3 = new Object3D();
+
+    this.scene.add(this.container1);
+    this.container1.add(this.container2);
+    this.container2.add(this.container3);
+
     // Add object to inner container, neutralizing position
     this.container3.add(object);
     this.container3.position.copy(object.position).multiplyScalar(-1);
 
     // Neutralize rotation, making object face camera
     this.container2.quaternion.copy(object.quaternion).invert();
+
+    // Rotate a quarter-turn to the left, so objects aren't facing straight on to camera
+    this.container2.rotation.y -= Math.PI / 4;
 
     // Measure object size
     const box = new Box3().setFromObject(this.container1);
@@ -81,14 +86,16 @@ export class PhotoBooth {
     box.getCenter(center);
     this.container1.position.copy(center).multiplyScalar(-1);
 
-    // Rotate a quarter-turn to the left, so objects aren't facing straight on to camera
-    this.container2.rotation.y -= Math.PI / 4;
-
     // Move camera so that object takes up full view
-    var fov = this.camera.fov * (Math.PI / 180);
-    var distance = Math.abs(Math.min(bbSize.x, bbSize.y) / Math.sin(fov / 2));
+    const vFov = this.camera.fov * (Math.PI / 180);
+    const sphere = new Sphere();
+    box.getBoundingSphere(sphere);
+
+    const distance = Math.abs(
+      (this.camera.aspect * (sphere.radius / 1.5)) / Math.sin(vFov / 2)
+    );
+
     this.camera.position.set(0, 1, 1).normalize().multiplyScalar(distance);
-    // this.camera.lookAt(this.container1.position);
     this.camera.lookAt(0, 0, 0);
 
     // Take photo
