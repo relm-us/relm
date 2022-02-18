@@ -140,7 +140,7 @@ export class WorldManager {
 
     this.camera = new CameraManager(this.world, this.avatar.entities.body);
 
-    this.photoBooth = new PhotoBooth(this.world.presentation.renderer);
+    this.photoBooth = new PhotoBooth();
 
     const light = makeLight(this.world, this.avatar.entities.body).activate();
     this.light = light;
@@ -591,6 +591,31 @@ export class WorldManager {
     const entities = [...this.world.entities.entities.values()];
     if (idx >= 0 && idx < entities.length) {
       return entities[idx].getByName("Object3D").value;
+    }
+  }
+
+  showAll() {
+    const scroll = document.createElement("div");
+    scroll.style.position = "absolute";
+    scroll.style.zIndex = "5";
+    scroll.style.top = "0px";
+    scroll.style.overflowY = "scroll";
+    scroll.style.height = "100%";
+    document.body.appendChild(scroll);
+
+    const container = document.createElement("div");
+    container.style.display = "flex";
+    container.style.flexWrap = "wrap";
+    scroll.appendChild(container);
+
+    for (let i = 0; i < this.world.entities.entities.size; i++) {
+      try {
+        const object = this.getObject3D(i);
+        const img = this.photoBooth.takeShot(object);
+        img.style.width = "150px";
+        img.style.height = "150px";
+        container.appendChild(img);
+      } catch (err) {}
     }
   }
 }

@@ -9,6 +9,7 @@ import {
   Box3,
   Sphere,
 } from "three";
+import { createRenderer } from "./createRenderer";
 import { createScene } from "./createScene";
 
 export class PhotoBooth {
@@ -21,9 +22,17 @@ export class PhotoBooth {
   renderer: WebGLRenderer;
   light: DirectionalLight;
 
-  constructor(renderer) {
-    this.renderer = renderer;
+  constructor() {
+    this.renderer = this.createPhotoBoothRenderer();
     this.scene = this.createPhotoBoothScene();
+  }
+
+  createPhotoBoothRenderer() {
+    const renderer = createRenderer(false);
+    renderer.shadowMap.enabled = false;
+    renderer.setSize(300, 300, true);
+
+    return renderer;
   }
 
   createPhotoBoothScene() {
@@ -92,7 +101,7 @@ export class PhotoBooth {
     box.getBoundingSphere(sphere);
 
     const distance = Math.abs(
-      (this.camera.aspect * (sphere.radius / 1.5)) / Math.sin(vFov / 2)
+      (this.camera.aspect * (sphere.radius / 1.25)) / Math.sin(vFov / 2)
     );
 
     this.camera.position.set(0, 1, 1).normalize().multiplyScalar(distance);
@@ -110,17 +119,5 @@ export class PhotoBooth {
     image.src = srcUrl;
 
     return image;
-  }
-
-  showShot(object: Object3D) {
-    return this.showImage(this.takeShot(object));
-  }
-
-  showImage(img) {
-    img.style.position = "absolute";
-    img.style.zIndex = "5";
-    img.style.top = "0px";
-    document.body.appendChild(img);
-    return img;
   }
 }

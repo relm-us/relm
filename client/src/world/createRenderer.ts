@@ -9,7 +9,7 @@ import {
 
 import { SHADOW_MAP_TYPE } from "~/config/constants";
 
-export function createRenderer() {
+export function createRenderer(withDefaultStyles = true) {
   const renderer = new WebGLRenderer({
     antialias: true,
     alpha: true,
@@ -36,11 +36,13 @@ export function createRenderer() {
       break;
   }
 
-  const style = renderer.domElement.style;
-  style.outline = "0";
-  style.position = "absolute";
-  style.pointerEvents = "none";
-  style.zIndex = "1";
+  if (withDefaultStyles) {
+    const style = renderer.domElement.style;
+    style.outline = "0";
+    style.position = "absolute";
+    style.pointerEvents = "none";
+    style.zIndex = "1";
+  }
 
   return renderer;
 }
