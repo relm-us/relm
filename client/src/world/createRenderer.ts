@@ -18,7 +18,7 @@ export function createRenderer() {
   });
 
   // renderer.setPixelRatio(window.devicePixelRatio)
-  renderer.setClearColor(0x000000, 1.0);
+  renderer.setClearColor(0x000000, 0.0);
   renderer.toneMapping = LinearToneMapping;
   renderer.toneMappingExposure = 1.1;
   renderer.physicallyCorrectLights = true;

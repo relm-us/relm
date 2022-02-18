@@ -65,6 +65,7 @@ import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 import { setTransformArrayOnParticipants } from "~/identity/Avatar/transform";
 import { delay } from "~/utils/delay";
 import { RelmRestAPI } from "~/main/RelmRestAPI";
+import { PhotoBooth } from "./PhotoBooth";
 
 type LoopType =
   | { type: "raf" }
@@ -92,6 +93,7 @@ export class WorldManager {
   selection: SelectionManager;
   chat: ChatManager;
   camera: CameraManager;
+  photoBooth: PhotoBooth;
 
   previousLoopTime: number = 0;
   started: boolean = false;
@@ -137,6 +139,8 @@ export class WorldManager {
     });
 
     this.camera = new CameraManager(this.world, this.avatar.entities.body);
+
+    this.photoBooth = new PhotoBooth(this.world.presentation.renderer);
 
     const light = makeLight(this.world, this.avatar.entities.body).activate();
     this.light = light;
@@ -581,5 +585,12 @@ export class WorldManager {
 
   setLightPosition(position: Vector3) {
     this.light.get(Follow).offset.copy(position);
+  }
+
+  getObject3D(idx: number) {
+    const entities = [...this.world.entities.entities.values()];
+    if (idx >= 0 && idx < entities.length) {
+      return entities[idx].getByName("Object3D").value;
+    }
   }
 }
