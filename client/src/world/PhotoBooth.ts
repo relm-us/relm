@@ -27,6 +27,7 @@ export class PhotoBooth {
   createPhotoBoothScene() {
     const scene = createScene();
     scene.background = null;
+    scene.fog = null;
 
     this.light = new DirectionalLight("#ffffff", 2.5);
     this.light.position.set(-5 * 10, 5 * 10, 2.5 * 10);
