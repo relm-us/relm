@@ -11,7 +11,7 @@ export { Components };
 export { headFollowsPointer, headFollowsAngle } from "./headFollows";
 
 export default createPlugin({
-  name: "twist-bone",
+  name: "bone-twist",
   plugins: [CorePlugin, ModelPlugin],
   systems: Object.values(Systems),
   components: Object.values(Components),

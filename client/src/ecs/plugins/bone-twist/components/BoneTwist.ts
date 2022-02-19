@@ -7,7 +7,7 @@ import {
   BooleanType,
 } from "~/ecs/base";
 
-export class TwistBone extends LocalComponent {
+export class BoneTwist extends LocalComponent {
   boneName: string;
   function: Vector3;
   speed: number;
@@ -32,8 +32,8 @@ export class TwistBone extends LocalComponent {
     function: {
       type: RefType,
       default: (entity) => {
-        console.error("TwistBone function required");
-        entity.remove(TwistBone);
+        console.error("BoneTwist function required");
+        entity.remove(BoneTwist);
       },
       editor: {
         label: "Custom twist function",

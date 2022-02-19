@@ -115,7 +115,7 @@ Desired order of Systems:
   [ "DistanceSystem", 2001 ],
   [ "MorphSystem", 2001 ],
   [ "SkyboxSystem", 2001 ],
-  [ "TwistBoneSystem", 2015 ],
+  [ "BoneTwistSystem", 2015 ],
   [ "CssPlaneSystem", 2099 ],
   [ "TransformEffectsSystem", 2995 ],
   [ "FollowSystem", 3000 ],

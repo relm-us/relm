@@ -4,7 +4,7 @@ import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
 
 import { Entity } from "~/ecs/base";
 import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
-import { TwistBoneRef } from "~/ecs/plugins/twist-bone";
+import { BoneTwistRef } from "~/ecs/plugins/bone-twist";
 import { ControllerState } from "~/ecs/plugins/player-control";
 import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
 
@@ -21,7 +21,7 @@ export const headFollowsPointer =
     const state: ControllerState = entity.get(ControllerState);
     const ppref: PointerPositionRef = entity.get(PointerPositionRef);
     const pointer: WorldPlanes = ppref.value;
-    const parent = entity.get(TwistBoneRef).parent;
+    const parent = entity.get(BoneTwistRef).parent;
 
     parent.getWorldQuaternion(qParent);
     parent.getWorldPosition(vParent);
@@ -84,7 +84,7 @@ export const headFollowsAngle =
     if (angle === null || angle === undefined || Number.isNaN(angle)) return;
 
     const pointer = entity.get(PointerPositionRef).value;
-    const parent = entity.get(TwistBoneRef).parent;
+    const parent = entity.get(BoneTwistRef).parent;
 
     parent.getWorldQuaternion(qParent);
     parent.getWorldPosition(vParent);

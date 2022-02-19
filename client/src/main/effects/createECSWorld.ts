@@ -12,6 +12,8 @@ import PerspectivePlugin from "~/ecs/plugins/perspective";
 
 import AnimationPlugin from "~/ecs/plugins/animation";
 import AssetPlugin from "~/ecs/plugins/asset";
+import BoneAttachPlugin from "~/ecs/plugins/bone-attach";
+import BoneTwistPlugin from "~/ecs/plugins/bone-twist";
 import BoundingHelperPlugin from "~/ecs/plugins/bounding-helper";
 import ClickablePlugin from "~/ecs/plugins/clickable";
 import ColorationPlugin from "~/ecs/plugins/coloration";
@@ -38,7 +40,6 @@ import SkyboxPlugin from "~/ecs/plugins/skybox";
 import TransitionPlugin from "~/ecs/plugins/transition";
 import TransformEffectsPlugin from "~/ecs/plugins/transform-effects";
 import TranslucentPlugin from "~/ecs/plugins/translucent";
-import TwistBonePlugin from "~/ecs/plugins/twist-bone";
 
 import { PerformanceStatsSystem } from "~/ecs/systems/PerformanceStatsSystem";
 import { Dispatch } from "../ProgramTypes";
@@ -64,6 +65,8 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       /* others */
       AnimationPlugin,
       AssetPlugin,
+      BoneAttachPlugin,
+      BoneTwistPlugin,
       BoundingHelperPlugin,
       ClickablePlugin,
       ColorationPlugin,
@@ -88,7 +91,6 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       TransitionPlugin,
       TransformEffectsPlugin,
       TranslucentPlugin,
-      TwistBonePlugin,
     ],
     systems: [PerformanceStatsSystem],
   }) as DecoratedECSWorld;

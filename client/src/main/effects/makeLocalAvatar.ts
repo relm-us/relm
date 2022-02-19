@@ -1,7 +1,7 @@
 import { Vector3 } from "three";
 
 import { Controller } from "~/ecs/plugins/player-control";
-import { TwistBone, headFollowsPointer } from "~/ecs/plugins/twist-bone";
+import { BoneTwist, headFollowsPointer } from "~/ecs/plugins/bone-twist";
 
 import type { DecoratedECSWorld } from "~/types";
 import type { Dispatch } from "../ProgramTypes";
@@ -21,7 +21,7 @@ export const makeLocalAvatar =
       if (avatar) avatar.headAngle = angle;
     };
 
-    entities.body.add(Controller).add(TwistBone, {
+    entities.body.add(Controller).add(BoneTwist, {
       boneName: "mixamorigHead",
       function: headFollowsPointer(storeHeadAngle),
     });

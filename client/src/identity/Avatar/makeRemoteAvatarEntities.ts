@@ -1,7 +1,7 @@
 import { Vector3 } from "three";
 
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
-import { TwistBone, headFollowsAngle } from "~/ecs/plugins/twist-bone";
+import { BoneTwist, headFollowsAngle } from "~/ecs/plugins/bone-twist";
 import { Distance } from "~/ecs/plugins/distance";
 
 import { AvatarEntities } from "~/types";
@@ -18,7 +18,7 @@ export function makeRemoteAvatarEntities(
   const entities = makeAvatarEntities(ecsWorld, position, true, participantId);
 
   entities.body
-    .add(TwistBone, {
+    .add(BoneTwist, {
       boneName: "mixamorigHead",
       function: headFollowsAngle(getHeadAngle),
     })

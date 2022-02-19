@@ -4,7 +4,7 @@ import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Presentation } from "~/ecs/plugins/core";
 import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
 
-import { TwistBone, TwistBoneError, TwistBoneRef } from "../components";
+import { BoneTwist, BoneTwistError, BoneTwistRef } from "../components";
 import { ModelAttached } from "~/ecs/plugins/model";
 
 const vUp = new Vector3(0, 1, 0);
@@ -14,16 +14,16 @@ const qBoneTarget = new Quaternion();
 const mBoneParent = new Matrix4();
 const qBoneParent = new Quaternion();
 
-export class TwistBoneSystem extends System {
+export class BoneTwistSystem extends System {
   presentation: Presentation;
 
   // After both AnimationSystem and PointerPositionSystem
   order = Groups.Simulation + 15;
 
   static queries = {
-    added: [TwistBone, ModelAttached, Not(TwistBoneRef), Not(TwistBoneError)],
-    active: [TwistBone, TwistBoneRef, PointerPositionRef],
-    removed: [Not(TwistBone), TwistBoneRef],
+    added: [BoneTwist, ModelAttached, Not(BoneTwistRef), Not(BoneTwistError)],
+    active: [BoneTwist, BoneTwistRef, PointerPositionRef],
+    removed: [Not(BoneTwist), BoneTwistRef],
   };
 
   init({ presentation }) {
@@ -36,20 +36,20 @@ export class TwistBoneSystem extends System {
     });
 
     this.queries.active.forEach((entity) => {
-      const spec = entity.get(TwistBone);
+      const spec = entity.get(BoneTwist);
       if (spec.enabled) {
         this.follow(entity);
       }
     });
 
     this.queries.removed.forEach((entity) => {
-      entity.maybeRemove(TwistBoneRef);
-      entity.maybeRemove(TwistBoneError);
+      entity.maybeRemove(BoneTwistRef);
+      entity.maybeRemove(BoneTwistError);
     });
   }
 
   build(entity: Entity) {
-    const spec = entity.get(TwistBone);
+    const spec = entity.get(BoneTwist);
     const { parent, child } = entity.get(ModelAttached);
     let bone;
     child.traverse((node) => {
@@ -58,18 +58,18 @@ export class TwistBoneSystem extends System {
       }
     });
     if (bone) {
-      entity.add(TwistBoneRef, { value: bone, parent });
+      entity.add(BoneTwistRef, { value: bone, parent });
     } else {
       console.warn(`bone not found`, spec.boneName);
-      entity.add(TwistBoneError);
+      entity.add(BoneTwistError);
     }
   }
 
   follow(entity: Entity) {
-    const spec = entity.get(TwistBone);
-    const bone = entity.get(TwistBoneRef).value;
+    const spec = entity.get(BoneTwist);
+    const bone = entity.get(BoneTwistRef).value;
 
-    // Set the rotation matrix from the custom function used to set up TwistBone
+    // Set the rotation matrix from the custom function used to set up BoneTwist
     // For example: vLookAt could be set by headFollowsPointer
     const vLookAt = spec.function(entity);
     if (!vLookAt) return;
@@ -80,7 +80,7 @@ export class TwistBoneSystem extends System {
     mBone.lookAt(vLookAt, vOrigin, vUp);
     qBoneTarget.setFromRotationMatrix(mBone);
 
-    // Keep track of the TwistBone rotation target for this bone
+    // Keep track of the BoneTwist rotation target for this bone
     if (!bone.twistBoneQuaternion) {
       bone.twistBoneQuaternion = new Quaternion();
     }
