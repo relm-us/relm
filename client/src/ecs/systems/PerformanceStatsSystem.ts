@@ -1,5 +1,8 @@
-import { System, Groups, Not } from "~/ecs/base";
 import { get } from "svelte/store";
+
+import { System, Groups } from "~/ecs/base";
+import { Presentation } from "~/ecs/plugins/core";
+
 import {
   DATA_WINDOW_SIZE,
   createStatsStore,
@@ -7,35 +10,33 @@ import {
   memoryTextures,
   renderCalls,
   renderTriangles,
-  renderPoints,
-  renderLines,
   renderFrames,
   programs,
   systems,
 } from "~/stores/stats";
 
 export class PerformanceStatsSystem extends System {
+  presentation: Presentation;
   programHash: string;
 
   // This should happen last, after everything is done, so stats are accurate
   // for the current frame
   order = Groups.Presentation + 500;
 
-  init() {
+  init({ presentation }) {
+    this.presentation = presentation;
     this.programHash = "";
   }
 
   update() {
-    const info = (this.world as any).presentation?.renderer?.info;
+    const info = this.presentation?.renderer?.info;
     // Rendering performance
     if (info) {
       memoryGeometries.addData(info.memory.geometries);
       memoryTextures.addData(info.memory.textures);
       renderCalls.addData(info.render.calls);
       renderTriangles.addData(info.render.triangles);
-      renderPoints.addData(info.render.points);
-      renderLines.addData(info.render.lines);
-      renderFrames.addData(info.render.frames);
+      renderFrames.addData(info.render.frame);
 
       // Every once in a while, check to see if there are new shaders, etc.
       if (this.world.version % 500 === 20) {

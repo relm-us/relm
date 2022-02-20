@@ -1,5 +1,6 @@
 import { get, Writable } from "svelte/store";
 import { Vector3 } from "three";
+
 import { DeviceIds } from "video-mirror";
 
 import { worldManager } from "~/world";
@@ -57,7 +58,9 @@ const send: (msg: Message) => Effect = Cmd.ofMsg;
  * The main Relm program
  */
 export function makeProgram(): Program {
-  const globalBroadcast = window.BroadcastChannel ? new BroadcastChannel("relm.us") : null;
+  const globalBroadcast = window.BroadcastChannel
+    ? new BroadcastChannel("relm.us")
+    : null;
 
   const init: [State, Effect] = [
     {

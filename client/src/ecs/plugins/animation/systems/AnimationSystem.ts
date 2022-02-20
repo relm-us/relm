@@ -16,7 +16,6 @@ export class AnimationSystem extends System {
   };
 
   update(delta) {
-    const dt = 1 / (1000 / delta);
     this.queries.new.forEach((entity) => {
       this.build(entity);
       this.setAnimation(entity);
@@ -26,7 +25,7 @@ export class AnimationSystem extends System {
     });
     this.queries.active.forEach((entity) => {
       const { value: mixer } = entity.get(MixerRef);
-      mixer.update(dt);
+      mixer.update(delta);
     });
     this.queries.removed.forEach((entity) => {
       this.remove(entity);

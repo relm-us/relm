@@ -15,11 +15,12 @@ export function createRenderer(withDefaultStyles = true) {
     // optimize for postprocessing composition
     antialias: false,
     stencil: false,
-    // depth: false,
-    depth: true,
+    depth: false,
     // necessary for CSS3D
     alpha: true,
   });
+
+  renderer.info.autoReset = false;
 
   // renderer.setPixelRatio(window.devicePixelRatio)
   renderer.setClearColor(0x000000, 0.0);

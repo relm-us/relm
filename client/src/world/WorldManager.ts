@@ -5,6 +5,7 @@ import {
   AmbientLight,
   HemisphereLight,
   DirectionalLight,
+  Clock,
 } from "three";
 import * as THREE from "three";
 
@@ -68,13 +69,16 @@ import { RelmRestAPI } from "~/main/RelmRestAPI";
 import { PhotoBooth } from "./PhotoBooth";
 
 type LoopType =
-  | { type: "raf" }
+  | { type: "requestAF" }
+  | { type: "nolimit"; running: boolean }
   | { type: "interval"; targetFps: number; interval?: NodeJS.Timer };
+
 export class WorldManager {
   dispatch: Dispatch;
   state: State;
   broker: ParticipantYBroker;
   api: RelmRestAPI;
+  clock: Clock;
 
   world: DecoratedECSWorld;
   worldDoc: WorldDoc;
@@ -85,7 +89,7 @@ export class WorldManager {
 
   transformArray: any[];
 
-  loopType: LoopType = { type: "raf" };
+  loopType: LoopType = { type: "requestAF" };
 
   light: Entity;
 
@@ -95,7 +99,6 @@ export class WorldManager {
   camera: CameraManager;
   photoBooth: PhotoBooth;
 
-  previousLoopTime: number = 0;
   started: boolean = false;
 
   unsubs: Function[] = [];
@@ -119,6 +122,7 @@ export class WorldManager {
       state.pageParams.relmName,
       state.authHeaders
     );
+    this.clock = new Clock();
 
     this.world = ecsWorld;
     this.worldDoc = worldDoc;
@@ -346,8 +350,18 @@ export class WorldManager {
     const loop = this.loop.bind(this);
 
     switch (this.loopType.type) {
-      case "raf":
+      case "requestAF":
         this.world.presentation.setLoop(loop);
+        break;
+
+      case "nolimit":
+        this.loopType.running = true;
+        const noLimitLoop = () => {
+          loop();
+          if (this.loopType.type == "nolimit" && this.loopType.running)
+            setTimeout(noLimitLoop, 0);
+        };
+        noLimitLoop();
         break;
 
       case "interval":
@@ -374,8 +388,12 @@ export class WorldManager {
 
   _stopLoop() {
     switch (this.loopType.type) {
-      case "raf":
+      case "requestAF":
         this.world.presentation.setLoop(null);
+        break;
+
+      case "nolimit":
+        this.loopType.running = false;
         break;
 
       case "interval":
@@ -401,14 +419,20 @@ export class WorldManager {
   }
 
   setFps(fps: number) {
-    if (fps < 0 || fps > 60) return;
-
     this.stop();
 
-    targetFps.set(fps);
     if (fps === 60) {
-      this.loopType = { type: "raf" };
+      targetFps.set(60);
+      this.loopType = { type: "requestAF" };
+    } else if (fps === null) {
+      targetFps.set(null);
+      this.loopType = { type: "nolimit", running: true };
     } else {
+      if (fps < 0 || fps > 60) {
+        console.warn("Can't set FPS to ", fps);
+        return;
+      }
+      targetFps.set(fps);
       this.loopType = { type: "interval", targetFps: fps };
     }
 
@@ -424,9 +448,9 @@ export class WorldManager {
   }
 
   loop() {
-    const time = performance.now();
-    const delta = time - this.previousLoopTime;
-    fpsTime.addData(1000 / delta);
+    const delta = this.clock.getDelta();
+
+    fpsTime.addData(delta === 0 ? 60 : 1 / delta);
 
     this.useTransformArray();
 
@@ -434,9 +458,7 @@ export class WorldManager {
 
     this.participants.sendMyTransformData();
 
-    this.camera.update(time);
-
-    this.previousLoopTime = time;
+    this.camera.update(delta);
   }
 
   setTransformArray(array) {

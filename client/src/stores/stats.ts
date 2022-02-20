@@ -35,8 +35,6 @@ export const memoryGeometries = createStatsStore(DATA_WINDOW_SIZE);
 export const memoryTextures = createStatsStore(DATA_WINDOW_SIZE);
 export const renderCalls = createStatsStore(DATA_WINDOW_SIZE);
 export const renderTriangles = createStatsStore(DATA_WINDOW_SIZE);
-export const renderPoints = createStatsStore(DATA_WINDOW_SIZE);
-export const renderLines = createStatsStore(DATA_WINDOW_SIZE);
 export const renderFrames = createStatsStore(DATA_WINDOW_SIZE);
 
 export const programs = writable([]);

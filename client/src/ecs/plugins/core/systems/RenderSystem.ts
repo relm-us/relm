@@ -15,7 +15,7 @@ export class RenderSystem extends System {
     this.presentation = presentation;
   }
 
-  update() {
-    this.presentation.update();
+  update(delta) {
+    this.presentation.update(delta);
   }
 }

@@ -59,7 +59,6 @@ export class Presentation {
   viewport: HTMLElement;
   size: Vector2;
   object3ds: Array<Object3D>;
-  clock: Clock;
 
   scene: Scene;
   camera: PerspectiveCamera;
@@ -83,7 +82,6 @@ export class Presentation {
     this.viewport = null;
     this.size = new Vector2(1, 1);
     this.object3ds = [];
-    this.clock = new Clock();
 
     this.scene = options.scene;
     this.camera = options.camera;
@@ -214,7 +212,7 @@ export class Presentation {
     this.renderer.compile(this.scene, this.camera);
   }
 
-  update() {
+  update(delta) {
     if (!this.viewport) return;
     if (this.skipUpdate > 0) {
       this.scene.updateMatrixWorld();
@@ -222,7 +220,7 @@ export class Presentation {
       this.skipUpdate--;
       return;
     }
-    const delta = this.clock.getDelta();
+    this.renderer.info.reset();
     this.composer.render(delta);
     // this.renderer.render(this.scene, this.camera);
   }

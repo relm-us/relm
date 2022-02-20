@@ -59,16 +59,14 @@ export class PhysicsSystem extends System {
     );
   }
 
-  // delta is number if milliseconds since last frame, e.g. 16.6ms if framerate is 60fps
+  // delta is number of seconds since last frame, e.g. 0.0166s if framerate is 60fps
   update(delta: number) {
-    const dt = 1 / (1000 / delta);
-
     // Impact components last just one cycle; clean up old ones
     this.queries.impacts.forEach((entity) => {
       entity.remove(Impact);
     });
 
-    this.fixedUpdate(dt);
+    this.fixedUpdate(delta);
 
     // Clear the actions list, so that it can be re-filled during next ECS world step
     RigidBodyRef.actions.length = 0;
