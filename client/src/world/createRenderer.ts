@@ -11,10 +11,14 @@ import { SHADOW_MAP_TYPE } from "~/config/constants";
 
 export function createRenderer(withDefaultStyles = true) {
   const renderer = new WebGLRenderer({
-    antialias: true,
-    alpha: true,
-    stencil: false,
     powerPreference: "high-performance",
+    // optimize for postprocessing composition
+    antialias: false,
+    stencil: false,
+    // depth: false,
+    depth: true,
+    // necessary for CSS3D
+    alpha: true,
   });
 
   // renderer.setPixelRatio(window.devicePixelRatio)

@@ -2,20 +2,37 @@ import { Loader } from "./Loader";
 import {
   Object3D,
   TextureLoader,
-  Color,
-  HemisphereLight,
-  DirectionalLight,
   Scene,
   PerspectiveCamera,
   WebGLRenderer,
-  VSMShadowMap,
-  sRGBEncoding,
   Texture,
   Vector3,
   Vector2,
   Frustum,
   Matrix4,
+  Color,
+  Layers,
+  Clock,
 } from "three";
+
+import {
+  EffectComposer,
+  EffectPass,
+  RenderPass,
+  BlendFunction,
+  BloomEffect,
+  OutlineEffect,
+  SMAAEffect,
+  SMAAPreset,
+  SMAAImageLoader,
+  EdgeDetectionMode,
+  KernelSize,
+} from "postprocessing";
+
+// import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+// import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+// import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass.js";
+// import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
 
 import { World } from "~/ecs/base";
 import { IntersectionFinder } from "./IntersectionFinder";
@@ -42,9 +59,16 @@ export class Presentation {
   viewport: HTMLElement;
   size: Vector2;
   object3ds: Array<Object3D>;
+  clock: Clock;
+
   scene: Scene;
-  renderer: WebGLRenderer;
   camera: PerspectiveCamera;
+
+  renderer: WebGLRenderer;
+  composer: EffectComposer;
+
+  outlineEffect: OutlineEffect;
+
   cameraTarget: Vector3;
   resizeObserver: ResizeObserver;
   intersectionFinder: IntersectionFinder;
@@ -59,9 +83,52 @@ export class Presentation {
     this.viewport = null;
     this.size = new Vector2(1, 1);
     this.object3ds = [];
+    this.clock = new Clock();
+
     this.scene = options.scene;
-    this.renderer = options.renderer;
     this.camera = options.camera;
+    this.renderer = options.renderer;
+
+    this.composer = new EffectComposer(this.renderer);
+
+    this.composer.addPass(new RenderPass(this.scene, this.camera));
+
+    // prepare outline effect for outline EffectPass
+    this.outlineEffect = new OutlineEffect(this.scene, this.camera, {
+      blendFunction: BlendFunction.SCREEN,
+      edgeStrength: 50,
+      // pulseSpeed: 0.5,
+      visibleEdgeColor: 0x00ff00,
+      hiddenEdgeColor: 0x00aa00,
+      blur: true,
+      // kernelSize: KernelSize.MEDIUM,
+      xRay: true,
+      opacity: 1,
+      // height: 480,
+    });
+    // this.outlineEffect.getBlurPass().setScale(2)
+
+    new SMAAImageLoader().load(([searchImage, areaImage]) => {
+      const outlinePass = new EffectPass(this.camera, this.outlineEffect);
+      // outlinePass.renderToScreen = true;
+      this.composer.addPass(outlinePass);
+
+      // Add anti-aliasing last
+      this.composer.addPass(
+        new EffectPass(
+          this.camera,
+          new SMAAEffect(
+            searchImage,
+            areaImage,
+            SMAAPreset.HIGH,
+            EdgeDetectionMode.COLOR
+          )
+        )
+      );
+
+      // this.composer.addPass(new EffectPass(this.camera, new BloomEffect()));
+    });
+
     this.cameraTarget = null; // can be set later with setCameraTarget
     this.resizeObserver = new ResizeObserver(this.resize.bind(this));
     this.intersectionFinder = new IntersectionFinder(this.camera, this.scene);
@@ -133,7 +200,7 @@ export class Presentation {
     this.updateSize();
     this.camera.aspect = this.size.x / this.size.y;
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize(this.size.x, this.size.y);
+    this.composer.setSize(this.size.x, this.size.y);
     if (this.viewport) {
       this.renderer.render(this.scene, this.camera);
     }
@@ -155,7 +222,9 @@ export class Presentation {
       this.skipUpdate--;
       return;
     }
-    this.renderer.render(this.scene, this.camera);
+    const delta = this.clock.getDelta();
+    this.composer.render(delta);
+    // this.renderer.render(this.scene, this.camera);
   }
 
   getFrustum(camera: PerspectiveCamera = this.camera) {
