@@ -1,10 +1,6 @@
 import { Object3D as ThreeObject3D } from "three";
-import { WireframeGeometry2 } from "three/examples/jsm/lines/WireframeGeometry2";
-import { Wireframe } from "three/examples/jsm/lines/Wireframe";
-import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
 
-import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
-import { Mesh, Group, DoubleSide, MeshLambertMaterial } from "three";
+import { System, Groups, Not, Entity } from "~/ecs/base";
 import { Object3D, Presentation } from "~/ecs/plugins/core";
 import { Outline, OutlineApplied } from "../components";
 
@@ -35,21 +31,19 @@ export class OutlineSystem extends System {
   }
 
   addOutline(entity) {
-    const object = entity.get(Object3D).value.children[0];
-    // object.layers.toggle(10);
-    // this.selectedObjects.push(object);
-    // this.presentation.outlinePass.selectedObjects = this.selectedObjects;
-    this.presentation.outlineEffect.selection.add(object);
+    const object: ThreeObject3D = entity.get(Object3D).value;
+    object.traverse((obj) => {
+      this.presentation.outlineEffect.selection.add(obj);
+    });
     entity.add(OutlineApplied, { object });
   }
 
   removeOutline(entity: Entity) {
     const applied = entity.get(OutlineApplied);
     if (applied) {
-      // applied.object.layers.toggle(10);
-      // const idx = this.selectedObjects.indexOf(applied.object);
-      // if (idx >= 0) this.selectedObjects.splice(idx, 1);
-      this.presentation.outlineEffect.selection.delete(applied.object);
+      applied.object.traverse((obj) => {
+        this.presentation.outlineEffect.selection.delete(obj);
+      });
       entity.remove(OutlineApplied);
     }
   }
