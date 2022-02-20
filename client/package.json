@@ -45,6 +45,7 @@
     "sanitize-html": "^2.3.2",
     "serve": "^11.3.2",
     "simplex-noise": "^2.4.0",
+    "sparse-octree": "^7.1.4",
     "svelt-yjs": "1.1.0",
     "svelte": "3.46.3",
     "svelte-dnd-action": "^0.7.3",
