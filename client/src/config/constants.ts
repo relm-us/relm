@@ -12,6 +12,9 @@ export const OCULUS_HEIGHT_SIT = 1.5;
 export const PROXIMITY_AUDIO_INNER_RADIUS = 3;
 export const PROXIMITY_AUDIO_OUTER_RADIUS = 6;
 
+// Physics time-step is independent of render framerate
+export const PHYSICS_TIMESTEP = 1 / 60;
+
 // 0 - 100, where 100 is completely zoomed out
 export const DEFAULT_VIEWPORT_ZOOM = 25.0;
 

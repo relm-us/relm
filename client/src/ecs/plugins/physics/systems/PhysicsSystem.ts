@@ -1,13 +1,17 @@
+import { Matrix4, Vector3, Quaternion } from "three";
 import type {
   EventQueue,
   RigidBody as RapierRigidBody,
   World,
 } from "@dimforge/rapier3d";
+
+import { PHYSICS_TIMESTEP } from "~/config/constants";
+
 import { System, Modified, Groups } from "~/ecs/base";
-import { Impact, RigidBody, RigidBodyRef } from "../components";
 import { Transform, WorldTransform } from "~/ecs/plugins/core";
-import { Matrix4, Vector3, Quaternion } from "three";
+
 import { Physics } from "..";
+import { Impact, RigidBody, RigidBodyRef } from "../components";
 
 const v3_1 = new Vector3();
 const q_1 = new Quaternion();
@@ -15,8 +19,6 @@ const m4_1 = new Matrix4();
 const m4_2 = new Matrix4();
 const m4_3 = new Matrix4();
 const scale = new Vector3(1, 1, 1);
-
-const TIMESTEP = 1 / 60;
 
 function createFixedTimestep(
   timestep: number,
@@ -54,7 +56,7 @@ export class PhysicsSystem extends System {
 
     // Create a regular, fixed physics time-step, regardless of rendering framerate
     this.fixedUpdate = createFixedTimestep(
-      TIMESTEP,
+      PHYSICS_TIMESTEP,
       this.onFixedUpdate.bind(this)
     );
   }
@@ -72,7 +74,7 @@ export class PhysicsSystem extends System {
     RigidBodyRef.actions.length = 0;
   }
 
-  onFixedUpdate(accum) {
+  onFixedUpdate() {
     if (!this.active) return;
     const { world, eventQueue }: { world: World; eventQueue: EventQueue } =
       this.physics;
