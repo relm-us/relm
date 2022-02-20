@@ -3,14 +3,11 @@
   import { createEventDispatcher } from "svelte";
 
   import { Pane } from "~/ui/lib/LeftPanel";
-  import Capsule from "~/ui/lib/Capsule";
+
   import Property from "./Property.svelte";
 
   export let Component;
   export let component;
-  export let entity;
-
-  let toolbarVisible = false;
 
   const dispatch = createEventDispatcher();
 
@@ -26,25 +23,10 @@
     }
   };
 
-  const debugComponent = () => {
-    (window as any).component = component;
-    (window as any).entity = entity;
-    console.log(`'window.component' and 'window.entity' available`)
-  };
-  
-  const modifyComponent = () => {
-    component.modified();
-    dispatch("modified");
-  };
-
   const onModified = () => {
     Component = Component;
     component = component;
     dispatch("modified");
-  };
-
-  const onSettings = () => {
-    toolbarVisible = !toolbarVisible;
   };
 
   const canDestroy = () => {
@@ -66,39 +48,11 @@
 <Pane
   title={Component.editor ? Component.editor.label : Component.name}
   showClose={canDestroy()}
-  showMinimize={true}
-  showSettings={true}
   on:close={() => dispatch("destroy")}
-  on:settings={onSettings}
 >
   {#each Object.entries(Component.props) as [key, prop] (key)}
     {#if propVisible(prop)}
       <Property {key} {component} {prop} on:modified={onModified} />
     {/if}
   {/each}
-  {#if toolbarVisible}
-    <toolbar>
-      <Capsule
-        value="Debug"
-        editable={false}
-        on:mousedown={debugComponent}
-        cursor="pointer"
-      />
-      <Capsule
-        value="Modified"
-        editable={false}
-        on:mousedown={modifyComponent}
-        cursor="pointer"
-      />
-    </toolbar>
-  {/if}
 </Pane>
-
-<style>
-  toolbar {
-    display: flex;
-    margin: 8px 16px 8px 16px;
-    padding-top: 8px;
-    border-top: 1px solid #555;
-  }
-</style>

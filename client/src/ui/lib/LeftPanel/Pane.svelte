@@ -3,8 +3,6 @@
 
   // https://svelte-icons.vercel.app/
   import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
-  import IoIosArrowDown from "svelte-icons/io/IoIosArrowDown.svelte";
-  import IoIosArrowUp from "svelte-icons/io/IoIosArrowUp.svelte";
   import IoIosMenu from "svelte-icons/io/IoIosMenu.svelte";
 
   export let title: string;
@@ -12,8 +10,12 @@
   export let minimized = false;
 
   export let showClose = false;
-  export let showMinimize = false;
   export let showSettings = false;
+
+  function onMinimize() {
+    minimized = !minimized;
+    dispatch("minimize", minimized);
+  }
 
   const dispatch = createEventDispatcher();
 </script>
@@ -33,30 +35,15 @@
         <IoIosMenu />
       </icon>
     {/if}
-    {#if showMinimize}
-      <icon
-        class="minimize"
-        on:mousedown|preventDefault={() => {
-          minimized = !minimized;
-          dispatch("minimize", minimized);
-        }}
-      >
-        {#if minimized}
-          <IoIosArrowDown />
-        {:else}
-          <IoIosArrowUp />
-        {/if}
-      </icon>
-    {/if}
   </icon-bar>
 
   {#if title}
-    <lbl>
-      {title}
+    <r-label on:mousedown|preventDefault={onMinimize}>
+      <span style="cursor: pointer">{title}</span>
       {#if subtitle}
         <info>{subtitle}</info>
       {/if}
-    </lbl>
+    </r-label>
   {/if}
   {#if !minimized}
     <r-content>
@@ -79,7 +66,7 @@
     padding: var(--pane-padding, 4px 12px);
   }
 
-  lbl {
+  r-label {
     background-color: var(--bg-color, rgba(255, 255, 255, 0.25));
     display: block;
     padding: 4px 16px;
@@ -94,7 +81,7 @@
     letter-spacing: 0.5px;
   }
 
-  lbl info {
+  r-label info {
     font-weight: normal;
     color: #eee;
   }
@@ -105,7 +92,6 @@
     justify-content: flex-start;
     flex-direction: row-reverse;
 
-    width: 100%;
     top: 2px;
     right: 8px;
 
@@ -120,8 +106,5 @@
   }
   icon.small {
     transform: scale(0.75);
-  }
-  icon.minimize {
-    transform: scale(0.68) translateY(-2px);
   }
 </style>

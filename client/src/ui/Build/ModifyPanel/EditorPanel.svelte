@@ -14,6 +14,11 @@
   const destroyEntity = () => {
     worldManager.worldDoc.delete(entity);
   };
+
+  const debugEntity = () => {
+    (window as any).entity = entity;
+    console.log(`'window.entity' available`);
+  };
 </script>
 
 <LeftPanel on:minimize>
@@ -27,6 +32,8 @@
     <EntityComponents {entity} />
     <toolbar>
       <Button on:click={destroyEntity}>Delete this Object</Button>
+      <div style="margin-bottom:8px" />
+      <Button on:click={debugEntity}>Debug in Console</Button>
     </toolbar>
     {#if permits.includes("admin")}
       <AdminAddToLibrary />
@@ -54,9 +61,10 @@
   }
   toolbar {
     display: flex;
+    flex-direction: column;
     justify-content: center;
 
-    margin-top: 8px;
+    margin: 8px;
     padding-top: 4px;
     --margin: 8px;
   }
