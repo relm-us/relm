@@ -14,6 +14,9 @@ export class IntersectionFinder {
   raycaster: Raycaster;
   camera: Camera;
   scene: Scene;
+  candidateObjectsCache: Object3D[] = [];
+  candidateObjectsCacheNeedsUpdate: boolean = true;
+  foundSet: Set<Object3D> = new Set();
 
   _intersections: Array<Intersection>;
   _normalizedCoord: Vector2;
@@ -44,21 +47,39 @@ export class IntersectionFinder {
   }
 
   find(): Set<Object3D> {
+    if (this.candidateObjectsCacheNeedsUpdate) {
+      this.candidateObjectsCacheNeedsUpdate = false;
+      this.candidateObjectsCache.length = 0;
+      // this.camera.
+      this.scene.traverseVisible((object) =>
+        this.candidateObjectsCache.push(object)
+      );
+    }
+
     // Reduce length to zero rather than garbage collect (speed optimization)
     this._intersections.length = 0;
-    this.raycaster.intersectObject(this.scene, true, this._intersections);
 
-    return this._intersections.reduce((acc, intersection, i) => {
+    // console.log("visible cache", this.candidateObjectsCache.length);
+    this.raycaster.intersectObjects(
+      this.candidateObjectsCache,
+      false,
+      this._intersections
+    );
+
+    this.foundSet.clear();
+
+    for (let intersection of this._intersections) {
       const object = findObjectActingAsEntityRoot(intersection.object);
       if (object !== null) {
         // outlines and other things should be invisible to IntersectionFinder
         if (!object.userData.nonInteractive) {
           object.userData.lastIntersectionPoint = intersection.point;
-          acc.add(object);
+          this.foundSet.add(object);
         }
       }
-      return acc;
-    }, new Set<Object3D>() /* TODO: don't alloc new Set every time */);
+    }
+
+    return this.foundSet;
   }
 
   findBetween(source: Vector3, target: Vector3): Set<Object3D> {

@@ -222,7 +222,7 @@ export class Presentation {
     }
     this.renderer.info.reset();
     this.composer.render(delta);
-    // this.renderer.render(this.scene, this.camera);
+    this.intersectionFinder.candidateObjectsCacheNeedsUpdate = true;
   }
 
   getFrustum(camera: PerspectiveCamera = this.camera) {
