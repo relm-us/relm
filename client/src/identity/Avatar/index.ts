@@ -7,7 +7,7 @@ import {
 } from "~/config/colliderInteractions";
 import { AvatarEntities } from "~/types";
 
-import { Transform, WorldTransform } from "~/ecs/plugins/core";
+import { Transform } from "~/ecs/plugins/core";
 import { Controller } from "~/ecs/plugins/player-control";
 import { Collider } from "~/ecs/plugins/physics";
 import { Translucent } from "~/ecs/plugins/translucent";
@@ -54,12 +54,7 @@ export class Avatar {
         // Update ECS Transform object
         const transform = e.get(Transform);
         transform.position.add(delta);
-
-        const world = e.get(WorldTransform);
-        world?.position.add(delta);
-
-        // Physics engine keeps a copy of position, update it too
-        const rigidBody = (entity.getByName("RigidBody").sync = true);
+        transform.modified();
       },
       false,
       true

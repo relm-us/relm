@@ -1,6 +1,6 @@
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import { RigidBody, RigidBodyRef, Collider, ColliderRef } from "../components";
-import { Transform, WorldTransform } from "~/ecs/plugins/core";
+import { Transform } from "~/ecs/plugins/core";
 import { ColliderDesc as RapierColliderDesc } from "@dimforge/rapier3d";
 import { createColliderShape } from "../createColliderShape";
 import { Physics } from "../Physics";
@@ -49,12 +49,12 @@ export class ColliderSystem extends System {
     const rigidBodyRef = entity.get(RigidBodyRef);
     const { world, rapier } = (this.world as any).physics;
 
-    const worldTransform = entity.get(WorldTransform);
+    const transform = entity.get(Transform);
 
     const colliderDesc: RapierColliderDesc = createColliderShape(
       rapier,
       spec,
-      worldTransform.scale
+      transform.scale
     );
 
     colliderDesc.setActiveCollisionTypes(
@@ -70,9 +70,9 @@ export class ColliderSystem extends System {
     );
 
     colliderDesc.setTranslation(
-      spec.offset.x * worldTransform.scale.x,
-      spec.offset.y * worldTransform.scale.y,
-      spec.offset.z * worldTransform.scale.z
+      spec.offset.x * transform.scale.x,
+      spec.offset.y * transform.scale.y,
+      spec.offset.z * transform.scale.z
     );
     colliderDesc.setSensor(spec.isSensor);
     colliderDesc.setDensity(spec.density);

@@ -1,7 +1,7 @@
 import { Vector3 } from "three";
 
 import { System, Groups, Not } from "~/ecs/base";
-import { WorldTransform } from "~/ecs/plugins/core";
+import { Transform } from "~/ecs/plugins/core";
 
 import { Presentation } from "~/ecs/plugins/core/Presentation";
 import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
@@ -14,7 +14,7 @@ export class PointerPositionSystem extends System {
   order = Groups.Initialization + 10;
 
   static queries = {
-    added: [WorldTransform, PointerPosition, Not(PointerPositionRef)],
+    added: [PointerPosition, Not(PointerPositionRef)],
     active: [PointerPosition, PointerPositionRef],
     removed: [Not(PointerPosition), PointerPositionRef],
   };
@@ -45,12 +45,12 @@ export class PointerPositionSystem extends System {
 
   build(entity) {
     const spec = entity.get(PointerPosition);
-    const world = entity.get(WorldTransform);
+    const transform = entity.get(Transform);
 
     const value = new WorldPlanes(
       this.presentation.camera,
       this.presentation.size,
-      world.position,
+      transform.position,
       spec.offset
     );
     entity.add(PointerPositionRef, { value });

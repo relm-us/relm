@@ -1,5 +1,7 @@
+import * as THREE from "three";
+
 import { System, Groups, Not, Modified } from "~/ecs/base";
-import { WorldTransform } from "~/ecs/plugins/core";
+import { Object3D } from "~/ecs/plugins/core";
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer";
 
 import { isBrowser } from "~/utils/isBrowser";
@@ -9,6 +11,9 @@ import { Renderable, RenderableRef, CssPlane } from "../components";
 import { getRenderableComponentByType } from "../renderables";
 import { Queries } from "~/ecs/base/Query";
 import { CssPresentation } from "../CssPresentation";
+
+const _v1 = new THREE.Vector3();
+const _q1 = new THREE.Quaternion();
 
 export class RenderableSystem extends System {
   cssPresentation: CssPresentation;
@@ -24,7 +29,7 @@ export class RenderableSystem extends System {
     added: [Renderable, Not(RenderableRef)],
     modified: [Modified(Renderable), RenderableRef],
     modifiedCssPlane: [Modified(CssPlane), RenderableRef],
-    active: [Renderable, RenderableRef],
+    active: [Renderable, RenderableRef, Object3D],
     removed: [Not(Renderable), RenderableRef],
   };
 
@@ -51,13 +56,12 @@ export class RenderableSystem extends System {
     });
 
     this.queries.active.forEach((entity) => {
-      const transform = entity.get(WorldTransform);
-      if (!transform) return;
+      const object3d = entity.get(Object3D).value;
 
       const spec = entity.get(Renderable);
-      const ref = entity.get(RenderableRef);
+      const css3d = entity.get(RenderableRef)?.value;
 
-      this.copyTransform(ref.value, transform, spec.scale);
+      this.copyTransform(css3d, object3d, spec.scale);
     });
 
     this.queries.removed.forEach((entity) => {
@@ -67,10 +71,10 @@ export class RenderableSystem extends System {
 
   build(entity) {
     const spec = entity.get(Renderable);
-    const transform = entity.get(WorldTransform);
+    const object3d = entity.get(Object3D);
     const cssPlane = entity.get(CssPlane);
 
-    if (!transform || !cssPlane) return;
+    if (!object3d || !cssPlane) return;
 
     const screenSize = cssPlane.getScreenSize(spec.scale);
 
@@ -78,20 +82,20 @@ export class RenderableSystem extends System {
     const containerElement = document.createElement("div");
     containerElement.style.width = screenSize.x + "px";
     containerElement.style.height = screenSize.y + "px";
-    const object = new CSS3DObject(containerElement);
+    const css3d = new CSS3DObject(containerElement);
 
     // Create whatever Svelte component is specified by the type
     const RenderableComponent = getRenderableComponentByType(spec.kind);
-    object.userData.renderable = new RenderableComponent({
+    css3d.userData.renderable = new RenderableComponent({
       target: containerElement,
       props: { ...spec, width: screenSize.x, height: screenSize.y, entity },
     });
 
-    this.copyTransform(object, transform, spec.scale);
+    this.copyTransform(css3d, object3d.value, spec.scale);
 
-    this.cssPresentation.scene.add(object);
+    this.cssPresentation.scene.add(css3d);
 
-    entity.add(RenderableRef, { value: object });
+    entity.add(RenderableRef, { value: css3d });
   }
 
   remove(entity) {
@@ -105,17 +109,16 @@ export class RenderableSystem extends System {
     entity.remove(RenderableRef);
   }
 
-  copyTransform(object, transform, scale) {
-    if (!object) {
-      console.warn(`Can't copyTransform, object is null`, object);
+  copyTransform(css3d, object3d: THREE.Object3D, scale) {
+    if (!css3d) {
+      console.warn(`Can't copyTransform, css3d is null`, css3d);
       return;
     }
-    object.position
-      .copy(transform.position)
-      .multiplyScalar(this.cssPresentation.FACTOR);
-    object.quaternion.copy(transform.rotation);
-    object.scale
-      .copy(transform.scale)
-      .multiplyScalar(this.cssPresentation.FACTOR * scale);
+    object3d.getWorldPosition(_v1);
+    css3d.position.copy(_v1).multiplyScalar(this.cssPresentation.FACTOR);
+    object3d.getWorldQuaternion(_q1);
+    css3d.quaternion.copy(_q1);
+    object3d.getWorldScale(_v1);
+    css3d.scale.copy(_v1).multiplyScalar(this.cssPresentation.FACTOR * scale);
   }
 }

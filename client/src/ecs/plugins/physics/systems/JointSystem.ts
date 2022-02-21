@@ -1,5 +1,5 @@
 import { System, Groups, Not, Modified } from "~/ecs/base";
-import { Transform, WorldTransform } from "~/ecs/plugins/core";
+import { Transform } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 import {
   BallJoint,
@@ -12,8 +12,7 @@ export class JointSystem extends System {
   order = Groups.Initialization;
 
   static queries = {
-    new: [WorldTransform, RigidBodyRef, BallJoint, Not(BallJointRef)],
-    removedWorld: [Not(WorldTransform), BallJointRef],
+    new: [RigidBodyRef, BallJoint, Not(BallJointRef)],
     removedBody: [Not(RigidBodyRef), BallJointRef],
     removed: [Not(BallJoint), BallJointRef],
     modified: [Modified(BallJoint), BallJointRef],
@@ -23,9 +22,6 @@ export class JointSystem extends System {
   update() {
     this.queries.new.forEach((entity) => {
       this.build(entity);
-    });
-    this.queries.removedWorld.forEach((entity) => {
-      this.release(entity);
     });
     this.queries.removedBody.forEach((entity) => {
       this.release(entity);
@@ -72,8 +68,8 @@ export class JointSystem extends System {
         );
       }
 
-      const parentPosition = targetEntity.get(WorldTransform).position;
-      const childPosition = entity.get(WorldTransform).position;
+      const parentPosition = targetEntity.get(Transform).position;
+      const childPosition = entity.get(Transform).position;
       // let jointParams = new rapier.JointParams.revolute(
       //   new Vector3(childPosition.x < 0 ? -0.5 : 0.5, 0.5, 0),
       //   new Vector3(0, 0, 1),

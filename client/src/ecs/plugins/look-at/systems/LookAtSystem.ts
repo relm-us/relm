@@ -1,7 +1,7 @@
 import { Vector3, Matrix4, Quaternion } from "three";
-import { System, Groups, Entity } from "~/ecs/base";
+import { System, Entity } from "~/ecs/base";
 
-import { Transform, WorldTransform, Presentation } from "~/ecs/plugins/core";
+import { Transform, Presentation } from "~/ecs/plugins/core";
 import { LookAt } from "../components";
 
 const m1 = new Matrix4();
@@ -41,18 +41,15 @@ export class LookAtSystem extends System {
     const lookAt = entity.get(LookAt);
     const transform = entity.get(Transform);
 
-    const world = entity.get(WorldTransform);
-    if (!world) return;
-
     const targetEntity = this.world.entities.getById(lookAt.target);
     if (!targetEntity) return;
 
-    const targetWorld = targetEntity.get(WorldTransform) as any;
-    if (!targetWorld) return;
+    const targetTransform = targetEntity.get(Transform) as any;
+    if (!targetTransform) return;
 
-    position.copy(world.position);
+    position.copy(transform.position);
 
-    targetPosition.copy(targetWorld.position);
+    targetPosition.copy(targetTransform.position);
 
     // Camera looks down negative z-axis, so when it is the thing doing the looking, flip it around
     if (entity.id === this.cameraId) {
@@ -80,7 +77,7 @@ export class LookAtSystem extends System {
 
     const parent = entity.getParent();
     if (parent) {
-      m1.extractRotation(parent.get(WorldTransform).matrix);
+      m1.extractRotation(parent.get(Transform).matrix);
       q1.setFromRotationMatrix(m1);
       transform.rotation.premultiply(q1.inverse());
     }

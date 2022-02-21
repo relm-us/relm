@@ -7,7 +7,7 @@
 
   import { worldUIMode } from "~/stores/worldUIMode";
   import { audioMode } from "~/stores/audioMode";
-  import { Transform, WorldTransform } from "~/ecs/plugins/core";
+  import { Object3D } from "~/ecs/plugins/core";
   import { isFirefox } from "~/utils/isFirefox";
 
   import PlayButtonIcon from "./shared/PlayButtonIcon.svelte";
@@ -141,10 +141,10 @@
   $: if ($audioMode === "proximity") {
     if (interval) clearInterval(interval);
     interval = setInterval(() => {
-      const transform = entity.get(WorldTransform);
+      const object3d = entity.get(Object3D)?.value;
       const avatar = worldManager.avatar;
-      if (avatar && transform) {
-        const distance = avatar.position.distanceTo(transform.position);
+      if (avatar && object3d) {
+        const distance = avatar.position.distanceTo(object3d.position);
         if (distance >= 0 && distance < falloffStart) {
           volume = 1;
         } else if (distance < falloffEnd) {

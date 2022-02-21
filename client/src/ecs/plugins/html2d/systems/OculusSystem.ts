@@ -2,7 +2,7 @@ import { Vector3 } from "three";
 import { Tween, Easing } from "@tweenjs/tween.js";
 
 import { System, Groups, Not, Entity, Modified } from "~/ecs/base";
-import { WorldTransform, Presentation } from "~/ecs/plugins/core";
+import { Object3D, Presentation } from "~/ecs/plugins/core";
 import { Perspective } from "~/ecs/plugins/perspective";
 
 import HtmlOculus from "../HtmlOculus.svelte";
@@ -25,7 +25,7 @@ export class OculusSystem extends System {
   static queries = {
     new: [Oculus, Not(OculusRef)],
     modified: [Modified(Oculus), OculusRef],
-    active: [Oculus, OculusRef, WorldTransform],
+    active: [Oculus, OculusRef, Object3D],
     removed: [Not(Oculus), OculusRef],
   };
 
@@ -89,10 +89,10 @@ export class OculusSystem extends System {
   updatePosition(entity: Entity) {
     if (this.presentation.skipUpdate > 0) return;
 
-    const world = entity.get(WorldTransform);
+    const object3d = entity.get(Object3D);
     const spec = entity.get(Oculus);
     const dist = this.presentation.camera.parent.position.distanceTo(
-      entity.get(WorldTransform).position
+      object3d.value.position
     );
 
     if (spec.tween && spec.tweenedTargetOffset) {
@@ -121,7 +121,7 @@ export class OculusSystem extends System {
     }
 
     // calculate left, top
-    v1.copy(world.position);
+    v1.copy(object3d.value.position);
     v1.add(spec.offset);
 
     this.htmlPresentation.project(v1);

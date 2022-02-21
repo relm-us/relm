@@ -1,8 +1,8 @@
 import { Vector3 } from "three";
 
 import { System, Groups, Not, Entity, Modified } from "~/ecs/base";
-import { WorldTransform, Presentation } from "~/ecs/plugins/core";
-import { Perspective } from '~/ecs/plugins/perspective'
+import { Presentation, Object3D } from "~/ecs/plugins/core";
+import { Perspective } from "~/ecs/plugins/perspective";
 
 import { Html2d, Html2dRef } from "../components";
 import { getHtmlComponent } from "../html";
@@ -19,7 +19,7 @@ export class Html2dSystem extends System {
   static queries = {
     new: [Html2d, Not(Html2dRef)],
     modified: [Modified(Html2d), Html2dRef],
-    active: [Html2d, Html2dRef, WorldTransform],
+    active: [Html2d, Html2dRef, Object3D],
     removed: [Not(Html2d), Html2dRef],
   };
 
@@ -51,14 +51,6 @@ export class Html2dSystem extends System {
   build(entity: Entity) {
     const spec = entity.get(Html2d);
 
-    const isOverflowing = ({
-      clientWidth,
-      clientHeight,
-      scrollWidth,
-      scrollHeight,
-    }) => {
-      return scrollHeight > clientHeight || scrollWidth > clientWidth;
-    };
     // Prepare a container for Svelte
     const container = this.htmlPresentation.createContainer(
       spec.hanchor,
@@ -96,11 +88,11 @@ export class Html2dSystem extends System {
   updatePosition(entity: Entity, boundsWidth: number) {
     if (this.presentation.skipUpdate > 0) return;
 
-    const world = entity.get(WorldTransform);
+    const object3d = entity.get(Object3D);
     const spec = entity.get(Html2d);
 
     // calculate left, top
-    v1.copy(world.position);
+    v1.copy(object3d.value.position);
     v1.add(spec.offset);
 
     this.htmlPresentation.project(v1);

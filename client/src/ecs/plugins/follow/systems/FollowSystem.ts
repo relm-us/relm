@@ -1,6 +1,6 @@
 import { Vector3 } from "three";
 import { System, Groups } from "~/ecs/base";
-import { WorldTransform, Transform } from "~/ecs/plugins/core";
+import { Object3D, Transform } from "~/ecs/plugins/core";
 
 import { Follow } from "../components";
 
@@ -26,10 +26,10 @@ export class FollowSystem extends System {
     const targetEntity = world.entities.getById(spec.target);
     if (!targetEntity) return;
 
-    const targetTransform = targetEntity.get(WorldTransform) as any;
-    if (!targetTransform) return;
+    const object3d = targetEntity.get(Object3D);
+    if (!object3d) return;
 
-    targetPosition.copy(targetTransform.position);
+    targetPosition.copy(object3d.value.position);
     targetPosition.add(spec.offset);
 
     transform.position.lerp(targetPosition, spec.lerpAlpha);
