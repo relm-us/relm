@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { System, Not, Groups, Entity } from "~/ecs/base";
+import { System, Not, Modified, Groups, Entity } from "~/ecs/base";
 import { Queries } from "~/ecs/base/Query";
 import { Object3D, Transform } from "../components";
 import { Presentation } from "../Presentation";
@@ -11,6 +11,7 @@ export class Object3DSystem extends System {
 
   static queries: Queries = {
     new: [Transform, Not(Object3D)],
+    modified: [Modified(Transform), Object3D],
     removed: [Not(Transform), Object3D],
   };
 
@@ -25,6 +26,10 @@ export class Object3DSystem extends System {
   update() {
     this.queries.new.forEach((entity) => {
       this.createObject(entity);
+    });
+
+    this.queries.modified.forEach((entity) => {
+      this.updateObject(entity);
     });
 
     this.queries.removed.forEach((entity) => {
@@ -65,6 +70,17 @@ export class Object3DSystem extends System {
     transform.position = object3d.position;
     transform.rotation = object3d.quaternion;
     transform.scale = object3d.scale;
+  }
+
+  updateObject(entity: Entity) {
+    const transform = entity.get(Transform);
+    const object3d = entity.get(Object3D).value;
+
+    object3d.matrix.compose(
+      transform.position,
+      transform.rotation,
+      transform.scale
+    );
   }
 
   removeObject(entity: Entity) {
