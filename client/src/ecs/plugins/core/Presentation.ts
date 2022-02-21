@@ -10,9 +10,6 @@ import {
   Vector2,
   Frustum,
   Matrix4,
-  Color,
-  Layers,
-  Clock,
 } from "three";
 
 import {
@@ -20,19 +17,12 @@ import {
   EffectPass,
   RenderPass,
   BlendFunction,
-  BloomEffect,
   OutlineEffect,
   SMAAEffect,
   SMAAPreset,
   SMAAImageLoader,
   EdgeDetectionMode,
-  KernelSize,
 } from "postprocessing";
-
-// import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
-// import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-// import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass.js";
-// import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
 
 import { World } from "~/ecs/base";
 import { IntersectionFinder } from "./IntersectionFinder";

@@ -167,11 +167,6 @@ module.exports = {
         use: ["source-map-loader"],
       },
       {
-        test: /\.mjs$/,
-        include: /node_modules/,
-        type: "javascript/auto",
-      },
-      {
         test: /\.(png|jpe?g|gif|svg)$/i,
         use: [
           {
