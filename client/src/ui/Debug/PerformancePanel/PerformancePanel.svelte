@@ -3,6 +3,7 @@
 
   import { worldManager } from "~/world";
   import { shadowsEnabled } from "~/stores/shadowsEnabled";
+  import { highDefEnabled } from "~/stores/highDefEnabled";
 
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import Button from "~/ui/lib/Button";
@@ -64,6 +65,11 @@
   <setting>
     <b>Shadows Enabled:</b>
     <ToggleSwitch bind:enabled={$shadowsEnabled} />
+  </setting>
+
+  <setting>
+    <b>High-def Enabled:</b>
+    <ToggleSwitch bind:enabled={$highDefEnabled} />
   </setting>
 
   <!-- Show most relevant render stats here -->

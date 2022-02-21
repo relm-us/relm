@@ -22,7 +22,6 @@ export function createRenderer(withDefaultStyles = true) {
 
   renderer.info.autoReset = false;
 
-  // renderer.setPixelRatio(window.devicePixelRatio)
   renderer.setClearColor(0x000000, 0.0);
   renderer.toneMapping = LinearToneMapping;
   renderer.toneMappingExposure = 1.1;

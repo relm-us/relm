@@ -21,6 +21,7 @@ import { targetFps } from "~/stores/targetFps";
 import { playState } from "~/stores/playState";
 import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 import { shadowsEnabled } from "~/stores/shadowsEnabled";
+import { highDefEnabled } from "~/stores/highDefEnabled";
 
 // Animation keys
 import { keyShift, key1, key2, key3 } from "~/stores/keys";
@@ -198,6 +199,12 @@ export class WorldManager {
       })
     );
 
+    this.unsubs.push(
+      highDefEnabled.subscribe(($enabled) => {
+        this.setPixelRatio($enabled ? window.devicePixelRatio : 1);
+      })
+    );
+
     // Make colliders visible in build mode
     this.unsubs.push(
       derived([worldUIMode, keyShift], ([$mode, $keyShift], set) => {
@@ -334,6 +341,11 @@ export class WorldManager {
       setLabel(avatar.entities, "", "", null);
     }
     (this.world.presentation.scene.fog as any).density = 0;
+  }
+
+  setPixelRatio(n) {
+    this.world.presentation.renderer.setPixelRatio(n);
+    this.world.presentation.resize();
   }
 
   start() {
