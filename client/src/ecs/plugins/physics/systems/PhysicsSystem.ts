@@ -1,44 +1,13 @@
-import { Matrix4, Vector3, Quaternion } from "three";
-import type {
-  EventQueue,
-  RigidBody as RapierRigidBody,
-  World,
-} from "@dimforge/rapier3d";
+import type { EventQueue, RigidBody, World } from "@dimforge/rapier3d";
 
 import { PHYSICS_TIMESTEP } from "~/config/constants";
 
 import { System, Modified, Groups } from "~/ecs/base";
-import { Transform, WorldTransform } from "~/ecs/plugins/core";
+import { Transform } from "~/ecs/plugins/core";
 
 import { Physics } from "..";
-import { Impact, RigidBody, RigidBodyRef } from "../components";
+import { Impact, RigidBodyRef } from "../components";
 import { RigidBodySystem } from ".";
-
-const v3_1 = new Vector3();
-const q_1 = new Quaternion();
-const m4_1 = new Matrix4();
-const m4_2 = new Matrix4();
-const m4_3 = new Matrix4();
-const scale = new Vector3(1, 1, 1);
-
-function createFixedTimestep(
-  timestep: number,
-  callback: (delta: number) => void
-) {
-  let accumulator = 0;
-  return (delta: number) => {
-    accumulator += delta;
-    while (accumulator >= timestep) {
-      callback(accumulator);
-      if (accumulator >= 1) {
-        // give up, too slow to catch up
-        accumulator = 0;
-      } else {
-        accumulator -= timestep;
-      }
-    }
-  };
-}
 
 export class PhysicsSystem extends System {
   fixedUpdate: Function;
@@ -88,7 +57,7 @@ export class PhysicsSystem extends System {
     });
 
     this.queries.modified.forEach((entity) => {
-      const body: RapierRigidBody = entity.get(RigidBodyRef).value;
+      const body: RigidBody = entity.get(RigidBodyRef).value;
       const local = entity.get(Transform);
       body.setTranslation(local.position, true);
       body.setRotation(local.rotation, true);
@@ -115,42 +84,37 @@ export class PhysicsSystem extends System {
     eventQueue.drainContactEvents(handleContactEvent);
     eventQueue.drainIntersectionEvents(handleContactEvent);
 
-    this.physics.world.forEachActiveRigidBodyHandle((handle) => {
-      const entity = RigidBodySystem.bodies.get(handle);
+    this.physics.world.forEachActiveRigidBody((body) => {
+      const entity = RigidBodySystem.bodies.get(body.handle);
 
       const parent = entity.getParent();
-      const local = entity.get(Transform);
-      const world = entity.get(WorldTransform);
-      const spec = entity.get(RigidBody);
-      const body = entity.get(RigidBodyRef).value;
+      const transform = entity.get(Transform);
 
-      if (spec.kind === "DYNAMIC") {
-        if (!parent) {
-          // if (entity.name === "Avatar") return;
-          local.position.copy(body.translation());
-          world.position.copy(body.translation());
-          local.rotation.copy(body.rotation());
-          world.rotation.copy(body.rotation());
-        } else {
-          v3_1.copy(body.translation());
-          q_1.copy(body.rotation());
-          // make a sim world matrix
-          m4_1.compose(v3_1, q_1, scale);
-          // make an inverse world matrix
-          m4_2.copy(world.matrix).invert();
-          // -world * sim (diff to apply to local)
-          m4_3.multiplyMatrices(m4_2, m4_1);
-          // add diff matrix to local
-          local.matrix.multiply(m4_3);
-          // decompose and update world
-          local.matrix.decompose(local.position, local.rotation, local.scale);
-          world.matrix.copy(m4_1);
-          world.matrix.decompose(world.position, world.rotation, world.scale);
-        }
-
-        spec.angularVelocity.copy(body.angvel());
-        spec.linearVelocity.copy(body.linvel());
+      if (!parent) {
+        transform.position.copy(body.translation());
+        transform.rotation.copy(body.rotation());
       }
     });
   }
+}
+
+// Return a function that calls a callback as many times
+// as needed in order to "catch up" to the current time
+function createFixedTimestep(
+  timestep: number,
+  callback: (delta: number) => void
+) {
+  let accumulator = 0;
+  return (delta: number) => {
+    accumulator += delta;
+    while (accumulator >= timestep) {
+      callback(accumulator);
+      if (accumulator >= 1) {
+        // give up, too slow to catch up
+        accumulator = 0;
+      } else {
+        accumulator -= timestep;
+      }
+    }
+  };
 }
