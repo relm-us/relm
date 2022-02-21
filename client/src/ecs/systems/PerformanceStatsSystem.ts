@@ -11,13 +11,11 @@ import {
   renderCalls,
   renderTriangles,
   renderFrames,
-  programs,
   systems,
 } from "~/stores/stats";
 
 export class PerformanceStatsSystem extends System {
   presentation: Presentation;
-  programHash: string;
 
   // This should happen last, after everything is done, so stats are accurate
   // for the current frame
@@ -25,7 +23,6 @@ export class PerformanceStatsSystem extends System {
 
   init({ presentation }) {
     this.presentation = presentation;
-    this.programHash = "";
   }
 
   update() {
@@ -37,23 +34,6 @@ export class PerformanceStatsSystem extends System {
       renderCalls.addData(info.render.calls);
       renderTriangles.addData(info.render.triangles);
       renderFrames.addData(info.render.frame);
-
-      // Every once in a while, check to see if there are new shaders, etc.
-      if (this.world.version % 500 === 20) {
-        const programsSummary = info.programs.map((program) => ({
-          id: program.id,
-          name: program.name,
-          usedTimes: program.usedTimes,
-          size: program.cacheKey.length,
-        }));
-        const programHash = info.programs
-          .map((program) => program.name)
-          .join("-");
-        if (this.programHash !== programHash) {
-          programs.set(programsSummary);
-          this.programHash = programHash;
-        }
-      }
     }
 
     // ECS system performance

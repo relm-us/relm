@@ -1,4 +1,7 @@
 <script>
+  import { onMount } from "svelte";
+
+  import { worldManager } from "~/world";
   import { shadowsEnabled } from "~/stores/shadowsEnabled";
 
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
@@ -12,8 +15,6 @@
     fpsTime,
     renderCalls,
     renderTriangles,
-    memoryGeometries,
-    memoryTextures,
     programs,
     systems,
   } from "~/stores/stats";
@@ -31,6 +32,21 @@
   $: secondarySystems = Object.entries($systems).filter(
     ([name, _]) => !name.match(primarySystemsRE)
   );
+
+  onMount(() => {
+    const renderer = worldManager.world.presentation.renderer;
+    const interval = setInterval(() => {
+      const programsSummary = renderer.info.programs.map((program) => ({
+        id: program.id,
+        name: program.name,
+        usedTimes: program.usedTimes,
+        size: program.cacheKey.length,
+      }));
+      programs.set(programsSummary);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  });
 </script>
 
 <LeftPanel on:minimize>

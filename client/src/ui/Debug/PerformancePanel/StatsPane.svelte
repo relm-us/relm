@@ -12,12 +12,7 @@
   $$props;
 </script>
 
-<Pane
-  {title}
-  subtitle={value || $dataStore[0].toFixed(1)}
-  showMinimize={true}
-  {minimized}
->
+<Pane {title} subtitle={value || $dataStore[0].toFixed(1)} {minimized}>
   <Chart data={$dataStore} {maximum} />
   <slot />
 </Pane>
