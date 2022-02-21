@@ -1,4 +1,4 @@
-import { System, Groups, Not, Modified } from "~/ecs/base";
+import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
 import { RigidBody, RigidBodyRef } from "../components";
 import type { RigidBodyDesc as RapierRigidBodyDesc } from "@dimforge/rapier3d";
@@ -24,6 +24,8 @@ export class RigidBodySystem extends System {
     modified: [Modified(RigidBody), RigidBodyRef],
     removed: [Not(RigidBody), RigidBodyRef],
   };
+
+  static bodies: Map<number, Entity> = new Map();
 
   update() {
     // create RigidBodyRef from spec
@@ -68,6 +70,7 @@ export class RigidBodySystem extends System {
     if (spec.mass) rigidBodyDesc.setAdditionalMass(spec.mass);
 
     let rigidBody = world.createRigidBody(rigidBodyDesc);
+    RigidBodySystem.bodies.set(rigidBody.handle, entity);
 
     entity.add(RigidBodyRef, { value: rigidBody });
   }
@@ -77,6 +80,11 @@ export class RigidBodySystem extends System {
     const bodyRef = entity.get(RigidBodyRef);
 
     world.removeRigidBody(bodyRef.value);
+    RigidBodySystem.bodies.delete(bodyRef.value.handle);
     entity.remove(RigidBodyRef);
+  }
+
+  reset(): void {
+    RigidBodySystem.bodies.clear();
   }
 }

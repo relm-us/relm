@@ -12,6 +12,7 @@ import { Transform, WorldTransform } from "~/ecs/plugins/core";
 
 import { Physics } from "..";
 import { Impact, RigidBody, RigidBodyRef } from "../components";
+import { RigidBodySystem } from ".";
 
 const v3_1 = new Vector3();
 const q_1 = new Quaternion();
@@ -46,7 +47,6 @@ export class PhysicsSystem extends System {
   order = Groups.Presentation + 300;
 
   static queries = {
-    default: [RigidBodyRef, Transform, WorldTransform],
     modified: [RigidBodyRef, Modified(Transform)],
     impacts: [Impact],
   };
@@ -115,7 +115,9 @@ export class PhysicsSystem extends System {
     eventQueue.drainContactEvents(handleContactEvent);
     eventQueue.drainIntersectionEvents(handleContactEvent);
 
-    this.queries.default.forEach((entity) => {
+    this.physics.world.forEachActiveRigidBodyHandle((handle) => {
+      const entity = RigidBodySystem.bodies.get(handle);
+
       const parent = entity.getParent();
       const local = entity.get(Transform);
       const world = entity.get(WorldTransform);
