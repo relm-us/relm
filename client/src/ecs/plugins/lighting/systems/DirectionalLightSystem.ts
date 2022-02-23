@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { MathUtils } from "three";
+import { MathUtils, Object3D } from "three";
 
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
-import { Object3D } from "~/ecs/plugins/core";
+import { Object3DRef } from "~/ecs/plugins/core";
 import { Perspective } from "~/ecs/plugins/perspective";
 
 import { DirectionalLight, DirectionalLightRef } from "../components";
@@ -16,7 +16,7 @@ export class DirectionalLightSystem extends System {
   order = Groups.Initialization;
 
   static queries = {
-    added: [DirectionalLight, Object3D, Not(DirectionalLightRef)],
+    added: [DirectionalLight, Object3DRef, Not(DirectionalLightRef)],
     active: [DirectionalLight, DirectionalLightRef],
     modified: [Modified(DirectionalLight), DirectionalLightRef],
     removed: [Not(DirectionalLight), DirectionalLightRef],
@@ -90,17 +90,17 @@ export class DirectionalLightSystem extends System {
 
   buildLight(entity) {
     const spec = entity.get(DirectionalLight);
-    const object3d = entity.get(Object3D);
+    const object3d: Object3D = entity.get(Object3DRef).value;
     const light = new THREE.DirectionalLight(spec.color, spec.intensity);
 
-    object3d.value.add(light);
+    object3d.add(light);
 
     if (spec.target) {
       const targetEntity: Entity = this.world.entities.getById(spec.target);
       if (targetEntity) {
         // DirectionalLight will point towards target entity, if provided
-        const target = targetEntity.get(Object3D);
-        light.target = target.value;
+        const target: Object3D = targetEntity.get(Object3DRef)?.value;
+        light.target = target;
       } else {
         console.warn(
           `DirectionalLight's target entity is invalid; ` +
@@ -112,10 +112,10 @@ export class DirectionalLightSystem extends System {
       // If no target entity is provided, DirectionalLight will "float",
       // always pointing in same direction
       // TODO: FixMe
-      light.target.position.x = -object3d.value.position.x;
-      light.target.position.y = -object3d.value.position.y;
-      light.target.position.z = -object3d.value.position.z;
-      object3d.value.add(light.target);
+      light.target.position.x = -object3d.position.x;
+      light.target.position.y = -object3d.position.y;
+      light.target.position.z = -object3d.position.z;
+      object3d.add(light.target);
     }
 
     return light;

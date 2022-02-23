@@ -1,5 +1,5 @@
 import { System, Groups, Entity, Not, Modified } from "~/ecs/base";
-import { Presentation, Object3D } from "~/ecs/plugins/core";
+import { Presentation, Object3DRef, Transform } from "~/ecs/plugins/core";
 import { Particles, ParticlesRef, ParticlesLoading } from "../components";
 import * as THREE from "three";
 import NebulaSystem, * as N from "three-nebula";
@@ -40,9 +40,9 @@ export class ParticlesSystem extends System {
       const system = entity.get(ParticlesRef).value;
 
       if (spec.follows) {
-        const object3d = entity.get(Object3D).value;
+        const transform: Transform = entity.get(Transform);
         system.emitters.forEach((emitter) => {
-          emitter.position.copy(object3d.position);
+          emitter.position.copy(transform.positionWorld);
         });
       }
 

@@ -1,8 +1,8 @@
-import { FrontSide, NoBlending } from "three";
+import { FrontSide, NoBlending, Object3D } from "three";
 import { Tween, Easing } from "@tweenjs/tween.js";
 
 import { System, Groups, Entity, Not, Modified } from "~/ecs/base";
-import { Object3D } from "~/ecs/plugins/core";
+import { Object3DRef } from "~/ecs/plugins/core";
 import {
   Translucent,
   TranslucentApplied,
@@ -14,8 +14,8 @@ export class TranslucentSystem extends System {
   order = Groups.Initialization + 1;
 
   static queries = {
-    new: [Object3D, Translucent, Not(TranslucentApplied)],
-    active: [Object3D, TranslucentTweening],
+    new: [Object3DRef, Translucent, Not(TranslucentApplied)],
+    active: [Object3DRef, TranslucentTweening],
     modified: [Modified(Translucent)],
     removed: [Not(Translucent), TranslucentApplied],
   };
@@ -37,13 +37,13 @@ export class TranslucentSystem extends System {
   }
 
   build(entity: Entity) {
-    const object3d = entity.get(Object3D);
+    const object3d: Object3D = entity.get(Object3DRef).value;
     const translucent = entity.get(Translucent);
     const options =
       entity.get(TranslucentOptions) || new TranslucentOptions(this.world);
 
     if (!options.opaque) {
-      object3d.value.traverse((node) => {
+      object3d.traverse((node: any) => {
         if (node.isMesh && !node.material.transparent) {
           node.userData.translucent = {
             transparent: node.material.transparent,
@@ -74,18 +74,21 @@ export class TranslucentSystem extends System {
     time: number = 500,
     onComplete: () => void = null
   ) {
-    const object3d = entity.get(Object3D);
+    const object3d: Object3D = entity.get(Object3DRef).value;
     const tweening = entity.get(TranslucentTweening);
 
     if (tweening) {
+      // If we're interrupting another tween, start with the opacity
+      // at the level the interruption occurs:
       startOpacity = tweening.tween._object.opacity;
+      
       tweening.tween?.stop();
       tweening.tween = null;
       entity.remove(TranslucentTweening);
     }
 
     const setOpacity = (opacity) => {
-      object3d.value.traverse((node) => {
+      object3d.traverse((node: any) => {
         if (
           node.isMesh &&
           node.userData.translucent &&
@@ -120,14 +123,14 @@ export class TranslucentSystem extends System {
   }
 
   remove(entity: Entity) {
-    const applied = entity.get(TranslucentApplied);
+    const applied: TranslucentApplied = entity.get(TranslucentApplied);
     const options =
       entity.get(TranslucentOptions) || new TranslucentOptions(this.world);
     const object3d = applied.value;
 
     if (object3d) {
       this.startTween(entity, applied.opacity, 1, options.time, () => {
-        object3d.value.traverse((node) => {
+        object3d.traverse((node: any) => {
           if (node.isMesh) {
             const former = node.userData.translucent;
             if (former) {

@@ -1,6 +1,15 @@
+import {
+  Object3D,
+  PlaneGeometry,
+  CircleGeometry,
+  MeshBasicMaterial,
+  Mesh,
+  NoBlending,
+  DoubleSide,
+} from "three";
+
 import { System, Not, Modified, Groups } from "~/ecs/base";
-import { Object3D } from "~/ecs/plugins/core";
-import * as THREE from "three";
+import { Object3DRef } from "~/ecs/plugins/core";
 
 import { isBrowser } from "~/utils/isBrowser";
 import { CssPlane, CssShapeMesh } from "../components";
@@ -10,9 +19,9 @@ export class CssPlaneSystem extends System {
   order = Groups.Simulation + 99;
 
   static queries = {
-    added: [Object3D, CssPlane, Not(CssShapeMesh)],
-    modified: [Object3D, Modified(CssPlane), CssShapeMesh],
-    removed: [Object3D, Not(CssPlane), CssShapeMesh],
+    added: [Object3DRef, CssPlane, Not(CssShapeMesh)],
+    modified: [Object3DRef, Modified(CssPlane), CssShapeMesh],
+    removed: [Object3DRef, Not(CssPlane), CssShapeMesh],
   };
 
   update() {
@@ -35,30 +44,30 @@ export class CssPlaneSystem extends System {
 
   build(entity) {
     const plane = entity.get(CssPlane);
-    const object3d = entity.get(Object3D).value;
+    const object3d: Object3D = entity.get(Object3DRef).value;
 
     let geometry;
     switch (plane.kind) {
       case "RECTANGLE":
         const size = plane.rectangleSize;
-        geometry = new THREE.PlaneGeometry(size.x, size.y);
+        geometry = new PlaneGeometry(size.x, size.y);
         break;
       case "CIRCLE":
         const radius = plane.circleRadius;
-        geometry = new THREE.CircleGeometry(radius, 32);
+        geometry = new CircleGeometry(radius, 32);
         break;
       default:
         throw new Error(`CssPlaneSystem: invalid plane.kind ${plane.kind}`);
     }
 
-    const material = new THREE.MeshBasicMaterial({
+    const material = new MeshBasicMaterial({
       color: 0,
       opacity: 0,
-      blending: THREE.NoBlending,
-      side: THREE.DoubleSide,
+      blending: NoBlending,
+      side: DoubleSide,
     });
 
-    const mesh = new THREE.Mesh(geometry, material);
+    const mesh = new Mesh(geometry, material);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
 

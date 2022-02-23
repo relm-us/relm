@@ -2,14 +2,14 @@ import {
   Vector2,
   Vector3,
   Box3,
-  Object3D as ThreeObject3D,
+  Object3D,
   Mesh,
   BoxBufferGeometry,
   MeshStandardMaterial,
   Color,
 } from "three";
 
-import { Object3D } from "~/ecs/plugins/core";
+import { Object3DRef } from "~/ecs/plugins/core";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
 
@@ -115,7 +115,7 @@ export class SelectionBox {
     const objectSize = new Vector3();
     const contained = [];
     for (const entity of this.world.entities.entities.values()) {
-      const object3d: ThreeObject3D = entity.get(Object3D)?.value;
+      const object3d: Object3D = entity.get(Object3DRef)?.value;
       if (!object3d) continue;
 
       const nonInteractive = entity.get(NonInteractive);

@@ -32,7 +32,7 @@ export class ColliderSystem extends System {
     });
     this.queries.modifiedTransform.forEach((entity) => {
       // TODO: is this necessary?
-      this.remove(entity);
+      // this.remove(entity);
     });
     // replace ColliderRef with new spec
     this.queries.modified.forEach((entity) => {

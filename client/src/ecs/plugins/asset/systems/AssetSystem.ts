@@ -1,7 +1,7 @@
 import { System, Not, Modified, Groups } from "~/ecs/base";
 
 import { Asset, AssetLoading, AssetLoaded, AssetError } from "../components";
-import { Presentation } from "~/ecs/plugins/core";
+import { Presentation, Object3DRef } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
 import { assetUrl } from "~/config/assetUrl";
 

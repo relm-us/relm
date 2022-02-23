@@ -1,4 +1,5 @@
 import {
+  Object3D,
   PlaneBufferGeometry,
   MeshStandardMaterial,
   Mesh,
@@ -9,7 +10,7 @@ import { System, Not, Modified, Groups, Entity } from "~/ecs/base";
 import { Queries } from "~/ecs/base/Query";
 
 import { Image, ImageRef, ImageAttached } from "../components";
-import { Presentation, Object3D } from "~/ecs/plugins/core";
+import { Presentation, Object3DRef } from "~/ecs/plugins/core";
 import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 
 type Size = {
@@ -46,9 +47,9 @@ export class ImageSystem extends System {
     modified: [Modified(Image), AssetLoaded],
     removed: [Not(Image), ImageRef],
 
-    detached: [Object3D, ImageRef, Not(ImageAttached)],
+    detached: [Object3DRef, ImageRef, Not(ImageAttached)],
     attached: [Not(ImageRef), ImageAttached],
-    dangling: [Not(Object3D), ImageRef],
+    dangling: [Not(Object3DRef), ImageRef],
   };
 
   init({ presentation }) {
@@ -108,7 +109,7 @@ export class ImageSystem extends System {
   }
 
   attach(entity: Entity) {
-    const parent = entity.get(Object3D).value;
+    const parent: Object3D = entity.get(Object3DRef).value;
     const child = entity.get(ImageRef).value;
     parent.add(child);
     entity.add(ImageAttached, { parent, child });

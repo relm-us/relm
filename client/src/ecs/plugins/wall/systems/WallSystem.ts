@@ -1,5 +1,5 @@
 import { System, Not, Modified, Groups } from "~/ecs/base";
-import { Object3D, Transform } from "~/ecs/plugins/core";
+import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import * as THREE from "three";
 import { RigidBodyRef } from "~/ecs/plugins/physics";
 import { worldUIMode } from "~/stores/worldUIMode";
@@ -10,18 +10,19 @@ import { Wall, WallMesh, WallColliderRef, WallVisible } from "../components";
 import { WallGeometry, wallGeometryData } from "../WallGeometry";
 import { OBJECT_INTERACTION } from "~/config/colliderInteractions";
 import { colliderMaterial } from "~/ecs/shared/colliderMaterial";
+import { Object3D } from "three";
 
 export class WallSystem extends System {
   active = isBrowser();
   order = Groups.Initialization;
 
   static queries = {
-    added: [Object3D, Wall, Not(WallMesh)],
+    added: [Object3DRef, Wall, Not(WallMesh)],
     needsCollider: [Wall, RigidBodyRef, Not(WallColliderRef)],
-    modified: [Object3D, Modified(Wall), WallMesh],
+    modified: [Object3DRef, Modified(Wall), WallMesh],
     modifiedTransform: [WallColliderRef, Modified(Transform)],
-    removedObj: [Not(Object3D), WallMesh],
-    removed: [Object3D, Not(Wall), WallMesh],
+    removedObj: [Not(Object3DRef), WallMesh],
+    removed: [Object3DRef, Not(Wall), WallMesh],
 
     needsVisible: [Wall, Not(WallVisible)],
     needsHidden: [WallVisible],
@@ -61,13 +62,13 @@ export class WallSystem extends System {
     const $mode = get(worldUIMode);
     if ($mode === "build") {
       this.queries.needsVisible.forEach((entity) => {
-        const object3d = entity.get(Object3D).value;
+        const object3d: Object3D = entity.get(Object3DRef).value;
         object3d.visible = true;
         entity.add(WallVisible);
       });
     } else if ($mode === "play") {
       this.queries.needsHidden.forEach((entity) => {
-        const object3d = entity.get(Object3D).value;
+        const object3d: Object3D = entity.get(Object3DRef).value;
         const wall = entity.get(Wall);
         object3d.visible = wall.visible;
         entity.remove(WallVisible);

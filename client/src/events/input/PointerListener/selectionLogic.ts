@@ -1,7 +1,8 @@
 import { SelectionManager } from "~/world/SelectionManager";
 import { groupTree } from "~/stores/selection";
 import { intersection } from "~/utils/setOps";
-import { Object3D } from "~/ecs/plugins/core";
+import { Object3DRef } from "~/ecs/plugins/core";
+import { Object3D } from "three";
 
 type EntityId = string;
 
@@ -28,7 +29,7 @@ function maybeSelectGroupContainingEntity(
 
 export function mouseup(selection: SelectionManager) {
   if (!found) return;
-  
+
   const foundSet: Set<string> = new Set(found);
 
   if (found.length === 0) {
@@ -96,6 +97,6 @@ export function mousedown(
 
 export function pointerPointInSelection(selection, found) {
   const entity = selection.entities.find((e) => found.includes(e.id));
-  const object3d = entity?.get(Object3D)?.value;
+  const object3d: Object3D = entity?.get(Object3DRef)?.value;
   return object3d?.userData.lastIntersectionPoint;
 }

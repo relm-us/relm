@@ -1,10 +1,10 @@
-import { Object3D as ThreeObject3D, Vector3 } from "three";
+import { Object3D, Vector3 } from "three";
 
 import { difference } from "~/utils/setOps";
 import { AVATAR_HEIGHT } from "~/config/constants";
 
 import { Entity, System } from "~/ecs/base";
-import { Presentation, Transform, Object3D } from "~/ecs/plugins/core";
+import { Presentation, Transform, Object3DRef } from "~/ecs/plugins/core";
 import { Translucent } from "~/ecs/plugins/translucent";
 
 import { Perspective } from "../Perspective";
@@ -53,16 +53,19 @@ export class PerspectiveSystem extends System {
     }
   }
 
-  getVisuallyBlockingObjects(): Set<ThreeObject3D> {
+  getVisuallyBlockingObjects(): Set<Object3D> {
     const source = this.presentation.camera.parent?.position;
     const transform = this.perspective.avatar?.get(Transform);
     if (source && transform) {
       this.target.copy(transform.position);
       this.target.y += AVATAR_HEIGHT / 2;
       if (source) {
-        const objects: Set<ThreeObject3D> =
+        const objects: Set<Object3D> =
           this.presentation.intersectionFinder.findBetween(source, this.target);
-        objects.delete(this.perspective.avatar?.get(Object3D)?.value);
+
+        const avatarObject = this.perspective.avatar?.get(Object3DRef)?.value;
+        objects.delete(avatarObject);
+
         return objects;
       }
     }

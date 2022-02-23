@@ -83,12 +83,9 @@ export class ControllerSystem extends System {
 
   init({ physics }) {
     this.physics = physics;
-    (this as any).count = 0;
   }
 
   update() {
-    (this as any).count++;
-
     // Keep global state for each keyboard key
     transition(keysState.left, get(keyLeft));
     transition(keysState.right, get(keyRight));

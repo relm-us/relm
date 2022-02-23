@@ -1,7 +1,7 @@
-import { BufferGeometry, Mesh } from "three";
+import { BufferGeometry, Mesh, Object3D } from "three";
 import { System, Groups, Not, Modified } from "~/ecs/base";
 import { Collider, ColliderVisible, ColliderVisibleRef } from "../components";
-import { Object3D } from "~/ecs/plugins/core";
+import { Object3DRef } from "~/ecs/plugins/core";
 import { colliderMaterial } from "~/ecs/shared/colliderMaterial";
 import { getGeometry } from "~/ecs/plugins/shape/ShapeCache";
 
@@ -9,10 +9,10 @@ export class ColliderVisibleSystem extends System {
   order = Groups.Initialization;
 
   static queries = {
-    added: [Object3D, Collider, ColliderVisible, Not(ColliderVisibleRef)],
-    removed: [Object3D, Not(ColliderVisible), ColliderVisibleRef],
-    modifiedCollider: [Object3D, Modified(Collider), ColliderVisible],
-    removedCollider: [Object3D, Not(Collider), ColliderVisibleRef],
+    added: [Object3DRef, Collider, ColliderVisible, Not(ColliderVisibleRef)],
+    removed: [Object3DRef, Not(ColliderVisible), ColliderVisibleRef],
+    modifiedCollider: [Object3DRef, Modified(Collider), ColliderVisible],
+    removedCollider: [Object3DRef, Not(Collider), ColliderVisibleRef],
   };
 
   update() {
@@ -26,7 +26,7 @@ export class ColliderVisibleSystem extends System {
     this.queries.modifiedCollider.forEach((entity) => {
       this.remove(entity);
       this.build(entity);
-      
+
       // Notify outline to rebuild if necessary
       entity.getByName("Outline")?.modified();
     });
@@ -37,7 +37,7 @@ export class ColliderVisibleSystem extends System {
 
   build(entity) {
     const collider = entity.get(Collider);
-    const object3d = entity.get(Object3D).value;
+    const object3d: Object3D = entity.get(Object3DRef).value;
 
     const geometry: BufferGeometry = getGeometry(colliderToShape(collider));
 
@@ -50,7 +50,7 @@ export class ColliderVisibleSystem extends System {
   }
 
   remove(entity) {
-    const object3d = entity.get(Object3D).value;
+    const object3d: Object3D = entity.get(Object3DRef).value;
     const mesh = entity.get(ColliderVisibleRef).value;
 
     object3d.remove(mesh);

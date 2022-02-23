@@ -37,6 +37,13 @@ export class PhysicsSystem extends System {
       entity.remove(Impact);
     });
 
+    this.queries.modified.forEach((entity) => {
+      const body: RigidBody = entity.get(RigidBodyRef).value;
+      const transform = entity.get(Transform);
+      body.setTranslation(transform.position, true);
+      body.setRotation(transform.rotation, true);
+    });
+
     this.fixedUpdate(delta);
 
     // Clear the actions list, so that it can be re-filled during next ECS world step
@@ -45,8 +52,8 @@ export class PhysicsSystem extends System {
 
   onFixedUpdate() {
     if (!this.active) return;
-    const { world, eventQueue }: { world: World; eventQueue: EventQueue } =
-      this.physics;
+
+    const { world, eventQueue } = this.physics;
 
     /**
      * We re-apply forces and torques during each fixedUpdate, so that
@@ -54,13 +61,6 @@ export class PhysicsSystem extends System {
      */
     RigidBodyRef.actions.forEach(({ ref, name, args }) => {
       ref.value[name].apply(ref.value, args);
-    });
-
-    this.queries.modified.forEach((entity) => {
-      const body: RigidBody = entity.get(RigidBodyRef).value;
-      const local = entity.get(Transform);
-      body.setTranslation(local.position, true);
-      body.setRotation(local.rotation, true);
     });
 
     world.step(eventQueue);
@@ -86,13 +86,19 @@ export class PhysicsSystem extends System {
 
     this.physics.world.forEachActiveRigidBody((body) => {
       const entity = RigidBodySystem.bodies.get(body.handle);
+      // console.log("active rigidbody", body.handle, body.numColliders(), entity);
 
       const parent = entity.getParent();
       const transform = entity.get(Transform);
 
       if (!parent) {
+        // console.log("phys body translation", transform.position, body.translation());
         transform.position.copy(body.translation());
+        // console.log("phys body rotation", transform.rotation, body.rotation());
         transform.rotation.copy(body.rotation());
+        transform.modified();
+      } else {
+        console.log("physics disabled for entity with parent");
       }
     });
   }
@@ -107,6 +113,8 @@ function createFixedTimestep(
   let accumulator = 0;
   return (delta: number) => {
     accumulator += delta;
+    // callback(accumulator);
+    // return;
     while (accumulator >= timestep) {
       callback(accumulator);
       if (accumulator >= 1) {

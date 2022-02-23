@@ -1,7 +1,7 @@
 import { PerspectiveCamera } from "three";
 import { System, Not, Groups } from "~/ecs/base";
 import { Queries } from "~/ecs/base/Query";
-import { Object3D, Camera, CameraAttached } from "../components";
+import { Object3DRef, Camera, CameraAttached } from "../components";
 import { IS_BROWSER } from "../utils";
 
 export class CameraSystem extends System {
@@ -11,7 +11,7 @@ export class CameraSystem extends System {
   order = Groups.Initialization;
 
   static queries: Queries = {
-    added: [Object3D, Camera, Not(CameraAttached)],
+    added: [Object3DRef, Camera, Not(CameraAttached)],
     removed: [Not(Camera), CameraAttached],
   };
 
@@ -21,7 +21,7 @@ export class CameraSystem extends System {
 
   update() {
     this.queries.added.forEach((entity) => {
-      const object3d = entity.get(Object3D).value;
+      const object3d = entity.get(Object3DRef).value;
       object3d.add(this.camera);
       entity.add(CameraAttached);
     });

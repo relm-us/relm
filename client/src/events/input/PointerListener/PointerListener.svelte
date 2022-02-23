@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Vector2, Vector3 } from "three";
+  import { Object3D, Vector2, Vector3 } from "three";
   import { hasAncestor } from "~/utils/hasAncestor";
   import { globalEvents } from "~/events";
   import { pointerPointInSelection } from "./selectionLogic";
@@ -9,7 +9,7 @@
     addTouchController,
     removeTouchController,
   } from "~/ecs/plugins/player-control";
-  import { Object3D } from "~/ecs/plugins/core";
+  import { Object3DRef } from "~/ecs/plugins/core";
   import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
   import { Clickable, Clicked } from "~/ecs/plugins/clickable";
 
@@ -233,7 +233,7 @@
 
   function clickedPosition(entityId, world) {
     const entity = world.entities.getById(entityId);
-    const object3d = entity?.get(Object3D)?.value;
+    const object3d: Object3D = entity?.get(Object3DRef)?.value;
     return object3d?.userData.lastIntersectionPoint;
   }
 </script>

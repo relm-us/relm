@@ -7,6 +7,13 @@ export class Transform extends Component {
   rotation: Quaternion;
   scale: Vector3;
 
+  readonly positionWorld: Vector3 = new Vector3();
+  readonly rotationWorld: Quaternion = new Quaternion();
+  readonly scaleWorld: Vector3 = new Vector3(1, 1, 1);
+
+  // used for recursion
+  frame: number;
+
   static props = {
     position: {
       type: Vector3Type,
@@ -14,12 +21,14 @@ export class Transform extends Component {
         label: "Position",
       },
     },
+
     rotation: {
       type: QuaternionType,
       editor: {
         label: "Rotation",
       },
     },
+
     scale: {
       type: Vector3Type,
       default: new Vector3(1, 1, 1),
@@ -28,7 +37,7 @@ export class Transform extends Component {
       },
     },
   };
-  
+
   static editor = {
     label: "Transform",
   };

@@ -25,6 +25,7 @@ import { highDefEnabled } from "~/stores/highDefEnabled";
 
 // Animation keys
 import { keyShift, key1, key2, key3 } from "~/stores/keys";
+import { keyLeft, keyRight, keyUp, keyDown } from "~/stores/keys";
 import {
   OCULUS_HEIGHT_SIT,
   OCULUS_HEIGHT_STAND,
@@ -87,6 +88,11 @@ export class WorldManager {
   entryway: string;
   relmDocId: string;
   avConnection: AVConnection;
+
+  keyLeft = keyLeft;
+  keyRight = keyRight;
+  keyUp = keyUp;
+  keyDown = keyDown;
 
   transformArray: any[];
 

@@ -1,7 +1,7 @@
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
-import { Presentation, Object3D } from "~/ecs/plugins/core";
+import { Presentation, Object3DRef } from "~/ecs/plugins/core";
 import { Fire, FireMesh } from "../components";
-import { MathUtils, Color } from "three";
+import { MathUtils, Color, Object3D } from "three";
 import { Fire as ThreeFire } from "../Fire";
 
 export class FireSystem extends System {
@@ -10,7 +10,7 @@ export class FireSystem extends System {
   presentation: Presentation;
 
   static queries = {
-    new: [Fire, Object3D, Not(FireMesh)],
+    new: [Fire, Object3DRef, Not(FireMesh)],
     modified: [Modified(Fire), FireMesh],
     active: [Fire, FireMesh],
     removed: [Not(Fire), FireMesh],
@@ -43,7 +43,7 @@ export class FireSystem extends System {
 
   async build(entity: Entity) {
     const spec = entity.get(Fire);
-    const object3d = entity.get(Object3D).value;
+    const object3d: Object3D = entity.get(Object3DRef).value;
 
     if (!entity.has(FireMesh)) {
       entity.add(FireMesh);
@@ -70,9 +70,9 @@ export class FireSystem extends System {
   remove(entity: Entity) {
     const mesh = entity.get(FireMesh).value;
 
-    const object3d = entity.get(Object3D);
+    const object3d: Object3D = entity.get(Object3DRef)?.value;
     if (object3d) {
-      object3d.value.remove(mesh);
+      object3d.remove(mesh);
     }
 
     entity.remove(FireMesh);

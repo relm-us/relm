@@ -4,9 +4,10 @@ import {
   BufferGeometry,
   SphereGeometry,
   Color,
+  Object3D,
 } from "three";
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
-import { Presentation, Object3D } from "~/ecs/plugins/core";
+import { Presentation, Object3DRef } from "~/ecs/plugins/core";
 import { Diamond, DiamondRef } from "../components";
 import { GlowShader } from "../GlowShader";
 
@@ -21,7 +22,7 @@ export class DiamondSystem extends System {
   presentation: Presentation;
 
   static queries = {
-    new: [Diamond, Object3D, Not(DiamondRef)],
+    new: [Diamond, Object3DRef, Not(DiamondRef)],
     modified: [Modified(Diamond), DiamondRef],
     active: [Diamond, DiamondRef],
     removed: [Not(Diamond), DiamondRef],
@@ -62,7 +63,7 @@ export class DiamondSystem extends System {
 
   async build(entity: Entity) {
     const spec = entity.get(Diamond);
-    const object3d = entity.get(Object3D).value;
+    const object3d: Object3D = entity.get(Object3DRef).value;
 
     const diamond = this.createKernel(new Color(spec.color));
     if (spec.offset) diamond.position.copy(spec.offset);

@@ -14,7 +14,7 @@ import { System, Not, Modified, Groups, Entity } from "~/ecs/base";
 import { Queries } from "~/ecs/base/Query";
 
 import { Model, ModelRef, ModelAttached } from "../components";
-import { Presentation, Object3D } from "~/ecs/plugins/core";
+import { Presentation, Object3DRef } from "~/ecs/plugins/core";
 import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 
 import { normalize } from "../normalize";
@@ -48,9 +48,9 @@ export class ModelSystem extends System {
     modified: [Modified(Model), AssetLoaded],
     removed: [Not(Model), ModelRef],
 
-    detached: [Object3D, ModelRef, Not(ModelAttached)],
+    detached: [Object3DRef, ModelRef, Not(ModelAttached)],
     attached: [Not(ModelRef), ModelAttached],
-    dangling: [Not(Object3D), ModelRef],
+    dangling: [Not(Object3DRef), ModelRef],
   };
 
   init({ presentation }) {
@@ -113,10 +113,14 @@ export class ModelSystem extends System {
   }
 
   attach(entity: Entity) {
-    const parent = entity.get(Object3D).value;
+    const object3dref = entity.get(Object3DRef);
+    const parent = object3dref.value;
     const child = entity.get(ModelRef).scene;
     parent.add(child);
     entity.add(ModelAttached, { parent, child });
+
+    // Notifiy dependencies, e.g. BoundingBox, that object3d has changed
+    object3dref.modified();
   }
 
   detach(entity: Entity) {

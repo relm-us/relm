@@ -1,13 +1,13 @@
 import { Vector3 } from "three";
-import { System, Groups } from "~/ecs/base";
-import { Object3D, Transform } from "~/ecs/plugins/core";
+
+import { Groups, System } from "~/ecs/base";
+import { Transform } from "~/ecs/plugins/core";
 
 import { Follow } from "../components";
 
 const targetPosition = new Vector3();
 export class FollowSystem extends System {
-  // order = Groups.Simulation;
-  order = 3000;
+  order = Groups.Initialization;
 
   static queries = {
     targeted: [Follow],
@@ -26,12 +26,13 @@ export class FollowSystem extends System {
     const targetEntity = world.entities.getById(spec.target);
     if (!targetEntity) return;
 
-    const object3d = targetEntity.get(Object3D);
-    if (!object3d) return;
+    const targetTransform: Transform = targetEntity.get(Transform);
+    if (!targetTransform) return;
 
-    targetPosition.copy(object3d.value.position);
+    targetPosition.copy(targetTransform.positionWorld);
     targetPosition.add(spec.offset);
 
     transform.position.lerp(targetPosition, spec.lerpAlpha);
+    transform.modified();
   }
 }

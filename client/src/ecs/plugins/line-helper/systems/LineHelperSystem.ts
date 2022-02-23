@@ -1,7 +1,7 @@
-import { Vector3, LineBasicMaterial, BufferGeometry, Line } from "three";
+import { LineBasicMaterial, BufferGeometry, Line } from "three";
 
 import { System, Groups, Entity, Not } from "~/ecs/base";
-import { Object3D, Presentation, Transform } from "~/ecs/plugins/core";
+import { Presentation, Transform } from "~/ecs/plugins/core";
 
 import { LineHelper, LineHelperRef } from "../components";
 

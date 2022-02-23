@@ -1,7 +1,7 @@
-import * as THREE from "three";
+import { Object3D, Vector3, Quaternion } from "three";
 
 import { System, Groups, Not, Modified } from "~/ecs/base";
-import { Object3D } from "~/ecs/plugins/core";
+import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer";
 
 import { isBrowser } from "~/utils/isBrowser";
@@ -12,8 +12,8 @@ import { getRenderableComponentByType } from "../renderables";
 import { Queries } from "~/ecs/base/Query";
 import { CssPresentation } from "../CssPresentation";
 
-const _v1 = new THREE.Vector3();
-const _q1 = new THREE.Quaternion();
+const _v1 = new Vector3();
+const _q1 = new Quaternion();
 
 export class RenderableSystem extends System {
   cssPresentation: CssPresentation;
@@ -29,7 +29,7 @@ export class RenderableSystem extends System {
     added: [Renderable, Not(RenderableRef)],
     modified: [Modified(Renderable), RenderableRef],
     modifiedCssPlane: [Modified(CssPlane), RenderableRef],
-    active: [Renderable, RenderableRef, Object3D],
+    active: [Renderable, RenderableRef, Object3DRef],
     removed: [Not(Renderable), RenderableRef],
   };
 
@@ -56,12 +56,12 @@ export class RenderableSystem extends System {
     });
 
     this.queries.active.forEach((entity) => {
-      const object3d = entity.get(Object3D).value;
+      const transform: Transform = entity.get(Transform);
 
       const spec = entity.get(Renderable);
       const css3d = entity.get(RenderableRef)?.value;
 
-      this.copyTransform(css3d, object3d, spec.scale);
+      this.copyTransform(css3d, transform, spec.scale);
     });
 
     this.queries.removed.forEach((entity) => {
@@ -70,11 +70,11 @@ export class RenderableSystem extends System {
   }
 
   build(entity) {
-    const spec = entity.get(Renderable);
-    const object3d = entity.get(Object3D);
-    const cssPlane = entity.get(CssPlane);
+    const spec: Renderable = entity.get(Renderable);
+    const transform: Transform = entity.get(Transform);
+    const cssPlane: CssPlane = entity.get(CssPlane);
 
-    if (!object3d || !cssPlane) return;
+    if (!transform || !cssPlane) return;
 
     const screenSize = cssPlane.getScreenSize(spec.scale);
 
@@ -91,7 +91,7 @@ export class RenderableSystem extends System {
       props: { ...spec, width: screenSize.x, height: screenSize.y, entity },
     });
 
-    this.copyTransform(css3d, object3d.value, spec.scale);
+    this.copyTransform(css3d, transform, spec.scale);
 
     this.cssPresentation.scene.add(css3d);
 
@@ -109,16 +109,18 @@ export class RenderableSystem extends System {
     entity.remove(RenderableRef);
   }
 
-  copyTransform(css3d, object3d: THREE.Object3D, scale) {
+  copyTransform(css3d: CSS3DObject, transform: Transform, scale) {
     if (!css3d) {
       console.warn(`Can't copyTransform, css3d is null`, css3d);
       return;
     }
-    object3d.getWorldPosition(_v1);
-    css3d.position.copy(_v1).multiplyScalar(this.cssPresentation.FACTOR);
-    object3d.getWorldQuaternion(_q1);
-    css3d.quaternion.copy(_q1);
-    object3d.getWorldScale(_v1);
-    css3d.scale.copy(_v1).multiplyScalar(this.cssPresentation.FACTOR * scale);
+    css3d.position
+      .copy(transform.positionWorld)
+      .multiplyScalar(this.cssPresentation.FACTOR);
+    css3d.quaternion.copy(transform.rotationWorld);
+    css3d.scale
+      .copy(transform.scaleWorld)
+      .multiplyScalar(this.cssPresentation.FACTOR * scale);
+    css3d.updateMatrix();
   }
 }

@@ -7,10 +7,11 @@
 
   import { worldUIMode } from "~/stores/worldUIMode";
   import { audioMode } from "~/stores/audioMode";
-  import { Object3D } from "~/ecs/plugins/core";
+  import { Object3DRef } from "~/ecs/plugins/core";
   import { isFirefox } from "~/utils/isFirefox";
 
   import PlayButtonIcon from "./shared/PlayButtonIcon.svelte";
+  import { Object3D } from "three";
 
   export let width: number;
   export let height: number;
@@ -141,7 +142,7 @@
   $: if ($audioMode === "proximity") {
     if (interval) clearInterval(interval);
     interval = setInterval(() => {
-      const object3d = entity.get(Object3D)?.value;
+      const object3d: Object3D = entity.get(Object3DRef)?.value;
       const avatar = worldManager.avatar;
       if (avatar && object3d) {
         const distance = avatar.position.distanceTo(object3d.position);

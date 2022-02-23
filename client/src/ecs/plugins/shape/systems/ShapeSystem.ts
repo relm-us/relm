@@ -1,9 +1,9 @@
-import { Mesh, MeshStandardMaterial, RepeatWrapping } from "three";
+import { Mesh, MeshStandardMaterial, Object3D, RepeatWrapping } from "three";
 
 import { isBrowser } from "~/utils/isBrowser";
 
 import { Entity, System, Not, Modified, Groups } from "~/ecs/base";
-import { Object3D } from "~/ecs/plugins/core";
+import { Object3DRef } from "~/ecs/plugins/core";
 import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 
 import { Shape, ShapeBuilt, ShapeNeedsTexture, ShapeMesh } from "../components";
@@ -132,7 +132,7 @@ export class ShapeSystem extends System {
   }
 
   attach(entity: Entity) {
-    const parent = entity.get(Object3D)?.value;
+    const parent: Object3D = entity.get(Object3DRef)?.value;
     if (!parent) return;
     const child = entity.get(ShapeMesh).value;
     parent.add(child);

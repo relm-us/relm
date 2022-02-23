@@ -1,17 +1,17 @@
-import { Object3D as ThreeObject3D } from "three";
+import { Object3D } from "three";
 
 import { System, Groups, Not, Entity } from "~/ecs/base";
-import { Object3D, Presentation } from "~/ecs/plugins/core";
+import { Object3DRef, Presentation } from "~/ecs/plugins/core";
 import { Outline, OutlineApplied } from "../components";
 
 export class OutlineSystem extends System {
   presentation: Presentation;
-  selectedObjects: ThreeObject3D[];
+  selectedObjects: Object3D[];
 
   order = Groups.Initialization + 50;
 
   static queries = {
-    added: [Outline, Not(OutlineApplied), Object3D],
+    added: [Outline, Not(OutlineApplied), Object3DRef],
     removed: [Not(Outline), OutlineApplied],
   };
 
@@ -31,7 +31,7 @@ export class OutlineSystem extends System {
   }
 
   addOutline(entity) {
-    const object: ThreeObject3D = entity.get(Object3D).value;
+    const object: Object3D = entity.get(Object3DRef).value;
     object.traverse((obj) => {
       this.presentation.outlineEffect.selection.add(obj);
     });

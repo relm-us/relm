@@ -1,6 +1,6 @@
-import { Box3, Object3D as ThreeObject3D, Vector3 } from "three";
+import { Box3, Object3D, Object3D as ThreeObject3D, Vector3 } from "three";
 import { System, Groups, Entity, Not } from "~/ecs/base";
-import { Object3D, Presentation } from "~/ecs/plugins/core";
+import { Object3DRef, Presentation } from "~/ecs/plugins/core";
 
 import { BoneAttach, BoneAttachError, BoneAttachRef } from "../components";
 import { ModelAttached } from "~/ecs/plugins/model";
@@ -64,7 +64,7 @@ export class BoneAttachSystem extends System {
   attach(bone: Bone, entityToAttachId: string) {
     const entityToAttach = this.world.entities.getById(entityToAttachId);
     if (entityToAttach) {
-      const object = entityToAttach.get(Object3D).value;
+      const object: Object3D = entityToAttach.get(Object3DRef)?.value;
       if (object) {
         const child = object.children[0];
         if (child) {

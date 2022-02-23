@@ -1,6 +1,4 @@
-import { Loader } from "./Loader";
 import {
-  Object3D,
   TextureLoader,
   Scene,
   PerspectiveCamera,
@@ -25,7 +23,11 @@ import {
 } from "postprocessing";
 
 import { World } from "~/ecs/base";
+
 import { IntersectionFinder } from "./IntersectionFinder";
+import { Loader } from "./Loader";
+import { SpatialIndex } from "./SpatialIndex";
+import { BoundingBox } from "./components";
 
 export type PlaneOrientation = "xz" | "xy";
 
@@ -48,7 +50,7 @@ export class Presentation {
   world: World;
   viewport: HTMLElement;
   size: Vector2;
-  object3ds: Array<Object3D>;
+  spatial: SpatialIndex = new SpatialIndex();
 
   scene: Scene;
   camera: PerspectiveCamera;
@@ -71,7 +73,6 @@ export class Presentation {
     this.world = world;
     this.viewport = null;
     this.size = new Vector2(1, 1);
-    this.object3ds = [];
 
     this.scene = options.scene;
     this.camera = options.camera;
@@ -228,5 +229,20 @@ export class Presentation {
     frustum.setFromProjectionMatrix(cameraViewProjectionMatrix);
 
     return frustum;
+  }
+
+  *entitiesInView() {
+    const frustum = this.getFrustum();
+    for (let entity of this.spatial.fallback) {
+      const boundingBox: BoundingBox = entity.get(BoundingBox);
+      if (frustum.intersectsBox(boundingBox.box)) yield entity;
+    }
+    for (let node of this.spatial.octree.cull(frustum)) {
+      const entities = (node as any).data?.data || [];
+      for (let entity of entities) {
+        const boundingBox: BoundingBox = entity.get(BoundingBox);
+        if (frustum.intersectsBox(boundingBox.box)) yield entity;
+      }
+    }
   }
 }

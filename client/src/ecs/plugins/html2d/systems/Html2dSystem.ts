@@ -1,7 +1,7 @@
-import { Vector3 } from "three";
+import { Object3D, Vector3 } from "three";
 
 import { System, Groups, Not, Entity, Modified } from "~/ecs/base";
-import { Presentation, Object3D } from "~/ecs/plugins/core";
+import { Presentation, Object3DRef, Transform } from "~/ecs/plugins/core";
 import { Perspective } from "~/ecs/plugins/perspective";
 
 import { Html2d, Html2dRef } from "../components";
@@ -19,7 +19,7 @@ export class Html2dSystem extends System {
   static queries = {
     new: [Html2d, Not(Html2dRef)],
     modified: [Modified(Html2d), Html2dRef],
-    active: [Html2d, Html2dRef, Object3D],
+    active: [Html2d, Html2dRef, Object3DRef],
     removed: [Not(Html2d), Html2dRef],
   };
 
@@ -88,11 +88,11 @@ export class Html2dSystem extends System {
   updatePosition(entity: Entity, boundsWidth: number) {
     if (this.presentation.skipUpdate > 0) return;
 
-    const object3d = entity.get(Object3D);
+    const transform: Transform = entity.get(Transform);
     const spec = entity.get(Html2d);
 
     // calculate left, top
-    v1.copy(object3d.value.position);
+    v1.copy(transform.positionWorld);
     v1.add(spec.offset);
 
     this.htmlPresentation.project(v1);

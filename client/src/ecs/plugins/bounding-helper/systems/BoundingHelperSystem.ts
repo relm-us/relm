@@ -1,7 +1,7 @@
-import { BoxHelper } from "three";
+import { BoxHelper, Object3D } from "three";
 
 import { System, Groups, Entity, Not } from "~/ecs/base";
-import { Object3D, Presentation } from "~/ecs/plugins/core";
+import { Object3DRef, Presentation } from "~/ecs/plugins/core";
 
 import { BoundingHelper, BoundingHelperRef } from "../components";
 
@@ -11,7 +11,7 @@ export class BoundingHelperSystem extends System {
   order = Groups.Simulation - 1;
 
   static queries = {
-    added: [BoundingHelper, Not(BoundingHelperRef), Object3D],
+    added: [BoundingHelper, Not(BoundingHelperRef), Object3DRef],
     active: [BoundingHelper, BoundingHelperRef],
     removed: [Not(BoundingHelper), BoundingHelperRef],
   };
@@ -38,7 +38,7 @@ export class BoundingHelperSystem extends System {
     const spec = entity.get(BoundingHelper);
     // TODO: spec.kind === sphere
 
-    const object3d = entity.get(Object3D).value;
+    const object3d: Object3D = entity.get(Object3DRef).value;
 
     const box = new BoxHelper(object3d, 0xffff00);
 

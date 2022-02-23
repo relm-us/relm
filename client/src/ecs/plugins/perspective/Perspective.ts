@@ -1,7 +1,7 @@
 import { Box3, Object3D as ThreeObject3D, Vector2, Vector3 } from "three";
 
 import { Entity } from "~/ecs/base";
-import { Presentation, Transform, Object3D } from "~/ecs/plugins/core";
+import { Presentation } from "~/ecs/plugins/core";
 import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
 import { GetWorldFromScreenOpts, WorldPlanes } from "~/ecs/shared/WorldPlanes";
 

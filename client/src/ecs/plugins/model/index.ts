@@ -1,5 +1,5 @@
-import { createPlugin, Entity } from "~/ecs/base";
-import CorePlugin, { Object3D } from "~/ecs/plugins/core";
+import { createPlugin } from "~/ecs/base";
+import CorePlugin from "~/ecs/plugins/core";
 
 import * as Components from "./components";
 import * as Systems from "./systems";

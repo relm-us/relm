@@ -93,5 +93,7 @@ export class LookAtSystem extends System {
       }
       this.frames++;
     }
+
+    transform.modified();
   }
 }

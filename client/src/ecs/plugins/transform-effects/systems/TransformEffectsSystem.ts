@@ -1,5 +1,5 @@
 import { System, Groups, Not } from "~/ecs/base";
-import { Object3D } from "~/ecs/plugins/core";
+import { Object3DRef } from "~/ecs/plugins/core";
 
 import { Matrix4 } from "three";
 
@@ -63,12 +63,12 @@ export class TransformEffectsSystem extends System {
     const stack = entity.get(TransformEffectsStack).stack;
     this.computeStack(effects, stack, delta);
 
-    const object3d = entity.get(Object3D);
-    if (!object3d) {
+    const object3dref = entity.get(Object3DRef);
+    if (!object3dref) {
       console.warn("TransformEffectsSystem: entity has no object3d", entity);
       return;
     }
-    this.applyStack(object3d.value, stack);
+    this.applyStack(object3dref.value, stack);
   }
 
   removeEffectByIndex(effects, stack, index) {
