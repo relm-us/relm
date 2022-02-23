@@ -1,0 +1,1 @@
+export { SpatialIndexSystem } from "./SpatialIndexSystem";

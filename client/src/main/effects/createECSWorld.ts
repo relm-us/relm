@@ -14,7 +14,7 @@ import AnimationPlugin from "~/ecs/plugins/animation";
 import AssetPlugin from "~/ecs/plugins/asset";
 import BoneAttachPlugin from "~/ecs/plugins/bone-attach";
 import BoneTwistPlugin from "~/ecs/plugins/bone-twist";
-import BoundingHelperPlugin from "~/ecs/plugins/bounding-helper";
+import BoundingBoxPlugin from "~/ecs/plugins/bounding-box";
 import ClickablePlugin from "~/ecs/plugins/clickable";
 import ColorationPlugin from "~/ecs/plugins/coloration";
 import Css3DPlugin from "~/ecs/plugins/css3d";
@@ -37,6 +37,7 @@ import PointerPositionPlugin from "~/ecs/plugins/pointer-position";
 import PortalPlugin from "~/ecs/plugins/portal";
 import PhysicsPlugin from "~/ecs/plugins/physics";
 import SkyboxPlugin from "~/ecs/plugins/skybox";
+import SpatialIndexPlugin from "~/ecs/plugins/spatial-index";
 import TransitionPlugin from "~/ecs/plugins/transition";
 import TransformEffectsPlugin from "~/ecs/plugins/transform-effects";
 import TranslucentPlugin from "~/ecs/plugins/translucent";
@@ -52,7 +53,7 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       CorePlugin({
         renderer: createRenderer(),
         scene: createScene(),
-        camera: new PerspectiveCamera(35, 1, 0.1, 1000),
+        camera: new PerspectiveCamera(35, 1, 0.1, 200),
       }),
       PhysicsPlugin({
         // Pass the physics engine in to the plugin
@@ -67,7 +68,7 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       AssetPlugin,
       BoneAttachPlugin,
       BoneTwistPlugin,
-      BoundingHelperPlugin,
+      BoundingBoxPlugin,
       ClickablePlugin,
       ColorationPlugin,
       Css3DPlugin,
@@ -88,6 +89,7 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       PointerPositionPlugin,
       PortalPlugin,
       SkyboxPlugin,
+      SpatialIndexPlugin,
       TransitionPlugin,
       TransformEffectsPlugin,
       TranslucentPlugin,

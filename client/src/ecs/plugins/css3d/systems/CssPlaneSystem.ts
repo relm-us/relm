@@ -74,16 +74,22 @@ export class CssPlaneSystem extends System {
     object3d.add(mesh);
 
     entity.add(CssShapeMesh, { value: mesh });
+
+    // Notifiy dependencies, e.g. BoundingBox, that object3d has changed
+    entity.get(Object3DRef).modified();
   }
 
   remove(entity) {
-    const object3d = entity.get(Object3D).value;
+    const object3dref = entity.get(Object3DRef);
     const mesh = entity.get(CssShapeMesh).value;
 
     mesh.geometry.dispose();
     mesh.material.dispose();
-    object3d.remove(mesh);
+    object3dref.value.remove(mesh);
 
     entity.remove(CssShapeMesh);
+
+    // Notifiy dependencies, e.g. BoundingBox, that object3d has changed
+    object3dref.modified();
   }
 }

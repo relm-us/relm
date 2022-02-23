@@ -48,7 +48,7 @@ export class ImageSystem extends System {
     removed: [Not(Image), ImageRef],
 
     detached: [Object3DRef, ImageRef, Not(ImageAttached)],
-    attached: [Not(ImageRef), ImageAttached],
+    attached: [Object3DRef, Not(ImageRef), ImageAttached],
     dangling: [Not(Object3DRef), ImageRef],
   };
 
@@ -109,16 +109,23 @@ export class ImageSystem extends System {
   }
 
   attach(entity: Entity) {
-    const parent: Object3D = entity.get(Object3DRef).value;
+    const object3dref: Object3DRef = entity.get(Object3DRef);
+    const parent = object3dref.value;
     const child = entity.get(ImageRef).value;
     parent.add(child);
     entity.add(ImageAttached, { parent, child });
+
+    // Notifiy dependencies, e.g. BoundingBox, that object3d has changed
+    object3dref.modified();
   }
 
   detach(entity: Entity) {
     const { parent, child } = entity.get(ImageAttached);
     parent.remove(child);
     entity.remove(ImageAttached);
+
+    // Notifiy dependencies, e.g. BoundingBox, that object3d has changed
+    entity.get(Object3DRef).modified();
   }
 
   makeMesh(plane, texture) {

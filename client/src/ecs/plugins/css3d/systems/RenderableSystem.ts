@@ -114,13 +114,17 @@ export class RenderableSystem extends System {
       console.warn(`Can't copyTransform, css3d is null`, css3d);
       return;
     }
+
     css3d.position
       .copy(transform.positionWorld)
       .multiplyScalar(this.cssPresentation.FACTOR);
+
     css3d.quaternion.copy(transform.rotationWorld);
+
     css3d.scale
       .copy(transform.scaleWorld)
       .multiplyScalar(this.cssPresentation.FACTOR * scale);
+
     css3d.updateMatrix();
   }
 }

@@ -74,6 +74,8 @@ export class TranslucentSystem extends System {
     time: number = 500,
     onComplete: () => void = null
   ) {
+    if (!entity) return;
+
     const object3d: Object3D = entity.get(Object3DRef).value;
     const tweening = entity.get(TranslucentTweening);
 
@@ -81,7 +83,7 @@ export class TranslucentSystem extends System {
       // If we're interrupting another tween, start with the opacity
       // at the level the interruption occurs:
       startOpacity = tweening.tween._object.opacity;
-      
+
       tweening.tween?.stop();
       tweening.tween = null;
       entity.remove(TranslucentTweening);

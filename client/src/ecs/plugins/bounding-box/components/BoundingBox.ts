@@ -2,7 +2,7 @@ import { Box3, Vector3 } from "three";
 
 import { LocalComponent } from "~/ecs/base";
 
-import { Box3Type, Vector3Type } from "../types";
+import { Box3Type, Vector3Type } from "../../core/types";
 
 export class BoundingBox extends LocalComponent {
   box: Box3;

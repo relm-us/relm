@@ -77,6 +77,7 @@ export function makeProgram(): Program {
   ];
 
   const update = (msg: Message, state: State): [State, any?] => {
+    (window as any).state = state;
     if (logEnabled) {
       console.log(
         `program msg '${msg.id}' (${state.pageParams?.relmName}): %o`,

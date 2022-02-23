@@ -49,7 +49,7 @@ export class ModelSystem extends System {
     removed: [Not(Model), ModelRef],
 
     detached: [Object3DRef, ModelRef, Not(ModelAttached)],
-    attached: [Not(ModelRef), ModelAttached],
+    attached: [Object3DRef, Not(ModelRef), ModelAttached],
     dangling: [Not(Object3DRef), ModelRef],
   };
 
@@ -99,14 +99,11 @@ export class ModelSystem extends System {
   }
 
   remove(entity: Entity) {
-    const { scene, animations } = entity.get(ModelRef);
+    const { scene } = entity.get(ModelRef);
 
     scene.geometry?.dispose();
     scene.material?.dispose();
     scene.dispose?.();
-
-    // Notify outline to rebuild if necessary
-    entity.getByName("Outline")?.modified();
 
     entity.remove(ModelRef);
     entity.maybeRemove(Asset);
@@ -127,6 +124,9 @@ export class ModelSystem extends System {
     const { parent, child } = entity.get(ModelAttached);
     parent.remove(child);
     entity.remove(ModelAttached);
+
+    // Notifiy dependencies, e.g. BoundingBox, that object3d has changed
+    entity.get(Object3DRef).modified();
   }
 
   invalidModel(scene: Group): any {

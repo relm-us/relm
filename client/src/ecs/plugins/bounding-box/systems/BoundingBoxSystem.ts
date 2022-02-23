@@ -1,9 +1,11 @@
-import { System, Not, Modified, Groups, Entity } from "~/ecs/base";
-import { Object3DRef, Transform } from "../components";
-import { Queries } from "~/ecs/base/Query";
-import { Presentation } from "..";
-import { BoundingBox } from "../components/BoundingBox";
 import { Object3D } from "three";
+
+import { System, Not, Modified, Groups } from "~/ecs/base";
+import { Object3DRef, Presentation, Transform } from "~/ecs/plugins/core";
+import { Queries } from "~/ecs/base/Query";
+import { Model } from "~/ecs/plugins/model";
+
+import { BoundingBox } from "../components";
 
 export class BoundingBoxSystem extends System {
   presentation: Presentation;
@@ -13,6 +15,7 @@ export class BoundingBoxSystem extends System {
   static queries: Queries = {
     new: [Transform, Object3DRef, Not(BoundingBox)],
     modified: [Modified(Transform), Object3DRef, BoundingBox],
+    modifiedModel: [Transform, Modified(Object3DRef), BoundingBox],
     removed: [Not(Transform), BoundingBox],
   };
 
@@ -25,9 +28,15 @@ export class BoundingBoxSystem extends System {
       entity.add(BoundingBox);
       this.updateBounds(entity);
     });
+
     this.queries.modified.forEach((entity) => {
       this.updateBounds(entity);
     });
+
+    this.queries.modifiedModel.forEach((entity) => {
+      this.updateBounds(entity);
+    });
+
     this.queries.removed.forEach((entity) => {
       entity.remove(BoundingBox);
     });
@@ -39,6 +48,7 @@ export class BoundingBoxSystem extends System {
 
     boundingBox.box.setFromObject(object3d);
     boundingBox.box.getSize(boundingBox.size);
+
     boundingBox.modified();
   }
 }

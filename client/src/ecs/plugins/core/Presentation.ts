@@ -2,12 +2,14 @@ import {
   TextureLoader,
   Scene,
   PerspectiveCamera,
+  PlaneHelper,
   WebGLRenderer,
   Texture,
   Vector3,
   Vector2,
   Frustum,
   Matrix4,
+  CameraHelper,
 } from "three";
 
 import {
@@ -26,8 +28,8 @@ import { World } from "~/ecs/base";
 
 import { IntersectionFinder } from "./IntersectionFinder";
 import { Loader } from "./Loader";
-import { SpatialIndex } from "./SpatialIndex";
-import { BoundingBox } from "./components";
+import type { SpatialIndex } from "~/ecs/plugins/spatial-index/SpatialIndex";
+import { Object3DRef } from ".";
 
 export type PlaneOrientation = "xz" | "xy";
 
@@ -50,7 +52,8 @@ export class Presentation {
   world: World;
   viewport: HTMLElement;
   size: Vector2;
-  spatial: SpatialIndex = new SpatialIndex();
+  spatial: SpatialIndex;
+  frame: number;
 
   scene: Scene;
   camera: PerspectiveCamera;
@@ -73,6 +76,7 @@ export class Presentation {
     this.world = world;
     this.viewport = null;
     this.size = new Vector2(1, 1);
+    this.frame = 0;
 
     this.scene = options.scene;
     this.camera = options.camera;
@@ -211,38 +215,69 @@ export class Presentation {
       this.skipUpdate--;
       return;
     }
+
+    this.frame++;
+
     this.renderer.info.reset();
+    const frustum = this.getFrustum();
+
+    // Make off-camera things invisible
+    if (this.spatial) {
+      // Optimization: since we don't *have* to set off-screen entities to
+      // invisible, rotate through a few of them each frame; Basically, a
+      // rotating cache invalidation
+      const entities = Array.from(this.world.entities.entities.values());
+      for (let i = 0; i < 100; i++) {
+        const entity = entities[(this.frame * 100 + i) % entities.length];
+        const object3d = entity.get(Object3DRef)?.value;
+        if (object3d) object3d.visible = false;
+      }
+
+      // this.world.entities.entities.forEach((entity) => {
+      //   const object3d = entity.get(Object3DRef)?.value;
+      //   if (object3d) object3d.visible = false;
+      // });
+
+      for (let entity of this.spatial.entitiesInView(frustum)) {
+        const object3d = entity.get(Object3DRef)?.value;
+        if (object3d) object3d.visible = true;
+      }
+    }
+
     this.composer.render(delta);
     this.intersectionFinder.candidateObjectsCacheNeedsUpdate = true;
+
+    this.frame++;
   }
 
   getFrustum(camera: PerspectiveCamera = this.camera) {
-    const frustum = new Frustum();
-    const cameraViewProjectionMatrix = new Matrix4();
+    // TODO: is this simpler/faster?
 
-    camera.updateMatrixWorld();
-    camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
-    cameraViewProjectionMatrix.multiplyMatrices(
-      camera.projectionMatrix,
-      camera.matrixWorldInverse
+    // camera.updateMatrixWorld();
+    const frustum = new Frustum();
+
+    camera.updateMatrix();
+    camera.updateWorldMatrix(true, false);
+    camera.updateProjectionMatrix();
+    frustum.setFromProjectionMatrix(
+      new Matrix4().multiplyMatrices(
+        camera.projectionMatrix,
+        camera.matrixWorldInverse
+      )
     );
-    frustum.setFromProjectionMatrix(cameraViewProjectionMatrix);
+    // console.log("frustum", frustum.planes);
+
+    // const frustum = new Frustum();
+    // const cameraViewProjectionMatrix = new Matrix4();
+
+    // camera.updateMatrixWorld();
+    // camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
+    // cameraViewProjectionMatrix.multiplyMatrices(
+    //   camera.projectionMatrix,
+    //   camera.matrixWorldInverse
+    // );
+    // frustum.setFromProjectionMatrix(cameraViewProjectionMatrix);
 
     return frustum;
-  }
-
-  *entitiesInView() {
-    const frustum = this.getFrustum();
-    for (let entity of this.spatial.fallback) {
-      const boundingBox: BoundingBox = entity.get(BoundingBox);
-      if (frustum.intersectsBox(boundingBox.box)) yield entity;
-    }
-    for (let node of this.spatial.octree.cull(frustum)) {
-      const entities = (node as any).data?.data || [];
-      for (let entity of entities) {
-        const boundingBox: BoundingBox = entity.get(BoundingBox);
-        if (frustum.intersectsBox(boundingBox.box)) yield entity;
-      }
-    }
   }
 }

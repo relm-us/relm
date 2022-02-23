@@ -9,6 +9,8 @@ import {
 } from "three";
 import * as THREE from "three";
 
+(window as any).THREE = THREE;
+
 import { derived, get } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
@@ -42,7 +44,7 @@ import { makeLight } from "~/prefab/makeLight";
 import { Entity } from "~/ecs/base";
 import { Collider, ColliderVisible } from "~/ecs/plugins/physics";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
-import { BoundingHelper } from "~/ecs/plugins/bounding-helper";
+import { BoundingBox, BoundingHelper } from "~/ecs/plugins/bounding-box";
 import { ControllerState } from "~/ecs/plugins/player-control";
 import { Follow } from "~/ecs/plugins/follow";
 import { intersectionPointWithGround } from "~/ecs/shared/isMakingContactWithGround";

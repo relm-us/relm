@@ -32,7 +32,14 @@ export class FollowSystem extends System {
     targetPosition.copy(targetTransform.positionWorld);
     targetPosition.add(spec.offset);
 
-    transform.position.lerp(targetPosition, spec.lerpAlpha);
-    transform.modified();
+    if (transform.position.equals(targetPosition)) {
+      // Do nothing
+    } else if (transform.position.distanceToSquared(targetPosition) < 0.0001) {
+      transform.position.copy(targetPosition);
+      transform.modified();
+    } else {
+      transform.position.lerp(targetPosition, spec.lerpAlpha);
+      transform.modified();
+    }
   }
 }

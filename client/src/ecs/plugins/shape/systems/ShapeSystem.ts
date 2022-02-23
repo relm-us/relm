@@ -132,15 +132,20 @@ export class ShapeSystem extends System {
   }
 
   attach(entity: Entity) {
-    const parent: Object3D = entity.get(Object3DRef)?.value;
-    if (!parent) return;
+    const parentRef: Object3DRef = entity.get(Object3DRef);
+    if (!parentRef) return;
     const child = entity.get(ShapeMesh).value;
-    parent.add(child);
+    parentRef.value.add(child);
+
+    parentRef.modified();
   }
 
   detach(entity: Entity) {
     const child = entity.get(ShapeMesh).value;
     child.removeFromParent();
+
+    const parentRef: Object3DRef = entity.get(Object3DRef);
+    parentRef.modified();
   }
 
   makeMesh(shape, material) {
