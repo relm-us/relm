@@ -257,7 +257,7 @@ export class Presentation {
   }
 
   hideOffCameraObjects() {
-    const frustum = this.getFrustum();
+    const frustum = this.getFrustum({ grow: SPATIAL_INDEX_THRESHOLD / 2 });
     this.visibleCandidates.clear();
 
     // Make off-camera things invisible
@@ -283,16 +283,21 @@ export class Presentation {
     }
   }
 
-  getFrustum(camera: PerspectiveCamera = this.camera) {
+  getFrustum({ scale = 1.0, grow = 0 } = {}) {
     const frustum = new Frustum();
 
-    camera.updateProjectionMatrix();
+    const m4 = new Matrix4()
+      .copy(this.camera.projectionMatrix)
+      .multiplyScalar(scale);
+    this.camera.updateProjectionMatrix();
     frustum.setFromProjectionMatrix(
-      new Matrix4().multiplyMatrices(
-        camera.projectionMatrix,
-        camera.matrixWorldInverse
-      )
+      m4.multiply(this.camera.matrixWorldInverse)
     );
+    if (grow) {
+      frustum.planes.forEach((plane) => {
+        plane.constant += grow;
+      });
+    }
 
     return frustum;
   }

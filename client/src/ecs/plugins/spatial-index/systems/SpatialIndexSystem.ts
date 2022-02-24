@@ -41,7 +41,7 @@ export class SpatialIndexSystem extends System {
 
   getLargestSide(entity: Entity) {
     const boundingBox: BoundingBox = entity.get(BoundingBox);
-    return Math.max(boundingBox.size.x, boundingBox.size.z);
+    return Math.max(boundingBox.size.x, boundingBox.size.y, boundingBox.size.z);
   }
 
   addOrMove(entity: Entity) {
