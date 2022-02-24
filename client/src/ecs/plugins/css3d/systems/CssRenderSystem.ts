@@ -10,7 +10,7 @@ export class CssRenderSystem extends System {
 
   active = isBrowser();
   // This needs to be immediately after RenderableSystem
-  order = Groups.Presentation + 400;
+  order = Groups.Initialization + 101;
 
   init({ presentation, cssPresentation }) {
     if (!presentation) {

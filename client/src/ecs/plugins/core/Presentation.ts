@@ -2,14 +2,13 @@ import {
   TextureLoader,
   Scene,
   PerspectiveCamera,
-  PlaneHelper,
   WebGLRenderer,
   Texture,
   Vector3,
   Vector2,
   Frustum,
   Matrix4,
-  CameraHelper,
+  Object3D,
 } from "three";
 
 import {
@@ -30,6 +29,7 @@ import { IntersectionFinder } from "./IntersectionFinder";
 import { Loader } from "./Loader";
 import type { SpatialIndex } from "~/ecs/plugins/spatial-index/SpatialIndex";
 import { Object3DRef } from ".";
+import { SPATIAL_INDEX_THRESHOLD } from "~/config/constants";
 
 export type PlaneOrientation = "xz" | "xy";
 
@@ -57,6 +57,7 @@ export class Presentation {
 
   scene: Scene;
   camera: PerspectiveCamera;
+  visibleCandidates: Set<Object3D>;
 
   renderer: WebGLRenderer;
   composer: EffectComposer;
@@ -80,8 +81,9 @@ export class Presentation {
 
     this.scene = options.scene;
     this.camera = options.camera;
-    this.renderer = options.renderer;
+    this.visibleCandidates = new Set();
 
+    this.renderer = options.renderer;
     this.composer = new EffectComposer(this.renderer);
 
     this.composer.addPass(new RenderPass(this.scene, this.camera));
@@ -219,7 +221,44 @@ export class Presentation {
     this.frame++;
 
     this.renderer.info.reset();
+
+    this.hideOffCameraObjects();
+
+    this.composer.render(delta);
+
+    this.frame++;
+  }
+
+  fastFindBetween(source: Vector3, target: Vector3): Object3D[] {
+    if (!this.spatial) throw new Error("fastRaycast requires spatial index");
+
+    const raycaster = this.intersectionFinder.prepareRaycastBetween(
+      source,
+      target
+    );
+    raycaster.params.Points.threshold = SPATIAL_INDEX_THRESHOLD / 2;
+
+    const nodes = this.spatial.octree.raycast(raycaster);
+    const candidateObjects = [];
+    for (let node of nodes) {
+      const { data: entity } = node;
+      if (entity) {
+        const object3d = entity.get(Object3DRef).value;
+
+        // Gather all children, because intersectionFinder needs meshes, not
+        // just top-level Object3D container
+        object3d.traverse((obj) => {
+          candidateObjects.push(obj);
+        });
+      }
+    }
+
+    return this.intersectionFinder.find(candidateObjects);
+  }
+
+  hideOffCameraObjects() {
     const frustum = this.getFrustum();
+    this.visibleCandidates.clear();
 
     // Make off-camera things invisible
     if (this.spatial) {
@@ -233,31 +272,20 @@ export class Presentation {
         if (object3d) object3d.visible = false;
       }
 
-      // this.world.entities.entities.forEach((entity) => {
-      //   const object3d = entity.get(Object3DRef)?.value;
-      //   if (object3d) object3d.visible = false;
-      // });
-
+      // Only turn objects within camera frustum back to 'visible' state
       for (let entity of this.spatial.entitiesInView(frustum)) {
         const object3d = entity.get(Object3DRef)?.value;
-        if (object3d) object3d.visible = true;
+        if (object3d) {
+          object3d.visible = true;
+          this.visibleCandidates.add(object3d);
+        }
       }
     }
-
-    this.composer.render(delta);
-    this.intersectionFinder.candidateObjectsCacheNeedsUpdate = true;
-
-    this.frame++;
   }
 
   getFrustum(camera: PerspectiveCamera = this.camera) {
-    // TODO: is this simpler/faster?
-
-    // camera.updateMatrixWorld();
     const frustum = new Frustum();
 
-    camera.updateMatrix();
-    camera.updateWorldMatrix(true, false);
     camera.updateProjectionMatrix();
     frustum.setFromProjectionMatrix(
       new Matrix4().multiplyMatrices(
@@ -265,18 +293,6 @@ export class Presentation {
         camera.matrixWorldInverse
       )
     );
-    // console.log("frustum", frustum.planes);
-
-    // const frustum = new Frustum();
-    // const cameraViewProjectionMatrix = new Matrix4();
-
-    // camera.updateMatrixWorld();
-    // camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
-    // cameraViewProjectionMatrix.multiplyMatrices(
-    //   camera.projectionMatrix,
-    //   camera.matrixWorldInverse
-    // );
-    // frustum.setFromProjectionMatrix(cameraViewProjectionMatrix);
 
     return frustum;
   }

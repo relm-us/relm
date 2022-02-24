@@ -1,3 +1,7 @@
+import { Vector3 } from "three";
+
+import { SPATIAL_INDEX_THRESHOLD } from "~/config/constants";
+
 import { Entity, System, Not, Modified, Groups } from "~/ecs/base";
 import { Queries } from "~/ecs/base/Query";
 import { Presentation, Transform } from "~/ecs/plugins/core";
@@ -5,8 +9,7 @@ import { BoundingBox } from "~/ecs/plugins/bounding-box";
 import { DirectionalLight } from "~/ecs/plugins/lighting";
 
 import { SpatiallyIndexed } from "../components";
-import { SpatialIndex, SPATIAL_THRESHOLD } from "../SpatialIndex";
-import { Vector3 } from "three";
+import { SpatialIndex } from "../SpatialIndex";
 
 export class SpatialIndexSystem extends System {
   presentation: Presentation;
@@ -38,7 +41,7 @@ export class SpatialIndexSystem extends System {
 
   getLargestSide(entity: Entity) {
     const boundingBox: BoundingBox = entity.get(BoundingBox);
-    return Math.max(boundingBox.size.x, boundingBox.size.y, boundingBox.size.z);
+    return Math.max(boundingBox.size.x, boundingBox.size.z);
   }
 
   addOrMove(entity: Entity) {
@@ -49,7 +52,7 @@ export class SpatialIndexSystem extends System {
 
     const side = this.getLargestSide(entity);
     const isIndexable =
-      side < SPATIAL_THRESHOLD && !entity.has(DirectionalLight);
+      side < SPATIAL_INDEX_THRESHOLD && !entity.has(DirectionalLight);
 
     if (!spatially) {
       if (isIndexable) {

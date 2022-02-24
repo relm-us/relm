@@ -23,7 +23,7 @@ export class RenderableSystem extends System {
   // is updated with the latest world coords as soon as possible after
   // having computed them during WebGL render. It must be immediately
   // followed up with CssRenderSystem so that the actual render occurs.
-  order = Groups.Presentation + 300;
+  order = Groups.Initialization + 100;
 
   static queries: Queries = {
     added: [Renderable, Not(RenderableRef)],

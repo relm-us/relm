@@ -14,8 +14,6 @@ export class IntersectionFinder {
   raycaster: Raycaster;
   camera: Camera;
   scene: Scene;
-  candidateObjectsCache: Object3D[] = [];
-  candidateObjectsCacheNeedsUpdate: boolean = true;
   foundSet: Set<Object3D> = new Set();
 
   _intersections: Array<Intersection>;
@@ -46,48 +44,40 @@ export class IntersectionFinder {
     );
   }
 
-  find(): Set<Object3D> {
-    if (this.candidateObjectsCacheNeedsUpdate) {
-      this.candidateObjectsCacheNeedsUpdate = false;
-      this.candidateObjectsCache.length = 0;
-      // this.camera.
-      this.scene.traverseVisible((object) =>
-        this.candidateObjectsCache.push(object)
-      );
+  find(visibleCandidates?: Object3D[]): Object3D[] {
+    if (!visibleCandidates) {
+      visibleCandidates = [];
+      this.scene.traverseVisible((object) => visibleCandidates.push(object));
     }
 
     // Reduce length to zero rather than garbage collect (speed optimization)
     this._intersections.length = 0;
 
-    // console.log("visible cache", this.candidateObjectsCache.length);
     this.raycaster.intersectObjects(
-      this.candidateObjectsCache,
+      visibleCandidates,
       false,
       this._intersections
     );
 
-    this.foundSet.clear();
-
-    for (let intersection of this._intersections) {
-      const object = findObjectActingAsEntityRoot(intersection.object);
-      if (object !== null) {
-        // outlines and other things should be invisible to IntersectionFinder
-        if (!object.userData.nonInteractive) {
-          object.userData.lastIntersectionPoint = intersection.point;
-          this.foundSet.add(object);
-        }
-      }
-    }
-
-    return this.foundSet;
+    return findIntersectionRoots(this._intersections);
   }
 
-  findBetween(source: Vector3, target: Vector3): Set<Object3D> {
+  prepareRaycastBetween(source: Vector3, target: Vector3) {
     direction.copy(target).sub(source).normalize();
     this.raycaster.camera = this.camera;
     this.raycaster.far = source.distanceTo(target);
     this.raycaster.set(source, direction);
-    return this.find();
+
+    return this.raycaster;
+  }
+
+  findBetween(
+    source: Vector3,
+    target: Vector3,
+    visibleCandidates?: Object3D[]
+  ): Object3D[] {
+    this.prepareRaycastBetween(source, target);
+    return this.find(visibleCandidates);
   }
 
   entityIdsAt(screenCoord: Vector2) {
@@ -111,4 +101,19 @@ function findObjectActingAsEntityRoot(object): Object3D | null {
   } else {
     return null;
   }
+}
+
+export function findIntersectionRoots(intersections) {
+  const roots = [];
+  for (let intersection of intersections) {
+    const object = findObjectActingAsEntityRoot(intersection.object);
+    if (object !== null) {
+      // outlines and other things should be invisible to IntersectionFinder
+      if (!object.userData.nonInteractive) {
+        object.userData.lastIntersectionPoint = intersection.point;
+        roots.push(object);
+      }
+    }
+  }
+  return roots;
 }

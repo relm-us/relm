@@ -5,7 +5,6 @@ import { Entity } from "~/ecs/base";
 import { BoundingBox } from "~/ecs/plugins/bounding-box";
 import { DirectionalLight } from "../lighting";
 
-export const SPATIAL_THRESHOLD = 6;
 export const WORLD_EXTENT = 250;
 
 export class SpatialIndex {
@@ -33,12 +32,14 @@ export class SpatialIndex {
     }
     for (let node of this.octree.leaves(frustum) as any) {
       if (node.data) {
-        const { points, data } = node.data;
+        const { data } = node.data;
         for (let i = 0; i < data.length; i++) {
           const entity = data[i];
-          const boundingBox: BoundingBox = entity.get(BoundingBox);
-          if (boundingBox && frustum.intersectsBox(boundingBox.box)) {
-            yield data[i];
+          if (entity) {
+            const boundingBox: BoundingBox = entity.get(BoundingBox);
+            if (boundingBox && frustum.intersectsBox(boundingBox.box)) {
+              yield data[i];
+            }
           }
         }
       }
