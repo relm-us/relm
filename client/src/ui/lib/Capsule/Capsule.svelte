@@ -92,7 +92,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
     min-width: 30px;
     min-height: 18px;
     flex-grow: 1;
@@ -101,7 +101,7 @@
     border-bottom-right-radius: 4px;
 
     text-align: center;
-    word-break: break-all;
+    word-break: keep-all;
     background-color: rgba(255, 255, 255, 0.25);
     color: #eee;
 
@@ -110,6 +110,8 @@
   }
   .value-text {
     padding: 2px 8px;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   value.max-width {
     max-width: var(--value-width, 45px);
