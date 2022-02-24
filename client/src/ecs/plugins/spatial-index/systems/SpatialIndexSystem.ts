@@ -56,25 +56,7 @@ export class SpatialIndexSystem extends System {
 
     if (!spatially) {
       if (isIndexable) {
-        // Make position unique
-        const index = new Vector3()
-          .random()
-          .divideScalar(100000)
-          .add(transform.positionWorld);
-
-        // Check if by random chance something already exists there:
-        const alreadyThere = spatial.octree.get(index);
-        if (alreadyThere) {
-          // prettier-ignore
-          console.warn(
-            "Spatial index already has element at position", index,
-            "alreadyThere:", alreadyThere,
-            "entity:", entity
-          );
-        }
-
-        // Register entity in octree and remember lookup index
-        spatial.octree.set(index, entity);
+        const index = this.indexFuzzyPoint(transform.positionWorld, entity);
         entity.add(SpatiallyIndexed, { index });
       } else {
         spatial.fallback.add(entity);
@@ -92,10 +74,7 @@ export class SpatialIndexSystem extends System {
       spatially.index = transform.positionWorld;
     } else if (isIndexable && !wasFallback) {
       // Assume it has been added before, since this is a 'move' op
-      const newIndex = new Vector3()
-        .random()
-        .divideScalar(100000)
-        .add(transform.positionWorld);
+      const newIndex = makeFuzzy(transform.positionWorld);
       spatial.octree.move(spatially.index, newIndex);
       spatially.index = newIndex;
     } else if (!isIndexable && wasFallback) {
@@ -116,4 +95,33 @@ export class SpatialIndexSystem extends System {
     }
     entity.remove(SpatiallyIndexed);
   }
+
+  // Adds a little random 'fuzz' to a point before adding it to the
+  // octree index, so that objects that are exactly overlapping in
+  // 3D space do not overwrite each other.
+  indexFuzzyPoint(point: Vector3, entity: Entity): Vector3 {
+    const spatial = this.presentation.spatial;
+
+    const index = makeFuzzy(point);
+
+    // Check if by random chance something already exists there:
+    const alreadyThere = spatial.octree.get(index);
+    if (alreadyThere) {
+      // prettier-ignore
+      console.warn(
+        "Spatial index already has element at position", index,
+        "alreadyThere:", alreadyThere,
+        "entity:", entity
+      );
+    }
+
+    // Register entity in octree and remember lookup index
+    spatial.octree.set(index, entity);
+
+    return index;
+  }
+}
+
+function makeFuzzy(point: Vector3) {
+  return new Vector3().random().divideScalar(100000).add(point);
 }
