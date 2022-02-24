@@ -12,7 +12,8 @@ import { SHADOW_MAP_TYPE } from "~/config/constants";
 export function createRenderer(withDefaultStyles = true) {
   const renderer = new WebGLRenderer({
     powerPreference: "high-performance",
-    // optimize for postprocessing composition
+    // Optimized settings for postprocessing composition:
+    // (see Presentation.ts)
     antialias: false,
     stencil: false,
     depth: false,

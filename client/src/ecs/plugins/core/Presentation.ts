@@ -17,6 +17,7 @@ import {
   RenderPass,
   BlendFunction,
   OutlineEffect,
+  SelectiveBloomEffect,
   SMAAEffect,
   SMAAPreset,
   SMAAImageLoader,
@@ -63,6 +64,7 @@ export class Presentation {
   composer: EffectComposer;
 
   outlineEffect: OutlineEffect;
+  bloomEffect: SelectiveBloomEffect;
 
   cameraTarget: Vector3;
   resizeObserver: ResizeObserver;
@@ -92,36 +94,36 @@ export class Presentation {
     this.outlineEffect = new OutlineEffect(this.scene, this.camera, {
       blendFunction: BlendFunction.SCREEN,
       edgeStrength: 50,
-      // pulseSpeed: 0.5,
+      pulseSpeed: 0.5,
       visibleEdgeColor: 0x00ff00,
       hiddenEdgeColor: 0x00aa00,
       blur: true,
-      // kernelSize: KernelSize.MEDIUM,
       xRay: true,
       opacity: 1,
-      // height: 480,
     });
-    // this.outlineEffect.getBlurPass().setScale(2)
+
+    this.bloomEffect = new SelectiveBloomEffect(this.scene, this.camera, {
+      blendFunction: BlendFunction.ADD,
+      intensity: 1,
+      luminanceThreshold: 0.3,
+      luminanceSmoothing: 0.025,
+    });
 
     new SMAAImageLoader().load(([searchImage, areaImage]) => {
-      const outlinePass = new EffectPass(this.camera, this.outlineEffect);
-      // outlinePass.renderToScreen = true;
-      this.composer.addPass(outlinePass);
-
       // Add anti-aliasing last
       this.composer.addPass(
         new EffectPass(
           this.camera,
+          this.outlineEffect,
           new SMAAEffect(
             searchImage,
             areaImage,
             SMAAPreset.HIGH,
             EdgeDetectionMode.COLOR
-          )
+          ),
+          this.bloomEffect
         )
       );
-
-      // this.composer.addPass(new EffectPass(this.camera, new BloomEffect()));
     });
 
     this.cameraTarget = null; // can be set later with setCameraTarget
