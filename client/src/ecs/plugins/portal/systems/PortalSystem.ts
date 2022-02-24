@@ -63,9 +63,8 @@ export class PortalSystem extends System {
           }, 1000);
         } else if (portal.kind === "REMOTE") {
           const transform = otherEntity.get(Transform);
-          const sparklesEntrance = makeSparkles(this.world, transform.position);
+          makeSparkles(this.world, transform.position);
           setTimeout(() => {
-            sparklesEntrance.destroy();
             worldManager.dispatch({
               id: "enterPortal",
               relmName: portal.relm,

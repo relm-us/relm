@@ -281,6 +281,8 @@ export class WorldManager {
   }
 
   async deinit() {
+    console.trace("worldManager.deinit");
+
     this.broker.unsubscribe();
 
     await delay(30);
@@ -292,6 +294,7 @@ export class WorldManager {
     this.worldDoc.unsubscribe();
 
     this.scene.traverse((node) => (node as any).dispose?.());
+    this.world.systems.systems.forEach((system) => (system.active = false));
     this.world.reset();
 
     this.camera.deinit();
