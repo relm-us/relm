@@ -115,7 +115,7 @@ export class ImageSystem extends System {
     parent.add(child);
     entity.add(ImageAttached, { parent, child });
 
-    // Notifiy dependencies, e.g. BoundingBox, that object3d has changed
+    // Notify dependencies, e.g. BoundingBox, that object3d has changed
     object3dref.modified();
   }
 
@@ -124,7 +124,7 @@ export class ImageSystem extends System {
     parent.remove(child);
     entity.remove(ImageAttached);
 
-    // Notifiy dependencies, e.g. BoundingBox, that object3d has changed
+    // Notify dependencies, e.g. BoundingBox, that object3d has changed
     entity.get(Object3DRef).modified();
   }
 

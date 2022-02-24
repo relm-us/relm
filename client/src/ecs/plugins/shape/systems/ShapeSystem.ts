@@ -137,6 +137,7 @@ export class ShapeSystem extends System {
     const child = entity.get(ShapeMesh).value;
     parentRef.value.add(child);
 
+    // Notify dependencies, e.g. BoundingBox, that object3d has changed
     parentRef.modified();
   }
 
@@ -144,8 +145,8 @@ export class ShapeSystem extends System {
     const child = entity.get(ShapeMesh).value;
     child.removeFromParent();
 
-    const parentRef: Object3DRef = entity.get(Object3DRef);
-    parentRef.modified();
+    // Notify dependencies, e.g. BoundingBox, that object3d has changed
+    entity.get(Object3DRef).modified();
   }
 
   makeMesh(shape, material) {

@@ -116,7 +116,7 @@ export class ModelSystem extends System {
     parent.add(child);
     entity.add(ModelAttached, { parent, child });
 
-    // Notifiy dependencies, e.g. BoundingBox, that object3d has changed
+    // Notify dependencies, e.g. BoundingBox, that object3d has changed
     object3dref.modified();
   }
 
@@ -125,7 +125,7 @@ export class ModelSystem extends System {
     parent.remove(child);
     entity.remove(ModelAttached);
 
-    // Notifiy dependencies, e.g. BoundingBox, that object3d has changed
+    // Notify dependencies, e.g. BoundingBox, that object3d has changed
     entity.get(Object3DRef).modified();
   }
 

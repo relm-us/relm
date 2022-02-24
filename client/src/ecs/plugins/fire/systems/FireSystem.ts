@@ -43,7 +43,8 @@ export class FireSystem extends System {
 
   async build(entity: Entity) {
     const spec = entity.get(Fire);
-    const object3d: Object3D = entity.get(Object3DRef).value;
+    const object3dref: Object3DRef = entity.get(Object3DRef);
+    const object3d: Object3D = object3dref.value;
 
     if (!entity.has(FireMesh)) {
       entity.add(FireMesh);
@@ -64,15 +65,20 @@ export class FireSystem extends System {
 
       object3d.add(mesh);
       fireMesh.value = mesh;
+
+      // Notify dependencies, e.g. BoundingBox, that object3d has changed
+      object3dref.modified();
     }
   }
 
   remove(entity: Entity) {
     const mesh = entity.get(FireMesh).value;
 
-    const object3d: Object3D = entity.get(Object3DRef)?.value;
-    if (object3d) {
-      object3d.remove(mesh);
+    const object3dref: Object3DRef = entity.get(Object3DRef);
+    if (object3dref) {
+      entity.get(Object3DRef).value.remove(mesh);
+      // Notify dependencies, e.g. BoundingBox, that object3d has changed
+      object3dref.modified();
     }
 
     entity.remove(FireMesh);

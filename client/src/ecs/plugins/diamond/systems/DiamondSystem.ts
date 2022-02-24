@@ -63,7 +63,8 @@ export class DiamondSystem extends System {
 
   async build(entity: Entity) {
     const spec = entity.get(Diamond);
-    const object3d: Object3D = entity.get(Object3DRef).value;
+    const object3dref: Object3DRef = entity.get(Object3DRef);
+    const object3d: Object3D = object3dref.value;
 
     const diamond = this.createKernel(new Color(spec.color));
     if (spec.offset) diamond.position.copy(spec.offset);
@@ -74,6 +75,9 @@ export class DiamondSystem extends System {
     object3d.add(glow);
 
     entity.add(DiamondRef, { diamond, glow });
+
+    // Notify dependencies, e.g. BoundingBox, that object3d has changed
+    object3dref.modified();
   }
 
   remove(entity: Entity) {
@@ -83,6 +87,9 @@ export class DiamondSystem extends System {
     if (ref.glow) ref.glow.removeFromParent();
 
     entity.remove(DiamondRef);
+
+    // Notify dependencies, e.g. BoundingBox, that object3d has changed
+    entity.get(Object3DRef).modified();
   }
 
   // The small orange "kernel" at the interior of the diamond

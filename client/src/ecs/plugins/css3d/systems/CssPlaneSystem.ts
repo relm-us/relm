@@ -75,7 +75,7 @@ export class CssPlaneSystem extends System {
 
     entity.add(CssShapeMesh, { value: mesh });
 
-    // Notifiy dependencies, e.g. BoundingBox, that object3d has changed
+    // Notify dependencies, e.g. BoundingBox, that object3d has changed
     entity.get(Object3DRef).modified();
   }
 
@@ -89,7 +89,7 @@ export class CssPlaneSystem extends System {
 
     entity.remove(CssShapeMesh);
 
-    // Notifiy dependencies, e.g. BoundingBox, that object3d has changed
+    // Notify dependencies, e.g. BoundingBox, that object3d has changed
     object3dref.modified();
   }
 }
