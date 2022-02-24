@@ -33,7 +33,11 @@ export class TransformSystem extends System {
     });
 
     this.queries.modified.forEach((entity) => {
-      this.updateWorldTransform(entity);
+      // Update this entity and its children, since we only flag the
+      // top-most Transform as "modified()":
+      entity.traverse((e) => {
+        this.updateWorldTransform(e);
+      });
     });
 
     this.queries.removed.forEach((entity) => {
