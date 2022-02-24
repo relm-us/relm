@@ -719,7 +719,7 @@ export class PointOctree<T> extends Octree {
 				const octant = octants[i];
 				const pointData = octant.data;
 
-				if(pointData !== null) {
+				if(pointData) {
 
 					pointData.testPoints(raycaster, result);
 
