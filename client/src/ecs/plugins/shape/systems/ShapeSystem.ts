@@ -46,9 +46,6 @@ export class ShapeSystem extends System {
       } else {
         this.buildWithoutTexture(entity);
       }
-
-      // Notify outline to rebuild if necessary
-      entity.getByName("Outline")?.modified();
     });
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
@@ -132,21 +129,31 @@ export class ShapeSystem extends System {
   }
 
   attach(entity: Entity) {
-    const parentRef: Object3DRef = entity.get(Object3DRef);
-    if (!parentRef) return;
-    const child = entity.get(ShapeMesh).value;
-    parentRef.value.add(child);
+    const object3dref: Object3DRef = entity.get(Object3DRef);
 
-    // Notify dependencies, e.g. BoundingBox, that object3d has changed
-    parentRef.modified();
+    if (object3dref) {
+      const object3d = object3dref.value;
+
+      const child = entity.get(ShapeMesh).value;
+      object3d.add(child);
+
+      // Notify dependencies, e.g. BoundingBox, that object3d has changed
+      object3dref.modified();
+    }
   }
 
   detach(entity: Entity) {
-    const child = entity.get(ShapeMesh).value;
-    child.removeFromParent();
+    const object3dref: Object3DRef = entity.get(Object3DRef);
 
-    // Notify dependencies, e.g. BoundingBox, that object3d has changed
-    entity.get(Object3DRef).modified();
+    if (object3dref) {
+      const object3d = object3dref.value;
+
+      const child = entity.get(ShapeMesh).value;
+      object3d.remove(child);
+
+      // Notify dependencies, e.g. BoundingBox, that object3d has changed
+      object3dref.modified();
+    }
   }
 
   makeMesh(shape, material) {

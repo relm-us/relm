@@ -83,13 +83,19 @@ export class DiamondSystem extends System {
   remove(entity: Entity) {
     const ref = entity.get(DiamondRef);
 
-    if (ref.diamond) ref.diamond.removeFromParent();
-    if (ref.glow) ref.glow.removeFromParent();
+    const object3dref = entity.get(Object3DRef);
 
-    entity.remove(DiamondRef);
+    if (object3dref) {
+      const object3d = object3dref.value;
 
-    // Notify dependencies, e.g. BoundingBox, that object3d has changed
-    entity.get(Object3DRef).modified();
+      if (ref.diamond) object3d.remove(ref.diamond);
+      if (ref.glow) object3d.remove(ref.glow);
+
+      entity.remove(DiamondRef);
+
+      // Notify dependencies, e.g. BoundingBox, that object3d has changed
+      object3dref.modified();
+    }
   }
 
   // The small orange "kernel" at the interior of the diamond
