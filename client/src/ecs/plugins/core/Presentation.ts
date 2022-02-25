@@ -260,7 +260,6 @@ export class Presentation {
 
   hideOffCameraObjects() {
     const frustum = this.getFrustum({ grow: SPATIAL_INDEX_THRESHOLD / 2 });
-    this.visibleCandidates.clear();
 
     // Make off-camera things invisible
     if (this.spatial) {
@@ -279,7 +278,6 @@ export class Presentation {
         const object3d = entity.get(Object3DRef)?.value;
         if (object3d) {
           object3d.visible = true;
-          this.visibleCandidates.add(object3d);
         }
       }
     }
