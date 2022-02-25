@@ -55,6 +55,7 @@ export class Html2d extends Component {
       default: 3,
       editor: {
         label: "Max. Width",
+        requires: [{ prop: "kind", value: "LABEL" }],
       },
     },
 
@@ -144,6 +145,7 @@ export class Html2d extends Component {
       default: false,
       editor: {
         label: "Draggable",
+        requires: [{ prop: "kind", value: "LABEL" }],
       },
     },
 
@@ -166,10 +168,18 @@ export class Html2d extends Component {
     // Called when done editing
     onChange: {
       type: RefType,
+      editor: {
+        // hide
+        requires: [{ prop: "kind", value: "" }],
+      },
     },
 
     onClose: {
       type: RefType,
+      editor: {
+        // hide
+        requires: [{ prop: "kind", value: "" }],
+      },
     },
   };
 
