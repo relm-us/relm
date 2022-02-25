@@ -50,6 +50,9 @@ export class TransformSystem extends System {
     object3d.uuid = entity.id as string;
     object3d.name = entity.name;
     object3d.matrixAutoUpdate = false;
+    // We don't need frustum culling, because we use sparse-octree to
+    // make objects visible when inside the camera frustum:
+    object3d.frustumCulled = false;
     object3d.userData.entityId = entity.id;
 
     let parent = this.presentation.scene;
