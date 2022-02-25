@@ -32,7 +32,10 @@ export class Clickable extends Component {
       type: StringType,
       editor: {
         label: "URL",
-        requires: [{ prop: "action", value: "LINK" }],
+        requires: [
+          { prop: "action", value: "LINK" },
+          { prop: "action", value: "OPEN" },
+        ],
       },
     },
 

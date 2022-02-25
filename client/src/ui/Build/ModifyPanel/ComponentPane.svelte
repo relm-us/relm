@@ -15,8 +15,8 @@
     if (prop.editor && prop.editor.requires) {
       // if the `editor.requires` field exists, check if we meet criteria
       return prop.editor.requires.reduce((acc, item) => {
-        return acc && component[item.prop] === item.value;
-      }, true);
+        return acc || component[item.prop] === item.value;
+      }, false);
     } else {
       // by default, all props are shown
       return true;
