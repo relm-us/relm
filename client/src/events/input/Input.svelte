@@ -55,6 +55,6 @@
 
 <svelte:window on:keydown={onKeydown} on:keyup={onKeyup} />
 
-<PointerListener {world} />
+<PointerListener />
 <WheelListener {world} />
 <CopyPasteListener />
