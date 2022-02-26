@@ -83,8 +83,7 @@ function cull(node: Node, region: Frustum | Box3, result: Node[]): void {
  * @param result - A list to be filled with the identified octants.
  */
 
-function findNodesByLevel(node: Node, level: number, depth: number,
-	result: Node[]): void {
+function findNodesByLevel(node: Node, level: number, depth: number, result: Node[]): void {
 
 	const children = node.children;
 
@@ -203,8 +202,7 @@ export class Octree implements Tree, Iterable<Node> {
 	}
 
 	/**
-	 * Finds nodes that intersect with the given ray. The intersecting nodes are
-	 * sorted by distance, closest first.
+	 * Finds nodes that intersect with the given ray. The intersecting nodes are sorted by distance, closest first.
 	 *
 	 * @param raycaster - A raycaster.
 	 * @return The intersecting nodes.
@@ -212,15 +210,14 @@ export class Octree implements Tree, Iterable<Node> {
 
 	getIntersectingNodes(raycaster: Raycaster): Node[] {
 
-		return OctreeRaycaster.intersectOctree(this, raycaster.ray);
+		return OctreeRaycaster.intersectOctree(this.root, raycaster.ray);
 
 	}
 
 	/**
 	 * Returns an iterator that traverses the octree and returns leaf nodes.
 	 *
-	 * When a cull region is provided, the iterator will only return leaves that
-	 * intersect with that region.
+	 * When a cull region is provided, the iterator will only return leaves that intersect with that region.
 	 *
 	 * @param region - A cull region.
 	 * @return An iterator.
@@ -228,7 +225,7 @@ export class Octree implements Tree, Iterable<Node> {
 
 	leaves(region: Frustum | Box3 = null): Iterator<Node> {
 
-		return new OctreeIterator(this, region);
+		return new OctreeIterator(this.root, region);
 
 	}
 
@@ -240,7 +237,7 @@ export class Octree implements Tree, Iterable<Node> {
 
 	[Symbol.iterator](): Iterator<Node> {
 
-		return new OctreeIterator(this);
+		return new OctreeIterator(this.root);
 
 	}
 

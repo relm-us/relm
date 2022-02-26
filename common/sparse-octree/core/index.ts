@@ -1,9 +1,9 @@
 export { edges } from "./edges";
 export { layout } from "./layout";
 
-export type { DataContainer } from "./DataContainer";
-export type { Node } from "./Node";
-export type { Tree } from "./Tree";
+export { DataContainer } from "./DataContainer";
+export { Node } from "./Node";
+export { Tree } from "./Tree";
 
 export { CubicOctant } from "./CubicOctant";
 export { Octant } from "./Octant";

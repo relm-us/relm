@@ -17,14 +17,6 @@ export class SpatialIndex {
       new Vector3(-extent, -extent, -extent),
       new Vector3(extent, extent, extent)
     );
-
-    // Workaround until https://github.com/vanruesc/sparse-octree/issues/40 resolved
-    for (let i = 0; i < 10; i++) {
-      this.octree.set(
-        new Vector3(extent - 1 + i / 11, extent - 1, extent - 1),
-        null
-      );
-    }
     this.fallback = new Set();
   }
 
