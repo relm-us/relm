@@ -1,4 +1,4 @@
-import type { EventQueue, RigidBody, World } from "@dimforge/rapier3d";
+import type { RigidBody } from "@dimforge/rapier3d";
 
 import { PHYSICS_TIMESTEP } from "~/config/constants";
 
@@ -50,7 +50,7 @@ export class PhysicsSystem extends System {
     RigidBodyRef.actions.length = 0;
   }
 
-  onFixedUpdate() {
+  onFixedUpdate(dt) {
     if (!this.active) return;
 
     const { world, eventQueue } = this.physics;
@@ -63,6 +63,7 @@ export class PhysicsSystem extends System {
       ref.value[name].apply(ref.value, args);
     });
 
+    world.integrationParameters.dt = dt;
     world.step(eventQueue);
 
     // Add Impacts when contact or intersection takes place. We need to
@@ -107,21 +108,26 @@ export class PhysicsSystem extends System {
 // Return a function that calls a callback as many times
 // as needed in order to "catch up" to the current time
 function createFixedTimestep(
-  timestep: number,
+  timestep: number /* e.g. 1/60 of a second */,
   callback: (delta: number) => void
 ) {
   let accumulator = 0;
   return (delta: number) => {
-    accumulator += delta;
-    // callback(accumulator);
-    // return;
-    while (accumulator >= timestep) {
-      callback(accumulator);
-      if (accumulator >= 1) {
-        // give up, too slow to catch up
-        accumulator = 0;
-      } else {
-        accumulator -= timestep;
+    // catch up via physics engine dt
+    if (delta <= 2 * timestep) {
+      callback(delta);
+      accumulator = 0;
+    } else {
+      // catch up via multiple physics engine steps
+      accumulator += delta;
+      while (accumulator >= timestep) {
+        callback(timestep);
+        if (accumulator >= 1) {
+          // give up, too slow to catch up
+          accumulator = 0;
+        } else {
+          accumulator -= timestep;
+        }
       }
     }
   };
