@@ -86,7 +86,11 @@ export class Presentation {
     this.visibleCandidates = new Set();
 
     this.renderer = options.renderer;
-    this.composer = new EffectComposer(this.renderer, { multisampling: 4 });
+    if (this.renderer.capabilities.isWebGL2) {
+      this.composer = new EffectComposer(this.renderer, { multisampling: 4 });
+    } else {
+      this.composer = new EffectComposer(this.renderer);
+    }
 
     this.composer.addPass(new RenderPass(this.scene, this.camera));
 
@@ -109,9 +113,28 @@ export class Presentation {
       luminanceSmoothing: 0.025,
     });
 
-    this.composer.addPass(
-      new EffectPass(this.camera, this.bloomEffect, this.outlineEffect)
-    );
+    if (this.renderer.capabilities.isWebGL2) {
+      this.composer.addPass(
+        new EffectPass(this.camera, this.bloomEffect, this.outlineEffect)
+      );
+    } else {
+      new SMAAImageLoader().load(([searchImage, areaImage]) => {
+        // Add anti-aliasing last
+        this.composer.addPass(
+          new EffectPass(
+            this.camera,
+            this.outlineEffect,
+            new SMAAEffect(
+              searchImage,
+              areaImage,
+              SMAAPreset.HIGH,
+              EdgeDetectionMode.COLOR
+            ),
+            this.bloomEffect
+          )
+        );
+      });
+    }
 
     this.cameraTarget = null; // can be set later with setCameraTarget
     this.resizeObserver = new ResizeObserver(this.resize.bind(this));
