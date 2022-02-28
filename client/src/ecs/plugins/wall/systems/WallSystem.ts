@@ -1,17 +1,18 @@
-import { System, Not, Modified, Groups } from "~/ecs/base";
-import { Object3DRef, Transform } from "~/ecs/plugins/core";
-import * as THREE from "three";
-import { RigidBodyRef } from "~/ecs/plugins/physics";
-import { worldUIMode } from "~/stores/worldUIMode";
+import { Object3D, Mesh, MeshStandardMaterial } from "three";
 import { get } from "svelte/store";
 
+import { OBJECT_INTERACTION } from "~/config/colliderInteractions";
+
+import { System, Not, Modified, Groups } from "~/ecs/base";
+import { Object3DRef, Transform } from "~/ecs/plugins/core";
+import { RigidBodyRef } from "~/ecs/plugins/physics";
+import { colliderMaterial } from "~/ecs/shared/colliderMaterial";
+
+import { worldUIMode } from "~/stores/worldUIMode";
 import { isBrowser } from "~/utils/isBrowser";
+
 import { Wall, WallMesh, WallColliderRef, WallVisible } from "../components";
 import { WallGeometry, wallGeometryData } from "../WallGeometry";
-import { OBJECT_INTERACTION } from "~/config/colliderInteractions";
-import { colliderMaterial } from "~/ecs/shared/colliderMaterial";
-import { Object3D } from "three";
-
 export class WallSystem extends System {
   active = isBrowser();
   order = Groups.Initialization;
@@ -78,7 +79,7 @@ export class WallSystem extends System {
 
   build(entity) {
     const wall = entity.get(Wall);
-    const object3d = entity.get(Object3D).value;
+    const object3d = entity.get(Object3DRef).value;
     const geometry = WallGeometry(
       wall.size.x,
       wall.size.y,
@@ -89,7 +90,7 @@ export class WallSystem extends System {
 
     let material;
     if (wall.visible) {
-      material = new THREE.MeshStandardMaterial({
+      material = new MeshStandardMaterial({
         color: wall.color,
         roughness: wall.roughness,
         metalness: wall.metalness,
@@ -98,7 +99,7 @@ export class WallSystem extends System {
     } else {
       material = colliderMaterial;
     }
-    const mesh = new THREE.Mesh(geometry, material);
+    const mesh = new Mesh(geometry, material);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
 
@@ -113,7 +114,7 @@ export class WallSystem extends System {
   remove(entity) {
     const mesh = entity.get(WallMesh).value;
     if (mesh) {
-      const object3d = entity.get(Object3D).value;
+      const object3d: Object3D = entity.get(Object3DRef).value;
       object3d.remove(mesh);
       mesh.geometry.dispose();
       mesh.material.dispose();
