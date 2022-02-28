@@ -259,7 +259,8 @@ export class Presentation {
     for (let node of nodes) {
       const { data: entity } = node;
       if (entity) {
-        const object3d = entity.get(Object3DRef).value;
+        const object3d = entity.get(Object3DRef)?.value;
+        if (!object3d) continue;
 
         // Gather all children, because intersectionFinder needs meshes, not
         // just top-level Object3D container
