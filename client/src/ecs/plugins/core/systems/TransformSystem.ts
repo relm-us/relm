@@ -53,6 +53,10 @@ export class TransformSystem extends System {
     // We don't need frustum culling, because we use sparse-octree to
     // make objects visible when inside the camera frustum:
     object3d.frustumCulled = false;
+    // We start objects as not visible, so that the entire world doesn't
+    // need to be rendered on the first frame; instead, we will use
+    // the spatial index to quickly turn on visible, in-frustum objects
+    object3d.visible = false;
     object3d.userData.entityId = entity.id;
 
     let parent = this.presentation.scene;
