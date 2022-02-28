@@ -13,6 +13,7 @@ import { Presentation, Transform } from "~/ecs/plugins/core";
 import { SpatiallyIndexed, SpatialIndex } from "~/ecs/plugins/spatial-index";
 import { Outline } from "~/ecs/plugins/outline";
 import { BoundingBox } from "~/ecs/plugins/bounding-box";
+import { Clicked, Clickable } from "~/ecs/plugins/clickable";
 
 import { Item, ItemActor } from "../components";
 
@@ -21,9 +22,10 @@ const vProjectOutward = new Vector3();
 const probe = new Sphere();
 
 export class ItemActorSystem extends System {
+  static selected: Entity = null;
+
   presentation: Presentation;
   spatial: SpatialIndex;
-  selected: Entity;
   sphereHelper: Mesh;
   candidates: Entity[];
 
@@ -36,22 +38,23 @@ export class ItemActorSystem extends System {
   init({ presentation }) {
     this.presentation = presentation;
     this.spatial = presentation.spatial;
-    this.selected = null;
     this.candidates = [];
   }
 
   update(delta) {
     this.queries.active.forEach((entity) => {
+      const spec = entity.get(ItemActor);
       const entitiesNearby = this.getEntitiesNearby(entity);
       const probe = this.makeProbe(entity);
 
-      // this.updateSphereHelper(entity, probe.center, probe.radius);
+      if (spec.debug)
+        this.updateSphereHelper(entity, probe.center, probe.radius);
 
       // Add intersecting entities to candidates list
       this.candidates.length = 0;
       for (let entity of entitiesNearby) {
         if (entity.parent) continue;
-        if (!entity.get(Item)) continue;
+        if (!entity.get(Item) && !entity.get(Clickable)) continue;
         const box: Box3 = entity.get(BoundingBox)?.box;
         if (box && probe.intersectsBox(box)) {
           this.candidates.push(entity);
@@ -69,17 +72,15 @@ export class ItemActorSystem extends System {
         ? this.candidates[0]
         : null;
 
-      if (
-        this.selected &&
-        this.selected !== shouldOutline &&
-        this.selected.has(Outline)
-      ) {
-        this.selected.remove(Outline);
+      const selected = ItemActorSystem.selected;
+      if (selected && selected !== shouldOutline && selected.has(Outline)) {
+        selected.remove(Outline);
+        ItemActorSystem.selected = null;
       }
 
       if (shouldOutline && !shouldOutline.has(Outline)) {
         shouldOutline.add(Outline);
-        this.selected = shouldOutline;
+        ItemActorSystem.selected = shouldOutline;
       }
     });
   }

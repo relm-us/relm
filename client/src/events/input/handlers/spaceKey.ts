@@ -1,5 +1,7 @@
 import { keySpace } from "~/stores/keys";
 import { globalEvents } from "~/events";
+import { ItemActorSystem } from "~/ecs/plugins/item/systems";
+import { Clickable, Clicked } from "~/ecs/plugins/clickable";
 
 export function onKeydown(event) {
   if (event.key === " ") {
@@ -9,6 +11,11 @@ export function onKeydown(event) {
     globalEvents.emit("action");
 
     if (event.repeat) return;
+
+    const selected = ItemActorSystem.selected;
+    if (selected && selected.get(Clickable) && !selected.get(Clicked)) {
+      selected.add(Clicked);
+    }
 
     // We only need to track "first time" key press
     keySpace.set(true);
