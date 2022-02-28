@@ -44,7 +44,8 @@ export const STATE_TRANSITION_TABLE = new Map([
 
   [KPR.Pressed | SHORT | PRESSED, KPR.Pressed],
   [KPR.Pressed | LONG | PRESSED, KPR.LongPressed],
-  [KPR.Pressed | SHORT | RELEASED, KPR.Released],
+  // Allow to transition from stand-still to double-pressed:
+  [KPR.Pressed | SHORT | RELEASED, KPR.LongPressedReleased],
   [KPR.Pressed | LONG | RELEASED, KPR.Released],
 
   [KPR.LongPressed | SHORT | PRESSED, KPR.LongPressed],
