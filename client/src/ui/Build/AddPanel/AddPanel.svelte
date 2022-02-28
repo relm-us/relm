@@ -25,26 +25,31 @@
 
   let search;
   let lastSearch;
+  let lastPage = 0;
   let spinner = false;
   let selectedAsset: LibraryAsset;
   let assets: LibraryAsset[] = [];
+  let page = 0;
 
   const isTag = (booleanValue: boolean) => (term) => {
     return term.startsWith("#") === booleanValue;
   };
 
-  const query = async (search) => {
-    if (search === lastSearch) return;
+  const query = async (search, page) => {
+    if (search === lastSearch && page === lastPage) return;
     lastSearch = search;
+    lastPage = page;
 
     spinner = true;
     const terms = search ? search.trim().split(/\s+/) : [];
     const tags = terms.filter(isTag(true)).map((tag) => tag.slice(1));
     const keywords = terms.filter(isTag(false));
-    assets = await worldManager.api.queryAssets({ keywords, tags });
+    assets = await worldManager.api.queryAssets({ keywords, tags, page });
     spinner = false;
   };
-  const debouncedQuery: (search?: string) => void = debounce(query, 500, {
+
+  type queryFn = (search: string, page: number) => void;
+  const debouncedQuery: queryFn = debounce(query, 500, {
     leading: true,
   });
 
@@ -61,12 +66,12 @@
     search = `#${tag}`;
   };
 
-  function empty(str: string) {
+  function isEmpty(str: string) {
     if (!str) return true;
     else return str.match(/^\s*$/);
   }
 
-  $: debouncedQuery(empty(search) ? null : search);
+  $: debouncedQuery(isEmpty(search) ? null : search, page);
 
   const onUpload = ({ detail }) => {
     console.log("onUpload", detail);
@@ -130,14 +135,34 @@
         <Tag value="path" on:click={searchTag("path")} />
       </r-tag-sampler>
     {/if}
-    <r-results>
-      {#if spinner}
-        <r-spinner>Loading...</r-spinner>
+    <r-spacer />
+    <r-pagination>
+      {#if page > 0}
+        <Button on:click={() => (page = page - 1)}>Prev</Button>
+      {:else}
+        <div />
       {/if}
-      {#each assets as asset}
-        <SearchResult result={asset} on:click={() => (selectedAsset = asset)} />
-      {/each}
-    </r-results>
+      <r-page>p. {page + 1}</r-page>
+      {#if assets.length > 0}
+        <Button on:click={() => (page = page + 1)}>Next</Button>
+      {:else}
+        <div />
+      {/if}
+    </r-pagination>
+    {#if spinner}
+      <r-results transition:slide>
+        <r-spinner>Loading...</r-spinner>
+      </r-results>
+    {:else}
+      <r-results transition:slide>
+        {#each assets as asset}
+          <SearchResult
+            result={asset}
+            on:click={() => (selectedAsset = asset)}
+          />
+        {/each}
+      </r-results>
+    {/if}
     <r-spacer />
     <UploadButton on:uploaded={onUpload} />
     <SelectCreatePrefab />
@@ -204,6 +229,19 @@
     display: flex;
     margin: 8px 4px 0 10px;
     flex-wrap: wrap;
+  }
+  r-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  r-pagination > div {
+    min-width: 62px;
+    margin: 0 16px;
+  }
+  r-page {
+    display: block;
+    color: #aaa;
   }
 
   r-spacer {
