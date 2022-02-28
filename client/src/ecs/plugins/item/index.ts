@@ -9,6 +9,7 @@ import * as Components from "./components";
 import * as Systems from "./systems";
 
 export * from "./components";
+export * from "./systems";
 
 export { Components };
 

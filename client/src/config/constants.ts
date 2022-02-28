@@ -6,6 +6,8 @@ export const DEFAULT_ENTRYWAY = "default";
 export const DEFAULT_DIRECTIONAL_LIGHT_POSITION = [-5, 5, 2.5];
 export const DRAG_DISTANCE_THRESHOLD = 4;
 
+export const LONG_PRESS_THRESHOLD = 1000;
+
 export const OCULUS_HEIGHT_STAND = 2.4;
 export const OCULUS_HEIGHT_SIT = 1.5;
 
