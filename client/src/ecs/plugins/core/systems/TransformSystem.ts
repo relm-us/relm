@@ -91,15 +91,6 @@ export class TransformSystem extends System {
     object3d.quaternion.copy(transform.rotation);
     object3d.scale.copy(transform.scale);
     object3d.updateMatrix();
-    // object3d.matrix.compose(
-    //   transform.position,
-    //   transform.rotation,
-    //   transform.scale
-    // );
-
-    // if (entity.name === "Avatar") {
-    //   console.log("avatar transform", transform.position);
-    // }
 
     if (parent) {
       // Recursively update any parent WorldTransform whose frame
