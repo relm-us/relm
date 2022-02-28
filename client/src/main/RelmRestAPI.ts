@@ -67,7 +67,7 @@ export class RelmRestAPI {
     keywords,
     tags,
     page,
-    per_page,
+    per_page = 12,
   }: {
     keywords?: string[];
     tags?: string[];

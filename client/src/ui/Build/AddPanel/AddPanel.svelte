@@ -13,6 +13,7 @@
   import Search from "~/ui/lib/Search";
   import Button from "~/ui/lib/Button";
   import UploadButton from "~/ui/Build/shared/UploadButton";
+  import Pane from "~/ui/lib/LeftPanel/Pane.svelte";
 
   import { copyBuffer } from "~/stores/copyBuffer";
   import { paste } from "~/events/input/CopyPasteListener/paste";
@@ -52,6 +53,10 @@
     paste();
   };
 
+  function onCloseSelectedAsset() {
+    selectedAsset = null;
+  }
+
   const searchTag = (tag: string) => () => {
     search = `#${tag}`;
   };
@@ -81,45 +86,50 @@
     <r-search-wrap>
       <Search bind:value={search} placeholder="Search Assets..." />
     </r-search-wrap>
-    <r-selected>
-      {#if selectedAsset}
-        <r-thumb>
-          <img
-            src="{config.assetUrl}/{selectedAsset.thumbnail}"
-            alt={selectedAsset.name}
-          />
-        </r-thumb>
-      {:else}
-        <div>
-          e.g.
-          <Tag value="nature" on:click={searchTag("nature")} />
-          <Tag value="furniture" on:click={searchTag("furniture")} />
-          <Tag value="path" on:click={searchTag("path")} />
-        </div>
-      {/if}
-      {#if selectedAsset}
-        <r-details transition:slide>
-          <r-add-button>
-            <Button
-              on:click={addAsset(selectedAsset)}
-              style="border: 1px solid #999;"
-            >
-              Add {selectedAsset.name}
-            </Button>
-          </r-add-button>
-          <r-desc>
-            {selectedAsset.description}
-          </r-desc>
-          {#if selectedAsset.tags && selectedAsset.tags.length > 0}
-            <r-tags>
-              {#each selectedAsset.tags as value}
-                <Tag {value} on:click={searchTag(value)} />
-              {/each}
-            </r-tags>
-          {/if}
-        </r-details>
-      {/if}
-    </r-selected>
+    {#if selectedAsset}
+      <Pane
+        title={selectedAsset.name}
+        showClose={true}
+        on:close={onCloseSelectedAsset}
+      >
+        <r-selected transition:slide>
+          <r-thumb>
+            <img
+              src="{config.assetUrl}/{selectedAsset.thumbnail}"
+              alt={selectedAsset.name}
+            />
+          </r-thumb>
+
+          <r-details>
+            <r-desc>
+              {selectedAsset.description}
+            </r-desc>
+            {#if selectedAsset.tags && selectedAsset.tags.length > 0}
+              <r-tags>
+                {#each selectedAsset.tags as value}
+                  <Tag {value} on:click={searchTag(value)} />
+                {/each}
+              </r-tags>
+            {/if}
+            <r-add-button>
+              <Button
+                on:click={addAsset(selectedAsset)}
+                style="border: 1px solid #999;"
+              >
+                Add {selectedAsset.name}
+              </Button>
+            </r-add-button>
+          </r-details>
+        </r-selected>
+      </Pane>
+    {:else}
+      <r-tag-sampler>
+        e.g.
+        <Tag value="nature" on:click={searchTag("nature")} />
+        <Tag value="furniture" on:click={searchTag("furniture")} />
+        <Tag value="path" on:click={searchTag("path")} />
+      </r-tag-sampler>
+    {/if}
     <r-results>
       {#if spinner}
         <r-spinner>Loading...</r-spinner>
@@ -148,6 +158,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 12px;
   }
   r-desc {
     padding: 8px 4px;
@@ -160,6 +171,10 @@
   r-tags {
     display: block;
     margin: 8px;
+  }
+  r-tag-sampler {
+    display: block;
+    margin: 0px 12px;
   }
   r-thumb {
     display: block;
@@ -187,9 +202,8 @@
 
   r-results {
     display: flex;
-    margin: 8px auto;
+    margin: 8px 4px 0 10px;
     flex-wrap: wrap;
-    justify-content: center;
   }
 
   r-spacer {
