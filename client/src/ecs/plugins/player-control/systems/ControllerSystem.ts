@@ -11,7 +11,7 @@ import { Animation } from "~/ecs/plugins/animation";
 import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
 import { isMakingContactWithGround } from "~/ecs/shared/isMakingContactWithGround";
 
-import { keyUp, keyDown, keyLeft, keyRight } from "~/stores/keys";
+import { keyUp, keyDown, keyLeft, keyRight, keySpace } from "~/stores/keys";
 
 import { Controller, ControllerState, Repulsive } from "../components";
 
@@ -91,6 +91,7 @@ export class ControllerSystem extends System {
     transition(keysState.right, get(keyRight));
     transition(keysState.up, get(keyUp));
     transition(keysState.down, get(keyDown));
+    transition(spaceState, get(keySpace));
 
     // Make "DoublePressed" key state "sticky" so avatars stay running
     const states = Object.values(keysState);

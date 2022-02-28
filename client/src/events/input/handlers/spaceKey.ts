@@ -1,4 +1,8 @@
+import { get } from "svelte/store";
+
 import { keySpace } from "~/stores/keys";
+import { worldUIMode } from "~/stores/worldUIMode";
+
 import { globalEvents } from "~/events";
 import { ItemActorSystem } from "~/ecs/plugins/item/systems";
 import { Clickable, Clicked } from "~/ecs/plugins/clickable";
@@ -12,9 +16,11 @@ export function onKeydown(event) {
 
     if (event.repeat) return;
 
-    const selected = ItemActorSystem.selected;
-    if (selected && selected.get(Clickable) && !selected.get(Clicked)) {
-      selected.add(Clicked);
+    if (get(worldUIMode) === "play") {
+      const selected = ItemActorSystem.selected;
+      if (selected && selected.get(Clickable) && !selected.get(Clicked)) {
+        selected.add(Clicked);
+      }
     }
 
     // We only need to track "first time" key press
