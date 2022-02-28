@@ -16,6 +16,7 @@ import {
   EffectPass,
   RenderPass,
   BlendFunction,
+  KernelSize,
   OutlineEffect,
   SelectiveBloomEffect,
   SMAAEffect,
@@ -86,7 +87,10 @@ export class Presentation {
     this.visibleCandidates = new Set();
 
     this.renderer = options.renderer;
-    if (this.renderer.capabilities.isWebGL2) {
+
+    const isWebGL2 = this.renderer.capabilities.isWebGL2;
+
+    if (isWebGL2) {
       this.composer = new EffectComposer(this.renderer, { multisampling: 4 });
     } else {
       this.composer = new EffectComposer(this.renderer);
@@ -96,15 +100,15 @@ export class Presentation {
 
     // prepare outline effect for outline EffectPass
     this.outlineEffect = new OutlineEffect(this.scene, this.camera, {
-      blendFunction: BlendFunction.SCREEN,
-      edgeStrength: 50,
-      pulseSpeed: 0.5,
-      visibleEdgeColor: 0x00ff00,
-      hiddenEdgeColor: 0x00aa00,
+      blendFunction: BlendFunction.ALPHA,
+      edgeStrength: 5,
+      visibleEdgeColor: 0xffffff,
+      hiddenEdgeColor: 0x5f5f5f,
       blur: true,
       xRay: true,
-      opacity: 1,
     });
+    // this.outlineEffect.blendMode.opacity = 0.5;
+    // this.outlineEffect.blurPass.alpha = false;
 
     this.bloomEffect = new SelectiveBloomEffect(this.scene, this.camera, {
       blendFunction: BlendFunction.ADD,
@@ -113,7 +117,7 @@ export class Presentation {
       luminanceSmoothing: 0.025,
     });
 
-    if (this.renderer.capabilities.isWebGL2) {
+    if (isWebGL2) {
       this.composer.addPass(
         new EffectPass(this.camera, this.bloomEffect, this.outlineEffect)
       );
