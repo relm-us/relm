@@ -4,7 +4,7 @@
  */
 
 // Minimum number of milliseconds to consider a key press/release as "long"
-export const LONG_THRESHOLD = 100;
+export const LONG_THRESHOLD = 125;
 
 /**
  * Use bit 0 for Short/Long and bit 1 for Pressed/Released

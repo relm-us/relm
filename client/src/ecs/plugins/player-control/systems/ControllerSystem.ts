@@ -21,7 +21,7 @@ import {
   isKeyActive,
   KeyState,
   KPR,
-} from "../KeyState";
+} from "~/ecs/shared/KeyState";
 
 const FLYING_SPEED = 3;
 const FALL_NORMAL = 1;
