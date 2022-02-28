@@ -76,7 +76,9 @@ export class TranslucentSystem extends System {
   ) {
     if (!entity) return;
 
-    const object3d: Object3D = entity.get(Object3DRef).value;
+    const object3d: Object3D = entity.get(Object3DRef)?.value;
+    if (!object3d) return;
+
     const tweening = entity.get(TranslucentTweening);
 
     if (tweening) {
