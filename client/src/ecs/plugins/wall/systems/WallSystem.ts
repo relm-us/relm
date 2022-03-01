@@ -39,9 +39,6 @@ export class WallSystem extends System {
 
       this.removeCollider(entity);
       entity.remove(WallVisible);
-
-      // Notify outline to rebuild if necessary
-      entity.getByName("Outline")?.modified();
     });
     this.queries.modifiedTransform.forEach((entity) => {
       this.removeCollider(entity);
@@ -107,6 +104,9 @@ export class WallSystem extends System {
 
     // Honor visibility of wall right from the start
     object3d.visible = wall.visible;
+
+    // Notify dependencies, e.g. BoundingBox, that object3d has changed
+    entity.get(Object3DRef)?.modified();
 
     entity.add(WallMesh, { value: mesh });
   }
