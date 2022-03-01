@@ -1,14 +1,12 @@
 <script lang="ts">
   import { Entity } from "~/ecs/base";
   import { worldUIMode } from "~/stores/worldUIMode";
-  import { worldManager } from "~/world";
   import { config } from "~/config";
 
   export let width: number;
   export let height: number;
   export let url: string;
   export let alwaysOn: boolean;
-  export let entity: Entity;
 
   let iframe;
   let active = false;
@@ -39,9 +37,6 @@
 
   function onWindowFocus(event: FocusEvent) {
     highlighted = false;
-    if (worldManager.camera) {
-      worldManager.camera.followParticipant();
-    }
   }
 
   function onFrameMouseout() {
@@ -49,19 +44,14 @@
       active = false;
       highlighted = false;
       forceRestoreFocus();
-      worldManager.camera.followParticipant();
     }
   }
 
   function onOverlayMousedown() {
     if ($worldUIMode === "play") {
-      if (worldManager.camera.state.type === "following") {
-        worldManager.camera.focus(entity, () => {
-          active = true;
-          highlighted = true;
-          iframe?.focus();
-        });
-      }
+      active = true;
+      highlighted = true;
+      iframe?.focus();
     }
   }
 
