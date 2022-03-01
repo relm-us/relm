@@ -39,9 +39,6 @@ export class DiamondSystem extends System {
   update(delta) {
     if (!this.loaded) return;
 
-    // Rotate diamonds in step with actual time
-    const d = 1 / (1000 / delta);
-
     this.queries.new.forEach((entity) => {
       this.build(entity);
     });
@@ -52,7 +49,8 @@ export class DiamondSystem extends System {
     this.queries.active.forEach((entity) => {
       const spec = entity.get(Diamond);
       const ref = entity.get(DiamondRef);
-      ref.time += spec.speed * Math.PI * d;
+      // Rotate diamonds in step with actual time
+      ref.time += spec.speed * Math.PI * delta;
       this.setKernelScale(ref.diamond.scale, ref.time);
       this.setDiamondRotation(ref.glow.rotation, ref.time);
     });
