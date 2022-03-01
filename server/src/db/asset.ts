@@ -1,6 +1,5 @@
-import * as Doc from "./doc";
 import { db, sql, INSERT, UPDATE, WHERE } from "./db";
-import { getDefinedKeys, nullOr } from "../utils";
+import { nullOr } from "../utils";
 import { LIMIT, OFFSET, ORDER_BY } from "./pgSqlHelpers";
 
 type AssetColumns = {
@@ -75,6 +74,61 @@ export async function createAsset({
   }
 }
 
+export async function updateAsset({
+  assetId,
+  name,
+  description,
+  tags,
+  ecsProperties,
+  thumbnail,
+  userId,
+  relmId,
+  createdBy,
+}: {
+  assetId: string;
+  name?: string;
+  description?: string;
+  tags?: string[];
+  ecsProperties?: any;
+  thumbnail?: string;
+  userId?: string;
+  relmId?: string;
+  createdBy?: string;
+}) {
+  if (!assetId) {
+    throw new Error("assetId required");
+  }
+  const attrs: any = {};
+  if (name !== undefined) attrs.name = name;
+  if (description !== undefined) attrs.description = description;
+  if (tags !== undefined) attrs.tags = JSON.stringify(tags ?? []);
+  if (ecsProperties !== undefined)
+    attrs.ecs_properties = JSON.stringify(ecsProperties ?? {});
+  if (userId !== undefined) attrs.user_id = userId;
+  if (relmId !== undefined) attrs.relm_id = relmId;
+  if (thumbnail !== undefined) attrs.thumbnail = thumbnail;
+  if (createdBy !== undefined) attrs.created_by = createdBy;
+
+  const filter: any = {
+    asset_id: assetId,
+  };
+
+  let s = sql`
+      ${UPDATE("assets", attrs)}
+      ${WHERE(filter)}
+      RETURNING *
+    `;
+  // console.log("asset create sql", s);
+  const row = await db.oneOrNone(s);
+  if (row !== null) {
+    const relm = mkAsset(row);
+    return relm;
+  } else {
+    return null;
+  }
+}
+
+// Return zero or more assets based on query parameters
 export async function queryAssets({
   keywords,
   tags,

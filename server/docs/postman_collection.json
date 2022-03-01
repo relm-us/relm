@@ -152,11 +152,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{serverUrl}}/mkadmin",
+							"raw": "{{serverUrl}}/admin/mkadmin",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
+								"admin",
 								"mkadmin"
 							]
 						}
@@ -169,35 +170,7 @@
 			"name": "Asset",
 			"item": [
 				{
-					"name": "Upload Asset",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "files[]",
-									"type": "file",
-									"src": "/home/duane/tmp/skyboxes/skybox-bluesky.webp"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{serverUrl}}/asset/upload",
-							"host": [
-								"{{serverUrl}}"
-							],
-							"path": [
-								"asset",
-								"upload"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Add Asset to Library",
+					"name": "Add Library Asset",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -236,7 +209,46 @@
 					"response": []
 				},
 				{
-					"name": "Remove Asset from Library",
+					"name": "Modify Library Asset",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n  \"assetId\": \"bd5f9ea5-299f-4e1e-90cc-b1e079f94fbf\",\n  \"name\": \"Stout Oak Tree\",\n  \"description\": \"A pleasant oak tree\",\n  \"tags\": [\"nature\", \"tree\"]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/asset/library/update",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"asset",
+								"library",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Library Asset",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -275,7 +287,7 @@
 					"response": []
 				},
 				{
-					"name": "Query Asset Library",
+					"name": "Query Library Assets",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -308,6 +320,34 @@
 								"asset",
 								"library",
 								"query"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Asset Binary Data",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files[]",
+									"type": "file",
+									"src": "/home/duane/tmp/skyboxes/skybox-bluesky.webp"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{serverUrl}}/asset/upload",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"asset",
+								"upload"
 							]
 						}
 					},
@@ -684,30 +724,81 @@
 					"response": []
 				},
 				{
-					"name": "Truncate Relm History",
+					"name": "Change Variables",
 					"request": {
 						"method": "POST",
 						"header": [
 							{
 								"key": "X-Relm-S",
-								"type": "text",
-								"value": "{{relmSig}}"
+								"value": "{{relmSig}}",
+								"type": "text"
 							},
 							{
 								"key": "X-Relm-Id",
-								"type": "text",
-								"value": "{{relmId}}"
+								"value": "{{relmId}}",
+								"type": "text"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"changes\": {\n        \"set\": {\n            \"door\": \"open\"\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{serverUrl}}/relm/default/truncate",
+							"raw": "{{serverUrl}}/relm/default/variables",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"relm",
 								"default",
-								"truncate"
+								"variables"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Variables",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/relm/default/variables",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"default",
+								"variables"
 							]
 						}
 					},

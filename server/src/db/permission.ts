@@ -1,5 +1,4 @@
 import { db, sql, INSERT, IN, raw } from "./db";
-import * as set from "../utils/set";
 import { arrayToBooleanObject, booleanObjectToArray } from "../utils";
 import { getRelm } from "./relm";
 

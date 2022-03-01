@@ -36,18 +36,12 @@ asset.post(
   middleware.authenticated(),
   middleware.authorized("admin"),
   wrapAsync(async (req, res) => {
-    let name: string = req.body.name;
-    let description: string = req.body.description;
-    let thumbnail: string = req.body.thumbnail;
-    let tags: string[] = req.body.tags;
-    let ecsProperties: any = req.body.ecsProperties;
-
     const asset = await Asset.createAsset({
-      name,
-      description,
-      thumbnail,
-      tags: tags,
-      ecsProperties,
+      name: req.body.name,
+      description: req.body.description,
+      thumbnail: req.body.thumbnail,
+      tags: req.body.tags,
+      ecsProperties: req.body.ecsProperties,
       createdBy: req.authenticatedPlayerId,
     });
 
@@ -59,6 +53,31 @@ asset.post(
   })
 );
 
+// Update asset metadata in the library
+asset.post(
+  "/library/update",
+  cors(),
+  middleware.authenticated(),
+  middleware.authorized("admin"),
+  wrapAsync(async (req, res) => {
+    const asset = await Asset.updateAsset({
+      assetId: req.body.assetId,
+      name: req.body.name,
+      description: req.body.description,
+      thumbnail: req.body.thumbnail,
+      tags: req.body.tags,
+      ecsProperties: req.body.ecsProperties,
+    });
+
+    return util.respond(res, 200, {
+      status: "success",
+      action: "create",
+      asset,
+    });
+  })
+);
+
+// Delete asset from the library
 asset.delete(
   "/library/delete",
   cors(),
@@ -68,7 +87,7 @@ asset.delete(
     let assetId: string = req.body.assetId;
 
     const deleted = await Asset.deleteAsset({ assetId });
-    
+
     return util.respond(res, 200, {
       status: "success",
       action: "delete",
