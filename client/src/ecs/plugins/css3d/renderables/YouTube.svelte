@@ -55,6 +55,10 @@
   $: if ($worldUIMode === "build") pauseVideo();
 
   function ytCommand(func, args = []) {
+    if (!iframe || !iframe.contentWindow) {
+      console.warn("YouTube iframe.contentWindow missing; command ignored");
+      return;
+    }
     iframe.contentWindow.postMessage(
       JSON.stringify({
         event: "command",
