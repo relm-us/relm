@@ -97,6 +97,7 @@ export class WorldManager {
   keyDown = keyDown;
 
   transformArray: any[];
+  errorCount: number = 0;
 
   loopType: LoopType = { type: "requestAF" };
 
@@ -464,9 +465,25 @@ export class WorldManager {
 
   worldStep(delta?: number) {
     if (this.world) {
-      this.world.update(
-        this.started && delta !== undefined ? delta : 1000 / 60
-      );
+      try {
+        this.world.update(
+          this.started && delta !== undefined ? delta : 1000 / 60
+        );
+      } catch (err) {
+        this.errorCount++;
+        if (this.errorCount > 100) {
+          console.warn(err);
+          this.stop();
+
+          this.dispatch({
+            id: "notify",
+            notification: {
+              text: `Unrecoverable errors; please refresh browser.`,
+              position: "bottom-center",
+            },
+          });
+        }
+      }
     }
   }
 

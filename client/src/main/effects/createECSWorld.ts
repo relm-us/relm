@@ -48,6 +48,8 @@ import { PerformanceStatsSystem } from "~/ecs/systems/PerformanceStatsSystem";
 import { Dispatch } from "../ProgramTypes";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
+let errCount = 0;
+
 export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
   const ecsWorld = new World({
     getTime: performance.now.bind(performance),
@@ -102,7 +104,16 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
   }) as DecoratedECSWorld;
 
   const interval = setInterval(() => {
-    ecsWorld.update(40);
+    try {
+      ecsWorld.update(40);
+    } catch (err) {
+      errCount++;
+      if (errCount > 100) {
+        console.warn(err);
+        clearInterval(interval);
+        alert("There was a problem loading; try refreshing?");
+      }
+    }
   }, 40);
   const unsub = () => clearInterval(interval);
 
