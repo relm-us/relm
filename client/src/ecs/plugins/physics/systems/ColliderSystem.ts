@@ -13,7 +13,6 @@ export class ColliderSystem extends System {
   static queries = {
     added: [Collider, Not(ColliderRef), RigidBodyRef],
     modifiedBody: [ColliderRef, Modified(RigidBody)],
-    modifiedTransform: [ColliderRef, Modified(Transform)],
     modified: [Modified(Collider), RigidBodyRef],
     removed: [Not(Collider), ColliderRef],
   };
@@ -29,10 +28,6 @@ export class ColliderSystem extends System {
     });
     this.queries.modifiedBody.forEach((entity) => {
       this.remove(entity);
-    });
-    this.queries.modifiedTransform.forEach((entity) => {
-      // TODO: is this necessary?
-      // this.remove(entity);
     });
     // replace ColliderRef with new spec
     this.queries.modified.forEach((entity) => {
