@@ -1,4 +1,5 @@
 import { Quaternion, Vector3 } from "three";
+import { cleanLink } from "~/utils/cleanLink";
 
 import { worldManager } from "~/world";
 import { System, Groups, Entity } from "~/ecs/base";
@@ -35,11 +36,11 @@ export class ClickableSystem extends System {
 
     switch (clickable.action) {
       case "OPEN":
-        window.open(clickable.link);
+        window.open(cleanLink(clickable.link));
         break;
 
       case "LINK":
-        window.open(clickable.link, "_blank");
+        window.open(cleanLink(clickable.link), "_blank");
         break;
 
       case "CHANGES": {
