@@ -7,6 +7,18 @@ import {
 } from "~/config/colliderInteractions";
 
 export class Collider extends Component {
+  shape: "BOX" | "SPHERE" | "CYLINDER" | "CAPSULE";
+  boxSize: Vector3;
+  sphereRadius: number;
+  cylinderRadius: number;
+  cylinderHeight: number;
+  capsuleRadius: number;
+  capsuleHeight: number;
+  offset: Vector3;
+  density: number;
+  interaction: number;
+  isSensor: boolean;
+
   static props = {
     shape: {
       type: StringType,
