@@ -92,7 +92,7 @@ export class TransformSystem extends System {
     object3d.scale.copy(transform.scale);
     object3d.updateMatrix();
 
-    if (parent) {
+    if (parent && parent.has(Object3DRef)) {
       // Recursively update any parent WorldTransform whose frame
       // is not equal to the current frame:
       const parentObject3D = this.updateWorldTransform(parent);
