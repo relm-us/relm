@@ -13,11 +13,9 @@ import { RigidBody, Collider, Impactable } from "~/ecs/plugins/physics";
 import { Animation } from "~/ecs/plugins/animation";
 import { Repulsive } from "~/ecs/plugins/player-control";
 import { TranslucentOptions } from "~/ecs/plugins/translucent";
-import { IDLE } from "~/config/constants";
+import { AVATAR_HEIGHT_UNSCALED, IDLE } from "~/config/constants";
 
 import { AvatarEntities } from "~/types";
-
-const UNSCALED_CHARACTER_HEIGHT = 7;
 
 export function makeAvatarEntities(
   world: DecoratedECSWorld,
@@ -52,17 +50,17 @@ export function makeAvatarEntities(
       shape: "CAPSULE",
       capsuleHeight: 5.5,
       capsuleRadius: 1,
-      offset: new Vector3(0, UNSCALED_CHARACTER_HEIGHT / 2, 0),
+      offset: new Vector3(0, AVATAR_HEIGHT_UNSCALED / 2, 0),
       interaction: AVATAR_INTERACTION,
     });
 
   const head = makeEntity(world, "AvatarHead").add(Transform, {
-    position: new Vector3(0, UNSCALED_CHARACTER_HEIGHT, 0),
+    position: new Vector3(0, AVATAR_HEIGHT_UNSCALED, 0),
   });
   head.setParent(body);
 
   const emoji = makeEntity(world, "AvatarEmoji").add(Transform, {
-    position: new Vector3(0, UNSCALED_CHARACTER_HEIGHT, 0),
+    position: new Vector3(0, AVATAR_HEIGHT_UNSCALED, 0),
   });
   emoji.setParent(body);
 

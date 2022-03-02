@@ -26,6 +26,9 @@ export const DEFAULT_VIEWPORT_ZOOM = 25.0;
 
 // Height of the avatar (GLB); TODO: make this a variable?
 export const AVATAR_HEIGHT = 1.5;
+// Due to the way GLB is exported, it is much larger in local
+// transform, and we need to take that into account at times
+export const AVATAR_HEIGHT_UNSCALED = 7;
 
 // Distance from camera to object of focus (e.g. web page)
 export const CAMERA_FOCUS_DISTANCE = 5.0;
@@ -45,3 +48,4 @@ export const SCREEN_SHARING = "screen-sharing";
 export const WALKING = "walking";
 export const WAVING = "waving";
 export const STAND_SIT = "stand-to-sit-ground";
+export const CHAIR_SIT = "stand-to-sit-chair";
