@@ -475,13 +475,7 @@ export class WorldManager {
           console.warn(err);
           this.stop();
 
-          this.dispatch({
-            id: "notify",
-            notification: {
-              text: `Unrecoverable errors; please refresh browser.`,
-              position: "bottom-center",
-            },
-          });
+          alert("Unrecoverable errors; please refresh browser.");
         }
       }
     }
