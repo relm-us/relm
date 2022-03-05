@@ -135,21 +135,14 @@ export class AVConnection {
   // Adds or replaces the tracks associated with a remote participant
   // that this peer knows about.
   acceptTracks(participantId: string, tracks: Array<Track>) {
+    console.log(
+      "AV acceptTracks",
+      participantId,
+      tracks.map((t) => t.kind)
+    );
     for (const track of tracks) {
       const store = this.getTrackStore(participantId, track.kind as TrackKind);
       store.set(track);
     }
-    // this.getStreamStore(participantId).update((stream) => {
-    //   let previousTrack;
-    //   for (const track of tracks) {
-    //     if (track.kind === "video") previousTrack = stream.getVideoTracks()[0];
-    //     if (track.kind === "audio") previousTrack = stream.getAudioTracks()[0];
-
-    //     if (previousTrack) stream.removeTrack(stream.getVideoTracks()[0]);
-    //     stream.addTrack(track);
-    //   }
-    //   console.log("accepTracks stream", stream, stream.getTracks());
-    //   return stream;
-    // });
   }
 }

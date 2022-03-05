@@ -111,6 +111,8 @@
       {/if}
     </oculus>
   </container>
+{:else if showAudio && !isLocal}
+  <Audio track={$audioStore} {volume} />
 {/if}
 
 <style lang="scss">
