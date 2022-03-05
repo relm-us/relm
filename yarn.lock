@@ -12024,10 +12024,10 @@ tunnel-agent@^0.6.0:
   dependencies:
     safe-buffer "^5.0.1"
 
-twilio-video@2.18.3:
-  version "2.18.3"
-  resolved "https://registry.yarnpkg.com/twilio-video/-/twilio-video-2.18.3.tgz#8387503a822c79541a2a1dcfbe2b3b8fcf7c171e"
-  integrity sha512-S4Fq5QCBDXHAsITu3Kd1MHTBeFchLENUI9gAZrwYOQr+yJIclIHRNCUktym/G9rGGdJVQlG/nuyYYpOR3R9rvQ==
+twilio-video@2.20.1:
+  version "2.20.1"
+  resolved "https://registry.yarnpkg.com/twilio-video/-/twilio-video-2.20.1.tgz#391a311621ccc5d904eaa5b228e6c967edd19763"
+  integrity sha512-fxQeW5gCEt6r6NxsRgA7RgjaytXLjuLKey/Hio1P5Nmqkw6s+c+XHACIOpWhgX4M68FV0i3qwvHCO+YMQVyyrw==
   dependencies:
     "@twilio/webrtc" "4.5.2"
     backoff "^2.5.0"

@@ -8,34 +8,26 @@ export const joinAudioVideo =
   (
     localParticipant: Participant,
     avConnection: AVConnection,
-    avDisconnect: Function,
+    avDisconnectPrevious: Function,
     relmDocId: string,
     twilioToken: string
   ) =>
   async (dispatch: Dispatch) => {
-    if (avDisconnect) {
-      try {
-        // await avDisconnect();
-      } catch {}
+    if (avDisconnectPrevious) {
+      console.log("joinAudioVideo disconnect previous...");
+      await avDisconnectPrevious();
+    } else {
+      console.log("joinAudioVideo first time");
     }
 
-    const idData = {
+    // Join the room
+    console.log("joinAudioVideo connect...");
+    const avDisconnect = await avConnection.connect({
       roomId: relmDocId,
       displayName: localParticipant.identityData.name,
-    };
-
-    // Join the room
-    console.log("Joining video conference room", idData);
-    const disconnect = await avConnection.connect({
-      ...idData,
       token: twilioToken,
     });
+    console.log("joinAudioVideo joined");
 
-    dispatch({
-      id: "didJoinAudioVideo",
-      avDisconnect: () => {
-        console.log("Leaving video conference room", idData);
-        disconnect();
-      },
-    });
+    dispatch({ id: "didJoinAudioVideo", avDisconnect });
   };

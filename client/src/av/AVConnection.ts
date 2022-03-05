@@ -21,6 +21,7 @@ export class AVConnection {
   adapter: ClientAVAdapter;
   audioTrackStores: Record<string, Writable<Track>>;
   videoTrackStores: Record<string, Writable<Track>>;
+  connectedStore: Writable<boolean> = writable(false);
 
   constructor(participantId) {
     this.participantId = participantId;
@@ -35,9 +36,13 @@ export class AVConnection {
   }
 
   async connect({ roomId, token, displayName }: AVConnectOpts) {
+    console.log("Joining video conference room", this);
+
     await this.adapter.connect(roomId, token, { displayName });
     this.watchLocalTrackChanges();
     this.watchRemoteTrackChanges();
+
+    this.connectedStore.set(true);
 
     return async () => {
       await this.adapter.disconnect();
@@ -45,7 +50,13 @@ export class AVConnection {
   }
 
   async disconnect() {
-    await this.adapter.disconnect();
+    console.log("Leaving video conference room", this);
+    try {
+      await this.adapter.disconnect();
+    } catch (err) {
+      console.log("Unable to disconnect from video conference", err);
+    }
+    this.connectedStore.set(false);
   }
 
   // Reactively waits for local participant's stream changes (e.g. if they
@@ -54,12 +65,14 @@ export class AVConnection {
   watchLocalTrackChanges() {
     // Whenever local audio source or settings change, update the adapter
     localAudioTrackStore.subscribe((track: MediaStreamTrack) => {
+      console.log("localAudioTrackStore changed", track);
       this.adapter.publishLocalTracks([track]);
     });
 
     // // Whenever local video source or settings change, update the adapter
     let prevTrack;
     localVisualTrackStore.subscribe((track: MediaStreamTrack) => {
+      console.log("localVisualTrackStore changed", track);
       if (prevTrack) {
         this.adapter.unpublishLocalTracks([prevTrack]);
       }

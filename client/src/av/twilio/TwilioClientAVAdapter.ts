@@ -70,16 +70,30 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
       "participantDisconnected",
       this._participantDisconnected.bind(this)
     );
+
+    this.room.on("disconnected", (room, error) => {
+      console.log("AV disconnected", error);
+    });
+
+    this.room.on("reconnecting", (error) => {
+      console.log("AV reconnecting", error);
+    });
+
+    this.room.on("reconnected", () => {
+      console.log("AV reconnected");
+    });
   }
 
   disconnect(): Promise<void> {
     return new Promise((resolve, reject) => {
+      console.log("AV disconnected", this.room.state);
       try {
         this.room.disconnect();
-        resolve();
       } catch (err) {
         reject(err);
+        return;
       }
+      resolve();
     });
   }
 
@@ -146,16 +160,24 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
   }
 
   publishLocalTracks(tracks: Array<MediaStreamTrack>) {
+    if (this.room.state !== "connected") {
+      console.warn("TwilioClient not publishing local tracks; not connected");
+      return;
+    }
     const localParticipant = this.room.localParticipant;
-    let previousTrack: LocalTrack;
     for (const track of tracks) {
       if (!track) continue;
-      if (track.kind === "video")
-        previousTrack = localParticipant.videoTracks.values()[0];
-      if (track.kind === "audio")
-        previousTrack = localParticipant.audioTracks.values()[0];
 
-      if (previousTrack) localParticipant.unpublishTrack(previousTrack);
+      if (track.kind === "video") {
+        const previousTrack = localParticipant.videoTracks.values()[0];
+        if (previousTrack) localParticipant.unpublishTrack(previousTrack);
+      }
+
+      if (track.kind === "audio") {
+        const previousTrack = localParticipant.audioTracks.values()[0];
+        if (previousTrack) localParticipant.unpublishTrack(previousTrack);
+      }
+
       localParticipant.publishTrack(track);
     }
   }
