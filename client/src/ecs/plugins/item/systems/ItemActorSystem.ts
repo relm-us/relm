@@ -90,6 +90,7 @@ export class ItemActorSystem extends System {
     if (!spatiallyIndexed) return [];
     return this.spatial.octree
       .findPoints(spatiallyIndexed.index, SPATIAL_INDEX_THRESHOLD, true)
+      .filter((found) => Boolean(found.data))
       .map((found) => found.data);
   }
 
