@@ -106,12 +106,11 @@
           class="oculus-video"
         />
       {/if}
-      {#if showAudio && !isLocal}
-        <Audio track={$audioStore} {volume} />
-      {/if}
     </oculus>
   </container>
-{:else if showAudio && !isLocal}
+{/if}
+
+{#if showAudio && !isLocal}
   <Audio track={$audioStore} {volume} />
 {/if}
 

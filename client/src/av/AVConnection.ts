@@ -92,9 +92,10 @@ export class AVConnection {
       const groups = groupBy(resources, "participantId");
 
       for (const [participantId, resources] of Object.entries(groups)) {
-        const tracks = resources.map((r) => r.track);
-        if (participantId !== this.participantId)
+        if (participantId !== this.participantId) {
+          const tracks = resources.map((r) => r.track);
           this.acceptTracks(participantId, tracks);
+        }
       }
     });
   }
