@@ -14,7 +14,7 @@ export class Clickable extends Component {
   static props = {
     action: {
       type: StringType,
-      default: "CHANGES",
+      default: "TOGGLE",
       editor: {
         label: "Action",
         input: "Select",
@@ -54,6 +54,12 @@ export class Clickable extends Component {
       editor: {
         label: "Axis",
         requires: [{ prop: "action", value: "FLIP" }],
+        input: "Select",
+        options: [
+          { label: "X-axis", value: "X" },
+          { label: "Y-axis", value: "Y" },
+          { label: "Z-axis", value: "Z" },
+        ],
       },
     },
 
