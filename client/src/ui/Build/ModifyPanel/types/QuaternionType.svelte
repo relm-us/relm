@@ -23,14 +23,17 @@
   let value: Euler;
   $: value = new Euler(0, 0, 0, "YXZ").setFromQuaternion(component[key]); //component[key]
 
-  function fmt(n) {
-    return n === undefined ? "un" : n.toFixed(1);
+  function radToDeg(rad) {
+    return (rad / Math.PI) * 180;
+  }
+  function degToRad(deg) {
+    return (deg / 180) * Math.PI;
   }
 
   const onInputChange =
     (dimension) =>
     ({ detail }) => {
-      const newValue = parseFloat(detail);
+      const newValue = degToRad(parseFloat(detail));
       if (!Number.isNaN(newValue)) {
         value[dimension] = newValue;
         q1.setFromEuler(value);
@@ -48,7 +51,7 @@
 
   const setNewValue = (dimension, newValue) => {
     const floatValue = parseFloat(newValue);
-    value[dimension] = floatValue;
+    value[dimension] = degToRad(floatValue);
     q1.setFromEuler(value);
     component[key].copy(q1);
     component.modified();
@@ -56,7 +59,7 @@
 
   const makeDragger = (dimension) => {
     return new NumberDragger({
-      getValue: () => value[dimension],
+      getValue: () => radToDeg(value[dimension]),
       onDrag: (newValue) => {
         setNewValue(dimension, newValue);
       },
@@ -98,7 +101,8 @@
         on:change={onInputChange(dim)}
         on:cancel={onInputCancel(dim)}
         label={dim.toUpperCase()}
-        value={formatNumber(value[dim], editing[dim])}
+        value={formatNumber(radToDeg(value[dim]), editing[dim])}
+        suffix="°"
         type="number"
       />
     {/each}

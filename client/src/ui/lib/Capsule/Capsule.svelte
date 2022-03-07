@@ -3,6 +3,7 @@
 
   export let label: string = null;
   export let value: any = "";
+  export let suffix: string = "";
   export let type: "text" | "number" = "text";
   export let editable: boolean = true;
   export let editing: boolean = false;
@@ -65,7 +66,9 @@
           on:blur={onBlur}
         />
       {/if}
-    {:else if value !== undefined}<span class="value-text">{value}</span>{/if}
+    {:else if value !== undefined}
+      <span class="value-text">{value}{suffix}</span>
+    {/if}
   </value>
 </capsule>
 

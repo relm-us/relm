@@ -7,7 +7,11 @@ export function formatNumber(n, editing, digits = 1) {
     if (editing) {
       return n;
     } else {
-      return fixed;
+      if (digits > 1 && fixed.endsWith("0")) {
+        return formatNumber(n, editing, digits - 1);
+      } else {
+        return fixed;
+      }
     }
   } else if (n === undefined) {
     return "[undefined]";
