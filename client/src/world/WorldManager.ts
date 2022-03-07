@@ -71,6 +71,7 @@ import { setTransformArrayOnParticipants } from "~/identity/Avatar/transform";
 import { delay } from "~/utils/delay";
 import { RelmRestAPI } from "~/main/RelmRestAPI";
 import { PhotoBooth } from "./PhotoBooth";
+import { audioMode, AudioMode } from "~/stores/audioMode";
 
 type LoopType =
   | { type: "requestAF" }
@@ -191,13 +192,19 @@ export class WorldManager {
 
         const fov = $settings.get("cameraFov");
         if (fov) this.camera.setFov(fov);
+
+        const audioModeSetting: AudioMode = $settings.get("audioMode");
+        if (audioModeSetting === "proximity") {
+          audioMode.set("proximity");
+        } else {
+          audioMode.set("world");
+        }
       })
     );
 
     this.camera.init();
 
     this.world.perspective.setAvatar(this.avatar.entities.body);
-    // this.world.perspective.setCameraManager(this.camera);
 
     this.unsubs.push(
       shadowsEnabled.subscribe(($enabled) => {

@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { State } from "~/main/ProgramTypes";
 
-  import AudioModeButton from "~/ui/ButtonControls/AudioModeButton";
   import MicButton from "~/ui/ButtonControls/MicButton";
   import VideoButton from "~/ui/ButtonControls/VideoButton";
   import AvatarSetupButton from "~/ui/ButtonControls/AvatarSetupButton";
@@ -79,10 +78,7 @@
       {/if}
 
       {#if $openPanel === "actions"}
-        <ActionsPanel
-          on:minimize={toPlayMode}
-          actions={state.worldDoc.actions}
-        />
+        <ActionsPanel on:minimize={toPlayMode} />
       {/if}
 
       <!-- Export panel opens from button in SettingsPanel -->
@@ -151,14 +147,6 @@
 
     <div style="width:16px" />
 
-    <Tooltip
-      tip={$audioMode === "world"
-        ? _("Hear nearby only", "audio_mode_near")
-        : _("Hear everyone", "audio_mode_global")}
-      top
-    >
-      <AudioModeButton />
-    </Tooltip>
     <Tooltip
       tip={$chatOpen
         ? _("Close chat", "chat_close")

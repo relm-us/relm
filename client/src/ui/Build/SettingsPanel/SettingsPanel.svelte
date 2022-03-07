@@ -7,6 +7,7 @@
   import SkyboxSettings from "./SkyboxSettings.svelte";
   import FogSettings from "./FogSettings.svelte";
   import CameraSettings from "./CameraSettings.svelte";
+  import AudioSettings from "./AudioSettings.svelte";
   import LightingSettings from "./LightingSettings.svelte";
 </script>
 
@@ -20,6 +21,8 @@
     <FogSettings />
 
     <CameraSettings />
+
+    <AudioSettings />
 
     <LightingSettings />
 
