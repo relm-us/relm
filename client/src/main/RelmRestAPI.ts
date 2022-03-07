@@ -1,7 +1,6 @@
-import axios from "axios";
-
 import type { AuthenticationHeaders } from "~/types";
 import type { LibraryAsset } from "~/types";
+import { fetch } from "~/utils/fetch";
 
 export class RelmRestAPI {
   url: string;
@@ -14,14 +13,16 @@ export class RelmRestAPI {
     this.authHeaders = authHeaders;
   }
 
-  async get(path) {
-    const url = `${this.url}${path}`;
-    return await axios.get(url, { headers: this.authHeaders });
+  async get(path): Promise<Response> {
+    return await fetch(`${this.url}${path}`, { headers: this.authHeaders });
   }
 
-  async post(path, body = {}) {
-    const url = `${this.url}${path}`;
-    return await axios.post(url, body, { headers: this.authHeaders });
+  async post(path, body = {}): Promise<Response> {
+    return await fetch(`${this.url}${path}`, {
+      method: "POST",
+      headers: this.authHeaders,
+      body: JSON.stringify(body, null, 2),
+    });
   }
 
   async getPermitsAndMeta(): Promise<{ permits: string[]; jwt: any }> {
@@ -53,10 +54,11 @@ export class RelmRestAPI {
   async getPermitsForManyRelms(relms: string[]) {
     const res = await this.post("/auth/permissions", { relms });
     if (res?.status === 200) {
-      if (res.data?.status === "success") {
-        return res.data.permits;
+      const body = await res.json();
+      if (body.data?.status === "success") {
+        return body.data.permits;
       } else {
-        throw Error(`can't get permissions (${res.data?.status})`);
+        throw Error(`can't get permissions (${body.data?.status})`);
       }
     } else {
       throw Error(`can't get permissions (${res?.status})`);
@@ -81,10 +83,11 @@ export class RelmRestAPI {
       per_page,
     });
     if (res?.status === 200) {
-      if (res.data?.status === "success") {
-        return res.data.assets;
+      const body = await res.json();
+      if (body.data?.status === "success") {
+        return body.data.assets;
       } else {
-        throw Error(`can't get assets (${res.data?.status})`);
+        throw Error(`can't get assets (${body.data?.status})`);
       }
     } else {
       throw Error(`can't get assets (${res?.status})`);
@@ -112,10 +115,11 @@ export class RelmRestAPI {
       ecsProperties,
     });
     if (res?.status === 200) {
-      if (res.data?.status === "success") {
+      const body = await res.json();
+      if (body.data?.status === "success") {
         return true;
       } else {
-        throw Error(`can't get assets (${res.data?.status})`);
+        throw Error(`can't get assets (${body.data?.status})`);
       }
     } else {
       throw Error(`can't get assets (${res?.status})`);
@@ -136,10 +140,11 @@ export class RelmRestAPI {
     const url = `/relm/${this.relmName}/variables`;
     const res = await this.post(url, { changes });
     if (res?.status === 200) {
-      if (res.data?.status === "success") {
+      const body = await res.json();
+      if (body.data?.status === "success") {
         return true;
       } else {
-        throw Error(`can't set variables (${res.data?.status})`);
+        throw Error(`can't set variables (${body.data?.status})`);
       }
     } else {
       throw Error(`can't set variables (${res?.status})`);

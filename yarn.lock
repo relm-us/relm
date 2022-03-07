@@ -2695,7 +2695,7 @@ aws-sdk@^2.1046.0:
     uuid "3.3.2"
     xml2js "0.4.19"
 
-axios@^0.21.1, axios@^0.21.4:
+axios@^0.21.4:
   version "0.21.4"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.4.tgz#c67b90dc0568e5c1cf2b0b858c43ba28e2eda575"
   integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==
@@ -10210,6 +10210,11 @@ readdirp@~3.6.0:
   integrity sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==
   dependencies:
     picomatch "^2.2.1"
+
+real-cancellable-promise@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/real-cancellable-promise/-/real-cancellable-promise-1.1.1.tgz#be793502f7ed8067936d95dc040a2d2a2a1944a7"
+  integrity sha512-vxanUX4Aff5sRX6Rb1CSeCDWhO20L0hKQXWTLOYbtRo9WYFMjlhEBX0E75iz3+7ucrmFdPpDolwLC7L65P7hag==
 
 rechoir@^0.7.0:
   version "0.7.1"
