@@ -46,4 +46,10 @@ export type LibraryAsset = {
   createdAt: string;
 };
 
+export type LibraryAssetResults = {
+  search: string;
+  page: number;
+  results: LibraryAsset[];
+};
+
 export * from "./identity";

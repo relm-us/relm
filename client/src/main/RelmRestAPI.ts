@@ -17,15 +17,24 @@ export class RelmRestAPI {
   get<T>(path): CancellablePromise<T> {
     return simpleFetch(`${this.url}${path}`, {
       method: "GET",
-      headers: this.authHeaders,
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        ...this.authHeaders,
+      },
     });
   }
 
-  post<T>(path, body = {}): CancellablePromise<T> {
+  post<T>(path, params = {}): CancellablePromise<T> {
+    const body = JSON.stringify(params, null, 2);
     return simpleFetch(`${this.url}${path}`, {
       method: "POST",
-      headers: this.authHeaders,
-      body: JSON.stringify(body, null, 2),
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        ...this.authHeaders,
+      },
+      body,
     });
   }
 

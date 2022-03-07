@@ -1,12 +1,9 @@
 <script lang="ts">
   import type { LibraryAsset } from "~/types";
 
-  import debounce from "lodash/debounce";
   import { slide } from "svelte/transition";
 
   import { config } from "~/config";
-
-  import { worldManager } from "~/world";
   import { createPrefab } from "~/prefab";
 
   import LeftPanel, { Header } from "~/ui/lib/LeftPanel";
@@ -16,6 +13,12 @@
   import Pane from "~/ui/lib/LeftPanel/Pane.svelte";
 
   import { copyBuffer } from "~/stores/copyBuffer";
+  import {
+    libraryAssets,
+    librarySearch,
+    libraryPage,
+  } from "~/stores/libraryAssets";
+
   import { paste } from "~/events/input/CopyPasteListener/paste";
   import { deserializeCopyBuffer } from "~/events/input/CopyPasteListener/common";
 
@@ -23,35 +26,29 @@
   import SelectCreatePrefab from "./SelectCreatePrefab.svelte";
   import Tag from "./Tag.svelte";
 
-  let search;
-  let lastSearch;
-  let lastPage = 0;
   let spinner = false;
-  let selectedAsset: LibraryAsset;
+  let spinStart = 0;
   let assets: LibraryAsset[] = [];
-  let page = 0;
+  let selectedAsset: LibraryAsset;
 
-  const isTag = (booleanValue: boolean) => (term) => {
-    return term.startsWith("#") === booleanValue;
-  };
-
-  const query = async (search, page) => {
-    if (search === lastSearch && page === lastPage) return;
-    lastSearch = search;
-    lastPage = page;
-
-    spinner = true;
-    const terms = search ? search.trim().split(/\s+/) : [];
-    const tags = terms.filter(isTag(true)).map((tag) => tag.slice(1));
-    const keywords = terms.filter(isTag(false));
-    assets = await worldManager.api.queryAssets({ keywords, tags, page });
-    spinner = false;
-  };
-
-  type queryFn = (search: string, page: number) => void;
-  const debouncedQuery: queryFn = debounce(query, 500, {
-    leading: true,
-  });
+  $: switch ($libraryAssets.type) {
+    case "init":
+      break;
+    case "fetching":
+      spinner = true;
+      spinStart = performance.now();
+      break;
+    case "success":
+      spinner = false;
+      assets = $libraryAssets.assets;
+      break;
+    case "error":
+      spinner = false;
+      assets = [];
+      break;
+    default:
+      console.warn("Unknown libraryAsset type:", $libraryAssets);
+  }
 
   const addAsset = (asset: LibraryAsset) => () => {
     copyBuffer.set(deserializeCopyBuffer(JSON.stringify(asset.ecsProperties)));
@@ -63,15 +60,9 @@
   }
 
   const searchTag = (tag: string) => () => {
-    search = `#${tag}`;
+    $librarySearch = `#${tag}`;
+    $libraryPage = 0;
   };
-
-  function isEmpty(str: string) {
-    if (!str) return true;
-    else return str.match(/^\s*$/);
-  }
-
-  $: debouncedQuery(isEmpty(search) ? null : search, page);
 
   const onUpload = ({ detail }) => {
     console.log("onUpload", detail);
@@ -83,13 +74,25 @@
       }
     }
   };
+
+  function prevPage() {
+    if ($libraryPage > 0) $libraryPage = $libraryPage - 1;
+  }
+
+  function nextPage() {
+    $libraryPage = $libraryPage + 1;
+  }
 </script>
 
 <LeftPanel on:minimize>
   <Header>Add</Header>
   <r-column>
     <r-search-wrap>
-      <Search bind:value={search} placeholder="Search Assets..." />
+      <Search
+        bind:value={$librarySearch}
+        on:keydown={() => ($libraryPage = 0)}
+        placeholder="Search Assets..."
+      />
     </r-search-wrap>
     {#if selectedAsset}
       <Pane
@@ -137,30 +140,34 @@
     {/if}
     <r-spacer />
     <r-pagination>
-      {#if page > 0}
-        <Button on:click={() => (page = page - 1)}>Prev</Button>
+      {#if $libraryPage > 0}
+        <Button on:click={prevPage}>Prev</Button>
       {:else}
         <div />
       {/if}
-      <r-page>p. {page + 1}</r-page>
+      <r-page>p. {$libraryPage + 1}</r-page>
       {#if assets.length > 0}
-        <Button on:click={() => (page = page + 1)}>Next</Button>
+        <Button on:click={nextPage}>Next</Button>
       {:else}
         <div />
       {/if}
     </r-pagination>
-    {#if spinner}
-      <r-results transition:slide>
+    {#if spinner && window.performance.now() - spinStart > 1000}
+      <r-results>
         <r-spinner>Loading...</r-spinner>
       </r-results>
-    {:else}
-      <r-results transition:slide>
+    {:else if assets.length > 0}
+      <r-results>
         {#each assets as asset}
           <SearchResult
             result={asset}
             on:click={() => (selectedAsset = asset)}
           />
         {/each}
+      </r-results>
+    {:else}
+      <r-results>
+        <r-spinner>Empty Page</r-spinner>
       </r-results>
     {/if}
     <r-spacer />
@@ -234,6 +241,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    min-height: 38.5px;
   }
   r-pagination > div {
     min-width: 62px;
