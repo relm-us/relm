@@ -1,3 +1,7 @@
+<script context="module">
+  let youtubeInstances = 0;
+</script>
+
 <script lang="ts">
   import { worldManager } from "~/world";
   import {
@@ -26,6 +30,9 @@
   let frameMouseOver = false;
   let active = false;
   let overlayHovered = false;
+
+  // Note: MUST be 1 or greater, since youtube treats id '0' as special
+  const youtubeId = ++youtubeInstances;
 
   const UNSTARTED = -1;
   const ENDED = 0;
@@ -62,7 +69,7 @@
     iframe.contentWindow.postMessage(
       JSON.stringify({
         event: "command",
-        id: 1,
+        id: youtubeId,
         channel: "default",
         func,
         args,
@@ -101,7 +108,8 @@
   function onMessage(message) {
     if (message.origin === HOST) {
       const data = JSON.parse(message.data);
-      // console.log("yt data", data);
+      if (data.id !== youtubeId) return;
+
       if (data.info && "playerState" in data.info) {
         playerState = data.info.playerState;
       }
@@ -117,7 +125,11 @@
 
   function onFrameLoaded() {
     state = "LOADING";
-    const listenEvent = { event: "listening", id: 1, channel: "default" };
+    const listenEvent = {
+      event: "listening",
+      id: youtubeId,
+      channel: "default",
+    };
     iframe.contentWindow.postMessage(JSON.stringify(listenEvent), "*");
 
     ytCommand("addEventListener", ["onReady"]);
