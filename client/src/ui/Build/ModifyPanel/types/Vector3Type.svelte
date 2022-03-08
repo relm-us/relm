@@ -51,6 +51,7 @@
       onClick: () => {
         editing[dimension] = true;
       },
+      scaleFactor: 0.01,
     });
   };
 

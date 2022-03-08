@@ -11,6 +11,7 @@ export class NumberDragger {
   currentValue = null;
   dragEngageDistance = 5;
   hasEverDragged = false;
+  scaleFactor = 1;
 
   mousedown: EventHandler<MouseEvent, Window>;
   mouseup: EventHandler<MouseEvent, Window>;
@@ -26,16 +27,19 @@ export class NumberDragger {
     onDrag = noop,
     onChange = noop,
     onClick = noop,
+    scaleFactor = 1,
   }: {
     getValue: Function;
     onDrag?: Function;
     onChange?: Function;
     onClick?: Function;
+    scaleFactor?: number;
   }) {
     this.getValue = getValue;
     this.onDrag = onDrag;
     this.onChange = onChange;
     this.onClick = onClick;
+    this.scaleFactor = scaleFactor;
 
     this.currentValue = null;
 
@@ -77,17 +81,8 @@ export class NumberDragger {
         const threshold =
           this.dragEngageDistance * (delta > this.dragEngageDistance ? 1 : -1);
 
-        let scaleFactor = 1;
-        if (this.mouseStartValue < 1) {
-          scaleFactor = 1 / 100;
-        } else if (this.mouseStartValue < 10) {
-          scaleFactor = 1 / 10;
-        } else {
-          scaleFactor = 1;
-        }
-
         this.currentValue =
-          this.mouseStartValue + (delta - threshold) * scaleFactor;
+          this.mouseStartValue + (delta - threshold) * this.scaleFactor;
         this.onDrag(this.currentValue);
         this.hasEverDragged = true;
       }
