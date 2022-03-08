@@ -59,6 +59,8 @@
   $: if ($audioMode === "proximity" && !isLocal) {
     if (interval) clearInterval(interval);
     interval = setInterval(() => {
+      if (!participant || !participant.avatar) return;
+
       const falloffStart = PROXIMITY_AUDIO_INNER_RADIUS;
       const falloffEnd = PROXIMITY_AUDIO_OUTER_RADIUS;
       const distance =
