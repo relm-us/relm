@@ -477,13 +477,7 @@ export class WorldManager {
           this.started && delta !== undefined ? delta : 1000 / 60
         );
       } catch (err) {
-        this.errorCount++;
-        if (this.errorCount > 100) {
-          console.warn(err);
-          this.stop();
-
-          alert("Unrecoverable errors; please refresh browser.");
-        }
+        console.error(err);
       }
     }
   }

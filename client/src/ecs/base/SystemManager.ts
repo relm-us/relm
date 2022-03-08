@@ -52,8 +52,6 @@ export class SystemManager {
   update(delta) {
     let timeBefore;
     const getTime = this.world.getTime;
-    // console.log(this.systems.map((s) => [s.order, s.constructor.name]));
-    // window.alert(this.tick);
     for (let i = 0; i < this.systems.length; i++) {
       this.tick++;
       const system = this.systems[i];

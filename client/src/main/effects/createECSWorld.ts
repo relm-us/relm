@@ -104,16 +104,7 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
   }) as DecoratedECSWorld;
 
   const interval = setInterval(() => {
-    try {
-      ecsWorld.update(40);
-    } catch (err) {
-      errCount++;
-      if (errCount > 100) {
-        console.warn(err);
-        clearInterval(interval);
-        alert("There was a problem loading; try refreshing?");
-      }
-    }
+    ecsWorld.update(40);
   }, 40);
   const unsub = () => clearInterval(interval);
 
