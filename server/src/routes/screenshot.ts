@@ -2,9 +2,8 @@ import path from "path";
 import fs from "fs";
 import express from "express";
 import crypto from "crypto";
-import cors from "cors";
 
-import { fail, wrapAsync } from "../utils";
+import { respondWithError, wrapAsync } from "../utils";
 import { SCREENSHOTS_DIR } from "../config";
 
 // Currently incompatible with ES6 import, so use `require`:
@@ -16,7 +15,7 @@ screenshot.use(express.static(SCREENSHOTS_DIR)).get(
   /^\/([\dx]+)\/(http.+)$/,
   wrapAsync(async (req, res) => {
     if (!capture) {
-      return fail(res, "capture-website not installed on server");
+      return respondWithError(res, "capture-website not installed on server");
     }
     const { 0: size, 1: url } = req.params;
     const [width, height] = (size || "800x600")

@@ -1,4 +1,9 @@
-import { respond, joinError, decodedValidJwt } from "./utils";
+import {
+  respondWithSuccess,
+  respondWithError,
+  joinError,
+  decodedValidJwt,
+} from "./utils";
 import { Player, Permission, Relm, useToken } from "./db";
 import { JWTSECRET } from "./config";
 import createError from "http-errors";
@@ -19,10 +24,7 @@ export function relmName(key = "relmName") {
       req.relmName = normalizeRelmName(req.params[key]);
       next();
     } else {
-      respond(res, 400, {
-        status: "error",
-        reason: "relm name required",
-      });
+      respondWithError(res, "relm name required");
     }
   };
 }
@@ -35,10 +37,7 @@ export function relmExists() {
   return async (req, res, next) => {
     req.relm = await Relm.getRelm({ relmName: req.relmName });
     if (!req.relm) {
-      respond(res, 404, {
-        status: "error",
-        reason: "relm does not exist",
-      });
+      respondWithError(res, "relm does not exist");
     } else {
       next();
     }

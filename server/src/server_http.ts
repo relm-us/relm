@@ -3,7 +3,7 @@ import cors from "cors";
 
 import * as middleware from "./middleware";
 import * as routes from "./routes";
-import { respond, uuidv4, wrapAsync } from "./utils";
+import { respondWithError, uuidv4 } from "./utils";
 
 export const app = express();
 
@@ -29,12 +29,7 @@ app.use("/screenshot", routes.screenshot);
 
 // Error handling: catch-all for 404s
 app.use((req, res) => {
-  const code = 404;
-  respond(res, code, {
-    status: "error",
-    code: code,
-    reason: `Not found`,
-  });
+  respondWithError(res, `Not found`);
 });
 
 // Error handling: general catch-all for errors must be last middleware
@@ -48,11 +43,7 @@ app.use((error, req, res, next) => {
       error.message
     }\n${error.stack}`
   );
-  respond(res, code, {
-    status: "error",
-    code: code,
-    reason: `${error.message} (${errorId})`,
-  });
+  respondWithError(res, `${error.message} (${errorId})`);
 });
 
 // Used for logging IP addresses

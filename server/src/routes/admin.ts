@@ -3,7 +3,7 @@ import cors from "cors";
 
 import * as middleware from "../middleware";
 import { Permission } from "../db";
-import { respond, wrapAsync } from "../utils";
+import { respondWithSuccess, wrapAsync } from "../utils";
 
 export const admin = express.Router();
 
@@ -13,9 +13,8 @@ admin.post(
   middleware.authenticated(),
   middleware.acceptToken(),
   wrapAsync(async (req, res) => {
-    respond(res, 200, {
-      status: "success",
-      action: "authenticate",
+    respondWithSuccess(res, {
+      action: "authenticated",
     });
   })
 );
@@ -36,11 +35,9 @@ admin.post(
       playerId: req.body.playerId,
       permits,
     });
-    respond(res, 200, {
-      status: "success",
-      action: "mkadmin",
+    respondWithSuccess(res, {
+      action: "madeAdmin",
       permits: permits,
     });
   })
 );
-

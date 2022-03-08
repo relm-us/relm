@@ -7,7 +7,7 @@ import sharp from "sharp";
 import * as middleware from "../middleware";
 import * as conversion from "../conversion";
 import * as util from "../utils";
-import { fail, wrapAsync } from "../utils";
+import { respondWithSuccess, respondWithError, wrapAsync } from "../utils";
 
 import { Asset } from "../db";
 
@@ -45,9 +45,8 @@ asset.post(
       createdBy: req.authenticatedPlayerId,
     });
 
-    return util.respond(res, 200, {
-      status: "success",
-      action: "create",
+    return respondWithSuccess(res, {
+      action: "created",
       asset,
     });
   })
@@ -69,9 +68,8 @@ asset.post(
       ecsProperties: req.body.ecsProperties,
     });
 
-    return util.respond(res, 200, {
-      status: "success",
-      action: "create",
+    return respondWithSuccess(res, {
+      action: "updated",
       asset,
     });
   })
@@ -86,12 +84,11 @@ asset.delete(
   wrapAsync(async (req, res) => {
     let assetId: string = req.body.assetId;
 
-    const deleted = await Asset.deleteAsset({ assetId });
+    const asset = await Asset.deleteAsset({ assetId });
 
-    return util.respond(res, 200, {
-      status: "success",
-      action: "delete",
-      deleted,
+    return respondWithSuccess(res, {
+      action: "deleted",
+      asset,
     });
   })
 );
@@ -112,8 +109,7 @@ asset.post(
 
     const assets = await Asset.queryAssets({ keywords, tags, page, per_page });
 
-    return util.respond(res, 200, {
-      status: "success",
+    return respondWithSuccess(res, {
       action: "query",
       assets,
     });
@@ -139,7 +135,7 @@ asset.post(
   // middleware.authorized("edit"),
   wrapAsync(async (req, res) => {
     if (!("file" in req.files)) {
-      return fail(res, "expecting file form-data");
+      return respondWithError(res, "expecting 'file' in form-data");
     }
 
     // TODO: turn on `batch: true` and change this to one-or-many
@@ -149,12 +145,12 @@ asset.post(
     //   - ?? how do we respond to Uppy for errors in just 1 of several?
     const asset = req.files["file"];
     if (asset.size > MAX_FILE_SIZE) {
-      return fail(res, "file too large");
+      return respondWithError(res, "file too large");
     }
 
     const extension = path.extname(asset.name).toLowerCase();
     if (extension.length > MAX_FILE_EXTENSION_LENGTH) {
-      return fail(res, "file extension too long");
+      return respondWithError(res, "file extension too long");
     }
 
     try {
@@ -189,10 +185,10 @@ asset.post(
           return conversion.fileUploadSuccess(res, { gltf });
 
         default:
-          return fail(res, "unsupported filetype");
+          return respondWithError(res, "unsupported filetype");
       }
     } catch (err) {
-      return fail(res, err);
+      return respondWithError(res, err.toString());
     }
   })
 );

@@ -3,7 +3,12 @@ import cors from "cors";
 
 import * as middleware from "../middleware";
 import { Permission } from "../db";
-import { fail, respond, wrapAsync, intersection } from "../utils";
+import {
+  respondWithSuccess,
+  respondWithError,
+  wrapAsync,
+  intersection,
+} from "../utils";
 
 export const auth = express.Router();
 
@@ -14,7 +19,7 @@ auth.post(
   middleware.acceptJwt(),
   wrapAsync(async (req, res) => {
     if (!req.body.relms) {
-      fail(res, "relms required");
+      return respondWithError(res, "relms required");
     } else {
       let permissions = {};
 
@@ -31,8 +36,8 @@ auth.post(
         });
       }
 
-      respond(res, 200, {
-        status: "success",
+      respondWithSuccess(res, {
+        action: "permitted",
         permissions,
         jwt: req.jwtRaw,
       });

@@ -1,6 +1,7 @@
+import { CancellablePromise } from "real-cancellable-promise";
 import type { AuthenticationHeaders } from "~/types";
 import type { LibraryAsset } from "~/types";
-import { fetch } from "~/utils/fetch";
+import { simpleFetch } from "~/utils/simpleFetch";
 
 export class RelmRestAPI {
   url: string;
@@ -13,12 +14,15 @@ export class RelmRestAPI {
     this.authHeaders = authHeaders;
   }
 
-  async get(path): Promise<Response> {
-    return await fetch(`${this.url}${path}`, { headers: this.authHeaders });
+  get<T>(path): CancellablePromise<T> {
+    return simpleFetch(`${this.url}${path}`, {
+      method: "GET",
+      headers: this.authHeaders,
+    });
   }
 
-  async post(path, body = {}): Promise<Response> {
-    return await fetch(`${this.url}${path}`, {
+  post<T>(path, body = {}): CancellablePromise<T> {
+    return simpleFetch(`${this.url}${path}`, {
       method: "POST",
       headers: this.authHeaders,
       body: JSON.stringify(body, null, 2),
@@ -26,46 +30,22 @@ export class RelmRestAPI {
   }
 
   async getPermitsAndMeta(): Promise<{ permits: string[]; jwt: any }> {
-    let res;
-    try {
-      res = await this.get(`/relm/${this.relmName}/permitsAndMeta`);
-    } catch (err) {
-      if (err.response) {
-        if (err.response.status === 404) {
-          throw Error(`relm named "${this.relmName}" not found`);
-        } else if (err.response.status === 401 || err.response.status === 400) {
-          throw Error(`permission denied: ${err.response.data.reason}`);
-        }
-      }
-      throw Error(`not allowed`);
-    }
-
-    if (res?.status === 200) {
-      if (res.data.status === "success") {
-        return res.data;
-      } else {
-        throw Error(`can't get permissions (${res.data?.status})`);
-      }
+    type Content =
+      | { status: "success"; permits: string[]; jwt: any }
+      | { status: "error"; code?: number; reason: string };
+    let content: Content = await this.get(
+      `/relm/${this.relmName}/permitsAndMeta`
+    );
+    if (content.status === "success") {
+      return content;
+    } else if (content.code === 404) {
+      throw Error(`relm named "${this.relmName}" not found`);
     } else {
-      throw Error(`can't get permissions (${res?.status})`);
+      throw Error(`permission denied: ${content.reason}`);
     }
   }
 
-  async getPermitsForManyRelms(relms: string[]) {
-    const res = await this.post("/auth/permissions", { relms });
-    if (res?.status === 200) {
-      const body = await res.json();
-      if (body.data?.status === "success") {
-        return body.data.permits;
-      } else {
-        throw Error(`can't get permissions (${body.data?.status})`);
-      }
-    } else {
-      throw Error(`can't get permissions (${res?.status})`);
-    }
-  }
-
-  async queryAssets({
+  queryAssets({
     keywords,
     tags,
     page,
@@ -75,23 +55,22 @@ export class RelmRestAPI {
     tags?: string[];
     page?: number;
     per_page?: number;
-  }): Promise<LibraryAsset[]> {
-    const res = await this.post("/asset/library/query", {
+  }): CancellablePromise<LibraryAsset[]> {
+    type Content =
+      | { status: "success"; assets: any[] }
+      | { status: "error"; code?: number; reason: string };
+    return this.post("/asset/library/query", {
       keywords,
       tags,
       page,
       per_page,
-    });
-    if (res?.status === 200) {
-      const body = await res.json();
-      if (body.data?.status === "success") {
-        return body.data.assets;
+    }).then((content: Content) => {
+      if (content.status === "success") {
+        return content.assets;
       } else {
-        throw Error(`can't get assets (${body.data?.status})`);
+        throw Error(`can't get assets: ${content.reason}`);
       }
-    } else {
-      throw Error(`can't get assets (${res?.status})`);
-    }
+    });
   }
 
   async addAsset({
@@ -107,22 +86,20 @@ export class RelmRestAPI {
     thumbnail: string;
     ecsProperties: any;
   }): Promise<boolean> {
-    const res = await this.post("/asset/library/create", {
+    type Content =
+      | { status: "success" }
+      | { status: "error"; code?: number; reason: string };
+    const content: Content = await this.post("/asset/library/create", {
       name,
       description,
       tags,
       thumbnail,
       ecsProperties,
     });
-    if (res?.status === 200) {
-      const body = await res.json();
-      if (body.data?.status === "success") {
-        return true;
-      } else {
-        throw Error(`can't get assets (${body.data?.status})`);
-      }
+    if (content.status === "success") {
+      return true;
     } else {
-      throw Error(`can't get assets (${res?.status})`);
+      throw Error(`can't get assets: ${content.reason}`);
     }
   }
 
@@ -137,17 +114,17 @@ export class RelmRestAPI {
    * where `operation` may be 'add', 'set', or 'map'
    */
   async changeVariables({ changes }: { changes: any }): Promise<boolean> {
-    const url = `/relm/${this.relmName}/variables`;
-    const res = await this.post(url, { changes });
-    if (res?.status === 200) {
-      const body = await res.json();
-      if (body.data?.status === "success") {
-        return true;
-      } else {
-        throw Error(`can't set variables (${body.data?.status})`);
-      }
+    type Content =
+      | { status: "success" }
+      | { status: "error"; code?: number; reason: string };
+    const content: Content = await this.post(
+      `/relm/${this.relmName}/variables`,
+      { changes }
+    );
+    if (content.status === "success") {
+      return true;
     } else {
-      throw Error(`can't set variables (${res?.status})`);
+      throw Error(`can't set variables: ${content.reason}`);
     }
   }
 }

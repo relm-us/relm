@@ -1,7 +1,7 @@
 import { CancellablePromise, Cancellation } from "real-cancellable-promise";
 
 // Cancellable Fetch
-export function fetch<T>(
+export function simpleFetch<T>(
   input: RequestInfo,
   init: RequestInit = {}
 ): CancellablePromise<T> {
@@ -13,9 +13,15 @@ export function fetch<T>(
       signal: controller.signal,
     })
     .then((response) => {
-      // Handle the response object however you want
       if (!response.ok) {
-        throw new Error(`Fetch failed with status code ${response.status}.`);
+        // Duck type the return value so the error can be handled just
+        // like a 200 response from the server:
+        return {
+          status: "error",
+          reason: `fetch failed with status code ${response.status}`,
+          // Forward the status code
+          code: response.status,
+        };
       }
 
       if (response.headers.get("content-type")?.includes("application/json")) {
@@ -27,10 +33,10 @@ export function fetch<T>(
     .catch((e) => {
       if (e.name === "AbortError") {
         throw new Cancellation();
+      } else {
+        // rethrow the original error
+        throw e;
       }
-
-      // rethrow the original error
-      throw e;
     });
 
   return new CancellablePromise<T>(promise, () => controller.abort());

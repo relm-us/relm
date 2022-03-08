@@ -9,6 +9,7 @@ import * as config from "../config";
 import * as util from "../utils";
 import * as middleware from "../middleware";
 import * as twilio from "../lib/twilio";
+import { respondWithSuccess, respondWithError } from "../utils";
 import { Permission, Relm, Doc, Variable } from "../db";
 import { getYDoc } from "../getYDoc";
 import mkConscript from "conscript";
@@ -102,9 +103,8 @@ relm.post(
         );
       }
 
-      return util.respond(res, 200, {
-        status: "success",
-        action: "create",
+      return respondWithSuccess(res, {
+        action: "created",
         relm,
       });
     }
@@ -119,9 +119,8 @@ relm.delete(
   middleware.authorized("admin"),
   wrapAsync(async (req, res) => {
     await Relm.deleteRelm({ relmId: req.relm.relmId });
-    return util.respond(res, 200, {
-      status: "success",
-      action: "delete",
+    return respondWithSuccess(res, {
+      action: "deleted",
       relmId: req.relm.relmId,
     });
   })
@@ -138,8 +137,7 @@ relm.get(
     const relmDoc = await getYDoc(req.relm.permanentDocId);
     const content = exportRelm(relmDoc);
 
-    return util.respond(res, 200, {
-      status: "success",
+    return respondWithSuccess(res, {
       action: "content",
       relm: { ...req.relm, content },
     });
@@ -158,8 +156,7 @@ relm.get(
     req.relm.permanentDocSize = Y.encodeStateAsUpdate(doc).byteLength;
     const twilioToken = twilio.getToken(req.authenticatedPlayerId);
 
-    return util.respond(res, 200, {
-      status: "success",
+    return respondWithSuccess(res, {
       action: "meta",
       relm: req.relm,
       twilioToken,
@@ -182,9 +179,8 @@ relm.put(
     };
 
     const relm = await Relm.updateRelm(attrs);
-    return util.respond(res, 200, {
-      status: "success",
-      action: "update",
+    return respondWithSuccess(res, {
+      action: "updated",
       relm,
     });
   })
@@ -202,8 +198,8 @@ relm.get(
       playerId: req.authenticatedPlayerId,
       relmNames: [req.relmName],
     });
-    util.respond(res, 200, {
-      status: "success",
+    respondWithSuccess(res, {
+      action: "permitted",
       permits: permissions[req.relmName] || [],
       jwt: req.jwtRaw,
     });
@@ -233,9 +229,8 @@ relm.get(
       permissions["*"].forEach((permit) => permits.add(permit));
     }
 
-    return util.respond(res, 200, {
-      status: "success",
-      action: "read",
+    return respondWithSuccess(res, {
+      action: "permitted",
       relm: req.relm,
       permits: [...permits],
       twilioToken,
@@ -270,8 +265,8 @@ relm.get(
     const relmId = req.relm.relmId;
     const variables = await Variable.getVariables({ relmId });
 
-    return util.respond(res, 200, {
-      status: "success",
+    return respondWithSuccess(res, {
+      action: "getVariables",
       variables,
     });
   })
@@ -289,7 +284,9 @@ relm.post(
     const relmId = req.relm.relmId;
 
     const changes = req.body.changes;
-    if (!changes) return util.fail(res, "changes required");
+    if (!changes) {
+      return respondWithError(res, "changes required");
+    }
 
     const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
     // console.log("doc.actions", doc.getMap("actions").toJSON());
@@ -360,8 +357,8 @@ relm.post(
       }
     }
 
-    return util.respond(res, 200, {
-      status: "success",
+    return respondWithSuccess(res, {
+      action: "setVariables",
       variables: results,
     });
   })

@@ -3,7 +3,7 @@ import cors from "cors";
 
 import * as middleware from "../middleware";
 import { Relm } from "../db";
-import { respond, wrapAsync } from "../utils";
+import { respondWithSuccess, wrapAsync } from "../utils";
 
 export const relms = express.Router();
 
@@ -16,8 +16,8 @@ relms.get(
     const relms = await Relm.getAllRelms({
       excludeEmpty: req.query["excludeEmpty"] !== "false",
     });
-    respond(res, 200, {
-      status: "success",
+    respondWithSuccess(res, {
+      action: "getRelms",
       relms,
     });
   })
@@ -28,8 +28,8 @@ relms.get(
   cors(),
   wrapAsync(async (req, res) => {
     const relms = await Relm.getAllRelms({ isPublic: true });
-    respond(res, 200, {
-      status: "success",
+    respondWithSuccess(res, {
+      action: "getPublicRelms",
       relms,
     });
   })

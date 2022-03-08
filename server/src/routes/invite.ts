@@ -4,6 +4,7 @@ import cors from "cors";
 import * as util from "../utils";
 import * as middleware from "../middleware";
 import { Invitation, Permission } from "../db";
+import { respondWithSuccess } from "../utils";
 
 const { wrapAsync } = util;
 
@@ -46,9 +47,8 @@ invite.post(
       }
     }
 
-    util.respond(res, 200, {
-      status: "success",
-      action: "create",
+    respondWithSuccess(res, {
+      action: "created",
       invitation: Invitation.toJSON(invitation),
     });
   })
@@ -67,8 +67,8 @@ invite.get(
 
     const invitations = await Invitation.getInvitations({ relmId, token });
 
-    util.respond(res, 200, {
-      status: "success",
+    respondWithSuccess(res, {
+      action: "query",
       invitations: invitations.map((invite) => Invitation.toJSON(invite)),
     });
   })
@@ -88,9 +88,8 @@ invite.delete(
 
     const invitations = await Invitation.deleteInvitation(attrs);
 
-    util.respond(res, 200, {
-      status: "success",
-      action: "delete",
+    respondWithSuccess(res, {
+      action: "deleted",
       deletedCount: invitations.length,
     });
   })
