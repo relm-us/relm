@@ -1,6 +1,9 @@
 import { Vector3 } from "three";
 
-import { SPATIAL_INDEX_THRESHOLD } from "~/config/constants";
+import {
+  SPATIAL_INDEX_THRESHOLD,
+  SPATIAL_INDEX_WORLD_EXTENT,
+} from "~/config/constants";
 
 import { Entity, System, Not, Modified, Groups } from "~/ecs/base";
 import { Queries } from "~/ecs/base/Query";
@@ -75,7 +78,13 @@ export class SpatialIndexSystem extends System {
     } else if (isIndexable && !wasFallback) {
       // Assume it has been added before, since this is a 'move' op
       const newIndex = makeFuzzy(transform.positionWorld);
+
+      // Can't allow things to go outside bounds of the octree:
+      newIndex.clamp(spatial.octree.min, spatial.octree.max);
+
       spatial.octree.move(spatially.index, newIndex);
+
+      // Keep record of the precise fuzzy point we use:
       spatially.index = newIndex;
     } else if (!isIndexable && wasFallback) {
       // Do nothing; already in fallback

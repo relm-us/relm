@@ -3,7 +3,6 @@ import { Object3D } from "three";
 import { System, Not, Modified, Groups } from "~/ecs/base";
 import { Object3DRef, Presentation, Transform } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
-import { Model } from "~/ecs/plugins/model";
 
 import { BoundingBox } from "../components";
 
