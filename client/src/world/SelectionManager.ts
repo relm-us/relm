@@ -94,7 +94,10 @@ export class SelectionManager {
     }
   }
 
-  moveRelativeToSavedPositions(vector) {
+  moveRelativeToSavedPositions(
+    vector: Vector3,
+    adjust?: (position: Vector3) => void
+  ) {
     for (const entity of this.entities) {
       // Only move root entities:
       if (entity.getParent()) continue;
@@ -103,6 +106,7 @@ export class SelectionManager {
       const savedPos = (entity as any).savedPosition;
       if (savedPos) {
         transform.position.copy(savedPos).add(vector);
+        adjust?.(transform.position);
         transform.modified(); // update physics engine
       }
     }

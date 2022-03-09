@@ -9,7 +9,7 @@ export type ComponentProperty = {
     label?: string;
     input?: string;
     options?: Array<{ label: string; value: string | number }>;
-    requires?: Array<{ prop: string; value: string | number }>;
+    requires?: Array<{ prop: string; value: string | number | boolean }>;
   };
 };
 

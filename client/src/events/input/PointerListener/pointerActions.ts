@@ -42,6 +42,7 @@ let pointerState: PointerState = "initial";
 let pointerDownFound: string[] = [];
 let dragOffset: Vector3 = new Vector3();
 let pointerPoint: Vector3;
+let interactiveEntity: Entity;
 let shiftKeyOnClick = false;
 
 let dragPlane;
@@ -70,7 +71,7 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
 
     if (pointerPoint) getDragPlane().setOrigin(pointerPoint);
   } else if ($mode === "play") {
-    const interactiveEntity = firstInteractiveEntity(pointerDownFound);
+    interactiveEntity = firstInteractiveEntity(pointerDownFound);
 
     if (
       pointerDownFound.includes(worldManager.avatar.entities.body.id as string)
@@ -130,6 +131,7 @@ export function onPointerUp(event: MouseEvent | TouchEvent) {
       });
     } else if (pointerState === "interactive-drag") {
       worldManager.selection.syncEntities();
+      interactiveEntity = null;
     } else if (isControllingAvatar) {
       removeTouchController(worldManager.avatar.entities.body);
       isControllingAvatar = false;
@@ -191,7 +193,26 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
       worldManager.selection.savePositions();
     } else if (pointerState === "interactive-drag") {
       const delta = getDragPlane().getDelta(pointerPosition);
-      worldManager.selection.moveRelativeToSavedPositions(delta);
+      const draggable = interactiveEntity.get(Draggable);
+      worldManager.selection.moveRelativeToSavedPositions(delta, (position) => {
+        if (draggable.grid) {
+          if (draggable.plane.includes("X")) {
+            position.x =
+              Math.floor(position.x / draggable.gridSize) * draggable.gridSize +
+              draggable.gridOffset.x;
+          }
+          if (draggable.plane.includes("Y")) {
+            position.y =
+              Math.floor(position.y / draggable.gridSize) * draggable.gridSize +
+              draggable.gridOffset.y;
+          }
+          if (draggable.plane.includes("Z")) {
+            position.z =
+              Math.floor(position.z / draggable.gridSize) * draggable.gridSize +
+              draggable.gridOffset.y;
+          }
+        }
+      });
     } else if (pointerState === "click" && atLeastMinDragDistance()) {
       // drag  mode start
       setNextPointerState("drag");
