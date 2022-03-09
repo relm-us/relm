@@ -22,6 +22,7 @@ import {
   KeyState,
   KPR,
 } from "~/ecs/shared/KeyState";
+import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
 
 const FLYING_SPEED = 3;
 const FALL_NORMAL = 1;
@@ -169,11 +170,11 @@ export class ControllerSystem extends System {
   }
 
   useTouch(entity: Entity, state: ControllerState) {
-    const pointer = entity.get(PointerPositionRef)?.value;
+    const pointer: WorldPlanes = entity.get(PointerPositionRef)?.value;
     if (pointer) {
       const position = entity.get(Transform).position;
 
-      vDir.copy(pointer.points.xz).sub(position);
+      vDir.copy(pointer.points.XZ).sub(position);
       vDir.y = 0;
       const distance = vDir.length();
 
