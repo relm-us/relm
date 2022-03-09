@@ -7,7 +7,7 @@ import { makeDragPlaneHelper } from "./DragPlaneHelper";
 
 export class DragPlane {
   world: DecoratedECSWorld;
-  orientation: PlaneOrientation = "xz";
+  orientation: PlaneOrientation = "XZ";
   planes: WorldPlanes = null;
   camera: PerspectiveCamera = new PerspectiveCamera();
   group: Group;
@@ -48,7 +48,7 @@ export class DragPlane {
     this.group = makeDragPlaneHelper();
 
     this.group.position.copy(this.planes.origin);
-    if (this.orientation == "xz") {
+    if (this.orientation == "XZ") {
       this.group.rotation.x += Math.PI / 2;
     }
 

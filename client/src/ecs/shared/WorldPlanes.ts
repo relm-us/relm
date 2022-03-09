@@ -1,6 +1,6 @@
 import { Vector2, Vector3, Plane, Raycaster, PerspectiveCamera } from "three";
 
-export type PlaneOrientation = "xz" | "xy";
+export type PlaneOrientation = "XZ" | "XY";
 
 export type GetWorldFromScreenOpts = {
   plane?: PlaneOrientation;
@@ -47,16 +47,16 @@ export class WorldPlanes {
    * The planes we'll keep updated at the origin point, so we can calculate (mouse) world coords
    */
   planes: Record<PlaneOrientation, Plane> = {
-    xz: new Plane(upward, -0.01),
-    xy: new Plane(inward, -0.01),
+    XZ: new Plane(upward, -0.01),
+    XY: new Plane(inward, -0.01),
   };
 
   /**
    * The points we'll keep updated (e.g. mouse position)
    */
   points: Record<PlaneOrientation, Vector3> = {
-    xz: new Vector3(),
-    xy: new Vector3(),
+    XZ: new Vector3(),
+    XY: new Vector3(),
   };
 
   previousPoint: Vector2;
@@ -86,7 +86,7 @@ export class WorldPlanes {
   getWorldFromScreen(
     coord: Vector2,
     target: Vector3 = _intersect,
-    { plane = "xz", camera = this.camera }: GetWorldFromScreenOpts = {}
+    { plane = "XZ", camera = this.camera }: GetWorldFromScreenOpts = {}
   ): Vector3 {
     _vec2.set(
       (coord.x * 2) / this.screenSize.width - 1,
@@ -101,7 +101,7 @@ export class WorldPlanes {
   getWorldFromNormalizedScreen(
     coord: Vector2,
     target: Vector3 = _intersect,
-    { plane = "xz", camera = this.camera }: GetWorldFromScreenOpts = {}
+    { plane = "XZ", camera = this.camera }: GetWorldFromScreenOpts = {}
   ): Vector3 {
     _raycaster.setFromCamera(coord, camera);
     _raycaster.ray.intersectPlane(this.planes[plane], target);
@@ -110,8 +110,8 @@ export class WorldPlanes {
 
   recalculatePlanesConstants() {
     // Set both planes to origin
-    this.planes.xz.constant = -this.origin.y - this.offset.y;
-    this.planes.xy.constant = -this.origin.z - this.offset.z;
+    this.planes.XZ.constant = -this.origin.y - this.offset.y;
+    this.planes.XY.constant = -this.origin.z - this.offset.z;
   }
 
   update(point?: Vector2) {
@@ -126,8 +126,8 @@ export class WorldPlanes {
 
     // If a 2d point on the screen is given, calculate its 3d world coords on both planes
     if (point) {
-      this.getWorldFromScreen(point, this.points.xz, { plane: "xz" });
-      this.getWorldFromScreen(point, this.points.xy, { plane: "xy" });
+      this.getWorldFromScreen(point, this.points.XZ, { plane: "XZ" });
+      this.getWorldFromScreen(point, this.points.XY, { plane: "XY" });
     }
   }
 }

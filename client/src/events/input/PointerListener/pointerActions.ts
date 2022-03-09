@@ -47,34 +47,6 @@ let shiftKeyOnClick = false;
 let dragPlane;
 let selectionBox;
 
-// TODO: Make selectionBox and dragPlane aspects of World?
-function getDragPlane() {
-  if (!dragPlane) {
-    dragPlane = new DragPlane(worldManager.world);
-  }
-  return dragPlane;
-}
-
-function getSelectionBox() {
-  if (!selectionBox) {
-    selectionBox = new SelectionBox(worldManager.world);
-  }
-  return selectionBox;
-}
-
-function setNextPointerState(nextState: PointerState) {
-  if (
-    nextState === "drag" ||
-    nextState === "drag-select" ||
-    nextState === "interactive-drag"
-  ) {
-    document.body.classList.add("pointer-events-none");
-  } else {
-    document.body.classList.remove("pointer-events-none");
-  }
-  pointerState = nextState;
-}
-
 export function onPointerDown(x: number, y: number, shiftKey: boolean) {
   const world = worldManager.world;
   const finder = world.presentation.intersectionFinder;
@@ -107,15 +79,16 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
     } else if (interactiveEntity?.has(Draggable)) {
       // Clicked on an interactive entity, perhaps starting a play-mode drag?
       setNextPointerState("interactive-click");
+      const draggable = interactiveEntity.get(Draggable);
       const dragPlane = getDragPlane();
-      dragPlane.setOrientation("xz");
+      dragPlane.setOrientation(draggable.plane);
       dragPlane.setOrigin(clickedPosition(interactiveEntity.id, world));
       worldManager.selection.clear();
       worldManager.selection.addEntityId(interactiveEntity.id);
     } else {
       // At this point, at least a 'click' has started. TBD if it's a drag.
       setNextPointerState("click");
-      getDragPlane().setOrientation("xz");
+      getDragPlane().setOrientation("XZ");
       if (pointerDownFound.length > 0) {
         const position = clickedPosition(pointerDownFound[0], world);
         getDragPlane().setOrigin(position);
@@ -182,7 +155,7 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
       if (worldManager.selection.length > 0 && pointerPoint) {
         setNextPointerState("drag");
         worldManager.selection.savePositions();
-        getDragPlane().setOrientation(shiftKeyOnClick ? "xy" : "xz");
+        getDragPlane().setOrientation(shiftKeyOnClick ? "XY" : "XZ");
       } else {
         setNextPointerState("drag-select");
         getSelectionBox().show();
@@ -225,6 +198,34 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
       worldManager.hoverOutline(firstInteractiveEntity(pointerMoveFound));
     }
   }
+}
+
+// TODO: Make selectionBox and dragPlane aspects of World?
+function getDragPlane(): DragPlane {
+  if (!dragPlane) {
+    dragPlane = new DragPlane(worldManager.world);
+  }
+  return dragPlane;
+}
+
+function getSelectionBox() {
+  if (!selectionBox) {
+    selectionBox = new SelectionBox(worldManager.world);
+  }
+  return selectionBox;
+}
+
+function setNextPointerState(nextState: PointerState) {
+  if (
+    nextState === "drag" ||
+    nextState === "drag-select" ||
+    nextState === "interactive-drag"
+  ) {
+    document.body.classList.add("pointer-events-none");
+  } else {
+    document.body.classList.remove("pointer-events-none");
+  }
+  pointerState = nextState;
 }
 
 function firstInteractiveEntity(entityIds: string[]) {

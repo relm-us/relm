@@ -51,14 +51,14 @@ export class SelectionBox {
 
   setStart(screenCoord: Vector2) {
     this.world.perspective.getWorldFromScreen(screenCoord, this.start, {
-      plane: "xz",
+      plane: "XZ",
     });
     this.recalculateBox();
   }
 
   setEnd(screenCoord: Vector2) {
     this.world.perspective.getWorldFromScreen(screenCoord, this.end, {
-      plane: "xz",
+      plane: "XZ",
     });
     this.recalculateBox();
   }
@@ -74,7 +74,7 @@ export class SelectionBox {
       );
     }
     this.endPlanes.getWorldFromScreen(screenCoord, this.top, {
-      plane: "xy",
+      plane: "XZ",
     });
     this.top.x = this.end.x;
     this.top.y *= 2;

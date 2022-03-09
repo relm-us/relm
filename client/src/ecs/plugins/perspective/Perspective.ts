@@ -37,7 +37,7 @@ export class Perspective {
   getWorldFromScreen(
     screenCoord: Vector2,
     target: Vector3,
-    { plane = "xz", camera }: GetWorldFromScreenOpts = {}
+    { plane = "XZ", camera }: GetWorldFromScreenOpts = {}
   ) {
     const worldPlanes = this.getAvatarPlanes();
     if (worldPlanes) {

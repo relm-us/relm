@@ -26,7 +26,7 @@ export const headFollowsPointer =
     parent.getWorldQuaternion(qParent);
     parent.getWorldPosition(vParent);
 
-    vPointerPos.copy(pointer.points.xz).sub(vParent);
+    vPointerPos.copy(pointer.points.XZ).sub(vParent);
     vPointerPos.y = 0;
 
     vBodyFacing.copy(vOut);

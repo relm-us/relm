@@ -1,7 +1,7 @@
 import { Component, StringType, JSONType, NumberType } from "~/ecs/base";
 
 export class Draggable extends Component {
-  plane: "XZ" | "XY" | "YZ";
+  plane: "XZ" | "XY";
 
   static props = {
     plane: {
@@ -13,7 +13,6 @@ export class Draggable extends Component {
         options: [
           { label: "XZ Plane", value: "XZ" },
           { label: "XY Plane", value: "XY" },
-          { label: "YZ Plane", value: "YZ" },
         ],
       },
     },
