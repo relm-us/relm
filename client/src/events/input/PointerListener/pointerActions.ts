@@ -236,7 +236,7 @@ function getDragPlane(): DragPlane {
   return dragPlane;
 }
 
-function getSelectionBox() {
+function getSelectionBox(): SelectionBox {
   if (!selectionBox) {
     selectionBox = new SelectionBox(worldManager.world);
   }

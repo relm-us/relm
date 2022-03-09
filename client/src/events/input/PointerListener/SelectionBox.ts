@@ -74,7 +74,7 @@ export class SelectionBox {
       );
     }
     this.endPlanes.getWorldFromScreen(screenCoord, this.top, {
-      plane: "XZ",
+      plane: "XY",
     });
     this.top.x = this.end.x;
     this.top.y *= 2;
