@@ -3,26 +3,33 @@ import { WorldDoc } from "~/y-integration/WorldDoc";
 import { yEntityToJSON } from "relm-common/yrelm";
 import { YEntity } from "relm-common/yrelm/types";
 
-const RELM_EXPORT_VERSION = "relm-export v.1.2";
+const RELM_EXPORT_VERSION = "v1.3";
 
 export type FormatOpts = {
   relm?: string;
   scope?: string;
-  server?: string;
   timestamp?: Date;
+  entryways?: Record<string, any>;
+  settings?: Record<string, any>;
 };
 
 export function jsonFormat(
   entities: Array<any>,
-  { relm = "relm", timestamp, scope = "entire-relm", server }: FormatOpts
+  {
+    relm = "relm",
+    scope = "all",
+    entryways = {},
+    settings = {},
+    timestamp,
+  }: FormatOpts
 ) {
   return {
     relm,
     version: RELM_EXPORT_VERSION,
     timestamp: (timestamp || new Date()).toISOString(),
     scope,
-    server,
-    count: entities.length,
+    entryways,
+    settings,
     entities,
   };
 }
@@ -52,14 +59,22 @@ export function importRelm(wdoc: WorldDoc, json) {
   }
 
   const entityIds = [];
-  json.entities.forEach((data) => {
+  for (let data of json.entities) {
     entityIds.push(data.id);
     try {
       wdoc.syncFromJSON(data);
     } catch (err) {
       console.warn(data?.id, err);
     }
-  });
+  }
+
+  for (let [key, value] of Object.entries(json.settings as object)) {
+    wdoc.settings.y.set(key, value);
+  }
+
+  for (let [key, value] of Object.entries(json.entryways as object)) {
+    wdoc.entryways.y.set(key, value);
+  }
 
   return entityIds;
 }

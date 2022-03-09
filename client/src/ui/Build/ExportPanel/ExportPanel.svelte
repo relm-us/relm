@@ -24,8 +24,7 @@
   onMount(() => {
     const meta: FormatOpts = {
       // TODO: use whatever is the current relm
-      relm: worldManager.state.pageParams.relmName,
-      server: config.serverUrl,
+      relm: worldManager.getRelmUrl(),
     };
     let exported;
     if (worldManager.selection.length > 0) {
@@ -33,6 +32,8 @@
       meta.scope = "selection";
     } else {
       exported = exportRelm(worldManager.worldDoc);
+      meta.settings = worldManager.worldDoc.settings.y.toJSON();
+      meta.entryways = worldManager.worldDoc.entryways.y.toJSON();
     }
     const json = jsonFormat(exported, meta);
     text = JSON.stringify(json, null, 2);

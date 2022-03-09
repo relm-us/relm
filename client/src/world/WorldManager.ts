@@ -397,6 +397,10 @@ export class WorldManager {
     this.world.presentation.resize();
   }
 
+  getRelmUrl() {
+    return window.location.origin + "/" + this.state.pageParams.relmName;
+  }
+
   start() {
     if (!this.started) {
       this._startLoop();
