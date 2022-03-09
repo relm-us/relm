@@ -30,7 +30,13 @@ const pointerPosition = new Vector2();
 const pointerStartPosition = new Vector2();
 const cameraPanOffset = new Vector3();
 
-type PointerState = "initial" | "click" | "drag" | "drag-select";
+type PointerState =
+  | "initial"
+  | "click"
+  | "drag"
+  | "interactive-click"
+  | "interactive-drag"
+  | "drag-select";
 
 let pointerState: PointerState = "initial";
 let pointerDownFound: string[] = [];
@@ -57,7 +63,11 @@ function getSelectionBox() {
 }
 
 function setNextPointerState(nextState: PointerState) {
-  if (nextState === "drag" || nextState === "drag-select") {
+  if (
+    nextState === "drag" ||
+    nextState === "drag-select" ||
+    nextState === "interactive-drag"
+  ) {
     document.body.classList.add("pointer-events-none");
   } else {
     document.body.classList.remove("pointer-events-none");
@@ -74,7 +84,8 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
 
   pointerDownFound = finder.entityIdsAt(pointerPosition);
 
-  if (get(worldUIMode) === "build") {
+  const $mode = get(worldUIMode);
+  if ($mode === "build") {
     // At this point, at least a 'click' has started. TBD if it's a drag.
     setNextPointerState("click");
     shiftKeyOnClick = shiftKey;
@@ -85,12 +96,22 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
       pointerDownFound
     );
     if (pointerPoint) getDragPlane().setOrigin(pointerPoint);
-  } else if (get(worldUIMode) === "play") {
+  } else if ($mode === "play") {
+    const interactiveEntity = firstInteractiveEntity(pointerDownFound);
+
     if (
       pointerDownFound.includes(worldManager.avatar.entities.body.id as string)
     ) {
       addTouchController(worldManager.avatar.entities.body);
       isControllingAvatar = true;
+    } else if (interactiveEntity?.has(Draggable)) {
+      // Clicked on an interactive entity, perhaps starting a play-mode drag?
+      setNextPointerState("interactive-click");
+      const dragPlane = getDragPlane();
+      dragPlane.setOrientation("xz");
+      dragPlane.setOrigin(clickedPosition(interactiveEntity.id, world));
+      worldManager.selection.clear();
+      worldManager.selection.addEntityId(interactiveEntity.id);
     } else {
       // At this point, at least a 'click' has started. TBD if it's a drag.
       setNextPointerState("click");
@@ -117,7 +138,10 @@ export function onPointerUp(event: MouseEvent | TouchEvent) {
       worldManager.selection.syncEntities();
     }
   } else if (get(worldUIMode) === "play") {
-    if (pointerState === "click" && pointerDownFound.length > 0) {
+    if (
+      (pointerState === "click" || pointerState == "interactive-click") &&
+      pointerDownFound.length > 0
+    ) {
       const entities = worldManager.world.entities;
       pointerDownFound.forEach((entityId) => {
         const entity = entities.getById(entityId);
@@ -125,6 +149,8 @@ export function onPointerUp(event: MouseEvent | TouchEvent) {
           entity.add(Clicked);
         }
       });
+    } else if (pointerState === "interactive-drag") {
+      worldManager.selection.syncEntities();
     } else {
       removeTouchController(worldManager.avatar.entities.body);
       isControllingAvatar = false;
@@ -151,11 +177,7 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
   mouse.set(finder._normalizedCoord);
 
   if (get(worldUIMode) === "build") {
-    if (
-      pointerState === "click" &&
-      pointerPosition.distanceTo(pointerStartPosition) >=
-        DRAG_DISTANCE_THRESHOLD
-    ) {
+    if (pointerState === "click" && atLeastMinDragDistance()) {
       // drag  mode start
       if (worldManager.selection.length > 0 && pointerPoint) {
         setNextPointerState("drag");
@@ -184,11 +206,13 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
       worldManager.selection.addEntityIds(contained);
     }
   } else if (get(worldUIMode) === "play") {
-    if (
-      pointerState === "click" &&
-      pointerPosition.distanceTo(pointerStartPosition) >=
-        DRAG_DISTANCE_THRESHOLD
-    ) {
+    if (pointerState === "interactive-click" && atLeastMinDragDistance()) {
+      setNextPointerState("interactive-drag");
+      worldManager.selection.savePositions();
+    } else if (pointerState === "interactive-drag") {
+      const delta = getDragPlane().getDelta(pointerPosition);
+      worldManager.selection.moveRelativeToSavedPositions(delta);
+    } else if (pointerState === "click" && atLeastMinDragDistance()) {
       // drag  mode start
       setNextPointerState("drag");
       cameraPanOffset.copy(worldManager.camera.pan);
@@ -198,12 +222,21 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
       worldManager.camera.setPan(-dragOffset.x, -dragOffset.z);
     } else {
       // hovering over clickable/draggable results in outline
-      const found: Entity = pointerMoveFound
-        .map((entityId) => worldManager.world.entities.getById(entityId))
-        .find((entity) => isInteractive(entity));
-      worldManager.hoverOutline(found);
+      worldManager.hoverOutline(firstInteractiveEntity(pointerMoveFound));
     }
   }
+}
+
+function firstInteractiveEntity(entityIds: string[]) {
+  return entityIds
+    .map((entityId) => worldManager.world.entities.getById(entityId))
+    .find((entity) => isInteractive(entity));
+}
+
+function atLeastMinDragDistance() {
+  return (
+    pointerPosition.distanceTo(pointerStartPosition) >= DRAG_DISTANCE_THRESHOLD
+  );
 }
 
 function clickedPosition(entityId, world) {
