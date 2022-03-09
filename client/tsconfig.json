@@ -1,6 +1,6 @@
 {
 	"include": ["src/**/*"],
-	"exclude": ["node_modules/*", "__sapper__/*", "public/*"],
+	"exclude": ["node_modules/*", "public/*"],
 	"compilerOptions": {
 		"moduleResolution": "node",
 		"target": "es2017",
@@ -10,9 +10,7 @@
 		"esModuleInterop": true,
 		"sourceMap": true,
 		"baseUrl": "./src",
-		"paths": {
-			"~*": [".*"]
-		},
+		"paths": { "~/*": ["./*"] },
 		"typeRoots": ["types"],
 		"types": [
 			"jest",
