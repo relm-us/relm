@@ -16,6 +16,7 @@ import { BoundingBox } from "~/ecs/plugins/bounding-box";
 import { Clicked, Clickable } from "~/ecs/plugins/clickable";
 
 import { Item, ItemActor } from "../components";
+import { isInteractive } from "~/utils/isInteractive";
 
 const vOut = new Vector3(0, 0, 1);
 const vProjectOutward = new Vector3();
@@ -54,7 +55,7 @@ export class ItemActorSystem extends System {
       this.candidates.length = 0;
       for (let entity of entitiesNearby) {
         if (entity.parent) continue;
-        if (!entity.get(Item) && !entity.get(Clickable)) continue;
+        if (!isInteractive(entity)) continue;
         const box: Box3 = entity.get(BoundingBox)?.box;
         if (box && probe.intersectsBox(box)) {
           this.candidates.push(entity);

@@ -1,7 +1,6 @@
 import { Object3D, Vector2, Vector3 } from "three";
 import { get } from "svelte/store";
 
-import { hasAncestor } from "~/utils/hasAncestor";
 import { globalEvents } from "~/events";
 import { pointerPointInSelection } from "./selectionLogic";
 import * as selectionLogic from "./selectionLogic";
@@ -21,6 +20,9 @@ import { mouse } from "~/stores/mouse";
 import { DRAG_DISTANCE_THRESHOLD } from "~/config/constants";
 import { DragPlane } from "./DragPlane";
 import { SelectionBox } from "./SelectionBox";
+import { Draggable } from "~/ecs/plugins/clickable/components/Draggable";
+import { Entity } from "~/ecs/base";
+import { isInteractive } from "~/utils/isInteractive";
 
 export let isControllingAvatar: boolean = false;
 
@@ -144,7 +146,7 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
 
   globalEvents.emit("mouseActivity");
 
-  finder.entityIdsAt(pointerPosition);
+  const pointerMoveFound = finder.entityIdsAt(pointerPosition);
 
   mouse.set(finder._normalizedCoord);
 
@@ -194,6 +196,12 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
       const delta = getDragPlane().getDelta(pointerPosition);
       dragOffset.copy(delta).sub(cameraPanOffset);
       worldManager.camera.setPan(-dragOffset.x, -dragOffset.z);
+    } else {
+      // hovering over clickable/draggable results in outline
+      const found: Entity = pointerMoveFound
+        .map((entityId) => worldManager.world.entities.getById(entityId))
+        .find((entity) => isInteractive(entity));
+      worldManager.hoverOutline(found);
     }
   }
 }

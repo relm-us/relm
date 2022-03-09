@@ -72,6 +72,8 @@ import { delay } from "~/utils/delay";
 import { RelmRestAPI } from "~/main/RelmRestAPI";
 import { PhotoBooth } from "./PhotoBooth";
 import { audioMode, AudioMode } from "~/stores/audioMode";
+import { Outline } from "~/ecs/plugins/outline";
+import { ItemActorSystem } from "~/ecs/plugins/item";
 
 type LoopType =
   | { type: "requestAF" }
@@ -109,6 +111,7 @@ export class WorldManager {
   chat: ChatManager;
   camera: CameraManager;
   photoBooth: PhotoBooth;
+  hoverOutlineEntity: Entity;
 
   started: boolean = false;
 
@@ -218,6 +221,20 @@ export class WorldManager {
     this.unsubs.push(
       highDefEnabled.subscribe(($enabled) => {
         this.setPixelRatio($enabled ? window.devicePixelRatio : 1);
+      })
+    );
+
+    this.unsubs.push(
+      worldUIMode.subscribe(($mode) => {
+        switch ($mode) {
+          case "build":
+            this.hoverOutline(null);
+            this.world.systems.get(ItemActorSystem).active = false;
+            break;
+          case "play":
+            this.world.systems.get(ItemActorSystem).active = true;
+            break;
+        }
       })
     );
 
@@ -346,6 +363,19 @@ export class WorldManager {
     const entities = this.world.entities.getAllBy((entity) => !entity.parent);
     for (const entity of entities) {
       entity[action](BoundingHelper);
+    }
+  }
+
+  hoverOutline(found: Entity) {
+    if (found) {
+      if (!found.has(Outline)) {
+        this.hoverOutlineEntity?.maybeRemove(Outline);
+        found.add(Outline);
+        this.hoverOutlineEntity = found;
+      }
+    } else if (this.hoverOutlineEntity) {
+      this.hoverOutlineEntity.maybeRemove(Outline);
+      this.hoverOutlineEntity = null;
     }
   }
 
