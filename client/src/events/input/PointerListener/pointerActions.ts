@@ -209,7 +209,7 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
           if (draggable.plane.includes("Z")) {
             position.z =
               Math.floor(position.z / draggable.gridSize) * draggable.gridSize +
-              draggable.gridOffset.y;
+              draggable.gridOffset.y; // intentionally using 'y' of 2d for z of 3d here
           }
         }
       });
