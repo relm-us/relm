@@ -1,4 +1,4 @@
-import { Vector3, Quaternion, MathUtils } from "three";
+import { Vector3, Quaternion, MathUtils, Object3D } from "three";
 
 import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
 
@@ -83,13 +83,13 @@ export const headFollowsAngle =
     const angle = getAngle();
     if (angle === null || angle === undefined || Number.isNaN(angle)) return;
 
-    const pointer = entity.get(PointerPositionRef).value;
-    const parent = entity.get(BoneTwistRef).parent;
+    const pointer: WorldPlanes = entity.get(PointerPositionRef).value;
+    const parent: Object3D = entity.get(BoneTwistRef).parent;
 
     parent.getWorldQuaternion(qParent);
     parent.getWorldPosition(vParent);
 
-    vPointerPos.copy(pointer.points.xz).sub(vParent);
+    vPointerPos.copy(pointer.points.XZ).sub(vParent);
     vPointerPos.y = 0;
 
     vBodyFacing.copy(vOut);
