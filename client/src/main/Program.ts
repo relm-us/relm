@@ -47,6 +47,7 @@ import { getDefaultAppearance } from "~/identity/Avatar/appearance";
 import { localIdentityData } from "~/stores/identityData";
 import { IdentityData, UpdateData } from "~/types";
 import { resetArrowKeys } from "./effects/resetArrowKeys";
+import { Oculus } from "~/ecs/plugins/html2d";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -385,6 +386,15 @@ export function makeProgram(): Program {
         const newState = { ...state, audioVideoSetupDone: true };
 
         if (state.initializedWorldManager) {
+          // After visiting the video-mirror screen, each Svelte Video component
+          // except the local video loses its feed, so we need to remove/add
+          // each one back:
+          state.ecsWorld.entities
+            .getAllByComponent(Oculus)
+            .forEach((entity) => {
+              entity.get(Oculus).modified();
+            });
+
           effects.push(send({ id: "startPlaying" }));
         } else {
           effects.push(nextSetupStep(newState));
