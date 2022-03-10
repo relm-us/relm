@@ -79,9 +79,12 @@ export class OculusSystem extends System {
 
   remove(entity: Entity) {
     const ref = entity.get(OculusRef);
-    const container: HTMLElement = ref.container;
 
-    if (container) container.remove();
+    // Destroy Svelte component
+    if (ref.component) ref.component.$destroy();
+
+    // Remove HTML container of Svelte component
+    if (ref.container) ref.container.remove();
 
     entity.remove(OculusRef);
   }

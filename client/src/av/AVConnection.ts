@@ -69,15 +69,10 @@ export class AVConnection {
       this.adapter.publishLocalTracks([track]);
     });
 
-    // // Whenever local video source or settings change, update the adapter
-    let prevTrack;
+    // Whenever local video/screenshare source or settings change, update the adapter
     localVisualTrackStore.subscribe((track: MediaStreamTrack) => {
       console.log("localVisualTrackStore changed", track);
-      if (prevTrack) {
-        this.adapter.unpublishLocalTracks([prevTrack]);
-      }
       this.adapter.publishLocalTracks([track]);
-      prevTrack = track;
     });
   }
 

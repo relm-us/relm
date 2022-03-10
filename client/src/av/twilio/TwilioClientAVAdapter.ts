@@ -86,7 +86,7 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
 
   disconnect(): Promise<void> {
     return new Promise((resolve, reject) => {
-      console.log("AV disconnected", this.room.state);
+      console.log("AV disconnect", this.room.state);
       try {
         this.room.disconnect();
       } catch (err) {
@@ -168,14 +168,12 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
     for (const track of tracks) {
       if (!track) continue;
 
-      if (track.kind === "video") {
-        const previousTrack = localParticipant.videoTracks.values()[0];
-        if (previousTrack) localParticipant.unpublishTrack(previousTrack);
-      }
-
-      if (track.kind === "audio") {
-        const previousTrack = localParticipant.audioTracks.values()[0];
-        if (previousTrack) localParticipant.unpublishTrack(previousTrack);
+      const tracksAccessor = getTracksAccessorFromKind(track.kind);
+      if (tracksAccessor) {
+        const prevTracks = [...localParticipant[tracksAccessor].values()].map(
+          (publication) => publication.track
+        );
+        localParticipant.unpublishTracks(prevTracks);
       }
 
       localParticipant.publishTrack(track);
@@ -230,3 +228,12 @@ const isMobile = (() => {
   }
   return /Mobile/.test(navigator.userAgent);
 })();
+
+function getTracksAccessorFromKind(kind: string) {
+  switch (kind) {
+    case "audio":
+      return "audioTracks";
+    case "video":
+      return "videoTracks";
+  }
+}

@@ -24,7 +24,6 @@ export const libraryAssets: Readable<LibraryFetch> = derived(
   [librarySearch, libraryPage],
   ([search, page], set) => {
     const queryHash = `${search}/${page}`;
-    console.log("queryHash", queryHash, lastQueryHash);
     if (lastQueryHash === queryHash) return;
     lastQueryHash = queryHash;
 
