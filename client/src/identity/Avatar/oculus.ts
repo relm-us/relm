@@ -24,9 +24,14 @@ export function setOculus(
     });
   } else {
     const component = entities.body.get(OculusRef)?.component;
-
     if (component) {
       component.$set({ showAudio, showVideo });
+    }
+
+    const oculus = entities.body.get(Oculus);
+    if (oculus) {
+      oculus.showAudio = showAudio;
+      oculus.showVideo = showVideo;
     }
   }
 }
