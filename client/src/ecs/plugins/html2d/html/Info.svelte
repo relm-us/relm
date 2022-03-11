@@ -1,7 +1,7 @@
 <script>
-  import { onMount } from "svelte";
   import IoIosLink from "svelte-icons/io/IoIosLink.svelte";
   import IoIosArrowDown from "svelte-icons/io/IoIosArrowDown.svelte";
+  import debounce from "lodash/debounce";
 
   import { cleanHtml } from "~/utils/cleanHtml";
 
@@ -43,16 +43,6 @@
     worldManager.worldDoc.syncFrom(entity);
   }
 
-  function isModified() {
-    const component = entity.get(Html2d);
-
-    return (
-      component.title !== titleEl.value ||
-      component.link !== linkEl.value ||
-      component.content !== contentEl.innerHTML
-    );
-  }
-
   function imageContent(content) {
     const match = content.match(/^\s*image:\s*(http.*)$/);
     if (match) {
@@ -68,22 +58,13 @@
     return link && link.length > 0;
   }
 
-  function onKeydown(event) {
+  const onKeydown = debounce((event) => {
+    saveText();
     if (event.key === "Escape") {
       event.preventDefault();
-      saveText();
       editing = false;
     }
-  }
-
-  onMount(() => {
-    const interval = setInterval(() => {
-      if (editing && isModified()) {
-        saveText();
-      }
-    }, 1500);
-    return () => clearInterval(interval);
-  });
+  }, 1000);
 
   // ignore warning about missing props
   $$props;
