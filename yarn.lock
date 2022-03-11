@@ -12395,10 +12395,10 @@ vfn@^1.1.0:
     plainify "^1.0.0"
     wfn "^1.0.0"
 
-video-mirror@4.3.0:
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/video-mirror/-/video-mirror-4.3.0.tgz#3084610faf5622205186c7186cd66bf6799f4e23"
-  integrity sha512-4wXzNmR4mTPO5jtLEaxl5/l0HvI8ekCiBOgD0jo4cC31jePHWQ1Rq5XdpDcbsuNE6b+nQE/oWw49AjAqngUWVw==
+video-mirror@4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/video-mirror/-/video-mirror-4.4.0.tgz#f6b07d72d4c42e2ba055b24b55a040564b367558"
+  integrity sha512-fM7VQbxbs/XPy2kuMXsnqRet1kEC8TgpPASmVMEgEDaRcR7rrI2P13sbvlYvwSsI8Kp3xdcyMlhXV1WSroQQ4Q==
   dependencies:
     audio-activity "1.0.0"
     media-devices "0.2.0"

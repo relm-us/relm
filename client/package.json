@@ -55,7 +55,7 @@
     "three-nebula": "10.0.3",
     "tiny-typed-emitter": "2.1.0",
     "twilio-video": "2.20.1",
-    "video-mirror": "4.3.0",
+    "video-mirror": "4.4.0",
     "y-indexeddb": "9.0.7",
     "y-websocket": "canadaduane/y-websocket#async-bind-state",
     "yjs": "13.5.27"
