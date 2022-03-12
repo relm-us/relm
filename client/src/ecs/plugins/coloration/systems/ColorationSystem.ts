@@ -148,17 +148,25 @@ function lerpOriginalToColor(i, original, color, dColor, lerpAlpha) {
 
 function changeFacemapColor(node, facemapIndex, destColor, lerpAlpha) {
   if (facemapIndex >= getFacemapNames(node).length) {
-    console.log("no facemap index", facemapIndex, node);
+    console.warn(
+      "Can't changeFacemapColor: no facemap index",
+      facemapIndex,
+      node
+    );
     return;
   }
 
-  const geom = node.geometry;
+  const facemaps = node.geometry.getAttribute("_facemaps");
+  if (!facemaps) {
+    console.warn("Can't changeFacemapColor: no _facemaps attribute", node);
+    return;
+  }
+
   const dColor = new Color(destColor);
 
   const color = getOrCreateColorAttribute(node);
   const original = getOrCreateOriginalColorAttribute(node);
 
-  const facemaps = geom.getAttribute("_facemaps");
   for (let i = 0, len = facemaps.count; i < len; i++) {
     if (facemaps.array[i] === facemapIndex) {
       lerpOriginalToColor(i, original, color, dColor, lerpAlpha);
