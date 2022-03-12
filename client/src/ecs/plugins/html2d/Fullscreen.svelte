@@ -1,6 +1,5 @@
 <script>
   import { onMount, createEventDispatcher } from "svelte";
-  import IoIosArrowBack from "svelte-icons/io/IoIosArrowBack.svelte";
   import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
 
   const dispatch = createEventDispatcher();
@@ -40,7 +39,6 @@
       fullwindow = true;
     }
   });
-
 </script>
 
 <fullscreen bind:this={el} class:fullwindow>
@@ -74,11 +72,14 @@
 
   icon {
     display: block;
-    width: 32px;
-    height: 32px;
+    width: 48px;
+    height: 48px;
     margin: 0 auto;
 
     color: white;
   }
-
+  icon :global(path) {
+    stroke-width: 12px;
+    stroke: black;
+  }
 </style>
