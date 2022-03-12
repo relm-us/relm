@@ -48,11 +48,17 @@
 
   // TODO: (privacy) Make it so full screen is only possible when remote is sharing screen
   function enterFullscreen() {
-    if (!isLocal) fullscreen = true;
+    if (!isLocal) {
+      fullscreen = true;
+      worldManager.setFps(1);
+    }
   }
 
   function exitFullscreen() {
-    fullscreen = false;
+    if (!isLocal) {
+      fullscreen = false;
+      worldManager.setFps(60);
+    }
   }
 
   let interval;
