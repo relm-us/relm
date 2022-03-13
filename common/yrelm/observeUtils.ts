@@ -62,3 +62,35 @@ export function withMapEdits<T>(
     }
   }
 }
+
+export function getDeletedItems(event, transaction) {
+  const items = [];
+
+  Y.iterateDeletedStructs(
+    transaction,
+    transaction.deleteSet,
+    /** @param {Item|GC} item */ (item) => {
+      if (
+        item instanceof Y.Item &&
+        item.deleted &&
+        pathLength(event.target, item) == event.path[0]
+      ) {
+        items.push(item);
+      }
+    }
+  );
+
+  return items;
+}
+
+export function pathLength(ancestor, child: Y.Item) {
+  let length = 1;
+  while (child !== null) {
+    if (child.parent === ancestor) {
+      return length;
+    }
+    child = (child.parent as any)._item;
+    length++;
+  }
+  return null;
+}

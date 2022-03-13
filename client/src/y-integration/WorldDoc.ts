@@ -16,6 +16,7 @@ import {
   yEntityToJSON,
   yComponentToJSON,
   jsonToYEntity,
+  getDeletedItems,
 } from "relm-common/yrelm";
 
 import {
@@ -317,7 +318,13 @@ export class WorldDoc extends EventEmitter {
               this._addYComponent(entity, ycomponent);
             },
             onDelete: (yid) => {
-              this._deleteYComponent(entity, event.path[1] as string);
+              const items = getDeletedItems(event, transaction);
+              const componentName = items
+                .map((item) => item.content.getContent()[0])
+                .find((item) => typeof item === "string");
+              if (componentName) {
+                entity.removeByName(componentName);
+              }
             },
           });
         }
@@ -440,9 +447,5 @@ export class WorldDoc extends EventEmitter {
 
     // Signal completion of onAdd for tests
     this.emit("ycomponents.added", component, entity);
-  }
-
-  _deleteYComponent(entity: Entity, componentName: string) {
-    console.error("deleteYComponent not implemented", componentName, entity.id);
   }
 }
