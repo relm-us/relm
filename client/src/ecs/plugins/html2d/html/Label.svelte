@@ -1,17 +1,15 @@
 <script lang="ts">
-  import { Vector2, Vector3 } from "three";
   import { cleanHtml } from "~/utils/cleanHtml";
+  import IoMdCreate from "svelte-icons/io/IoMdCreate.svelte";
 
   import { Html2d } from "../components";
   import { worldManager } from "~/world";
   import { worldUIMode } from "~/stores/worldUIMode";
-  import { DRAG_DISTANCE_THRESHOLD } from "~/config/constants";
 
   export let content;
   export let color;
   export let shadowColor;
   export let underlineColor;
-  export let draggable;
   export let editable;
   export let visible;
 
@@ -19,22 +17,17 @@
   export let entity;
 
   let labelEl;
-  let clickStarted = false;
-  let dragging = false;
   let editing = false;
-  let showNoteIcon = false;
+  let showEditIcon = false;
+  let hasContent = content && content.length > 0;
 
-  $: showNoteIcon = editable && !editing && content === "";
-
-  const initialEntityPos = new Vector3();
-  const initialMousePos = new Vector2();
+  $: showEditIcon = editable && !hasContent;
 
   function doneEditing() {
     if (!editing) return;
 
-    content = labelEl.innerText.trim();
     const html2d: Html2d = entity.get(Html2d);
-    html2d.content = content;
+    html2d.content = content = labelEl.innerText.trim();
 
     if (html2d.onChange) {
       html2d.onChange(content);
@@ -57,8 +50,16 @@
       ((event.key === "Enter" || event.key === "Return") && !event.shiftKey)
     ) {
       event.preventDefault();
-      doneEditing();
+      event.stopPropagation();
+      event.target.blur();
+    } else {
+      // slightly faster visual response than keyup
+      hasContent = true;
     }
+  }
+
+  function onKeyup(event) {
+    hasContent = labelEl.innerText.trim().length > 0;
   }
 
   function onMousedown(event) {
@@ -70,61 +71,21 @@
         worldManager.selection.clear();
         worldManager.selection.addEntityId(entity.id);
       }, 100);
-    } else if ($worldUIMode === "play") {
-      const mouse2d = worldManager.world.presentation.mouse2d;
-      // Store the original click in 3d world coords
-      worldManager.world.perspective.getWorldFromScreen(
-        mouse2d,
-        initialEntityPos
-      );
-      initialEntityPos.sub(entity.getByName("Transform").position);
-
-      initialMousePos.copy(mouse2d);
-      clickStarted = true;
-    }
-  }
-
-  function onMouseup(_event) {
-    if (dragging) {
-      worldManager.worldDoc.syncFrom(entity);
-      dragging = false;
-    } else if (clickStarted && editable && !editing) {
+    } else if (editable && !editing) {
       editing = true;
-      setTimeout(() => labelEl.focus(), 100);
+      setTimeout(() => {
+        labelEl.focus();
+        selectAll(labelEl);
+      }, 100);
     }
-    clickStarted = false;
   }
 
-  function onMousemove(event) {
-    if (!visible) return;
-
-    if (!editing) event.preventDefault();
-
-    if (!event.target.parentElement) return;
-
-    if (!worldManager.world) return;
-
-    const mouse2d = worldManager.world.presentation.mouse2d;
-
-    if (
-      draggable &&
-      clickStarted &&
-      mouse2d.distanceTo(initialMousePos) > DRAG_DISTANCE_THRESHOLD
-    ) {
-      // this is the start of a drag
-      dragging = true;
-    }
-
-    if (!dragging) return;
-
-    const drag = new Vector3();
-    worldManager.world.perspective.getWorldFromScreen(mouse2d, drag);
-    drag.x -= initialEntityPos.x;
-    drag.z -= initialEntityPos.z;
-
-    const position = entity.getByName("Transform").position;
-    position.x = drag.x;
-    position.z = drag.z;
+  function selectAll(div) {
+    const range = document.createRange();
+    range.selectNodeContents(div);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
   }
 
   // ignore warning about missing props
@@ -132,65 +93,76 @@
 </script>
 
 {#if visible}
-  {#if showNoteIcon}
-    <div on:mousedown={onMousedown}>✎</div>
-  {:else}
+  <r-label>
+    {#if showEditIcon}
+      <icon on:mousedown={onMousedown}><IoMdCreate /></icon>
+    {/if}
     <div
       contenteditable={editing}
       class="truncate-overflow interactive"
       class:underline={!!underlineColor}
-      class:dragging
       style="--color:{color};--shadow-color:{shadowColor};--underline-color:{underlineColor}"
       bind:this={labelEl}
       on:mousedown={onMousedown}
       on:blur={doneEditing}
       on:keydown={onKeydown}
+      on:keyup={onKeyup}
     >
       {@html cleanHtml(content)}
     </div>
-  {/if}
+  </r-label>
 {/if}
 
-<svelte:window on:mousemove={onMousemove} on:mouseup={onMouseup} />
-
 <style>
+  r-label {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
   div {
     overflow: hidden;
     hyphens: auto;
     white-space: nowrap;
     text-overflow: ellipsis;
     word-break: break-word;
+    flex-grow: 1;
 
     /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
     color: var(--color, #e5e5e5);
     letter-spacing: 1.2px;
     font-weight: 700;
     line-height: 1.5rem;
+    min-height: 1.5rem;
     text-shadow: 0 0 3px var(--shadow-color, "black");
 
     padding: 4px 8px;
     cursor: default;
-  }
-  div :global(a),
-  div :global(a:visited) {
-    color: var(--color, #e5e5e5);
-    text-decoration: underline;
   }
 
   div.underline {
     border-bottom: 2px solid var(--underline-color);
   }
 
-  div:hover,
-  .dragging {
-    position: relative;
-
-    display: block;
-    /* min-width: 300px; */
-
+  div:hover {
     background-color: rgba(0, 0, 0, 0.15);
-    border-radius: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
 
-    white-space: normal;
+  icon {
+    display: block;
+    width: 18px;
+    height: 18px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    padding: 3px 2px 3px 3px;
+    margin-right: 4px;
+
+    position: absolute;
+    left: -24px;
+  }
+  icon:hover {
+    background-color: rgba(80, 80, 80, 0.15);
   }
 </style>

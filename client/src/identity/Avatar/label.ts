@@ -13,11 +13,11 @@ export function setLabel(
   color: string,
   onDidEdit: (content: string) => void
 ) {
-  if (name && !entities.body.has(Html2d)) {
+  if (name !== null && !entities.body.has(Html2d)) {
     addLabel(entities, name, color, onDidEdit);
-  } else if (name && entities.body.has(Html2d)) {
+  } else if (name !== null && entities.body.has(Html2d)) {
     changeLabel(entities, name, color, onDidEdit);
-  } else if (!name && entities.body.has(Html2d)) {
+  } else if (name === null && entities.body.has(Html2d)) {
     entities.body.remove(Html2d);
   }
 }

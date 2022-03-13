@@ -20,7 +20,6 @@ export class Html2d extends Component {
   title: string;
   link: string;
   content: string;
-  draggable: boolean;
   editable: boolean;
   visible: boolean;
   onChange: Function;
@@ -137,15 +136,6 @@ export class Html2d extends Component {
       default: null,
       editor: {
         label: "HTML Content",
-      },
-    },
-
-    draggable: {
-      type: BooleanType,
-      default: false,
-      editor: {
-        label: "Draggable",
-        requires: [{ prop: "kind", value: "LABEL" }],
       },
     },
 
