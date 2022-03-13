@@ -31,7 +31,6 @@ export class Html2dSystem extends System {
 
   update() {
     const vb = this.perspective.visibleBounds;
-    const boundsWidth = vb.max.x - vb.min.x;
 
     this.queries.new.forEach((entity) => {
       this.build(entity);
@@ -41,7 +40,7 @@ export class Html2dSystem extends System {
       this.build(entity);
     });
     this.queries.active.forEach((entity) => {
-      this.updatePosition(entity, boundsWidth);
+      this.updatePosition(entity);
     });
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
@@ -85,7 +84,7 @@ export class Html2dSystem extends System {
     entity.remove(Html2dRef);
   }
 
-  updatePosition(entity: Entity, boundsWidth: number) {
+  updatePosition(entity: Entity) {
     if (this.presentation.skipUpdate > 0) return;
 
     const transform: Transform = entity.get(Transform);
@@ -97,13 +96,18 @@ export class Html2dSystem extends System {
 
     this.htmlPresentation.project(v1);
 
-    const container = entity.get(Html2dRef).container;
+    const container: HTMLElement = entity.get(Html2dRef).container;
     container.style.left = v1.x + "px";
     container.style.top = v1.y + "px";
     container.style.pointerEvents = "auto";
 
-    // calculate width
-    let width = (35 / boundsWidth) * spec.width * 60;
-    container.style.maxWidth = Math.floor(width) + "px";
+    if (!spec.zoomInvariant) {
+      this.presentation.camera.getWorldPosition(v1);
+      const distance = v1.distanceTo(transform.positionWorld);
+      for (let child of container.children) {
+        if (child instanceof HTMLElement)
+          child.style.transform = `scale(${10 / distance})`;
+      }
+    }
   }
 }

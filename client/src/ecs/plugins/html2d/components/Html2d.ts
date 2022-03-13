@@ -49,15 +49,6 @@ export class Html2d extends Component {
       },
     },
 
-    width: {
-      type: NumberType,
-      default: 3,
-      editor: {
-        label: "Max. Width",
-        requires: [{ prop: "kind", value: "LABEL" }],
-      },
-    },
-
     vanchor: {
       type: NumberType,
       default: 0,
@@ -92,6 +83,7 @@ export class Html2d extends Component {
       editor: {
         label: "Text Color",
         input: "Color",
+        requires: [{ prop: "kind", value: "LABEL" }],
       },
     },
 
@@ -120,6 +112,7 @@ export class Html2d extends Component {
       default: null,
       editor: {
         label: "Title",
+        requires: [{ prop: "kind", value: "INFO" }],
       },
     },
 
@@ -128,6 +121,7 @@ export class Html2d extends Component {
       default: null,
       editor: {
         label: "Title Link (URL)",
+        requires: [{ prop: "kind", value: "INFO" }],
       },
     },
 
@@ -153,6 +147,14 @@ export class Html2d extends Component {
       editor: {
         label: "Visible",
       },
+    },
+
+    zoomInvariant: {
+      type: BooleanType,
+      default: true,
+      editor: {
+        label: "Zoom Invariant"
+      }
     },
 
     // Called when done editing
