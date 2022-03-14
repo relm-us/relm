@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import IoIosLink from "svelte-icons/io/IoIosLink.svelte";
   import IoIosArrowDown from "svelte-icons/io/IoIosArrowDown.svelte";
   import IoIosArrowForward from "svelte-icons/io/IoIosArrowForward.svelte";
@@ -12,6 +12,7 @@
 
   import { Html2d } from "../components";
   import { hasAncestor } from "~/utils/hasAncestor";
+  import { selectAll } from "~/utils/selectAll";
 
   export let title;
   export let link;
@@ -23,11 +24,9 @@
   export let entity;
 
   let containerEl;
-  let titleEl;
-  let linkEl;
-  let contentEl;
   let editing = false;
   let expanded = false;
+  let clickedContainer = false;
 
   function toggleEditing() {
     editing = !editing;
@@ -37,10 +36,17 @@
     }
   }
 
+  function setClickedContainer(event) {
+    if (hasAncestor(event.target, containerEl)) {
+      clickedContainer = false;
+    }
+  }
+
   function cancelEditing(event) {
-    if (!hasAncestor(event.target, containerEl)) {
+    if (clickedContainer && !hasAncestor(event.target, containerEl)) {
       editing = false;
     }
+    clickedContainer = false;
   }
 
   function toggleExpanded() {
@@ -50,25 +56,35 @@
   function saveText() {
     const component = entity.get(Html2d);
 
-    title = component.title = titleEl.value;
-    link = component.link = linkEl.value;
-    content = component.content = contentEl.innerHTML;
+    component.title = title;
+    component.link = link;
+    component.content = content;
 
     // Broadcast changes
     worldManager.worldDoc.syncFrom(entity);
   }
 
+  const saveTextDebounced = debounce(saveText, 1000);
+
   function notEmpty(link) {
     return link && link.length > 0;
   }
 
-  const onKeydown = debounce((event) => {
-    saveText();
-    if (event.key === "Escape") {
+  function focus(el) {
+    console.log("focus", el);
+    setTimeout(() => {
+      el.focus();
+      el.select();
+    }, 0);
+  }
+
+  const onKeydown = (doneOnEnter: boolean) => (event) => {
+    saveTextDebounced();
+    if (event.key === "Escape" || (doneOnEnter && event.key === "Enter")) {
       event.preventDefault();
       editing = false;
     }
-  }, 1000);
+  };
 
   // ignore warning about missing props
   $$props;
@@ -81,11 +97,11 @@
         <r-row>
           <!-- svelte-ignore a11y-positive-tabindex -->
           <input
-            bind:this={titleEl}
-            on:keydown={onKeydown}
+            bind:value={title}
+            on:keydown={onKeydown(true)}
+            use:focus
             tabIndex="1"
             type="text"
-            value={title ? title : ""}
           />
           <CircleButton size={24} margin={0} on:click={toggleEditing}>
             <IoMdCreate />
@@ -94,11 +110,10 @@
         <r-row class="margin-bottom">
           <!-- svelte-ignore a11y-positive-tabindex -->
           <input
-            bind:this={linkEl}
-            on:keydown={onKeydown}
+            bind:value={link}
+            on:keydown={onKeydown(true)}
             tabIndex="2"
             type="text"
-            value={link ? link : ""}
           />
           <CircleButton size={24}>
             <IoIosLink />
@@ -106,17 +121,15 @@
         </r-row>
         <!-- svelte-ignore a11y-positive-tabindex -->
         <r-body
-          bind:this={contentEl}
-          on:keydown={onKeydown}
+          bind:innerHTML={content}
+          on:keydown={onKeydown(false)}
           tabIndex="3"
-          contenteditable={true}
-        >
-          {@html cleanHtml(content)}
-        </r-body>
+          contenteditable="true"
+        />
       {:else}
-        <r-row on:click={toggleExpanded}>
+        <r-row>
           {#if notEmpty(content)}
-            <icon>
+            <icon on:click={toggleExpanded}>
               {#if expanded}
                 <IoIosArrowDown />
               {:else}
@@ -125,12 +138,7 @@
             </icon>
           {/if}
           {#if notEmpty(title) && notEmpty(link)}
-            <a
-              class="row-content"
-              href={link}
-              target="_blank"
-              on:click|stopPropagation>{title}</a
-            >
+            <a class="row-content" href={link} target="_blank">{title}</a>
           {:else if notEmpty(title)}
             <div class="row-content interactive">
               {title}
@@ -156,9 +164,7 @@
 
         {#if expanded}
           <r-row style="margin-top: 8px">
-            <r-body bind:this={contentEl}>
-              {@html cleanHtml(content)}
-            </r-body>
+            <r-body>{@html cleanHtml(content)}</r-body>
           </r-row>
         {/if}
       {/if}
@@ -166,7 +172,7 @@
   </r-container>
 {/if}
 
-<svelte:window on:mouseup={cancelEditing} />
+<svelte:window on:mousedown={setClickedContainer} on:mouseup={cancelEditing} />
 
 <style>
   r-container {
@@ -241,5 +247,6 @@
     width: 24px;
     height: 24px;
     color: var(--fg-color, rgba(221, 221, 221, 0.9));
+    cursor: pointer;
   }
 </style>
