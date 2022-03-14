@@ -5,6 +5,7 @@
   import { Html2d } from "../components";
   import { worldManager } from "~/world";
   import { worldUIMode } from "~/stores/worldUIMode";
+  import { selectAll } from "~/utils/selectAll";
 
   export let content;
   export let color;
@@ -78,14 +79,6 @@
         selectAll(labelEl);
       }, 100);
     }
-  }
-
-  function selectAll(div) {
-    const range = document.createRange();
-    range.selectNodeContents(div);
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
   }
 
   // ignore warning about missing props

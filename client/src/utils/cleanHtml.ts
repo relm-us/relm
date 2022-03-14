@@ -7,7 +7,8 @@ const defaultOptions = {
   allowedTags: [
     "h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "div", "hr", "li", "ol",
     "p", "pre", "ul", "a", "b", "br","code", "em", "i", "small", "span", "u",
-    "strong", "sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr"
+    "strong", "sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr",
+    "img"
   ],
   disallowedTagsMode: "discard",
   allowedAttributes: {
@@ -18,7 +19,7 @@ const defaultOptions = {
   selfClosing: ["img", "br", "hr", "area"],
   // URL schemes we permit
   allowedSchemes: ["http", "https", "ftp", "mailto", "tel"],
-  allowedSchemesByTag: {},
+  allowedSchemesByTag: { img: ["http", "https", "data"] },
   allowedSchemesAppliedToAttributes: ["href", "src", "cite"],
   allowProtocolRelative: true,
   enforceHtmlBoundary: false,
