@@ -128,6 +128,7 @@
     position: relative;
     width: var(--oculus-size, 100%);
     height: var(--oculus-size, 100%);
+    pointer-events: auto;
   }
   :global(.oculus-video) {
     filter: brightness(1.2) saturate(1.1);

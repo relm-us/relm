@@ -1,6 +1,8 @@
 <script>
   import IoIosLink from "svelte-icons/io/IoIosLink.svelte";
   import IoIosArrowDown from "svelte-icons/io/IoIosArrowDown.svelte";
+  import IoIosArrowForward from "svelte-icons/io/IoIosArrowForward.svelte";
+  import IoMdCreate from "svelte-icons/io/IoMdCreate.svelte";
   import debounce from "lodash/debounce";
 
   import { cleanHtml } from "~/utils/cleanHtml";
@@ -9,6 +11,7 @@
   import CircleButton from "~/ui/lib/CircleButton";
 
   import { Html2d } from "../components";
+  import { hasAncestor } from "~/utils/hasAncestor";
 
   export let title;
   export let link;
@@ -19,10 +22,12 @@
   // The entity that this Label is attached to
   export let entity;
 
+  let containerEl;
   let titleEl;
   let linkEl;
   let contentEl;
   let editing = false;
+  let expanded = false;
 
   function toggleEditing() {
     editing = !editing;
@@ -30,6 +35,16 @@
     if (!editing) {
       saveText();
     }
+  }
+
+  function cancelEditing(event) {
+    if (!hasAncestor(event.target, containerEl)) {
+      editing = false;
+    }
+  }
+
+  function toggleExpanded() {
+    expanded = !expanded;
   }
 
   function saveText() {
@@ -41,17 +56,6 @@
 
     // Broadcast changes
     worldManager.worldDoc.syncFrom(entity);
-  }
-
-  function imageContent(content) {
-    const match = content.match(/^\s*image:\s*(http.*)$/);
-    if (match) {
-      return match[1];
-    }
-  }
-
-  function openLink() {
-    window.open(link, "_blank");
   }
 
   function notEmpty(link) {
@@ -71,107 +75,105 @@
 </script>
 
 {#if visible}
-  {#if editable}
-    <r-container>
-      <r-info>
-        {#if !editing}
-          <r-row>
-            {#if notEmpty(title) && notEmpty(link)}
-              <a class="row-content" href={link} target="_blank">{title}</a>
-            {:else if notEmpty(title)}
-              <div class="row-content interactive">
-                {title}
-              </div>
-            {:else}
-              <div
-                class="row-content"
-                style="text-align: center; cursor: pointer"
-                on:click={toggleEditing}
-              >
-                Add Info
-              </div>
-            {/if}
-            <CircleButton size={24} on:click={toggleEditing}>
-              <IoIosArrowDown />
-            </CircleButton>
-          </r-row>
-        {:else}
-          <r-row class="margin-bottom">
-            <!-- svelte-ignore a11y-positive-tabindex -->
-            <input
-              bind:this={titleEl}
-              on:keydown={onKeydown}
-              tabIndex="1"
-              type="text"
-              value={title ? title : ""}
-            />
-            <CircleButton size={24} on:click={toggleEditing}>
-              <IoIosArrowDown />
-            </CircleButton>
-          </r-row>
-          <r-row class="margin-bottom">
-            <!-- svelte-ignore a11y-positive-tabindex -->
-            <input
-              bind:this={linkEl}
-              on:keydown={onKeydown}
-              tabIndex="2"
-              type="text"
-              value={link ? link : ""}
-            />
-            <CircleButton size={24} on:click={openLink}>
-              <IoIosLink />
-            </CircleButton>
-          </r-row>
+  <r-container bind:this={containerEl}>
+    <r-info>
+      {#if editing}
+        <r-row>
           <!-- svelte-ignore a11y-positive-tabindex -->
-          <r-body
-            bind:this={contentEl}
+          <input
+            bind:this={titleEl}
             on:keydown={onKeydown}
-            tabIndex="3"
-            contenteditable={true}
-          >
-            {@html cleanHtml(content)}
-          </r-body>
-        {/if}
-      </r-info>
-    </r-container>
-  {:else if notEmpty(title) || notEmpty(content)}
-    <r-container>
-      <r-info>
-        {#if notEmpty(title) && notEmpty(link)}
-          <r-row>
-            <a class="row-content" href={link} target="_blank">{title}</a>
-          </r-row>
-        {:else if notEmpty(title)}
-          <r-row>
+            tabIndex="1"
+            type="text"
+            value={title ? title : ""}
+          />
+          <CircleButton size={24} margin={0} on:click={toggleEditing}>
+            <IoMdCreate />
+          </CircleButton>
+        </r-row>
+        <r-row class="margin-bottom">
+          <!-- svelte-ignore a11y-positive-tabindex -->
+          <input
+            bind:this={linkEl}
+            on:keydown={onKeydown}
+            tabIndex="2"
+            type="text"
+            value={link ? link : ""}
+          />
+          <CircleButton size={24}>
+            <IoIosLink />
+          </CircleButton>
+        </r-row>
+        <!-- svelte-ignore a11y-positive-tabindex -->
+        <r-body
+          bind:this={contentEl}
+          on:keydown={onKeydown}
+          tabIndex="3"
+          contenteditable={true}
+        >
+          {@html cleanHtml(content)}
+        </r-body>
+      {:else}
+        <r-row on:click={toggleExpanded}>
+          {#if notEmpty(content)}
+            <icon>
+              {#if expanded}
+                <IoIosArrowDown />
+              {:else}
+                <IoIosArrowForward />
+              {/if}
+            </icon>
+          {/if}
+          {#if notEmpty(title) && notEmpty(link)}
+            <a
+              class="row-content"
+              href={link}
+              target="_blank"
+              on:click|stopPropagation>{title}</a
+            >
+          {:else if notEmpty(title)}
             <div class="row-content interactive">
               {title}
             </div>
-          </r-row>
-        {/if}
+          {:else if editable}
+            <div
+              class="row-content"
+              style="text-align: center; cursor: pointer"
+              on:click={toggleEditing}
+            >
+              Add Info
+            </div>
+          {/if}
 
-        {#if notEmpty(content)}
+          {#if editable}
+            <r-button-margin>
+              <CircleButton size={24} margin={0} on:click={toggleEditing}>
+                <IoMdCreate />
+              </CircleButton>
+            </r-button-margin>
+          {/if}
+        </r-row>
+
+        {#if expanded}
           <r-row style="margin-top: 8px">
             <r-body bind:this={contentEl}>
-              {#if imageContent(content)}
-                <!-- svelte-ignore a11y-missing-attribute -->
-                <img src={imageContent(content)} width="250" />
-              {:else}
-                {@html cleanHtml(content)}
-              {/if}
+              {@html cleanHtml(content)}
             </r-body>
           </r-row>
         {/if}
-      </r-info>
-    </r-container>
-  {/if}
+      {/if}
+    </r-info>
+  </r-container>
 {/if}
 
-<!-- <svelte:window on:mouseup={onMouseup} /> -->
+<svelte:window on:mouseup={cancelEditing} />
+
 <style>
   r-container {
     position: relative;
     display: flex;
     height: 48px;
+    pointer-events: auto;
   }
   r-info {
     display: flex;
@@ -191,9 +193,13 @@
   }
   r-row {
     display: flex;
+    align-items: center;
   }
   r-row.margin-bottom {
-    margin-bottom: 8px;
+    margin-bottom: 5px;
+  }
+  r-button-margin {
+    margin-left: 18px;
   }
   r-row a,
   r-row input {
@@ -228,5 +234,12 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  icon {
+    display: block;
+    width: 24px;
+    height: 24px;
+    color: var(--fg-color, rgba(221, 221, 221, 0.9));
   }
 </style>

@@ -50,6 +50,7 @@
 <style lang="scss">
   .bubble {
     display: inline-block;
+    pointer-events: auto;
 
     position: relative;
     padding: 15px 20px;

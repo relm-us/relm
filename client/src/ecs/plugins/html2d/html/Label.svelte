@@ -118,6 +118,7 @@
     display: flex;
     align-items: center;
     position: relative;
+    pointer-events: auto;
   }
   div {
     overflow: hidden;

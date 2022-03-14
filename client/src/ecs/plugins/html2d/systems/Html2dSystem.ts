@@ -105,7 +105,6 @@ export class Html2dSystem extends System {
     const container: HTMLElement = entity.get(Html2dRef).container;
     container.style.left = v1.x + "px";
     container.style.top = v1.y + "px";
-    container.style.pointerEvents = "auto";
 
     if (!spec.zoomInvariant) {
       this.presentation.camera.getWorldPosition(v1);
