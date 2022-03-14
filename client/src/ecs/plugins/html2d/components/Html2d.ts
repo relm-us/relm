@@ -138,6 +138,7 @@ export class Html2d extends Component {
       default: false,
       editor: {
         label: "Editable",
+        requires: [{ prop: "kind", value: "INFO" }],
       },
     },
 
@@ -153,8 +154,17 @@ export class Html2d extends Component {
       type: BooleanType,
       default: true,
       editor: {
-        label: "Zoom Invariant"
-      }
+        label: "Zoom Invariant",
+      },
+    },
+
+    zoomSize: {
+      type: NumberType,
+      default: 1.0,
+      editor: {
+        label: "Zoom Size",
+        requires: [{ prop: "zoomInvariant", value: false }],
+      },
     },
 
     // Called when done editing
