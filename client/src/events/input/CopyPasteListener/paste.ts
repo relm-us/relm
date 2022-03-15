@@ -49,7 +49,7 @@ export function paste(clipboardData?: DataTransfer) {
   const targetPosition = new Vector3().copy(
     worldManager.participants.local.avatar.position
   );
-  targetPosition.y = buffer.center.y;
+  targetPosition.y += buffer.center.y;
 
   const entities = [];
 
