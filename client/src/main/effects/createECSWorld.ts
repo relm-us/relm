@@ -41,7 +41,6 @@ import PhysicsPlugin from "~/ecs/plugins/physics";
 import SkyboxPlugin from "~/ecs/plugins/skybox";
 import SpatialIndexPlugin from "~/ecs/plugins/spatial-index";
 import TransitionPlugin from "~/ecs/plugins/transition";
-import TransformEffectsPlugin from "~/ecs/plugins/transform-effects";
 import TranslucentPlugin from "~/ecs/plugins/translucent";
 
 import { PerformanceStatsSystem } from "~/ecs/systems/PerformanceStatsSystem";
@@ -97,7 +96,6 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       SkyboxPlugin,
       SpatialIndexPlugin,
       TransitionPlugin,
-      TransformEffectsPlugin,
       TranslucentPlugin,
     ],
     systems: [PerformanceStatsSystem],
