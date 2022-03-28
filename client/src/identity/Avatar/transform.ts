@@ -22,11 +22,9 @@ export function participantToTransformData(
   if (!participant?.avatar) return;
 
   const entities = participant.avatar.entities;
-
   if (!entities.body) return;
 
   const transform = entities.body.get(Transform);
-
   if (!transform) return;
 
   const transformData: any[] = [participant.participantId];

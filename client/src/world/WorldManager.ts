@@ -69,7 +69,6 @@ import { Avatar, setLabel } from "~/identity/Avatar";
 import { Participant } from "~/types/identity";
 import { ParticipantManager } from "~/identity/ParticipantManager";
 import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
-import { setTransformArrayOnParticipants } from "~/identity/Avatar/transform";
 import { delay } from "~/utils/delay";
 import { RelmRestAPI } from "~/main/RelmRestAPI";
 import { PhotoBooth } from "./PhotoBooth";
@@ -102,8 +101,6 @@ export class WorldManager {
   keyUp = keyUp;
   keyDown = keyDown;
   keySpace = keySpace;
-
-  transformArray: any[] = [];
 
   lastActivity: number = 0;
   lastFpsChange: number = 0;
@@ -350,7 +347,6 @@ export class WorldManager {
 
     this.camera.deinit();
     this.participants.deinit();
-    this.transformArray.length = 0;
 
     this.world = null;
     this.worldDoc = null;
@@ -567,33 +563,16 @@ export class WorldManager {
 
     fpsTime.addData(delta === 0 ? 60 : 1 / delta);
 
-    this.useTransformArray();
+    this.participants.applyOthersTransformData(
+      this.world,
+      this.worldDoc.provider
+    );
 
     this.worldStep(delta);
 
     this.participants.sendMyTransformData();
 
     this.camera.update(delta);
-  }
-
-  useTransformArray() {
-    const states = this.worldDoc.provider.awareness.getStates();
-
-    this.transformArray.length = 0;
-    for (let state of states.values()) {
-      if ("m" in state) {
-        this.transformArray.push(state["m"]);
-      }
-    }
-
-    setTransformArrayOnParticipants(
-      this.world,
-      this.participants.participants,
-      this.transformArray,
-      (participant) => {
-        this.dispatch({ id: "participantJoined", participant });
-      }
-    );
   }
 
   async startScreenShare(onStop) {

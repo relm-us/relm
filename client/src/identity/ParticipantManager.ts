@@ -1,15 +1,25 @@
-import { playerId } from "./playerId";
+import type {
+  Appearance,
+  DecoratedECSWorld,
+  Participant,
+  UpdateData,
+} from "~/types";
 
-import type { Appearance, Participant, UpdateData } from "~/types";
+import { WebsocketProvider } from "y-websocket";
+
+import { playerId } from "./playerId";
 
 import { Dispatch } from "~/main/ProgramTypes";
 import { participantToTransformData } from "./Avatar/transform";
 import { ParticipantYBroker } from "./ParticipantYBroker";
+import { setTransformArrayOnParticipants } from "~/identity/Avatar/transform";
 
 export class ParticipantManager {
   dispatch: Dispatch;
   broker: ParticipantYBroker;
   participants: Map<string, Participant>;
+
+  transformArray: any[] = [];
 
   get local(): Participant {
     return this.participants.get(playerId);
@@ -42,6 +52,29 @@ export class ParticipantManager {
 
     const transformData = participantToTransformData(this.local);
     this.broker.setAwareness("m", transformData);
+  }
+
+  applyOthersTransformData(
+    world: DecoratedECSWorld,
+    provider: WebsocketProvider
+  ) {
+    const states = provider.awareness.getStates();
+
+    this.transformArray.length = 0;
+    for (let state of states.values()) {
+      if ("m" in state) {
+        this.transformArray.push(state["m"]);
+      }
+    }
+
+    setTransformArrayOnParticipants(
+      world,
+      this.participants,
+      this.transformArray,
+      (participant) => {
+        this.dispatch({ id: "participantJoined", participant });
+      }
+    );
   }
 
   updateMe(identityData: UpdateData) {
