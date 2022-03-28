@@ -103,7 +103,8 @@ export class WorldManager {
   keyDown = keyDown;
   keySpace = keySpace;
 
-  transformArray: any[];
+  transformArray: any[] = [];
+
   lastActivity: number = 0;
   lastFpsChange: number = 0;
 
@@ -575,12 +576,15 @@ export class WorldManager {
     this.camera.update(delta);
   }
 
-  setTransformArray(array) {
-    this.transformArray = array;
-  }
-
   useTransformArray() {
-    if (!this.transformArray) return;
+    const states = this.worldDoc.provider.awareness.getStates();
+
+    this.transformArray.length = 0;
+    for (let state of states.values()) {
+      if ("m" in state) {
+        this.transformArray.push(state["m"]);
+      }
+    }
 
     setTransformArrayOnParticipants(
       this.world,

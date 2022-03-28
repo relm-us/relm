@@ -39,8 +39,7 @@ export class ParticipantYBroker {
     this.awareness.setLocalStateField(key, value);
   }
 
-  subscribe(dispatch: Dispatch, callback: RecvTransformCallback) {
-    this.unsubs.push(this.subscribeTransformData(callback));
+  subscribe(dispatch: Dispatch) {
     this.unsubs.push(this.subscribeDisconnect(dispatch));
     this.unsubs.push(this.subscribeIdentityData(dispatch));
   }
@@ -48,27 +47,6 @@ export class ParticipantYBroker {
   unsubscribe() {
     this.unsubs.forEach((unsub) => unsub());
     this.unsubs.length = 0;
-  }
-
-  subscribeTransformData(callback: RecvTransformCallback) {
-    // Update participants' transform data (position, rotation, etc.)
-    const observer = () => {
-      const states = this.worldDoc.provider.awareness.getStates();
-
-      transformArray.length = 0;
-      for (let state of states.values()) {
-        if ("m" in state) {
-          transformArray.push(state["m"]);
-        }
-      }
-      callback(transformArray);
-    };
-
-    this.awareness.on("update", observer);
-
-    return () => {
-      this.awareness.off("update", observer);
-    };
   }
 
   subscribeDisconnect(dispatch: Dispatch) {
@@ -99,18 +77,20 @@ export class ParticipantYBroker {
       transaction: Y.Transaction
     ) => {
       withMapEdits(event, {
-        onAdd: (participantId, identityData) =>
+        onAdd: (participantId, identityData) => {
           dispatch({
             id: "recvParticipantData",
             participantId,
             identityData,
-          }),
-        onUpdate: (participantId, identityData, _oldIdentityData) =>
+          });
+        },
+        onUpdate: (participantId, identityData, _oldIdentityData) => {
           dispatch({
             id: "recvParticipantData",
             participantId,
             identityData,
-          }),
+          });
+        },
         onDelete: (participantId, _identityData) => {
           throw Error(
             `remove by participantId unimplemented (${participantId})`

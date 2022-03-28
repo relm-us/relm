@@ -144,7 +144,9 @@ export function setTransformArrayOnParticipants(
       console.warn("empty transform data, skipping", transformData);
       continue;
     }
+
     const participant: Participant = participants.get(participantId);
+
     if (!participant || participant.participantId === playerId) continue;
 
     if (!participant.avatar) {
