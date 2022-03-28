@@ -27,8 +27,10 @@ import { highDefEnabled } from "~/stores/highDefEnabled";
 
 // Animation keys
 import { keyShift, key1, key2, key3 } from "~/stores/keys";
-import { keyLeft, keyRight, keyUp, keyDown } from "~/stores/keys";
+import { keyLeft, keyRight, keyUp, keyDown, keySpace } from "~/stores/keys";
 import {
+  FPS_SLOWDOWN_MIN_FPS,
+  FPS_SLOWDOWN_TIMEOUT,
   OCULUS_HEIGHT_SIT,
   OCULUS_HEIGHT_STAND,
   RAISING_HAND,
@@ -76,7 +78,7 @@ import { Outline } from "~/ecs/plugins/outline";
 import { ItemActorSystem } from "~/ecs/plugins/item";
 
 type LoopType =
-  | { type: "requestAF" }
+  | { type: "reqAnimFrame" }
   | { type: "nolimit"; running: boolean }
   | { type: "interval"; targetFps: number; interval?: NodeJS.Timer };
 
@@ -94,15 +96,18 @@ export class WorldManager {
   relmDocId: string;
   avConnection: AVConnection;
 
+  // Make key state available for debugging
   keyLeft = keyLeft;
   keyRight = keyRight;
   keyUp = keyUp;
   keyDown = keyDown;
+  keySpace = keySpace;
 
   transformArray: any[];
-  errorCount: number = 0;
+  lastActivity: number = 0;
+  lastFpsChange: number = 0;
 
-  loopType: LoopType = { type: "requestAF" };
+  loopType: LoopType = { type: "reqAnimFrame" };
 
   light: Entity;
 
@@ -299,6 +304,26 @@ export class WorldManager {
       })
     );
 
+    const fpsCheckInterval = setInterval(() => {
+      if (!this.started) return;
+
+      const now = performance.now();
+      if (now - this.lastActivity > FPS_SLOWDOWN_TIMEOUT) {
+        const currFps = this.getFps();
+        if (
+          now - this.lastFpsChange > FPS_SLOWDOWN_TIMEOUT &&
+          currFps > FPS_SLOWDOWN_MIN_FPS
+        ) {
+          let newFps = currFps - 10;
+          if (newFps < FPS_SLOWDOWN_MIN_FPS) newFps = FPS_SLOWDOWN_MIN_FPS;
+          this.setFps(newFps);
+        }
+      }
+    }, 500);
+    this.unsubs.push(() => {
+      clearInterval(fpsCheckInterval);
+    });
+
     // Pre-compile assets to prevent some jank while exploring the world
     this.world.presentation.compile();
 
@@ -401,6 +426,15 @@ export class WorldManager {
     return window.location.origin + "/" + this.state.pageParams.relmName;
   }
 
+  didControlAvatar() {
+    this.lastActivity = performance.now();
+
+    // As soon as avatar moves, restore full 60fps framerate
+    if (this.loopType.type !== "reqAnimFrame") {
+      this.setFps(60);
+    }
+  }
+
   start() {
     if (!this.started) {
       this._startLoop();
@@ -415,7 +449,7 @@ export class WorldManager {
     const loop = this.loop.bind(this);
 
     switch (this.loopType.type) {
-      case "requestAF":
+      case "reqAnimFrame":
         this.world.presentation.setLoop(loop);
         break;
 
@@ -453,7 +487,7 @@ export class WorldManager {
 
   _stopLoop() {
     switch (this.loopType.type) {
-      case "requestAF":
+      case "reqAnimFrame":
         this.world.presentation.setLoop(null);
         break;
 
@@ -488,7 +522,7 @@ export class WorldManager {
 
     if (fps === 60) {
       targetFps.set(60);
-      this.loopType = { type: "requestAF" };
+      this.loopType = { type: "reqAnimFrame" };
     } else if (fps === null) {
       targetFps.set(null);
       this.loopType = { type: "nolimit", running: true };
@@ -501,7 +535,18 @@ export class WorldManager {
       this.loopType = { type: "interval", targetFps: fps };
     }
 
+    this.lastFpsChange = performance.now();
+
     this.start();
+  }
+
+  getFps(): number {
+    // prettier-ignore
+    switch (this.loopType.type) {
+      case "reqAnimFrame": return 60;
+      case "nolimit": return 60;
+      case "interval": return this.loopType.targetFps;
+    }
   }
 
   worldStep(delta?: number) {

@@ -1,3 +1,6 @@
+import type { DecoratedECSWorld } from "~/types";
+import type { Dispatch } from "../ProgramTypes";
+
 import { Vector3 } from "three";
 
 import { Entity } from "~/ecs/base";
@@ -5,8 +8,7 @@ import { ItemActor } from "~/ecs/plugins/item";
 import { Controller } from "~/ecs/plugins/player-control";
 import { BoneTwist, headFollowsPointer } from "~/ecs/plugins/bone-twist";
 
-import type { DecoratedECSWorld } from "~/types";
-import type { Dispatch } from "../ProgramTypes";
+import { worldManager } from "~/world";
 
 import { makeAvatarEntities } from "~/identity/Avatar/makeAvatarEntities";
 import { playerId } from "~/identity/playerId";
@@ -23,7 +25,7 @@ export const makeLocalAvatar =
     };
 
     entities.body
-      .add(Controller)
+      .add(Controller, { onActivity: () => worldManager.didControlAvatar() })
       .add(ItemActor)
       .add(BoneTwist, {
         boneName: "mixamorigHead",

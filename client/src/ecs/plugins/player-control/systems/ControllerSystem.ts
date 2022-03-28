@@ -133,11 +133,19 @@ export class ControllerSystem extends System {
         rigidBody.setLinearDamping(spec.linDamps[state.speed]);
       }
 
-      this.torqueTowards(entity, state.direction, spec.torques[state.speed]);
+      const angle = this.torqueTowards(
+        entity,
+        state.direction,
+        spec.torques[state.speed]
+      );
       if (!state.animOverride)
         this.thrustTowards(entity, state.direction, spec.thrusts[state.speed]);
 
-      this.repelFromOthers(entity);
+      const appliedForce = this.repelFromOthers(entity);
+
+      if (state.speed > 0 || angle > 0 || appliedForce) {
+        spec.onActivity?.();
+      }
 
       const anim: Animation = entity.get(Animation);
       if (anim) {
@@ -222,6 +230,8 @@ export class ControllerSystem extends System {
     const angle = signedAngleBetweenVectors(bodyFacing, direction, vUp);
     torque.set(0, angle * torqueMagnitude, 0);
     ref.applyTorque(torque, true);
+
+    return angle;
   }
 
   thrustTowards(entity: Entity, direction: Vector3, thrustMagnitude: number) {
@@ -240,6 +250,7 @@ export class ControllerSystem extends System {
     p1.x += (Math.random() - 0.5) / 100;
     p1.z += (Math.random() - 0.5) / 100;
 
+    let appliedForce = false;
     this.queries.repulsive.forEach((repelEntity) => {
       if (repelEntity === entity) return;
       p2.copy(repelEntity.get(Transform).position);
@@ -251,7 +262,10 @@ export class ControllerSystem extends System {
           .normalize()
           .divideScalar(distance * distance);
         ref.applyForce(vDir, true);
+        appliedForce = true;
       }
     });
+
+    return appliedForce;
   }
 }

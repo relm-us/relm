@@ -17,6 +17,10 @@ export const PROXIMITY_AUDIO_OUTER_RADIUS = 6;
 // Physics time-step is independent of render framerate
 export const PHYSICS_TIMESTEP = 1 / 60;
 
+// When to slow down framerate after inactivity
+export const FPS_SLOWDOWN_TIMEOUT = 5000;
+export const FPS_SLOWDOWN_MIN_FPS = 20;
+
 // How large (x, z) can an object be before it no longer makes sense
 // to index it using an PointOctree:
 export const SPATIAL_INDEX_THRESHOLD = 6;
