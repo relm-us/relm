@@ -16,8 +16,11 @@
   function applyText() {
     const json = parse(text);
     if (json) {
+      const yActions = worldManager.worldDoc.actions.y;
+      // TODO: make this collaboratively editable?
+      yActions.clear();
       for (let [varName, possibilities] of Object.entries(json)) {
-        worldManager.worldDoc.actions.y.set(varName, possibilities);
+        yActions.set(varName, possibilities);
       }
     } else {
       errorState = true;

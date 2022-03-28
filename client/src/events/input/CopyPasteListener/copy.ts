@@ -34,6 +34,9 @@ export function copy(clipboardData?: DataTransfer) {
       }
     });
 
+    // after serializing with center, move center to accommodate pos of participant
+    center.y -= worldManager.participants.local.avatar.position.y;
+
     const buffer: CopyBuffer = {
       center,
       entities: serializedEntities,
