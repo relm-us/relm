@@ -1,15 +1,15 @@
+import type { TransformData, AnimationData, Participant } from "~/types";
+
 import { Vector3, Euler, AnimationClip } from "three";
 
 import { Transform } from "~/ecs/plugins/core";
 import { ModelRef } from "~/ecs/plugins/model";
 import { Animation } from "~/ecs/plugins/animation";
 
-import type { TransformData, AnimationData, Participant } from "~/types";
 import { Avatar } from "../Avatar";
 import { makeRemoteAvatarEntities } from "./makeRemoteAvatarEntities";
 import { setAvatarFromParticipant } from "./setAvatarFromParticipant";
 import { DecoratedECSWorld } from "types/DecoratedECSWorld";
-import { playerId } from "~/identity/playerId";
 import { Oculus } from "~/ecs/plugins/html2d";
 
 const e1 = new Euler(0, 0, 0, "YXZ");

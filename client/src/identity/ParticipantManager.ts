@@ -49,22 +49,20 @@ export class ParticipantManager {
   }
 
   sendMyState() {
-    if (!this.local.avatar) return;
-
     if (!this.broker.getField("id")) {
       this.broker.setField("id", playerId);
     }
 
     const avatar = this.local.avatar;
-    if (avatar) {
-      const transformData = avatarToTransformData(avatar);
-      this.broker.setField("t", transformData);
+    if (!this.local.avatar) return;
 
-      const animationData = avatarToAnimationData(avatar);
-      const currClipIndex = this.broker.getField("a")?.clipIndex;
-      if (animationData.clipIndex !== currClipIndex) {
-        this.broker.setField("a", animationData);
-      }
+    const transformData = avatarToTransformData(avatar);
+    this.broker.setField("t", transformData);
+
+    const animationData = avatarToAnimationData(avatar);
+    const currClipIndex = this.broker.getField("a")?.clipIndex;
+    if (animationData.clipIndex !== currClipIndex) {
+      this.broker.setField("a", animationData);
     }
   }
 
