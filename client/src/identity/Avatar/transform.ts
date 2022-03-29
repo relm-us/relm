@@ -4,7 +4,7 @@ import { Transform } from "~/ecs/plugins/core";
 import { ModelRef } from "~/ecs/plugins/model";
 import { Animation } from "~/ecs/plugins/animation";
 
-import type { TransformData, Participant } from "~/types";
+import type { TransformData, AnimationData, Participant } from "~/types";
 import { Avatar } from "../Avatar";
 import { makeRemoteAvatarEntities } from "./makeRemoteAvatarEntities";
 import { setAvatarFromParticipant } from "./setAvatarFromParticipant";
@@ -37,14 +37,6 @@ export function avatarToTransformData(
   // Get angle of head
   transformData[4] = avatar.headAngle;
 
-  const clips: AnimationClip[] = entities.body.get(ModelRef)?.animations;
-  const animation: Animation = entities.body.get(Animation);
-  if (clips && animation) {
-    const index = clips.findIndex((c) => c.name === animation.clipName);
-    transformData[5] = index;
-    transformData[6] = animation.loop;
-  }
-
   const oculus = entities.body.get(Oculus);
   if (oculus) {
     transformData[7] = oculus.targetOffset.y;
@@ -53,10 +45,33 @@ export function avatarToTransformData(
   return transformData as TransformData;
 }
 
-function setTransformDataOnAvatar(
+export function avatarToAnimationData(
   this: void,
+  avatar: Avatar
+): AnimationData {
+  const entities = avatar.entities;
+  if (!entities.body) return;
+
+  const animationData = {
+    clipIndex: null,
+    animLoop: false,
+  };
+
+  const clips: AnimationClip[] = entities.body.get(ModelRef)?.animations;
+  const animation: Animation = entities.body.get(Animation);
+  if (clips && animation) {
+    animationData.clipIndex = clips.findIndex(
+      (c) => c.name === animation.clipName
+    );
+    animationData.animLoop = animation.loop;
+  }
+
+  return animationData;
+}
+
+function setTransformDataOnAvatar(
   avatar: Avatar,
-  [x, y, z, theta, headTheta, clipIndex, animLoop, oculusOffset]: TransformData
+  [x, y, z, theta, headTheta, oculusOffset]: TransformData
 ) {
   const entities = avatar.entities;
   if (!entities.body) return;
@@ -87,6 +102,17 @@ function setTransformDataOnAvatar(
     avatar.headAngle = headTheta;
   }
 
+  const oculus = entities.body.get(Oculus);
+  if (oculus) oculus.targetOffset.y = oculusOffset;
+}
+
+export function setAnimationDataOnAvatar(
+  avatar: Avatar,
+  { clipIndex, animLoop }: AnimationData
+) {
+  const entities = avatar.entities;
+  if (!entities.body) return;
+
   const clips = entities.body.get(ModelRef)?.animations;
   const animation = entities.body.get(Animation);
   if (clips && clipIndex >= 0 && clipIndex < clips.length) {
@@ -97,16 +123,14 @@ function setTransformDataOnAvatar(
       animation.modified();
     }
   }
-
-  const oculus = entities.body.get(Oculus);
-  if (oculus) oculus.targetOffset.y = oculusOffset;
 }
 
-export function setTransformDataOnParticipant(
+export function setDataOnParticipant(
   this: void,
   ecsWorld: DecoratedECSWorld,
   participant: Participant,
   transformData: TransformData,
+  animationData: AnimationData,
   onAddParticipant: (participant: Participant) => void
 ) {
   // Record that we've seen this participant now, so we can know which
@@ -130,6 +154,9 @@ export function setTransformDataOnParticipant(
   }
 
   setTransformDataOnAvatar(participant.avatar, transformData);
+
+  if (animationData)
+    setAnimationDataOnAvatar(participant.avatar, animationData);
 
   // If the remote participant is active (if we've reached this point,
   // they are), and some IdentityData has been modified, then take the

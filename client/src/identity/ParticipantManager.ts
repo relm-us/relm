@@ -11,8 +11,9 @@ import { playerId } from "./playerId";
 
 import { Dispatch } from "~/main/ProgramTypes";
 import {
+  avatarToAnimationData,
   avatarToTransformData,
-  setTransformDataOnParticipant,
+  setDataOnParticipant,
 } from "./Avatar/transform";
 import { ParticipantYBroker } from "./ParticipantYBroker";
 
@@ -54,9 +55,16 @@ export class ParticipantManager {
       this.broker.setField("id", playerId);
     }
 
-    if (this.local.avatar) {
-      const transformData = avatarToTransformData(this.local.avatar);
+    const avatar = this.local.avatar;
+    if (avatar) {
+      const transformData = avatarToTransformData(avatar);
       this.broker.setField("t", transformData);
+
+      const animationData = avatarToAnimationData(avatar);
+      const currClipIndex = this.broker.getField("a")?.clipIndex;
+      if (animationData.clipIndex !== currClipIndex) {
+        this.broker.setField("a", animationData);
+      }
     }
   }
 
@@ -69,16 +77,18 @@ export class ParticipantManager {
       const participantId = state["id"];
       if (participantId === playerId) continue;
 
-      if ("t" in state) {
+      const participant: Participant = this.participants.get(participantId);
+      if (!participant) continue;
+
+      if ("t" in state && "a" in state) {
         const transformData = state["t"];
+        const animationData = state["a"];
 
-        const participant: Participant = this.participants.get(participantId);
-        if (!participant) continue;
-
-        setTransformDataOnParticipant(
+        setDataOnParticipant(
           world,
           participant,
           transformData,
+          animationData,
           (participant) => {
             this.dispatch({ id: "participantJoined", participant });
           }

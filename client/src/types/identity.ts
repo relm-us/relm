@@ -121,10 +121,13 @@ export type TransformData = [
   z: number,
   theta: number,
   headTheta: number,
-  clipIndex: number,
-  animLoop: boolean,
   oculusOffset: number
 ];
+
+export type AnimationData = {
+  clipIndex: number;
+  animLoop: boolean;
+};
 
 export type AvatarEntities = {
   head: Entity;
