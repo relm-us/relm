@@ -28,7 +28,7 @@ export class PhotoBooth {
   }
 
   createPhotoBoothRenderer() {
-    const renderer = createRenderer(false);
+    const renderer = createRenderer(false, { antialias: true, depth: true });
     renderer.shadowMap.enabled = false;
     renderer.setSize(300, 300, true);
 

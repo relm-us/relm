@@ -9,16 +9,19 @@ import {
 
 import { SHADOW_MAP_TYPE } from "~/config/constants";
 
-export function createRenderer(withDefaultStyles = true) {
+export function createRenderer(
+  withDefaultStyles = true,
+  { antialias = false, stencil = false, depth = false, alpha = true } = {}
+) {
   const renderer = new WebGLRenderer({
     powerPreference: "high-performance",
     // Optimized settings for postprocessing composition:
     // (see Presentation.ts)
-    antialias: false,
-    stencil: false,
-    depth: false,
+    antialias,
+    stencil,
+    depth,
     // necessary for CSS3D
-    alpha: true,
+    alpha,
   });
 
   renderer.info.autoReset = false;
