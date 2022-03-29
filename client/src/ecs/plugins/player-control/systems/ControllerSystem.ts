@@ -256,13 +256,15 @@ export class ControllerSystem extends System {
       p2.copy(repelEntity.get(Transform).position);
       const distance = Math.max(0.5, p1.distanceTo(p2));
       if (distance <= 1.25) {
-        vDir
-          .copy(p1)
-          .sub(p2)
-          .normalize()
-          .divideScalar(distance * distance);
+        const distanceSq = distance * distance;
+        vDir.copy(p1).sub(p2).normalize().divideScalar(distanceSq);
         ref.applyForce(vDir, true);
-        appliedForce = true;
+
+        // TODO: don't use magic number 1.0
+        // NOTE: 0.75 is approx. "stationary"
+        if (distanceSq > 1.0) {
+          appliedForce = true;
+        }
       }
     });
 
