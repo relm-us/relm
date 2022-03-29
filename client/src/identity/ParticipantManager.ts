@@ -50,8 +50,12 @@ export class ParticipantManager {
   sendMyTransformData() {
     if (!this.local.avatar) return;
 
+    if (!this.broker.getField("id")) {
+      this.broker.setField("id", playerId);
+    }
+
     const transformData = participantToTransformData(this.local);
-    this.broker.setAwareness("m", transformData);
+    this.broker.setField("m", transformData);
   }
 
   applyOthersTransformData(
@@ -61,11 +65,13 @@ export class ParticipantManager {
     const states = provider.awareness.getStates();
 
     for (let state of states.values()) {
+      if (!("id" in state)) continue;
+
+      const participantId = state["id"];
+      if (participantId === playerId) continue;
+
       if ("m" in state) {
         const transformData = state["m"];
-
-        const participantId = transformData[0];
-        if (participantId === playerId) continue;
 
         const participant: Participant = this.participants.get(participantId);
         if (!participant) continue;

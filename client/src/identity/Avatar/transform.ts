@@ -27,29 +27,29 @@ export function participantToTransformData(
   const transform = entities.body.get(Transform);
   if (!transform) return;
 
-  const transformData: any[] = [participant.participantId];
+  const transformData: any[] = [];
 
   // Get position of body
-  transform.position.toArray(transformData, 1);
+  transform.position.toArray(transformData, 0);
 
   // Get angle of body
   e1.setFromQuaternion(transform.rotation);
-  transformData[4] = e1.y;
+  transformData[3] = e1.y;
 
   // Get angle of head
-  transformData[5] = participant.avatar?.headAngle;
+  transformData[4] = participant.avatar?.headAngle;
 
   const clips: AnimationClip[] = entities.body.get(ModelRef)?.animations;
   const animation: Animation = entities.body.get(Animation);
   if (clips && animation) {
     const index = clips.findIndex((c) => c.name === animation.clipName);
-    transformData[6] = index;
-    transformData[7] = animation.loop;
+    transformData[5] = index;
+    transformData[6] = animation.loop;
   }
 
   const oculus = entities.body.get(Oculus);
   if (oculus) {
-    transformData[8] = oculus.targetOffset.y;
+    transformData[7] = oculus.targetOffset.y;
   }
 
   return transformData as TransformData;
@@ -58,17 +58,7 @@ export function participantToTransformData(
 function setTransformDataOnAvatar(
   this: void,
   avatar: Avatar,
-  [
-    playerId,
-    x,
-    y,
-    z,
-    theta,
-    headTheta,
-    clipIndex,
-    animLoop,
-    oculusOffset,
-  ]: TransformData
+  [x, y, z, theta, headTheta, clipIndex, animLoop, oculusOffset]: TransformData
 ) {
   const entities = avatar.entities;
   if (!entities.body) return;

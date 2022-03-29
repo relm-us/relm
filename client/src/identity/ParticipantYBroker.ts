@@ -33,8 +33,12 @@ export class ParticipantYBroker {
     this.yidentities.set(participantId, identityData);
   }
 
-  setAwareness(key, value) {
+  setField(key, value) {
     this.awareness.setLocalStateField(key, value);
+  }
+
+  getField(key) {
+    return this.awareness.getLocalState()[key];
   }
 
   subscribe(dispatch: Dispatch) {

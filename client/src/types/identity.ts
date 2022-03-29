@@ -116,7 +116,6 @@ export type UpdateData = {
 };
 
 export type TransformData = [
-  playerId: PlayerID,
   x: number,
   y: number,
   z: number,
