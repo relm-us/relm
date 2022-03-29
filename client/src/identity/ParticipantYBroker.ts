@@ -1,3 +1,5 @@
+import type { IdentityData } from "~/types";
+
 import * as Y from "yjs";
 
 import { withMapEdits } from "relm-common/yrelm";
@@ -5,10 +7,6 @@ import { withMapEdits } from "relm-common/yrelm";
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
 import { Dispatch } from "~/main/ProgramTypes";
-import { IdentityData, RecvTransformCallback } from "~/types";
-import { playerId } from "./playerId";
-
-const transformArray = [];
 
 /**
  * An adapter between the WorldDoc's "identities" map (Yjs) and

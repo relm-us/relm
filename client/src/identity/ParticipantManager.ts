@@ -10,16 +10,16 @@ import { WebsocketProvider } from "y-websocket";
 import { playerId } from "./playerId";
 
 import { Dispatch } from "~/main/ProgramTypes";
-import { participantToTransformData } from "./Avatar/transform";
+import {
+  participantToTransformData,
+  setTransformDataOnParticipant,
+} from "./Avatar/transform";
 import { ParticipantYBroker } from "./ParticipantYBroker";
-import { setTransformArrayOnParticipants } from "~/identity/Avatar/transform";
 
 export class ParticipantManager {
   dispatch: Dispatch;
   broker: ParticipantYBroker;
   participants: Map<string, Participant>;
-
-  transformArray: any[] = [];
 
   get local(): Participant {
     return this.participants.get(playerId);
@@ -60,21 +60,26 @@ export class ParticipantManager {
   ) {
     const states = provider.awareness.getStates();
 
-    this.transformArray.length = 0;
     for (let state of states.values()) {
       if ("m" in state) {
-        this.transformArray.push(state["m"]);
+        const transformData = state["m"];
+
+        const participantId = transformData[0];
+        if (participantId === playerId) continue;
+
+        const participant: Participant = this.participants.get(participantId);
+        if (!participant) continue;
+
+        setTransformDataOnParticipant(
+          world,
+          participant,
+          transformData,
+          (participant) => {
+            this.dispatch({ id: "participantJoined", participant });
+          }
+        );
       }
     }
-
-    setTransformArrayOnParticipants(
-      world,
-      this.participants,
-      this.transformArray,
-      (participant) => {
-        this.dispatch({ id: "participantJoined", participant });
-      }
-    );
   }
 
   updateMe(identityData: UpdateData) {

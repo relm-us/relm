@@ -127,8 +127,6 @@ export type TransformData = [
   oculusOffset: number
 ];
 
-export type RecvTransformCallback = (transformArray: TransformData[]) => void;
-
 export type AvatarEntities = {
   head: Entity;
   body: Entity;

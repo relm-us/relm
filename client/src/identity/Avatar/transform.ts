@@ -114,55 +114,41 @@ function setTransformDataOnAvatar(
   if (oculus) oculus.targetOffset.y = oculusOffset;
 }
 
-export function setTransformArrayOnParticipants(
+export function setTransformDataOnParticipant(
   this: void,
   ecsWorld: DecoratedECSWorld,
-  participants: Map<string, Participant>,
-  transformArray: TransformData[],
+  participant: Participant,
+  transformData: TransformData,
   onAddParticipant: (participant: Participant) => void
 ) {
-  for (let transformData of transformArray) {
-    let participantId;
-    try {
-      participantId = transformData[0];
-    } catch (err) {
-      console.warn("empty transform data, skipping", transformData);
-      continue;
-    }
+  // Record that we've seen this participant now, so we can know which
+  // participants are currently active
+  participant.lastSeen = performance.now();
 
-    const participant: Participant = participants.get(participantId);
+  if (!participant.avatar) {
+    const position = new Vector3().fromArray(transformData as number[], 1);
+    const entities = makeRemoteAvatarEntities(
+      ecsWorld,
+      position,
+      participant.participantId,
+      () => {
+        return participant.avatar?.headAngle;
+      }
+    );
+    participant.avatar = new Avatar(ecsWorld, entities);
 
-    if (!participant || participant.participantId === playerId) continue;
+    // Let caller handle anything that should happen when the participant first arrives
+    onAddParticipant(participant);
+  }
 
-    // Record that we've seen this participant now, so we can know which
-    // participants are currently active
-    participant.lastSeen = performance.now();
+  setTransformDataOnAvatar(participant.avatar, transformData);
 
-    if (!participant.avatar) {
-      const position = new Vector3().fromArray(transformData as number[], 1);
-      const entities = makeRemoteAvatarEntities(
-        ecsWorld,
-        position,
-        participant.participantId,
-        () => {
-          return participant.avatar?.headAngle;
-        }
-      );
-      participant.avatar = new Avatar(ecsWorld, entities);
-
-      // Let caller handle anything that should happen when the participant first arrives
-      onAddParticipant(participant);
-    }
-
-    setTransformDataOnAvatar(participant.avatar, transformData);
-
-    // If the remote participant is active (if we've reached this point,
-    // they are), and some IdentityData has been modified, then take the
-    // opportunity to update the remote participant's label, appearance,
-    // etc.
-    if (participant.modified) {
-      setAvatarFromParticipant(participant);
-      participant.modified = false;
-    }
+  // If the remote participant is active (if we've reached this point,
+  // they are), and some IdentityData has been modified, then take the
+  // opportunity to update the remote participant's label, appearance,
+  // etc.
+  if (participant.modified) {
+    setAvatarFromParticipant(participant);
+    participant.modified = false;
   }
 }
