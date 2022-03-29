@@ -39,7 +39,7 @@ export function avatarToTransformData(
 
   const oculus = entities.body.get(Oculus);
   if (oculus) {
-    transformData[7] = oculus.targetOffset.y;
+    transformData[5] = oculus.targetOffset.y;
   }
 
   return transformData as TransformData;
@@ -71,7 +71,7 @@ export function avatarToAnimationData(
 
 function setTransformDataOnAvatar(
   avatar: Avatar,
-  [x, y, z, theta, headTheta, oculusOffset]: TransformData
+  [x, y, z, bodyAngle, headAngle, oculusOffset]: TransformData
 ) {
   const entities = avatar.entities;
   if (!entities.body) return;
@@ -91,7 +91,7 @@ function setTransformDataOnAvatar(
 
   // Set angle of body
   e1.setFromQuaternion(transform.rotation);
-  e1.y = theta;
+  e1.y = bodyAngle;
   transform.rotation.setFromEuler(e1);
 
   // Update physics engine to accept position & rotation transformations
@@ -99,7 +99,7 @@ function setTransformDataOnAvatar(
 
   // Set angle of head
   if (avatar) {
-    avatar.headAngle = headTheta;
+    avatar.headAngle = headAngle;
   }
 
   const oculus = entities.body.get(Oculus);
