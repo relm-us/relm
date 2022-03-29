@@ -563,14 +563,14 @@ export class WorldManager {
 
     fpsTime.addData(delta === 0 ? 60 : 1 / delta);
 
-    this.participants.applyOthersTransformData(
+    this.participants.applyOthersState(
       this.world,
       this.worldDoc.provider
     );
 
     this.worldStep(delta);
 
-    this.participants.sendMyTransformData();
+    this.participants.sendMyState();
 
     this.camera.update(delta);
   }

@@ -11,7 +11,7 @@ import { playerId } from "./playerId";
 
 import { Dispatch } from "~/main/ProgramTypes";
 import {
-  participantToTransformData,
+  avatarToTransformData,
   setTransformDataOnParticipant,
 } from "./Avatar/transform";
 import { ParticipantYBroker } from "./ParticipantYBroker";
@@ -47,21 +47,20 @@ export class ParticipantManager {
     this.participants.clear();
   }
 
-  sendMyTransformData() {
+  sendMyState() {
     if (!this.local.avatar) return;
 
     if (!this.broker.getField("id")) {
       this.broker.setField("id", playerId);
     }
 
-    const transformData = participantToTransformData(this.local);
-    this.broker.setField("m", transformData);
+    if (this.local.avatar) {
+      const transformData = avatarToTransformData(this.local.avatar);
+      this.broker.setField("t", transformData);
+    }
   }
 
-  applyOthersTransformData(
-    world: DecoratedECSWorld,
-    provider: WebsocketProvider
-  ) {
+  applyOthersState(world: DecoratedECSWorld, provider: WebsocketProvider) {
     const states = provider.awareness.getStates();
 
     for (let state of states.values()) {
@@ -70,8 +69,8 @@ export class ParticipantManager {
       const participantId = state["id"];
       if (participantId === playerId) continue;
 
-      if ("m" in state) {
-        const transformData = state["m"];
+      if ("t" in state) {
+        const transformData = state["t"];
 
         const participant: Participant = this.participants.get(participantId);
         if (!participant) continue;

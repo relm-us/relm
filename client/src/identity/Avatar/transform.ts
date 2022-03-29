@@ -15,13 +15,11 @@ import { Oculus } from "~/ecs/plugins/html2d";
 const e1 = new Euler(0, 0, 0, "YXZ");
 const v1 = new Vector3();
 
-export function participantToTransformData(
+export function avatarToTransformData(
   this: void,
-  participant: Participant
+  avatar: Avatar
 ): TransformData {
-  if (!participant?.avatar) return;
-
-  const entities = participant.avatar.entities;
+  const entities = avatar.entities;
   if (!entities.body) return;
 
   const transform = entities.body.get(Transform);
@@ -37,7 +35,7 @@ export function participantToTransformData(
   transformData[3] = e1.y;
 
   // Get angle of head
-  transformData[4] = participant.avatar?.headAngle;
+  transformData[4] = avatar.headAngle;
 
   const clips: AnimationClip[] = entities.body.get(ModelRef)?.animations;
   const animation: Animation = entities.body.get(Animation);
