@@ -75,6 +75,7 @@ import { PhotoBooth } from "./PhotoBooth";
 import { audioMode, AudioMode } from "~/stores/audioMode";
 import { Outline } from "~/ecs/plugins/outline";
 import { ItemActorSystem } from "~/ecs/plugins/item";
+import { Object3DRef } from "~/ecs/plugins/core";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -563,10 +564,7 @@ export class WorldManager {
 
     fpsTime.addData(delta === 0 ? 60 : 1 / delta);
 
-    this.participants.applyOthersState(
-      this.world,
-      this.worldDoc.provider
-    );
+    this.participants.applyOthersState(this.world, this.worldDoc.provider);
 
     this.worldStep(delta);
 
@@ -709,7 +707,7 @@ export class WorldManager {
   getObject3D(idx: number) {
     const entities = [...this.world.entities.entities.values()];
     if (idx >= 0 && idx < entities.length) {
-      return entities[idx].getByName("Object3D").value;
+      return entities[idx].get(Object3DRef).value;
     }
   }
 
@@ -734,7 +732,9 @@ export class WorldManager {
         img.style.width = "150px";
         img.style.height = "150px";
         container.appendChild(img);
-      } catch (err) {}
+      } catch (err) {
+        console.warn(err);
+      }
     }
   }
 }
