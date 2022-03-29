@@ -55,9 +55,9 @@ export function participantToTransformData(
   return transformData as TransformData;
 }
 
-function setTransformDataOnParticipant(
+function setTransformDataOnAvatar(
   this: void,
-  participant: Participant,
+  avatar: Avatar,
   [
     playerId,
     x,
@@ -70,23 +70,10 @@ function setTransformDataOnParticipant(
     oculusOffset,
   ]: TransformData
 ) {
-  if (!participant) {
-    console.warn("expecting participant, got null", playerId);
-    return;
-  }
-
-  // Record that we've seen this participant now, so we can know which
-  // participants are currently active
-  participant.lastSeen = performance.now();
-
-  if (!participant.avatar) return;
-
-  const entities = participant.avatar.entities;
-
+  const entities = avatar.entities;
   if (!entities.body) return;
 
   const transform = entities.body.get(Transform);
-
   if (!transform) return;
 
   // Set position of body
@@ -108,8 +95,8 @@ function setTransformDataOnParticipant(
   transform.modified();
 
   // Set angle of head
-  if (participant.avatar) {
-    participant.avatar.headAngle = headTheta;
+  if (avatar) {
+    avatar.headAngle = headTheta;
   }
 
   const clips = entities.body.get(ModelRef)?.animations;
@@ -147,6 +134,10 @@ export function setTransformArrayOnParticipants(
 
     if (!participant || participant.participantId === playerId) continue;
 
+    // Record that we've seen this participant now, so we can know which
+    // participants are currently active
+    participant.lastSeen = performance.now();
+
     if (!participant.avatar) {
       const position = new Vector3().fromArray(transformData as number[], 1);
       const entities = makeRemoteAvatarEntities(
@@ -162,7 +153,8 @@ export function setTransformArrayOnParticipants(
       // Let caller handle anything that should happen when the participant first arrives
       onAddParticipant(participant);
     }
-    setTransformDataOnParticipant(participant, transformData);
+
+    setTransformDataOnAvatar(participant.avatar, transformData);
 
     // If the remote participant is active (if we've reached this point,
     // they are), and some IdentityData has been modified, then take the
