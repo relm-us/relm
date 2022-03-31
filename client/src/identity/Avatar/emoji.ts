@@ -5,7 +5,6 @@ import { Html2d } from "~/ecs/plugins/html2d";
 import { AvatarEntities } from "~/types";
 
 export function setEmoji(
-  this: void,
   entities: AvatarEntities,
   emoji: string,
   isEmoting: boolean
@@ -20,7 +19,7 @@ export function setEmoji(
   }
 }
 
-function addEmote(this: void, entities: AvatarEntities, content: string) {
+function addEmote(entities: AvatarEntities, content: string) {
   entities.emoji.add(Html2d, {
     kind: "EMOJI",
     content,
@@ -29,7 +28,7 @@ function addEmote(this: void, entities: AvatarEntities, content: string) {
   });
 }
 
-function changeEmote(this: void, entities: AvatarEntities, content: string) {
+function changeEmote(entities: AvatarEntities, content: string) {
   const html2d = entities.emoji.get(Html2d);
   if (!html2d) return;
 
@@ -37,9 +36,4 @@ function changeEmote(this: void, entities: AvatarEntities, content: string) {
     html2d.content = content;
     html2d.modified();
   }
-}
-
-// TODO: is this used?
-export function removeEmote(this: void, entities: AvatarEntities) {
-  entities.emoji.maybeRemove(Html2d);
 }
