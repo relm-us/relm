@@ -16,7 +16,7 @@ export class System {
 
   order = Groups.Simulation;
 
-  static queries;
+  static queries: Record<string, any[]>;
 
   constructor(world: World) {
     this.world = world;

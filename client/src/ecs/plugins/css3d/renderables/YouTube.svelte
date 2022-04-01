@@ -21,6 +21,7 @@
   export let height: number;
   export let embedId: string;
   export let alwaysOn: boolean;
+  export let visible: boolean;
   export let title = "YouTube Video";
   export let entity;
 
@@ -183,24 +184,53 @@
 
 <svelte:window on:message={onMessage} on:blur={onWindowBlur} />
 
-{#if active}
-  <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-  <iframe
-    class:invisible={state !== "LOADED"}
-    bind:this={iframe}
-    on:load={onFrameLoaded}
-    on:mouseover={onFrameMouseover}
-    on:mouseout={onFrameMouseout}
-    {title}
-    {width}
-    {height}
-    {src}
-    frameborder="0"
-    allowfullscreen
-    allow="autoplay"
-  />
+{#if visible}
+  {#if active}
+    <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+    <iframe
+      class:invisible={state !== "LOADED"}
+      bind:this={iframe}
+      on:load={onFrameLoaded}
+      on:mouseover={onFrameMouseover}
+      on:mouseout={onFrameMouseout}
+      {title}
+      {width}
+      {height}
+      {src}
+      frameborder="0"
+      allowfullscreen
+      allow="autoplay"
+    />
 
-  {#if $worldUIMode === "build"}
+    {#if $worldUIMode === "build"}
+      <r-overlay
+        on:click={onClickPlay}
+        on:pointerenter={() => (overlayHovered = true)}
+        on:pointerleave={() => (overlayHovered = false)}
+      >
+        <img
+          src="https://img.youtube.com/vi/{embedId}/hqdefault.jpg"
+          alt={title}
+        />
+      </r-overlay>
+    {:else if state !== "LOADED"}
+      <r-overlay>
+        <r-centered>
+          <div>Loading...</div>
+        </r-centered>
+      </r-overlay>
+    {:else if useAltControls}
+      <r-overlay
+        on:click={onClickPlay}
+        on:pointerenter={() => (overlayHovered = true)}
+        on:pointerleave={() => (overlayHovered = false)}
+      >
+        {#if overlayHovered && playerState !== PLAYING}
+          <PlayButtonIcon active={overlayHovered} />
+        {/if}
+      </r-overlay>
+    {/if}
+  {:else}
     <r-overlay
       on:click={onClickPlay}
       on:pointerenter={() => (overlayHovered = true)}
@@ -210,34 +240,10 @@
         src="https://img.youtube.com/vi/{embedId}/hqdefault.jpg"
         alt={title}
       />
-    </r-overlay>
-  {:else if state !== "LOADED"}
-    <r-overlay>
-      <r-centered>
-        <div>Loading...</div>
-      </r-centered>
-    </r-overlay>
-  {:else if useAltControls}
-    <r-overlay
-      on:click={onClickPlay}
-      on:pointerenter={() => (overlayHovered = true)}
-      on:pointerleave={() => (overlayHovered = false)}
-    >
-      {#if overlayHovered && playerState !== PLAYING}
-        <PlayButtonIcon active={overlayHovered} />
-      {/if}
+
+      <PlayButtonIcon active={overlayHovered} />
     </r-overlay>
   {/if}
-{:else}
-  <r-overlay
-    on:click={onClickPlay}
-    on:pointerenter={() => (overlayHovered = true)}
-    on:pointerleave={() => (overlayHovered = false)}
-  >
-    <img src="https://img.youtube.com/vi/{embedId}/hqdefault.jpg" alt={title} />
-
-    <PlayButtonIcon active={overlayHovered} />
-  </r-overlay>
 {/if}
 
 <style>

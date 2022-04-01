@@ -12,6 +12,7 @@ export class Renderable extends Component {
   scale: number;
   editable: boolean;
   alwaysOn: boolean;
+  visible: boolean;
 
   static props = {
     kind: {
@@ -111,12 +112,20 @@ export class Renderable extends Component {
         requires: [{ prop: "kind", value: "LABEL" }],
       },
     },
-    
+
     alwaysOn: {
       type: BooleanType,
       default: false,
       editor: {
         label: "Force Embed",
+      },
+    },
+
+    visible: {
+      type: BooleanType,
+      default: true,
+      editor: {
+        label: "Visible",
       },
     },
   };

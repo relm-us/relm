@@ -7,6 +7,7 @@
   export let height: number;
   export let url: string;
   export let alwaysOn: boolean;
+  export let visible: boolean;
 
   let iframe;
   let active = false;
@@ -74,30 +75,32 @@
 
 <svelte:window on:blur={onWindowBlur} on:focus={onWindowFocus} />
 
-<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<iframe
-  bind:this={iframe}
-  on:mouseout={onFrameMouseout}
-  class:active
-  title="Web Page"
-  {width}
-  {height}
-  src={url}
-  frameborder="0"
-  allowfullscreen
-  allow="camera;microphone"
-  scrolling="yes"
-/>
-{#if !active}
-  <img src={screenshot(url, width, height)} alt="screenshot" />
-{/if}
+{#if visible}
+  <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+  <iframe
+    bind:this={iframe}
+    on:mouseout={onFrameMouseout}
+    class:active
+    title="Web Page"
+    {width}
+    {height}
+    src={url}
+    frameborder="0"
+    allowfullscreen
+    allow="camera;microphone"
+    scrolling="yes"
+  />
+  {#if !active}
+    <img src={screenshot(url, width, height)} alt="screenshot" />
+  {/if}
 
-<overlay
-  class:build-mode={$worldUIMode === "build"}
-  class:active
-  class:highlighted
-  on:mousedown={onOverlayMousedown}
-/>
+  <overlay
+    class:build-mode={$worldUIMode === "build"}
+    class:active
+    class:highlighted
+    on:mousedown={onOverlayMousedown}
+  />
+{/if}
 
 <style>
   iframe {

@@ -13,6 +13,7 @@
   export let bgColor: string;
   export let borderColor: string;
   export let editable: boolean;
+  export let visible: boolean;
   export let entity;
 
   let canEdit = false;
@@ -31,16 +32,15 @@
   $$props;
 </script>
 
-<!-- <div style="--width:{width}px; --height:{height}px">{text}</div> -->
-<container
-  on:input={onInput}
-  contenteditable={canEdit ? "true" : undefined}
-  style="--width:{width}px;--height:{height}px;--size:{fontSize}px;--color:{fontColor};--bgColor:{bgColor};--borderColor:{borderColor};"
->
-  {@html cleanHtml(text)}
-</container>
-  <!-- <resizer-left /> -->
-  <!-- <resizer-right /> -->
+{#if visible}
+  <container
+    on:input={onInput}
+    contenteditable={canEdit ? "true" : undefined}
+    style="--width:{width}px;--height:{height}px;--size:{fontSize}px;--color:{fontColor};--bgColor:{bgColor};--borderColor:{borderColor};"
+  >
+    {@html cleanHtml(text)}
+  </container>
+{/if}
 
 <style>
   container {
