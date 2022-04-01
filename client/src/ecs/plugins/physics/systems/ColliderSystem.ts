@@ -1,6 +1,6 @@
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import { RigidBody, RigidBodyRef, Collider, ColliderRef } from "../components";
-import { Transform } from "~/ecs/plugins/core";
+import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { ColliderDesc as RapierColliderDesc } from "@dimforge/rapier3d";
 import { createColliderShape } from "../createColliderShape";
 import { Physics } from "../Physics";
@@ -14,7 +14,8 @@ export class ColliderSystem extends System {
     added: [Collider, Not(ColliderRef), RigidBodyRef],
     modifiedBody: [ColliderRef, Modified(RigidBody)],
     modified: [Modified(Collider), RigidBodyRef],
-    removed: [Not(Collider), ColliderRef],
+    // removed: [Not(Collider), ColliderRef],
+    bboxCollider: [Object3DRef, Not(Collider), Not(ColliderRef)],
   };
 
   init({ physics }) {

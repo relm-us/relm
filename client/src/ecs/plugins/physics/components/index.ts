@@ -1,5 +1,6 @@
 export { Collider } from "./Collider";
 export { ColliderRef } from "./ColliderRef";
+export { ColliderBboxRef } from "./ColliderBboxRef";
 export { ColliderMapped } from "./ColliderMapped";
 export { ColliderVisible } from "./ColliderVisible";
 export { ColliderVisibleRef } from "./ColliderVisibleRef";
