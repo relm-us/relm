@@ -1,21 +1,25 @@
+import { ColliderDesc } from "@dimforge/rapier3d";
+
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
-import { RigidBody, RigidBodyRef, Collider, ColliderRef } from "../components";
-import { Object3DRef, Transform } from "~/ecs/plugins/core";
-import { ColliderDesc as RapierColliderDesc } from "@dimforge/rapier3d";
+import { Transform } from "~/ecs/plugins/core";
+import { Query } from "~/ecs/base/Query";
+
 import { createColliderShape } from "../createColliderShape";
 import { Physics } from "../Physics";
+import { RigidBody, RigidBodyRef, Collider, ColliderRef } from "../components";
 
+type QueryKeys = "added" | "modifiedBody" | "modified" | "removed";
 export class ColliderSystem extends System {
   physics: Physics;
+  queries: Record<QueryKeys, Query>;
 
   order = Groups.Presentation + 301; // After WorldTransform
 
-  static queries = {
+  static queries: Record<QueryKeys, any[]> = {
     added: [Collider, Not(ColliderRef), RigidBodyRef],
     modifiedBody: [ColliderRef, Modified(RigidBody)],
     modified: [Modified(Collider), RigidBodyRef],
-    // removed: [Not(Collider), ColliderRef],
-    bboxCollider: [Object3DRef, Not(Collider), Not(ColliderRef)],
+    removed: [Not(Collider), ColliderRef],
   };
 
   init({ physics }) {
@@ -47,32 +51,30 @@ export class ColliderSystem extends System {
 
     const transform = entity.get(Transform);
 
-    const colliderDesc: RapierColliderDesc = createColliderShape(
+    const colliderDesc: ColliderDesc = createColliderShape(
       rapier,
       spec,
       transform.scale
-    );
-
-    colliderDesc.setActiveCollisionTypes(
-      rapier.ActiveCollisionTypes.DEFAULT |
-        // Participant is Dynamic, portals etc. are Static
-        rapier.ActiveCollisionTypes.DYNAMIC_STATIC
-    );
-    colliderDesc.setActiveEvents(
-      // Impact with non-sensors
-      rapier.ActiveEvents.CONTACT_EVENTS |
-        // Impact with sensors
-        rapier.ActiveEvents.INTERSECTION_EVENTS
-    );
-
-    colliderDesc.setTranslation(
-      spec.offset.x * transform.scale.x,
-      spec.offset.y * transform.scale.y,
-      spec.offset.z * transform.scale.z
-    );
-    colliderDesc.setSensor(spec.isSensor);
-    colliderDesc.setDensity(spec.density);
-    colliderDesc.setCollisionGroups(spec.interaction);
+    )
+      .setActiveCollisionTypes(
+        rapier.ActiveCollisionTypes.DEFAULT |
+          // Participant is Dynamic, portals etc. are Static
+          rapier.ActiveCollisionTypes.DYNAMIC_STATIC
+      )
+      .setActiveEvents(
+        // Impact with non-sensors
+        rapier.ActiveEvents.CONTACT_EVENTS |
+          // Impact with sensors
+          rapier.ActiveEvents.INTERSECTION_EVENTS
+      )
+      .setTranslation(
+        spec.offset.x * transform.scale.x,
+        spec.offset.y * transform.scale.y,
+        spec.offset.z * transform.scale.z
+      )
+      .setSensor(spec.isSensor)
+      .setDensity(spec.density)
+      .setCollisionGroups(spec.interaction);
 
     const colliderRef = entity.get(ColliderRef);
     if (colliderRef) {

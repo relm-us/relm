@@ -46,7 +46,7 @@ import { makeLight } from "~/prefab/makeLight";
 import { Entity } from "~/ecs/base";
 import { Collider, ColliderVisible } from "~/ecs/plugins/physics";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
-import { BoundingBox, BoundingHelper } from "~/ecs/plugins/bounding-box";
+import { BoundingHelper } from "~/ecs/plugins/bounding-box";
 import { ControllerState } from "~/ecs/plugins/player-control";
 import { Follow } from "~/ecs/plugins/follow";
 import { intersectionPointWithGround } from "~/ecs/shared/isMakingContactWithGround";
