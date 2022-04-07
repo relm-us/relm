@@ -8,7 +8,13 @@ import { createColliderShape } from "../createColliderShape";
 import { Physics } from "../Physics";
 import { RigidBody, RigidBodyRef, Collider, ColliderRef } from "../components";
 
-type QueryKeys = "added" | "modifiedBody" | "modified" | "removed";
+type QueryKeys =
+  | "removedBody"
+  | "modifiedBody"
+  | "added"
+  | "modified"
+  | "removed";
+
 export class ColliderSystem extends System {
   physics: Physics;
   queries: Record<QueryKeys, Query>;
@@ -16,8 +22,9 @@ export class ColliderSystem extends System {
   order = Groups.Presentation + 301; // After WorldTransform
 
   static queries: Record<QueryKeys, any[]> = {
-    added: [Collider, Not(ColliderRef), RigidBodyRef],
+    removedBody: [ColliderRef, Not(RigidBody)],
     modifiedBody: [ColliderRef, Modified(RigidBody)],
+    added: [Collider, Not(ColliderRef), RigidBodyRef],
     modified: [Modified(Collider), RigidBodyRef],
     removed: [Not(Collider), ColliderRef],
   };
@@ -27,21 +34,18 @@ export class ColliderSystem extends System {
   }
 
   update() {
+    // If rigidbody is removed or modified, re-create the collider
+    this.queries.removedBody.forEach((entity) => this.remove(entity));
+    this.queries.modifiedBody.forEach((entity) => this.remove(entity));
+
     // create new ColliderRef
-    this.queries.added.forEach((entity) => {
-      this.build(entity);
-    });
-    this.queries.modifiedBody.forEach((entity) => {
-      this.remove(entity);
-    });
+    this.queries.added.forEach((entity) => this.build(entity));
+
     // replace ColliderRef with new spec
-    this.queries.modified.forEach((entity) => {
-      this.build(entity);
-    });
+    this.queries.modified.forEach((entity) => this.build(entity));
+
     // Remove ColliderRef
-    this.queries.removed.forEach((entity) => {
-      this.remove(entity);
-    });
+    this.queries.removed.forEach((entity) => this.remove(entity));
   }
 
   build(entity: Entity) {

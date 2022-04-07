@@ -59,15 +59,13 @@ export class RigidBodySystem extends System {
         transform.position.z
       )
       .setRotation(transform.rotation)
-      .setLinearDamping(spec.linearDamping)
-      .setAngularDamping(spec.angularDamping);
+      .setLinearDamping(0.1)
+      .setAngularDamping(0.1);
 
     // TODO: Make this less obviously a hack
     if (entity.name === "Avatar") {
       rigidBodyDesc.restrictRotations(false, true, false);
     }
-
-    if (spec.mass) rigidBodyDesc.setAdditionalMass(spec.mass);
 
     let rigidBody = world.createRigidBody(rigidBodyDesc);
     RigidBodySystem.bodies.set(rigidBody.handle, entity);
