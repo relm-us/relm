@@ -1,13 +1,5 @@
 {
   "private": true,
-  "workspaces": {
-    "packages": [
-      "client",
-      "server",
-      "common"
-    ],
-    "nohoist": []
-  },
   "devDependencies": {
     "concurrently": "^5.3.0",
     "typescript": "^4.1.3"

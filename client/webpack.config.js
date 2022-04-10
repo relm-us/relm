@@ -89,8 +89,6 @@ module.exports = {
   resolve: {
     alias: {
       "~": path.resolve(__dirname, "src"),
-      // Must go "up" a directory for node_modules because we're using yarn workspaces
-      "svelte": path.resolve(__dirname, "..", "node_modules", "svelte"),
     },
     extensions: [".mjs", ".js", ".ts", ".svelte"],
     mainFields: ["svelte", "browser", "module", "main"],

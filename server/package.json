@@ -34,6 +34,7 @@
     "pg-sql": "^1.1.0",
     "pgkeen": "^1.4.0",
     "postgres-migrations": "^4.0.3",
+    "relm-common": "workspace:*",
     "sharp": "^0.25.4",
     "twilio": "^3.71.2",
     "ws": "^7.2.3",
@@ -44,7 +45,7 @@
   "devDependencies": {
     "@jest-mock/express": "^1.4.0",
     "@types/express": "^4.17.11",
-    "@types/jest": "^26.0.22",
+    "@types/jest": "^27.0.0",
     "@types/node": "^17.0.5",
     "@types/sharp": "^0.28.0",
     "@types/ws": "^7.4.1",
