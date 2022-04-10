@@ -1,4 +1,4 @@
-import { Permission } from "../db";
+import { Permission } from "../db/index.js";
 
 export function unabbreviatedPermits(
   abbrev: string

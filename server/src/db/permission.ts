@@ -1,6 +1,6 @@
-import { db, sql, INSERT, IN, raw } from "./db";
-import { arrayToBooleanObject, booleanObjectToArray } from "../utils";
-import { getRelm } from "./relm";
+import { db, sql, INSERT, IN, raw } from "./db.js";
+import { arrayToBooleanObject, booleanObjectToArray } from "../utils/index.js";
+import { getRelm } from "./relm.js";
 
 export type Permission = "admin" | "access" | "invite" | "edit";
 

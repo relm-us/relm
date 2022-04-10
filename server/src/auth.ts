@@ -1,10 +1,11 @@
 import { Crypto } from "@peculiar/webcrypto";
 import base64 from "base64-arraybuffer";
 
-import { joinError } from "./utils";
-import { SECURITY_CONFIG } from "./config";
+import { joinError } from "./utils/index.js";
+import { SECURITY_CONFIG } from "./config.js";
 
-const { encode } = require("fastestsmallesttextencoderdecoder");
+import pkg from "fastestsmallesttextencoderdecoder";
+const { encode } = pkg;
 
 const crypto = new Crypto();
 
@@ -69,10 +70,3 @@ export async function verify(message, signature, publicKey) {
   );
   return result;
 }
-
-module.exports = {
-  verify,
-  xyDocToPubKeyDoc,
-  pubKeyDocToPubKey,
-  xyDocToPubKey,
-};

@@ -1,6 +1,6 @@
-import { db, sql, INSERT, UPDATE, WHERE } from "./db";
-import { nullOr } from "../utils";
-import { LIMIT, OFFSET, ORDER_BY } from "./pgSqlHelpers";
+import { db, sql, INSERT, UPDATE, WHERE } from "./db.js";
+import { nullOr } from "../utils/index.js";
+import { LIMIT, OFFSET, ORDER_BY } from "./pgSqlHelpers.js";
 
 type AssetColumns = {
   asset_id: string;

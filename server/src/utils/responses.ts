@@ -1,4 +1,4 @@
-import * as config from "../config";
+import * as config from "../config.js";
 
 export function respondWithError(res, reason) {
   console.error(reason);

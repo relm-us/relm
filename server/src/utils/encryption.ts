@@ -1,5 +1,5 @@
 import * as bcrypt from "bcrypt";
-import * as config from "../config";
+import * as config from "../config.js";
 
 export async function encrypt(password) {
   return new Promise((resolve, reject) => {

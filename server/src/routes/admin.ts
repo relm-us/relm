@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
 
-import * as middleware from "../middleware";
-import { Permission } from "../db";
-import { respondWithSuccess, wrapAsync } from "../utils";
+import * as middleware from "../middleware.js";
+import { Permission } from "../db/index.js";
+import { respondWithSuccess, wrapAsync } from "../utils/index.js";
 
 export const admin = express.Router();
 

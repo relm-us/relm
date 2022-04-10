@@ -2,7 +2,7 @@ import pgPromise from "pg-promise";
 import { sql as pgSql } from "pg-sql";
 import { migrate } from "postgres-migrations";
 
-import * as config from "../config";
+import * as config from "../config.js";
 
 const pgp = pgPromise();
 
@@ -65,4 +65,4 @@ export {
   OR,
   LIMIT,
   OFFSET,
-} from "./pgSqlHelpers";
+} from "./pgSqlHelpers.js";

@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
 
-import * as middleware from "../middleware";
-import { Relm } from "../db";
-import { respondWithSuccess, wrapAsync } from "../utils";
+import * as middleware from "../middleware.js";
+import { Relm } from "../db/index.js";
+import { respondWithSuccess, wrapAsync } from "../utils/index.js";
 
 export const relms = express.Router();
 

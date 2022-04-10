@@ -3,11 +3,12 @@ import fs from "fs";
 import express from "express";
 import crypto from "crypto";
 
-import { respondWithError, wrapAsync } from "../utils";
-import { SCREENSHOTS_DIR } from "../config";
+import { respondWithError, wrapAsync } from "../utils/index.js";
+import { SCREENSHOTS_DIR } from "../config.js";
 
 // Currently incompatible with ES6 import, so use `require`:
-const capture = require("capture-website");
+// const capture = (await import("capture-website")).default;
+import capture from 'capture-website';
 
 export const screenshot = express.Router();
 

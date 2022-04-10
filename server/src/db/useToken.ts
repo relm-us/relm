@@ -1,6 +1,6 @@
-import { MAX_TOKEN_LENGTH } from "../config";
-import { useInvitation } from "./invitation";
-import { setPermits } from "./permission";
+import { MAX_TOKEN_LENGTH } from "../config.js";
+import { useInvitation } from "./invitation.js";
+import { setPermits } from "./permission.js";
 
 export async function useToken({ token, relmId, playerId }) {
   if (token && token.length <= MAX_TOKEN_LENGTH) {

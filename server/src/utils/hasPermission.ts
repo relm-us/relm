@@ -1,4 +1,4 @@
-import { isAllowed } from "./isAllowed";
+import { isAllowed } from "./isAllowed.js";
 
 /**
  *

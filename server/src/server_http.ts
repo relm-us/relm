@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
 
-import * as middleware from "./middleware";
-import * as routes from "./routes";
-import { respondWithError, uuidv4 } from "./utils";
+import * as middleware from "./middleware.js";
+import * as routes from "./routes/index.js";
+import { respondWithError, uuidv4 } from "./utils/index.js";
 
 export const app = express();
 

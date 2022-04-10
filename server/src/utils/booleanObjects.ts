@@ -1,4 +1,4 @@
-var fromEntries = require('object.fromentries');
+import fromEntries from "object.fromentries";
 
 export function arrayToBooleanObject(arr: string[]): Record<string, boolean> {
   return fromEntries(arr.map((value) => [value, true]));

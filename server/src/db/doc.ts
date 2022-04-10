@@ -1,7 +1,7 @@
-import { db, sql, raw } from "./db";
-import { INSERT, UPDATE } from "./pgSqlHelpers";
+import { db, sql, raw } from "./db.js";
+import { INSERT, UPDATE } from "./pgSqlHelpers.js";
 
-import { getDefinedKeys, nullOr } from "../utils";
+import { getDefinedKeys, nullOr } from "../utils/index.js";
 
 /**
  * Metadata about a yjs document. Stores the datetime it was created so we can

@@ -1,14 +1,14 @@
-import {
-  respondWithSuccess,
-  respondWithError,
-  joinError,
-  decodedValidJwt,
-} from "./utils";
-import { Player, Permission, Relm, useToken } from "./db";
-import { JWTSECRET } from "./config";
 import createError from "http-errors";
-import { unabbreviatedPermits } from "./utils/unabbreviatedPermits";
-import { hasPermission } from "./utils/hasPermission";
+
+import {
+  decodedValidJwt,
+  hasPermission,
+  joinError,
+  respondWithError,
+  unabbreviatedPermits,
+} from "./utils/index.js";
+import { Player, Permission, Relm, useToken } from "./db/index.js";
+import { JWTSECRET } from "./config.js";
 
 function getParam(req, key) {
   if (key in req.query) {

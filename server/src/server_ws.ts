@@ -2,10 +2,10 @@ import WebSocket from "ws";
 import { createServer } from "http";
 import * as yws from "y-websocket/bin/utils";
 
-import { app } from "./server_http";
-import { Player, Permission, Doc } from "./db";
-import { ydocStats } from "./getYDoc";
-import { hasPermission } from "./utils/hasPermission";
+import { app } from "./server_http.js";
+import { Player, Permission, Doc } from "./db/index.js";
+import { ydocStats } from "./getYDoc.js";
+import { hasPermission } from "./utils/hasPermission.js";
 
 export const server = createServer();
 

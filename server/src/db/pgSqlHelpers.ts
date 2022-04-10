@@ -1,6 +1,7 @@
 import is from "is";
-import { isPlainObject } from "../utils/isPlainObject";
 import { sql } from "pg-sql";
+
+import { isPlainObject } from "../utils/isPlainObject.js";
 
 /**
  * A map of operators shorthands to PostgreSQL operators.

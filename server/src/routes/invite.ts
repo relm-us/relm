@@ -1,10 +1,10 @@
 import * as express from "express";
 import cors from "cors";
 
-import * as util from "../utils";
-import * as middleware from "../middleware";
-import { Invitation, Permission } from "../db";
-import { respondWithSuccess } from "../utils";
+import * as util from "../utils/index.js";
+import * as middleware from "../middleware.js";
+import { Invitation, Permission } from "../db/index.js";
+import { respondWithSuccess } from "../utils/index.js";
 
 const { wrapAsync } = util;
 

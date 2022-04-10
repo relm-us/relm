@@ -1,7 +1,7 @@
-import { db, sql, raw } from "./db";
-import { INSERT, UPDATE } from "./pgSqlHelpers";
+import { db, sql } from "./db.js";
+import { INSERT } from "./pgSqlHelpers.js";
 
-import { nullOr } from "../utils";
+import { nullOr } from "../utils/index.js";
 
 type VariableColumns = {
   relm_id: string;

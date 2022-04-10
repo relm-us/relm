@@ -1,7 +1,7 @@
-export { admin } from "./admin";
-export { asset } from "./asset";
-export { auth } from "./auth";
-export { invite } from "./invite";
-export { relm } from "./relm";
-export { relms } from "./relms";
-export { screenshot } from "./screenshot";
+export { admin } from "./admin.js";
+export { asset } from "./asset.js";
+export { auth } from "./auth.js";
+export { invite } from "./invite.js";
+export { relm } from "./relm.js";
+export { relms } from "./relms.js";
+export { screenshot } from "./screenshot.js";

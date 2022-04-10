@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path";
 import md5File from "md5-file";
-import { useSpaces, uploadToSpaces } from "./lib/spaces";
+import { useSpaces, uploadToSpaces } from "./lib/spaces.js";
 
-import { ASSETS_DIR, CONTENT_TYPE_JSON } from "./config";
+import { ASSETS_DIR, CONTENT_TYPE_JSON } from "./config.js";
 
 export async function moveOrUploadContentAddressable(
   filepath,

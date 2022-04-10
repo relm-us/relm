@@ -3,10 +3,11 @@ import {
   YComponents,
   YEntities,
   YValues,
-} from "relm-common/yrelm/types";
+} from "relm-common";
 import * as Y from "yjs";
-import { Doc } from "./db";
 import * as yws from "y-websocket/bin/utils";
+
+import { Doc } from "./db/index.js";
 
 export async function getYDoc(docId: string): Promise<Y.Doc> {
   const doc = await yws.getYDoc(docId, { callbackHandler: ydocStats });

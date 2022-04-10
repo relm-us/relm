@@ -4,21 +4,20 @@ import fileupload from "express-fileupload";
 import cors from "cors";
 import sharp from "sharp";
 
-import * as middleware from "../middleware";
-import * as conversion from "../conversion";
-import * as util from "../utils";
-import { respondWithSuccess, respondWithError, wrapAsync } from "../utils";
+import * as middleware from "../middleware.js";
+import * as conversion from "../conversion.js";
+import { respondWithSuccess, respondWithError, wrapAsync } from "../utils/index.js";
 
-import { Asset } from "../db";
-
-export const asset = express.Router();
+import { Asset } from "../db/index.js";
 
 import {
   TMP_DIR,
   ASSETS_DIR,
   MAX_FILE_EXTENSION_LENGTH,
   MAX_FILE_SIZE,
-} from "../config";
+} from "../config.js";
+
+export const asset = express.Router();
 
 // Allow files to be uploaded.
 // NOTE: This must be before app.post('/asset')

@@ -1,8 +1,8 @@
 import fs from "fs";
 
-import { ASSETS_DIR, DATABASE_NAME, PORT } from "./config";
-import { server } from "./server_ws";
-import { init } from "./db/db";
+import { ASSETS_DIR, DATABASE_NAME, PORT } from "./config.js";
+import { server } from "./server_ws.js";
+import { init } from "./db/db.js";
 
 if (!fs.existsSync(ASSETS_DIR)) {
   throw Error(`Asset upload directory doesn't exist: ${ASSETS_DIR}`);

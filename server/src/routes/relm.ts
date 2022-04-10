@@ -1,25 +1,25 @@
 import * as express from "express";
 import cors from "cors";
+import mkConscript from "conscript";
 import * as Y from "yjs";
 
-import exportRelm from "relm-common/serialize/export";
-import importRelm from "relm-common/serialize/import";
-
-import * as config from "../config";
-import * as util from "../utils";
-import * as middleware from "../middleware";
-import * as twilio from "../lib/twilio";
-import { respondWithSuccess, respondWithError } from "../utils";
-import { Permission, Relm, Doc, Variable } from "../db";
-import { getYDoc } from "../getYDoc";
-import mkConscript from "conscript";
 import {
+  exportWorldDoc,
+  importWorldDoc,
   findInYArray,
   YComponents,
   YEntities,
   YEntity,
   YValues,
-} from "relm-common/yrelm";
+} from "relm-common";
+
+import * as config from "../config.js";
+import * as util from "../utils/index.js";
+import * as middleware from "../middleware.js";
+import * as twilio from "../lib/twilio.js";
+import { respondWithSuccess, respondWithError } from "../utils/index.js";
+import { Permission, Relm, Doc, Variable } from "../db/index.js";
+import { getYDoc } from "../getYDoc.js";
 
 const { wrapAsync, uuidv4 } = util;
 const conscript = mkConscript();
@@ -45,7 +45,7 @@ relm.post(
         if (!seedRelm) {
           throw Error(
             `relm can't be created because ` +
-              `seedRelmId '${seedRelmId}' doesn't exist`
+            `seedRelmId '${seedRelmId}' doesn't exist`
           );
         }
       } else if (seedRelmName) {
@@ -53,7 +53,7 @@ relm.post(
         if (!seedRelm) {
           throw Error(
             `relm can't be created because ` +
-              `seed relm named '${seedRelmName}' doesn't exist`
+            `seed relm named '${seedRelmName}' doesn't exist`
           );
         }
         seedRelmId = seedRelm.relmId;
@@ -76,30 +76,30 @@ relm.post(
         });
         const seedRelmDoc: Y.Doc = await getYDoc(seedDocId);
 
-        relmContent = exportRelm(seedRelmDoc);
+        relmContent = exportWorldDoc(seedRelmDoc);
       } else {
         relmContent = config.DEFAULT_RELM_CONTENT;
       }
 
       const newRelmDoc: Y.Doc = await getYDoc(newRelmDocId);
-      importRelm(relmContent, newRelmDoc);
+      importWorldDoc(relmContent, newRelmDoc);
 
       if (seedDocId) {
         if (seedRelmName) {
           console.log(
             `Cloned new relm '${req.relmName}' from '${seedRelmName}' ` +
-              `('${seedDocId}') (creator: '${req.authenticatedPlayerId}')`
+            `('${seedDocId}') (creator: '${req.authenticatedPlayerId}')`
           );
         } else {
           console.log(
             `Cloned new relm '${req.relmName}' from '${seedDocId}' ` +
-              `(creator: '${req.authenticatedPlayerId}')`
+            `(creator: '${req.authenticatedPlayerId}')`
           );
         }
       } else {
         console.log(
           `Created relm '${req.relmName}' ` +
-            `(creator: '${req.authenticatedPlayerId}')`
+          `(creator: '${req.authenticatedPlayerId}')`
         );
       }
 
@@ -135,7 +135,7 @@ relm.get(
   middleware.authorized("access"),
   wrapAsync(async (req, res) => {
     const relmDoc = await getYDoc(req.relm.permanentDocId);
-    const content = exportRelm(relmDoc);
+    const content = exportWorldDoc(relmDoc);
 
     return respondWithSuccess(res, {
       action: "content",
@@ -376,7 +376,7 @@ async function setVariable(doc, variables, relmId, name, value) {
     // TODO: figure out why actions are sometimes not available by now??
     console.warn(
       `Unable to load possible actions for relm ${relmId};` +
-        ` not setting variable ${name}`
+      ` not setting variable ${name}`
     );
     return;
   }

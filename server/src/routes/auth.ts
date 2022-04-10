@@ -1,14 +1,14 @@
 import express from "express";
 import cors from "cors";
 
-import * as middleware from "../middleware";
-import { Permission } from "../db";
+import * as middleware from "../middleware.js";
+import { Permission } from "../db/index.js";
 import {
   respondWithSuccess,
   respondWithError,
   wrapAsync,
   intersection,
-} from "../utils";
+} from "../utils/index.js";
 
 export const auth = express.Router();
 

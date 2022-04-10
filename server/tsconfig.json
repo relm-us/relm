@@ -1,8 +1,11 @@
 {
+  "include": [
+    "src"
+  ],
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "es2020",
+    "target": "es2020",
     "esModuleInterop": true,
-    "target": "es2019",
     "moduleResolution": "node",
     "declaration": false,
     "sourceMap": true,
