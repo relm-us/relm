@@ -5,7 +5,7 @@ import {
   YComponents,
   YComponent,
   YValues,
-} from "./types";
+} from "./types.js";
 
 export function yEntityToJSON(yentity: YEntity) {
   return {

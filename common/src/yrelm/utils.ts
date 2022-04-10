@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import { YIDSTR } from "./types";
+import { YIDSTR } from "./types.js";
 
 export function isEntityAttribute(key: string) {
   return (

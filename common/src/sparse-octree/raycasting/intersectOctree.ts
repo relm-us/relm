@@ -1,6 +1,6 @@
 import { Box3, Ray, Vector3 } from "three";
-import { Node } from "../core/Node";
-import { RaycastingFlags } from "./RaycastingFlags";
+import { Node } from "../core/Node.js";
+import { RaycastingFlags } from "./RaycastingFlags.js";
 
 const v = new Vector3();
 const b = new Box3();

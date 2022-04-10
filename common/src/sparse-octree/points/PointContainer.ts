@@ -1,5 +1,5 @@
 import { Vector3 } from "three";
-import { DataContainer } from "../core/DataContainer";
+import { DataContainer } from "../core/DataContainer.js";
 
 /**
  * A container for a single point and its data.

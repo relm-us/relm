@@ -1,5 +1,5 @@
 import { Box3, Frustum } from "three";
-import { Node } from "./Node";
+import { Node } from "./Node.js";
 
 const b = new Box3();
 

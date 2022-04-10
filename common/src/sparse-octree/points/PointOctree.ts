@@ -1,9 +1,9 @@
 import { Raycaster, Vector3 } from "three";
-import { Octree } from "../core/Octree";
-import { PointContainer } from "./PointContainer";
-import { PointData } from "./PointData";
-import { PointOctant } from "./PointOctant";
-import { RayPointIntersection } from "./RayPointIntersection";
+import { Octree } from "../core/Octree.js";
+import { PointContainer } from "./PointContainer.js";
+import { PointData } from "./PointData.js";
+import { PointOctant } from "./PointOctant.js";
+import { RayPointIntersection } from "./RayPointIntersection.js";
 
 /**
  * Recursively counts the points that are in the given octant.

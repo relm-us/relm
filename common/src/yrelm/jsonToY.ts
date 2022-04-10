@@ -7,9 +7,9 @@ import {
   YComponents,
   YComponent,
   YValues,
-} from "./types";
+} from "./types.js";
 
-import { isEntityAttribute } from "./utils";
+import { isEntityAttribute } from "./utils.js";
 
 /**
  * Create a new YEntity and subtree from a HECS entity's JSON-export.

@@ -1,7 +1,7 @@
 import { Vector3 } from "three";
-import { DataContainer } from "./DataContainer";
-import { Node } from "./Node";
-import { layout } from "./layout";
+import { DataContainer } from "./DataContainer.js";
+import { Node } from "./Node.js";
+import { layout } from "./layout.js";
 
 const c = new Vector3();
 

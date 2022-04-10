@@ -1,5 +1,5 @@
 import { BufferAttribute, BufferGeometry, Group, LineSegments, LineBasicMaterial } from "three";
-import { edges, layout, Node, Tree } from "../core";
+import { edges, layout, Node, Tree } from "./index.js";
 
 /**
  * An octree helper.

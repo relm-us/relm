@@ -1,9 +1,9 @@
 import { Ray } from "three";
-import { Node } from "../core";
-import { RaycastingFlags } from "./RaycastingFlags";
-import { findEntryOctant } from "./findEntryOctant";
-import { findNextOctant } from "./findNextOctant";
-import { intersectOctree } from "./intersectOctree";
+import { Node } from "../core/index.js";
+import { RaycastingFlags } from "./RaycastingFlags.js";
+import { findEntryOctant } from "./findEntryOctant.js";
+import { findNextOctant } from "./findNextOctant.js";
+import { intersectOctree } from "./intersectOctree.js";
 
 const flags = new RaycastingFlags();
 

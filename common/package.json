@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "author": "Duane Johnson",
   "license": "GPL-3.0-only",
+
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": "./dist/index.js",
+
   "scripts": {
     "build": "tsc"
   },

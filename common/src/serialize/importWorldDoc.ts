@@ -1,9 +1,8 @@
 import * as Y from "yjs";
-import { jsonToYEntity } from "../yrelm";
-import { YEntity } from "../yrelm/types";
-import { MinimalRelmJSON } from "./types";
+import { jsonToYEntity, YEntity } from "../yrelm/index.js";
+import { MinimalRelmJSON } from "./types.js";
 
-export default function (source: MinimalRelmJSON, dest: Y.Doc) {
+export function importWorldDoc(source: MinimalRelmJSON, dest: Y.Doc) {
   const yentities = dest.getArray("entities") as Y.Array<YEntity>;
   // Y.Array#push takes many items, unlike regular Array#push
   yentities.push(source.entities.map((e) => jsonToYEntity(e)));

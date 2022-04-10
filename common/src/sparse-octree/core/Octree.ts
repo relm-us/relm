@@ -1,8 +1,8 @@
 import { Box3, Frustum, Raycaster, Vector3 } from "three";
-import { OctreeRaycaster } from "../raycasting";
-import { OctreeIterator } from "./OctreeIterator";
-import { Node } from "./Node";
-import { Tree } from "./Tree";
+import { OctreeRaycaster } from "../raycasting/index.js";
+import { OctreeIterator } from "./OctreeIterator.js";
+import { Node } from "./Node.js";
+import { Tree } from "./Tree.js";
 
 const b = new Box3();
 

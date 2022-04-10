@@ -1,5 +1,5 @@
 import { Raycaster, Vector3 } from "three";
-import { RayPointIntersection } from "./RayPointIntersection";
+import { RayPointIntersection } from "./RayPointIntersection.js";
 
 /**
  * A collection of many points and associated data entries.
