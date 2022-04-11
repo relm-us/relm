@@ -1,7 +1,8 @@
-import * as Asset from "./asset";
+import { describe, expect, beforeAll, afterAll, it } from '@jest/globals';
 
-import { init, deinit } from "./db";
-import { uuidv4, UUID_RE } from "../utils";
+import * as Asset from "./asset.js";
+
+import { init, deinit } from "./db.js";
 
 describe("Asset model tests", () => {
   beforeAll(init);

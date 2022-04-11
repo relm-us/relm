@@ -1,9 +1,11 @@
-import * as Player from "./player";
-import * as auth from "../auth";
+import { describe, expect, beforeAll, afterAll, it } from '@jest/globals';
 import { CryptoKey } from "@peculiar/webcrypto";
 
-import { uuidv4 } from "../utils";
-import { init, deinit } from "./db";
+import * as Player from "./player.js";
+import * as auth from "../auth.js";
+
+import { uuidv4 } from "../utils/index.js";
+import { init, deinit } from "./db.js";
 
 describe("Player model tests", () => {
   beforeAll(init);
@@ -11,7 +13,7 @@ describe("Player model tests", () => {
 
   it("sets and gets public key document", async () => {
     const playerId = uuidv4();
-    const pubKeyDoc = ["hello"];
+    const pubKeyDoc = [uuidv4()];
     expect(await Player.hasPubKeyDoc({ playerId })).toBe(false);
     await Player.addPubKeyDoc({ playerId, pubKeyDoc });
     expect(await Player.hasPubKeyDoc({ playerId })).toBe(true);

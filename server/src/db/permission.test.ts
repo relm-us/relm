@@ -1,8 +1,10 @@
-import * as Permission from "./permission";
+import { describe, expect, beforeAll, afterAll, it } from '@jest/globals';
 
-import { uuidv4 } from "../utils";
-import { init, deinit } from "./db";
-import { Relm } from ".";
+import * as Permission from "./permission.js";
+
+import { uuidv4 } from "../utils/index.js";
+import { init, deinit } from "./db.js";
+import { Relm } from "./index.js";
 
 describe("Permission model tests", () => {
   beforeAll(init);

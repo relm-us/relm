@@ -1,7 +1,9 @@
-import * as Doc from "./doc";
+import { describe, expect, beforeAll, afterAll, it } from '@jest/globals';
 
-import { init, deinit } from "./db";
-import { uuidv4, UUID_RE } from "../utils";
+import * as Doc from "./doc.js";
+
+import { init, deinit } from "./db.js";
+import { uuidv4, UUID_RE } from "../utils/index.js";
 
 async function setHistDoc(date, attrs) {
   let doc = await Doc.setDoc(attrs);

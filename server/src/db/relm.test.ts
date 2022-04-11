@@ -1,37 +1,41 @@
-import * as Relm from "./relm";
+import { describe, expect, beforeAll, afterAll, it } from "@jest/globals";
 
-import { init, deinit } from "./db";
-import { uuidv4, UUID_RE } from "../utils";
+import * as Relm from "./relm.js";
+
+import { init, deinit } from "./db.js";
+import { uuidv4, UUID_RE } from "../utils/index.js";
 
 describe("Relm model tests", () => {
   beforeAll(init);
   afterAll(deinit);
 
   it("Gets all public relms", async () => {
-    await Relm.createRelm({ relmName: "allpub-public-relm-1", isPublic: true });
-    await Relm.createRelm({ relmName: "allpub-public-relm-2", isPublic: true });
+    const pubPrefix = uuidv4();
+    const relmName1 = pubPrefix + uuidv4();
+    const relmName2 = pubPrefix + uuidv4();
+    const relmName3 = uuidv4();
+    await Relm.createRelm({ relmName: relmName1, isPublic: true });
+    await Relm.createRelm({ relmName: relmName2, isPublic: true });
     await Relm.createRelm({
-      relmName: "allpub-private-relm-3",
+      relmName: relmName3,
       isPublic: false,
     });
     const relms = await Relm.getAllRelms({
-      prefix: "allpub",
+      prefix: pubPrefix,
       isPublic: true,
-      excludeEmpty: false
+      excludeEmpty: false,
     });
     const relmNames = new Set(relms.map((r) => r.relmName));
-    expect(relmNames).toEqual(
-      new Set(["allpub-public-relm-1", "allpub-public-relm-2"])
-    );
+    expect(relmNames).toEqual(new Set([relmName1, relmName2]));
   });
 
   it("Creates a relm with defaults", async () => {
-    const relmName = "relm-being-created";
+    const relmName = "relm-being-created-" + uuidv4();
     const relm = await Relm.createRelm({ relmName });
     expect(relm).toEqual({
       relmId: expect.stringMatching(UUID_RE),
       seedRelmId: null,
-      relmName: "relm-being-created",
+      relmName,
       isPublic: false,
       createdBy: null,
       createdAt: expect.any(Date),
@@ -40,7 +44,7 @@ describe("Relm model tests", () => {
   });
 
   it("Gets a relm by relmName", async () => {
-    const relmName = "relm-with-name";
+    const relmName = "relm-with-name-" + uuidv4();
     await Relm.createRelm({ relmName });
     const relm = await Relm.getRelm({ relmName });
     expect(relm.relmName).toEqual(relmName);
@@ -49,23 +53,24 @@ describe("Relm model tests", () => {
 
   it("Gets a relm by relmId", async () => {
     const relmId = uuidv4();
-    const relmName = "relm-with-id";
+    const relmName = "relm-with-id-" + uuidv4();
     await Relm.createRelm({ relmId, relmName });
     const relm = await Relm.getRelm({ relmId });
     expect(relm.relmName).toEqual(relmName);
   });
 
   it("Updates a relm", async () => {
-    const relmName = "relm-being-updated";
+    const relmName = "relm-being-updated-" + uuidv4();
     const createdRelm = await Relm.createRelm({ relmName });
 
+    const updatedRelmName = "relm-has-been-updated-" + uuidv4();
     const relm = await Relm.updateRelm({
       relmId: createdRelm.relmId,
-      relmName: "relm-has-been-updated",
+      relmName: updatedRelmName,
       isPublic: true,
     });
 
     expect(relm.isPublic).toBe(true);
-    expect(relm.relmName).toEqual("relm-has-been-updated");
+    expect(relm.relmName).toEqual(updatedRelmName);
   });
 });

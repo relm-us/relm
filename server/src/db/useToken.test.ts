@@ -1,9 +1,11 @@
-import { useToken } from "./useToken";
-import { createInvitation } from "./invitation";
-import { getPermissions } from "./permission";
-import { init, deinit } from "./db";
-import { uuidv4 } from "../utils";
-import { createRelm } from "./relm";
+import { describe, expect, beforeAll, afterAll, it } from '@jest/globals';
+
+import { useToken } from "./useToken.js";
+import { createInvitation } from "./invitation.js";
+import { getPermissions } from "./permission.js";
+import { init, deinit } from "./db.js";
+import { uuidv4 } from "../utils/index.js";
+import { createRelm } from "./relm.js";
 
 describe("useToken", () => {
   beforeAll(init);

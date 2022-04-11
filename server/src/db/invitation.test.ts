@@ -1,6 +1,8 @@
-import * as Invitation from "./invitation";
-import { init, deinit } from "./db";
-import { uuidv4 } from "../utils";
+import { describe, expect, beforeAll, afterAll, it } from '@jest/globals';
+
+import * as Invitation from "./invitation.js";
+import { init, deinit } from "./db.js";
+import { uuidv4 } from "../utils/index.js";
 
 describe("Invitation model tests", () => {
   beforeAll(init);
@@ -9,7 +11,7 @@ describe("Invitation model tests", () => {
   it("creates invitation", async () => {
     const relmId = uuidv4();
     const playerId = uuidv4();
-    const token = "join-now";
+    const token = uuidv4();
     const invitation = await Invitation.createInvitation({
       relmId,
       permits: ["access"],
@@ -38,7 +40,7 @@ describe("Invitation model tests", () => {
   it("uses an invitation", async () => {
     const relmId = uuidv4();
     const playerId = uuidv4();
-    const token = "use-me";
+    const token = uuidv4();
     const invitation = await Invitation.createInvitation({
       token: token,
       relmId,
