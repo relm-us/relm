@@ -6,12 +6,10 @@ import {
   YChildren,
   YComponents,
   YValues,
-} from "relm-common/yrelm/types";
-import {
   jsonToYComponent,
   isEntityAttribute,
   findInYArray,
-} from "relm-common/yrelm";
+} from "relm-common";
 
 export function applyChangeToYEntity(change: Change, yentity: YEntity) {
   const key: number | string = change.path[0];

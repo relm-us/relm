@@ -1,5 +1,5 @@
 import { Frustum, Vector3 } from "three";
-import { PointOctree } from "relm-common/sparse-octree";
+import { PointOctree } from "relm-common";
 
 import { SPATIAL_INDEX_WORLD_EXTENT } from "~/config/constants";
 import { Entity } from "~/ecs/base";

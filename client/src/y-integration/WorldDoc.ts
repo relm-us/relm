@@ -17,16 +17,14 @@ import {
   yComponentToJSON,
   jsonToYEntity,
   getDeletedItems,
-} from "relm-common/yrelm";
-
-import {
   YEntities,
   YEntity,
   YComponents,
   YComponent,
   YValues,
   YIDSTR,
-} from "relm-common/yrelm/types";
+} from "relm-common";
+
 
 import EventEmitter from "eventemitter3";
 import { applyDiffToYEntity } from "./applyDiff";

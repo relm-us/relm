@@ -2,8 +2,13 @@ import * as Y from "yjs";
 
 import { Change } from "./diffTypes";
 
-import { YEntities, YEntity, YComponents } from "relm-common/yrelm/types";
-import { jsonToYComponents, yComponentsToJSON } from "relm-common/yrelm";
+import {
+  YEntities,
+  YEntity,
+  YComponents,
+  jsonToYComponents,
+  yComponentsToJSON,
+} from "relm-common";
 
 import { applyChangeToYEntity } from "./applyDiff";
 

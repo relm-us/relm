@@ -2,7 +2,7 @@ import type { IdentityData } from "~/types";
 
 import * as Y from "yjs";
 
-import { withMapEdits } from "relm-common/yrelm";
+import { withMapEdits } from "relm-common";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
