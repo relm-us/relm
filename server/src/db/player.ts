@@ -1,4 +1,4 @@
-import { db, sql } from "./db";
+import { db, sql } from "./db.js";
 
 /**
  * The `Player` model represents an authenticated player in the database. Note that
@@ -12,7 +12,7 @@ import { db, sql } from "./db";
  *
  */
 
-import * as auth from "../auth";
+import * as auth from "../auth.js";
 
 export async function hasPubKeyDoc({ playerId }) {
   const pubKeyDoc = await getPubKeyDoc({ playerId });
