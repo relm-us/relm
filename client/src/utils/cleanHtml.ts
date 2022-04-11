@@ -1,5 +1,7 @@
 // TODO: is DOMPurify any smaller/faster?
 import sanitizeHtml from "sanitize-html";
+
+// TODO: is https://www.npmjs.com/package/autolinker more secure?
 import anchorme from "anchorme";
 
 const defaultOptions = {
