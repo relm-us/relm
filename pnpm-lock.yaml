@@ -120,7 +120,7 @@ importers:
       redux: 4.1.2
       redux-thunk: 2.4.1_redux@4.1.2
       regenerator-runtime: 0.13.9
-      relm-common: link:../common
+      relm-common: file:common
       sanitize-html: 2.7.0
       serve: 11.3.2
       simplex-noise: 2.4.0
@@ -268,7 +268,7 @@ importers:
       pg-sql: 1.1.0
       pgkeen: 1.4.0_pg@8.7.3
       postgres-migrations: 5.3.0
-      relm-common: link:../common
+      relm-common: file:common
       sharp: 0.25.4
       twilio: 3.76.1
       uuidv4: 6.2.13
@@ -12061,6 +12061,7 @@ packages:
 
   /ws/6.2.2:
     resolution: {integrity: sha512-zmhltoSR8u1cnDsD43TX59mzoMZsLKqUweyYBAIvTngR3shc0W6aOZylZmq/7hqyVxPdi+5Ud2QInblgyE72fw==}
+    requiresBuild: true
     dependencies:
       async-limiter: 1.0.1
 
@@ -12240,6 +12241,15 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  file:common:
+    resolution: {directory: common, type: directory}
+    name: relm-common
+    version: 1.0.0
+    dependencies:
+      three: 0.131.3
+      yjs: 13.5.27
+    dev: false
 
   github.com/canadaduane/y-websocket/de54818d86dbcb22b1e71c93775f9dc1c33e1b7e_yjs@13.5.27:
     resolution: {tarball: https://codeload.github.com/canadaduane/y-websocket/tar.gz/de54818d86dbcb22b1e71c93775f9dc1c33e1b7e}

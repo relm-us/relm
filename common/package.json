@@ -8,6 +8,12 @@
   "main": "./dist/index.js",
   "exports": "./dist/index.js",
 
+  "files": [
+    "dist/**/*",
+    "src/**/*",
+    "tsconfig.json"
+  ],
+
   "scripts": {
     "build": "tsc"
   },
