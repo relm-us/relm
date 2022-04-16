@@ -1,9 +1,16 @@
 {
   "name": "relm-client",
   "version": "1.0.0",
-  "main": "index.js",
   "author": "Duane Johnson",
   "license": "GPL-3.0-only",
+
+  "engines": {
+    "node": "^14.13.1 || >=16.0.0",
+    "pnpm": ">=6"
+  },
+  
+  "main": "index.js",
+  
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --debug",
     "start": "webpack-dev-server",

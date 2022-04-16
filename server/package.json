@@ -3,9 +3,24 @@
   "version": "1.0.0",
   "author": "Duane Johnson",
   "license": "GPL-3.0-only",
+
   "type": "module",
   "exports": "./server.js",
-  "node": "^12.20.0 || ^14.13.1 || >=16.0.0",
+
+  "engines": {
+    "node": "^14.13.1 || >=16.0.0",
+    "pnpm": ">=6"
+  },
+
+  "files": [
+    "dist/**/*",
+    "src/**/*",
+    "docs/**/*",
+    "migrations/**/*",
+    ".env.example",
+    "tsconfig.json"
+  ],
+
   "scripts": {
     "test": "cross-env NODE_ENV=test DATABASE_NAME=relm-test jest src/**/*.test.ts",
     "start": "tsc && cross-env TMP_DIR=data/tmp ASSETS_DIR=data/assets node dist/server.js",
