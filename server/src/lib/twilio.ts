@@ -13,6 +13,10 @@ const MAX_ALLOWED_SESSION_DURATION = 14400;
 export type Identity = string;
 
 export function getToken(identity: string) {
+  // Allow silently failing if Twilio is not set up
+  if (!TWILIO_ACCOUNT_SID || TWILIO_ACCOUNT_SID === "") {
+    return ""
+  }
   // Create an access token which we will sign and return to the client,
   // containing the grant we just created.
   const token = new jwt.AccessToken(
