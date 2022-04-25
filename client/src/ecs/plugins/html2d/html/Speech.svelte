@@ -41,7 +41,7 @@
     border: 2px solid black;
     background: white;
     clear: both;
-    width: 120px;
+    width: 150px;
 
     text-align: center;
 
