@@ -50,6 +50,8 @@ export function copy(clipboardData?: DataTransfer) {
 
       // Let caller preventDefault on event
       return true;
+    } else {
+      console.log("not setting clipboardData");
     }
   } else {
     console.warn("Nothing copied (nothing selected)");

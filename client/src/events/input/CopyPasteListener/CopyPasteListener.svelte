@@ -5,7 +5,8 @@
   import { paste } from "./paste";
 
   function onCopy(event: ClipboardEvent) {
-    if (isInputEvent(event)) return;
+    console.log("onCopy called", event);
+    if (isInputEvent(event, true)) return;
     if ($worldUIMode === "build") {
       if (copy(event.clipboardData)) {
         event.preventDefault();
@@ -13,7 +14,8 @@
     }
   }
   function onPaste(event: ClipboardEvent) {
-    if (isInputEvent(event)) return;
+    console.log("onPaste called", event);
+    if (isInputEvent(event, true)) return;
     if ($worldUIMode === "build") {
       paste(event.clipboardData || (window as any).clipboardData);
     }

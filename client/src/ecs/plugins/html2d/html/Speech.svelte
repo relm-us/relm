@@ -30,7 +30,6 @@
 
 {#if visible}
   <div
-    tabindex="0"
     class="bubble"
     class:right={hanchor === 2}
     class:left={hanchor === 1}
