@@ -7,13 +7,12 @@
   },
 
   "devDependencies": {
-    "concurrently": "^5.3.0",
     "typescript": "^4.1.3"
   },
   "prettier": {
     "quoteProps": "consistent"
   },
   "scripts": {
-    "start": "concurrently 'yarn workspace relm-client start' 'yarn workspace relm-server start'"
+    "start": "pnpm --filter=!relm-common start"
   }
 }
