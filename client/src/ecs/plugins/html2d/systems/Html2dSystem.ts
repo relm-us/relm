@@ -58,18 +58,8 @@ export class Html2dSystem extends System {
 
     // Prepare a container for Svelte
     const container = this.htmlPresentation.createContainer(
-      spec.hanchor,
-      spec.vanchor
+      spec.zoomInvariant ? 2 : 1
     );
-
-    // When hovering over the container and we're zoomed out, we still want
-    // the HTML label (for example) to have plenty of width so it can be read.
-    container.addEventListener("mouseenter", () => {
-      // if (isOverflowing(container)) container.style.minWidth = "300px";
-    });
-    container.addEventListener("mouseleave", () => {
-      container.style.minWidth = "";
-    });
 
     this.htmlPresentation.domElement.appendChild(container);
 
@@ -94,7 +84,7 @@ export class Html2dSystem extends System {
     if (this.presentation.skipUpdate > 0) return;
 
     const transform: Transform = entity.get(Transform);
-    const spec = entity.get(Html2d);
+    const spec: Html2d = entity.get(Html2d);
 
     // calculate left, top
     v1.copy(transform.positionWorld);
@@ -106,13 +96,20 @@ export class Html2dSystem extends System {
     container.style.left = v1.x + "px";
     container.style.top = v1.y + "px";
 
-    if (!spec.zoomInvariant) {
-      this.presentation.camera.getWorldPosition(v1);
-      const distance = v1.distanceTo(transform.positionWorld);
-      for (let child of container.children) {
-        if (child instanceof HTMLElement)
-          child.style.transform = `scale(${(10 * spec.zoomSize) / distance})`;
+    this.presentation.camera.getWorldPosition(v1);
+    const distance = v1.distanceTo(transform.positionWorld);
+    const scale = spec.zoomInvariant ? 1 : (10 * spec.zoomSize) / distance;
+    const x = this.percent(spec.hanchor);
+    const y = this.percent(spec.vanchor);
+    container.style.transform = `translate(-50%,-50%) scale(${scale}) translate(${x},${y})`;
+  }
+
+  percent(enumVal) {
+    // prettier-ignore
+    switch (enumVal) {
+        case 0: return "0%";
+        case 1: return "50%";
+        case 2: return "-50%";
       }
-    }
   }
 }

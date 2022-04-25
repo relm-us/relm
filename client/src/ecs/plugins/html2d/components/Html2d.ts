@@ -9,11 +9,11 @@ import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
 export class Html2d extends Component {
-  kind: string;
+  kind: "INFO" | "LABEL" | "SPEECH" | "EMOJI";
   offset: Vector3;
   width: number;
-  vanchor: number;
-  hanchor: number;
+  vanchor: 0 | 1 | 2;
+  hanchor: 0 | 1 | 2;
   color: string;
   shadowColor: string;
   underlineColor: string;
@@ -22,6 +22,8 @@ export class Html2d extends Component {
   content: string;
   editable: boolean;
   visible: boolean;
+  zoomInvariant: boolean;
+  zoomSize: number;
   onChange: Function;
   onClose: Function;
 

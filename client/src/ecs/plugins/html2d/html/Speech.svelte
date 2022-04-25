@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import IoMdClose from "svelte-icons/io/IoMdClose.svelte";
   import { cleanHtml } from "~/utils/cleanHtml";
 
@@ -9,7 +9,7 @@
 
   function close() {
     visible = false;
-    if (onClose) onClose();
+    onClose?.();
   }
 
   // ignore warning about missing props
@@ -18,7 +18,7 @@
 
 {#if visible}
   <div class="bubble" class:right={hanchor === 2} class:left={hanchor === 1}>
-    {@html cleanHtml(content)}
+    <span>{@html cleanHtml(content)}</span>
     {#if onClose}
       <div class="outline" />
       <button class="close" on:click={close}>
@@ -40,20 +40,26 @@
     border-radius: 10px;
     border: 2px solid black;
     background: white;
-    /* font-family: "Permanent Marker"; */
     clear: both;
-    min-width: 60px;
+    width: 120px;
+
+    text-align: center;
+
+    span {
+      display: inline-block;
+      vertical-align: top;
+      text-align: left;
+    }
 
     &:before {
       content: "";
       position: absolute;
-      bottom: -50px;
+      bottom: -49.5px;
       height: 50px;
       width: 90px;
     }
 
     &.left {
-      float: left;
       margin: 0px 100px 50px 0px;
       &:before {
         border-radius: 0 0 100%;
@@ -65,7 +71,6 @@
       }
     }
     &.right {
-      float: right;
       margin: 0px 0px 50px 100px;
       &:before {
         border-radius: 0 0 0 100%;

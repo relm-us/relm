@@ -58,11 +58,7 @@ export class OculusSystem extends System {
     if (!worldManager.avConnection) return;
 
     // Prepare a container for Svelte
-    const container = this.htmlPresentation.createContainer(
-      spec.hanchor,
-      spec.vanchor,
-      2
-    );
+    const container = this.htmlPresentation.createContainer(3);
     container.style.display = "flex";
     container.style.justifyContent = "center";
     container.style.alignItems = "center";

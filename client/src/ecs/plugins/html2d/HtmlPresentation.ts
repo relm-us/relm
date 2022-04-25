@@ -32,16 +32,7 @@ export class HtmlPresentation {
     position.z = 0;
   }
 
-  percent(enumVal) {
-    // prettier-ignore
-    switch (enumVal) {
-        case 0: return "-50%";
-        case 1: return "0%";
-        case 2: return "-100%";
-      }
-  }
-
-  createContainer(hanchor, vanchor, zIndex = 1) {
+  createContainer(zIndex = 1) {
     const container = document.createElement("div");
 
     // just above the 3d world, but below the editor panel
@@ -50,10 +41,8 @@ export class HtmlPresentation {
     container.style.width = "fit-content";
     // position the element where we need it, "on top of" the 3d world
     container.style.position = "fixed";
-
-    const x = this.percent(hanchor);
-    const y = this.percent(vanchor);
-    container.style.transform = `translate(${x},${y})`;
+    // center the container
+    container.style.transform = `translate(-50%,-50%)`;
 
     return container;
   }
