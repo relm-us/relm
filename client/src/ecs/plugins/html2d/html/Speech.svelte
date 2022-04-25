@@ -1,6 +1,4 @@
 <script>
-  import { fade } from "svelte/transition";
-
   import IoMdClose from "svelte-icons/io/IoMdClose.svelte";
   import { cleanHtml } from "~/utils/cleanHtml";
 
@@ -8,16 +6,6 @@
   export let hanchor;
   export let onClose;
   export let visible;
-
-  let controlsVisible = true;
-
-  function showControls() {
-    controlsVisible = true;
-  }
-
-  function hideControls() {
-    controlsVisible = false;
-  }
 
   function close() {
     visible = false;
@@ -29,20 +17,16 @@
 </script>
 
 {#if visible}
-  <div
-    class="bubble"
-    class:right={hanchor === 2}
-    class:left={hanchor === 1}
-    on:focus={showControls}
-    on:blur={hideControls}
-  >
+  <div class="bubble" class:right={hanchor === 2} class:left={hanchor === 1}>
     {@html cleanHtml(content)}
-    <div class="outline" />
-    <button class="close" on:click={close}>
-      <div>
-        <IoMdClose />
-      </div>
-    </button>
+    {#if onClose}
+      <div class="outline" />
+      <button class="close" on:click={close}>
+        <div>
+          <IoMdClose />
+        </div>
+      </button>
+    {/if}
   </div>
 {/if}
 
