@@ -47,6 +47,15 @@ export class HtmlPresentation {
     return container;
   }
 
+  percent(enumVal) {
+    // prettier-ignore
+    switch (enumVal) {
+        case 0: return "0%";
+        case 1: return "50%";
+        case 2: return "-50%";
+      }
+  }
+
   setViewport(viewport) {
     if (this.viewport === viewport) {
       return;

@@ -99,17 +99,9 @@ export class Html2dSystem extends System {
     this.presentation.camera.getWorldPosition(v1);
     const distance = v1.distanceTo(transform.positionWorld);
     const scale = spec.zoomInvariant ? 1 : (10 * spec.zoomSize) / distance;
-    const x = this.percent(spec.hanchor);
-    const y = this.percent(spec.vanchor);
+    const x = this.htmlPresentation.percent(spec.hanchor);
+    const y = this.htmlPresentation.percent(spec.vanchor);
     container.style.transform = `translate(-50%,-50%) scale(${scale}) translate(${x},${y})`;
   }
 
-  percent(enumVal) {
-    // prettier-ignore
-    switch (enumVal) {
-        case 0: return "0%";
-        case 1: return "50%";
-        case 2: return "-50%";
-      }
-  }
 }

@@ -148,7 +148,7 @@
     border-radius: 100%;
 
     /* Safari needs this in order to clip the video as a circle */
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(-2px, 0, 0);
   }
 
   @keyframes white {
