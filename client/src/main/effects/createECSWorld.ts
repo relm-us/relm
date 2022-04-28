@@ -18,6 +18,7 @@ import BoneTwistPlugin from "~/ecs/plugins/bone-twist";
 import BoundingBoxPlugin from "~/ecs/plugins/bounding-box";
 import ClickablePlugin from "~/ecs/plugins/clickable";
 import ColorationPlugin from "~/ecs/plugins/coloration";
+import ConversationPlugin from "~/ecs/plugins/conversation";
 import Css3DPlugin from "~/ecs/plugins/css3d";
 import DiamondPlugin from "~/ecs/plugins/diamond";
 import DistancePlugin from "~/ecs/plugins/distance";
@@ -75,6 +76,7 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       BoundingBoxPlugin,
       ClickablePlugin,
       ColorationPlugin,
+      ConversationPlugin,
       Css3DPlugin,
       DiamondPlugin,
       DistancePlugin,

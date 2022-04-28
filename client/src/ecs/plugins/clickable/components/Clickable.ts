@@ -1,7 +1,7 @@
 import { Component, StringType, JSONType, NumberType } from "~/ecs/base";
 
 export class Clickable extends Component {
-  action: string;
+  action: "OPEN" | "LINK" | "CHANGES" | "TOGGLE" | "TOGGLE_CONV" | "FLIP";
   link: string;
   cycle: any;
   axis: "X" | "Y" | "Z";
@@ -23,6 +23,7 @@ export class Clickable extends Component {
           { label: "Open URL (new tab)", value: "LINK" },
           { label: "Change Variables", value: "CHANGES" },
           { label: "Toggle Html2d", value: "TOGGLE" },
+          { label: "Toggle Conversation", value: "TOGGLE_CONV" },
           { label: "Flip Over", value: "FLIP" },
         ],
       },

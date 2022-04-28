@@ -36,6 +36,7 @@
   import { debugMode } from "~/stores/debugMode";
   import { centerCameraVisible } from "~/stores/centerCameraVisible";
   import { selectedEntities } from "~/stores/selection";
+  import { showCenterButtons } from "~/stores/showCenterButtons";
 
   export let dispatch;
   export let permits;
@@ -64,7 +65,9 @@
   <CenterCamera />
 {/if}
 
-<MiniMap />
+{#if $showCenterButtons}
+  <MiniMap />
+{/if}
 
 <overlay class:open={buildMode}>
   <overlay-panel class="interactive">
@@ -128,38 +131,40 @@
   </overlay-content>
 </overlay>
 
-<overlay-center>
-  <play-buttons class="interactive">
-    <Tooltip tip={_("Set up video", "set_up_video")} top>
-      <VideoButton enabled={$localIdentityData.showVideo} {dispatch} />
-    </Tooltip>
-    <Tooltip
-      tip={$localIdentityData.showAudio
-        ? _("Mute", "mute")
-        : _("Unmute", "unmute")}
-      top
-    >
-      <MicButton enabled={$localIdentityData.showAudio} />
-    </Tooltip>
-    <Tooltip tip={_("Share screen", "share_screen")} top>
-      <ShareScreenButton />
-    </Tooltip>
+{#if $showCenterButtons}
+  <overlay-center>
+    <play-buttons class="interactive">
+      <Tooltip tip={_("Set up video", "set_up_video")} top>
+        <VideoButton enabled={$localIdentityData.showVideo} {dispatch} />
+      </Tooltip>
+      <Tooltip
+        tip={$localIdentityData.showAudio
+          ? _("Mute", "mute")
+          : _("Unmute", "unmute")}
+        top
+      >
+        <MicButton enabled={$localIdentityData.showAudio} />
+      </Tooltip>
+      <Tooltip tip={_("Share screen", "share_screen")} top>
+        <ShareScreenButton />
+      </Tooltip>
 
-    <div style="width:16px" />
+      <div style="width:16px" />
 
-    <Tooltip
-      tip={$chatOpen
-        ? _("Close chat", "chat_close")
-        : _("Open chat", "chat_open")}
-      top
-    >
-      <ChatButton unread={$unreadCount} />
-    </Tooltip>
-    <Tooltip tip={_("Change how you look", "avatar_setup")} top>
-      <AvatarSetupButton />
-    </Tooltip>
-  </play-buttons>
-</overlay-center>
+      <Tooltip
+        tip={$chatOpen
+          ? _("Close chat", "chat_close")
+          : _("Open chat", "chat_open")}
+        top
+      >
+        <ChatButton unread={$unreadCount} />
+      </Tooltip>
+      <Tooltip tip={_("Change how you look", "avatar_setup")} top>
+        <AvatarSetupButton />
+      </Tooltip>
+    </play-buttons>
+  </overlay-center>
+{/if}
 
 <Chat />
 
