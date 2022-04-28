@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import byteSize from "byte-size";
+  import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
 
   // import Capsule from "~/ui/lib/Capsule";
   import TextInput from "~/ui/lib/TextInput/TextInput.svelte";
@@ -47,6 +48,10 @@
     dispatch("modified");
   }
 
+  function onDeleteAsset() {
+    setAssetUrl("");
+  }
+
   const onInputCancel = (event) => {
     value = initialValue;
   };
@@ -69,11 +74,18 @@
     <TextInput {value} on:change={onInputChange} on:cancel={onInputCancel} />
   </r-text>
 
-  {#if formatSizeInKb(value)}
-    <r-size>
-      Size:
-      <div>{formatSizeInKb(value)}</div>
-    </r-size>
+  {#if value && value !== ""}
+    <r-row>
+      {#if formatSizeInKb(value)}
+        <r-size>
+          Size:
+          <div>{formatSizeInKb(value)}</div>
+        </r-size>
+      {/if}
+      <r-delete on:click={onDeleteAsset}>
+        <icon><IoIosClose /></icon>
+      </r-delete>
+    </r-row>
   {/if}
 
   <r-upload-button>
@@ -92,7 +104,6 @@
   }
   r-size {
     display: flex;
-    margin-top: 8px;
   }
   r-size > div {
     flex-grow: 1;
@@ -103,5 +114,19 @@
     display: flex;
     justify-content: center;
     margin: 12px 0;
+  }
+  r-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+  r-delete:hover {
+    background-color: black;
+    border-radius: 4px;
+  }
+  icon {
+    display: block;
+    width: 20px;
+    height: 20px;
   }
 </style>
