@@ -82,12 +82,12 @@
 {#if visible}
   <Fullwindow zIndex={3} on:click={onClick}>
     <r-conversation bind:this={el} style="transform:translateY({slideY}px)">
-      <r-container>
+      <r-container class:small={width <= 500}>
         {#if width > 500}
           {#if image.url && image.url !== ""}
-            <r-character>
+            <r-image>
               <img src={assetUrl(image.url)} alt="{title} photo" />
-            </r-character>
+            </r-image>
           {/if}
           <r-dialog>
             <r-name>
@@ -103,7 +103,27 @@
             {/if}
           </r-dialog>
         {:else}
-          mobile
+          <!-- mobile -->
+          <r-row>
+            {#if image.url && image.url !== ""}
+              <r-image>
+                <img src={assetUrl(image.url)} alt="{title} photo" />
+              </r-image>
+            {/if}
+            <r-name>
+              {#if title && title !== ""}
+                <span>{title}</span>
+              {/if}
+            </r-name>
+          </r-row>
+          <r-dialog>
+            <r-content>{@html cleanHtml(sections[sectionIndex])}</r-content>
+            {#if sections.length > 1 && sectionIndex < sections.length - 1}
+              <r-more-content>
+                <icon><IoIosArrowDown /></icon>
+              </r-more-content>
+            {/if}
+          </r-dialog>
         {/if}
       </r-container>
     </r-conversation>
@@ -126,9 +146,37 @@
     display: flex;
     margin: 20px;
   }
-  r-character {
-    width: 150px;
+
+  /* Mobile (small screen) is stacked as a column */
+  r-container.small {
+    flex-direction: column;
+  }
+  r-container.small r-image {
+    margin-top: -40px;
+  }
+  r-container.small img {
+    width: 80px;
+    height: 80px;
+  }
+  r-container.small r-name {
+    margin-left: 15px;
+  }
+  r-container.small r-dialog {
+    margin-left: unset;
+  }
+
+  r-image {
     margin-top: -75px;
+  }
+  r-image img {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+  }
+  r-row {
+    display: flex;
+    margin-top: -40px;
+    margin-bottom: 40px;
   }
   r-dialog {
     display: flex;
@@ -163,9 +211,5 @@
     display: block;
     width: 24px;
     height: 24px;
-  }
-  img {
-    width: 150px;
-    object-fit: contain;
   }
 </style>
