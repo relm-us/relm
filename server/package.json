@@ -3,15 +3,12 @@
   "version": "1.0.0",
   "author": "Duane Johnson",
   "license": "GPL-3.0-only",
-
   "type": "module",
   "exports": "./server.js",
-
   "engines": {
     "node": "^14.13.1 || >=16.0.0",
     "pnpm": ">=6"
   },
-
   "files": [
     "dist/**/*",
     "src/**/*",
@@ -20,7 +17,6 @@
     ".env.example",
     "tsconfig.json"
   ],
-
   "scripts": {
     "test": "cross-env NODE_ENV=test DATABASE_NAME=relm-test jest src/**/*.test.ts",
     "start": "tsc && cross-env TMP_DIR=data/tmp ASSETS_DIR=data/assets node dist/server.js",
@@ -42,6 +38,8 @@
     "http-errors": "^1.8.0",
     "is": "^3.3.0",
     "level": "^6.0.1",
+    "lib0": "^0.2.42",
+    "lodash.debounce": "^4.0.8",
     "md5-file": "^5.0.0",
     "moment": "^2.27.0",
     "multer": "^1.4.2",
@@ -56,6 +54,7 @@
     "twilio": "^3.71.2",
     "uuidv4": "^6.2.13",
     "ws": "^7.2.3",
+    "y-leveldb": "^0.1.0",
     "y-protocols": "1.0.5",
     "y-websocket": "canadaduane/y-websocket#async-bind-state",
     "yjs": "13.5.27"
@@ -69,6 +68,7 @@
     "@types/sharp": "^0.28.0",
     "@types/ws": "^7.4.1",
     "cross-env": "^7.0.2",
+    "estrace": "^4.0.0",
     "jest": "27.5.1",
     "supertest": "6.2.2",
     "ts-jest": "27.1.4",

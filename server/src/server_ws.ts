@@ -1,6 +1,6 @@
 import WebSocket from "ws";
 import { createServer } from "http";
-import * as yws from "y-websocket/bin/utils";
+import * as yws from './yws_utils.js'
 
 import { app } from "./server_http.js";
 import { Player, Permission, Doc } from "./db/index.js";
