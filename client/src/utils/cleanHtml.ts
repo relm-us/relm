@@ -16,11 +16,12 @@ const defaultOptions = {
   allowedAttributes: {
     a: ["href", "name", "target"],
     img: ["src"],
+    div: ["style"]
   },
   // Lots of these won't come up by default because we don't allow them
   selfClosing: ["img", "br", "hr", "area"],
   // URL schemes we permit
-  allowedSchemes: ["http", "https", "ftp", "mailto", "tel"],
+  allowedSchemes: ["http", "https", "mailto", "tel"],
   allowedSchemesByTag: { img: ["http", "https", "data"] },
   allowedSchemesAppliedToAttributes: ["href", "src", "cite"],
   allowProtocolRelative: true,

@@ -54,6 +54,7 @@ importers:
       postcss-loader: ^3.0.0
       postprocessing: 6.23.5
       protoo-client: ^4.0.6
+      quill: ^1.3.7
       real-cancellable-promise: ^1.1.1
       redux: ^4.0.5
       redux-thunk: ^2.3.0
@@ -90,6 +91,7 @@ importers:
       webpack-cli: ^3.3.12
       webpack-dev-server: ^3.11.0
       y-indexeddb: 9.0.7
+      y-quill: ^0.1.4
       y-websocket: canadaduane/y-websocket#async-bind-state
       yjs: 13.5.27
     dependencies:
@@ -114,6 +116,7 @@ importers:
       nanoid: 3.3.4
       postprocessing: 6.23.5_three@0.131.3
       protoo-client: 4.0.6
+      quill: 1.3.7
       real-cancellable-promise: 1.1.1
       redux: 4.2.0
       redux-thunk: 2.4.1_redux@4.2.0
@@ -134,6 +137,7 @@ importers:
       twilio-video: 2.20.1
       video-mirror: 4.5.0
       y-indexeddb: 9.0.7_yjs@13.5.27
+      y-quill: 0.1.4_quill@1.3.7+yjs@13.5.27
       y-websocket: github.com/canadaduane/y-websocket/de54818d86dbcb22b1e71c93775f9dc1c33e1b7e_yjs@13.5.27
       yjs: 13.5.27
     devDependencies:
@@ -5888,7 +5892,6 @@ packages:
       object-is: 1.1.5
       object-keys: 1.1.1
       regexp.prototype.flags: 1.4.3
-    dev: true
 
   /deep-extend/0.6.0:
     resolution: {integrity: sha512-LOHxIOaPYdHlJRtCQfDIVZtfw/ufM8+rVj649RIHzcm/vGwQRXFt6OPqIFWsm2XEMrNIEtWR64sY1LEKD2vAOA==}
@@ -6507,6 +6510,10 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
+  /eventemitter3/2.0.3:
+    resolution: {integrity: sha1-teEHm1n7XhuidxwKmTvgYKWMmbo=}
+    dev: false
+
   /eventemitter3/4.0.7:
     resolution: {integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==}
 
@@ -6703,7 +6710,6 @@ packages:
 
   /extend/3.0.2:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
-    dev: true
 
   /extglob/2.0.4:
     resolution: {integrity: sha512-Nmb6QXkELsuBr24CJSkilo6UHHgbekK5UiZgfE6UHD3Eb27YC6oD+bhcT+tJ6cl8dmsgdQxnWlcry8ksBIBLpw==}
@@ -6748,6 +6754,10 @@ packages:
   /fast-deep-equal/3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
     dev: true
+
+  /fast-diff/1.1.2:
+    resolution: {integrity: sha512-KaJUt+M9t1qaIteSvjc6P3RbMdXsNhK61GRftR6SNxqmhthcd9MGIi4T+o0jD8LUSpSnSKXE20nLtJ3fOHxQig==}
+    dev: false
 
   /fast-glob/3.2.11:
     resolution: {integrity: sha512-xrO3+1bxSo3ZVHAnqzyuewYT6aMFHRAd4Kcs92MAonjwQZLsK9d0SF1IyQ3k5PoirxTW0Oe/RqFgMQ6TcNE5Ew==}
@@ -6974,6 +6984,19 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
+    dev: false
+
+  /follow-redirects/1.14.9_debug@4.3.4:
+    resolution: {integrity: sha512-MQDfihBQYMcyy5dhRDJUHcw7lb2Pv/TuE6xP1vyraLukNDHKbDxDNaOE3NbCAdKQApno+GPRyo1YAp89yCjK4w==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dependencies:
+      debug: 4.3.4_supports-color@6.1.0
+    dev: true
 
   /for-in/1.0.2:
     resolution: {integrity: sha1-gQaNKVqBQuwKxybG4iAMMPttXoA=}
@@ -7095,7 +7118,6 @@ packages:
 
   /functions-have-names/1.2.3:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
-    dev: true
 
   /gauge/2.7.4:
     resolution: {integrity: sha1-LANAXHU4w51+s3sxcCLjJfsBi/c=}
@@ -7582,7 +7604,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.14.9
+      follow-redirects: 1.14.9_debug@4.3.4
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -7836,7 +7858,6 @@ packages:
     dependencies:
       call-bind: 1.0.2
       has-tostringtag: 1.0.0
-    dev: true
 
   /is-array-of-length/1.1.0:
     resolution: {integrity: sha512-s4srcJzEuKAJqWZUZL0bLRfFSZy6pQMkky/7HCtADhVuAT5im1RApMRHgiRmNApR3CdrpR061odhPh9a4uxQGw==}
@@ -10342,7 +10363,6 @@ packages:
     dependencies:
       call-bind: 1.0.2
       define-properties: 1.1.3
-    dev: true
 
   /object-keys/1.1.1:
     resolution: {integrity: sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==}
@@ -10576,6 +10596,10 @@ packages:
       dot-case: 3.0.4
       tslib: 2.3.1
     dev: true
+
+  /parchment/1.1.4:
+    resolution: {integrity: sha512-J5FBQt/pM2inLzg4hEWmzQx/8h8D0CiDxaG3vyp9rKrQRSDgBlhjdP5jQGgosEajXPSQouXGHOmVdgo7QmJuOg==}
+    dev: false
 
   /parent-module/1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
@@ -11780,6 +11804,26 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /quill-delta/3.6.3:
+    resolution: {integrity: sha512-wdIGBlcX13tCHOXGMVnnTVFtGRLoP0imqxM696fIPwIf5ODIYUHIvHbZcyvGlZFiFhK5XzDC2lpjbxRhnM05Tg==}
+    engines: {node: '>=0.10'}
+    dependencies:
+      deep-equal: 1.1.1
+      extend: 3.0.2
+      fast-diff: 1.1.2
+    dev: false
+
+  /quill/1.3.7:
+    resolution: {integrity: sha512-hG/DVzh/TiknWtE6QmWAF/pxoZKYxfe3J/d/+ShUWkDvvkZQVTPeVmUJVu1uE6DDooC4fWTiCLh84ul89oNz5g==}
+    dependencies:
+      clone: 2.1.2
+      deep-equal: 1.1.1
+      eventemitter3: 2.0.3
+      extend: 3.0.2
+      parchment: 1.1.4
+      quill-delta: 3.6.3
+    dev: false
+
   /raj/1.0.0:
     resolution: {integrity: sha512-knaaqTd7wHdiFtLrbIWNYK0Hpv+RzMdNrhndWMZdqO4LbWDmdipas6/o/PpAEODCNBpWiRdDuiPplTFguC0itQ==}
     dev: false
@@ -11957,7 +12001,6 @@ packages:
       call-bind: 1.0.2
       define-properties: 1.1.3
       functions-have-names: 1.2.3
-    dev: true
 
   /regexpu-core/5.0.1:
     resolution: {integrity: sha512-CriEZlrKK9VJw/xQGJpQM5rY88BtuL8DM+AEwvcThHilbxiTAy8vq4iJnd2tqq8wLmjbGZzP7ZcKFjbGkmEFrw==}
@@ -14908,6 +14951,18 @@ packages:
     resolution: {integrity: sha512-Wil92b7cGk712lRHDqS4T90IczF6RkcvCwAD0A2OPg+adKmOe+nOiT/N2hvpQIWS3zfjmtL4CPaH5sIW1Hkm/A==}
     dependencies:
       lib0: 0.2.49
+    dev: false
+
+  /y-quill/0.1.4_quill@1.3.7+yjs@13.5.27:
+    resolution: {integrity: sha512-z4wCVgF5SUDkr+I8NRtcjU0AE4Ne0JCHzs9LpWrFdx+fvTk0Jtia/weEJjLlJHPZ0Ub7HMe5Bvia7UONsb4ZaQ==}
+    peerDependencies:
+      quill: ^1.3.7
+      yjs: ^13.0.0
+    dependencies:
+      lib0: 0.2.49
+      quill: 1.3.7
+      y-protocols: 1.0.5
+      yjs: 13.5.27
     dev: false
 
   /y18n/4.0.3:

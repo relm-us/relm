@@ -1,19 +1,14 @@
-import { Object3D, Vector3, Quaternion } from "three";
-
 import { System, Groups, Not, Modified } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer";
 
 import { isBrowser } from "~/utils/isBrowser";
 
-import { Renderable, RenderableRef, CssPlane } from "../components";
+import { Renderable, RenderableRef, Document, CssPlane } from "../components";
 
 import { getRenderableComponentByType } from "../renderables";
 import { Queries } from "~/ecs/base/Query";
 import { CssPresentation } from "../CssPresentation";
-
-const _v1 = new Vector3();
-const _q1 = new Quaternion();
 
 export class RenderableSystem extends System {
   cssPresentation: CssPresentation;
@@ -85,10 +80,18 @@ export class RenderableSystem extends System {
     const css3d = new CSS3DObject(containerElement);
 
     // Create whatever Svelte component is specified by the type
-    const RenderableComponent = getRenderableComponentByType(spec.kind);
+    const isDocument = entity.has(Document);
+    const RenderableComponent = getRenderableComponentByType(
+      isDocument ? "DOCUMENT" : spec.kind
+    );
     css3d.userData.renderable = new RenderableComponent({
       target: containerElement,
-      props: { ...spec, width: screenSize.x, height: screenSize.y, entity },
+      props: {
+        ...(isDocument ? entity.get(Document) : spec),
+        width: screenSize.x,
+        height: screenSize.y,
+        entity,
+      },
     });
 
     this.copyTransform(css3d, transform, spec.scale);
