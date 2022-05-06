@@ -40,7 +40,7 @@
       modules: {
         // cursors: true,
         toolbar: [
-          [{ header: [1, 2, false] }],
+          [{ header: [1, 2, false] }, { align: ["", "center", "right"] }],
           ["bold", "italic", "underline", "strike"],
           ["image", "blockquote", "code-block"],
           [{ color: colors }, { background: colors }],
@@ -75,5 +75,6 @@
   r-document {
     display: block;
     background-color: white;
+    height: 100%;
   }
 </style>
