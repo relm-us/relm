@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { Entity } from "~/ecs/base";
   import { worldUIMode } from "~/stores/worldUIMode";
   import { config } from "~/config";
 
@@ -128,7 +127,6 @@
     align-items: center;
 
     color: black;
-    box-shadow: inset 0px 0px 0px 6px #000000;
 
     pointer-events: auto;
   }

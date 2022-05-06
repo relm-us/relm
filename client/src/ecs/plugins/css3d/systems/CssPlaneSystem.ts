@@ -4,8 +4,11 @@ import {
   CircleGeometry,
   MeshBasicMaterial,
   Mesh,
+  Shape,
+  ShapeGeometry,
   NoBlending,
   DoubleSide,
+  MathUtils,
 } from "three";
 
 import { System, Not, Modified, Groups } from "~/ecs/base";
@@ -47,14 +50,27 @@ export class CssPlaneSystem extends System {
     const object3d: Object3D = entity.get(Object3DRef).value;
 
     let geometry;
+    const size = plane.rectangleSize;
+    const radius = plane.circleRadius;
     switch (plane.kind) {
       case "RECTANGLE":
-        const size = plane.rectangleSize;
         geometry = new PlaneGeometry(size.x, size.y);
         break;
+      case "ROUNDED":
+        const shape = new Shape();
+        // prettier-ignore
+        roundedRect(shape,
+          -size.x / 2, -size.y / 2,
+          size.x, size.y,
+          radius
+        );
+        geometry = new ShapeGeometry(shape);
+        break;
       case "CIRCLE":
-        const radius = plane.circleRadius;
-        geometry = new CircleGeometry(radius, 32);
+        geometry = new CircleGeometry(
+          radius,
+          MathUtils.clamp(Math.floor(radius * 12), 24, 72)
+        );
         break;
       default:
         throw new Error(`CssPlaneSystem: invalid plane.kind ${plane.kind}`);
@@ -92,4 +108,16 @@ export class CssPlaneSystem extends System {
     // Notify dependencies, e.g. BoundingBox, that object3d has changed
     object3dref.modified();
   }
+}
+
+function roundedRect(ctx, x, y, width, height, radius) {
+  ctx.moveTo(x, y + radius);
+  ctx.lineTo(x, y + height - radius);
+  ctx.quadraticCurveTo(x, y + height, x + radius, y + height);
+  ctx.lineTo(x + width - radius, y + height);
+  ctx.quadraticCurveTo(x + width, y + height, x + width, y + height - radius);
+  ctx.lineTo(x + width, y + radius);
+  ctx.quadraticCurveTo(x + width, y, x + width - radius, y);
+  ctx.lineTo(x + radius, y);
+  ctx.quadraticCurveTo(x, y, x, y + radius);
 }
