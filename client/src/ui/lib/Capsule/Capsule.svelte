@@ -67,7 +67,7 @@
         />
       {/if}
     {:else if value !== undefined}
-      <span class="value-text">{value}{suffix}</span>
+      <span class="value-text" tabindex="0">{value}{suffix}</span>
     {/if}
   </value>
 </capsule>
