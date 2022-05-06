@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "b921f2ac-e1e4-4619-baa6-a2a894b763b4",
+		"_postman_id": "11b5364a-0518-40e7-87c0-7b1f0745db18",
 		"name": "Relm Server",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -763,6 +763,45 @@
 					"response": []
 				},
 				{
+					"name": "Edit Relm",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"actions\": [\n        {\n          \"type\": \"setProperty\",\n          \"entity\": \"Stq3SsT0TnkzAbhALNM47\",\n          \"component\": \"Transform\",\n          \"property\": \"position\",\n          \"value\": [ 0, 0.6, -2.7 ]\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/relm/default/edit",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"default",
+								"edit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get All Variables",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -916,7 +955,10 @@
 					"name": "Get Website Screenshot",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				}

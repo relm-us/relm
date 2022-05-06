@@ -45,7 +45,7 @@ relm.post(
         if (!seedRelm) {
           throw Error(
             `relm can't be created because ` +
-            `seedRelmId '${seedRelmId}' doesn't exist`
+              `seedRelmId '${seedRelmId}' doesn't exist`
           );
         }
       } else if (seedRelmName) {
@@ -53,7 +53,7 @@ relm.post(
         if (!seedRelm) {
           throw Error(
             `relm can't be created because ` +
-            `seed relm named '${seedRelmName}' doesn't exist`
+              `seed relm named '${seedRelmName}' doesn't exist`
           );
         }
         seedRelmId = seedRelm.relmId;
@@ -88,18 +88,18 @@ relm.post(
         if (seedRelmName) {
           console.log(
             `Cloned new relm '${req.relmName}' from '${seedRelmName}' ` +
-            `('${seedDocId}') (creator: '${req.authenticatedPlayerId}')`
+              `('${seedDocId}') (creator: '${req.authenticatedPlayerId}')`
           );
         } else {
           console.log(
             `Cloned new relm '${req.relmName}' from '${seedDocId}' ` +
-            `(creator: '${req.authenticatedPlayerId}')`
+              `(creator: '${req.authenticatedPlayerId}')`
           );
         }
       } else {
         console.log(
           `Created relm '${req.relmName}' ` +
-          `(creator: '${req.authenticatedPlayerId}')`
+            `(creator: '${req.authenticatedPlayerId}')`
         );
       }
 
@@ -273,6 +273,29 @@ relm.get(
 );
 
 relm.post(
+  "/edit",
+  cors(),
+  middleware.relmExists(),
+  middleware.authenticated(),
+  middleware.acceptToken(),
+  middleware.acceptJwt(),
+  middleware.authorized("edit"),
+  wrapAsync(async (req, res) => {
+    const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
+
+    const actions = req.body.actions;
+
+    const errors = applyActions(doc, actions);
+
+    if (errors.length === 0) {
+      return respondWithSuccess(res, { action: "edit" });
+    } else {
+      return respondWithError(res, "applyActions had errors", errors);
+    }
+  })
+);
+
+relm.post(
   "/variables",
   cors(),
   middleware.relmExists(),
@@ -376,7 +399,7 @@ async function setVariable(doc, variables, relmId, name, value) {
     // TODO: figure out why actions are sometimes not available by now??
     console.warn(
       `Unable to load possible actions for relm ${relmId};` +
-      ` not setting variable ${name}`
+        ` not setting variable ${name}`
     );
     return;
   }
@@ -394,14 +417,16 @@ async function setVariable(doc, variables, relmId, name, value) {
 }
 
 function applyActions(doc: Y.Doc, actions: Action[]) {
+  const errors = [];
   for (let { type, entity, component, property, value } of actions || []) {
     switch (type) {
       case "setProperty": {
-        setProperty(doc, entity, component, property, value);
+        errors.push(...setProperty(doc, entity, component, property, value));
         break;
       }
     }
   }
+  return errors;
 }
 
 function setProperty(
@@ -411,6 +436,13 @@ function setProperty(
   propertyName: string,
   value: any
 ) {
+  const errors = [];
+
+  const errorNotify = (msg) => {
+    console.log(msg);
+    errors.push(msg);
+  };
+
   const entities = doc.getArray("entities") as YEntities;
   const entity = findInYArray(
     entities,
@@ -427,16 +459,15 @@ function setProperty(
         const values = component.get("values") as YValues;
         values.set(propertyName, value);
       } else {
-        console.log(
-          "setProperty: component not found",
-          entityId,
-          componentName
+        errorNotify(
+          `setProperty: component not found ${entityId}, '${componentName}'`
         );
       }
     } else {
-      console.log("setProperty: components not found", entityId);
+      errorNotify(`setProperty: components not found ${entityId}`);
     }
   } else {
-    console.log("setProperty: entity not found", entityId);
+    errorNotify(`setProperty: entity not found ${entityId}`);
   }
+  return errors;
 }
