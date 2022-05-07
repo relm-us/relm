@@ -13,7 +13,7 @@
   export let editable: boolean;
   export let visible: boolean;
 
-  let container;
+  let editor, container, toolbar, bounds;
 
   // prettier-ignore
   const colors = [
@@ -27,18 +27,14 @@
   ];
 
   onMount(() => {
-    var editor = new Quill(container, {
+    editor = new Quill(container, {
       modules: {
         // cursors: true,
-        toolbar: [
-          [{ header: [1, 2, false] }, { align: ["", "center", "right"] }],
-          ["bold", "italic", "underline", "strike"],
-          ["image", "blockquote", "code-block"],
-          [{ color: colors }, { background: colors }],
-        ],
+        toolbar,
       },
       placeholder: "Start collaborating...",
       theme: "snow", // or 'bubble'
+      bounds,
     });
 
     const interval = setInterval(() => {
@@ -59,7 +55,46 @@
 </script>
 
 <r-document data-pointer-interact="1">
+  <div id="toolbar" bind:this={toolbar}>
+    <div class="ql-formats">
+      <select class="ql-header">
+        <option value="1" />
+        <option value="2" />
+        <!-- Note a missing, thus falsy value, is used to reset to default -->
+        <option selected />
+      </select>
+      <select class="ql-align">
+        <option value="" />
+        <option value="center" />
+        <option value="right" />
+      </select>
+      <button class="ql-link" />
+    </div>
+    <div class="ql-formats">
+      <button class="ql-bold" />
+      <button class="ql-italic" />
+      <button class="ql-underline" />
+      <button class="ql-strike" />
+    </div>
+    <div class="ql-formats">
+      <button class="ql-image" />
+      <button class="ql-blockquote" />
+    </div>
+    <div class="ql-formats">
+      <select class="ql-color">
+        {#each colors as color}
+          <option value={color} />
+        {/each}
+      </select>
+      <select class="ql-background">
+        {#each colors as color}
+          <option value={color} />
+        {/each}
+      </select>
+    </div>
+  </div>
   <div bind:this={container} />
+  <div bind:this={bounds} class="bounds" />
 </r-document>
 
 <style>
@@ -71,5 +106,11 @@
 
   r-document :global(.ql-editor) {
     height: calc(100% - 30px);
+  }
+
+  .bounds {
+    position: absolute;
+    left: 75px;
+    right: 0px;
   }
 </style>
