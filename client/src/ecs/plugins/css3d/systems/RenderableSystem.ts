@@ -23,6 +23,7 @@ export class RenderableSystem extends System {
   static queries: Queries = {
     added: [Renderable, Not(RenderableRef)],
     modified: [Modified(Renderable), RenderableRef],
+    modifiedDocument: [Modified(Document), RenderableRef],
     modifiedCssPlane: [Modified(CssPlane), RenderableRef],
     active: [Renderable, RenderableRef, Object3DRef],
     removed: [Not(Renderable), RenderableRef],
@@ -43,6 +44,10 @@ export class RenderableSystem extends System {
     this.queries.modified.forEach((entity) => {
       this.remove(entity);
       this.build(entity);
+    });
+
+    this.queries.modifiedDocument.forEach((entity) => {
+      this.modifyDocument(entity);
     });
 
     this.queries.modifiedCssPlane.forEach((entity) => {
@@ -90,6 +95,7 @@ export class RenderableSystem extends System {
         ...(isDocument ? entity.get(Document) : spec),
         width: screenSize.x,
         height: screenSize.y,
+        visible: spec.visible,
         entity,
       },
     });
@@ -110,6 +116,23 @@ export class RenderableSystem extends System {
     }
 
     entity.remove(RenderableRef);
+  }
+
+  modifyDocument(entity) {
+    const spec: Renderable = entity.get(Renderable);
+    const cssPlane: CssPlane = entity.get(CssPlane);
+    const screenSize = cssPlane.getScreenSize(spec.scale);
+    const props = {
+      ...entity.get(Document),
+      width: screenSize.x,
+      height: screenSize.y,
+      entity,
+    };
+    const css3d = entity.get(RenderableRef).value;
+    if (css3d) {
+      const component = css3d.userData.renderable;
+      component?.$set(props);
+    }
   }
 
   copyTransform(css3d: CSS3DObject, transform: Transform, scale) {

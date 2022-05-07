@@ -4,9 +4,7 @@ export class Document extends Component {
   docId: string;
   bgColor: string;
   borderColor: string;
-  scale: number;
   editable: boolean;
-  visible: boolean;
 
   static props = {
     docId: {
@@ -35,27 +33,11 @@ export class Document extends Component {
       },
     },
 
-    scale: {
-      type: NumberType,
-      default: 0.005,
-      editor: {
-        label: "Scale",
-      },
-    },
-
     editable: {
       type: BooleanType,
       default: false,
       editor: {
         label: "Editable",
-      },
-    },
-
-    visible: {
-      type: BooleanType,
-      default: true,
-      editor: {
-        label: "Visible",
       },
     },
   };

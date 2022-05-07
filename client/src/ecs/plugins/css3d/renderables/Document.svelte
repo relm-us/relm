@@ -2,14 +2,14 @@
   import { onMount } from "svelte";
   import { QuillBinding } from "y-quill";
   import Quill from "quill";
+
   import { worldManager } from "~/world";
+  import { worldUIMode } from "~/stores/worldUIMode";
   // import QuillCursors from "quill-cursors";
 
   // Quill.register("modules/cursors", QuillCursors);
 
   export let docId: string;
-  export let width: number;
-  export let height: number;
   export let editable: boolean;
   export let visible: boolean;
 
@@ -26,6 +26,10 @@
     "#696daa","#906aa1","#d8bbcd","#c9ceec","#4f3b47",
   ];
 
+  $: if (editor) {
+    editor.enable(editable);
+  }
+
   onMount(() => {
     editor = new Quill(container, {
       modules: {
@@ -36,6 +40,8 @@
       theme: "snow", // or 'bubble'
       bounds,
     });
+
+    editor.enable(editable);
 
     const interval = setInterval(() => {
       if (worldManager.worldDoc) {
@@ -51,10 +57,14 @@
     return () => clearInterval(interval);
   });
 
+  // ignore warning about missing props
   $$props;
 </script>
 
-<r-document data-pointer-interact="1">
+<r-document
+  data-pointer-interact={$worldUIMode === "play" ? "1" : undefined}
+  class:visible={visible || $worldUIMode === "build"}
+>
   <div id="toolbar" bind:this={toolbar}>
     <div class="ql-formats">
       <select class="ql-header">
@@ -95,13 +105,19 @@
   </div>
   <div bind:this={container} />
   <div bind:this={bounds} class="bounds" />
+  {#if $worldUIMode === "build"}
+    <r-overlay />
+  {/if}
 </r-document>
 
 <style>
   r-document {
-    display: block;
+    display: none;
     background-color: white;
     height: 100%;
+  }
+  r-document.visible {
+    display: block;
   }
 
   r-document :global(.ql-editor) {
@@ -112,5 +128,19 @@
     position: absolute;
     left: 75px;
     right: 0px;
+  }
+
+  r-overlay {
+    position: absolute;
+    z-index: 2;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+
+    opacity: 0.5;
+    background-color: white;
   }
 </style>
