@@ -1,5 +1,6 @@
 import { get } from "svelte/store";
 import { uploadingDialogOpen } from "~/stores/uploadingDialogOpen";
+import { hasPointerInteractAncestor } from "~/utils/hasAncestor";
 
 function showIsInput(msg, target) {
   (window as any).debugTarget = target;
@@ -13,36 +14,42 @@ export function isInputEvent(event, debug = false) {
     return true;
   }
 
-  if (!event.target || !event.target.getAttribute) {
-    if (debug)
-      console.log("isInputEvent false (event has no target)", event.target);
+  const el = event.target as HTMLElement;
+
+  if (!el || !el.getAttribute) {
+    if (debug) console.log("isInputEvent false (event has no target)", el);
     return false;
   } else {
     let value = false;
     // Regular text inputs and textareas should be able to use copy paste, arrow keys
     // (INPUT, TEXTAREA, IFRAME)
-    if (event.target.tagName === "INPUT") {
-      if (debug) showIsInput("INPUT", event.target);
+    if (el.tagName === "INPUT") {
+      if (debug) showIsInput("INPUT", el);
       value = true;
     }
-    if (event.target.tagName === "TEXTAREA") {
-      if (debug) showIsInput("TEXTAREA", event.target);
+    if (el.tagName === "TEXTAREA") {
+      if (debug) showIsInput("TEXTAREA", el);
       value = true;
     }
-    if (event.target.tagName === "IFRAME") {
-      if (debug) showIsInput("IFRAME", event.target);
+    if (el.tagName === "IFRAME") {
+      if (debug) showIsInput("IFRAME", el);
       value = true;
     }
 
     // We can make divs editable, and they should be able to copy/paste, etc.
-    if (event.target.getAttribute("contenteditable") == "true") {
-      if (debug) showIsInput("ContentEditable", event.target);
+    if (el.getAttribute("contenteditable") == "true") {
+      if (debug) showIsInput("ContentEditable", el);
       value = true;
     }
 
     // We can make divs receive focus, and they, too, should be able to copy/paste etc.
-    if (event.target.getAttribute("tabindex") !== null) {
-      if (debug) showIsInput("TabIndex", event.target);
+    if (el.getAttribute("tabindex") !== null) {
+      if (debug) showIsInput("TabIndex", el);
+      value = true;
+    }
+
+    if (hasPointerInteractAncestor(el)) {
+      if (debug) showIsInput("data-pointer-interact", el);
       value = true;
     }
 

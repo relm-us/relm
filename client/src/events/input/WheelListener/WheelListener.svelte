@@ -1,7 +1,7 @@
 <script lang="ts">
   import { MathUtils } from "three";
   import { get } from "svelte/store";
-  import { hasAncestor } from "~/utils/hasAncestor";
+  import { hasAncestor, hasPointerInteractAncestor } from "~/utils/hasAncestor";
 
   import { viewportScale } from "~/stores/viewportScale";
 
@@ -12,7 +12,11 @@
   let scale = get(viewportScale);
 
   function onWheel(event: WheelEvent) {
-    if (hasAncestor(event.target as HTMLElement, world.presentation.viewport)) {
+    const el = event.target as HTMLElement;
+    if (
+      hasAncestor(el, world.presentation.viewport) &&
+      !hasPointerInteractAncestor(el)
+    ) {
       const wheelStep = MathUtils.clamp(event.deltaY, -15, 15);
       scale = MathUtils.clamp(
         scale + wheelStep,
