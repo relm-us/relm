@@ -5,7 +5,7 @@ const ResizeObserver = (window as any).ResizeObserver;
 
 export class CssPresentation {
   // Work around a bug in some browsers
-  FACTOR = 100;
+  static FACTOR = 100;
 
   world: any;
   renderer: any;
@@ -63,7 +63,7 @@ export class CssPresentation {
     if (!camera) return;
 
     this.camera.quaternion.copy(camera.quaternion);
-    this.camera.position.copy(camera.position).multiplyScalar(this.FACTOR);
+    this.camera.position.copy(camera.position).multiplyScalar(CssPresentation.FACTOR);
   }
 
   render() {
@@ -87,8 +87,8 @@ export class CssPresentation {
     return new PerspectiveCamera(
       fov,
       aspect,
-      near * this.FACTOR,
-      far * this.FACTOR
+      near * CssPresentation.FACTOR,
+      far * CssPresentation.FACTOR
     );
   }
 }

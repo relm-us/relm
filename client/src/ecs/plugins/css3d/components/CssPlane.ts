@@ -1,11 +1,16 @@
-import { Component, StringType, NumberType } from "~/ecs/base";
-import { Vector2Type } from "~/ecs/plugins/core";
 import { Vector2 } from "three";
+
+import { Component, StringType, NumberType, BooleanType } from "~/ecs/base";
+import { Vector2Type } from "~/ecs/plugins/core";
+
+const SCALE_DIVISOR = 200;
 
 export class CssPlane extends Component {
   kind: string;
   rectangleSize: Vector2;
   circleRadius: number;
+  scale: number;
+  visible: boolean;
 
   static props = {
     kind: {
@@ -45,6 +50,22 @@ export class CssPlane extends Component {
         ],
       },
     },
+
+    scale: {
+      type: NumberType,
+      default: 1.0,
+      editor: {
+        label: "Scale",
+      },
+    },
+
+    visible: {
+      type: BooleanType,
+      default: true,
+      editor: {
+        label: "Visible",
+      },
+    },
   };
 
   static editor = {
@@ -63,12 +84,26 @@ export class CssPlane extends Component {
     }
   }
 
-  getScreenSize(scale: number) {
+  getFracScale() {
+    return this.scale / SCALE_DIVISOR
+  }
+
+  getScreenSize(scale = this.getFracScale()) {
     const size = this.getSize();
     // Adding 2 pixels to width and height makes antialiasing smoother
     // because the size is "just larger" than the hole we poke through
     // the canvas3d; thus, we get a single antialiasing line rather than
     // two competing antialiasing lines
     return new Vector2(size.x / scale + 2, size.y / scale + 2);
+  }
+
+  createComponentContainer() {
+    const screenSize = this.getScreenSize();
+
+    const containerElement = document.createElement("div");
+    containerElement.style.width = screenSize.x + "px";
+    containerElement.style.height = screenSize.y + "px";
+
+    return containerElement;
   }
 }

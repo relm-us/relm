@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Color } from "three";
   import { onMount } from "svelte";
   import { QuillBinding } from "y-quill";
   import Quill from "quill";
@@ -13,6 +14,7 @@
   // Quill.register("modules/cursors", QuillCursors);
 
   export let docId: string;
+  export let bgColor: string;
   export let editable: boolean;
   export let visible: boolean;
 
@@ -60,6 +62,9 @@
     return () => clearInterval(interval);
   });
 
+  let bgColorDark;
+  $: bgColorDark = "#" + new Color(bgColor).multiplyScalar(0.8).getHexString();
+
   // ignore warning about missing props
   $$props;
 </script>
@@ -67,6 +72,7 @@
 <r-document
   data-pointer-interact={$worldUIMode === "play" ? "1" : undefined}
   class:visible={visible || $worldUIMode === "build"}
+  style="--bg-color: {bgColor}; --bg-color-dark: {bgColorDark}"
 >
   <div id="toolbar" bind:this={toolbar}>
     <div class="ql-formats">
@@ -105,6 +111,9 @@
         {/each}
       </select>
     </div>
+    <div class="ql-formats">
+      <button class="ql-clean" />
+    </div>
   </div>
   <div bind:this={container} />
   <div bind:this={bounds} class="bounds" />
@@ -117,13 +126,16 @@
   r-document {
     display: none;
     flex-direction: column;
-    background-color: white;
+    background-color: var(--bg-color, white);
     height: 100%;
   }
   r-document.visible {
     display: flex;
   }
 
+  r-document :global(.ql-toolbar) {
+    border-color: var(--bg-color-dark, #ccc) !important;
+  }
   r-document :global(.ql-editor) {
     padding: 12px 15px 4px 15px;
   }

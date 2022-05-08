@@ -17,18 +17,9 @@ export class Document extends Component {
 
     bgColor: {
       type: StringType,
-      default: "#fbfbfb",
+      default: "#ffffff",
       editor: {
         label: "Background Color",
-        input: "Color",
-      },
-    },
-
-    borderColor: {
-      type: StringType,
-      default: "#8b8b8b",
-      editor: {
-        label: "Border Color",
         input: "Color",
       },
     },

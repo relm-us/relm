@@ -1,19 +1,17 @@
-import { System, Groups, Not, Modified } from "~/ecs/base";
-import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer";
 
-import { isBrowser } from "~/utils/isBrowser";
+import { System, Groups, Not, Modified } from "~/ecs/base";
+import { Object3DRef, Transform } from "~/ecs/plugins/core";
+import { Queries } from "~/ecs/base/Query";
 
 import { Renderable, RenderableRef, Document, CssPlane } from "../components";
-
 import { getRenderableComponentByType } from "../renderables";
-import { Queries } from "~/ecs/base/Query";
 import { CssPresentation } from "../CssPresentation";
+import { copyTransform } from "./copyTransform";
 
 export class RenderableSystem extends System {
   cssPresentation: CssPresentation;
 
-  active = isBrowser();
   // This needs to be after WorldTransformationSystem, so that the CSS
   // is updated with the latest world coords as soon as possible after
   // having computed them during WebGL render. It must be immediately
@@ -60,8 +58,12 @@ export class RenderableSystem extends System {
 
       const spec = entity.get(Renderable);
       const css3d = entity.get(RenderableRef)?.value;
+      const cssPlane: CssPlane = entity.get(CssPlane);
 
-      this.copyTransform(css3d, transform, spec.scale);
+      // TODO: remove deprecated spec.scale
+      const scale = cssPlane.scale ?? spec.scale;
+
+      copyTransform(css3d, transform, scale);
     });
 
     this.queries.removed.forEach((entity) => {
@@ -76,7 +78,13 @@ export class RenderableSystem extends System {
 
     if (!transform || !cssPlane) return;
 
-    const screenSize = cssPlane.getScreenSize(spec.scale);
+    // TODO: remove deprecated spec.scale
+    const scale = spec.scale;
+
+    // TODO: remove deprecated spec.visible
+    const visible = spec.visible;
+
+    const screenSize = cssPlane.getScreenSize(scale);
 
     // Prepare a container for Svelte
     const containerElement = document.createElement("div");
@@ -95,12 +103,12 @@ export class RenderableSystem extends System {
         ...(isDocument ? entity.get(Document) : spec),
         width: screenSize.x,
         height: screenSize.y,
-        visible: spec.visible,
+        visible,
         entity,
       },
     });
 
-    this.copyTransform(css3d, transform, spec.scale);
+    copyTransform(css3d, transform, scale);
 
     this.cssPresentation.scene.add(css3d);
 
@@ -121,11 +129,19 @@ export class RenderableSystem extends System {
   modifyDocument(entity) {
     const spec: Renderable = entity.get(Renderable);
     const cssPlane: CssPlane = entity.get(CssPlane);
-    const screenSize = cssPlane.getScreenSize(spec.scale);
+
+    // TODO: remove deprecated spec.scale
+    const scale = cssPlane.scale ?? spec.scale;
+
+    // TODO: remove deprecated spec.visible
+    const visible = cssPlane.visible ?? spec.visible;
+
+    const screenSize = cssPlane.getScreenSize(scale);
     const props = {
       ...entity.get(Document),
       width: screenSize.x,
       height: screenSize.y,
+      visible,
       entity,
     };
     const css3d = entity.get(RenderableRef).value;
@@ -133,24 +149,5 @@ export class RenderableSystem extends System {
       const component = css3d.userData.renderable;
       component?.$set(props);
     }
-  }
-
-  copyTransform(css3d: CSS3DObject, transform: Transform, scale) {
-    if (!css3d) {
-      console.warn(`Can't copyTransform, css3d is null`, css3d);
-      return;
-    }
-
-    css3d.position
-      .copy(transform.positionWorld)
-      .multiplyScalar(this.cssPresentation.FACTOR);
-
-    css3d.quaternion.copy(transform.rotationWorld);
-
-    css3d.scale
-      .copy(transform.scaleWorld)
-      .multiplyScalar(this.cssPresentation.FACTOR * scale);
-
-    css3d.updateMatrix();
   }
 }
