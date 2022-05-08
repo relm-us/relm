@@ -3,9 +3,12 @@
   import { QuillBinding } from "y-quill";
   import Quill from "quill";
 
+  // TODO: Can we find away around this transform issue? https://github.com/reedsy/quill-cursors/issues/59
+  //       Possibly need to walk ancestors and "untransform"? http://jsfiddle.net/YLCd8/2/
+  // import QuillCursors from "quill-cursors";
+
   import { worldManager } from "~/world";
   import { worldUIMode } from "~/stores/worldUIMode";
-  // import QuillCursors from "quill-cursors";
 
   // Quill.register("modules/cursors", QuillCursors);
 
@@ -45,10 +48,10 @@
 
     const interval = setInterval(() => {
       if (worldManager.worldDoc) {
-        const type = worldManager.worldDoc.ydoc.getText(docId);
-        const binding = new QuillBinding(
-          type,
-          editor /*, provider.awareness */
+        new QuillBinding(
+          worldManager.worldDoc.ydoc.getText(docId),
+          editor,
+          worldManager.worldDoc.provider.awareness
         );
         clearInterval(interval);
       }
@@ -113,15 +116,16 @@
 <style>
   r-document {
     display: none;
+    flex-direction: column;
     background-color: white;
     height: 100%;
   }
   r-document.visible {
-    display: block;
+    display: flex;
   }
 
   r-document :global(.ql-editor) {
-    height: calc(100% - 30px);
+    padding: 12px 15px 4px 15px;
   }
 
   .bounds {
