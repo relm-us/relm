@@ -13,6 +13,20 @@
 
   // Quill.register("modules/cursors", QuillCursors);
 
+  let Font = Quill.import("formats/font");
+  // We do not add Sans Serif since it is the default
+  Font.whitelist = ["quicksand", "garamond", "oswald", "squarepeg"];
+  Quill.register(Font, true);
+
+  // prettier-ignore
+  const fontSizeArr = [
+    "12px", "16px", "20px", "24px", "32px",
+    "48px", "80px", "100px", "150px"
+  ];
+  var Size = Quill.import("attributors/style/size");
+  Size.whitelist = fontSizeArr;
+  Quill.register(Size, true);
+
   export let docId: string;
   export let bgColor: string;
   export let editable: boolean;
@@ -74,31 +88,35 @@
   class:visible={visible || $worldUIMode === "build"}
   style="--bg-color: {bgColor}; --bg-color-dark: {bgColorDark}"
 >
-  <div id="toolbar" bind:this={toolbar}>
+  <div class="toolbar" bind:this={toolbar}>
     <div class="ql-formats">
-      <select class="ql-header">
-        <option value="1" />
-        <option value="2" />
-        <!-- Note a missing, thus falsy value, is used to reset to default -->
-        <option selected />
+      <button class="ql-bold" />
+      <button class="ql-italic" />
+      <button class="ql-underline" />
+    </div>
+
+    <div class="ql-formats">
+      <select class="ql-font">
+        <option selected value="">Sans Serif</option>
+        <option value="quicksand">Quicksand</option>
+        <option value="garamond">Garamond</option>
+        <option value="oswald">Oswald</option>
+        <option value="squarepeg">Square Peg</option>
       </select>
+
+      <select class="ql-size">
+        {#each fontSizeArr as size}
+          <option value={size}>{size.replace("px", "")}</option>
+        {/each}
+      </select>
+
       <select class="ql-align">
         <option value="" />
         <option value="center" />
         <option value="right" />
       </select>
-      <button class="ql-link" />
     </div>
-    <div class="ql-formats">
-      <button class="ql-bold" />
-      <button class="ql-italic" />
-      <button class="ql-underline" />
-      <button class="ql-strike" />
-    </div>
-    <div class="ql-formats">
-      <button class="ql-image" />
-      <button class="ql-blockquote" />
-    </div>
+
     <div class="ql-formats">
       <select class="ql-color">
         {#each colors as color}
@@ -112,6 +130,12 @@
       </select>
     </div>
     <div class="ql-formats">
+      <button class="ql-link" />
+      <button class="ql-image" />
+    </div>
+    <div class="ql-formats">
+      <button class="ql-strike" />
+      <button class="ql-blockquote" />
       <button class="ql-clean" />
     </div>
   </div>
@@ -121,6 +145,11 @@
     <r-overlay />
   {/if}
 </r-document>
+
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css?family=Quicksand|Cormorant+Garamond|Oswald|Square+Peg"
+/>
 
 <style>
   r-document {
@@ -158,5 +187,39 @@
 
     opacity: 0.5;
     background-color: white;
+  }
+
+  .toolbar {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .toolbar :global(.ql-formats) {
+    display: flex;
+  }
+
+  .toolbar :global(.ql-font span[data-label="Sans Serif"]::before) {
+    font-family: Helvetica, Arial, sans-serif;
+  }
+
+  .toolbar :global(.ql-font span[data-label="Quicksand"]::before),
+  :global(.ql-font-quicksand) {
+    font-family: "Quicksand";
+  }
+
+  .toolbar :global(.ql-font span[data-label="Garamond"]::before),
+  :global(.ql-font-garamond) {
+    font-family: "Cormorant Garamond";
+  }
+
+  .toolbar :global(.ql-font span[data-label="Oswald"]::before),
+  :global(.ql-font-oswald) {
+    font-family: "Oswald";
+  }
+
+  .toolbar :global(.ql-font span[data-label="Square Peg"]::before),
+  :global(.ql-font-squarepeg) {
+    font-family: "Square Peg";
   }
 </style>

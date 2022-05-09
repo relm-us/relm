@@ -408,8 +408,8 @@
   display: inline-block;
   float: left;
   height: 24px;
-  padding: 3px 5px;
-  width: 28px;
+  padding: 2px 3px;
+  width: 24px;
 }
 .ql-snow.ql-toolbar button svg,
 .ql-snow .ql-toolbar button svg {
@@ -812,7 +812,7 @@
   font-family: Monaco, Courier New, monospace;
 }
 .ql-snow .ql-picker.ql-size {
-  width: 98px;
+  width: 56px;
 }
 .ql-snow .ql-picker.ql-size .ql-picker-label::before,
 .ql-snow .ql-picker.ql-size .ql-picker-item::before {
