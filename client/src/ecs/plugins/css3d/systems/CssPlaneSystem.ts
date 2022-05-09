@@ -86,6 +86,7 @@ export class CssPlaneSystem extends System {
     const mesh = new Mesh(geometry, material);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
+    mesh.position.copy(plane.offset);
 
     object3d.add(mesh);
 

@@ -1,7 +1,7 @@
-import { Vector2 } from "three";
+import { Vector2, Vector3 } from "three";
 
 import { Component, StringType, NumberType, BooleanType } from "~/ecs/base";
-import { Vector2Type } from "~/ecs/plugins/core";
+import { Vector2Type, Vector3Type } from "~/ecs/plugins/core";
 
 const SCALE_DIVISOR = 200;
 
@@ -9,6 +9,7 @@ export class CssPlane extends Component {
   kind: string;
   rectangleSize: Vector2;
   circleRadius: number;
+  offset: Vector3;
   scale: number;
   visible: boolean;
 
@@ -51,6 +52,14 @@ export class CssPlane extends Component {
       },
     },
 
+    offset: {
+      type: Vector3Type,
+      default: new Vector3(),
+      editor: {
+        label: "Position Offset",
+      },
+    },
+
     scale: {
       type: NumberType,
       default: 1.0,
@@ -85,16 +94,16 @@ export class CssPlane extends Component {
   }
 
   getFracScale() {
-    return this.scale / SCALE_DIVISOR
+    return this.scale / SCALE_DIVISOR;
   }
 
   getScreenSize(scale = this.getFracScale()) {
     const size = this.getSize();
-    // Adding 2 pixels to width and height makes antialiasing smoother
+    // Adding 4 pixels to width and height makes antialiasing smoother
     // because the size is "just larger" than the hole we poke through
     // the canvas3d; thus, we get a single antialiasing line rather than
     // two competing antialiasing lines
-    return new Vector2(size.x / scale + 2, size.y / scale + 2);
+    return new Vector2(size.x / scale + 4, size.y / scale + 4);
   }
 
   createComponentContainer() {

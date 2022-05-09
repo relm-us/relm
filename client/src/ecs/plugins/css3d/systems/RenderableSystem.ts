@@ -1,3 +1,4 @@
+import { Vector3 } from "three";
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer";
 
 import { System, Groups, Not, Modified } from "~/ecs/base";
@@ -8,6 +9,8 @@ import { Renderable, RenderableRef, Document, CssPlane } from "../components";
 import { getRenderableComponentByType } from "../renderables";
 import { CssPresentation } from "../CssPresentation";
 import { copyTransform } from "./copyTransform";
+
+const zeroOffset = new Vector3();
 
 export class RenderableSystem extends System {
   cssPresentation: CssPresentation;
@@ -63,7 +66,7 @@ export class RenderableSystem extends System {
       // TODO: remove deprecated spec.scale
       const scale = cssPlane.scale ?? spec.scale;
 
-      copyTransform(css3d, transform, scale);
+      copyTransform(css3d, transform, scale, zeroOffset);
     });
 
     this.queries.removed.forEach((entity) => {
@@ -78,37 +81,26 @@ export class RenderableSystem extends System {
 
     if (!transform || !cssPlane) return;
 
-    // TODO: remove deprecated spec.scale
-    const scale = spec.scale;
-
-    // TODO: remove deprecated spec.visible
-    const visible = spec.visible;
-
-    const screenSize = cssPlane.getScreenSize(scale);
+    const screenSize = cssPlane.getScreenSize(spec.scale);
 
     // Prepare a container for Svelte
-    const containerElement = document.createElement("div");
-    containerElement.style.width = screenSize.x + "px";
-    containerElement.style.height = screenSize.y + "px";
+    const containerElement = cssPlane.createComponentContainer();
     const css3d = new CSS3DObject(containerElement);
 
     // Create whatever Svelte component is specified by the type
-    const isDocument = entity.has(Document);
-    const RenderableComponent = getRenderableComponentByType(
-      isDocument ? "DOCUMENT" : spec.kind
-    );
+    const RenderableComponent = getRenderableComponentByType(spec.kind);
     css3d.userData.renderable = new RenderableComponent({
       target: containerElement,
       props: {
-        ...(isDocument ? entity.get(Document) : spec),
+        ...(spec as any),
         width: screenSize.x,
         height: screenSize.y,
-        visible,
+        visible: spec.visible,
         entity,
       },
     });
 
-    copyTransform(css3d, transform, scale);
+    copyTransform(css3d, transform, spec.scale, zeroOffset);
 
     this.cssPresentation.scene.add(css3d);
 
