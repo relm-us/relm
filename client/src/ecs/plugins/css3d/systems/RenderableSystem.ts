@@ -63,10 +63,7 @@ export class RenderableSystem extends System {
       const css3d = entity.get(RenderableRef)?.value;
       const cssPlane: CssPlane = entity.get(CssPlane);
 
-      // TODO: remove deprecated spec.scale
-      const scale = cssPlane.scale ?? spec.scale;
-
-      copyTransform(css3d, transform, scale, zeroOffset);
+      copyTransform(css3d, transform, spec.scale, zeroOffset);
     });
 
     this.queries.removed.forEach((entity) => {
@@ -122,18 +119,12 @@ export class RenderableSystem extends System {
     const spec: Renderable = entity.get(Renderable);
     const cssPlane: CssPlane = entity.get(CssPlane);
 
-    // TODO: remove deprecated spec.scale
-    const scale = cssPlane.scale ?? spec.scale;
-
-    // TODO: remove deprecated spec.visible
-    const visible = cssPlane.visible ?? spec.visible;
-
-    const screenSize = cssPlane.getScreenSize(scale);
+    const screenSize = cssPlane.getScreenSize(spec.scale);
     const props = {
       ...entity.get(Document),
       width: screenSize.x,
       height: screenSize.y,
-      visible,
+      visible: spec.visible,
       entity,
     };
     const css3d = entity.get(RenderableRef).value;
