@@ -1,8 +1,12 @@
-import { Vector3 } from "three";
+import { Matrix4, Vector3, Quaternion } from "three";
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer";
 
 import { Transform } from "~/ecs/plugins/core";
 import { CssPresentation } from "../CssPresentation";
+
+const _pos = new Vector3();
+const _rot = new Quaternion();
+const _sca = new Vector3();
 
 export function copyTransform(
   css3d: CSS3DObject,
@@ -15,16 +19,17 @@ export function copyTransform(
     return;
   }
 
-  css3d.position
-    .copy(transform.positionWorld)
-    .add(offset)
-    .multiplyScalar(CssPresentation.FACTOR);
+  // TODO: Why must the FACTOR be multiplied by 2 here?
+  _pos.copy(offset).multiplyScalar(CssPresentation.FACTOR * 2);
+  const offsetMatrix = new Matrix4().setPosition(_pos);
 
-  css3d.quaternion.copy(transform.rotationWorld);
-
-  css3d.scale
+  const primaryMatrix = new Matrix4();
+  _pos.copy(transform.positionWorld).multiplyScalar(CssPresentation.FACTOR);
+  _sca
     .copy(transform.scaleWorld)
     .multiplyScalar(CssPresentation.FACTOR * scale);
 
-  css3d.updateMatrix();
+  primaryMatrix.compose(_pos, transform.rotationWorld, _sca);
+  primaryMatrix.multiply(offsetMatrix);
+  primaryMatrix.decompose(css3d.position, css3d.quaternion, css3d.scale);
 }
