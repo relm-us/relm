@@ -941,6 +941,3 @@
 .ql-snow a {
   color: var(--selected-red, #06c);
 }
-.ql-container.ql-snow {
-  border: 1px solid #ccc;
-}

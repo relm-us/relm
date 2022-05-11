@@ -42,7 +42,7 @@ export class RenderableBaseSystem extends System {
     // Create whatever Svelte component is specified by the type
     css3d.userData.renderable = new this.RenderableComponent({
       target: containerElement,
-      props: { ...spec, visible: cssPlane.visible },
+      props: this.getProps(entity),
     });
 
     copyTransform(css3d, transform, cssPlane.getFracScale(), cssPlane.offset);
@@ -53,13 +53,13 @@ export class RenderableBaseSystem extends System {
   }
 
   modify(entity) {
-    const spec: Document = entity.get(Document);
+    const spec: any = entity.get(this.EcsComponent);
     const cssPlane: CssPlane = entity.get(CssPlane);
 
     const css3d = entity.get(this.EcsComponentRef).value;
     if (css3d) {
       const component = css3d.userData.renderable;
-      component?.$set({ ...spec, visible: cssPlane.visible });
+      component?.$set(this.getProps(entity));
     }
   }
 
@@ -86,5 +86,12 @@ export class RenderableBaseSystem extends System {
     }
 
     entity.remove(this.EcsComponentRef);
+  }
+
+  getProps(entity) {
+    const spec: any = entity.get(this.EcsComponent);
+    const cssPlane: CssPlane = entity.get(CssPlane);
+    const size = cssPlane.getScreenSize();
+    return { ...spec, size, visible: cssPlane.visible };
   }
 }

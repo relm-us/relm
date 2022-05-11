@@ -11,7 +11,8 @@
   let identity: IdentityData;
 
   // Poll for participant data
-  // TODO: Make a more elegant way to send the fact that participant data is ready
+  // TODO: Make a more elegant way to send the fact that participant 
+  //       data is ready. Perhaps use worldManager.afterInit(fn)?
   onMount(() => {
     let interval = setInterval(() => {
       const participants = worldManager.participants.participants;

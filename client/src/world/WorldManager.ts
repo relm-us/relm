@@ -120,6 +120,8 @@ export class WorldManager {
   started: boolean = false;
 
   unsubs: Function[] = [];
+  afterInitFns: Function[] = [];
+  didInit: boolean = false;
 
   async init(
     dispatch: Dispatch,
@@ -327,6 +329,10 @@ export class WorldManager {
     this.world.presentation.compile();
 
     this.start();
+
+    this.afterInitFns.forEach((fn) => fn());
+    this.afterInitFns.length = 0;
+    this.didInit = true;
   }
 
   async deinit() {
@@ -357,6 +363,13 @@ export class WorldManager {
     this.avConnection = null;
     this.camera = null;
     this.participants = null;
+
+    this.didInit = false;
+  }
+
+  afterInit(fn: Function) {
+    if (this.didInit) fn();
+    else this.afterInitFns.push(fn);
   }
 
   enableNonInteractiveGround(enabled = true) {
