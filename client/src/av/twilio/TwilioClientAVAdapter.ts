@@ -27,8 +27,8 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
       // https://www.twilio.com/console/video/configure
       bandwidthProfile: {
         video: {
-          dominantSpeakerPriority: "high",
           mode: "collaboration",
+          dominantSpeakerPriority: "high",
           clientTrackSwitchOffControl: "auto",
           contentPreferencesMode: "auto",
         },
@@ -46,14 +46,11 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
       // to adapt your encoded video quality for each RemoteParticipant based on
       // their individual bandwidth constraints. This has no utility if you are
       // using Peer-to-Peer Rooms, so you can comment this line.
-      preferredVideoCodecs: [{ codec: "VP8", simulcast: true }],
+      preferredVideoCodecs: "auto",
 
       // We'll add audio and video tracks manually from local(*)TrackStore
       audio: false,
       video: false,
-
-      // Capture 720p video @ 24 fps.
-      // video: { deviceId: get(), height: 720, frameRate: 24, width: 1280 },
     };
     if (isMobile) {
       options.bandwidthProfile.video.maxSubscriptionBitrate = 250000;
