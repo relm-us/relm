@@ -8,7 +8,7 @@
   import { assetUrl } from "~/config/assetUrl";
   import { showCenterButtons } from "~/stores/showCenterButtons";
 
-  import Fullwindow from "./Fullwindow.svelte";
+  import Fullwindow from "~/ui/lib/Fullwindow.svelte";
 
   export let title;
   export let image;

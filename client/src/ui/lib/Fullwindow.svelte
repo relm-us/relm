@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { slide } from "svelte/transition";
   import { onMount } from "svelte";
 
   export let zIndex = 100;
