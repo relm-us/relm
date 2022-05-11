@@ -193,7 +193,12 @@ export class Presentation {
   }
 
   loadGltf(url) {
-    return gltfLoader.load(url);
+    try {
+      return gltfLoader.load(url);
+    } catch (err) {
+      console.error("Error while loading GLB/GLTF", url);
+      throw err;
+    }
   }
 
   async loadTexture(url: string): Promise<Texture> {
