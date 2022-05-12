@@ -1,7 +1,6 @@
 <script lang="ts">
   import { fontSizes, fontColors } from "./quillInit";
 
-  export let editor;
   export let toolbar;
 </script>
 
@@ -77,14 +76,6 @@
     top: 10px;
     left: 15px;
     right: 15px;
-/* 
-    transition-property: "top";
-    transition-duration: 0.3s;
-    transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); */
-  }
-
-  r-toolbar-wrapper.active {
-    top: 10px;
   }
 
   .toolbar {
@@ -104,23 +95,19 @@
     font-family: Helvetica, Arial, sans-serif;
   }
 
-  .toolbar :global(.ql-font span[data-label="Quicksand"]::before),
-  :global(.ql-font-quicksand) {
+  .toolbar :global(.ql-font span[data-label="Quicksand"]::before) {
     font-family: "Quicksand";
   }
 
-  .toolbar :global(.ql-font span[data-label="Garamond"]::before),
-  :global(.ql-font-garamond) {
+  .toolbar :global(.ql-font span[data-label="Garamond"]::before) {
     font-family: "Cormorant Garamond";
   }
 
-  .toolbar :global(.ql-font span[data-label="Oswald"]::before),
-  :global(.ql-font-oswald) {
+  .toolbar :global(.ql-font span[data-label="Oswald"]::before) {
     font-family: "Oswald";
   }
 
-  .toolbar :global(.ql-font span[data-label="Square Peg"]::before),
-  :global(.ql-font-squarepeg) {
+  .toolbar :global(.ql-font span[data-label="Square Peg"]::before) {
     font-family: "Square Peg";
   }
 </style>

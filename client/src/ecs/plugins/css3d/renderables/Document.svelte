@@ -14,7 +14,8 @@
   export let visible: boolean;
   export let size: Vector2;
 
-  let editor, toolbar;
+  let editor = null;
+  let toolbar = null;
   let bigscreen = false;
 
   $: if (editor) editor.enable(editable && bigscreen);
