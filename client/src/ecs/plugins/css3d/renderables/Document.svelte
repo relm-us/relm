@@ -1,11 +1,13 @@
 <script lang="ts">
   import { Vector2 } from "three";
-  import { worldUIMode } from "~/stores/worldUIMode";
-  import QuillOverlay from "./QuillOverlay.svelte";
+  import { slide } from "svelte/transition";
 
-  import QuillPage from "./QuillPage.svelte";
+  import { worldUIMode } from "~/stores/worldUIMode";
   import Fullwindow from "~/ui/lib/Fullwindow.svelte";
   import { hasAncestor } from "~/utils/hasAncestor";
+
+  import QuillOverlay from "./QuillOverlay.svelte";
+  import QuillPage from "./QuillPage.svelte";
 
   export let docId: string;
   export let bgColor: string;
@@ -44,6 +46,7 @@
   <Fullwindow on:click={onClick}>
     <r-centered>
       <r-page-margin
+        transition:slide
         bind:this={pageEl}
         style="--x:{size.x}px;--y:{size.y}px;--radius:{radius * 150}px"
         class:rounded={kind === "ROUNDED"}
@@ -85,6 +88,7 @@
     display: block;
     width: var(--x);
     height: var(--y);
+    box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.5);
   }
 
   .rounded {

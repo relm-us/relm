@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Color } from "three";
   import { onMount } from "svelte";
+  import { fly } from "svelte/transition";
 
   import { quillBind, quillInit } from "./quillInit";
   import QuillToolbar from "./QuillToolbar.svelte";
@@ -31,7 +32,7 @@
 </script>
 
 {#if editor && showToolbar}
-  <r-toolbar-wrapper>
+  <r-toolbar-wrapper transition:fly={{ y: -50 }}>
     <QuillToolbar bind:toolbar />
   </r-toolbar-wrapper>
 {/if}
