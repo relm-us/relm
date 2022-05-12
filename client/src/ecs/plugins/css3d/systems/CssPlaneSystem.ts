@@ -13,6 +13,7 @@ import {
 
 import { System, Not, Modified, Groups } from "~/ecs/base";
 import { Object3DRef } from "~/ecs/plugins/core";
+import { worldUIMode } from "~/stores";
 
 import { isBrowser } from "~/utils/isBrowser";
 import { CssPlane, CssShapeMesh } from "../components";
@@ -81,12 +82,20 @@ export class CssPlaneSystem extends System {
       opacity: 0,
       blending: NoBlending,
       side: DoubleSide,
+      visible: plane.visible,
     });
 
     const mesh = new Mesh(geometry, material);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     mesh.position.copy(plane.offset);
+    mesh.userData.cssPlaneUnsub = worldUIMode.subscribe(($mode) => {
+      if ($mode === "build") {
+        material.visible = true;
+      } else {
+        material.visible = plane.visible;
+      }
+    });
 
     object3d.add(mesh);
 
@@ -99,6 +108,8 @@ export class CssPlaneSystem extends System {
   remove(entity) {
     const object3dref = entity.get(Object3DRef);
     const mesh = entity.get(CssShapeMesh).value;
+
+    mesh.userData.cssPlaneUnsub?.();
 
     mesh.geometry.dispose();
     mesh.material.dispose();

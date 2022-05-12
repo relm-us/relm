@@ -60,13 +60,15 @@
   </Fullwindow>
 {/if}
 
-<QuillPage {docId} {bgColor} bind:editor readOnly={true} showToolbar={false}>
-  {#if $worldUIMode === "play"}
-    <QuillOverlay cloudy={false} on:click={activate} />
-  {:else if $worldUIMode === "build"}
-    <QuillOverlay cloudy={true} />
-  {/if}
-</QuillPage>
+{#if visible}
+  <QuillPage {docId} {bgColor} bind:editor readOnly={true} showToolbar={false}>
+    {#if $worldUIMode === "play"}
+      <QuillOverlay cloudy={false} on:click={activate} />
+    {:else if $worldUIMode === "build"}
+      <QuillOverlay cloudy={true} />
+    {/if}
+  </QuillPage>
+{/if}
 
 <style>
   r-centered {
