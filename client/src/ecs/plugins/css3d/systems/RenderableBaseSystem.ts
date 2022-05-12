@@ -92,6 +92,12 @@ export class RenderableBaseSystem extends System {
     const spec: any = entity.get(this.EcsComponent);
     const cssPlane: CssPlane = entity.get(CssPlane);
     const size = cssPlane.getScreenSize();
-    return { ...spec, size, visible: cssPlane.visible };
+    return {
+      ...spec,
+      size,
+      kind: cssPlane.kind,
+      radius: cssPlane.circleRadius,
+      visible: cssPlane.visible,
+    };
   }
 }

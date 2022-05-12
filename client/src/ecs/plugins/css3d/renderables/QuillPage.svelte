@@ -31,7 +31,9 @@
 </script>
 
 {#if editor && showToolbar}
-  <QuillToolbar bind:toolbar />
+  <r-toolbar-wrapper>
+    <QuillToolbar bind:toolbar />
+  </r-toolbar-wrapper>
 {/if}
 
 <r-document-wrapper
@@ -61,6 +63,18 @@
   }
   r-document-wrapper :global(.ql-editor) {
     padding: 12px 15px 4px 15px;
+  }
+
+  r-toolbar-wrapper {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 3;
+    top: 10px;
+    left: 15px;
+    right: 15px;
   }
 
   :global(.ql-font-quicksand) {

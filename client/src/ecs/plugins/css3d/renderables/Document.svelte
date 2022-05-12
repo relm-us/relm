@@ -5,13 +5,14 @@
 
   import QuillPage from "./QuillPage.svelte";
   import Fullwindow from "~/ui/lib/Fullwindow.svelte";
-  import RatioContainer from "./RatioContainer.svelte";
   import { hasAncestor } from "~/utils/hasAncestor";
 
   export let docId: string;
   export let bgColor: string;
   export let editable: boolean;
   export let visible: boolean;
+  export let kind: string;
+  export let radius: number;
   export let size: Vector2;
 
   let editor = null;
@@ -40,9 +41,12 @@
 
 {#if bigscreen}
   <Fullwindow on:click={onClick}>
-    <r-info>{size.x / size.y}</r-info>
-    <RatioContainer ratio={size.x / size.y}>
-      <r-page-margin>
+    <r-centered>
+      <r-page-margin
+        style="--x:{size.x}px;--y:{size.y}px;--radius:{radius * 150}px"
+        class:rounded={kind === "ROUNDED"}
+        class:circle={kind === "CIRCLE"}
+      >
         <QuillPage
           {docId}
           {bgColor}
@@ -52,7 +56,7 @@
           showToolbar={editable}
         />
       </r-page-margin>
-    </RatioContainer>
+    </r-centered>
   </Fullwindow>
 {/if}
 
@@ -65,20 +69,27 @@
 </QuillPage>
 
 <style>
-  r-info {
-    display: block;
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    font-weight: bold;
+  r-centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 12px;
   }
 
   r-page-margin {
     display: block;
-    position: absolute;
-    top: 60px;
-    left: 32px;
-    right: 32px;
-    bottom: 32px;
+    width: var(--x);
+    height: var(--y);
+  }
+
+  .rounded {
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .circle {
+    border-radius: 100%;
+    overflow: hidden;
   }
 </style>
