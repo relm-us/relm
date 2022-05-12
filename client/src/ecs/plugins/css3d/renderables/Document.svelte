@@ -17,6 +17,7 @@
 
   let editor = null;
   let toolbar = null;
+  let pageEl = null;
   let bigscreen = false;
 
   $: if (editor) editor.enable(editable && bigscreen);
@@ -26,10 +27,10 @@
 
   function onClick(event) {
     if (
-      hasAncestor(event.target, editor.root) ||
+      hasAncestor(event.target, pageEl) ||
       hasAncestor(event.target, toolbar)
     ) {
-      console.log("editor clicked");
+      editor.focus();
     } else {
       deactivate();
     }
@@ -43,6 +44,7 @@
   <Fullwindow on:click={onClick}>
     <r-centered>
       <r-page-margin
+        bind:this={pageEl}
         style="--x:{size.x}px;--y:{size.y}px;--radius:{radius * 150}px"
         class:rounded={kind === "ROUNDED"}
         class:circle={kind === "CIRCLE"}
