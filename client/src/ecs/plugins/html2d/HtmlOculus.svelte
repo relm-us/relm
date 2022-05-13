@@ -98,21 +98,13 @@
     <oculus class="round" on:click={enterFullscreen}>
       {#if fullscreen}
         <Fullscreen on:close={exitFullscreen}>
-          <Video track={$videoStore} mirror={false} class="oculus-video" />
+          <Video track={$videoStore} mirror={false} />
           <picture-in-picture>
-            <Video
-              track={$localVideoStore}
-              mirror={true}
-              class="oculus-video"
-            />
+            <Video track={$localVideoStore} mirror={true} />
           </picture-in-picture>
-        </Fullscreen>
+        </Fullscreen>setInterval
       {:else}
-        <Video
-          track={$videoStore}
-          mirror={isLocal && !isLocalSharing}
-          class="oculus-video"
-        />
+        <Video track={$videoStore} mirror={isLocal && !isLocalSharing} />
       {/if}
     </oculus>
   </container>
@@ -122,7 +114,7 @@
   <Audio track={$audioStore} {volume} />
 {/if}
 
-<style lang="scss">
+<style>
   container {
     display: block;
     position: relative;
@@ -130,9 +122,7 @@
     height: var(--oculus-size, 100%);
     pointer-events: auto;
   }
-  :global(.oculus-video) {
-    filter: brightness(1.2) saturate(1.1);
-  }
+
   oculus {
     display: flex;
     justify-content: center;
