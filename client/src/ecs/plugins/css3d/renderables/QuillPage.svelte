@@ -78,6 +78,10 @@
     right: 15px;
   }
 
+  :global(.ql-cursor-name) {
+    margin-top: 6px !important;
+  }
+
   :global(.ql-font-quicksand) {
     font-family: "Quicksand";
   }
