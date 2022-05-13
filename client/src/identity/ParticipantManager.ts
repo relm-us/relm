@@ -64,6 +64,16 @@ export class ParticipantManager {
     if (animationData.clipIndex !== currClipIndex) {
       this.broker.setField("a", animationData);
     }
+
+    const currName = this.broker.getField("user")?.name;
+    const { name, color } = this.local.identityData;
+    if (name !== currName) {
+      // Set quill cursor name and color
+      this.broker.setField("user", {
+        name,
+        color,
+      });
+    }
   }
 
   applyOthersState(world: DecoratedECSWorld, provider: WebsocketProvider) {

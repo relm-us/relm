@@ -1,4 +1,5 @@
 import Quill from "quill";
+import QuillCursors from "quill-cursors";
 import { QuillBinding } from "y-quill";
 
 import { worldManager } from "~/world";
@@ -20,11 +21,7 @@ export const fontColors = [
   "#696daa","#906aa1","#d8bbcd","#c9ceec","#4f3b47",
 ];
 
-// TODO: Can we find a way around this transform issue? https://github.com/reedsy/quill-cursors/issues/59
-//       Possibly need to walk ancestors and "untransform"? http://jsfiddle.net/YLCd8/2/
-// import QuillCursors from "quill-cursors";
-
-// Quill.register("modules/cursors", QuillCursors);
+Quill.register("modules/cursors", QuillCursors);
 
 // Allowed fonts. We do not add "Sans Serif" since it is the default.
 let Font = Quill.import("formats/font");
@@ -36,15 +33,19 @@ var Size = Quill.import("attributors/style/size");
 Size.whitelist = fontSizes;
 Quill.register(Size, true);
 
-export function quillInit(container, toolbar, readOnly = false) {
+export function quillInit(
+  container,
+  toolbar,
+  { cursors = true, readOnly = false }
+) {
   const editor = new Quill(container, {
     modules: {
-      // cursors: true,
+      cursors,
       toolbar,
     },
     placeholder: "Start collaborating...",
     theme: "snow", // or 'bubble'
-    readOnly
+    readOnly,
   });
 
   return editor;
@@ -55,10 +56,11 @@ export function quillBind(docId, editor) {
   let binding;
 
   worldManager.afterInit(() => {
+    const wdoc = worldManager.worldDoc;
     binding = new QuillBinding(
-      worldManager.worldDoc.ydoc.getText(docId),
+      wdoc.ydoc.getText(docId),
       editor,
-      worldManager.worldDoc.provider.awareness
+      wdoc.provider.awareness
     );
   });
 

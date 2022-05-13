@@ -9,6 +9,7 @@
   export let docId: string;
   export let bgColor: string;
   export let readOnly: boolean = false;
+  export let cursors: boolean = false;
   export let showToolbar: boolean = false;
   export let editor = null;
   export let toolbar = null;
@@ -16,11 +17,10 @@
   let container;
 
   onMount(() => {
-    editor = quillInit(
-      container,
-      showToolbar && toolbar ? toolbar : false,
-      readOnly
-    );
+    editor = quillInit(container, showToolbar && toolbar ? toolbar : false, {
+      readOnly,
+      cursors,
+    });
     return quillBind(docId, editor);
   });
 

@@ -58,6 +58,7 @@
           bind:editor
           bind:toolbar
           readOnly={!editable}
+          cursors={true}
           showToolbar={editable}
         />
       </r-page-margin>
@@ -66,7 +67,14 @@
 {/if}
 
 {#if visible}
-  <QuillPage {docId} {bgColor} bind:editor readOnly={true} showToolbar={false}>
+  <QuillPage
+    {docId}
+    {bgColor}
+    bind:editor
+    readOnly={true}
+    cursors={false}
+    showToolbar={false}
+  >
     {#if $worldUIMode === "play"}
       <QuillOverlay cloudy={false} on:click={activate} />
     {:else if $worldUIMode === "build"}
