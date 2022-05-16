@@ -2,26 +2,26 @@ import { Not, Modified } from "~/ecs/base";
 import { Object3DRef } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
 
-import { Document, DocumentRef, CssPlane } from "../components";
-import DocumentComponent from "./Document.svelte";
+import { WebPage, WebPageRef, CssPlane } from "../components";
+import WebPageComponent from "./WebPage.svelte";
 
 import { RenderableBaseSystem } from "../RenderableBaseSystem";
 
-export class DocumentSystem extends RenderableBaseSystem {
+export class WebPageSystem extends RenderableBaseSystem {
   static queries: Queries = {
-    added: [Document, Not(DocumentRef)],
-    modified: [Modified(Document), DocumentRef],
-    modifiedCssPlane: [Modified(CssPlane), DocumentRef],
-    active: [Document, DocumentRef, Object3DRef],
-    removed: [Not(Document), DocumentRef],
+    added: [WebPage, Not(WebPageRef)],
+    modified: [Modified(WebPage), WebPageRef],
+    modifiedCssPlane: [Modified(CssPlane), WebPageRef],
+    active: [WebPage, WebPageRef, Object3DRef],
+    removed: [Not(WebPage), WebPageRef],
   };
 
   init({ cssPresentation }) {
     this.cssPresentation = cssPresentation;
 
-    this.EcsComponent = Document;
-    this.EcsComponentRef = DocumentRef;
-    this.RenderableComponent = DocumentComponent;
+    this.EcsComponent = WebPage;
+    this.EcsComponentRef = WebPageRef;
+    this.RenderableComponent = WebPageComponent;
   }
 
   update() {

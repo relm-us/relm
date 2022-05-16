@@ -1,7 +1,7 @@
 import { Transform } from "~/ecs/plugins/core";
 import { Vector2, Vector3 } from "three";
 
-import { Renderable, CssPlane } from "~/ecs/plugins/css3d";
+import { CssPlane, WebPage } from "~/ecs/plugins/css3d";
 
 import { makeEntity } from "./makeEntity";
 
@@ -14,10 +14,7 @@ export function makeWebPage(
     .add(Transform, {
       position: new Vector3(x, y + yOffset, z),
     })
-    .add(Renderable, {
-      kind: "WEB_PAGE",
-      url,
-    })
+    .add(WebPage, { url })
     .add(CssPlane, {
       kind: "RECTANGLE",
       rectangleSize: new Vector2(width, height),
