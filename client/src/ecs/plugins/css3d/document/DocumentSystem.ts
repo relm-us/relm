@@ -3,10 +3,10 @@ import { Object3DRef } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
 
 import { Document, DocumentRef, CssPlane } from "../components";
-import DocumentComponent from "../renderables/Document.svelte";
+import DocumentComponent from "./Document.svelte";
 
 import { CssPresentation } from "../CssPresentation";
-import { RenderableBaseSystem } from "./RenderableBaseSystem";
+import { RenderableBaseSystem } from "../RenderableBaseSystem";
 
 export class DocumentSystem extends RenderableBaseSystem {
   cssPresentation: CssPresentation;

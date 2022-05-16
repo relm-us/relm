@@ -2,7 +2,8 @@ import { Matrix4, Vector3, Quaternion } from "three";
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer";
 
 import { Transform } from "~/ecs/plugins/core";
-import { CssPresentation } from "../CssPresentation";
+
+import { CssPresentation } from "./CssPresentation";
 
 const _pos = new Vector3();
 const _rot = new Quaternion();

@@ -6,8 +6,8 @@
   import Fullwindow from "~/ui/lib/Fullwindow.svelte";
   import { hasAncestor } from "~/utils/hasAncestor";
 
-  import QuillOverlay from "./QuillOverlay.svelte";
-  import QuillPage from "./QuillPage.svelte";
+  import QuillOverlay from "../document/quill/QuillOverlay.svelte";
+  import QuillPage from "./quill/QuillPage.svelte";
 
   export let docId: string;
   export let bgColor: string;

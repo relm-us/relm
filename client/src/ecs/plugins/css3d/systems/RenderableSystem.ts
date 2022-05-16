@@ -8,10 +8,14 @@ import { Queries } from "~/ecs/base/Query";
 import { Renderable, RenderableRef, Document, CssPlane } from "../components";
 import { getRenderableComponentByType } from "../renderables";
 import { CssPresentation } from "../CssPresentation";
-import { copyTransform } from "./copyTransform";
+import { copyTransform } from "../copyTransform";
 
 const zeroOffset = new Vector3();
 
+/**
+ * NOTE: This is deprecated in favor of RenderableBaseSystem & derivatives; however,
+ * we must keep this around for a while as we phase out of Renderable + 'kind'.
+ */
 export class RenderableSystem extends System {
   cssPresentation: CssPresentation;
 
