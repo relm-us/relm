@@ -26,7 +26,7 @@ export const directory = [
   { name: "Thing", make: makeThing },
   { name: "Wall", make: makeWall },
   { name: "Web Page", make: makeWebBox },
-  { name: "YouTube TV", make: makeTv },
+  { name: "TV (youtube)", make: makeTv },
 ];
 
 function activate(entity) {

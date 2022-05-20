@@ -6,3 +6,4 @@
 server/data/
 deploy/
 **/.env
+relm-*.tgz

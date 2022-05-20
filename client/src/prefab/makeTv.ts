@@ -1,7 +1,6 @@
 import { Vector3, Vector2, Color } from "three";
 import { CssPlane, YouTube } from "~/ecs/plugins/css3d";
 import { makeBox } from "./makeBox";
-import { makeYoutube } from "./makeYoutube";
 
 // The Boy Who Tricked the Devil : 4nZ9gNGZwO0
 
@@ -29,8 +28,8 @@ export function makeTv(
     .add(CssPlane, {
       kind: "ROUNDED",
       circleRadius: 0.1,
-      scale: 1.0,
       rectangleSize: new Vector2(w - 0.2, h - 0.2),
+      scale: 1.0,
       offset: new Vector3(0, 0, d / 2 + 0.05),
     });
 
