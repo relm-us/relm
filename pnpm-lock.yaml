@@ -55,6 +55,7 @@ importers:
       postprocessing: 6.23.5
       protoo-client: ^4.0.6
       quill: ^1.3.7
+      quill-cursors: ^3.1.2
       real-cancellable-promise: ^1.1.1
       redux: ^4.0.5
       redux-thunk: ^2.3.0
@@ -86,7 +87,7 @@ importers:
       ts-node: ^10.7.0
       twilio-video: 2.20.1
       typescript: ^4.0.2
-      video-mirror: 4.5.0
+      video-mirror: 4.5.1
       webpack: 4.46.0
       webpack-cli: ^3.3.12
       webpack-dev-server: ^3.11.0
@@ -112,11 +113,12 @@ importers:
       deep-diff: 1.0.2
       eventemitter3: 4.0.7
       lodash: 4.17.21
-      mediasoup-client: github.com/versatica/mediasoup-client/5c3127ec1ec5b29306f602eccf6d8aab01596659
+      mediasoup-client: github.com/versatica/mediasoup-client/56928a37a0a55d4a804030ddea206693a12cba01
       nanoid: 3.3.4
       postprocessing: 6.23.5_three@0.131.3
       protoo-client: 4.0.6
       quill: 1.3.7
+      quill-cursors: 3.1.2
       real-cancellable-promise: 1.1.1
       redux: 4.2.0
       redux-thunk: 2.4.1_redux@4.2.0
@@ -135,7 +137,7 @@ importers:
       three-nebula: 10.0.3_three@0.131.3
       tiny-typed-emitter: 2.1.0
       twilio-video: 2.20.1
-      video-mirror: 4.5.0
+      video-mirror: 4.5.1
       y-indexeddb: 9.0.7_yjs@13.5.27
       y-quill: 0.1.4_quill@1.3.7+yjs@13.5.27
       y-websocket: github.com/canadaduane/y-websocket/de54818d86dbcb22b1e71c93775f9dc1c33e1b7e_yjs@13.5.27
@@ -472,7 +474,7 @@ packages:
     resolution: {integrity: sha512-SLLb0AAn6PkUeAfKJCCOl9e1R53pQlGAfc4y4XuMRZfqeMYLE0dM1LMhqbGAlGQY0lfw5/ohoYWAe9V1yibRag==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/types': 7.17.0
+      '@babel/types': 7.17.10
     dev: true
 
   /@babel/helper-explode-assignable-expression/7.16.7:
@@ -487,14 +489,14 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/template': 7.16.7
-      '@babel/types': 7.17.0
+      '@babel/types': 7.17.10
     dev: true
 
   /@babel/helper-hoist-variables/7.16.7:
     resolution: {integrity: sha512-m04d/0Op34H5v7pbZw6pSKP7weA6lsMvfiIAMeIvkY/R4xQtBSMFEigu9QTZ2qB/9l22vsxtM8a+Q8CzD255fg==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/types': 7.17.0
+      '@babel/types': 7.17.10
     dev: true
 
   /@babel/helper-member-expression-to-functions/7.17.7:
@@ -581,7 +583,7 @@ packages:
     resolution: {integrity: sha512-xbWoy/PFoxSWazIToT9Sif+jJTlrMcndIsaOKvTA6u7QEo7ilkRZpjew18/W3c7nm8fXdUDXh02VXTbZ0pGDNw==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/types': 7.17.0
+      '@babel/types': 7.17.10
     dev: true
 
   /@babel/helper-validator-identifier/7.16.7:
@@ -630,6 +632,8 @@ packages:
     resolution: {integrity: sha512-vqUSBLP8dQHFPdPi9bc5GK9vRkYHJ49fsZdtoJ8EQ8ibpwk5rPKfvNIwChB0KVXcIjcepEBBd2VHC5r9Gy8ueg==}
     engines: {node: '>=6.0.0'}
     hasBin: true
+    dependencies:
+      '@babel/types': 7.17.10
     dev: true
 
   /@babel/plugin-bugfix-safari-id-destructuring-collision-in-function-expression/7.16.7_@babel+core@7.17.9:
@@ -1481,7 +1485,7 @@ packages:
     dependencies:
       '@babel/code-frame': 7.16.7
       '@babel/parser': 7.17.9
-      '@babel/types': 7.17.0
+      '@babel/types': 7.17.10
     dev: true
 
   /@babel/traverse/7.17.9:
@@ -4093,6 +4097,18 @@ packages:
     dependencies:
       micromatch: 3.1.10
       normalize-path: 2.1.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+    optional: true
+
+  /anymatch/2.0.0_supports-color@6.1.0:
+    resolution: {integrity: sha512-5teOsQWABXHHBFP9y3skS5P3d/WfWXpv3FUpy+LorMrNYaT9pI4oLMQX7jzQ2KklNpGpWHzdCXTDT2Y3XGlZBw==}
+    dependencies:
+      micromatch: 3.1.10_supports-color@6.1.0
+      normalize-path: 2.1.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /anymatch/3.1.2:
@@ -4572,6 +4588,27 @@ packages:
       qs: 6.9.7
       raw-body: 2.4.3
       type-is: 1.6.18
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /body-parser/1.19.2_supports-color@6.1.0:
+    resolution: {integrity: sha512-SAAwOxgoCKMGs9uUAUFHygfLAyaniaoun6I8mFY9pRAJL9+Kec34aU+oIjDhTycub1jozEfEwx1W1IuOYxVSFw==}
+    engines: {node: '>= 0.8'}
+    dependencies:
+      bytes: 3.1.2
+      content-type: 1.0.4
+      debug: 2.6.9_supports-color@6.1.0
+      depd: 1.1.2
+      http-errors: 1.8.1
+      iconv-lite: 0.4.24
+      on-finished: 2.3.0
+      qs: 6.9.7
+      raw-body: 2.4.3
+      type-is: 1.6.18
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /bonjour/3.5.0:
     resolution: {integrity: sha1-jokKGD2O6aI5OzhExpGkK897yfU=}
@@ -4625,6 +4662,26 @@ packages:
       snapdragon-node: 2.1.1
       split-string: 3.1.0
       to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /braces/2.3.2_supports-color@6.1.0:
+    resolution: {integrity: sha512-aNdbnj9P8PjdXU4ybaWLK2IF3jc/EoDYbC7AazW6to3TRsfXxscC9UXOB5iDiEQrkyIbWp2SLQda4+QAa7nc3w==}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      arr-flatten: 1.1.0
+      array-unique: 0.3.2
+      extend-shallow: 2.0.1
+      fill-range: 4.0.0
+      isobject: 3.0.1
+      repeat-element: 1.1.4
+      snapdragon: 0.8.2_supports-color@6.1.0
+      snapdragon-node: 2.1.1
+      split-string: 3.1.0
+      to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /braces/3.0.2:
@@ -4649,7 +4706,7 @@ packages:
     dev: true
 
   /brotli/1.3.2:
-    resolution: {integrity: sha1-UlqcrU/LqWR119OI9q7LE+7VL0Y=}
+    resolution: {integrity: sha512-K0HNa0RRpUpcF8yS4yNSd6vmkrvA+wRd+symIcwhfqGLAi7YgGlKfO4oDYVgiahiLGNviO9uY7Zlb1MCPeTmSA==}
     requiresBuild: true
     dependencies:
       base64-js: 1.5.1
@@ -4871,6 +4928,8 @@ packages:
       ssri: 8.0.1
       tar: 6.1.11
       unique-filename: 1.1.1
+    transitivePeerDependencies:
+      - bluebird
     dev: true
 
   /cache-base/1.0.1:
@@ -5040,6 +5099,30 @@ packages:
       upath: 1.2.0
     optionalDependencies:
       fsevents: 1.2.13
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+    optional: true
+
+  /chokidar/2.1.8_supports-color@6.1.0:
+    resolution: {integrity: sha512-ZmZUazfOzf0Nve7duiCKD23PFSCs4JPoYyccjUFF3aQkQadqBhfzhjkwBH2mNOG9cTBwhamM37EIsIkZw3nRgg==}
+    deprecated: Chokidar 2 does not receive security updates since 2019. Upgrade to chokidar 3 with 15x fewer dependencies
+    dependencies:
+      anymatch: 2.0.0_supports-color@6.1.0
+      async-each: 1.0.3
+      braces: 2.3.2_supports-color@6.1.0
+      glob-parent: 3.1.0
+      inherits: 2.0.4
+      is-binary-path: 1.0.1
+      is-glob: 4.0.3
+      normalize-path: 3.0.0
+      path-is-absolute: 1.0.1
+      readdirp: 2.2.1_supports-color@6.1.0
+      upath: 1.2.0
+    optionalDependencies:
+      fsevents: 1.2.13
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /chokidar/3.5.3:
@@ -5290,19 +5373,23 @@ packages:
       on-headers: 1.0.2
       safe-buffer: 5.1.2
       vary: 1.1.2
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
-  /compression/1.7.4:
+  /compression/1.7.4_supports-color@6.1.0:
     resolution: {integrity: sha512-jaSIDzP9pZVS4ZfQ+TzvtiWhdpFhE2RDHz8QJkpX9SIpLq88VueF5jJw6t+6CUQcAoA6t+x89MLrWAqpfDE8iQ==}
     engines: {node: '>= 0.8.0'}
     dependencies:
       accepts: 1.3.8
       bytes: 3.0.0
       compressible: 2.0.18
-      debug: 2.6.9
+      debug: 2.6.9_supports-color@6.1.0
       on-headers: 1.0.2
       safe-buffer: 5.1.2
       vary: 1.1.2
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /concat-map/0.0.1:
@@ -5789,13 +5876,36 @@ packages:
 
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
     dependencies:
       ms: 2.0.0
 
-  /debug/3.2.7:
+  /debug/2.6.9_supports-color@6.1.0:
+    resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+    dependencies:
+      ms: 2.0.0
+      supports-color: 6.1.0
+    dev: true
+
+  /debug/3.2.7_supports-color@6.1.0:
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
     dependencies:
       ms: 2.1.3
+      supports-color: 6.1.0
     dev: true
 
   /debug/4.3.4:
@@ -6621,6 +6731,23 @@ packages:
       regex-not: 1.0.2
       snapdragon: 0.8.2
       to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /expand-brackets/2.1.4_supports-color@6.1.0:
+    resolution: {integrity: sha1-t3c14xXOMPa27/D4OwQVGiJEliI=}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      debug: 2.6.9_supports-color@6.1.0
+      define-property: 0.2.5
+      extend-shallow: 2.0.1
+      posix-character-classes: 0.1.1
+      regex-not: 1.0.2
+      snapdragon: 0.8.2_supports-color@6.1.0
+      to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /expand-template/2.0.3:
@@ -6685,6 +6812,47 @@ packages:
       type-is: 1.6.18
       utils-merge: 1.0.1
       vary: 1.1.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /express/4.17.3_supports-color@6.1.0:
+    resolution: {integrity: sha512-yuSQpz5I+Ch7gFrPCk4/c+dIBKlQUxtgwqzph132bsT6qhuzss6I8cLJQz7B3rFblzd6wtcI0ZbGltH/C4LjUg==}
+    engines: {node: '>= 0.10.0'}
+    dependencies:
+      accepts: 1.3.8
+      array-flatten: 1.1.1
+      body-parser: 1.19.2_supports-color@6.1.0
+      content-disposition: 0.5.4
+      content-type: 1.0.4
+      cookie: 0.4.2
+      cookie-signature: 1.0.6
+      debug: 2.6.9_supports-color@6.1.0
+      depd: 1.1.2
+      encodeurl: 1.0.2
+      escape-html: 1.0.3
+      etag: 1.8.1
+      finalhandler: 1.1.2_supports-color@6.1.0
+      fresh: 0.5.2
+      merge-descriptors: 1.0.1
+      methods: 1.1.2
+      on-finished: 2.3.0
+      parseurl: 1.3.3
+      path-to-regexp: 0.1.7
+      proxy-addr: 2.0.7
+      qs: 6.9.7
+      range-parser: 1.2.1
+      safe-buffer: 5.2.1
+      send: 0.17.2_supports-color@6.1.0
+      serve-static: 1.14.2_supports-color@6.1.0
+      setprototypeof: 1.2.0
+      statuses: 1.5.0
+      type-is: 1.6.18
+      utils-merge: 1.0.1
+      vary: 1.1.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /ext/1.6.0:
     resolution: {integrity: sha512-sdBImtzkq2HpkdRLtlLWDa6w4DX22ijZLKx8BMPUuKe1c5lbN6xwQDQCxSfxBQnHZ13ls/FH0MQZx/q/gr6FQg==}
@@ -6723,6 +6891,24 @@ packages:
       regex-not: 1.0.2
       snapdragon: 0.8.2
       to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /extglob/2.0.4_supports-color@6.1.0:
+    resolution: {integrity: sha512-Nmb6QXkELsuBr24CJSkilo6UHHgbekK5UiZgfE6UHD3Eb27YC6oD+bhcT+tJ6cl8dmsgdQxnWlcry8ksBIBLpw==}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      array-unique: 0.3.2
+      define-property: 1.0.0
+      expand-brackets: 2.1.4_supports-color@6.1.0
+      extend-shallow: 2.0.1
+      fragment-cache: 0.2.1
+      regex-not: 1.0.2
+      snapdragon: 0.8.2_supports-color@6.1.0
+      to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /extract-zip/2.0.1:
@@ -6902,6 +7088,24 @@ packages:
       parseurl: 1.3.3
       statuses: 1.5.0
       unpipe: 1.0.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /finalhandler/1.1.2_supports-color@6.1.0:
+    resolution: {integrity: sha512-aAWcW57uxVNrQZqFXjITpW3sIUQmHGG3qSb9mUah9MgMC4NeWhNOlNjXEYq3HjRAvL6arUviZGGJsBg6z0zsWA==}
+    engines: {node: '>= 0.8'}
+    dependencies:
+      debug: 2.6.9_supports-color@6.1.0
+      encodeurl: 1.0.2
+      escape-html: 1.0.3
+      on-finished: 2.3.0
+      parseurl: 1.3.3
+      statuses: 1.5.0
+      unpipe: 1.0.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /find-cache-dir/2.1.0:
     resolution: {integrity: sha512-Tq6PixE0w/VMFfCgbONnkiQIVol/JJL7nRMi20fqzA4NRs9AfeqMGeRdPi3wIhYkxjeBaWh2rxwapn5Tu3IqOQ==}
@@ -6947,14 +7151,16 @@ packages:
       path-exists: 5.0.0
     dev: true
 
-  /findup-sync/3.0.0:
+  /findup-sync/3.0.0_supports-color@6.1.0:
     resolution: {integrity: sha512-YbffarhcicEhOrm4CtrwdKBdCuz576RLdhJDsIfvNtxUuhdRet1qZcsMjqbePtAseKdAnDyM/IyXbu7PRPRLYg==}
     engines: {node: '>= 0.10'}
     dependencies:
       detect-file: 1.0.0
       is-glob: 4.0.3
-      micromatch: 3.1.10
+      micromatch: 3.1.10_supports-color@6.1.0
       resolve-dir: 1.0.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /flat-cache/3.0.4:
@@ -7587,16 +7793,17 @@ packages:
       - supports-color
     dev: true
 
-  /http-proxy-middleware/0.19.1_debug@4.3.4:
+  /http-proxy-middleware/0.19.1_tmpgdztspuwvsxzgjkhoqk7duq:
     resolution: {integrity: sha512-yHYTgWMQO8VvwNS22eLLloAkvungsKdKTLO8AJlftYIKNfJr3GK3zK0ZCfzDDGUBttdGc8xFy1mCitvNKQtC3Q==}
     engines: {node: '>=4.0.0'}
     dependencies:
       http-proxy: 1.18.1_debug@4.3.4
       is-glob: 4.0.3
       lodash: 4.17.21
-      micromatch: 3.1.10
+      micromatch: 3.1.10_supports-color@6.1.0
     transitivePeerDependencies:
       - debug
+      - supports-color
     dev: true
 
   /http-proxy/1.18.1_debug@4.3.4:
@@ -9783,6 +9990,29 @@ packages:
       regex-not: 1.0.2
       snapdragon: 0.8.2
       to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /micromatch/3.1.10_supports-color@6.1.0:
+    resolution: {integrity: sha512-MWikgl9n9M3w+bpsY3He8L+w9eF9338xRl8IAO5viDizwSzziFEyUzo2xrrloB64ADbTf8uA8vRqqttDTOmccg==}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      arr-diff: 4.0.0
+      array-unique: 0.3.2
+      braces: 2.3.2_supports-color@6.1.0
+      define-property: 2.0.2
+      extend-shallow: 3.0.2
+      extglob: 2.0.4_supports-color@6.1.0
+      fragment-cache: 0.2.1
+      kind-of: 6.0.3
+      nanomatch: 1.2.13_supports-color@6.1.0
+      object.pick: 1.3.0
+      regex-not: 1.0.2
+      snapdragon: 0.8.2_supports-color@6.1.0
+      to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /micromatch/4.0.5:
@@ -10072,6 +10302,27 @@ packages:
       regex-not: 1.0.2
       snapdragon: 0.8.2
       to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /nanomatch/1.2.13_supports-color@6.1.0:
+    resolution: {integrity: sha512-fpoe2T0RbHwBTBUOftAfBPaDEi06ufaUai0mE6Yn1kacc3SnTErfb/h+X94VXzI64rKFHYImXSvdwGGCmwOqCA==}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      arr-diff: 4.0.0
+      array-unique: 0.3.2
+      define-property: 2.0.2
+      extend-shallow: 3.0.2
+      fragment-cache: 0.2.1
+      is-windows: 1.0.2
+      kind-of: 6.0.3
+      object.pick: 1.3.0
+      regex-not: 1.0.2
+      snapdragon: 0.8.2_supports-color@6.1.0
+      to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /napi-build-utils/1.0.2:
@@ -10968,13 +11219,15 @@ packages:
     resolution: {integrity: sha1-zqz9q0q/NT16DyqqLB/Hs/lBO6M=}
     dev: false
 
-  /portfinder/1.0.28:
+  /portfinder/1.0.28_supports-color@6.1.0:
     resolution: {integrity: sha512-Se+2isanIcEqf2XMHjyUKskczxbPH7dQnlMjXX6+dybayyHvAf/TCgyMRlzf/B6QDhAEFOGes0pzRo3by4AbMA==}
     engines: {node: '>= 0.12.0'}
     dependencies:
       async: 2.6.4
-      debug: 3.2.7
+      debug: 3.2.7_supports-color@6.1.0
       mkdirp: 0.5.6
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /posix-character-classes/0.1.1:
@@ -11458,6 +11711,11 @@ packages:
 
   /promise-inflight/1.0.1:
     resolution: {integrity: sha1-mEcocL8igTL8vdhoEputEsPAKeM=}
+    peerDependencies:
+      bluebird: '*'
+    peerDependenciesMeta:
+      bluebird:
+        optional: true
     dev: true
 
   /prompts/2.4.2:
@@ -11804,6 +12062,10 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /quill-cursors/3.1.2:
+    resolution: {integrity: sha512-oyANfYhqYiRp7OIrX/BurBPb0bvcpqSiS042fGm+T9FNy9UR6MCBzXpCyG7RmnK6OrV2idsdxMbogJ1XSktN5Q==}
+    dev: false
+
   /quill-delta/3.6.3:
     resolution: {integrity: sha512-wdIGBlcX13tCHOXGMVnnTVFtGRLoP0imqxM696fIPwIf5ODIYUHIvHbZcyvGlZFiFhK5XzDC2lpjbxRhnM05Tg==}
     engines: {node: '>=0.10'}
@@ -11926,6 +12188,20 @@ packages:
       graceful-fs: 4.2.10
       micromatch: 3.1.10
       readable-stream: 2.3.7
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+    optional: true
+
+  /readdirp/2.2.1_supports-color@6.1.0:
+    resolution: {integrity: sha512-1JU/8q+VgFZyxwrJ+SVIOsh+KywWGpds3NTqikiKpDMZWScmAYyKIgqkO+ARvNWJfXeXR1zxz7aHF4u4CyH6vQ==}
+    engines: {node: '>=0.10'}
+    dependencies:
+      graceful-fs: 4.2.10
+      micromatch: 3.1.10_supports-color@6.1.0
+      readable-stream: 2.3.7
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /readdirp/3.6.0:
@@ -12623,6 +12899,30 @@ packages:
       on-finished: 2.3.0
       range-parser: 1.2.1
       statuses: 1.5.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /send/0.17.2_supports-color@6.1.0:
+    resolution: {integrity: sha512-UJYB6wFSJE3G00nEivR5rgWp8c2xXvJ3OPWPhmuteU0IKj8nKbG3DrjiOmLwpnHGYWAVwA69zmTm++YG0Hmwww==}
+    engines: {node: '>= 0.8.0'}
+    dependencies:
+      debug: 2.6.9_supports-color@6.1.0
+      depd: 1.1.2
+      destroy: 1.0.4
+      encodeurl: 1.0.2
+      escape-html: 1.0.3
+      etag: 1.8.1
+      fresh: 0.5.2
+      http-errors: 1.8.1
+      mime: 1.6.0
+      ms: 2.1.3
+      on-finished: 2.3.0
+      range-parser: 1.2.1
+      statuses: 1.5.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /serialize-javascript/4.0.0:
     resolution: {integrity: sha512-GaNA54380uFefWghODBWEGisLZFj00nS5ACs6yHa9nLqlLpVLO8ChDGeKRjZnV4Nh4n0Qi7nhYZD/9fCPzEqkw==}
@@ -12649,17 +12949,19 @@ packages:
       range-parser: 1.2.0
     dev: false
 
-  /serve-index/1.9.1:
+  /serve-index/1.9.1_supports-color@6.1.0:
     resolution: {integrity: sha1-03aNabHn2C5c4FD/9bRTvqEqkjk=}
     engines: {node: '>= 0.8.0'}
     dependencies:
       accepts: 1.3.8
       batch: 0.6.1
-      debug: 2.6.9
+      debug: 2.6.9_supports-color@6.1.0
       escape-html: 1.0.3
       http-errors: 1.6.3
       mime-types: 2.1.35
       parseurl: 1.3.3
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /serve-static/1.14.2:
@@ -12670,6 +12972,21 @@ packages:
       escape-html: 1.0.3
       parseurl: 1.3.3
       send: 0.17.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /serve-static/1.14.2_supports-color@6.1.0:
+    resolution: {integrity: sha512-+TMNA9AFxUEGuC0z2mevogSnn9MXKb4fa7ngeRMJaaGv8vTwnIEkKi+QGvPt33HSnf8pRS+WGM0EbMtCJLKMBQ==}
+    engines: {node: '>= 0.8.0'}
+    dependencies:
+      encodeurl: 1.0.2
+      escape-html: 1.0.3
+      parseurl: 1.3.3
+      send: 0.17.2_supports-color@6.1.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /serve/11.3.2:
     resolution: {integrity: sha512-yKWQfI3xbj/f7X1lTBg91fXBP0FqjJ4TEi+ilES5yzH0iKJpN5LjNb1YzIfQg9Rqn4ECUS2SOf2+Kmepogoa5w==}
@@ -12684,6 +13001,8 @@ packages:
       compression: 1.7.3
       serve-handler: 6.1.3
       update-check: 1.5.2
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /set-blocking/2.0.0:
@@ -12843,17 +13162,37 @@ packages:
       source-map: 0.5.7
       source-map-resolve: 0.5.3
       use: 3.1.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
-  /sockjs-client/1.6.0:
+  /snapdragon/0.8.2_supports-color@6.1.0:
+    resolution: {integrity: sha512-FtyOnWN/wCHTVXOMwvSv26d+ko5vWlIDD6zoUJ7LW8vh+ZBC8QdljveRP+crNrtBwioEUWy/4dMtbBjA4ioNlg==}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      base: 0.11.2
+      debug: 2.6.9_supports-color@6.1.0
+      define-property: 0.2.5
+      extend-shallow: 2.0.1
+      map-cache: 0.2.2
+      source-map: 0.5.7
+      source-map-resolve: 0.5.3
+      use: 3.1.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /sockjs-client/1.6.0_supports-color@6.1.0:
     resolution: {integrity: sha512-qVHJlyfdHFht3eBFZdKEXKTlb7I4IV41xnVNo8yUKA1UHcPJwgW2SvTq9LhnjjCywSkSK7c/e4nghU0GOoMCRQ==}
     engines: {node: '>=12'}
     dependencies:
-      debug: 3.2.7
+      debug: 3.2.7_supports-color@6.1.0
       eventsource: 1.1.0
       faye-websocket: 0.11.4
       inherits: 2.0.4
       url-parse: 1.5.10
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /sockjs/0.3.24:
@@ -13667,6 +14006,8 @@ packages:
       terser: 5.13.1
       webpack: 4.46.0_webpack-cli@3.3.12
       webpack-sources: 1.4.3
+    transitivePeerDependencies:
+      - bluebird
     dev: true
 
   /terser/4.8.0:
@@ -13674,6 +14015,7 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
     dependencies:
+      acorn: 8.7.0
       commander: 2.20.3
       source-map: 0.6.1
       source-map-support: 0.5.21
@@ -14455,8 +14797,8 @@ packages:
       wfn: 1.0.0
     dev: false
 
-  /video-mirror/4.5.0:
-    resolution: {integrity: sha512-m3hO4koaEHT7GGmAOKd0eg/OkTl+0dO6asfj/Z8wqSp319xG87RfvzCQ5n5PHVoQB08KFf+CJJ3e65PTQNTG2w==}
+  /video-mirror/4.5.1:
+    resolution: {integrity: sha512-/tGfmwHC0vXJ9UjZV+sAxMGJDJlrJbNv0FVLtlErbj5p+VEBKEys2Ww/tEHrtx4osydyTdiV4UGKJSXO4Heu0g==}
     dependencies:
       audio-activity: 1.0.0
       media-devices: 0.2.0
@@ -14491,6 +14833,8 @@ packages:
     requiresBuild: true
     dependencies:
       chokidar: 2.1.8
+    transitivePeerDependencies:
+      - supports-color
     dev: true
     optional: true
 
@@ -14502,6 +14846,8 @@ packages:
     optionalDependencies:
       chokidar: 3.5.3
       watchpack-chokidar2: 2.0.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /wbuf/1.7.3:
@@ -14558,7 +14904,7 @@ packages:
       chalk: 2.4.2
       cross-spawn: 6.0.5
       enhanced-resolve: 4.5.0
-      findup-sync: 3.0.0
+      findup-sync: 3.0.0_supports-color@6.1.0
       global-modules: 2.0.0
       import-local: 2.0.0
       interpret: 1.4.0
@@ -14596,14 +14942,14 @@ packages:
     dependencies:
       ansi-html-community: 0.0.8
       bonjour: 3.5.0
-      chokidar: 2.1.8
-      compression: 1.7.4
+      chokidar: 2.1.8_supports-color@6.1.0
+      compression: 1.7.4_supports-color@6.1.0
       connect-history-api-fallback: 1.6.0
       debug: 4.3.4_supports-color@6.1.0
       del: 4.1.1
-      express: 4.17.3
+      express: 4.17.3_supports-color@6.1.0
       html-entities: 1.4.0
-      http-proxy-middleware: 0.19.1_debug@4.3.4
+      http-proxy-middleware: 0.19.1_tmpgdztspuwvsxzgjkhoqk7duq
       import-local: 2.0.0
       internal-ip: 4.3.0
       ip: 1.1.5
@@ -14612,13 +14958,13 @@ packages:
       loglevel: 1.8.0
       opn: 5.5.0
       p-retry: 3.0.1
-      portfinder: 1.0.28
+      portfinder: 1.0.28_supports-color@6.1.0
       schema-utils: 1.0.0
       selfsigned: 1.10.14
       semver: 6.3.0
-      serve-index: 1.9.1
+      serve-index: 1.9.1_supports-color@6.1.0
       sockjs: 0.3.24
-      sockjs-client: 1.6.0
+      sockjs-client: 1.6.0_supports-color@6.1.0
       spdy: 4.0.2_supports-color@6.1.0
       strip-ansi: 3.0.1
       supports-color: 6.1.0
@@ -14629,6 +14975,9 @@ packages:
       webpack-log: 2.0.0
       ws: 6.2.2
       yargs: 13.3.2
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
     dev: true
 
   /webpack-log/2.0.0:
@@ -14683,6 +15032,8 @@ packages:
       watchpack: 1.7.5
       webpack-cli: 3.3.12_webpack@4.46.0
       webpack-sources: 1.4.3
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /websocket-driver/0.7.4:
@@ -14710,6 +15061,8 @@ packages:
       typedarray-to-buffer: 3.1.5
       utf-8-validate: 5.0.9
       yaeti: 0.0.6
+    transitivePeerDependencies:
+      - supports-color
     dev: false
     optional: true
 
@@ -14864,6 +15217,14 @@ packages:
   /ws/6.2.2:
     resolution: {integrity: sha512-zmhltoSR8u1cnDsD43TX59mzoMZsLKqUweyYBAIvTngR3shc0W6aOZylZmq/7hqyVxPdi+5Ud2QInblgyE72fw==}
     requiresBuild: true
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
     dependencies:
       async-limiter: 1.0.1
 
@@ -15089,12 +15450,15 @@ packages:
     optionalDependencies:
       ws: 6.2.2
       y-leveldb: 0.1.1_yjs@13.5.27
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
     dev: false
 
-  github.com/versatica/mediasoup-client/5c3127ec1ec5b29306f602eccf6d8aab01596659:
-    resolution: {tarball: https://codeload.github.com/versatica/mediasoup-client/tar.gz/5c3127ec1ec5b29306f602eccf6d8aab01596659}
+  github.com/versatica/mediasoup-client/56928a37a0a55d4a804030ddea206693a12cba01:
+    resolution: {tarball: https://codeload.github.com/versatica/mediasoup-client/tar.gz/56928a37a0a55d4a804030ddea206693a12cba01}
     name: mediasoup-client
-    version: 3.6.51
+    version: 3.6.52
     engines: {node: '>=10'}
     dependencies:
       '@types/debug': 4.1.7

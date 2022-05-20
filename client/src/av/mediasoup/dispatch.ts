@@ -111,7 +111,7 @@ function consumerClosed(room: RoomClient, consumerId) {
 
     const { peerId } = consumer.appData;
 
-    room.emit("consumer-removed", peerId);
+    room.emit("consumer-removed", peerId as any);
   }
 }
 
