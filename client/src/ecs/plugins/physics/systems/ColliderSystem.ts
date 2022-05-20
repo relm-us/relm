@@ -1,7 +1,8 @@
+import type { ColliderDesc as RapierColliderDesc } from "@dimforge/rapier3d";
+
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import { RigidBody, RigidBodyRef, Collider, ColliderRef } from "../components";
 import { Transform } from "~/ecs/plugins/core";
-import { ColliderDesc as RapierColliderDesc } from "@dimforge/rapier3d";
 import { createColliderShape } from "../createColliderShape";
 import { Physics } from "../Physics";
 

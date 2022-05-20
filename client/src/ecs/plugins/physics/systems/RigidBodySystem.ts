@@ -1,7 +1,8 @@
+import type { RigidBodyDesc as RapierRigidBodyDesc } from "@dimforge/rapier3d";
+
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
 import { RigidBody, RigidBodyRef } from "../components";
-import type { RigidBodyDesc as RapierRigidBodyDesc } from "@dimforge/rapier3d";
 
 function getBodyStatus(rapier, kind) {
   switch (kind) {

@@ -1,5 +1,4 @@
-import { Vector3 } from "@dimforge/rapier3d";
-import { Vector2, Color } from "three";
+import { Vector3, Vector2, Color } from "three";
 import { CssPlane, YouTube } from "~/ecs/plugins/css3d";
 import { makeBox } from "./makeBox";
 import { makeYoutube } from "./makeYoutube";

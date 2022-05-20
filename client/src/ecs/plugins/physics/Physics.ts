@@ -1,4 +1,4 @@
-import { EventQueue, Vector3, World as RapierWorld } from "@dimforge/rapier3d";
+import type { EventQueue, Vector3, World as RapierWorld } from "@dimforge/rapier3d";
 import { World, Entity } from "~/ecs/base";
 
 export class Physics {

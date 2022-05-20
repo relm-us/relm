@@ -1,4 +1,4 @@
-import { ColliderDesc as RapierColliderDesc } from "@dimforge/rapier3d";
+import type { ColliderDesc as RapierColliderDesc } from "@dimforge/rapier3d";
 
 const MIN_SIZE = 0.01;
 
