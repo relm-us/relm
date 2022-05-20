@@ -6,6 +6,7 @@ import { makeDiamond } from "./makeDiamond";
 import { makeGround } from "./makeGround";
 import { makeImage } from "./makeImage";
 import { makeLabel } from "./makeLabel";
+import { makeRock } from "./makeRock";
 import { makeTv } from "./makeTv";
 import { makeWall } from "./makeWall";
 import { makeWebBox } from "./makeWebBox";
@@ -19,6 +20,7 @@ export const directory = [
   { name: "Card", make: makeCard },
   { name: "Diamond", make: makeDiamond },
   { name: "Ground", make: makeGround },
+  { name: "Rock", make: makeRock },
   { name: "Image", make: makeImage },
   { name: "Label", make: makeLabel },
   { name: "Wall", make: makeWall },
