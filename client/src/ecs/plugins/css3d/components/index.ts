@@ -8,3 +8,6 @@ export { DocumentRef } from "../document/DocumentRef";
 
 export { WebPage } from "../webpage/WebPage";
 export { WebPageRef } from "../webpage/WebPageRef";
+
+export { YouTube } from "../youtube/YouTube";
+export { YouTubeRef } from "../youtube/YouTubeRef";

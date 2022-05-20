@@ -1,4 +1,6 @@
-import { Color } from "three";
+import { Vector3 } from "@dimforge/rapier3d";
+import { Vector2, Color } from "three";
+import { CssPlane, YouTube } from "~/ecs/plugins/css3d";
 import { makeBox } from "./makeBox";
 import { makeYoutube } from "./makeYoutube";
 
@@ -13,24 +15,25 @@ export function makeTv(
 
   const w = 3.2;
   const h = 1.888;
-  const d = 0.6;
+  const d = 0.3;
 
   const tvBox = makeBox(world, {
     ...{ x, y, z, w, h, d, rx: -0.5 },
     color: `#${linearColor.getHexString()}`,
-    name: "BlueBox",
+    name: "TV",
   });
 
-  const video = makeYoutube(world, {
-    x: 0.0,
-    y: 0.0,
-    z: 0.301,
-    embedId,
-    frameWidth: 560,
-    frameHeight: 315,
-    worldWidth: 3,
-  });
-  video.setParent(tvBox);
+  tvBox
+    .add(YouTube, {
+      embedId: embedId,
+    })
+    .add(CssPlane, {
+      kind: "ROUNDED",
+      circleRadius: 0.1,
+      scale: 1.0,
+      rectangleSize: new Vector2(w - 0.2, h - 0.2),
+      offset: new Vector3(0, 0, d / 2 + 0.05),
+    });
 
   return tvBox;
 }
