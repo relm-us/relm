@@ -21,7 +21,7 @@ export function makeWebBox(
   const linearColor = new Color(color);
   linearColor.convertSRGBToLinear();
 
-  const box = makeBox(world, {
+  return makeBox(world, {
     ...{ x, y: y + yOffset, z, w, h, d },
     color: `#${linearColor.getHexString()}`,
     name: "WebPage",
@@ -33,6 +33,4 @@ export function makeWebBox(
       scale: 1.0,
       offset: new Vector3(0, 0, d / 2 + 0.05),
     });
-
-  return box;
 }
