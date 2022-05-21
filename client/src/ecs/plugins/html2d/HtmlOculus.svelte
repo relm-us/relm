@@ -95,7 +95,7 @@
       volume * 100
     ).toFixed(3)}%"
   >
-    <oculus class="round" on:click={enterFullscreen}>
+    <oculus class="round" class:contain={fullscreen} on:click={enterFullscreen}>
       {#if fullscreen}
         <Fullscreen on:close={exitFullscreen}>
           <Video track={$videoStore} mirror={false} />
@@ -139,6 +139,10 @@
 
     /* Safari needs this in order to clip the video as a circle */
     transform: translate3d(-2px, 0, 0);
+  }
+
+  .contain :global(video) {
+    object-fit: contain;
   }
 
   @keyframes white {
