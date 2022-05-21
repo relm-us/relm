@@ -1,0 +1,26 @@
+2022-05-21
+
+## Summary
+
+I think it would make sense to refactor all of the `interactive` components into a state machine, so that it's easier to reason about what happens when the user presses "spacebar" or clicks on something. Currently, we don't consider world state when deciding what "spacebar" should do--there is no action precedence, nor consideration to what the participant is currently carrying.
+
+Components that make an entity interactive:
+- Item
+- Clickable
+- Draggable
+
+Related:
+- NonInteractive
+- Outline
+- ItemActor
+
+
+## Notes
+
+Currently, ClickableSystem's "click" function handles a lot of the logic for clicking, depending on what the `Click` component sets it to do. e.g. OPEN / TOGGLE / FLIP
+
+The `clickable/Draggable` component is just a marker, as is the `item/Item` component. These components are needed by `pointerAction.ts`, which determines what happens when you use mouse/touch to interact with an object.
+
+The `ItemActorSystem` also shares part of the responsibility--specifically, with regard to "spacebar".
+
+The `utils/isInteractive.ts` collection is also aware of the special nature of these marker components.

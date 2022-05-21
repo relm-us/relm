@@ -1,7 +1,7 @@
 import { Mesh } from "three";
 import { BooleanType, LocalComponent } from "~/ecs/base";
 
-export class ItemActor extends LocalComponent {
+export class Interactor extends LocalComponent {
   // Optional sphere helper shows bounds where items are considered "nearby"
   sphereHelper: Mesh;
   debug: boolean;

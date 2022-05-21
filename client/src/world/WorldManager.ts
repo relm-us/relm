@@ -74,7 +74,7 @@ import { RelmRestAPI } from "~/main/RelmRestAPI";
 import { PhotoBooth } from "./PhotoBooth";
 import { audioMode, AudioMode } from "~/stores/audioMode";
 import { Outline } from "~/ecs/plugins/outline";
-import { ItemActorSystem } from "~/ecs/plugins/item";
+import { InteractorSystem } from "~/ecs/plugins/interactor";
 import { Object3DRef } from "~/ecs/plugins/core";
 
 type LoopType =
@@ -235,10 +235,10 @@ export class WorldManager {
         switch ($mode) {
           case "build":
             this.hoverOutline(null);
-            this.world.systems.get(ItemActorSystem).active = false;
+            this.world.systems.get(InteractorSystem).active = false;
             break;
           case "play":
-            this.world.systems.get(ItemActorSystem).active = true;
+            this.world.systems.get(InteractorSystem).active = true;
             break;
         }
       })

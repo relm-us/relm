@@ -4,7 +4,7 @@ import type { Dispatch } from "../ProgramTypes";
 import { Vector3 } from "three";
 
 import { Entity } from "~/ecs/base";
-import { ItemActor } from "~/ecs/plugins/item";
+import { Interactor } from "~/ecs/plugins/interactor";
 import { Controller } from "~/ecs/plugins/player-control";
 import { BoneTwist, headFollowsPointer } from "~/ecs/plugins/bone-twist";
 
@@ -26,7 +26,7 @@ export const makeLocalAvatar =
 
     entities.body
       .add(Controller, { onActivity: () => worldManager.didControlAvatar() })
-      .add(ItemActor)
+      .add(Interactor)
       .add(BoneTwist, {
         boneName: "mixamorigHead",
         function: headFollowsPointer(storeHeadAngle),

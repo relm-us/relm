@@ -26,6 +26,7 @@ import FirePlugin from "~/ecs/plugins/fire";
 import FollowPlugin from "~/ecs/plugins/follow";
 import Html2dPlugin from "~/ecs/plugins/html2d";
 import ImagePlugin from "~/ecs/plugins/image";
+import InteractorPlugin from "~/ecs/plugins/interactor";
 import ItemPlugin from "~/ecs/plugins/item";
 import LightingPlugin from "~/ecs/plugins/lighting";
 import LineHelperPlugin from "~/ecs/plugins/line-helper";
@@ -83,6 +84,7 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       FollowPlugin,
       Html2dPlugin,
       ImagePlugin,
+      InteractorPlugin,
       ItemPlugin,
       LightingPlugin,
       LineHelperPlugin,

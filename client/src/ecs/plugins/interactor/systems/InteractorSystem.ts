@@ -16,13 +16,13 @@ import { SpatiallyIndexed, SpatialIndex } from "~/ecs/plugins/spatial-index";
 import { Outline } from "~/ecs/plugins/outline";
 import { BoundingBox } from "~/ecs/plugins/bounding-box";
 
-import { ItemActor } from "../components";
+import { Interactor } from "../components";
 
 const vOut = new Vector3(0, 0, 1);
 const vProjectOutward = new Vector3();
 const probe = new Sphere();
 
-export class ItemActorSystem extends System {
+export class InteractorSystem extends System {
   static selected: Entity = null;
 
   presentation: Presentation;
@@ -33,7 +33,7 @@ export class ItemActorSystem extends System {
   order = Groups.Simulation;
 
   static queries = {
-    active: [ItemActor],
+    active: [Interactor],
   };
 
   init({ presentation }) {
@@ -44,7 +44,7 @@ export class ItemActorSystem extends System {
 
   update(delta) {
     this.queries.active.forEach((entity) => {
-      const spec = entity.get(ItemActor);
+      const spec = entity.get(Interactor);
       const entitiesNearby = this.getEntitiesNearby(entity);
       const probe = this.makeProbe(entity);
 
@@ -73,15 +73,15 @@ export class ItemActorSystem extends System {
         ? this.candidates[0]
         : null;
 
-      const selected = ItemActorSystem.selected;
+      const selected = InteractorSystem.selected;
       if (selected && selected !== shouldOutline && selected.has(Outline)) {
         selected.remove(Outline);
-        ItemActorSystem.selected = null;
+        InteractorSystem.selected = null;
       }
 
       if (shouldOutline && !shouldOutline.has(Outline)) {
         shouldOutline.add(Outline);
-        ItemActorSystem.selected = shouldOutline;
+        InteractorSystem.selected = shouldOutline;
       }
     });
   }
@@ -114,16 +114,16 @@ export class ItemActorSystem extends System {
   }
 
   updateSphereHelper(entity: Entity, center: Vector3, radius: number) {
-    const itemActor: ItemActor = entity.get(ItemActor);
+    const interactor: Interactor = entity.get(Interactor);
 
-    if (!itemActor.sphereHelper) {
+    if (!interactor.sphereHelper) {
       const geometry = new SphereGeometry(radius);
-      itemActor.sphereHelper = new Mesh(
+      interactor.sphereHelper = new Mesh(
         geometry,
         new MeshBasicMaterial({ transparent: true, opacity: 0.2 })
       );
-      this.presentation.scene.add(itemActor.sphereHelper);
+      this.presentation.scene.add(interactor.sphereHelper);
     }
-    itemActor.sphereHelper.position.copy(center);
+    interactor.sphereHelper.position.copy(center);
   }
 }
