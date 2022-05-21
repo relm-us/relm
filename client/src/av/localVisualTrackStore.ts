@@ -12,6 +12,7 @@ export const localVisualTrackStore: Readable<
     if ($localShareTrack) {
       set($localShareTrack);
     } else {
+      if ($localShareTrack) $localShareTrack.stop();
       set($localVideoTrack);
     }
   }
