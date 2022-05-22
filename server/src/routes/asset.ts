@@ -1,12 +1,21 @@
+import { jsonToYEntity, YEntity, yEntityToJSON } from "relm-common";
+
 import path from "path";
 import express from "express";
 import fileupload from "express-fileupload";
 import cors from "cors";
 import sharp from "sharp";
+import * as Y from "yjs";
 
 import * as middleware from "../middleware.js";
 import * as conversion from "../conversion.js";
-import { respondWithSuccess, respondWithError, wrapAsync } from "../utils/index.js";
+import {
+  respondWithSuccess,
+  respondWithError,
+  wrapAsync,
+} from "../utils/index.js";
+
+import { getYDoc } from "../getYDoc.js";
 
 import { Asset } from "../db/index.js";
 
@@ -107,6 +116,153 @@ asset.post(
     if (per_page > 100) per_page = 100;
 
     const assets = await Asset.queryAssets({ keywords, tags, page, per_page });
+
+    return respondWithSuccess(res, {
+      action: "query",
+      assets,
+    });
+  })
+);
+
+asset.post(
+  "/inventory/take",
+  cors(),
+  middleware.relmName(),
+  middleware.relmExists(),
+  middleware.authenticated(),
+  middleware.authorized("access"),
+  wrapAsync(async (req, res) => {
+    if (!req.body.entityId)
+      return respondWithError(res, "entityId is required");
+
+    const entityId: string = req.body.entityId;
+    const yCenter: number = req.body.yCenter || 0.0;
+
+    const relmDoc: Y.Doc = await getYDoc(req.relm.permanentDocId);
+    const yentities: Y.Array<YEntity> = relmDoc.getArray("entities");
+
+    // Find the entity
+    let entity;
+    for (let yentity of yentities) {
+      const id = yentity.get("id") as string;
+      if (entityId === id) {
+        entity = yEntityToJSON(yentity);
+        break;
+      }
+    }
+
+    if (entity) {
+      let asset;
+      try {
+        // Add the entity to inventory
+        asset = await Asset.createAsset({
+          userId: req.authenticatedPlayerId, // TODO: use a real userId rather than ephemeral playerId
+          name: entity.name,
+          ecsProperties: {
+            center: [0, yCenter, 0],
+            entities: [entity],
+            groupTree: { groups: {}, entities: {} },
+          },
+          createdBy: req.authenticatedPlayerId,
+        });
+
+        // We loop through and re-visit entities again, because time has passed since finding the entity.
+        // We want the 'delete' operation to be as close to accurate as possible, despite possible async edits.
+        let i = 0;
+        for (let yentity of yentities) {
+          const id = yentity.get("id") as string;
+          if (entityId === id) {
+            yentities.delete(i, 1);
+            break;
+          }
+          i++;
+        }
+      } catch (err) {
+        return respondWithError(res, "could not take item", {
+          msg: err.toString(),
+        });
+      }
+
+      return respondWithSuccess(res, {
+        action: "take",
+        entity,
+        asset,
+      });
+    } else {
+      return respondWithError(res, "relm has no such entity", { entityId });
+    }
+  })
+);
+
+asset.post(
+  "/inventory/drop",
+  cors(),
+  middleware.relmName(),
+  middleware.relmExists(),
+  middleware.authenticated(),
+  middleware.authorized("access"),
+  wrapAsync(async (req, res) => {
+    if (!req.body.assetId) return respondWithError(res, "assetId is required");
+    if (!req.body.position || req.body.position.length !== 3)
+      return respondWithError(res, "position is required ([x, y, z])");
+
+    const assetId: string = req.body.assetId;
+    const position: number[] = req.body.position;
+
+    const relmDoc: Y.Doc = await getYDoc(req.relm.permanentDocId);
+    const yentities: Y.Array<YEntity> = relmDoc.getArray("entities");
+
+    const asset = await Asset.getAsset({ assetId });
+    if (asset) {
+      const entity = asset.ecsProperties.entities[0];
+      position[1] += asset.ecsProperties.center[1];
+      entity.Transform.position = position;
+
+      try {
+        const yentity: YEntity = jsonToYEntity(entity);
+
+        // Try to make this as transactional as possible--
+        // delete & push as close together as we can
+        await Asset.deleteAsset({ assetId });
+        yentities.push([yentity]);
+
+        return respondWithSuccess(res, {
+          action: "drop",
+          asset,
+        });
+      } catch (err) {
+        return respondWithError(res, "unable to drop", { msg: err.toString() });
+      }
+    } else {
+      return respondWithError(res, "asset does not exist", { assetId });
+    }
+  })
+);
+
+asset.post(
+  "/inventory/query",
+  cors(),
+  middleware.relmName(),
+  middleware.relmExists(),
+  middleware.authenticated(),
+  middleware.authorized("access"),
+  wrapAsync(async (req, res) => {
+    let keywords: string[] = req.body.keywords;
+    let tags: string[] = req.body.tags;
+    let page: number = req.body.page ?? 0;
+    let per_page: number = req.body.per_page ?? 10;
+
+    if (page < 0) page = 0;
+    if (per_page < 0) per_page = 0;
+    if (per_page > 100) per_page = 100;
+
+    const assets = await Asset.queryAssets({
+      keywords,
+      tags,
+      page,
+      per_page,
+      userId: req.authenticatedPlayerId,
+    });
 
     return respondWithSuccess(res, {
       action: "query",

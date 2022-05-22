@@ -12,7 +12,7 @@ Components that make an entity interactive:
 Related:
 - NonInteractive
 - Outline
-- ItemActor
+- Interactor
 
 
 ## Notes
@@ -21,6 +21,6 @@ Currently, ClickableSystem's "click" function handles a lot of the logic for cli
 
 The `clickable/Draggable` component is just a marker, as is the `item/Item` component. These components are needed by `pointerAction.ts`, which determines what happens when you use mouse/touch to interact with an object.
 
-The `ItemActorSystem` also shares part of the responsibility--specifically, with regard to "spacebar".
+The `InteractorSystem` also shares part of the responsibility--specifically, with regard to "spacebar".
 
 The `utils/isInteractive.ts` collection is also aware of the special nature of these marker components.

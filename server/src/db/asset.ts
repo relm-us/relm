@@ -113,13 +113,30 @@ export async function updateAsset({
     asset_id: assetId,
   };
 
-  let s = sql`
+  const row = await db.oneOrNone(sql`
       ${UPDATE("assets", attrs)}
       ${WHERE(filter)}
       RETURNING *
-    `;
-  // console.log("asset create sql", s);
-  const row = await db.oneOrNone(s);
+    `);
+
+  if (row !== null) {
+    const relm = mkAsset(row);
+    return relm;
+  } else {
+    return null;
+  }
+}
+
+// Return an asset by its ID
+export async function getAsset({ assetId }: { assetId?: string }) {
+  const filter: any = {
+    asset_id: assetId,
+  };
+  const row = await db.oneOrNone(sql`
+    SELECT *
+    FROM assets
+    ${WHERE(filter)}
+    `);
   if (row !== null) {
     const relm = mkAsset(row);
     return relm;
@@ -134,13 +151,13 @@ export async function queryAssets({
   tags,
   page,
   per_page,
+  userId,
 }: {
   keywords?: string[];
   tags?: string[];
-  // userId: string,
-  // relmId: string
   page?: number;
   per_page?: number;
+  userId?: string;
 }) {
   const limit = per_page ?? 10;
   const offset = (page ?? 0) * limit;
@@ -151,6 +168,12 @@ export async function queryAssets({
   if (tags && tags.length > 0) {
     filter.tags = { "@>": JSON.stringify(tags) };
   }
+  if (userId) {
+    filter.user_id = userId;
+  } else {
+    filter.user_id = null;
+  }
+
   let s = sql`
       SELECT *
       FROM assets
@@ -159,7 +182,7 @@ export async function queryAssets({
       ${LIMIT(limit)}
       ${OFFSET(offset)}
     `;
-  // console.log("asset query sql", s);
+
   const rows = await db.manyOrNone(s);
   return rows.map((row) => mkAsset(row));
 }
