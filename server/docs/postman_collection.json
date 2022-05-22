@@ -167,7 +167,132 @@
 			]
 		},
 		{
-			"name": "Asset",
+			"name": "Inventory",
+			"item": [
+				{
+					"name": "Take Item",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"relmName\": \"default\",\n    \"entityId\": \"M6OcSdDQ4vyAtykqXOMof\",\n    \"yCenter\": 1.97\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/asset/inventory/take",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"asset",
+								"inventory",
+								"take"
+							]
+						},
+						"description": "Removes an item with `entityId` from the relm given by `relmName`, and places it in the participant's inventory. Note that `entityId` is the same as the object's `ID` in the build mode `Modify` panel.\n\nThe `yCenter` value is an optional number that indicates the vertical center of the entity, relative to the base of the participant's avatar (i.e. \"the ground\"). The `yCenter` is used when the `/asset/inventory/drop` command is used, to place it at approximately the same height as when it was taken.\n\nIt's important to capture the `asset`'s `assetId` returned by this call, if you would like to `drop` the item later (otherwise, you will need to `/asset/inventory/query` for it)."
+					},
+					"response": []
+				},
+				{
+					"name": "Drop Item",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"relmName\": \"default\",\n    \"assetId\": \"24492b72-f125-42b3-a657-ef8c6679975e\",\n    \"position\": [0.0, 0.0, 9.1]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/asset/inventory/drop",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"asset",
+								"inventory",
+								"drop"
+							]
+						},
+						"description": "If the asset is in the participant's inventory, drop it into the relm given by `relmName`. The `assetId` is a UUID provided by the server at the time the item was taken via `/asset/inventory/take`. It can also be retrieved with a call to `/asset/inventory/query`.\n\nThe `position` argument is an array containing `x`, `y`, and `z` coordinates at which the item should be dropped. Note that the `yCenter` value provided at the call to `/asset/inventory/take` will be used to adjust the `y` value here."
+					},
+					"response": []
+				},
+				{
+					"name": "Query Inventory Items",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"page\": 0,\n    \"per_page\": 100\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/asset/inventory/query",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"asset",
+								"inventory",
+								"query"
+							]
+						},
+						"description": "Query for items in the participant's inventory. This query is similar to the `/asset/library/query` API and similarly accepts an optional `keywords` array of strings and an optional `tags` array of strings."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Asset Library",
 			"item": [
 				{
 					"name": "Add Library Asset",
