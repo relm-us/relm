@@ -58,12 +58,12 @@ export class RelmRestAPI {
     keywords,
     tags,
     page,
-    per_page = 12,
+    perPage = 12,
   }: {
     keywords?: string[];
     tags?: string[];
     page?: number;
-    per_page?: number;
+    perPage?: number;
   }): CancellablePromise<LibraryAsset[]> {
     type Content =
       | { status: "success"; assets: any[] }
@@ -72,7 +72,7 @@ export class RelmRestAPI {
       keywords,
       tags,
       page,
-      per_page,
+      perPage,
     }).then((content: Content) => {
       if (content.status === "success") {
         return content.assets;
@@ -137,7 +137,7 @@ export class RelmRestAPI {
     }
   }
 
-  async take({
+  async itemTake({
     entityId,
     yCenter = 0,
   }: {
@@ -145,7 +145,7 @@ export class RelmRestAPI {
     yCenter?: number;
   }): Promise<string> {
     type Content =
-      | { status: "success" }
+      | { status: "success"; asset: any }
       | { status: "error"; code?: number; reason: string };
     const content: Content = await this.post(`/asset/inventory/take`, {
       relmName: this.relmName,
@@ -153,10 +153,46 @@ export class RelmRestAPI {
       yCenter,
     });
     if (content.status === "success") {
-      console.log("take", content);
-      return "";
+      return content.asset.assetId;
     } else {
-      throw Error(`can't set variables: ${content.reason}`);
+      throw Error(`can't take item: ${content.reason}`);
+    }
+  }
+
+  async itemDrop({
+    assetId,
+    position,
+  }: {
+    assetId: string;
+    position: number[];
+  }): Promise<boolean> {
+    type Content =
+      | { status: "success"; asset: any }
+      | { status: "error"; code?: number; reason: string };
+    const content: Content = await this.post(`/asset/inventory/drop`, {
+      relmName: this.relmName,
+      assetId,
+      position,
+    });
+    if (content.status === "success") {
+      return true;
+    } else {
+      throw Error(`can't drop item: ${content.reason}`);
+    }
+  }
+
+  async itemQuery(): Promise<any[]> {
+    type Content =
+      | { status: "success"; assets: any[] }
+      | { status: "error"; code?: number; reason: string };
+    const content: Content = await this.post(`/asset/inventory/query`, {
+      relmName: this.relmName,
+      perPage: 1,
+    });
+    if (content.status === "success") {
+      return content.assets;
+    } else {
+      throw Error(`can't list inventory: ${content.reason}`);
     }
   }
 }

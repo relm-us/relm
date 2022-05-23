@@ -11,6 +11,7 @@
   import * as arrowKeys from "./handlers/arrowKeys";
   import * as debugKey from "./handlers/debugKey";
   import * as deleteKey from "./handlers/deleteKey";
+  import * as dropKey from "./handlers/dropKey";
   import * as enterKey from "./handlers/enterKey";
   import * as escapeKey from "./handlers/escapeKey";
   import * as numberKeys from "./handlers/numberKeys";
@@ -26,6 +27,7 @@
     arrowKeys.onKeydown(event);
     debugKey.onKeydown(event);
     deleteKey.onKeydown(event);
+    dropKey.onKeydown(event);
     enterKey.onKeydown(event);
     escapeKey.onKeydown(event);
     numberKeys.onKeydown(event);
@@ -42,6 +44,7 @@
     arrowKeys.onKeyup(event);
     debugKey.onKeyup(event);
     deleteKey.onKeyup(event);
+    dropKey.onKeyup(event);
     enterKey.onKeyup(event);
     escapeKey.onKeyup(event);
     numberKeys.onKeyup(event);

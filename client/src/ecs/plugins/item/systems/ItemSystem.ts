@@ -22,7 +22,7 @@ export class ItemSystem extends System {
       worldManager.participants.local.avatar.position.y;
 
     try {
-      worldManager.api.take({ entityId: entity.id as string, yCenter });
+      worldManager.api.itemTake({ entityId: entity.id as string, yCenter });
     } catch (err) {
       alert(err);
     }

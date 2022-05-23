@@ -402,6 +402,21 @@ export class WorldManager {
     }
   }
 
+  // Drop most recently taken item
+  async dropItem() {
+    const assets = await this.api.itemQuery();
+    if (assets.length > 0) {
+      const assetId = assets[0].assetId;
+      const result = await this.api.itemDrop({
+        assetId,
+        position: this.participants.local.avatar.position.toArray(),
+      });
+      if (!result) {
+        console.error("Unable to drop item");
+      }
+    }
+  }
+
   hoverOutline(found: Entity) {
     if (found) {
       if (!found.has(Outline)) {

@@ -109,7 +109,7 @@ asset.post(
     let keywords: string[] = req.body.keywords;
     let tags: string[] = req.body.tags;
     let page: number = req.body.page ?? 0;
-    let per_page: number = req.body.per_page ?? 10;
+    let per_page: number = req.body.perPage ?? 10;
 
     if (page < 0) page = 0;
     if (per_page < 0) per_page = 0;
@@ -250,7 +250,7 @@ asset.post(
     let keywords: string[] = req.body.keywords;
     let tags: string[] = req.body.tags;
     let page: number = req.body.page ?? 0;
-    let per_page: number = req.body.per_page ?? 10;
+    let per_page: number = req.body.perPage ?? 10;
 
     if (page < 0) page = 0;
     if (per_page < 0) per_page = 0;
