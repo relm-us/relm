@@ -2,6 +2,7 @@ import { Entity, EntityId } from "~/ecs/base";
 import { BoneAttach } from "~/ecs/plugins/bone-attach";
 import { Transform } from "~/ecs/plugins/core";
 import { RelmRestAPI } from "~/main/RelmRestAPI";
+import { createPrefab } from "~/prefab";
 import { makeBox } from "~/prefab/makeBox";
 import { DecoratedECSWorld, Participant } from "~/types";
 import { Avatar } from "./Avatar";
@@ -13,6 +14,14 @@ export class Inventory {
 
   assets: any[];
   heldEntity: Entity;
+
+  get heldAsset() {
+    return this.assets[0];
+  }
+
+  get firstHeldEntity() {
+    return this.heldAsset?.ecsProperties.entities[0]
+  }
 
   constructor(
     api: RelmRestAPI,
@@ -54,8 +63,8 @@ export class Inventory {
 
   async drop(assetId?: string) {
     if (!assetId) {
-      if (this.assets.length > 0) {
-        assetId = this.assets[0].assetId;
+      if (this.heldAsset) {
+        assetId = this.heldAsset.assetId;
       } else {
         console.warn("No items to drop");
         return;
@@ -102,6 +111,22 @@ export class Inventory {
         this.heldEntity = null;
       } else {
         console.warn("Can't removeHoldingIndicator: avatar not available");
+      }
+    }
+  }
+
+  actionable(): boolean {
+    console.log(this.firstHeldEntity);
+    return Boolean(this.firstHeldEntity?.Item.power);
+  }
+
+  action() {
+    const power = this.firstHeldEntity?.Item.power;
+    if (power) {
+      const parts = power.split(":");
+      if (parts[0] === "make") {
+        const name = parts[1];
+        createPrefab(name);
       }
     }
   }
