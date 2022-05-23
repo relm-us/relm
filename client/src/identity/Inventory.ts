@@ -1,11 +1,15 @@
+import type { DecoratedECSWorld, Participant } from "~/types";
+
+import { Vector3 } from "three";
+
 import { Entity, EntityId } from "~/ecs/base";
 import { BoneAttach } from "~/ecs/plugins/bone-attach";
 import { Transform } from "~/ecs/plugins/core";
 import { RelmRestAPI } from "~/main/RelmRestAPI";
 import { createPrefab } from "~/prefab";
 import { makeBox } from "~/prefab/makeBox";
-import { DecoratedECSWorld, Participant } from "~/types";
-import { Avatar } from "./Avatar";
+
+const vOut = new Vector3(0, 0, 1);
 
 export class Inventory {
   api: RelmRestAPI;
@@ -20,7 +24,7 @@ export class Inventory {
   }
 
   get firstHeldEntity() {
-    return this.heldAsset?.ecsProperties.entities[0]
+    return this.heldAsset?.ecsProperties.entities[0];
   }
 
   constructor(
@@ -71,9 +75,12 @@ export class Inventory {
       }
     }
 
+    // Place the item in front of the avatar
+    const position = inFrontOf(this.participant.avatar.transform);
+
     const result = await this.api.itemDrop({
       assetId,
-      position: this.participant.avatar.position.toArray(),
+      position: position.toArray(),
     });
     if (!result) {
       console.error("Unable to drop item");
@@ -126,8 +133,20 @@ export class Inventory {
       const parts = power.split(":");
       if (parts[0] === "make") {
         const name = parts[1];
-        createPrefab(name);
+
+        // Make the item in front of the avatar
+        const position = inFrontOf(this.participant.avatar.transform);
+        createPrefab(name, { x: position.x, y: position.y, z: position.z });
       }
     }
   }
+}
+
+function inFrontOf(transform: Transform) {
+  const facing = new Vector3()
+    .copy(vOut)
+    .applyQuaternion(transform.rotation)
+    .normalize();
+  const position = new Vector3().copy(transform.position).add(facing);
+  return position;
 }
