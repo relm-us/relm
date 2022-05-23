@@ -136,4 +136,27 @@ export class RelmRestAPI {
       throw Error(`can't set variables: ${content.reason}`);
     }
   }
+
+  async take({
+    entityId,
+    yCenter = 0,
+  }: {
+    entityId: string;
+    yCenter?: number;
+  }): Promise<string> {
+    type Content =
+      | { status: "success" }
+      | { status: "error"; code?: number; reason: string };
+    const content: Content = await this.post(`/asset/inventory/take`, {
+      relmName: this.relmName,
+      entityId,
+      yCenter,
+    });
+    if (content.status === "success") {
+      console.log("take", content);
+      return "";
+    } else {
+      throw Error(`can't set variables: ${content.reason}`);
+    }
+  }
 }

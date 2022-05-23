@@ -8,7 +8,7 @@ import { Clickable, Clicked } from "~/ecs/plugins/clickable";
 export function onAction() {
   if (get(worldUIMode) === "play") {
     const selected = InteractorSystem.selected;
-    if (selected && selected.get(Clickable) && !selected.get(Clicked)) {
+    if (selected && selected.has(Clickable) && !selected.has(Clicked)) {
       selected.add(Clicked);
     }
   }
