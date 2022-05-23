@@ -52,6 +52,7 @@ import { Follow } from "~/ecs/plugins/follow";
 import { intersectionPointWithGround } from "~/ecs/shared/isMakingContactWithGround";
 import { Transition } from "~/ecs/plugins/transition";
 
+import { Inventory } from "~/identity/Inventory";
 import { SelectionManager } from "./SelectionManager";
 import { ChatManager } from "./ChatManager";
 import { CameraManager } from "./CameraManager";
@@ -111,6 +112,7 @@ export class WorldManager {
   light: Entity;
 
   participants: ParticipantManager;
+  inventory: Inventory;
   selection: SelectionManager;
   chat: ChatManager;
   camera: CameraManager;
@@ -156,6 +158,9 @@ export class WorldManager {
     this.selection = new SelectionManager(this.worldDoc);
 
     this.participants = new ParticipantManager(dispatch, broker, participants);
+
+    this.inventory = new Inventory(this.api, this.world, this.participants.local)
+    this.inventory.init();
 
     this.chat = new ChatManager();
     this.chat.init(this.worldDoc.messages, (msg, state, value) => {
@@ -399,21 +404,6 @@ export class WorldManager {
     const entities = this.world.entities.getAllBy((entity) => !entity.parent);
     for (const entity of entities) {
       entity[action](BoundingHelper);
-    }
-  }
-
-  // Drop most recently taken item
-  async dropItem() {
-    const assets = await this.api.itemQuery();
-    if (assets.length > 0) {
-      const assetId = assets[0].assetId;
-      const result = await this.api.itemDrop({
-        assetId,
-        position: this.participants.local.avatar.position.toArray(),
-      });
-      if (!result) {
-        console.error("Unable to drop item");
-      }
     }
   }
 

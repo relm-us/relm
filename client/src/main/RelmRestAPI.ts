@@ -153,7 +153,7 @@ export class RelmRestAPI {
       yCenter,
     });
     if (content.status === "success") {
-      return content.asset.assetId;
+      return content.asset;
     } else {
       throw Error(`can't take item: ${content.reason}`);
     }

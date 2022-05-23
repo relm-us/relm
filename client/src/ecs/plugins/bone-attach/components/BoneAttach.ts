@@ -2,6 +2,7 @@ import { LocalComponent, StringType } from "~/ecs/base";
 
 export class BoneAttach extends LocalComponent {
   boneName: string;
+  entityToAttachId: string;
 
   static props = {
     boneName: {

@@ -6,6 +6,8 @@ import { BoneAttach, BoneAttachError, BoneAttachRef } from "../components";
 import { ModelAttached } from "~/ecs/plugins/model";
 import { Bone } from "three";
 
+const HAND_LENGTH = 0.25;
+
 export class BoneAttachSystem extends System {
   presentation: Presentation;
 
@@ -32,14 +34,13 @@ export class BoneAttachSystem extends System {
       this.build(entity);
     });
 
-    this.queries.active.forEach((entity) => {
-      const spec = entity.get(BoneAttach);
-      // TODO
-    });
+    // TODO
+    // this.queries.active.forEach((entity) => {
+    //   const spec = entity.get(BoneAttach);
+    // });
 
     this.queries.removed.forEach((entity) => {
-      entity.maybeRemove(BoneAttachRef);
-      entity.maybeRemove(BoneAttachError);
+      this.remove(entity);
     });
   }
 
@@ -74,7 +75,7 @@ export class BoneAttachSystem extends System {
           box.getSize(size);
 
           const container = new ThreeObject3D();
-          container.position.y = size.y;
+          container.position.y = size.y + HAND_LENGTH;
           container.add(child);
           bone.add(container);
         } else console.warn(`can't attach to bone: object3d has no child`);
@@ -87,5 +88,15 @@ export class BoneAttachSystem extends System {
     } else {
       console.warn(`can't attach to bone: entity not found`, entityToAttachId);
     }
+  }
+
+  remove(entity) {
+    const ref = entity.get(BoneAttachRef);
+    if (ref) {
+      const child = ref.value.children[0];
+      if (child) ref.value.remove(child);
+      entity.remove(BoneAttachRef);
+    }
+    entity.maybeRemove(BoneAttachError);
   }
 }

@@ -2,7 +2,7 @@ import { worldManager } from "~/world";
 
 export function onKeydown(event) {
   if (event.key.toLowerCase() === "z") {
-    worldManager.dropItem();
+    worldManager.inventory.drop();
   }
 }
 

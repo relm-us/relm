@@ -17,12 +17,8 @@ export class ItemSystem extends System {
   }
 
   take(entity: Entity) {
-    const yCenter =
-      entity.get(Transform).position.y -
-      worldManager.participants.local.avatar.position.y;
-
     try {
-      worldManager.api.itemTake({ entityId: entity.id as string, yCenter });
+      worldManager.inventory.take(entity.id);
     } catch (err) {
       alert(err);
     }
