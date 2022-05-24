@@ -4,11 +4,14 @@ import { Vector3 } from "three";
 
 import { Entity, EntityId } from "~/ecs/base";
 import { BoneAttach } from "~/ecs/plugins/bone-attach";
-import { Transform } from "~/ecs/plugins/core";
+import { Asset, Transform } from "~/ecs/plugins/core";
 import { RelmRestAPI } from "~/main/RelmRestAPI";
 import { createPrefab } from "~/prefab";
 import { makeBox } from "~/prefab/makeBox";
 import { inFrontOf } from "~/utils/inFrontOf";
+import { makeEntity } from "~/prefab/makeEntity";
+import { Model } from "~/ecs/plugins/model";
+import { FaceMapColors } from "~/ecs/plugins/coloration";
 
 const HAND_LENGTH = 0.25;
 
@@ -97,14 +100,35 @@ export class Inventory {
     }
   }
 
-  showHoldingIndicator() {
-    this.heldEntity = makeBox(this.world, {
+  makeHeldEntity() {
+    const model = this.firstHeldEntityJSON.Model;
+    if (model) {
+      const entity = makeEntity(this.world, "Held")
+        .add(Transform)
+        .add(Model, {
+          asset: new Asset(model.asset.url),
+        });
+
+      if (this.firstHeldEntityJSON.FaceMapColors) {
+        entity.add(FaceMapColors, {
+          colors: JSON.parse(this.firstHeldEntityJSON.FaceMapColors.colors),
+        });
+      }
+
+      return entity.activate();
+    }
+
+    return makeBox(this.world, {
       w: 0.8,
       h: 0.8,
       d: 0.8,
       color: "#ff0000",
       collider: false,
     }).activate();
+  }
+
+  showHoldingIndicator() {
+    this.heldEntity = this.makeHeldEntity();
 
     const avatar = this.participant.avatar;
     if (avatar) {
@@ -139,7 +163,10 @@ export class Inventory {
           offset: new Vector3(0, height / 2 + 1.0, 0),
         };
       case "BACK":
-        return { boneName: "mixamorigSpine2", offset: new Vector3(0, 0, -height/2 - 0.25) };
+        return {
+          boneName: "mixamorigSpine2",
+          offset: new Vector3(0, 0, -height / 2 - 0.25),
+        };
       default:
         return {
           boneName: "mixamorigRightHand",

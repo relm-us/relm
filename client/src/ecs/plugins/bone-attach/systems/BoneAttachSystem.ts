@@ -55,22 +55,19 @@ export class BoneAttachSystem extends System {
     if (entityToAttach) {
       const object: Object3D = entityToAttach.get(Object3DRef)?.value;
       if (object) {
-        const child = object.children[0];
-        if (child) {
-          const box = new Box3();
-          box.setFromObject(child);
-          const size = new Vector3();
-          box.getSize(size);
+        // TODO: store object's Transform coordinates, set to zero, then restore?
+        
+        const box = new Box3();
+        box.setFromObject(object);
+        const size = new Vector3();
+        box.getSize(size);
 
-          const container = new Object3D();
-          container.position.copy(spec.offset);
-          container.add(child);
-          bone.add(container);
+        const container = new Object3D();
+        container.position.copy(spec.offset);
+        container.add(object);
+        bone.add(container);
 
-          return container;
-        } else {
-          console.warn(`can't attach to bone: object3d has no child`);
-        }
+        return container;
       } else {
         console.warn(
           `can't attach to bone: entityToAttach has no object3d`,
