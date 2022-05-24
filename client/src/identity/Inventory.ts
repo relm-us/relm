@@ -1,15 +1,12 @@
 import type { DecoratedECSWorld, Participant } from "~/types";
 
-import { Vector3 } from "three";
-
 import { Entity, EntityId } from "~/ecs/base";
 import { BoneAttach } from "~/ecs/plugins/bone-attach";
 import { Transform } from "~/ecs/plugins/core";
 import { RelmRestAPI } from "~/main/RelmRestAPI";
 import { createPrefab } from "~/prefab";
 import { makeBox } from "~/prefab/makeBox";
-
-const vOut = new Vector3(0, 0, 1);
+import { inFrontOf } from "~/utils/inFrontOf";
 
 export class Inventory {
   api: RelmRestAPI;
@@ -75,8 +72,8 @@ export class Inventory {
       }
     }
 
-    // Place the item in front of the avatar
-    const position = inFrontOf(this.participant.avatar.transform);
+    const transform = this.participant.avatar.transform;
+    const position = inFrontOf(transform.position, transform.rotation);
 
     const result = await this.api.itemDrop({
       assetId,
@@ -123,7 +120,6 @@ export class Inventory {
   }
 
   actionable(): boolean {
-    console.log(this.firstHeldEntity);
     return Boolean(this.firstHeldEntity?.Item.power);
   }
 
@@ -135,18 +131,10 @@ export class Inventory {
         const name = parts[1];
 
         // Make the item in front of the avatar
-        const position = inFrontOf(this.participant.avatar.transform);
+        const transform = this.participant.avatar.transform;
+        const position = inFrontOf(transform.position, transform.rotation);
         createPrefab(name, { x: position.x, y: position.y, z: position.z });
       }
     }
   }
-}
-
-function inFrontOf(transform: Transform) {
-  const facing = new Vector3()
-    .copy(vOut)
-    .applyQuaternion(transform.rotation)
-    .normalize();
-  const position = new Vector3().copy(transform.position).add(facing);
-  return position;
 }

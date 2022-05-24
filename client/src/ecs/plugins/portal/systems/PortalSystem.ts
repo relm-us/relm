@@ -10,6 +10,7 @@ import { worldManager } from "~/world";
 
 import { Portal } from "../components";
 import { makeSparkles } from "../makeSparkles";
+import { inFrontOf } from "~/utils/inFrontOf";
 
 const portalsDisabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -42,15 +43,12 @@ export class PortalSystem extends System {
       const portal = entity.get(Portal);
       const otherEntity: Entity = entity.get(Impact).other;
       if (otherEntity.has(Controller)) {
-        console.log("portal triggered", portal);
         if (portal.kind === "LOCAL") {
           const transform = otherEntity.get(Transform);
-          const newCoords = new Vector3().copy(portal.coords);
 
           // Make participant show up on the "other side" of the
           // portal destination, depending on movement direction.
-          bodyFacing.copy(vOut).applyQuaternion(transform.rotation).normalize();
-          newCoords.add(bodyFacing);
+          const newCoords = inFrontOf(portal.coords, transform.rotation);
 
           const sparklesEntrance = makeSparkles(this.world, transform.position);
 
