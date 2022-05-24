@@ -36,12 +36,13 @@ export class BoneAttachSystem extends System {
   }
 
   build(entity: Entity) {
-    const spec = entity.get(BoneAttach);
+    const spec: BoneAttach = entity.get(BoneAttach);
     const { parent, child } = entity.get(ModelAttached);
     const bone = this.findBone(child, spec.boneName);
     if (bone) {
-      this.attach(entity, bone);
-      entity.add(BoneAttachRef, { value: bone, parent });
+      const child = this.attach(entity, bone);
+      if (child) entity.add(BoneAttachRef, { bone, child });
+      else entity.add(BoneAttachError);
     } else {
       console.warn(`bone not found`, spec.boneName);
       entity.add(BoneAttachError);
@@ -62,10 +63,11 @@ export class BoneAttachSystem extends System {
           box.getSize(size);
 
           const container = new Object3D();
-          // container.position.y = size.y + 1.0; //HAND_LENGTH;
           container.position.copy(spec.offset);
           container.add(child);
           bone.add(container);
+
+          return container;
         } else {
           console.warn(`can't attach to bone: object3d has no child`);
         }
@@ -84,10 +86,9 @@ export class BoneAttachSystem extends System {
   }
 
   remove(entity) {
-    const ref = entity.get(BoneAttachRef);
+    const ref: BoneAttachRef = entity.get(BoneAttachRef);
     if (ref) {
-      const child = ref.value.children[0];
-      if (child) ref.value.remove(child);
+      ref.bone.remove(ref.child);
       entity.remove(BoneAttachRef);
     }
     entity.maybeRemove(BoneAttachError);

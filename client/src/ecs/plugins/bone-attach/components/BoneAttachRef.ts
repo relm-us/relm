@@ -2,15 +2,15 @@ import { Object3D } from "three";
 import { StateComponent, RefType } from "~/ecs/base";
 
 export class BoneAttachRef extends StateComponent {
-  value: Object3D;
-  parent: Object3D;
+  bone: Object3D;
+  child: Object3D;
 
   static props = {
-    value: {
+    bone: {
       type: RefType,
     },
 
-    parent: {
+    child: {
       type: RefType,
     },
   };

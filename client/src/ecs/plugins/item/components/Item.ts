@@ -14,6 +14,7 @@ export class Item extends Component {
       editor: {
         label: "Attach To",
         input: "Select",
+        default: "HAND",
         options: [
           { label: "Right Hand", value: "HAND" },
           { label: "Head", value: "HEAD" },
