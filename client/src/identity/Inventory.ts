@@ -1,5 +1,7 @@
 import type { DecoratedECSWorld, Participant } from "~/types";
 
+import { Vector3 } from "three";
+
 import { Entity, EntityId } from "~/ecs/base";
 import { BoneAttach } from "~/ecs/plugins/bone-attach";
 import { Transform } from "~/ecs/plugins/core";
@@ -7,6 +9,8 @@ import { RelmRestAPI } from "~/main/RelmRestAPI";
 import { createPrefab } from "~/prefab";
 import { makeBox } from "~/prefab/makeBox";
 import { inFrontOf } from "~/utils/inFrontOf";
+
+const HAND_LENGTH = 0.25;
 
 export class Inventory {
   api: RelmRestAPI;
@@ -20,7 +24,7 @@ export class Inventory {
     return this.assets[0];
   }
 
-  get firstHeldEntity() {
+  get firstHeldEntityJSON() {
     return this.heldAsset?.ecsProperties.entities[0];
   }
 
@@ -40,7 +44,10 @@ export class Inventory {
 
   async loadAssets() {
     this.assets = await this.api.itemQuery();
+    this.syncIndicator();
+  }
 
+  syncIndicator() {
     if (this.assets && this.assets.length > 0) {
       this.showHoldingIndicator();
     } else {
@@ -59,7 +66,9 @@ export class Inventory {
       yCenter,
     });
 
-    await this.loadAssets();
+    this.assets.unshift(asset);
+
+    this.syncIndicator();
   }
 
   async drop(assetId?: string) {
@@ -79,11 +88,13 @@ export class Inventory {
       assetId,
       position: position.toArray(),
     });
-    if (!result) {
+
+    if (result) {
+      this.assets.shift();
+      this.syncIndicator();
+    } else {
       console.error("Unable to drop item");
     }
-
-    await this.loadAssets();
   }
 
   showHoldingIndicator() {
@@ -98,8 +109,8 @@ export class Inventory {
     const avatar = this.participant.avatar;
     if (avatar) {
       avatar.entities.body.add(BoneAttach, {
-        boneName: "mixamorigRightHand",
         entityToAttachId: this.heldEntity.id,
+        ...this.getBoneAttachParams(),
       });
     } else {
       console.warn("Can't showHoldingIndicator: avatar not available");
@@ -119,12 +130,30 @@ export class Inventory {
     }
   }
 
+  getBoneAttachParams(entity = this.firstHeldEntityJSON) {
+    const height = 1.0;
+    switch (entity.Item.attach) {
+      case "HEAD":
+        return {
+          boneName: "mixamorigHeadTop_End",
+          offset: new Vector3(0, height / 2 + 1.0, 0),
+        };
+      case "BACK":
+        return { boneName: "mixamorigSpine2", offset: new Vector3(0, 0, -height/2 - 0.25) };
+      default:
+        return {
+          boneName: "mixamorigRightHand",
+          offset: new Vector3(0, height / 2 + HAND_LENGTH, 0),
+        };
+    }
+  }
+
   actionable(): boolean {
-    return Boolean(this.firstHeldEntity?.Item.power);
+    return Boolean(this.firstHeldEntityJSON?.Item.power);
   }
 
   action() {
-    const power = this.firstHeldEntity?.Item.power;
+    const power = this.firstHeldEntityJSON?.Item.power;
     if (power) {
       const parts = power.split(":");
       if (parts[0] === "make") {
