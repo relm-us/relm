@@ -1,6 +1,7 @@
 import type {
   Appearance,
   DecoratedECSWorld,
+  Equipment,
   Participant,
   UpdateData,
 } from "~/types";
@@ -115,6 +116,10 @@ export class ParticipantManager {
 
   setAppearance(appearance: Appearance) {
     this.updateMe({ appearance });
+  }
+
+  setEquipment(equipment: Equipment) {
+    this.updateMe({ equipment });
   }
 
   getName(): string {

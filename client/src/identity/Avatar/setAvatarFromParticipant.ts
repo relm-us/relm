@@ -8,6 +8,7 @@ import { setLabel } from "./label";
 import { setOculus } from "./oculus";
 import { setSpeech } from "./speech";
 import { chatOpen } from "~/stores/chat";
+import { setEquipped } from "./equip";
 
 function onDidEditName(name: string) {
   worldManager.participants.setName(name);
@@ -28,6 +29,7 @@ export function setAvatarFromParticipant(this: void, participant: Participant) {
   const entities = participant.avatar.entities;
   const data = participant.identityData;
   setAppearance(entities, data.appearance);
+  setEquipped(entities, data.equipment);
   setEmoji(entities, data.emoji, data.emoting);
   setLabel(
     entities,

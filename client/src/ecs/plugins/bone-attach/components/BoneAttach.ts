@@ -1,4 +1,4 @@
-import { Vector3 } from "three";
+import { Vector3, Quaternion } from "three";
 
 import { LocalComponent, StringType } from "~/ecs/base";
 import { QuaternionType, Vector3Type } from "~/ecs/plugins/core";
@@ -6,6 +6,10 @@ import { QuaternionType, Vector3Type } from "~/ecs/plugins/core";
 export class BoneAttach extends LocalComponent {
   boneName: string;
   entityToAttachId: string;
+
+  position: Vector3;
+  rotation: Quaternion;
+  scale: Vector3;
 
   static props = {
     boneName: {

@@ -57,6 +57,15 @@ export type Appearance = {
   shoeColor: string;
 };
 
+export type Equipment = {
+  bone: string;
+  position: [number, number, number];
+  rotation: [number, number, number, number];
+  scale: [number, number, number];
+  model?: string;
+  colors?: any;
+};
+
 export type AuthenticationHeaders = {
   "x-relm-id": string;
   "x-relm-s": string;
@@ -89,7 +98,10 @@ export type IdentityData = {
   showVideo: boolean;
 
   // Avatar appearance, based on Avatar Builder settings
-  appearance: Appearance;
+  appearance?: Appearance;
+
+  // If the participant is holding / wearing / has something equipped
+  equipment?: Equipment;
 
   // Last known yjs clientId for this participant
   clientId?: number;
@@ -110,6 +122,7 @@ export type UpdateData = {
   showAudio?: boolean;
   showVideo?: boolean;
   appearance?: Appearance;
+  equipment?: Equipment;
   clientId?: number;
   message?: string;
   emoji?: string;
@@ -133,6 +146,7 @@ export type AvatarEntities = {
   head: Entity;
   body: Entity;
   emoji: Entity;
+  equipped?: Entity;
 };
 
 export type Participant = {

@@ -18,6 +18,5 @@ export const localIdentityData: Readable<IdentityData> = storedWritable(
     emoting: false,
     showAudio: false,
     showVideo: false,
-    appearance: undefined, // undefined allows to pick up default value later
   }
 );
