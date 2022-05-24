@@ -8,7 +8,6 @@ import { ModelAttached } from "~/ecs/plugins/model";
 export class BoneAttachSystem extends System {
   presentation: Presentation;
 
-  // After both AnimationSystem and PointerPositionSystem
   order = Groups.Simulation + 15;
 
   static queries = {
@@ -55,16 +54,18 @@ export class BoneAttachSystem extends System {
     if (entityToAttach) {
       const object: Object3D = entityToAttach.get(Object3DRef)?.value;
       if (object) {
-        // TODO: store object's Transform coordinates, set to zero, then restore?
-        
+        // TODO: take bounding box size into consideration
         const box = new Box3();
         box.setFromObject(object);
         const size = new Vector3();
         box.getSize(size);
 
         const container = new Object3D();
-        container.position.copy(spec.offset);
+        container.position.copy(spec.position);
+        container.quaternion.copy(spec.rotation);
+        container.scale.copy(spec.scale);
         container.add(object);
+
         bone.add(container);
 
         return container;

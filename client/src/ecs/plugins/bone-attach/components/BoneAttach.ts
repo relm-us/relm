@@ -1,5 +1,7 @@
+import { Vector3 } from "three";
+
 import { LocalComponent, StringType } from "~/ecs/base";
-import { Vector3Type } from "~/ecs/plugins/core";
+import { QuaternionType, Vector3Type } from "~/ecs/plugins/core";
 
 export class BoneAttach extends LocalComponent {
   boneName: string;
@@ -9,24 +11,23 @@ export class BoneAttach extends LocalComponent {
     boneName: {
       type: StringType,
       default: null,
-      editor: {
-        label: "Bone Name",
-      },
     },
 
-    offset: {
+    position: {
       type: Vector3Type,
-      editor: {
-        label: "Offset",
-      },
+    },
+
+    rotation: {
+      type: QuaternionType,
+    },
+
+    scale: {
+      type: Vector3Type,
+      default: new Vector3(1, 1, 1),
     },
 
     entityToAttachId: {
       type: StringType,
-      default: null,
-      editor: {
-        label: "Entity to Attach",
-      },
     },
   };
 }

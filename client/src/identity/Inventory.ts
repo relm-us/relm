@@ -1,6 +1,6 @@
 import type { DecoratedECSWorld, Participant } from "~/types";
 
-import { Vector3 } from "three";
+import { Vector3, Quaternion } from "three";
 
 import { Entity, EntityId } from "~/ecs/base";
 import { BoneAttach } from "~/ecs/plugins/bone-attach";
@@ -12,6 +12,7 @@ import { inFrontOf } from "~/utils/inFrontOf";
 import { makeEntity } from "~/prefab/makeEntity";
 import { Model } from "~/ecs/plugins/model";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
+import { Item } from "~/ecs/plugins/item";
 
 const HAND_LENGTH = 0.25;
 
@@ -101,40 +102,53 @@ export class Inventory {
   }
 
   makeHeldEntity() {
-    const model = this.firstHeldEntityJSON.Model;
+    const json = this.firstHeldEntityJSON;
+    const model = json.Model;
+
+    let entity: Entity;
+
     if (model) {
-      const entity = makeEntity(this.world, "Held")
+      entity = makeEntity(this.world, "Held")
         .add(Transform)
         .add(Model, {
           asset: new Asset(model.asset.url),
         });
 
-      if (this.firstHeldEntityJSON.FaceMapColors) {
+      if (json.FaceMapColors) {
         entity.add(FaceMapColors, {
-          colors: JSON.parse(this.firstHeldEntityJSON.FaceMapColors.colors),
+          colors: JSON.parse(json.FaceMapColors.colors),
         });
       }
-
-      return entity.activate();
+    } else {
+      entity = makeBox(this.world, {
+        name: "Held",
+        w: 0.8,
+        h: 0.8,
+        d: 0.8,
+        color: "#ff0000",
+        collider: false,
+      });
     }
 
-    return makeBox(this.world, {
-      w: 0.8,
-      h: 0.8,
-      d: 0.8,
-      color: "#ff0000",
-      collider: false,
-    }).activate();
+    return entity.activate();
   }
 
   showHoldingIndicator() {
     this.heldEntity = this.makeHeldEntity();
 
+    const attachParams = this.getBoneAttachParams();
+
+    const item = new Item(this.world).fromJSON(this.firstHeldEntityJSON.Item);
+    attachParams.position.add(item.position);
+    attachParams.rotation.copy(item.rotation);
+    attachParams.scale.copy(item.scale);
+    // console.log("attachParams", attachParams, this.firstHeldEntityJSON.Item);
+
     const avatar = this.participant.avatar;
     if (avatar) {
       avatar.entities.body.add(BoneAttach, {
         entityToAttachId: this.heldEntity.id,
-        ...this.getBoneAttachParams(),
+        ...attachParams,
       });
     } else {
       console.warn("Can't showHoldingIndicator: avatar not available");
@@ -160,17 +174,23 @@ export class Inventory {
       case "HEAD":
         return {
           boneName: "mixamorigHeadTop_End",
-          offset: new Vector3(0, height / 2 + 1.0, 0),
+          position: new Vector3(0, height / 2, 0),
+          rotation: new Quaternion(),
+          scale: new Vector3(1, 1, 1),
         };
       case "BACK":
         return {
           boneName: "mixamorigSpine2",
-          offset: new Vector3(0, 0, -height / 2 - 0.25),
+          position: new Vector3(0, 0, -height / 2 - 0.25),
+          rotation: new Quaternion(),
+          scale: new Vector3(1, 1, 1),
         };
       default:
         return {
           boneName: "mixamorigRightHand",
-          offset: new Vector3(0, height / 2 + HAND_LENGTH, 0),
+          position: new Vector3(0, height / 2 + HAND_LENGTH, 0),
+          rotation: new Quaternion(),
+          scale: new Vector3(1, 1, 1),
         };
     }
   }
