@@ -1,7 +1,6 @@
 import { worldManager } from "~/world";
 
 import { Entity, System } from "~/ecs/base";
-import { Transform } from "~/ecs/plugins/core";
 
 import { Item, Taken } from "../components";
 

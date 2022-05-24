@@ -32,6 +32,7 @@ import { Loader } from "./Loader";
 import type { SpatialIndex } from "~/ecs/plugins/spatial-index/SpatialIndex";
 import { Object3DRef } from ".";
 import { SPATIAL_INDEX_THRESHOLD } from "~/config/constants";
+import { Taken } from "../item";
 
 export type PlaneOrientation = "xz" | "xy";
 
@@ -290,7 +291,10 @@ export class Presentation {
       for (let i = 0; i < 100; i++) {
         const entity = entities[(this.frame * 100 + i) % entities.length];
         const object3d = entity.get(Object3DRef)?.value;
-        if (object3d) object3d.visible = false;
+        // TODO: "Held" items disappear, because they are attached to the avatar.
+        // As a workaround, we use the special entity name "Held" here, but it
+        // would be ideal to use some other more generic rule.
+        if (object3d && entity.name !== "Held") object3d.visible = false;
       }
 
       // Only turn objects within camera frustum back to 'visible' state
