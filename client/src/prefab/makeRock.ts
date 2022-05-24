@@ -68,6 +68,7 @@ export function makeRock(
       vanchor: 2,
       editable: true,
       visible: false,
+      zoomInvariant: false,
     })
     .add(Draggable)
     .add(Clickable, {
