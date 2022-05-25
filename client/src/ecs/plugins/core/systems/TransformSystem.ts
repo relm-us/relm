@@ -56,7 +56,13 @@ export class TransformSystem extends System {
     // We start objects as not visible, so that the entire world doesn't
     // need to be rendered on the first frame; instead, we will use
     // the spatial index to quickly turn on visible, in-frustum objects
-    object3d.visible = false;
+    if (entity.name === "Held") {
+      // TODO: make equipped items visible in a less hacky way
+      object3d.visible = true;
+    } else {
+      object3d.visible = false;
+    }
+
     object3d.userData.entityId = entity.id;
 
     let parent = this.presentation.scene;
