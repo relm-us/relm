@@ -46,6 +46,7 @@ export function showHoldingIndicator(
   attachParams.scale.copy(item.scale);
 
   if (entities) {
+    // Will add (or modify, if BoneAttach already exists)
     entities.body.add(BoneAttach, {
       entityToAttachId: heldEntity.id,
       ...attachParams,

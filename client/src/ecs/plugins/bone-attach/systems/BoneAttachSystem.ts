@@ -1,5 +1,5 @@
 import { Box3, Object3D, Vector3, Bone } from "three";
-import { System, Groups, Entity, Not } from "~/ecs/base";
+import { System, Groups, Entity, Not, Modified } from "~/ecs/base";
 import { Object3DRef, Presentation } from "~/ecs/plugins/core";
 
 import { BoneAttach, BoneAttachError, BoneAttachRef } from "../components";
@@ -17,6 +17,7 @@ export class BoneAttachSystem extends System {
       Not(BoneAttachRef),
       Not(BoneAttachError),
     ],
+    modified: [Modified(BoneAttach)],
     removed: [Not(BoneAttach), BoneAttachRef],
   };
 
@@ -26,6 +27,11 @@ export class BoneAttachSystem extends System {
 
   update() {
     this.queries.added.forEach((entity) => {
+      this.build(entity);
+    });
+
+    this.queries.modified.forEach((entity) => {
+      this.remove(entity);
       this.build(entity);
     });
 
@@ -65,6 +71,7 @@ export class BoneAttachSystem extends System {
         container.quaternion.copy(spec.rotation);
         container.scale.copy(spec.scale);
         container.add(object);
+        (window as any).obj1 = object;
 
         bone.add(container);
 
@@ -86,7 +93,7 @@ export class BoneAttachSystem extends System {
   remove(entity) {
     const ref: BoneAttachRef = entity.get(BoneAttachRef);
     if (ref) {
-      ref.bone.remove(ref.child);
+      ref.child.removeFromParent();
       entity.remove(BoneAttachRef);
     }
     entity.maybeRemove(BoneAttachError);

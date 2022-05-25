@@ -50,6 +50,8 @@ export class ParticipantManager {
   }
 
   sendMyState() {
+    if (!this.broker.awareness.getLocalState()) return;
+
     if (!this.broker.getField("id")) {
       this.broker.setField("id", playerId);
     }
