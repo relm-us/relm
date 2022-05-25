@@ -28,7 +28,9 @@ export function onKeyup(event) {
     event.preventDefault();
     keySpace.set(false);
 
-    const heldTime = performance.now() - pressTimeStart;
+    const pressTimeEnd = performance.now();
+    const heldTime = pressTimeEnd - pressTimeStart;
+    console.log("Space Key Press Time", pressTimeStart, pressTimeEnd, heldTime);
     if (heldTime > LONG_PRESS_THRESHOLD) {
       globalEvents.emit("action-long");
     } else {
