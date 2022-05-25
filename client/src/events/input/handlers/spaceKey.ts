@@ -30,7 +30,6 @@ export function onKeyup(event) {
 
     const pressTimeEnd = performance.now();
     const heldTime = pressTimeEnd - pressTimeStart;
-    console.log("Space Key Press Time", pressTimeStart, pressTimeEnd, heldTime);
     if (heldTime > LONG_PRESS_THRESHOLD) {
       globalEvents.emit("action-long");
     } else {

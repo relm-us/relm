@@ -54,7 +54,9 @@ export class Inventory {
         rotation: entityJSON.Item.rotation,
         scale: entityJSON.Item.scale,
         model: entityJSON.Model?.asset.url,
-        colors: entityJSON.FaceMapColors?.colors,
+        colors: entityJSON.FaceMapColors
+          ? JSON.parse(entityJSON.FaceMapColors.colors)
+          : undefined,
       };
     }
 
