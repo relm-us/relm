@@ -4,6 +4,8 @@
   import InvitationPane from "./InvitationPane.svelte";
   import Fullwindow from "~/ui/lib/Fullwindow.svelte";
 
+  export let permits;
+
   let showInvitationPane = false;
 
   function onClick() {
@@ -16,7 +18,7 @@
 {#if showInvitationPane}
   <Fullwindow on:close={() => (showInvitationPane = false)}>
     <r-container>
-      <InvitationPane />
+      <InvitationPane {permits} />
     </r-container>
   </Fullwindow>
 {/if}

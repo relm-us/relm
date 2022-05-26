@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import { worldManager } from "~/world";
+
+  export let permits;
 
   let withEditPermission = false;
   let withInvitePermission = false;
@@ -25,22 +25,26 @@
   <h1>Invitation Link:</h1>
   <div><input value={inviteUrl} placeholder="Loading ..." /></div>
   <r-switches>
-    <div>
-      <span>Allow Build Mode?</span>
-      <ToggleSwitch
-        bind:enabled={withEditPermission}
-        labelOn="Yes"
-        labelOff="No"
-      />
-    </div>
-    <div>
-      <span>Allow Inviting?</span>
-      <ToggleSwitch
-        bind:enabled={withInvitePermission}
-        labelOn="Yes"
-        labelOff="No"
-      />
-    </div>
+    {#if permits.includes("edit")}
+      <div>
+        <span>Allow Build Mode?</span>
+        <ToggleSwitch
+          bind:enabled={withEditPermission}
+          labelOn="Yes"
+          labelOff="No"
+        />
+      </div>
+    {/if}
+    {#if permits.includes("invite")}
+      <div>
+        <span>Allow Inviting?</span>
+        <ToggleSwitch
+          bind:enabled={withInvitePermission}
+          labelOn="Yes"
+          labelOff="No"
+        />
+      </div>
+    {/if}
   </r-switches>
 </r-invitation-pane>
 

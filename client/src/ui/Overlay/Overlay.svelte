@@ -163,12 +163,14 @@
       <Tooltip tip={_("Change how you look", "avatar_setup")} top>
         <AvatarSetupButton />
       </Tooltip>
-      <Tooltip
-        tip={_("Invite someone to be with you here", "invite_someone")}
-        top
-      >
-        <InviteButton />
-      </Tooltip>
+      {#if permits.includes("invite")}
+        <Tooltip
+          tip={_("Invite someone to be with you here", "invite_someone")}
+          top
+        >
+          <InviteButton {permits} />
+        </Tooltip>
+      {/if}
     </play-buttons>
   </overlay-center>
 {/if}
