@@ -195,4 +195,36 @@ export class RelmRestAPI {
       throw Error(`can't list inventory: ${content.reason}`);
     }
   }
+
+  async makeInvitation({
+    withEditPermission = false,
+    withInvitePermission = false,
+    maxUses = 1,
+  }: {
+    withEditPermission: boolean;
+    withInvitePermission: boolean;
+    maxUses: number;
+  }): Promise<{ token: string; permits: string[]; url: string }> {
+    type Content =
+      | { status: "success"; invitation: any }
+      | { status: "error"; code?: number; reason: string };
+
+    const permits = ["access"];
+    if (withEditPermission) permits.push("edit");
+    if (withInvitePermission) permits.push("invite");
+
+    const content: Content = await this.post(`/invite/${this.relmName}/make`, {
+      permits,
+      maxUses,
+    });
+    if (content.status === "success") {
+      return {
+        token: content.invitation.token,
+        permits: content.invitation.permits,
+        url: `${location.origin}?t=${content.invitation.token}`,
+      };
+    } else {
+      throw Error(`can't drop item: ${content.reason}`);
+    }
+  }
 }
