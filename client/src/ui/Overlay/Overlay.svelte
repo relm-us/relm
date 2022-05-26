@@ -5,6 +5,7 @@
   import VideoButton from "~/ui/ButtonControls/VideoButton";
   import AvatarSetupButton from "~/ui/ButtonControls/AvatarSetupButton";
   import ShareScreenButton from "~/ui/ButtonControls/ShareScreenButton";
+  import InviteButton from "~/ui/ButtonControls/InviteButton";
   import ChatButton from "~/ui/Chat/ChatButton.svelte";
   import Button from "~/ui/lib/Button";
 
@@ -161,6 +162,12 @@
       </Tooltip>
       <Tooltip tip={_("Change how you look", "avatar_setup")} top>
         <AvatarSetupButton />
+      </Tooltip>
+      <Tooltip
+        tip={_("Invite someone to be with you here", "invite_someone")}
+        top
+      >
+        <InviteButton />
       </Tooltip>
     </play-buttons>
   </overlay-center>

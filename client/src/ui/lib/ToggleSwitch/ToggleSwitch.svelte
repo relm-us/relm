@@ -13,13 +13,13 @@
   };
 </script>
 
-<container on:mousedown|stopPropagation={toggle}>
+<container on:mousedown|stopPropagation={toggle} class:enabled>
   <lbl on:mousedown|preventDefault>
     {#if enabled}{labelOn}{:else}{labelOff}{/if}
   </lbl>
 
-  <toggle class:enabled>
-    <knob class:enabled />
+  <toggle>
+    <knob />
   </toggle>
 </container>
 
@@ -39,7 +39,7 @@
     background-color: rgba(0, 0, 0, 0.5);
   }
 
-  toggle.enabled {
+  .enabled toggle {
     background-color: rgba(200, 200, 200, 0.35);
   }
 
@@ -55,9 +55,9 @@
     border-radius: 100%;
   }
 
-  knob.enabled {
+  .enabled knob {
     left: 26px;
-    background-color: rgba(140, 215, 100, 1);
+    background-color: var(--enabled-green, green);
   }
 
   lbl {
