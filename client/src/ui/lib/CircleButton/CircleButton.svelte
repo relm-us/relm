@@ -1,10 +1,14 @@
 <script lang="ts">
+  import { SvelteComponent } from "svelte";
+
   import { createEventDispatcher } from "svelte";
 
   export let enabled: boolean = true;
   export let size: number = 48;
   export let margin: number = 2;
   export let padding: number = null;
+  export let Icon: SvelteComponent | any = null;
+  export let iconSize: number = 32;
 
   $: if (padding === null) padding = size / 6;
 
@@ -18,6 +22,11 @@
     dispatch("click");
   }}
 >
+  {#if Icon}
+    <icon style="--icon-size: {iconSize}px">
+      <svelte:component this={Icon} />
+    </icon>
+  {/if}
   <slot />
 </button>
 
@@ -53,5 +62,12 @@
   }
   button:active {
     transform: translateY(1px);
+  }
+
+  icon {
+    display: block;
+    width: var(--icon-size, 32px);
+    height: var(--icon-size, 32px);
+    margin: 0 auto;
   }
 </style>

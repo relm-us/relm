@@ -26,10 +26,7 @@
   $: if (showBuilder && builderEl) document.body.appendChild(builderEl);
 </script>
 
-<CircleButton on:click={onClick} padding={0}>
-  <icon>
-    <FaUserAlt />
-  </icon>
+<CircleButton on:click={onClick} padding={0} Icon={FaUserAlt} iconSize={28}>
   <slot />
 </CircleButton>
 
@@ -43,13 +40,6 @@
 {/if}
 
 <style>
-  icon {
-    display: block;
-    width: 28px;
-    height: 28px;
-    margin: 0 auto;
-  }
-
   .builder {
     position: absolute;
     z-index: 4;

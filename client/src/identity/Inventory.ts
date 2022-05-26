@@ -6,7 +6,6 @@ import { RelmRestAPI } from "~/main/RelmRestAPI";
 import { createPrefab } from "~/prefab";
 import { inFrontOf } from "~/utils/inFrontOf";
 
-import { removeHoldingIndicator, showHoldingIndicator } from "./Avatar/equip";
 import { worldManager } from "~/world";
 
 export class Inventory {

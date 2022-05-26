@@ -19,22 +19,12 @@
 </script>
 
 <r-button class:glowing={enabled}>
-  <CircleButton on:click={onClick}>
-    <icon>
-      <MdScreenShare />
-    </icon>
+  <CircleButton on:click={onClick} Icon={MdScreenShare}>
     <slot />
   </CircleButton>
 </r-button>
 
 <style>
-  icon {
-    display: block;
-    width: 32px;
-    height: 32px;
-    margin: 0 auto;
-  }
-
   r-button {
     display: flex;
   }

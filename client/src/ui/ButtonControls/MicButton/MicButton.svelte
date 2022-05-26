@@ -10,25 +10,16 @@
   }
 </script>
 
-<CircleButton on:click={toggle}>
-  <icon class:muted={!enabled}>
-    {#if enabled}
-      <IconAudioEnabled />
-    {:else}
-      <IconAudioDisabled />
-    {/if}
-  </icon>
-</CircleButton>
+<div class:muted={!enabled}>
+  <CircleButton
+    on:click={toggle}
+    Icon={enabled ? IconAudioEnabled : IconAudioDisabled}
+  />
+</div>
 
 <style>
-  .muted {
+  .muted :global(icon) {
     color: var(--selected-red, red);
     border-color: var(--selected-red, red);
-  }
-  icon {
-    display: block;
-    width: 32px;
-    height: 32px;
-    margin: 0 auto;
   }
 </style>
