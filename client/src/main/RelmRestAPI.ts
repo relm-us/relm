@@ -218,10 +218,15 @@ export class RelmRestAPI {
       maxUses,
     });
     if (content.status === "success") {
+      const url =
+        location.origin +
+        location.pathname +
+        `?t=${content.invitation.token}` +
+        location.hash;
       return {
         token: content.invitation.token,
         permits: content.invitation.permits,
-        url: `${location.origin}?t=${content.invitation.token}`,
+        url,
       };
     } else {
       throw Error(`can't drop item: ${content.reason}`);
