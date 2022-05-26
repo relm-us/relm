@@ -19,7 +19,6 @@
 
   let editor = null;
   let toolbar = null;
-  let pageEl = null;
   let bigscreen = false;
 
   $: if (editor) editor.enable(editable && bigscreen);
@@ -27,27 +26,15 @@
   const activate = () => (bigscreen = true);
   const deactivate = () => (bigscreen = false);
 
-  function onClick(event) {
-    if (
-      hasAncestor(event.target, pageEl) ||
-      hasAncestor(event.target, toolbar)
-    ) {
-      editor.focus();
-    } else {
-      deactivate();
-    }
-  }
-
   // ignore warning about missing props
   $$props;
 </script>
 
 {#if bigscreen}
-  <Fullwindow on:click={onClick}>
+  <Fullwindow on:click={() => editor.focus()} on:close={deactivate}>
     <r-centered>
       <r-page-margin
         transition:slide
-        bind:this={pageEl}
         style="--x:{size.x}px;--y:{size.y}px;--radius:{radius * 150}px"
         class:rounded={kind === "ROUNDED"}
         class:circle={kind === "CIRCLE"}
@@ -88,12 +75,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: none;
     height: 100%;
     padding: 12px;
   }
 
   r-page-margin {
     display: block;
+    pointer-events: all;
     width: var(--x);
     height: var(--y);
     box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.5);

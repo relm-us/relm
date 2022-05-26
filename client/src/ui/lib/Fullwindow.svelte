@@ -1,9 +1,16 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
 
   export let zIndex = 100;
 
+  const dispatch = createEventDispatcher();
+
   let el;
+
+  function onClick(event) {
+    if (event.target === el) dispatch("close");
+    else dispatch("click");
+  }
 
   onMount(async () => {
     // Move the containing element to document.body so that "fullwindow" mode can
@@ -12,7 +19,7 @@
   });
 </script>
 
-<fullwindow bind:this={el} style={`z-index: ${zIndex}`} on:click>
+<fullwindow bind:this={el} style={`z-index: ${zIndex}`} on:click={onClick}>
   <slot />
 </fullwindow>
 
