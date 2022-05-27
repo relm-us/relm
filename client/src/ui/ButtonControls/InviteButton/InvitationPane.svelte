@@ -1,4 +1,7 @@
 <script lang="ts">
+  import debounce from "lodash/debounce";
+
+  import TextInput from "~/ui/lib/TextInput";
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import { worldManager } from "~/world";
 
@@ -6,19 +9,27 @@
 
   let withEditPermission = false;
   let withInvitePermission = false;
+  let maxUses = 1;
 
   let inviteUrl = "";
 
-  $: withEditPermission, withInvitePermission, resetInviteUrl();
-  $: worldManager.api
-    .makeInvitation({ withEditPermission, withInvitePermission, maxUses: 100 })
-    .then(({ url }) => {
-      inviteUrl = url;
-    });
+  $: maxUses, resetInviteUrl();
+  $: withEditPermission, withInvitePermission, setInviteUrl();
 
-  function resetInviteUrl() {
+  const resetInviteUrl = () => {
     inviteUrl = "";
-  }
+    debouncedSetInviteUrl();
+  };
+
+  const setInviteUrl = () => {
+    worldManager.api
+      .makeInvitation({ withEditPermission, withInvitePermission, maxUses })
+      .then(({ url }) => {
+        inviteUrl = url;
+      });
+  };
+
+  const debouncedSetInviteUrl = debounce(setInviteUrl, 1000);
 </script>
 
 <r-invitation-pane>
@@ -37,7 +48,7 @@
     {/if}
     {#if permits.includes("invite")}
       <div>
-        <span>Allow Inviting?</span>
+        <span>Allow Inviting Others?</span>
         <ToggleSwitch
           bind:enabled={withInvitePermission}
           labelOn="Yes"
@@ -45,6 +56,10 @@
         />
       </div>
     {/if}
+    <div>
+      <span>Max Number of Uses</span>
+      <TextInput bind:value={maxUses} />
+    </div>
   </r-switches>
 </r-invitation-pane>
 
@@ -56,6 +71,10 @@
     border-radius: 5px;
     padding: 20px;
     color: var(--foreground-white, white);
+  }
+
+  r-invitation-pane :global(r-text-input) {
+    max-width: 80px;
   }
 
   h1 {
