@@ -25,6 +25,8 @@
       canceling = true;
       dispatch("cancel");
       inputEl.blur();
+    } else {
+      dispatch("keydown", event.key);
     }
   };
 </script>

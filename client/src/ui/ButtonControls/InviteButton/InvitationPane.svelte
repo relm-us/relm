@@ -13,7 +13,6 @@
 
   let inviteUrl = "";
 
-  $: maxUses, resetInviteUrl();
   $: withEditPermission, withInvitePermission, setInviteUrl();
 
   const resetInviteUrl = () => {
@@ -30,11 +29,17 @@
   };
 
   const debouncedSetInviteUrl = debounce(setInviteUrl, 1000);
+
+  function selectUrl(event) {
+    event.currentTarget.select();
+  }
 </script>
 
 <r-invitation-pane>
   <h1>Invitation Link:</h1>
-  <div><input value={inviteUrl} placeholder="Loading ..." /></div>
+  <div>
+    <input value={inviteUrl} placeholder="Loading ..." on:focus={selectUrl} />
+  </div>
   <r-switches>
     {#if permits.includes("edit")}
       <div>
@@ -58,7 +63,7 @@
     {/if}
     <div>
       <span>Max Number of Uses</span>
-      <TextInput bind:value={maxUses} />
+      <TextInput bind:value={maxUses} on:keydown={resetInviteUrl} />
     </div>
   </r-switches>
 </r-invitation-pane>
