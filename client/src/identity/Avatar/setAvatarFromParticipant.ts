@@ -4,7 +4,6 @@ import { playerId } from "~/identity/playerId";
 
 import { setAppearance } from "./appearance";
 import { setEmoji } from "./emoji";
-import { setLabel } from "./label";
 import { setOculus } from "./oculus";
 import { setSpeech } from "./speech";
 import { chatOpen } from "~/stores/chat";
@@ -31,12 +30,6 @@ export function setAvatarFromParticipant(this: void, participant: Participant) {
   setAppearance(entities, data.appearance);
   setEquipped(entities, data.equipment);
   setEmoji(entities, data.emoji, data.emoting);
-  // setLabel(
-  //   entities,
-  //   data.name,
-  //   data.color,
-  //   participant.editable && isLocal ? onDidEditName : null
-  // );
   setOculus(
     entities,
     participant.participantId,

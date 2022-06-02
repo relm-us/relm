@@ -2,6 +2,7 @@ import {
   BooleanType,
   LocalComponent,
   NumberType,
+  RefType,
   StringType,
 } from "~/ecs/base";
 import { Vector3Type } from "~/ecs/plugins/core";
@@ -18,6 +19,7 @@ export class Oculus extends LocalComponent {
   color: string;
   participantName: string;
   participantId: string;
+  onChange: Function;
 
   static props = {
     offset: {
@@ -98,6 +100,11 @@ export class Oculus extends LocalComponent {
     // Set automatically. If equal to local playerId, Oculus will show own video stream.
     participantId: {
       type: StringType,
+      default: null,
+    },
+
+    onChange: {
+      type: RefType,
       default: null,
     },
   };

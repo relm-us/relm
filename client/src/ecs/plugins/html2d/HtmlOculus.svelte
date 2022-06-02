@@ -11,12 +11,14 @@
     PROXIMITY_AUDIO_OUTER_RADIUS,
   } from "~/config/constants";
   import NameTag from "./NameTag.svelte";
+  import { Entity } from "~/ecs/base";
 
   export let participantName: string;
   export let color: string;
   export let showAudio: boolean;
   export let showVideo: boolean;
   export let participantId: string;
+  export let entity: Entity;
 
   let fullscreen = false;
   // TODO: add `size` var instead of hardcoding volume to be size
@@ -115,11 +117,11 @@
         <Video track={$videoStore} mirror={isLocal && !isLocalSharing} />
       {/if}
     </oculus>
-    <NameTag name={participantName} {color} />
+    <NameTag name={participantName} {color} {entity} />
   </container>
 {:else}
   <!-- Just show name -->
-  <NameTag name={participantName} {color} />
+  <NameTag name={participantName} {color} {entity} />
 {/if}
 
 {#if showAudio && !isLocal}

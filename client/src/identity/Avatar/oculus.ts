@@ -5,8 +5,6 @@ import { Vector3 } from "three";
 import { OCULUS_HEIGHT_STAND } from "~/config/constants";
 import { Oculus, OculusRef } from "~/ecs/plugins/html2d";
 
-const DEFAULT_LABEL_COLOR = "#D0D0D0";
-
 export function setOculus(
   this: void,
   entities: AvatarEntities,
@@ -26,6 +24,7 @@ export function setOculus(
       color,
       showAudio,
       showVideo,
+      onChange: onDidEdit,
       offset: new Vector3(0, OCULUS_HEIGHT_STAND, 0),
       targetOffset: new Vector3(0, OCULUS_HEIGHT_STAND, 0),
     });
@@ -37,6 +36,7 @@ export function setOculus(
 
     const oculus = entities.body.get(Oculus);
     if (oculus) {
+      oculus.onChange = onDidEdit;
       oculus.participantName = name;
       oculus.color = color;
       oculus.showAudio = showAudio;

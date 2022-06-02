@@ -66,7 +66,7 @@ import { localVideoTrack } from "video-mirror";
 import { createScreenTrack } from "~/av/twilio/createScreenTrack";
 
 import { playerId } from "~/identity/playerId";
-import { Avatar, setLabel } from "~/identity/Avatar";
+import { Avatar } from "~/identity/Avatar";
 import { Participant } from "~/types/identity";
 import { ParticipantManager } from "~/identity/ParticipantManager";
 import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
@@ -159,7 +159,11 @@ export class WorldManager {
 
     this.participants = new ParticipantManager(dispatch, broker, participants);
 
-    this.inventory = new Inventory(this.api, this.world, this.participants.local)
+    this.inventory = new Inventory(
+      this.api,
+      this.world,
+      this.participants.local
+    );
     this.inventory.init();
 
     this.chat = new ChatManager();
@@ -428,7 +432,6 @@ export class WorldManager {
       avatar.entities.body.traverse((e) => {
         e.getByName("Object3D").value.visible = false;
       });
-      setLabel(avatar.entities, "", "", null);
     }
     (this.world.presentation.scene.fog as any).density = 0;
   }
