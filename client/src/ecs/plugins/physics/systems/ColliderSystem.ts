@@ -1,5 +1,7 @@
 import type { ColliderDesc as RapierColliderDesc } from "@dimforge/rapier3d";
 
+import { MathUtils } from "three";
+
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import { RigidBody, RigidBodyRef, Collider, ColliderRef } from "../components";
 import { Transform } from "~/ecs/plugins/core";
@@ -71,7 +73,7 @@ export class ColliderSystem extends System {
       spec.offset.z * transform.scale.z
     );
     colliderDesc.setSensor(spec.isSensor);
-    colliderDesc.setDensity(spec.density);
+    colliderDesc.setDensity(MathUtils.clamp(spec.density, 0, 1000));
     colliderDesc.setCollisionGroups(spec.interaction);
 
     const colliderRef = entity.get(ColliderRef);
