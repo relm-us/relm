@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { Audio, Video } from "video-mirror";
   import { worldManager } from "~/world";
   import { audioMode } from "~/stores/audioMode";
@@ -10,10 +10,13 @@
     PROXIMITY_AUDIO_INNER_RADIUS,
     PROXIMITY_AUDIO_OUTER_RADIUS,
   } from "~/config/constants";
+  import NameTag from "./NameTag.svelte";
 
-  export let showAudio;
-  export let showVideo;
-  export let participantId;
+  export let participantName: string;
+  export let color: string;
+  export let showAudio: boolean;
+  export let showVideo: boolean;
+  export let participantId: string;
 
   let fullscreen = false;
   // TODO: add `size` var instead of hardcoding volume to be size
@@ -95,7 +98,12 @@
       volume * 100
     ).toFixed(3)}%"
   >
-    <oculus class="round" class:contain={fullscreen} on:click={enterFullscreen}>
+    <oculus
+      class="round"
+      class:contain={fullscreen}
+      style="--oculus-border-color: {color}"
+      on:click={enterFullscreen}
+    >
       {#if fullscreen}
         <Fullscreen on:close={exitFullscreen}>
           <Video track={$videoStore} mirror={false} />
@@ -107,7 +115,11 @@
         <Video track={$videoStore} mirror={isLocal && !isLocalSharing} />
       {/if}
     </oculus>
+    <NameTag name={participantName} {color} />
   </container>
+{:else}
+  <!-- Just show name -->
+  <NameTag name={participantName} {color} />
 {/if}
 
 {#if showAudio && !isLocal}
@@ -130,11 +142,11 @@
 
     width: 100%;
     height: 100%;
-    box-shadow: 0 0 5px #cccccc;
+    box-shadow: 0 0 5px var(--oculus-border-color, #cccccc);
     background-color: #959595;
 
     overflow: hidden;
-    border: 2px solid #cccccc;
+    border: 2px solid var(--oculus-border-color, #cccccc);
     border-radius: 100%;
 
     /* Safari needs this in order to clip the video as a circle */

@@ -15,6 +15,8 @@ export class Oculus extends LocalComponent {
   hanchor: number;
   showAudio: boolean;
   showVideo: boolean;
+  color: string;
+  participantName: string;
   participantId: string;
 
   static props = {
@@ -81,6 +83,16 @@ export class Oculus extends LocalComponent {
       editor: {
         label: "Show Video?",
       },
+    },
+
+    color: {
+      type: StringType,
+      default: null,
+    },
+
+    participantName: {
+      type: StringType,
+      default: null,
     },
 
     // Set automatically. If equal to local playerId, Oculus will show own video stream.

@@ -31,15 +31,18 @@ export function setAvatarFromParticipant(this: void, participant: Participant) {
   setAppearance(entities, data.appearance);
   setEquipped(entities, data.equipment);
   setEmoji(entities, data.emoji, data.emoting);
-  setLabel(
-    entities,
-    data.name,
-    data.color,
-    participant.editable && isLocal ? onDidEditName : null
-  );
+  // setLabel(
+  //   entities,
+  //   data.name,
+  //   data.color,
+  //   participant.editable && isLocal ? onDidEditName : null
+  // );
   setOculus(
     entities,
     participant.participantId,
+    data.name,
+    data.color,
+    participant.editable && isLocal ? onDidEditName : null,
     data.showAudio,
     data.showVideo
   );
