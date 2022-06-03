@@ -12,6 +12,7 @@
   } from "~/config/constants";
   import NameTag from "./NameTag.svelte";
   import { Entity } from "~/ecs/base";
+  import { worldUIMode } from "~/stores";
 
   export let participantName: string;
   export let color: string;
@@ -117,11 +118,21 @@
         <Video track={$videoStore} mirror={isLocal && !isLocalSharing} />
       {/if}
     </oculus>
-    <NameTag name={participantName} editable={isLocal} {color} {entity} />
+    <NameTag
+      name={participantName}
+      editable={isLocal && $worldUIMode !== "build"}
+      {color}
+      {entity}
+    />
   </container>
 {:else}
   <!-- Just show name -->
-  <NameTag name={participantName} editable={isLocal} {color} {entity} />
+  <NameTag
+    name={participantName}
+    editable={isLocal && $worldUIMode !== "build"}
+    {color}
+    {entity}
+  />
 {/if}
 
 {#if showAudio && !isLocal}
