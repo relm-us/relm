@@ -1,5 +1,7 @@
 <script lang="ts">
   import { Color, HSL } from "three";
+  import { onMount } from "svelte";
+  import { fade } from "svelte/transition";
 
   import { cleanHtml } from "~/utils/cleanHtml";
   import { selectAll } from "~/utils/selectAll";
@@ -16,8 +18,9 @@
 
   let fgColor = "black";
 
-  let labelEl;
+  let labelEl, nameTagEl;
   let editing = false;
+  let visible = true;
 
   $: {
     // Choose a foreground text color with enough contrast
@@ -77,18 +80,32 @@
       }, 100);
     }
   }
+
+  // Make NameTag appear & disappear based on size of Oculus
+  onMount(() => {
+    const interval = setInterval(() => {
+      const parent = nameTagEl?.parentElement?.parentElement;
+      if (parent) {
+        visible = parent.offsetWidth > 60;
+      }
+    }, 151);
+    return () => clearInterval(interval);
+  });
 </script>
 
-<r-name-tag>
-  <span
-    contenteditable={editing}
-    style="--name-bg-color: {color}; --name-color: {fgColor}"
-    on:mousedown={onMousedown}
-    bind:this={labelEl}
-    on:keydown={onKeydown}
-    on:blur={doneEditing}
-    data-placeholder="Add your name">{@html cleanHtml(name)}</span
-  >
+<r-name-tag bind:this={nameTagEl}>
+  {#if visible}
+    <r-label
+      contenteditable={editing}
+      data-placeholder="Add your name"
+      style="--name-bg-color: {color}; --name-color: {fgColor}"
+      bind:this={labelEl}
+      on:mousedown={onMousedown}
+      on:keydown={onKeydown}
+      on:blur={doneEditing}
+      transition:fade>{@html cleanHtml(name)}</r-label
+    >
+  {/if}
 </r-name-tag>
 
 <style>
@@ -104,13 +121,7 @@
     align-items: center;
   }
 
-  /* r-name-tag span {
-  } */
-  /* r-name-tag span::after {
-    content: " ";
-  } */
-
-  span {
+  r-label {
     display: block;
     outline: 0px solid transparent;
 
@@ -128,7 +139,7 @@
     text-overflow: ellipsis;
   }
 
-  span:empty:before {
+  r-label:empty:before {
     color: #999;
     content: attr(data-placeholder);
   }
