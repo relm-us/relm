@@ -93,8 +93,9 @@
   {#if visible}
     <r-label
       contenteditable={editing}
-      data-placeholder="Add your name"
+      data-placeholder={editable ? "Add your name" : undefined}
       style="--name-bg-color: {color}; --name-color: {fgColor}"
+      class:thin={!editable && name === ""}
       bind:this={labelEl}
       on:mousedown={onMousedown}
       on:keydown={onKeydown}
@@ -140,5 +141,10 @@
   r-label:empty:before {
     color: #999;
     content: attr(data-placeholder);
+  }
+
+  .thin {
+    height: 6px;
+    margin-bottom: 8px;
   }
 </style>

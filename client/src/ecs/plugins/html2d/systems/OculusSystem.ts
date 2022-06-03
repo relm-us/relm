@@ -91,9 +91,6 @@ export class OculusSystem extends System {
 
     const object3d: Object3D = entity.get(Object3DRef)?.value;
     const spec = entity.get(Oculus);
-    const dist = this.presentation.camera.parent.position.distanceTo(
-      object3d.position
-    );
 
     if (spec.tween && spec.tweenedTargetOffset) {
       if (spec.tweenedTargetOffset.distanceTo(spec.targetOffset) <= 0.001) {
@@ -123,6 +120,10 @@ export class OculusSystem extends System {
     // calculate left, top
     v1.copy(object3d.position);
     v1.add(spec.offset);
+
+    const dist = this.presentation.camera.parent.position.distanceTo(
+      v1
+    );
 
     this.htmlPresentation.project(v1);
 
