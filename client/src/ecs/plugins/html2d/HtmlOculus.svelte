@@ -112,7 +112,7 @@
           <picture-in-picture>
             <Video track={$localVideoStore} mirror={true} />
           </picture-in-picture>
-        </Fullscreen>setInterval
+        </Fullscreen>
       {:else}
         <Video track={$videoStore} mirror={isLocal && !isLocalSharing} />
       {/if}
