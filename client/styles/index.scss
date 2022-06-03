@@ -36,6 +36,24 @@
   --itemIsActiveColor: #1a1e23;
 }
 
+r-html2d {
+  display: block;
+  // when an Html2d object touches the edge of the page, we don't want it to resize
+  width: fit-content;
+  // position the element where we need it, "on top of" the 3d world
+  position: fixed;
+  // center the container
+  transform: translate(-50%,-50%);
+}
+
+/* Used by Oculus */
+r-html2d.flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+
 .notifications > div {
   z-index: 2;
 }

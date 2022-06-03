@@ -5,6 +5,7 @@
 
   import { cleanHtml } from "~/utils/cleanHtml";
   import { selectAll } from "~/utils/selectAll";
+  import { getAncestor } from "~/utils/hasAncestor";
   import { worldManager } from "~/world";
   import { worldUIMode } from "~/stores/worldUIMode";
 
@@ -79,9 +80,9 @@
   // Make NameTag appear & disappear based on size of Oculus
   onMount(() => {
     const interval = setInterval(() => {
-      const parent = nameTagEl?.parentElement?.parentElement;
+      const parent = getAncestor(nameTagEl, "r-html2d");
       if (parent) {
-        visible = parent.offsetWidth > 60;
+        visible = parseFloat(parent.style.width) > 60;
       }
     }, 151);
     return () => clearInterval(interval);
@@ -114,6 +115,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    pointer-events: all;
   }
 
   r-label {

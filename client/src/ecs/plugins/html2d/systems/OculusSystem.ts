@@ -59,10 +59,7 @@ export class OculusSystem extends System {
 
     // Prepare a container for Svelte
     const container = this.htmlPresentation.createContainer(3);
-    container.style.display = "flex";
-    container.style.justifyContent = "center";
-    container.style.alignItems = "center";
-    container.style.pointerEvents = "none";
+    container.classList.add('flex');
     const x = this.htmlPresentation.percent(spec.hanchor);
     const y = this.htmlPresentation.percent(spec.vanchor);
     container.style.transform = `translate(-50%,-50%) translate(${x},${y})`;
