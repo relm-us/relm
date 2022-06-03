@@ -117,11 +117,11 @@
         <Video track={$videoStore} mirror={isLocal && !isLocalSharing} />
       {/if}
     </oculus>
-    <NameTag name={participantName} {color} {entity} />
+    <NameTag name={participantName} editable={isLocal} {color} {entity} />
   </container>
 {:else}
   <!-- Just show name -->
-  <NameTag name={participantName} {color} {entity} />
+  <NameTag name={participantName} editable={isLocal} {color} {entity} />
 {/if}
 
 {#if showAudio && !isLocal}

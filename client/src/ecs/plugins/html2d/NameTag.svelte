@@ -134,7 +134,7 @@
     text-align: center;
     border-radius: 12px;
     white-space: nowrap;
-    padding: 0 6px;
+    padding: 2px 8px 1px 8px;
     overflow: hidden;
     text-overflow: ellipsis;
   }
