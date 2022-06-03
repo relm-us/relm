@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { fontSizes, fontColors } from "./quillInit";
+  import { fontSizes } from "./quillInit";
+  import { UNIQUE_COLOR_PALETTE } from "~/config/constants";
 
   export let toolbar;
 </script>
@@ -29,12 +30,12 @@
       <option value="right" />
     </select>
     <select class="ql-color">
-      {#each fontColors as color}
+      {#each UNIQUE_COLOR_PALETTE as color}
         <option value={color} />
       {/each}
     </select>
     <select class="ql-background">
-      {#each fontColors as color}
+      {#each UNIQUE_COLOR_PALETTE as color}
         <option value={color} />
       {/each}
     </select>
