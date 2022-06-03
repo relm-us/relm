@@ -166,9 +166,10 @@ export function makeProgram(): Program {
       }
 
       case "participantJoined": {
+        const name = msg.participant.identityData.name;
         if (state.notifyContext) {
           state.notifyContext.addNotification({
-            text: `${msg.participant.identityData.name} joined.`,
+            text: `${name && name !== "" ? name : "A newcomer"} joined.`,
             position: "bottom-center",
             removeAfter: 5000,
           });

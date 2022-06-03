@@ -37,12 +37,7 @@
     const oculus: Oculus = entity.get(Oculus);
     oculus.name = name = labelEl.innerText.trim();
 
-    if (oculus.onChange) {
-      oculus.onChange(name);
-    } else {
-      // Broadcast changes
-      worldManager.worldDoc.syncFrom(entity);
-    }
+    if (oculus.onChange) oculus.onChange(name);
 
     editing = false;
   }
