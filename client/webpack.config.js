@@ -80,6 +80,7 @@ module.exports = {
     contentBase: "public", // direct the DevServer to serve static files from public/
     watchContentBase: true,
     compress: true,
+    historyApiFallback: true
   },
 
   /**
