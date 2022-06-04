@@ -23,7 +23,7 @@ describe("Relm model tests", () => {
     const relms = await Relm.getAllRelms({
       prefix: pubPrefix,
       isPublic: true,
-      excludeEmpty: false,
+      includeEmpty: true,
     });
     const relmNames = new Set(relms.map((r) => r.relmName));
     expect(relmNames).toEqual(new Set([relmName1, relmName2]));

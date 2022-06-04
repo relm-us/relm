@@ -1052,7 +1052,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{serverUrl}}/relms/all",
+							"raw": "{{serverUrl}}/relms/all?includeEmpty=1",
 							"host": [
 								"{{serverUrl}}"
 							],
@@ -1062,9 +1062,8 @@
 							],
 							"query": [
 								{
-									"key": "excludeEmpty",
-									"value": "false",
-									"disabled": true
+									"key": "includeEmpty",
+									"value": "1"
 								}
 							]
 						}

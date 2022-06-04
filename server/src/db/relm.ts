@@ -90,25 +90,26 @@ export async function getRelm({
 
 export async function getAllRelms({
   prefix,
-  isPublic = true,
-  excludeEmpty = true,
+  isPublic,
+  includeEmpty = true,
 }: {
   prefix?: string;
   isPublic?: boolean;
-  excludeEmpty?: boolean;
+  includeEmpty?: boolean;
 }) {
   const filter: any = {
     recent_rank: 1,
-    is_public: isPublic,
   };
+  if (isPublic !== undefined) {
+    filter.is_public = isPublic;
+  }
   if (prefix) {
     filter.relm_name = { like: `${prefix}%` };
   }
-  if (excludeEmpty) {
+  if (!includeEmpty) {
     filter.entities_count = { gt: 0 };
   }
-  return (
-    await db.manyOrNone(sql`
+  const s = sql`
         SELECT r.*, d.doc_id, d.entities_count, d.assets_count
         FROM relms r
         LEFT JOIN docs d ON d.relm_id = r.relm_id
@@ -118,8 +119,9 @@ export async function getAllRelms({
           WHERE doc_type = 'permanent'
         ) z ON z.doc_id = d.doc_id
         ${WHERE(filter)}
-      `)
-  ).map((row) => mkRelmSummary(row));
+      `;
+  console.log("get all relms", s);
+  return (await db.manyOrNone(s)).map((row) => mkRelmSummary(row));
 }
 
 export async function deleteRelm({ relmId }: { relmId: string }) {

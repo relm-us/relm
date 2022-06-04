@@ -14,7 +14,7 @@ relms.get(
   middleware.authorized("admin"),
   wrapAsync(async (req, res) => {
     const relms = await Relm.getAllRelms({
-      excludeEmpty: req.query["excludeEmpty"] !== "false",
+      includeEmpty: req.query["includeEmpty"] === "1",
     });
     respondWithSuccess(res, {
       action: "getRelms",
