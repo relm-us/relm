@@ -6,6 +6,7 @@ import { Dispatch } from "../ProgramTypes";
 export const getPageParams =
   (globalBroadcast: BroadcastChannel) => (dispatch: Dispatch) => {
     const params = new URL(window.location.href).searchParams;
+    const hash = window.location.hash.replace("#", "");
 
     const invitationToken = params.get("t");
     const jsonWebToken = (window as any).jwt || params.get("jwt");
@@ -17,7 +18,13 @@ export const getPageParams =
     // Normally, the subrelm is specified as part of the path, e.g. "/demo", but
     // allow a `?relm=[value]` to override it.
     const relmName = params.get("relm") || pathParts[1] || DEFAULT_RELM_ID;
-    const entryway = params.get("entryway") || pathParts[2] || DEFAULT_ENTRYWAY;
+    const relmInstance = params.get("instance") || pathParts[2];
+    const entryway = hash === "" ? DEFAULT_ENTRYWAY : hash;
+
+    // TODO: The "new" keyword is a special instance that means to clone the base
+    // relm to create a new instance.
+    // if (relmInstance === "new") {
+    // }
 
     // Safari doesn't support BroadcastChannel, so globalBroadcast may be null
     if (globalBroadcast) {
