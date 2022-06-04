@@ -92,7 +92,7 @@ importers:
       webpack-cli: ^3.3.12
       webpack-dev-server: ^3.11.0
       y-indexeddb: 9.0.7
-      y-quill: ^0.1.4
+      y-quill: 0.1.4
       y-websocket: canadaduane/y-websocket#async-bind-state
       yjs: 13.5.27
     dependencies:
@@ -5516,7 +5516,6 @@ packages:
   /core-js-bundle/3.22.4:
     resolution: {integrity: sha512-KJUSA8TzvcHsLfbjo3GErcl7NqI5eceERXNAJSaTQ53qtPJdM6n8T02zYn39iEetceIKKtw+pANINDznzvk1+g==}
     requiresBuild: true
-    dev: true
 
   /core-js-compat/3.22.4:
     resolution: {integrity: sha512-dIWcsszDezkFZrfm1cnB4f/J85gyhiCpxbgBdohWCDtSVuAaChTSpPV7ldOQf/Xds2U5xCIJZOK82G4ZPAIswA==}
@@ -13868,7 +13867,6 @@ packages:
   /svelte/3.46.3:
     resolution: {integrity: sha512-mTOXvv74CVQqJHqoIZDprVfRKVVmYNadXP0VKnOEA54223kLGCr1nMrifS4Zx29qMt/xRB38Eq1D7dDH/fM8fQ==}
     engines: {node: '>= 8'}
-    dev: false
 
   /svg-tags/1.0.0:
     resolution: {integrity: sha1-WPcc7jvVGbWdSyqEO2x95krAR2Q=}
