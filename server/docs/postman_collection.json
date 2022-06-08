@@ -539,7 +539,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"maxUses\": 3,\n    \"permits\": [\"access\", \"edit\"]\n}",
+							"raw": "{\n    \"relmName\": \"default\",\n    \"maxUses\": 3,\n    \"permits\": [\"access\", \"edit\"]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -547,13 +547,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{serverUrl}}/invite/default/make",
+							"raw": "{{serverUrl}}/invite/make",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"invite",
-								"default",
 								"make"
 							]
 						}
@@ -563,7 +562,7 @@
 				{
 					"name": "Revoke Invitation",
 					"request": {
-						"method": "DELETE",
+						"method": "POST",
 						"header": [
 							{
 								"key": "X-Relm-S",
@@ -578,7 +577,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"token\": \"welcome1\"\n}",
+							"raw": "{\n    \"relmName\": \"default\",\n    \"token\": \"welcome1\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -586,13 +585,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{serverUrl}}/invite/default/delete",
+							"raw": "{{serverUrl}}/invite/delete",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"invite",
-								"default",
 								"delete"
 							]
 						}
@@ -602,7 +600,7 @@
 				{
 					"name": "Get Invitations by Relm",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [
 							{
 								"key": "X-Relm-S",
@@ -615,14 +613,22 @@
 								"type": "text"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"relmName\": \"default\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{serverUrl}}/invite/default/query",
+							"raw": "{{serverUrl}}/invite/query",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"invite",
-								"default",
 								"query"
 							],
 							"query": [

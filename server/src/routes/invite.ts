@@ -55,7 +55,7 @@ invite.post(
 );
 
 // Get all invitations for this relm that match the query
-invite.get(
+invite.post(
   "/query",
   cors(),
   middleware.relmExists(),
@@ -74,7 +74,7 @@ invite.get(
   })
 );
 
-invite.delete(
+invite.post(
   "/delete",
   cors(),
   middleware.relmExists(),
