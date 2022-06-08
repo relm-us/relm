@@ -109,7 +109,7 @@
     >
       {#if fullscreen}
         <Fullscreen on:close={exitFullscreen}>
-          <Video track={$videoStore} mirror={false} />
+          <Video track={$videoStore} mirror={false} contain={true} />
           <picture-in-picture>
             <Video track={$localVideoStore} mirror={true} />
           </picture-in-picture>
