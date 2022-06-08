@@ -83,12 +83,14 @@
     if (!iframe) return;
     ytCommand("playVideo");
     overlayHovered = false;
+    worldManager.participants.setMic(false);
   }
 
   function pauseVideo() {
     if (!iframe) return;
     ytCommand("pauseVideo");
     overlayHovered = true;
+    worldManager.participants.setMic(true);
   }
 
   // Return keyboard focus to Relm when user clicks on a youtube iframe

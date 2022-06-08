@@ -153,6 +153,10 @@ export class ParticipantManager {
     this.updateMe({ showAudio });
     return showAudio;
   }
+
+  setMic(showAudio: boolean) {
+    this.updateMe({ showAudio });
+  }
 }
 
 const LONG_TIME_AGO = 600000; // 5 minutes ago
