@@ -659,7 +659,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"isPublic\": true,\n    \"password\": \"welcome\",\n    \"seedRelmName\": \"default\"\n}",
+							"raw": "{\n    \"relmName\": \"new-relm\",\n    \"isPublic\": true,\n    \"seedRelmName\": \"default\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -667,13 +667,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{serverUrl}}/relm/new-relm/create",
+							"raw": "{{serverUrl}}/relm/create",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"relm",
-								"new-relm",
 								"create"
 							]
 						}
@@ -681,175 +680,7 @@
 					"response": []
 				},
 				{
-					"name": "Delete Relm",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"isPublic\": true,\n    \"password\": \"welcome\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{serverUrl}}/relm/default/delete",
-							"host": [
-								"{{serverUrl}}"
-							],
-							"path": [
-								"relm",
-								"default",
-								"delete"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Relm Permissions",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{serverUrl}}/relm/default/permits",
-							"host": [
-								"{{serverUrl}}"
-							],
-							"path": [
-								"relm",
-								"default",
-								"permits"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Relm Content",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"type": "text",
-								"value": "{{relmSig}}"
-							},
-							{
-								"key": "X-Relm-Id",
-								"type": "text",
-								"value": "{{relmId}}"
-							}
-						],
-						"url": {
-							"raw": "{{serverUrl}}/relm/default/content",
-							"host": [
-								"{{serverUrl}}"
-							],
-							"path": [
-								"relm",
-								"default",
-								"content"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Relm Metadata",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{serverUrl}}/relm/default/meta",
-							"host": [
-								"{{serverUrl}}"
-							],
-							"path": [
-								"relm",
-								"default",
-								"meta"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Set Relm Metadata",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"isPublic\": true\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{serverUrl}}/relm/default/meta",
-							"host": [
-								"{{serverUrl}}"
-							],
-							"path": [
-								"relm",
-								"default",
-								"meta"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Change Variables",
+					"name": "Clone Relm",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -866,7 +697,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"changes\": {\n        \"set\": {\n            \"door\": \"open\"\n        }\n    }\n}",
+							"raw": "{\n    \"relmName\": \"default\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -874,14 +705,281 @@
 							}
 						},
 						"url": {
-							"raw": "{{serverUrl}}/relm/default/variables",
+							"raw": "{{serverUrl}}/relm/clone",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"relm",
-								"default",
-								"variables"
+								"clone"
+							]
+						},
+						"description": "Creates a new subrelm by cloning the base relm. The new subrelm can be named using the value `subrelmName`; if it is not named, it will create a random token as the name.\n\nNote that whether or not this action is permitted depends upon the base relm's `clonePermitRequired` setting. If it is set to \"access\", then the participant calling the `/relm/[relmName]/new` API endpoint must at least have \"access\" permission to `[relmName]`.\n\nThe participant will be granted `clonePermitAssigned` permission to the new relm. `clonePermitAssigned` is also defined on the relm (not during this API call)."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Relm",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"relmName\": \"new-relm\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/relm/delete",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Relm Permissions",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"relmName\": \"default\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/relm/permits",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"permits"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Relm Content",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"type": "text",
+								"value": "{{relmSig}}"
+							},
+							{
+								"key": "X-Relm-Id",
+								"type": "text",
+								"value": "{{relmId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"relmName\": \"default\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/relm/content",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"content"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Relm Metadata",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"relmName\": \"default\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/relm/getmeta",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"getmeta"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Set Relm Metadata",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"relmName\": \"default\",\n    \"isPublic\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/relm/setmeta",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"setmeta"
+							]
+						},
+						"description": "Metadata about the relm:\n\n```\n\"relmName\": string\n\"isPublic\": boolean\n\"clonePermitRequired\": \"access\" | \"edit\" | null\n\"clonePermitAssigned\": \"access\" | \"edit\" | null\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Variables",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"relmName\": \"default\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/relm/getvars",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"getvars"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Set Variables",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Relm-S",
+								"value": "{{relmSig}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Relm-Id",
+								"value": "{{relmId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"relmName\": \"default\",\n    \"changes\": {\n        \"set\": {\n            \"door\": \"open\"\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/relm/setvars",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"setvars"
 							]
 						}
 					},
@@ -905,7 +1003,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"actions\": [\n        {\n          \"type\": \"setProperty\",\n          \"entity\": \"Stq3SsT0TnkzAbhALNM47\",\n          \"component\": \"Transform\",\n          \"property\": \"position\",\n          \"value\": [ 0, 0.6, -2.7 ]\n        }\n    ]\n}",
+							"raw": "{\n    \"relmName\": \"default\",\n    \"actions\": [\n        {\n          \"type\": \"setProperty\",\n          \"entity\": \"Stq3SsT0TnkzAbhALNM47\",\n          \"component\": \"Transform\",\n          \"property\": \"position\",\n          \"value\": [ 0, 0.6, -2.7 ]\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -913,88 +1011,16 @@
 							}
 						},
 						"url": {
-							"raw": "{{serverUrl}}/relm/default/edit",
+							"raw": "{{serverUrl}}/relm/edit",
 							"host": [
 								"{{serverUrl}}"
 							],
 							"path": [
 								"relm",
-								"default",
 								"edit"
 							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get All Variables",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
 						},
-						"url": {
-							"raw": "{{serverUrl}}/relm/default/variables",
-							"host": [
-								"{{serverUrl}}"
-							],
-							"path": [
-								"relm",
-								"default",
-								"variables"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Twilio Token",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"type": "text",
-								"value": "{{relmSig}}"
-							},
-							{
-								"key": "X-Relm-Id",
-								"type": "text",
-								"value": "{{relmId}}"
-							}
-						],
-						"url": {
-							"raw": "{{serverUrl}}/relm/default/twilio",
-							"host": [
-								"{{serverUrl}}"
-							],
-							"path": [
-								"relm",
-								"default",
-								"twilio"
-							]
-						}
+						"description": "Edits the content of a relm using the `actions` system. Note that this is primarily useful as to modify the content of the world via API. It cannot be used to change relms' metadata (see `Set Relm Metadata`)."
 					},
 					"response": []
 				}
