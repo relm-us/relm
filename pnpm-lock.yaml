@@ -93,7 +93,6 @@ importers:
       webpack-dev-server: ^3.11.0
       y-indexeddb: 9.0.7
       y-quill: 0.1.4
-      y-websocket: canadaduane/y-websocket#async-bind-state
       yjs: 13.5.27
     dependencies:
       '@dimforge/rapier3d': 0.7.6
@@ -140,7 +139,6 @@ importers:
       video-mirror: 4.5.3
       y-indexeddb: 9.0.7_yjs@13.5.27
       y-quill: 0.1.4_quill@1.3.7+yjs@13.5.27
-      y-websocket: github.com/canadaduane/y-websocket/de54818d86dbcb22b1e71c93775f9dc1c33e1b7e_yjs@13.5.27
       yjs: 13.5.27
     devDependencies:
       '@babel/core': 7.17.9
@@ -188,12 +186,20 @@ importers:
       '@jest/types': 27.5.1
       '@types/three': 0.131.0
       jest: 27.5.1
+      lib0: 0.2.51
+      lodash.debounce: 4.0.8
       three: 0.131.3
       ts-jest: 27.1.4
       typescript: ^4.0.2
+      y-leveldb: ^0.1.0
+      y-protocols: 1.0.5
       yjs: 13.5.27
     dependencies:
+      lib0: 0.2.51
+      lodash.debounce: 4.0.8
       three: 0.131.3
+      y-leveldb: 0.1.1_yjs@13.5.27
+      y-protocols: 1.0.5
     devDependencies:
       '@jest/types': 27.5.1
       '@types/three': 0.131.0
@@ -229,7 +235,7 @@ importers:
       is: ^3.3.0
       jest: 27.5.1
       level: ^6.0.1
-      lib0: ^0.2.42
+      lib0: 0.2.51
       lodash.debounce: ^4.0.8
       md5-file: ^5.0.0
       moment: ^2.27.0
@@ -250,7 +256,6 @@ importers:
       ws: ^7.2.3
       y-leveldb: ^0.1.0
       y-protocols: 1.0.5
-      y-websocket: canadaduane/y-websocket#async-bind-state
       yjs: 13.5.27
     dependencies:
       '@peculiar/webcrypto': 1.3.3
@@ -267,7 +272,7 @@ importers:
       http-errors: 1.8.1
       is: 3.3.0
       level: 6.0.1
-      lib0: 0.2.49
+      lib0: 0.2.51
       lodash.debounce: 4.0.8
       md5-file: 5.0.0
       moment: 2.29.2
@@ -285,7 +290,6 @@ importers:
       ws: 7.5.7
       y-leveldb: 0.1.1_yjs@13.5.27
       y-protocols: 1.0.5
-      y-websocket: github.com/canadaduane/y-websocket/de54818d86dbcb22b1e71c93775f9dc1c33e1b7e_yjs@13.5.27
       yjs: 13.5.27
     optionalDependencies:
       capture-website: 2.3.0
@@ -4273,6 +4277,7 @@ packages:
 
   /async-limiter/1.0.1:
     resolution: {integrity: sha512-csOlWGAcRFJaI6m+F2WKdnMKr4HhdhFVBk0H/QbJFMCr+uO2kwohwXQPxw/9OCxp05r5ghVBFSyioixx3gfkNQ==}
+    dev: true
 
   /async-lock/1.3.1:
     resolution: {integrity: sha512-zK7xap9UnttfbE23JmcrNIyueAn6jWshihJqA33U/hEnKprF/lVGBDsBv/bqLm2YMMl1DnpHhUY044eA0t1TUw==}
@@ -7189,6 +7194,19 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
+    dev: false
+
+  /follow-redirects/1.14.9_debug@4.3.4:
+    resolution: {integrity: sha512-MQDfihBQYMcyy5dhRDJUHcw7lb2Pv/TuE6xP1vyraLukNDHKbDxDNaOE3NbCAdKQApno+GPRyo1YAp89yCjK4w==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dependencies:
+      debug: 4.3.4_supports-color@6.1.0
+    dev: true
 
   /for-in/1.0.2:
     resolution: {integrity: sha1-gQaNKVqBQuwKxybG4iAMMPttXoA=}
@@ -7288,7 +7306,7 @@ packages:
     requiresBuild: true
     dependencies:
       bindings: 1.5.0
-      nan: 2.15.0
+      nan: 2.16.0
     dev: true
     optional: true
 
@@ -7797,7 +7815,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.14.9
+      follow-redirects: 1.14.9_debug@4.3.4
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -7974,11 +7992,11 @@ packages:
       wrappy: 1.0.2
 
   /inherits/2.0.1:
-    resolution: {integrity: sha1-sX0I0ya0Qj5Wjv9xn5GwscvfafE=}
+    resolution: {integrity: sha512-8nWq2nLTAwd02jTqJExUYFSD/fKq6VH9Y/oG2accc/kdI0V98Bag8d5a4gi3XHz73rDWa2PvTtvcWYquKqSENA==}
     dev: true
 
   /inherits/2.0.3:
-    resolution: {integrity: sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4=}
+    resolution: {integrity: sha512-x00IRNXNy63jwGkJmzPigoySHbaqpNuzKbBOmzK+g2OdZpQ9w+sxCN+VSB3ja7IAge2OP2qpfxTjeNcyjmW1uw==}
     dev: true
 
   /inherits/2.0.4:
@@ -9403,8 +9421,8 @@ packages:
       type-check: 0.3.2
     dev: true
 
-  /lib0/0.2.49:
-    resolution: {integrity: sha512-ziwYLe/pmI9bjHsAehm4ApuVfZ+q+sbC+vO6Z5+KM+0Fe0MrTLwZSDkJ+cElnhFNQ0P6z/wVkRmc5+vTmImJ9A==}
+  /lib0/0.2.51:
+    resolution: {integrity: sha512-05Erb3465CxJa38LQlMz4EbetNvRna1S3BzqEjC0/pmp5cQuQSfNNmeS0722Wev1dRlMUp2Cql0gQ55krSXf2Q==}
     engines: {node: '>=12'}
     dependencies:
       isomorphic.js: 0.2.5
@@ -9458,7 +9476,7 @@ packages:
     dev: true
 
   /lodash.debounce/4.0.8:
-    resolution: {integrity: sha1-gteb/zCmfEAF/9XiUVMArZyk168=}
+    resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
 
   /lodash.includes/4.3.0:
     resolution: {integrity: sha1-YLuYqHy5I8aMoeUTJUgzFISfVT8=}
@@ -9563,7 +9581,7 @@ packages:
     deprecated: Please update to latest patch version to fix memory leak https://github.com/isaacs/node-lru-cache/issues/227
 
   /ltgt/2.2.1:
-    resolution: {integrity: sha1-81ypHEk/e3PaDgdJUwTxezH4fuU=}
+    resolution: {integrity: sha512-AI2r85+4MquTw9ZYqabu4nMwy9Oftlfa/e/52t9IjtfG+mGBbTNdAoZ3RQKLHR6r0wQnwZnPIEh/Ya6XTWAKNA==}
     dev: false
 
   /m-o/2.2.0:
@@ -10261,6 +10279,12 @@ packages:
 
   /nan/2.15.0:
     resolution: {integrity: sha512-8ZtvEnA2c5aYCZYd1cvgdnU6cqwixRoYg70xPLWUws5ORTa/lnw+u4amixRS/Ac5U5mQVgp9pnlSUnbNWFaWZQ==}
+    dev: true
+    optional: true
+
+  /nan/2.16.0:
+    resolution: {integrity: sha512-UdAqHyFngu7TfQKsCBgAA6pWDkT8MAO7d0jyOecVhN5354xbLqdn8mV9Tat9gepAupm0bt2DbeaSC8vS52MuFA==}
+    requiresBuild: true
     dev: true
     optional: true
 
@@ -11738,7 +11762,7 @@ packages:
     optional: true
 
   /prr/1.0.1:
-    resolution: {integrity: sha1-0/wRS6BplaRexok/SEzrHXj19HY=}
+    resolution: {integrity: sha512-yPw4Sng1gWghHQWj0B3ZggWUm4qVbPwPFcRG8KyxiU7J2OHFSoEHKS+EZ3fv5l1t9CyCiop6l/ZYeWbrgoQejw==}
 
   /pseudomap/1.0.2:
     resolution: {integrity: sha1-8FKijacOYYkX7wqKw0wa5aaChrM=}
@@ -14694,6 +14718,13 @@ packages:
     resolution: {integrity: sha512-yXJmeNaw3DnnKAOKJE51sL/ZaYfWJRl1pK9dr19YFCu0ObS231AB1/LbqTKRAQ5kw8A90rA6fr4riOUpTZvQZA==}
     deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
     hasBin: true
+    dev: false
+
+  /uuid/3.4.0:
+    resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}
+    deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+    hasBin: true
+    dev: true
 
   /uuid/8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
@@ -14970,7 +15001,7 @@ packages:
     engines: {node: '>= 6'}
     dependencies:
       ansi-colors: 3.2.4
-      uuid: 3.3.2
+      uuid: 3.4.0
     dev: true
 
   /webpack-sources/1.4.3:
@@ -15212,6 +15243,7 @@ packages:
         optional: true
     dependencies:
       async-limiter: 1.0.1
+    dev: true
 
   /ws/7.5.7:
     resolution: {integrity: sha512-KMvVuFzpKBuiIXW3E4u3mySRO2/mCHSyZDJQM5NQ9Q9KHWHWh0NHgfbRMLLrceUK5qAL4ytALJbpRMjixFZh8A==}
@@ -15278,7 +15310,7 @@ packages:
     peerDependencies:
       yjs: ^13.0.0
     dependencies:
-      lib0: 0.2.49
+      lib0: 0.2.51
       yjs: 13.5.27
     dev: false
 
@@ -15289,14 +15321,14 @@ packages:
       yjs: ^13.0.0
     dependencies:
       level: 6.0.1
-      lib0: 0.2.49
+      lib0: 0.2.51
       yjs: 13.5.27
     dev: false
 
   /y-protocols/1.0.5:
     resolution: {integrity: sha512-Wil92b7cGk712lRHDqS4T90IczF6RkcvCwAD0A2OPg+adKmOe+nOiT/N2hvpQIWS3zfjmtL4CPaH5sIW1Hkm/A==}
     dependencies:
-      lib0: 0.2.49
+      lib0: 0.2.51
     dev: false
 
   /y-quill/0.1.4_quill@1.3.7+yjs@13.5.27:
@@ -15305,7 +15337,7 @@ packages:
       quill: ^1.3.7
       yjs: ^13.0.0
     dependencies:
-      lib0: 0.2.49
+      lib0: 0.2.51
       quill: 1.3.7
       y-protocols: 1.0.5
       yjs: 13.5.27
@@ -15398,7 +15430,7 @@ packages:
   /yjs/13.5.27:
     resolution: {integrity: sha512-1cWqmEomMCJTemtKLpEymXU946KZAAS45RxrE3TZAWVjua1wJhUF8192HYnuvOKv3iInxyySDtoMZTPs/afe1w==}
     dependencies:
-      lib0: 0.2.49
+      lib0: 0.2.51
 
   /yn/3.1.1:
     resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
@@ -15418,27 +15450,6 @@ packages:
   /zwitch/2.0.2:
     resolution: {integrity: sha512-JZxotl7SxAJH0j7dN4pxsTV6ZLXoLdGME+PsjkL/DaBrVryK9kTGq06GfKrwcSOqypP+fdXGoCHE36b99fWVoA==}
     dev: true
-
-  github.com/canadaduane/y-websocket/de54818d86dbcb22b1e71c93775f9dc1c33e1b7e_yjs@13.5.27:
-    resolution: {tarball: https://codeload.github.com/canadaduane/y-websocket/tar.gz/de54818d86dbcb22b1e71c93775f9dc1c33e1b7e}
-    id: github.com/canadaduane/y-websocket/de54818d86dbcb22b1e71c93775f9dc1c33e1b7e
-    name: y-websocket
-    version: 1.3.18-canadaduane
-    hasBin: true
-    peerDependencies:
-      yjs: ^13.5.6
-    dependencies:
-      lib0: 0.2.49
-      lodash.debounce: 4.0.8
-      y-protocols: 1.0.5
-      yjs: 13.5.27
-    optionalDependencies:
-      ws: 6.2.2
-      y-leveldb: 0.1.1_yjs@13.5.27
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: false
 
   github.com/versatica/mediasoup-client/56928a37a0a55d4a804030ddea206693a12cba01:
     resolution: {tarball: https://codeload.github.com/versatica/mediasoup-client/tar.gz/56928a37a0a55d4a804030ddea206693a12cba01}

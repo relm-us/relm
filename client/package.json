@@ -65,7 +65,6 @@
     "video-mirror": "4.5.3",
     "y-indexeddb": "9.0.7",
     "y-quill": "0.1.4",
-    "y-websocket": "canadaduane/y-websocket#async-bind-state",
     "yjs": "13.5.27"
   },
   "devDependencies": {

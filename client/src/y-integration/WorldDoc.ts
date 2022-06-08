@@ -3,7 +3,7 @@ import type { WorldDocStatus } from "~/types";
 import * as Y from "yjs";
 import { readableMap, YReadableMap } from "svelt-yjs";
 import { DeepDiff } from "deep-diff";
-import { WebsocketProvider } from "y-websocket";
+import { WebsocketProvider } from "relm-common";
 
 import { Entity, EntityId } from "~/ecs/base";
 
@@ -24,7 +24,6 @@ import {
   YValues,
   YIDSTR,
 } from "relm-common";
-
 
 import EventEmitter from "eventemitter3";
 import { applyDiffToYEntity } from "./applyDiff";

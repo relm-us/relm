@@ -9,6 +9,8 @@ import debounce from 'lodash.debounce'
 
 import { LeveldbPersistence } from 'y-leveldb'
 
+import { defaultCallbackHandler, isDefaultCallbackSet } from './callback.js'
+
 const CALLBACK_DEBOUNCE_WAIT = parseInt(process.env.CALLBACK_DEBOUNCE_WAIT) || 2000
 const CALLBACK_DEBOUNCE_MAXWAIT = parseInt(process.env.CALLBACK_DEBOUNCE_MAXWAIT) || 10000
 
@@ -21,7 +23,7 @@ const wsReadyStateClosed = 3 // eslint-disable-line
 const gcEnabled = process.env.GC !== 'false' && process.env.GC !== '0'
 const persistenceDir = process.env.YPERSISTENCE
 /**
- * @type {{bindState: function(string,WSSharedDoc):void, writeState:function(string,WSSharedDoc):Promise<any>, provider: any}|null}
+ * @type {{bindState: function(string,WSSharedDoc):void|Promise<void>, writeState:function(string,WSSharedDoc):Promise<any>, provider: any}|null}
  */
 let persistence = null
 if (typeof persistenceDir === 'string') {
@@ -84,10 +86,15 @@ class WSSharedDoc extends Y.Doc {
   mux: any;
   conns: Map<Object, Set<number>>;
   awareness: any;
+  whenSynced: Promise<void>;
+  isSynced: boolean;
+
   /**
    * @param {string} name
    */
-  constructor (name) {
+  constructor (name, {
+    callbackHandler = isDefaultCallbackSet ? defaultCallbackHandler : null
+  }) {
     super({ gc: gcEnabled })
     this.name = name
     this.mux = mutex.createMutex()
@@ -101,6 +108,14 @@ class WSSharedDoc extends Y.Doc {
      */
     this.awareness = new awarenessProtocol.Awareness(this)
     this.awareness.setLocalState(null)
+    /**
+     * @type {Promise<void>|void}
+     */
+    this.whenSynced = void 0
+    /**
+     * @type {boolean}
+     */
+    this.isSynced = false
     /**
      * @param {{ added: Array<number>, updated: Array<number>, removed: Array<number> }} changes
      * @param {Object | null} conn Origin is the connection that made the change
@@ -125,12 +140,16 @@ class WSSharedDoc extends Y.Doc {
     }
     this.awareness.on('update', awarenessChangeHandler)
     this.on('update', updateHandler)
-    if (isCallbackSet) {
+    if (callbackHandler) {
       this.on('update', debounce(
         callbackHandler,
         CALLBACK_DEBOUNCE_WAIT,
         { maxWait: CALLBACK_DEBOUNCE_MAXWAIT }
       ))
+    }
+    if (persistence !== null) {
+      this.whenSynced = persistence.bindState(name, this)
+        .then(() => { this.isSynced = true })
     }
   }
 }
@@ -142,12 +161,9 @@ class WSSharedDoc extends Y.Doc {
  * @param {boolean} gc - whether to allow gc on the doc (applies only when created)
  * @return {WSSharedDoc}
  */
-export const getYDoc = (docname, gc = true) => map.setIfUndefined(docs, docname, () => {
-  const doc = new WSSharedDoc(docname)
+export const getYDoc = (docname, { gc = true, callbackHandler = null } = {}) => map.setIfUndefined(docs, docname, () => {
+  const doc = new WSSharedDoc(docname, { callbackHandler })
   doc.gc = gc
-  if (persistence !== null) {
-    persistence.bindState(docname, doc)
-  }
   docs.set(docname, doc)
   return doc
 })
@@ -157,13 +173,18 @@ export const getYDoc = (docname, gc = true) => map.setIfUndefined(docs, docname,
  * @param {WSSharedDoc} doc
  * @param {Uint8Array} message
  */
-const messageListener = (conn, doc, message) => {
+const messageListener = async (conn, doc, message) => {
   try {
     const encoder = encoding.createEncoder()
     const decoder = decoding.createDecoder(message)
     const messageType = decoding.readVarUint(decoder)
     switch (messageType) {
       case messageSync:
+        // await the doc state being updated from persistence, if available, otherwise
+        // we may send sync step 2 too early
+        if (doc.whenSynced) {
+          await doc.whenSynced
+        }
         encoding.writeVarUint(encoder, messageSync)
         syncProtocol.readSyncMessage(decoder, encoder, doc, null)
         if (encoding.length(encoder) > 1) {
@@ -195,10 +216,13 @@ const closeConn = (doc, conn) => {
     doc.conns.delete(conn)
     awarenessProtocol.removeAwarenessStates(doc.awareness, Array.from(controlledIds), null)
     if (doc.conns.size === 0 && persistence !== null) {
-      // if persisted, we store state and destroy ydocument
-      persistence.writeState(doc.name, doc).then(() => {
-        doc.destroy()
-      })
+      if (doc.isSynced) {
+        // if persisted and the state has finished loading from the database,
+        // we write the state back to persisted storage
+        persistence.writeState(doc.name, doc).then(() => {
+          doc.destroy()
+        })
+      }
       docs.delete(doc.name)
     }
   }
@@ -228,10 +252,18 @@ const pingTimeout = 30000
  * @param {any} req
  * @param {any} opts
  */
-export const setupWSConnection = (conn, req, { docName = req.url.slice(1).split('?')[0], gc = true }: any = {}) => {
+export const setupWSConnection = async (
+  conn,
+  req,
+  {
+    docName = req.url.slice(1).split("?")[0],
+    gc = true,
+    callbackHandler = null
+  } = {}
+) => {
   conn.binaryType = 'arraybuffer'
   // get doc, initialize if it does not exist yet
-  const doc = getYDoc(docName, gc)
+  const doc = getYDoc(docName, { gc, callbackHandler })
   doc.conns.set(conn, new Set())
   // listen and reply to events
   conn.on('message', /** @param {ArrayBuffer} message */ message => messageListener(conn, doc, new Uint8Array(message)))
@@ -264,6 +296,12 @@ export const setupWSConnection = (conn, req, { docName = req.url.slice(1).split(
   // put the following in a variables in a block so the interval handlers don't keep in in
   // scope
   {
+    // await the doc state being updated from persistence, if available, otherwise
+    // we may send sync step 1 too early
+    if (doc.whenSynced) {
+      await doc.whenSynced
+    }
+
     // send sync step 1
     const encoder = encoding.createEncoder()
     encoding.writeVarUint(encoder, messageSync)
@@ -276,82 +314,5 @@ export const setupWSConnection = (conn, req, { docName = req.url.slice(1).split(
       encoding.writeVarUint8Array(encoder, awarenessProtocol.encodeAwarenessUpdate(doc.awareness, Array.from(awarenessStates.keys())))
       send(doc, conn, encoding.toUint8Array(encoder))
     }
-  }
-}
-
-import http from 'http'
-
-const CALLBACK_URL = process.env.CALLBACK_URL ? new URL(process.env.CALLBACK_URL) : null
-const CALLBACK_TIMEOUT = process.env.CALLBACK_TIMEOUT || 5000
-const CALLBACK_OBJECTS = process.env.CALLBACK_OBJECTS ? JSON.parse(process.env.CALLBACK_OBJECTS) : {}
-
-const isCallbackSet = !!CALLBACK_URL
-
-/**
- * @param {Uint8Array} update
- * @param {any} origin
- * @param {WSSharedDoc} doc
- */
-const callbackHandler = (update, origin, doc) => {
-  const room = doc.name
-  const dataToSend = {
-    room: room,
-    data: {}
-  }
-  const sharedObjectList = Object.keys(CALLBACK_OBJECTS)
-  sharedObjectList.forEach(sharedObjectName => {
-    const sharedObjectType = CALLBACK_OBJECTS[sharedObjectName]
-    dataToSend.data[sharedObjectName] = {
-      type: sharedObjectType,
-      content: getContent(sharedObjectName, sharedObjectType, doc).toJSON()
-    }
-  })
-  callbackRequest(CALLBACK_URL, CALLBACK_TIMEOUT, dataToSend)
-}
-
-/**
- * @param {URL} url
- * @param {number} timeout
- * @param {Object} data
- */
-const callbackRequest = (url, timeout, data) => {
-  data = JSON.stringify(data)
-  const options = {
-    hostname: url.hostname,
-    port: url.port,
-    path: url.pathname,
-    timeout: timeout,
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': data.length
-    }
-  }
-  const req = http.request(options)
-  req.on('timeout', () => {
-    console.warn('Callback request timed out.')
-    req.abort()
-  })
-  req.on('error', (e) => {
-    console.error('Callback request error.', e)
-    req.abort()
-  })
-  req.write(data)
-  req.end()
-}
-
-/**
- * @param {string} objName
- * @param {string} objType
- * @param {WSSharedDoc} doc
- */
-const getContent = (objName, objType, doc) => {
-  switch (objType) {
-    case 'Array': return doc.getArray(objName)
-    case 'Map': return doc.getMap(objName)
-    case 'Text': return doc.getText(objName)
-    case 'XmlFragment': return doc.getXmlFragment(objName)
-    case 'XmlElement': return doc.getXmlElement(objName)
-    default : return {}
   }
 }

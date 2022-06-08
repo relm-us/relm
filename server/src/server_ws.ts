@@ -1,6 +1,6 @@
 import WebSocket from "ws";
 import { createServer } from "http";
-import * as yws from './yws_utils.js'
+import { setupWSConnection } from "relm-common";
 
 import { app } from "./server_http.js";
 import { Player, Permission, Doc } from "./db/index.js";
@@ -12,7 +12,7 @@ export const server = createServer();
 let wss = new WebSocket.Server({ noServer: true });
 
 wss.on("connection", (conn, req) => {
-  yws.setupWSConnection(conn, req, {
+  setupWSConnection(conn, req, {
     callbackHandler: ydocStats,
   });
 });

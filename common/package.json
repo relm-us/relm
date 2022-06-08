@@ -3,22 +3,18 @@
   "version": "1.0.0",
   "author": "Duane Johnson",
   "license": "GPL-3.0-only",
-
   "type": "module",
   "main": "./dist/index.js",
   "exports": "./dist/index.js",
-
   "files": [
     "dist/**/*",
     "src/**/*",
     "tsconfig.json"
   ],
-
   "engines": {
     "node": "^14.13.1 || >=16.0.0",
     "pnpm": ">=6"
   },
-
   "scripts": {
     "build": "tsc"
   },
@@ -34,7 +30,11 @@
     "yjs": "13.5.27"
   },
   "dependencies": {
-    "three": "0.131.3"
+    "lib0": "0.2.51",
+    "lodash.debounce": "4.0.8",
+    "three": "0.131.3",
+    "y-leveldb": "^0.1.0",
+    "y-protocols": "1.0.5"
   },
   "browserslist": [
     "defaults"

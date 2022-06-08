@@ -6,7 +6,7 @@ import type {
   UpdateData,
 } from "~/types";
 
-import { WebsocketProvider } from "y-websocket";
+import { WebsocketProvider } from "relm-common";
 
 import { playerId } from "./playerId";
 
