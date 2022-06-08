@@ -136,6 +136,7 @@
     padding: 2px 8px 1px 8px;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 18px;
   }
 
   r-label:empty:before {
