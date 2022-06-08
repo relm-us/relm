@@ -1,5 +1,6 @@
-import { DEFAULT_RELM_ID, DEFAULT_ENTRYWAY } from "~/config/constants";
-import { canonicalIdentifier } from "~/utils/canonicalIdentifier";
+import { DEFAULT_RELM_NAME, DEFAULT_ENTRYWAY } from "~/config/constants";
+import { canonicalIdentifier } from "relm-common";
+import { removeLeading } from "~/utils/removeLeading";
 
 import { Dispatch } from "../ProgramTypes";
 
@@ -11,15 +12,13 @@ export const getPageParams =
     const invitationToken = params.get("t");
     const jsonWebToken = (window as any).jwt || params.get("jwt");
 
-    const pathParts = window.location.pathname
+    let relmName = removeLeading(window.location.pathname, "/")
       .split("/")
-      .map((part) => (part === "" ? null : part));
+      .map((part) => canonicalIdentifier(part))
+      .join("/");
+    if (relmName === "") relmName = DEFAULT_RELM_NAME;
 
-    // Normally, the subrelm is specified as part of the path, e.g. "/demo", but
-    // allow a `?relm=[value]` to override it.
-    const relmName = params.get("relm") || pathParts[1] || DEFAULT_RELM_ID;
-    const relmInstance = params.get("instance") || pathParts[2];
-    const entryway = hash === "" ? DEFAULT_ENTRYWAY : hash;
+    const entryway = hash === "" ? DEFAULT_ENTRYWAY : canonicalIdentifier(hash);
 
     // TODO: The "new" keyword is a special instance that means to clone the base
     // relm to create a new instance.
@@ -45,11 +44,13 @@ export const getPageParams =
     }
 
     const pageParams = {
-      relmName: canonicalIdentifier(relmName),
-      entryway: canonicalIdentifier(entryway),
+      relmName,
+      entryway,
       invitationToken,
       jsonWebToken,
     };
+
+    console.log("pageParams", pageParams);
 
     dispatch({ id: "gotPageParams", pageParams });
   };

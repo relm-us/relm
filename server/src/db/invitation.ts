@@ -1,11 +1,8 @@
 import { Permission } from "./permission";
 
 import { db, sql, INSERT, UPDATE, WHERE } from "./db.js";
-import { uuidv4 } from "../utils/index.js";
 
-function randomToken() {
-  return uuidv4().split("-")[0];
-}
+import { randomToken } from "../utils/randomToken.js";
 
 type InvitationColumns = {
   token: string;

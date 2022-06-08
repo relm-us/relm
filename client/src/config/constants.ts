@@ -1,7 +1,7 @@
 export type ShadowMapType = "BASIC" | "PCF" | "VSM";
 export const SHADOW_MAP_TYPE: ShadowMapType = "VSM";
 
-export const DEFAULT_RELM_ID = "default";
+export const DEFAULT_RELM_NAME = "default";
 export const DEFAULT_ENTRYWAY = "default";
 export const DEFAULT_DIRECTIONAL_LIGHT_POSITION = [-5, 5, 2.5];
 export const DRAG_DISTANCE_THRESHOLD = 4;

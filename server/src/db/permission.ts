@@ -2,11 +2,15 @@ import { db, sql, INSERT, IN, raw } from "./db.js";
 import { arrayToBooleanObject, booleanObjectToArray } from "../utils/index.js";
 import { getRelm } from "./relm.js";
 
+const PERMISSIONS = ["admin", "access", "invite", "edit"];
 export type Permission = "admin" | "access" | "invite" | "edit";
 
+export function validPermission(permission) {
+  return PERMISSIONS.includes(permission);
+}
+
 export function filteredPermits(permits) {
-  const acceptable = new Set(["admin", "access", "invite", "edit"]);
-  return new Set(permits.filter((permit) => acceptable.has(permit)));
+  return new Set(permits.filter((permission) => validPermission(permission)));
 }
 
 /**
@@ -81,7 +85,7 @@ export async function getPermissions({
   playerId: string;
   relmNames?: string[];
   relmIds?: string[];
-}): Promise<Record<string, string[]>> {
+}): Promise<Record<string, Permission[]>> {
   if (empty(relmNames) && empty(relmIds)) return {};
 
   const relms = relmNames ? relmNames : relmIds;
@@ -114,12 +118,12 @@ export async function getPermissions({
       WHERE r.relm_${raw(relmNames ? "name" : "id")} ${IN(relms)}
   `);
 
-  let permitsByRelm: Record<string, string[]> = {};
+  let permitsByRelm: Record<string, Permission[]> = {};
   for (const relm of relms) {
     permitsByRelm[relm] = [];
   }
   for (const row of rows) {
-    permitsByRelm[row.relm] = booleanObjectToArray(row.permits);
+    permitsByRelm[row.relm] = booleanObjectToArray(row.permits) as Permission[];
   }
 
   return permitsByRelm;

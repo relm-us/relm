@@ -23,7 +23,7 @@ app.use("/admin", routes.admin);
 app.use("/asset", routes.asset);
 app.use("/auth", routes.auth);
 app.use("/invite/:relmName", middleware.relmName(), routes.invite);
-app.use("/relm/:relmName", middleware.relmName(), routes.relm);
+app.use("/relm", middleware.relmName(), routes.relm);
 app.use("/relms", routes.relms);
 app.use("/screenshot", routes.screenshot);
 

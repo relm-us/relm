@@ -1,12 +1,15 @@
 import * as Doc from "./doc.js";
 import { db, sql, INSERT, UPDATE, WHERE } from "./db.js";
 import { getDefinedKeys, nullOr } from "../utils/index.js";
+import { validPermission } from "./permission.js";
 
 type RelmColumns = {
   relm_id: string;
   relm_name: string;
   seed_relm_id: string;
   is_public: boolean;
+  clone_permit_required?: string;
+  clone_permit_assigned?: string;
   created_by?: string;
   created_at: string;
 };
@@ -17,6 +20,8 @@ const mkRelm = nullOr((cols: RelmColumns) => {
     relmName: cols.relm_name,
     seedRelmId: cols.seed_relm_id,
     isPublic: cols.is_public,
+    clonePermitRequired: cols.clone_permit_required || null,
+    clonePermitAssigned: cols.clone_permit_assigned || null,
     createdBy: cols.created_by || null,
     createdAt: cols.created_at,
   };
@@ -27,6 +32,8 @@ type RelmSummaryColumns = {
   relm_name: string;
   seed_relm_id: string;
   is_public: boolean;
+  clone_permit_required: string;
+  clone_permit_assigned: string;
   created_at: string;
   doc_id: string;
   assets_count: number;
@@ -39,6 +46,8 @@ const mkRelmSummary = nullOr((cols: RelmSummaryColumns) => {
     relmName: cols.relm_name,
     seedRelmId: cols.seed_relm_id,
     isPublic: cols.is_public,
+    clonePermitRequired: cols.clone_permit_required,
+    clonePermitAssigned: cols.clone_permit_assigned,
     createdAt: cols.created_at,
     docId: cols.doc_id,
     assetsCount: cols.assets_count,
@@ -137,12 +146,16 @@ export async function createRelm({
   relmName,
   seedRelmId,
   isPublic,
+  clonePermitRequired,
+  clonePermitAssigned,
   createdBy,
 }: {
   relmId?: string;
   relmName: string;
   seedRelmId?: string;
   isPublic?: boolean;
+  clonePermitRequired?: string;
+  clonePermitAssigned?: string;
   createdBy?: string;
 }) {
   const attrs: any = {
@@ -151,6 +164,10 @@ export async function createRelm({
   if (relmId !== undefined) attrs.relm_id = relmId;
   if (seedRelmId !== undefined) attrs.seed_relm_id = seedRelmId;
   if (isPublic !== undefined) attrs.is_public = isPublic;
+  if (clonePermitRequired !== undefined)
+    attrs.clone_permit_required = clonePermitRequired;
+  if (clonePermitAssigned !== undefined)
+    attrs.clone_permit_assigned = clonePermitAssigned;
   if (createdBy !== undefined) attrs.created_by = createdBy;
 
   const row = await db.oneOrNone(sql`
@@ -175,18 +192,27 @@ export async function createRelm({
 export async function updateRelm({
   relmId,
   relmName,
-  seedRelmId,
   isPublic,
+  clonePermitRequired,
+  clonePermitAssigned,
 }: {
   relmId: string;
   relmName?: string;
-  seedRelmId?: string;
   isPublic?: boolean;
+  clonePermitRequired?: string;
+  clonePermitAssigned?: string;
 }) {
   const attrs: any = {};
   if (relmName !== undefined) attrs.relm_name = relmName;
-  if (seedRelmId !== undefined) attrs.seed_relm_id = seedRelmId;
   if (isPublic !== undefined) attrs.is_public = isPublic;
+  if (clonePermitRequired !== undefined) {
+    if (!validPermission(clonePermitRequired)) return null;
+    attrs.clone_permit_required = clonePermitRequired;
+  }
+  if (clonePermitAssigned !== undefined) {
+    if (!validPermission(clonePermitAssigned)) return null;
+    attrs.clone_permit_assigned = clonePermitAssigned;
+  }
 
   if (getDefinedKeys(attrs).length > 0) {
     const row = await db.oneOrNone(sql`

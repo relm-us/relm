@@ -7,6 +7,7 @@ import {
   respondWithError,
   unabbreviatedPermits,
 } from "./utils/index.js";
+import { canonicalIdentifier } from "relm-common";
 import { Player, Permission, Relm, useToken } from "./db/index.js";
 import { JWTSECRET } from "./config.js";
 
@@ -33,7 +34,10 @@ export function relmName(key = "relmName") {
 }
 
 function normalizeRelmName(name) {
-  return name.toLowerCase().replace(/[^a-z0-9\-]+/, "");
+  return name
+    .split("/")
+    .map((part) => canonicalIdentifier(part))
+    .join("/");
 }
 
 export function relmExists() {
@@ -126,17 +130,28 @@ export function acceptJwt() {
   };
 }
 
-export function authorized(requestedPermission) {
+export function authorized(
+  requestedPermission:
+    | Permission.Permission
+    | ((req: any) => Permission.Permission)
+) {
   return async (req, _res, next) => {
+    // Handle potential callback that gives us the Permission string
+    if (typeof requestedPermission === "function") {
+      requestedPermission = requestedPermission(req);
+    }
+
+    // Not permitted by default
+    let permitted = false;
+
     if (
       req.relm &&
       req.relm.isPublic === true &&
       requestedPermission === "access"
     ) {
       // Public relms don't need special permission to access
-      next();
-    } else {
-      let permitted = false;
+      permitted = true;
+    } else if (requestedPermission) {
       try {
         const relmNames = req.relmName ? [req.relmName] : ["*"];
         const permissions = await Permission.getPermissions({
@@ -152,12 +167,12 @@ export function authorized(requestedPermission) {
       } catch (err) {
         next(err);
       }
+    }
 
-      if (permitted === true) {
-        next();
-      } else {
-        next(createError(401, "unauthorized"));
-      }
+    if (permitted === true) {
+      next();
+    } else {
+      next(createError(401, "unauthorized"));
     }
   };
 }

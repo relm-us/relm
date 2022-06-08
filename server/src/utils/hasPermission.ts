@@ -1,3 +1,4 @@
+import { Permission } from "../db/permission.js";
 import { isAllowed } from "./isAllowed.js";
 
 /**
@@ -8,8 +9,8 @@ import { isAllowed } from "./isAllowed.js";
  * @returns
  */
 export function hasPermission(
-  requestedPermission: "access" | "edit" | "invite" | "admin",
-  permissions,
+  requestedPermission: Permission,
+  permissions: Record<string, Permission[]>,
   relm: string
 ) {
   if ("*" in permissions && relm in permissions) {

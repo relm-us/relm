@@ -14,17 +14,68 @@ import {
 } from "relm-common";
 
 import * as config from "../config.js";
-import * as util from "../utils/index.js";
 import * as middleware from "../middleware.js";
 import * as twilio from "../lib/twilio.js";
-import { respondWithSuccess, respondWithError } from "../utils/index.js";
 import { Permission, Relm, Doc, Variable } from "../db/index.js";
 import { getYDoc } from "../getYDoc.js";
 
-const { wrapAsync, uuidv4 } = util;
+import {
+  wrapAsync,
+  respondWithSuccess,
+  respondWithError,
+  randomToken,
+} from "../utils/index.js";
+
 const conscript = mkConscript();
 
 export const relm = express.Router();
+
+// Clone a subrelm from its base relm
+relm.post(
+  "/clone",
+  cors(),
+  middleware.relmExists(),
+  middleware.authenticated(),
+  // `clonePermit` will be one of `access`, `edit`, or NULL;
+  // If the participant has the appropriate authorization for
+  // this relm, then they will be allowed to clone a subrelm
+  middleware.authorized((req) => req.relm.clonePermitRequired),
+  wrapAsync(async (req, res) => {
+    const subrelmName = req.body.subrelmName || randomToken();
+
+    const seedRelm = req.relm;
+
+    const newRelmName = seedRelm.relmName + "/" + subrelmName;
+
+    const newRelm = await Relm.createRelm({
+      relmName: newRelmName,
+      seedRelmId: seedRelm.relmId,
+      isPublic: false,
+      createdBy: req.authenticatedPlayerId,
+    });
+
+    // Clone the "seed relm" into this new relm
+    await cloneRelmDoc(seedRelm.permanentDocId, newRelm.permanentDocId);
+
+    const permits = [seedRelm.clonePermitAssigned];
+
+    const success = await Permission.setPermits({
+      playerId: req.authenticatedPlayerId,
+      relmId: newRelm.relmId,
+      permits,
+    });
+
+    if (success) {
+      return respondWithSuccess(res, {
+        action: "cloned",
+        relm: newRelm,
+        permits,
+      });
+    } else {
+      return respondWithError(res, { reason: "can't set permits" });
+    }
+  })
+);
 
 // Create a new relm
 relm.post(
@@ -34,6 +85,9 @@ relm.post(
   middleware.authorized("admin"),
   wrapAsync(async (req, res) => {
     const relm = await Relm.getRelm({ relmName: req.relmName });
+
+    let seedRelm;
+
     if (relm !== null) {
       throw Error(`relm '${req.relmName}' already exists`);
     } else {
@@ -41,7 +95,7 @@ relm.post(
       let seedRelmName: string = req.body.seedRelmName;
 
       if (seedRelmId) {
-        const seedRelm = await Relm.getRelm({ relmId: seedRelmId });
+        seedRelm = await Relm.getRelm({ relmId: seedRelmId });
         if (!seedRelm) {
           throw Error(
             `relm can't be created because ` +
@@ -49,7 +103,7 @@ relm.post(
           );
         }
       } else if (seedRelmName) {
-        const seedRelm = await Relm.getRelm({ relmName: seedRelmName });
+        seedRelm = await Relm.getRelm({ relmName: seedRelmName });
         if (!seedRelm) {
           throw Error(
             `relm can't be created because ` +
@@ -59,44 +113,67 @@ relm.post(
         seedRelmId = seedRelm.relmId;
       }
 
-      const relm = await Relm.createRelm({
+      const attrs: any = {
         relmName: req.relmName,
         seedRelmId,
         isPublic: !!req.body.isPublic,
         createdBy: req.authenticatedPlayerId,
-      });
+      };
 
-      let seedDocId: string;
-      let newRelmDocId: string = relm.permanentDocId;
-
-      let relmContent;
-      if (seedRelmId) {
-        seedDocId = await Doc.getSeedDocId({
-          docId: newRelmDocId,
-        });
-        const seedRelmDoc: Y.Doc = await getYDoc(seedDocId);
-
-        relmContent = exportWorldDoc(seedRelmDoc);
-      } else {
-        relmContent = config.DEFAULT_RELM_CONTENT;
+      const cpReq = req.body.clonePermitRequired;
+      if (cpReq === "access" || cpReq === "edit") {
+        attrs.clonePermitRequired = cpReq;
       }
 
-      const newRelmDoc: Y.Doc = await getYDoc(newRelmDocId);
-      importWorldDoc(relmContent, newRelmDoc);
+      const cpAsn = req.body.clonePermitAssigned;
+      if (cpAsn === "access" || cpAsn === "edit") {
+        // Strict limit to prevent privilege escalation
+        attrs.clonePermitAssigned = cpAsn;
+      }
 
-      if (seedDocId) {
+      const relm = await Relm.createRelm(attrs);
+
+      // let seedDocId: string;
+      // let newRelmDocId: string = relm.permanentDocId;
+
+      // let relmContent;
+      // if (seedRelmId) {
+      //   seedDocId = await Doc.getSeedDocId({
+      //     docId: newRelmDocId,
+      //   });
+      //   const seedRelmDoc: Y.Doc = await getYDoc(seedDocId);
+
+      //   relmContent = exportWorldDoc(seedRelmDoc);
+      // } else {
+      //   relmContent = config.DEFAULT_RELM_CONTENT;
+      // }
+
+      // const newRelmDoc: Y.Doc = await getYDoc(newRelmDocId);
+      // importWorldDoc(relmContent, newRelmDoc);
+
+      if (seedRelmId) {
+        // Clone the "seed relm" into this new relm
+        const seedRelmDocId = await Doc.getSeedDocId({
+          docId: relm.permanentDocId,
+        });
+        await cloneRelmDoc(seedRelmDocId, relm.permanentDocId);
+
         if (seedRelmName) {
           console.log(
             `Cloned new relm '${req.relmName}' from '${seedRelmName}' ` +
-              `('${seedDocId}') (creator: '${req.authenticatedPlayerId}')`
+              `('${seedRelmDocId}') (creator: '${req.authenticatedPlayerId}')`
           );
         } else {
           console.log(
-            `Cloned new relm '${req.relmName}' from '${seedDocId}' ` +
+            `Cloned new relm '${req.relmName}' from '${seedRelmDocId}' ` +
               `(creator: '${req.authenticatedPlayerId}')`
           );
         }
       } else {
+        // Populate the new relm with basic ground
+        const newRelmDoc: Y.Doc = await getYDoc(relm.permanentDocId);
+        importWorldDoc(config.DEFAULT_RELM_CONTENT, newRelmDoc);
+
         console.log(
           `Created relm '${req.relmName}' ` +
             `(creator: '${req.authenticatedPlayerId}')`
@@ -111,7 +188,18 @@ relm.post(
   })
 );
 
-relm.delete(
+async function cloneRelmDoc(seedRelmDocId: string, newRelmDocId: string) {
+  const seedRelmDoc: Y.Doc = await getYDoc(seedRelmDocId);
+  const relmContent = exportWorldDoc(seedRelmDoc);
+  // console.log("relmContent", relmContent);
+
+  const newRelmDoc: Y.Doc = await getYDoc(newRelmDocId);
+  importWorldDoc(relmContent, newRelmDoc);
+
+  return newRelmDoc;
+}
+
+relm.post(
   "/delete",
   cors(),
   middleware.relmExists(),
@@ -127,7 +215,7 @@ relm.delete(
 );
 
 // Get an existing relm
-relm.get(
+relm.post(
   "/content",
   cors(),
   middleware.relmExists(),
@@ -145,8 +233,8 @@ relm.get(
 );
 
 // Get an existing relm
-relm.get(
-  "/meta",
+relm.post(
+  "/getmeta",
   cors(),
   middleware.relmExists(),
   middleware.authenticated(),
@@ -165,28 +253,49 @@ relm.get(
 );
 
 // Update an existing relm
-relm.put(
-  "/meta",
+relm.post(
+  "/setmeta",
   cors(),
   middleware.relmExists(),
   middleware.authenticated(),
   middleware.authorized("edit"),
   wrapAsync(async (req, res) => {
-    const attrs = {
+    const attrs: any = {
       relmId: req.relm.relmId,
-      isPublic: !!req.body.isPublic,
-      createdBy: req.authenticatedPlayerId,
     };
 
+    if (req.body.relmName) {
+      attrs.relmName = req.body.relmName;
+    }
+
+    if (req.body.isPublic !== undefined) {
+      attrs.isPublic = !!req.body.isPublic;
+    }
+
+    const cpReq = req.body.clonePermitRequired;
+    if (cpReq === "access" || cpReq === "edit") {
+      attrs.clonePermitRequired = cpReq;
+    }
+
+    const cpAsn = req.body.clonePermitAssigned;
+    if (cpAsn === "access" || cpAsn === "edit") {
+      // Strict limit to prevent privilege escalation
+      attrs.clonePermitAssigned = cpAsn;
+    }
+
     const relm = await Relm.updateRelm(attrs);
-    return respondWithSuccess(res, {
-      action: "updated",
-      relm,
-    });
+    if (relm) {
+      return respondWithSuccess(res, {
+        action: "updated",
+        relm,
+      });
+    } else {
+      return respondWithError(res, { reason: "invalid metadata" });
+    }
   })
 );
 
-relm.get(
+relm.post(
   "/permits",
   cors(),
   middleware.relmExists(),
@@ -194,19 +303,20 @@ relm.get(
   middleware.acceptToken(),
   middleware.acceptJwt(),
   wrapAsync(async (req, res) => {
-    const permissions = await Permission.getPermissions({
-      playerId: req.authenticatedPlayerId,
-      relmNames: [req.relmName],
-    });
+    const permits = await getPermitsForRelm(
+      req.relmName,
+      req.authenticatedPlayerId
+    );
+
     respondWithSuccess(res, {
       action: "permitted",
-      permits: permissions[req.relmName] || [],
+      permits,
       jwt: req.jwtRaw,
     });
   })
 );
 
-relm.get(
+relm.post(
   "/permitsAndMeta",
   cors(),
   middleware.relmExists(),
@@ -219,20 +329,16 @@ relm.get(
     req.relm.permanentDocSize = Y.encodeStateAsUpdate(doc).byteLength;
 
     const twilioToken = twilio.getToken(req.authenticatedPlayerId);
-    const permissions = await Permission.getPermissions({
-      playerId: req.authenticatedPlayerId,
-      relmNames: [req.relmName],
-    });
 
-    let permits = new Set(permissions[req.relmName] || []);
-    if (permissions["*"]) {
-      permissions["*"].forEach((permit) => permits.add(permit));
-    }
+    const permits = await getPermitsForRelm(
+      req.relmName,
+      req.authenticatedPlayerId
+    );
 
     return respondWithSuccess(res, {
       action: "permitted",
       relm: req.relm,
-      permits: [...permits],
+      permits,
       twilioToken,
       jwt: req.jwtRaw,
     });
@@ -253,8 +359,8 @@ type Possibility = {
   timeout: number;
 };
 
-relm.get(
-  "/variables",
+relm.post(
+  "/getvars",
   cors(),
   middleware.relmExists(),
   middleware.authenticated(),
@@ -273,30 +379,7 @@ relm.get(
 );
 
 relm.post(
-  "/edit",
-  cors(),
-  middleware.relmExists(),
-  middleware.authenticated(),
-  middleware.acceptToken(),
-  middleware.acceptJwt(),
-  middleware.authorized("edit"),
-  wrapAsync(async (req, res) => {
-    const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
-
-    const actions = req.body.actions;
-
-    const errors = applyActions(doc, actions);
-
-    if (errors.length === 0) {
-      return respondWithSuccess(res, { action: "edit" });
-    } else {
-      return respondWithError(res, "applyActions had errors", errors);
-    }
-  })
-);
-
-relm.post(
-  "/variables",
+  "/setvars",
   cors(),
   middleware.relmExists(),
   middleware.authenticated(),
@@ -387,6 +470,29 @@ relm.post(
   })
 );
 
+relm.post(
+  "/edit",
+  cors(),
+  middleware.relmExists(),
+  middleware.authenticated(),
+  middleware.acceptToken(),
+  middleware.acceptJwt(),
+  middleware.authorized("edit"),
+  wrapAsync(async (req, res) => {
+    const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
+
+    const actions = req.body.actions;
+
+    const errors = applyActions(doc, actions);
+
+    if (errors.length === 0) {
+      return respondWithSuccess(res, { action: "edit" });
+    } else {
+      return respondWithError(res, "applyActions had errors", errors);
+    }
+  })
+);
+
 async function setVariable(doc, variables, relmId, name, value) {
   console.log("setVariable", name, value, variables);
   await Variable.setVariable({ relmId, name, value });
@@ -470,4 +576,18 @@ function setProperty(
     errorNotify(`setProperty: entity not found ${entityId}`);
   }
   return errors;
+}
+
+async function getPermitsForRelm(relmName: string, playerId: string) {
+  const permissions = await Permission.getPermissions({
+    playerId,
+    relmNames: [relmName],
+  });
+
+  let permits = new Set(permissions[relmName] || []);
+  if (permissions["*"]) {
+    permissions["*"].forEach((permit) => permits.add(permit));
+  }
+
+  return [...permits];
 }

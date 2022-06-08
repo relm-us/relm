@@ -42,9 +42,9 @@ export class RelmRestAPI {
     type Content =
       | { status: "success"; permits: string[]; jwt: any }
       | { status: "error"; code?: number; reason: string };
-    let content: Content = await this.get(
-      `/relm/${this.relmName}/permitsAndMeta`
-    );
+    let content: Content = await this.post("/relm/permitsAndMeta", {
+      relmName: this.relmName,
+    });
     if (content.status === "success") {
       return content;
     } else if (content.code === 404) {
@@ -126,10 +126,10 @@ export class RelmRestAPI {
     type Content =
       | { status: "success" }
       | { status: "error"; code?: number; reason: string };
-    const content: Content = await this.post(
-      `/relm/${this.relmName}/variables`,
-      { changes }
-    );
+    const content: Content = await this.post("/relm/setvars", {
+      relmName: this.relmName,
+      changes,
+    });
     if (content.status === "success") {
       return true;
     } else {
@@ -213,7 +213,8 @@ export class RelmRestAPI {
     if (withEditPermission) permits.push("edit");
     if (withInvitePermission) permits.push("invite");
 
-    const content: Content = await this.post(`/invite/${this.relmName}/make`, {
+    const content: Content = await this.post(`/invite/make`, {
+      relmName: this.relmName,
       permits,
       maxUses,
     });
