@@ -25,6 +25,8 @@ export type PageParams = {
   relmName: string;
   // a named location within the relm
   entryway: string;
+  // whether or not we are inside a 'clone relm' request
+  isCloneRequest: boolean;
   // an optional invitation token
   invitationToken?: string;
   // an optional JWT token

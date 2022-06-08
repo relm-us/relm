@@ -32,6 +32,8 @@ import { getAuthenticationHeaders } from "./effects/getAuthenticationHeaders";
 import { pollLoadingState } from "./effects/pollLoadingState";
 import { subscribeBroker } from "./effects/subscribeBroker";
 import { makeLocalAvatar } from "./effects/makeLocalAvatar";
+import { resetArrowKeys } from "./effects/resetArrowKeys";
+import { requestCloneRelm } from "./effects/requestCloneRelm";
 
 import GameWorld from "./views/GameWorld.svelte";
 import ErrorScreen from "./views/ErrorScreen.svelte";
@@ -46,7 +48,6 @@ import { setAvatarFromParticipant } from "~/identity/Avatar/setAvatarFromPartici
 import { getDefaultAppearance } from "~/identity/Avatar/appearance";
 import { localIdentityData } from "~/stores/identityData";
 import { IdentityData, UpdateData } from "~/types";
-import { resetArrowKeys } from "./effects/resetArrowKeys";
 import { Oculus } from "~/ecs/plugins/html2d";
 
 const logEnabled = (localStorage.getItem("debug") || "")
@@ -139,17 +140,19 @@ export function makeProgram(): Program {
             twilioToken: msg.twilioToken,
           },
 
-          // Kick off parallel tasks:
-          //
-          // physics      audio/video
-          //    v              v
-          //   ECS           avatar
-          //    v              |
-          // worldDoc          |
-          //    \             /
-          //     `> loading <'
-          //
-          Cmd.batch([importPhysicsEngine, nextSetupStep(state)]),
+          state.pageParams.isCloneRequest
+            ? requestCloneRelm(state.pageParams, state.authHeaders)
+            : // Kick off parallel tasks:
+              //
+              // physics      audio/video
+              //    v              v
+              //   ECS           avatar
+              //    v              |
+              // worldDoc          |
+              //    \             /
+              //     `> loading <'
+              //
+              Cmd.batch([importPhysicsEngine, nextSetupStep(state)]),
         ];
       }
 

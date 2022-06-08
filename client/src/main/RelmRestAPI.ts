@@ -233,4 +233,32 @@ export class RelmRestAPI {
       throw Error(`can't drop item: ${content.reason}`);
     }
   }
+
+  async cloneRelm({
+    subrelmName,
+  }: {
+    subrelmName?: string;
+  } = {}): Promise<{
+    relm: {
+      relmId: string;
+      relmName: string;
+      isPublic: boolean;
+      // ... and others
+    };
+  }> {
+    type Result =
+      | { status: "success"; relm: any; permits: boolean }
+      | { status: "error"; code?: number; reason: string };
+
+    const result: Result = await this.post(`/relm/clone`, {
+      relmName: this.relmName,
+      subrelmName,
+    });
+
+    if (result.status === "success") {
+      return result.relm;
+    } else {
+      throw Error(`can't clone relm: ${result.reason}`);
+    }
+  }
 }

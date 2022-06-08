@@ -1,6 +1,5 @@
 import { DEFAULT_RELM_NAME, DEFAULT_ENTRYWAY } from "~/config/constants";
 import { canonicalIdentifier } from "relm-common";
-import { removeLeading } from "~/utils/removeLeading";
 
 import { Dispatch } from "../ProgramTypes";
 
@@ -12,18 +11,23 @@ export const getPageParams =
     const invitationToken = params.get("t");
     const jsonWebToken = (window as any).jwt || params.get("jwt");
 
-    let relmName = removeLeading(window.location.pathname, "/")
-      .split("/")
-      .map((part) => canonicalIdentifier(part))
-      .join("/");
-    if (relmName === "") relmName = DEFAULT_RELM_NAME;
-
     const entryway = hash === "" ? DEFAULT_ENTRYWAY : canonicalIdentifier(hash);
 
-    // TODO: The "new" keyword is a special instance that means to clone the base
-    // relm to create a new instance.
-    // if (relmInstance === "new") {
-    // }
+    const path = window.location.pathname.replace(/^\/|\/$/, "");
+
+    let relmName;
+    let isCloneRequest;
+
+    // Request to clone base relm?
+    const match = path.match(/^([^/]+)\/new$/);
+    if (match) {
+      relmName = match[1];
+      isCloneRequest = true;
+    } else {
+      // Nope, just a regular relm
+      relmName = path === "" ? DEFAULT_RELM_NAME : path;
+      isCloneRequest = false;
+    }
 
     // Safari doesn't support BroadcastChannel, so globalBroadcast may be null
     if (globalBroadcast) {
@@ -46,11 +50,10 @@ export const getPageParams =
     const pageParams = {
       relmName,
       entryway,
+      isCloneRequest,
       invitationToken,
       jsonWebToken,
     };
-
-    console.log("pageParams", pageParams);
 
     dispatch({ id: "gotPageParams", pageParams });
   };
