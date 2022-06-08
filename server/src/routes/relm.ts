@@ -57,7 +57,7 @@ relm.post(
     // Clone the "seed relm" into this new relm
     await cloneRelmDoc(seedRelm.permanentDocId, newRelm.permanentDocId);
 
-    const permits = [seedRelm.clonePermitAssigned];
+    const permits = [seedRelm.clonePermitAssigned, 'invite'];
 
     const success = await Permission.setPermits({
       playerId: req.authenticatedPlayerId,
