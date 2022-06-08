@@ -13,7 +13,7 @@ export const getPageParams =
 
     const entryway = hash === "" ? DEFAULT_ENTRYWAY : canonicalIdentifier(hash);
 
-    const path = window.location.pathname.replace(/^\/|\/$/, "");
+    const path = window.location.pathname.replace(/^\/|\/$/g, "");
 
     let relmName;
     let isCloneRequest;
