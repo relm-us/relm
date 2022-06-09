@@ -3,27 +3,27 @@ import { Object3DRef } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
 
 import { CssPlane } from "../components";
-import { WebPage } from "./WebPage";
-import { WebPageRef } from "./WebPageRef";
-import WebPageComponent from "./WebPage.svelte";
+import { HdImage } from "./HdImage";
+import { HdImageRef } from "./HdImageRef";
+import HdImageComponent from "./HdImage.svelte";
 
 import { RenderableBaseSystem } from "../RenderableBaseSystem";
 
-export class WebPageSystem extends RenderableBaseSystem {
+export class HdImageSystem extends RenderableBaseSystem {
   static queries: Queries = {
-    added: [WebPage, Not(WebPageRef)],
-    modified: [Modified(WebPage), WebPageRef],
-    modifiedCssPlane: [Modified(CssPlane), WebPageRef],
-    active: [WebPage, WebPageRef, Object3DRef],
-    removed: [Not(WebPage), WebPageRef],
+    added: [HdImage, Not(HdImageRef)],
+    modified: [Modified(HdImage), HdImageRef],
+    modifiedCssPlane: [Modified(CssPlane), HdImageRef],
+    active: [HdImage, HdImageRef, Object3DRef],
+    removed: [Not(HdImage), HdImageRef],
   };
 
   init({ cssPresentation }) {
     this.cssPresentation = cssPresentation;
 
-    this.EcsComponent = WebPage;
-    this.EcsComponentRef = WebPageRef;
-    this.RenderableComponent = WebPageComponent;
+    this.EcsComponent = HdImage;
+    this.EcsComponentRef = HdImageRef;
+    this.RenderableComponent = HdImageComponent;
   }
 
   update() {
