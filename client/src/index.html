@@ -18,6 +18,9 @@
 
     <script>
       window.jwt = ""; // for third party integration, populate window.jwt with server-side generated jwt token
+      window.onbeforeunload = function () {
+        return "Are you sure you would like to leave?";
+      };
     </script>
     <% // Note: html-webpack-plugin will insert CSS here %>
   </head>
