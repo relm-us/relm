@@ -4,7 +4,6 @@
 
   import { worldUIMode } from "~/stores/worldUIMode";
   import Fullwindow from "~/ui/lib/Fullwindow.svelte";
-  import { hasAncestor } from "~/utils/hasAncestor";
 
   import QuillOverlay from "../document/quill/QuillOverlay.svelte";
   import QuillPage from "./quill/QuillPage.svelte";
