@@ -127,7 +127,7 @@
       {#if fullscreen}
         <Fullscreen on:close={exitFullscreen}>
           {console.log($videoStore)}
-          <Video track={$videoStore} mirror={false} contain={false} />
+          <Video track={$videoStore} mirror={false} contain={true} />
 
           <small-pics>
             {#each [...getMeAndOtherParticipants($clients)] as participant}
