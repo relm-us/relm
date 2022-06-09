@@ -38,6 +38,7 @@ type PointerState =
   | "interactive-drag"
   | "drag-select";
 
+export let pointerStateDelayed: PointerState = "initial";
 let pointerState: PointerState = "initial";
 let pointerDownFound: string[] = [];
 let dragOffset: Vector3 = new Vector3();
@@ -254,6 +255,9 @@ function setNextPointerState(nextState: PointerState) {
     document.body.classList.remove("pointer-events-none");
   }
   pointerState = nextState;
+
+  // Allow external components to react to state after release
+  setTimeout(() => (pointerStateDelayed = nextState), 100);
 }
 
 function firstInteractiveEntity(entityIds: string[]) {

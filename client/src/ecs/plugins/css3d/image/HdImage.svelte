@@ -3,6 +3,7 @@
 
   import { assetUrl } from "~/config/assetUrl";
   import { Asset } from "~/ecs/plugins/core";
+  import { pointerStateDelayed } from "~/events/input/PointerListener/pointerActions";
   import { worldUIMode } from "~/stores/worldUIMode";
   import Fullwindow from "~/ui/lib/Fullwindow.svelte";
 
@@ -11,7 +12,9 @@
 
   let bigscreen = false;
 
-  const activate = () => (bigscreen = true);
+  const activate = () => {
+    if (pointerStateDelayed !== "interactive-drag") bigscreen = true;
+  };
   const deactivate = () => (bigscreen = false);
 
   // ignore other props
@@ -39,6 +42,7 @@
   src={assetUrl(asset.url)}
   alt={asset.name}
   on:click={$worldUIMode === "build" ? undefined : activate}
+  on:mousedown|preventDefault
 />
 
 <style>
