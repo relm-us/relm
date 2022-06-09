@@ -49,6 +49,26 @@ export class ParticipantManager {
     this.participants.clear();
   }
 
+  getByClientIds(clientIds: Set<number>): Participant[] {
+    let participants = [];
+    for (let clientId of clientIds) {
+      const participant = this.getByClientId(clientId);
+      if (participant) participants.push(participant);
+    }
+    return participants;
+  }
+
+  getByClientId(clientId: number): Participant {
+    let matchingParticipant;
+    for (let participant of this.participants.values()) {
+      if (participant.identityData.clientId === clientId) {
+        matchingParticipant = participant;
+        break;
+      }
+    }
+    return matchingParticipant;
+  }
+
   sendMyState() {
     if (!this.broker.awareness.getLocalState()) return;
 

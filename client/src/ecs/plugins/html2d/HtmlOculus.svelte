@@ -1,5 +1,7 @@
 <script lang="ts">
   import { Audio, Video } from "video-mirror";
+  import { Readable, get } from "svelte/store";
+
   import { worldManager } from "~/world";
   import { audioMode } from "~/stores/audioMode";
   import Fullscreen from "./Fullscreen.svelte";
@@ -19,6 +21,7 @@
   export let showAudio: boolean;
   export let showVideo: boolean;
   export let participantId: string;
+  export let clients: Readable<Set<number>>;
   export let entity: Entity;
 
   let fullscreen = false;
@@ -67,6 +70,20 @@
     }
   }
 
+  function getMeAndOtherParticipants(clientIds) {
+    const participants = worldManager.participants.getByClientIds(clientIds);
+
+    // Add me so I can see myself
+    const me = worldManager.participants.participants.get(localPlayerId);
+    participants.push(me);
+
+    // Don't show the "big screen" participant as a little screen also
+    const filtered = participants.filter(
+      (p) => p.participantId !== participantId
+    );
+    return filtered;
+  }
+
   let interval;
   $: if ($audioMode === "proximity" && !isLocal) {
     if (interval) clearInterval(interval);
@@ -109,10 +126,35 @@
     >
       {#if fullscreen}
         <Fullscreen on:close={exitFullscreen}>
-          <Video track={$videoStore} mirror={false} contain={true} />
-          <picture-in-picture>
-            <Video track={$localVideoStore} mirror={true} />
-          </picture-in-picture>
+          {console.log($videoStore)}
+          <Video track={$videoStore} mirror={false} contain={false} />
+
+          <small-pics>
+            {#each [...getMeAndOtherParticipants($clients)] as participant}
+              <div>
+                <oculus
+                  class="round"
+                  style="--oculus-border-color: {participant.identityData
+                    .color}"
+                >
+                  <Video
+                    track={get(
+                      worldManager.avConnection.getTrackStore(
+                        participant.participantId,
+                        "video"
+                      )
+                    )}
+                    mirror={participant.participantId === localPlayerId}
+                  />
+                </oculus>
+                <NameTag
+                  name={participant.identityData.name}
+                  editable={false}
+                  color={participant.identityData.color}
+                />
+              </div>
+            {/each}
+          </small-pics>
         </Fullscreen>
       {:else}
         <Video track={$videoStore} mirror={isLocal && !isLocalSharing} />
@@ -190,13 +232,19 @@
     opacity: 0.45;
   }
 
-  picture-in-picture {
-    display: block;
+  small-pics {
+    display: flex;
     position: absolute;
-    width: 15%;
-    height: 15%;
+    height: 100px;
+    left: 24px;
     right: 24px;
     bottom: 24px;
-    border: 2px solid white;
+  }
+
+  small-pics div {
+    margin: 5px 15px;
+    width: 100px;
+    height: 100px;
+    position: relative;
   }
 </style>

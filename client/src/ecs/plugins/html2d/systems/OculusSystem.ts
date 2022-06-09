@@ -59,7 +59,7 @@ export class OculusSystem extends System {
 
     // Prepare a container for Svelte
     const container = this.htmlPresentation.createContainer(3);
-    container.classList.add('flex');
+    container.classList.add("flex");
     const x = this.htmlPresentation.percent(spec.hanchor);
     const y = this.htmlPresentation.percent(spec.vanchor);
     container.style.transform = `translate(-50%,-50%) translate(${x},${y})`;
@@ -68,7 +68,11 @@ export class OculusSystem extends System {
     // Create the Svelte component
     const component = new HtmlOculus({
       target: container,
-      props: { ...spec, entity },
+      props: {
+        ...spec,
+        clients: worldManager.participants.broker.clients,
+        entity,
+      },
     });
 
     entity.add(OculusRef, { container, component });
@@ -121,9 +125,7 @@ export class OculusSystem extends System {
     v1.copy(object3d.position);
     v1.add(spec.offset);
 
-    const dist = this.presentation.camera.parent.position.distanceTo(
-      v1
-    );
+    const dist = this.presentation.camera.parent.position.distanceTo(v1);
 
     this.htmlPresentation.project(v1);
 

@@ -6,7 +6,6 @@
   import { cleanHtml } from "~/utils/cleanHtml";
   import { selectAll } from "~/utils/selectAll";
   import { getAncestor } from "~/utils/hasAncestor";
-  import { worldManager } from "~/world";
   import { worldUIMode } from "~/stores/worldUIMode";
 
   import { Oculus } from "./components";
@@ -15,7 +14,7 @@
   export let name: string = "";
   export let color: string;
   export let editable: boolean = true;
-  export let entity: Entity;
+  export let entity: Entity = null;
 
   let fgColor = "black";
 
@@ -60,15 +59,7 @@
   }
 
   function onMousedown(event) {
-    if ($worldUIMode === "build") {
-      event.preventDefault();
-      // Uses setTimeout because a click on "nothing" will deselect everything
-      // TODO: use selectionLogic to implement complete set of selection possibilities
-      setTimeout(() => {
-        worldManager.selection.clear();
-        worldManager.selection.addEntityId(entity.id);
-      }, 100);
-    } else if (editable && !editing) {
+    if ($worldUIMode === "play" && editable && !editing) {
       editing = true;
       setTimeout(() => {
         labelEl.focus();

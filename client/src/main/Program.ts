@@ -177,7 +177,11 @@ export function makeProgram(): Program {
             removeAfter: 5000,
           });
         }
-        console.log("participantJoined", state.participants.size);
+        console.log(
+          "participantJoined",
+          msg.participant.identityData.name,
+          state.participants.size
+        );
 
         return [
           state,

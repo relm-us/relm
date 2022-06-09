@@ -156,7 +156,7 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
     this.emit("resources-removed", [publication.trackSid]);
   }
 
-  publishLocalTracks(tracks: Array<MediaStreamTrack>, options: any = {}) {
+  publishLocalTracks(tracks: Array<MediaStreamTrack>) {
     if (this.room.state !== "connected") {
       console.warn("TwilioClient not publishing local tracks; not connected");
       return;
@@ -173,7 +173,7 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
         localParticipant.unpublishTracks(prevTracks);
       }
 
-      localParticipant.publishTrack(track, options);
+      localParticipant.publishTrack(track);
     }
   }
 

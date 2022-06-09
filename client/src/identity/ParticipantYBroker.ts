@@ -1,6 +1,7 @@
 import type { IdentityData } from "~/types";
 
 import * as Y from "yjs";
+import { writable, Writable } from "svelte/store";
 
 import { withMapEdits } from "relm-common";
 
@@ -15,10 +16,12 @@ import { Dispatch } from "~/main/ProgramTypes";
 export class ParticipantYBroker {
   worldDoc: WorldDoc;
   unsubs: Function[];
+  clients: Writable<Set<number>>;
 
   constructor(worldDoc: WorldDoc) {
     this.worldDoc = worldDoc;
     this.unsubs = [];
+    this.clients = writable(new Set());
   }
 
   get yidentities(): Y.Map<IdentityData> {
@@ -42,6 +45,7 @@ export class ParticipantYBroker {
   }
 
   subscribe(dispatch: Dispatch) {
+    this.unsubs.push(this.subscribeConnect(dispatch));
     this.unsubs.push(this.subscribeDisconnect(dispatch));
     this.unsubs.push(this.subscribeIdentityData(dispatch));
   }
@@ -51,19 +55,34 @@ export class ParticipantYBroker {
     this.unsubs.length = 0;
   }
 
+  subscribeConnect(dispatch: Dispatch) {
+    console.log("subscribeConnect");
+    const observer = (changes) => {
+      for (let id of changes.added) {
+        // Add clientId when they connect
+        this.clients.update(($clients) => {
+          $clients.add(id);
+          return $clients;
+        });
+      }
+    };
+    this.awareness.on("change", observer);
+    return () => this.awareness.off("change", observer);
+  }
+
   subscribeDisconnect(dispatch: Dispatch) {
-    // Remove participant avatars when they disconnect
     const observer = (changes) => {
       for (let id of changes.removed) {
+        this.clients.update(($clients) => {
+          $clients.delete(id);
+          return $clients;
+        });
+        // Remove participant avatars when they disconnect
         dispatch({ id: "removeParticipant", clientId: id });
       }
     };
-
-    this.worldDoc.provider.awareness.on("change", observer);
-
-    return () => {
-      this.worldDoc.provider.awareness.off("change", observer);
-    };
+    this.awareness.on("change", observer);
+    return () => this.awareness.off("change", observer);
   }
 
   subscribeIdentityData(dispatch: Dispatch) {
