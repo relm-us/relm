@@ -65,3 +65,6 @@ export const UNIQUE_COLOR_PALETTE = [
   "#086b75","#2188dd","#67b7d4","#81e2ea","#5d80b4",
   "#696daa","#906aa1","#d8bbcd","#c9ceec","#4f3b47",
 ];
+
+// Feature Flag: enable or disable audio/video capabilities (e.g. Twilio)
+export const AV_ENABLED: boolean = true;

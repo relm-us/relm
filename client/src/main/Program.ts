@@ -11,6 +11,7 @@ import { exists } from "~/utils/exists";
 import AvatarChooser from "~/ui/AvatarBuilder/AvatarChooser.svelte";
 
 import { AVConnection } from "~/av/AVConnection";
+import { AV_ENABLED } from "~/config/constants";
 
 import { preferredDeviceIds } from "~/stores/preferredDeviceIds";
 import { askAvatarSetup } from "~/stores/askAvatarSetup";
@@ -177,24 +178,32 @@ export function makeProgram(): Program {
             removeAfter: 5000,
           });
         }
+
         console.log(
           "participantJoined",
           msg.participant.identityData.name,
           state.participants.size
         );
 
-        return [
-          state,
-          state.avDisconnect
-            ? null /* We've already connected once, no need to do it again */
-            : joinAudioVideo(
-                state.participants.get(playerId),
-                state.avConnection,
-                state.avDisconnect,
-                state.relmDocId,
-                state.twilioToken
-              ),
-        ];
+        let nextAction = joinAudioVideo(
+          state.participants.get(playerId),
+          state.avConnection,
+          state.avDisconnect,
+          state.relmDocId,
+          state.twilioToken
+        );
+
+        if (AV_ENABLED === false) {
+          // The audio/video system is completely disabled
+          nextAction = null;
+        }
+
+        if (state.avDisconnect) {
+          // We've already connected once, no need to do it again
+          nextAction = null;
+        }
+
+        return [state, nextAction];
       }
 
       case "recvParticipantData": {

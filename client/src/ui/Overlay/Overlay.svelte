@@ -38,6 +38,7 @@
   import { centerCameraVisible } from "~/stores/centerCameraVisible";
   import { selectedEntities } from "~/stores/selection";
   import { showCenterButtons } from "~/stores/showCenterButtons";
+  import { AV_ENABLED } from "~/config/constants";
 
   export let dispatch;
   export let permits;
@@ -135,22 +136,24 @@
 {#if $showCenterButtons}
   <overlay-center>
     <play-buttons class="interactive">
-      <Tooltip tip={_("Set up video", "set_up_video")} top>
-        <VideoButton enabled={$localIdentityData.showVideo} {dispatch} />
-      </Tooltip>
-      <Tooltip
-        tip={$localIdentityData.showAudio
-          ? _("Mute", "mute")
-          : _("Unmute", "unmute")}
-        top
-      >
-        <MicButton enabled={$localIdentityData.showAudio} />
-      </Tooltip>
-      <Tooltip tip={_("Share screen", "share_screen")} top>
-        <ShareScreenButton />
-      </Tooltip>
+      {#if AV_ENABLED}
+        <Tooltip tip={_("Set up video", "set_up_video")} top>
+          <VideoButton enabled={$localIdentityData.showVideo} {dispatch} />
+        </Tooltip>
+        <Tooltip
+          tip={$localIdentityData.showAudio
+            ? _("Mute", "mute")
+            : _("Unmute", "unmute")}
+          top
+        >
+          <MicButton enabled={$localIdentityData.showAudio} />
+        </Tooltip>
+        <Tooltip tip={_("Share screen", "share_screen")} top>
+          <ShareScreenButton />
+        </Tooltip>
 
-      <div style="width:16px" />
+        <div style="width:16px" />
+      {/if}
 
       <Tooltip
         tip={$chatOpen
