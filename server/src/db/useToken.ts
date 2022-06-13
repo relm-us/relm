@@ -2,23 +2,23 @@ import { MAX_TOKEN_LENGTH } from "../config.js";
 import { useInvitation } from "./invitation.js";
 import { setPermits } from "./permission.js";
 
-export async function useToken({ token, relmId, playerId }) {
+export async function useToken({ token, relmId, participantId }) {
   if (token && token.length <= MAX_TOKEN_LENGTH) {
     const invite = await useInvitation({
       token,
       relmId,
-      playerId,
+      participantId,
     });
 
     // Convert invitation to permissions
     await setPermits({
-      playerId,
+      participantId,
       relmId: invite.relmId,
       permits: [...invite.permits],
     });
 
     console.log(
-      `Participant ${playerId} used token ${token} to enter ${relmId} with permits ${JSON.stringify(
+      `Participant ${participantId} used token ${token} to enter ${relmId} with permits ${JSON.stringify(
         invite.permits
       )}`
     );

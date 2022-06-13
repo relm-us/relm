@@ -8,7 +8,7 @@ import {
   unabbreviatedPermits,
 } from "./utils/index.js";
 import { AuthenticationHeaders, canonicalIdentifier } from "relm-common";
-import { Player, Permission, Relm, useToken } from "./db/index.js";
+import { Participant, Permission, Relm, useToken } from "./db/index.js";
 import { JWTSECRET } from "./config.js";
 
 export function relmName(key = "relmName") {
@@ -38,24 +38,24 @@ export function relmExists() {
 
 export function authenticated() {
   return async (req, _res, next) => {
-    const playerId = getParam(req, "x-relm-participant-id");
+    const participantId = getParam(req, "x-relm-participant-id");
 
-    // the `id` (playerId), signed
+    // the `id` (participantId), signed
     const sig = getParam(req, "x-relm-participant-sig");
 
     const x = getParam(req, "x-relm-pubkey-x");
     const y = getParam(req, "x-relm-pubkey-y");
 
     const params = {
-      playerId,
+      participantId,
       sig,
       x,
       y,
     };
 
     try {
-      req.verifiedPubKey = await Player.findOrCreateVerifiedPubKey(params);
-      req.authenticatedPlayerId = playerId;
+      req.verifiedPubKey = await Participant.findOrCreateVerifiedPubKey(params);
+      req.authenticatedParticipantId = participantId;
       next();
     } catch (err) {
       console.warn(`Can't findOrCreateVerifiedPubKey`, params);
@@ -68,10 +68,10 @@ export function acceptToken() {
   return async (req, _res, next) => {
     const token = getParam(req, "x-relm-invite-token");
     const relmId = req.relm ? req.relm.relmId : undefined;
-    const playerId = req.authenticatedPlayerId;
+    const participantId = req.authenticatedParticipantId;
 
     try {
-      await useToken({ token, relmId, playerId });
+      await useToken({ token, relmId, participantId });
       next();
     } catch (err) {
       if (err.message.match(/no longer valid/)) {
@@ -95,7 +95,7 @@ export function acceptJwt() {
         for (let [relmName, abbrevPermits] of Object.entries(result.relms)) {
           const permits = unabbreviatedPermits(abbrevPermits);
           await Permission.setPermits({
-            playerId: req.authenticatedPlayerId,
+            participantId: req.authenticatedParticipantId,
             relmName,
             permits,
             // This ensures that a JWT token can also delete permits when needed:
@@ -140,7 +140,7 @@ export function authorized(
       try {
         const relmNames = req.relmName ? [req.relmName] : ["*"];
         const permissions = await Permission.getPermissions({
-          playerId: req.authenticatedPlayerId,
+          participantId: req.authenticatedParticipantId,
           relmNames,
         });
 

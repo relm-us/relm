@@ -20,7 +20,7 @@ describe("Permission model tests", () => {
   });
 
   it("gets access permission to public relm", async () => {
-    const playerId = uuidv4();
+    const participantId = uuidv4();
     const relmId = uuidv4();
     const relmName = uuidv4();
 
@@ -31,7 +31,7 @@ describe("Permission model tests", () => {
     });
 
     const permitsByRelm = await Permission.getPermissions({
-      playerId,
+      participantId,
       relmNames: [relmName, "doesnotexist"],
     });
 
@@ -43,7 +43,7 @@ describe("Permission model tests", () => {
   });
 
   it("getPermissions returns multiple permits including wildcard relm", async () => {
-    const playerId = uuidv4();
+    const participantId = uuidv4();
     const relmId1 = uuidv4();
     const relmName1 = uuidv4();
     const relmId2 = uuidv4();
@@ -62,25 +62,25 @@ describe("Permission model tests", () => {
 
     // Wildcard permits for this participant
     await Permission.setPermits({
-      playerId,
+      participantId,
       relmId: null,
       permits: ["admin"],
     });
 
     // Relm-specific permits for this participant
     await Permission.setPermits({
-      playerId,
+      participantId,
       relmId: relmId1,
       permits: ["access", "edit"],
     });
     await Permission.setPermits({
-      playerId,
+      participantId,
       relmName: relmName2,
       permits: ["access"],
     });
 
     const permitsByRelm = await Permission.getPermissions({
-      playerId,
+      participantId,
       relmNames: [relmName1, relmName2],
     });
 
@@ -94,7 +94,7 @@ describe("Permission model tests", () => {
   });
 
   it("sets permissions", async () => {
-    const playerId = uuidv4();
+    const participantId = uuidv4();
     const relmId1 = uuidv4();
     const relmName1 = uuidv4();
 
@@ -106,7 +106,7 @@ describe("Permission model tests", () => {
 
     for (let permit of ["access", "invite", "edit"]) {
       await Permission.setPermits({
-        playerId,
+        participantId,
         relmId: relmId1,
         permits: [permit as Permission.Permission],
         union: false,
@@ -114,7 +114,7 @@ describe("Permission model tests", () => {
     }
 
     const permitsByRelm = await Permission.getPermissions({
-      playerId,
+      participantId,
       relmNames: [relmName1],
     });
 
@@ -122,7 +122,7 @@ describe("Permission model tests", () => {
   });
 
   it("sets unioned permissions", async () => {
-    const playerId = uuidv4();
+    const participantId = uuidv4();
     const relmId1 = uuidv4();
     const relmName1 = uuidv4();
 
@@ -134,14 +134,14 @@ describe("Permission model tests", () => {
 
     for (let permit of ["access", "invite", "invite"]) {
       await Permission.setPermits({
-        playerId,
+        participantId,
         relmId: relmId1,
         permits: [permit as Permission.Permission],
       });
     }
 
     const permitsByRelm = await Permission.getPermissions({
-      playerId,
+      participantId,
       relmNames: [relmName1],
     });
 

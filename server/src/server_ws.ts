@@ -3,7 +3,7 @@ import { createServer } from "http";
 import { setupWSConnection } from "relm-common";
 
 import { app } from "./server_http.js";
-import { Player, Permission, Doc } from "./db/index.js";
+import { Participant, Permission, Doc } from "./db/index.js";
 import { ydocStats } from "./getYDoc.js";
 import { hasPermission } from "./utils/hasPermission.js";
 
@@ -40,8 +40,8 @@ server.on("upgrade", async (req, socket, head) => {
 
   let verifiedPubKey;
   try {
-    verifiedPubKey = await Player.findOrCreateVerifiedPubKey({
-      playerId: participantId,
+    verifiedPubKey = await Participant.findOrCreateVerifiedPubKey({
+      participantId,
       sig: participantSig,
       x: pubkeyX,
       y: pubkeyY,
@@ -57,7 +57,7 @@ server.on("upgrade", async (req, socket, head) => {
     const doc = await Doc.getDoc({ docId });
 
     const permissions = await Permission.getPermissions({
-      playerId: participantId,
+      participantId,
       relmIds: [doc.relmId],
     });
 

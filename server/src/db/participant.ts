@@ -1,29 +1,29 @@
 import { db, sql } from "./db.js";
 
 /**
- * The `Player` model represents an authenticated player in the database. Note that
- * a User can have many Players: we don't require people to identify themselves
- * initially, so whatever their browser passes us as a playerId, we will use it as
+ * The `Participant` model represents an authenticated participants in the database. Note
+ * that a User can have many Participants: we don't require people to identify themselves
+ * initially, so whatever their browser passes us as a participantId, we will use it as
  * long as it is signed (meaning we can guarantee uniqueness, as long as the browser
  * hasn't been compromised.)
  *
  * This implies that a person who has multiple browsers open will have multiple
- * players, if they haven't integrated their players into a single user identity.
+ * participants, if they haven't integrated their participants into a single user identity.
  *
  */
 
 import * as auth from "../auth.js";
 
-export async function hasPubKeyDoc({ playerId }) {
-  const pubKeyDoc = await getPubKeyDoc({ playerId });
+export async function hasPubKeyDoc({ participantId }) {
+  const pubKeyDoc = await getPubKeyDoc({ participantId });
   return pubKeyDoc !== null;
 }
 
-export async function getPubKeyDoc({ playerId }) {
+export async function getPubKeyDoc({ participantId }) {
   const row = await db.oneOrNone(sql`
       SELECT public_key_doc
-      FROM players
-      WHERE player_id = ${playerId}
+      FROM participants
+      WHERE participant_id = ${participantId}
     `);
   if (row !== null) {
     return row.public_key_doc;
@@ -32,18 +32,18 @@ export async function getPubKeyDoc({ playerId }) {
   }
 }
 
-export async function addPubKeyDoc({ playerId, pubKeyDoc }) {
+export async function addPubKeyDoc({ participantId, pubKeyDoc }) {
   await db.none(sql`
-      INSERT INTO players (player_id, public_key_doc)
-      VALUES (${playerId}, ${JSON.stringify(pubKeyDoc)})
+      INSERT INTO participants (participant_id, public_key_doc)
+      VALUES (${participantId}, ${JSON.stringify(pubKeyDoc)})
     `);
 }
 
-export async function findOrCreateVerifiedPubKey({ playerId, x, y, sig }) {
+export async function findOrCreateVerifiedPubKey({ participantId, x, y, sig }) {
   let pubKeyDocFromParams = false;
 
   // If user already has a registered public key doc, use it
-  let pubKeyDoc = await getPubKeyDoc({ playerId });
+  let pubKeyDoc = await getPubKeyDoc({ participantId });
 
   if (pubKeyDoc === null) {
     // If not, then accept the xydoc from params (if available) and generate a public key document
@@ -61,11 +61,11 @@ export async function findOrCreateVerifiedPubKey({ playerId, x, y, sig }) {
   // Verify the signature (using the pubKeyDoc)
   const pubKey = await auth.pubKeyDocToPubKey(pubKeyDoc);
 
-  let signatureValid = await auth.verify(playerId, sig, pubKey);
+  let signatureValid = await auth.verify(participantId, sig, pubKey);
   if (signatureValid) {
     if (pubKeyDocFromParams) {
       // Now that we've confirmed it is valid, store the new pubKeyDoc
-      await addPubKeyDoc({ playerId, pubKeyDoc });
+      await addPubKeyDoc({ participantId, pubKeyDoc });
     }
 
     return pubKey;

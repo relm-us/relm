@@ -14,18 +14,18 @@ export function filteredPermits(permits) {
 }
 
 /**
- * @param {UUID} playerId - the UUID of the player to set permissions for
+ * @param {UUID} participantId - the UUID of the participant to set permissions for
  * @param {string} relm - the relm to which the permissions pertain, or '*' if for all relms
  * @param {Array<PERMISSIONS>} permits - an array-like containing a list of permissions, e.g. PERMISSIONS.ACCESS
  */
 export async function setPermits({
-  playerId,
+  participantId,
   relmId,
   relmName,
   permits = ["access"],
   union = true,
 }: {
-  playerId: string;
+  participantId: string;
   relmId?: string;
   relmName?: string;
   permits?: Array<Permission>;
@@ -50,14 +50,14 @@ export async function setPermits({
 
   const attrs = {
     relm_id,
-    player_id: playerId,
+    participant_id: participantId,
     permits: JSON.stringify(arrayToBooleanObject(permits)),
   };
 
   if (union) {
     await db.one(sql`
       ${INSERT("permissions", attrs)}
-      ON CONFLICT(relm_id, player_id)
+      ON CONFLICT(relm_id, participant_id)
       DO UPDATE SET
         updated_at = CURRENT_TIMESTAMP,
         permits = (permissions.permits || ${attrs.permits})::jsonb
@@ -66,7 +66,7 @@ export async function setPermits({
   } else {
     await db.one(sql`
       ${INSERT("permissions", attrs)}
-      ON CONFLICT(relm_id, player_id)
+      ON CONFLICT(relm_id, participant_id)
       DO UPDATE SET
         updated_at = CURRENT_TIMESTAMP,
         permits = ${attrs.permits}
@@ -78,11 +78,11 @@ export async function setPermits({
 }
 
 export async function getPermissions({
-  playerId,
+  participantId,
   relmNames,
   relmIds,
 }: {
-  playerId: string;
+  participantId: string;
   relmNames?: string[];
   relmIds?: string[];
 }): Promise<Record<string, Permission[]>> {
@@ -95,7 +95,7 @@ export async function getPermissions({
       --
       SELECT '*' AS relm, p.permits
       FROM permissions p
-      WHERE p.player_id = ${playerId}
+      WHERE p.participant_id = ${participantId}
         AND p.relm_id IS NULL
 
       UNION
@@ -113,7 +113,7 @@ export async function getPermissions({
       FROM relms AS r
       LEFT JOIN (
         SELECT * FROM permissions
-        WHERE player_id = ${playerId}
+        WHERE participant_id = ${participantId}
       ) p USING (relm_id)
       WHERE r.relm_${raw(relmNames ? "name" : "id")} ${IN(relms)}
   `);

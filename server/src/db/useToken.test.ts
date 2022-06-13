@@ -14,7 +14,7 @@ describe("useToken", () => {
   it("for invitation", async () => {
     const token = uuidv4(); // token can be anything, we just need something unique for testing
     const relmId = uuidv4();
-    const playerId = uuidv4();
+    const participantId = uuidv4();
 
     // Relm must exist for getPermissions to return a result
     await createRelm({ relmId, relmName: relmId, isPublic: false });
@@ -30,12 +30,12 @@ describe("useToken", () => {
     const usedInvitation = await useToken({
       token,
       relmId,
-      playerId,
+      participantId,
     });
     expect(usedInvitation.used).toEqual(1);
 
     const permitsByRelm = await getPermissions({
-      playerId,
+      participantId,
       relmIds: [relmId],
     });
     const permits = permitsByRelm[relmId];

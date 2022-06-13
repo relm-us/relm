@@ -20,7 +20,7 @@ invite.post(
   wrapAsync(async (req, res) => {
     const attrs: any = {
       relmId: req.relm.relmId,
-      createdBy: req.authenticatedPlayerId,
+      createdBy: req.authenticatedParticipantId,
       permits: ["access"],
     };
 

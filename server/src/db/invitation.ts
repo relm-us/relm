@@ -150,8 +150,8 @@ export async function useInvitation(
   {
     token,
     relmId,
-    playerId,
-  }: { token: string; relmId?: string; playerId?: string },
+    participantId,
+  }: { token: string; relmId?: string; participantId?: string },
   db = database
 ) {
   const row = await db.oneOrNone(
@@ -161,7 +161,7 @@ export async function useInvitation(
       LEFT JOIN invitations i USING (token, relm_id)
       WHERE iu.token = ${token}
         AND iu.relm_id = ${relmId}
-        AND iu.used_by = ${playerId}
+        AND iu.used_by = ${participantId}
     `
   );
   if (row !== null) {
@@ -184,10 +184,10 @@ export async function useInvitation(
             `)
           );
 
-          if (playerId) {
+          if (participantId) {
             const attrs = {
               token,
-              used_by: playerId,
+              used_by: participantId,
               relm_id: relmId,
             };
             queries.push(

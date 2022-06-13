@@ -51,7 +51,7 @@ relm.post(
       relmName: newRelmName,
       seedRelmId: seedRelm.relmId,
       isPublic: false,
-      createdBy: req.authenticatedPlayerId,
+      createdBy: req.authenticatedParticipantId,
     });
 
     // Clone the "seed relm" into this new relm
@@ -66,7 +66,7 @@ relm.post(
     }
 
     const success = await Permission.setPermits({
-      playerId: req.authenticatedPlayerId,
+      participantId: req.authenticatedParticipantId,
       relmId: newRelm.relmId,
       permits,
     });
@@ -123,7 +123,7 @@ relm.post(
         relmName: req.relmName,
         seedRelmId,
         isPublic: !!req.body.isPublic,
-        createdBy: req.authenticatedPlayerId,
+        createdBy: req.authenticatedParticipantId,
       };
 
       const cpReq = req.body.clonePermitRequired;
@@ -167,12 +167,12 @@ relm.post(
         if (seedRelmName) {
           console.log(
             `Cloned new relm '${req.relmName}' from '${seedRelmName}' ` +
-              `('${seedRelmDocId}') (creator: '${req.authenticatedPlayerId}')`
+              `('${seedRelmDocId}') (creator: '${req.authenticatedParticipantId}')`
           );
         } else {
           console.log(
             `Cloned new relm '${req.relmName}' from '${seedRelmDocId}' ` +
-              `(creator: '${req.authenticatedPlayerId}')`
+              `(creator: '${req.authenticatedParticipantId}')`
           );
         }
       } else {
@@ -182,7 +182,7 @@ relm.post(
 
         console.log(
           `Created relm '${req.relmName}' ` +
-            `(creator: '${req.authenticatedPlayerId}')`
+            `(creator: '${req.authenticatedParticipantId}')`
         );
       }
 
@@ -248,7 +248,7 @@ relm.post(
   wrapAsync(async (req, res) => {
     const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
     req.relm.permanentDocSize = Y.encodeStateAsUpdate(doc).byteLength;
-    const twilioToken = twilio.getToken(req.authenticatedPlayerId);
+    const twilioToken = twilio.getToken(req.authenticatedParticipantId);
 
     return respondWithSuccess(res, {
       action: "meta",
@@ -311,7 +311,7 @@ relm.post(
   wrapAsync(async (req, res) => {
     const permits = await getPermitsForRelm(
       req.relmName,
-      req.authenticatedPlayerId
+      req.authenticatedParticipantId
     );
 
     respondWithSuccess(res, {
@@ -334,11 +334,11 @@ relm.post(
     const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
     req.relm.permanentDocSize = Y.encodeStateAsUpdate(doc).byteLength;
 
-    const twilioToken = twilio.getToken(req.authenticatedPlayerId);
+    const twilioToken = twilio.getToken(req.authenticatedParticipantId);
 
     const permits = await getPermitsForRelm(
       req.relmName,
-      req.authenticatedPlayerId
+      req.authenticatedParticipantId
     );
 
     return respondWithSuccess(res, {
@@ -584,9 +584,9 @@ function setProperty(
   return errors;
 }
 
-async function getPermitsForRelm(relmName: string, playerId: string) {
+async function getPermitsForRelm(relmName: string, participantId: string) {
   const permissions = await Permission.getPermissions({
-    playerId,
+    participantId,
     relmNames: [relmName],
   });
 

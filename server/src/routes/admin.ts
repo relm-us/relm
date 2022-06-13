@@ -32,11 +32,11 @@ admin.post(
       "edit",
     ];
     await Permission.setPermits({
-      playerId: req.body.playerId,
+      participantId: req.body.participantId,
       permits,
     });
     respondWithSuccess(res, {
-      action: "madeAdmin",
+      action: "mkadmin",
       permits: permits,
     });
   })

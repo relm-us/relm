@@ -31,7 +31,7 @@ auth.post(
         }
       } else {
         permissions = await Permission.getPermissions({
-          playerId: req.authenticatedPlayerId,
+          participantId: req.authenticatedParticipantId,
           relmNames: req.body.relms,
         });
       }

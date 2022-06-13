@@ -50,7 +50,7 @@ asset.post(
       thumbnail: req.body.thumbnail,
       tags: req.body.tags,
       ecsProperties: req.body.ecsProperties,
-      createdBy: req.authenticatedPlayerId,
+      createdBy: req.authenticatedParticipantId,
     });
 
     return respondWithSuccess(res, {
@@ -156,14 +156,14 @@ asset.post(
       try {
         // Add the entity to inventory
         asset = await Asset.createAsset({
-          userId: req.authenticatedPlayerId, // TODO: use a real userId rather than ephemeral playerId
+          userId: req.authenticatedParticipantId, // TODO: use a real userId rather than ephemeral participantId
           name: entity.name,
           ecsProperties: {
             center: [0, yCenter, 0],
             entities: [entity],
             groupTree: { groups: {}, entities: {} },
           },
-          createdBy: req.authenticatedPlayerId,
+          createdBy: req.authenticatedParticipantId,
         });
 
         // We loop through and re-visit entities again, because time has passed since finding the entity.
@@ -261,7 +261,7 @@ asset.post(
       tags,
       page,
       per_page,
-      userId: req.authenticatedPlayerId,
+      userId: req.authenticatedParticipantId,
     });
 
     return respondWithSuccess(res, {

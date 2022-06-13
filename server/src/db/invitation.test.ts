@@ -10,13 +10,13 @@ describe("Invitation model tests", () => {
 
   it("creates invitation", async () => {
     const relmId = uuidv4();
-    const playerId = uuidv4();
+    const participantId = uuidv4();
     const token = uuidv4();
     const invitation = await Invitation.createInvitation({
       relmId,
       permits: ["access"],
       token: token,
-      createdBy: playerId,
+      createdBy: participantId,
     });
     expect(invitation.token).toEqual(token);
 
@@ -25,7 +25,7 @@ describe("Invitation model tests", () => {
       token,
       relmId,
     });
-    expect(invite.createdBy).toEqual(playerId);
+    expect(invite.createdBy).toEqual(participantId);
     expect(invite.permits).toEqual(new Set(["access"]));
     expect(invite.relmId).toEqual(relmId);
     expect(invite.maxUses).toEqual(1);
@@ -39,13 +39,13 @@ describe("Invitation model tests", () => {
 
   it("uses an invitation", async () => {
     const relmId = uuidv4();
-    const playerId = uuidv4();
+    const participantId = uuidv4();
     const token = uuidv4();
     const invitation = await Invitation.createInvitation({
       token: token,
       relmId,
       permits: ["access"],
-      createdBy: playerId,
+      createdBy: participantId,
     });
     expect(invitation.token).toEqual(token);
 
