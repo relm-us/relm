@@ -56,7 +56,7 @@
   };
 </script>
 
-<!-- Pause game if player is not focused on window, to save CPU/GPU resources -->
+<!-- Pause game if participant is not focused on window, to save CPU/GPU resources -->
 <PauseAutomatically />
 
 {#if $playState === "paused"}

@@ -1,8 +1,8 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
   import { worldManager } from "~/world";
   import { chatFocused, chatOpen } from "~/stores/chat";
-  import { playerId } from "~/identity/playerId";
+  import { participantId } from "~/identity/participantId";
 
   const dispatch = createEventDispatcher();
 
@@ -22,7 +22,7 @@
     if (text.match(/^\s*$/)) {
       dispatch("close");
     } else {
-      worldManager.chat.addMessage({ u: playerId, c: text });
+      worldManager.chat.addMessage({ u: participantId, c: text });
     }
   }
 

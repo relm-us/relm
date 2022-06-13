@@ -1,6 +1,6 @@
 import { worldManager } from "~/world";
 import { Participant } from "~/types";
-import { playerId } from "~/identity/playerId";
+import { participantId } from "~/identity/participantId";
 
 import { setAppearance } from "./appearance";
 import { setEmoji } from "./emoji";
@@ -23,7 +23,7 @@ export function setAvatarFromParticipant(this: void, participant: Participant) {
   if (!participant.avatar)
     throw Error(`participant requires avatar: ${participant.participantId}`);
 
-  const isLocal = participant.participantId === playerId;
+  const isLocal = participant.participantId === participantId;
 
   const entities = participant.avatar.entities;
   const data = participant.identityData;

@@ -1,5 +1,7 @@
+import { AuthenticationHeaders } from "relm-common";
+import { PageParams } from "~/types";
+
 import { config } from "~/config";
-import { AuthenticationHeaders, PageParams } from "~/types";
 import { Dispatch } from "../ProgramTypes";
 import { RelmRestAPI } from "../RelmRestAPI";
 

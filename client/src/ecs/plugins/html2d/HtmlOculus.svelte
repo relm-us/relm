@@ -6,7 +6,7 @@
   import { audioMode } from "~/stores/audioMode";
   import Fullscreen from "./Fullscreen.svelte";
   import shineImg from "./shine.svg";
-  import { playerId as localPlayerId } from "~/identity/playerId";
+  import { participantId as localParticipantId } from "~/identity/participantId";
   import { localShareTrackStore } from "~/av/localVisualTrackStore";
   import {
     PROXIMITY_AUDIO_INNER_RADIUS,
@@ -32,7 +32,7 @@
   $: isLocalSharing = Boolean($localShareTrackStore);
 
   let isLocal;
-  $: isLocal = participantId === localPlayerId;
+  $: isLocal = participantId === localParticipantId;
 
   let participant;
   $: participant = worldManager.participants.participants.get(participantId);
@@ -51,7 +51,7 @@
 
   let localVideoStore;
   $: localVideoStore = worldManager.avConnection.getTrackStore(
-    localPlayerId,
+    localParticipantId,
     "video"
   );
 
@@ -74,7 +74,7 @@
     const participants = worldManager.participants.getByClientIds(clientIds);
 
     // Add me so I can see myself
-    const me = worldManager.participants.participants.get(localPlayerId);
+    const me = worldManager.participants.participants.get(localParticipantId);
     participants.push(me);
 
     // Don't show the "big screen" participant as a little screen also
@@ -144,7 +144,7 @@
                         "video"
                       )
                     )}
-                    mirror={participant.participantId === localPlayerId}
+                    mirror={participant.participantId === localParticipantId}
                   />
                 </oculus>
                 <NameTag

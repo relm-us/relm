@@ -7,17 +7,9 @@ import {
   respondWithError,
   unabbreviatedPermits,
 } from "./utils/index.js";
-import { canonicalIdentifier } from "relm-common";
+import { AuthenticationHeaders, canonicalIdentifier } from "relm-common";
 import { Player, Permission, Relm, useToken } from "./db/index.js";
 import { JWTSECRET } from "./config.js";
-
-function getParam(req, key) {
-  if (key in req.query) {
-    return req.query[key];
-  } else {
-    return req.headers[`x-relm-${key}`];
-  }
-}
 
 export function relmName(key = "relmName") {
   return (req, res, next) => {
@@ -33,13 +25,6 @@ export function relmName(key = "relmName") {
   };
 }
 
-function normalizeRelmName(name) {
-  return name
-    .split("/")
-    .map((part) => canonicalIdentifier(part))
-    .join("/");
-}
-
 export function relmExists() {
   return async (req, res, next) => {
     req.relm = await Relm.getRelm({ relmName: req.relmName });
@@ -53,13 +38,13 @@ export function relmExists() {
 
 export function authenticated() {
   return async (req, _res, next) => {
-    const playerId = getParam(req, "id");
+    const playerId = getParam(req, "x-relm-participant-id");
 
     // the `id` (playerId), signed
-    const sig = getParam(req, "s");
+    const sig = getParam(req, "x-relm-participant-sig");
 
-    const x = getParam(req, "x");
-    const y = getParam(req, "y");
+    const x = getParam(req, "x-relm-pubkey-x");
+    const y = getParam(req, "x-relm-pubkey-y");
 
     const params = {
       playerId,
@@ -81,7 +66,7 @@ export function authenticated() {
 
 export function acceptToken() {
   return async (req, _res, next) => {
-    const token = getParam(req, "t");
+    const token = getParam(req, "x-relm-invite-token");
     const relmId = req.relm ? req.relm.relmId : undefined;
     const playerId = req.authenticatedPlayerId;
 
@@ -176,3 +161,19 @@ export function authorized(
     }
   };
 }
+
+function getParam(req, key: keyof AuthenticationHeaders) {
+  if (key in req.query) {
+    return req.query[key.replace("x-relm-", "")];
+  } else {
+    return req.headers[key];
+  }
+}
+
+function normalizeRelmName(name) {
+  return name
+    .split("/")
+    .map((part) => canonicalIdentifier(part))
+    .join("/");
+}
+

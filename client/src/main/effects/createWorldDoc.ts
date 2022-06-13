@@ -1,10 +1,8 @@
+import type { AuthenticationHeaders } from "relm-common";
+import type { DecoratedECSWorld, WorldDocStatus } from "~/types";
+
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import { config } from "~/config";
-import type {
-  AuthenticationHeaders,
-  DecoratedECSWorld,
-  WorldDocStatus,
-} from "~/types";
 
 import { Dispatch } from "../ProgramTypes";
 

@@ -1,3 +1,5 @@
+export * from "./types.js";
+
 export * from "./serialize/index.js";
 
 export * from "./sparse-octree/index.js";

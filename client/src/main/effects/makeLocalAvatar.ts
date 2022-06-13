@@ -11,12 +11,12 @@ import { BoneTwist, headFollowsPointer } from "~/ecs/plugins/bone-twist";
 import { worldManager } from "~/world";
 
 import { makeAvatarEntities } from "~/identity/Avatar/makeAvatarEntities";
-import { playerId } from "~/identity/playerId";
+import { participantId } from "~/identity/participantId";
 import { Avatar } from "~/identity/Avatar";
 
 export const makeLocalAvatar =
   (ecsWorld: DecoratedECSWorld, position: Vector3) => (dispatch: Dispatch) => {
-    const entities = makeAvatarEntities(ecsWorld, position, false, playerId);
+    const entities = makeAvatarEntities(ecsWorld, position, false, participantId);
 
     const avatar = new Avatar(ecsWorld, entities);
 

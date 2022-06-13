@@ -1,25 +1,27 @@
+import type { AuthenticationHeaders } from "relm-common";
+import type { PageParams } from "~/types";
+
 import { Dispatch } from "../ProgramTypes";
 
-import { playerId } from "~/identity/playerId";
+import { participantId } from "~/identity/participantId";
 import { Security } from "~/identity/Security";
-import type { AuthenticationHeaders, PageParams } from "~/types";
 
 export const getAuthenticationHeaders =
   (pageParams: PageParams) => async (dispatch: Dispatch) => {
     const security = new Security();
 
     const pubkey = await security.exportPublicKey();
-    const signature = await security.sign(playerId);
+    const signature = await security.sign(participantId);
 
     const authHeaders: AuthenticationHeaders = {
-      "x-relm-id": playerId,
-      "x-relm-s": signature,
-      "x-relm-x": pubkey.x,
-      "x-relm-y": pubkey.y,
+      "x-relm-participant-id": participantId,
+      "x-relm-participant-sig": signature,
+      "x-relm-pubkey-x": pubkey.x,
+      "x-relm-pubkey-y": pubkey.y,
     };
 
     if (pageParams.invitationToken) {
-      authHeaders["x-relm-t"] = pageParams.invitationToken;
+      authHeaders["x-relm-invite-token"] = pageParams.invitationToken;
     }
 
     if (pageParams.jsonWebToken) {

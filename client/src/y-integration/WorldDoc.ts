@@ -1,4 +1,5 @@
-import type { WorldDocStatus } from "~/types";
+import type { AuthenticationHeaders } from "relm-common";
+import type { DecoratedECSWorld, WorldDocStatus } from "~/types";
 
 import * as Y from "yjs";
 import { readableMap, YReadableMap } from "svelt-yjs";
@@ -29,7 +30,6 @@ import EventEmitter from "eventemitter3";
 import { applyDiffToYEntity } from "./applyDiff";
 
 import { selectedEntities } from "~/stores/selection";
-import { DecoratedECSWorld, AuthenticationHeaders } from "~/types";
 import { uuidv4 } from "~/utils/uuid";
 import { Transition } from "~/ecs/plugins/transition";
 
@@ -102,12 +102,12 @@ export class WorldDoc extends EventEmitter {
   ) {
     this.provider = new WebsocketProvider(url, subrelmDocId, this.ydoc, {
       params: {
-        id: authHeaders["x-relm-id"],
-        s: authHeaders["x-relm-s"],
-        x: authHeaders["x-relm-x"],
-        y: authHeaders["x-relm-y"],
-        t: authHeaders["x-relm-t"],
-        jwt: authHeaders["x-relm-jwt"],
+        "participant-id": authHeaders["x-relm-participant-id"],
+        "participant-sig": authHeaders["x-relm-participant-sig"],
+        "pubkey-x": authHeaders["x-relm-pubkey-x"],
+        "pubkey-y": authHeaders["x-relm-pubkey-y"],
+        "invite-token": authHeaders["x-relm-token"],
+        "jwt": authHeaders["x-relm-jwt"],
       },
       resyncInterval: 10000,
     });

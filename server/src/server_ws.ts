@@ -32,19 +32,19 @@ server.on("upgrade", async (req, socket, head) => {
   const docId = getRelmDocFromRequest(req);
   const params = getUrlParams(req.url);
 
-  const playerId = params.get("id");
-  const sig = params.get("s");
-  let x = params.get("x");
-  let y = params.get("y");
-  console.log("participant connected:", playerId);
+  const participantId = params.get("participant-id");
+  const participantSig = params.get("participant-sig");
+  let pubkeyX = params.get("pubkey-x");
+  let pubkeyY = params.get("pubkey-y");
+  console.log("participant connected:", participantId);
 
   let verifiedPubKey;
   try {
     verifiedPubKey = await Player.findOrCreateVerifiedPubKey({
-      playerId,
-      sig,
-      x,
-      y,
+      playerId: participantId,
+      sig: participantSig,
+      x: pubkeyX,
+      y: pubkeyY,
     });
   } catch (err) {
     console.warn("can't upgrade", err);
@@ -57,7 +57,7 @@ server.on("upgrade", async (req, socket, head) => {
     const doc = await Doc.getDoc({ docId });
 
     const permissions = await Permission.getPermissions({
-      playerId,
+      playerId: participantId,
       relmIds: [doc.relmId],
     });
 
@@ -66,7 +66,7 @@ server.on("upgrade", async (req, socket, head) => {
     if (permitted) {
       if (doc === null) {
         console.log(
-          `Participant '${playerId}' sought to sync doc '${docId}' but was rejected because it doesn't exist`
+          `Participant '${participantId}' sought to sync doc '${docId}' but was rejected because it doesn't exist`
         );
         socket.write("HTTP/1.1 404 Not Found\r\n\r\n");
         socket.destroy();
@@ -77,7 +77,7 @@ server.on("upgrade", async (req, socket, head) => {
       }
     } else {
       console.log(
-        `Participant '${playerId}' sought to enter '${docId}' but was rejected because unauthorized`,
+        `Participant '${participantId}' sought to enter '${docId}' but was rejected because unauthorized`,
         params,
         permissions
       );

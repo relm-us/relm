@@ -2,20 +2,21 @@ import type { Vector3 } from "three";
 import type { DeviceIds } from "video-mirror";
 import type { Writable } from "svelte/store";
 
+import type { AuthenticationHeaders } from "relm-common";
+
 import type { WorldDoc } from "~/y-integration/WorldDoc";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
-import { PageParams, WorldDocStatus } from "~/types";
-import { AVConnection } from "~/av/AVConnection";
-
-import type { IdentityData, UpdateData } from "~/types";
-import type { ParticipantYBroker } from "~/identity/ParticipantYBroker";
-import { Avatar } from "~/identity/Avatar";
+import type { AVConnection } from "~/av/AVConnection";
 
 import type {
-  Appearance,
-  AuthenticationHeaders,
-  Participant,
-} from "~/types/identity";
+  IdentityData,
+  UpdateData,
+  PageParams,
+  WorldDocStatus,
+} from "~/types";
+import type { ParticipantYBroker } from "~/identity/ParticipantYBroker";
+import type { Avatar } from "~/identity/Avatar";
+import type { Appearance, Participant } from "~/types/identity";
 
 export type State = {
   // initialization

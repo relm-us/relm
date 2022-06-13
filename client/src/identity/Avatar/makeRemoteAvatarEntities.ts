@@ -5,7 +5,7 @@ import { BoneTwist, headFollowsAngle } from "~/ecs/plugins/bone-twist";
 import { Distance } from "~/ecs/plugins/distance";
 
 import { AvatarEntities } from "~/types";
-import { playerId } from "../playerId";
+import { participantId as localParticipantId } from "../participantId";
 import { makeAvatarEntities } from "./makeAvatarEntities";
 
 export function makeRemoteAvatarEntities(
@@ -23,7 +23,8 @@ export function makeRemoteAvatarEntities(
       function: headFollowsAngle(getHeadAngle),
     })
     .add(Distance, {
-      target: playerId,
+      // Remote avatars all measure their distance to the local avatar
+      target: localParticipantId,
     });
 
   Object.values(entities).forEach((entity) => entity.activate());

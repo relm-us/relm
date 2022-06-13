@@ -43,7 +43,7 @@ import MediaSetupShim from "./views/MediaSetupShim.svelte";
 import LoadingScreen from "./views/LoadingScreen.svelte";
 import LoadingFailed from "./views/LoadingFailed.svelte";
 
-import { playerId } from "~/identity/playerId";
+import { participantId } from "~/identity/participantId";
 import { participantRemoveAvatar } from "~/identity/ParticipantManager";
 import { setAvatarFromParticipant } from "~/identity/Avatar/setAvatarFromParticipant";
 import { getDefaultAppearance } from "~/identity/Avatar/appearance";
@@ -117,7 +117,7 @@ export function makeProgram(): Program {
           {
             ...state,
             authHeaders: msg.authHeaders,
-            avConnection: new AVConnection(playerId),
+            avConnection: new AVConnection(participantId),
           },
           getRelmPermitsAndMetadata(state.pageParams, msg.authHeaders),
         ];
@@ -186,7 +186,7 @@ export function makeProgram(): Program {
         );
 
         let nextAction = joinAudioVideo(
-          state.participants.get(playerId),
+          state.participants.get(participantId),
           state.avConnection,
           state.avDisconnect,
           state.relmDocId,
@@ -228,7 +228,7 @@ export function makeProgram(): Program {
 
       // Update local participant's IdentityData and send to other participants
       case "updateLocalIdentityData": {
-        const localParticipant = state.participants.get(playerId);
+        const localParticipant = state.participants.get(participantId);
 
         // If name is assigned (e.g. via JWT), it can't be changed
         localParticipant.editable = state.overrideParticipantName === undefined;
@@ -245,7 +245,7 @@ export function makeProgram(): Program {
         state.localIdentityData.set(newIdentityData);
 
         // broadcast identityData to other participants
-        state.broker.setIdentityData(playerId, newIdentityData);
+        state.broker.setIdentityData(participantId, newIdentityData);
 
         // sync identityData to HTML and ECS entities
         setAvatarFromParticipant(localParticipant);
@@ -516,7 +516,7 @@ export function makeProgram(): Program {
       case "didMakeLocalAvatar": {
         exists(msg.avatar, "avatar");
 
-        state.participants.get(playerId).avatar = msg.avatar;
+        state.participants.get(participantId).avatar = msg.avatar;
 
         return [
           { ...state, localAvatarInitialized: true },

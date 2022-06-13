@@ -1,6 +1,7 @@
-import { CancellablePromise } from "real-cancellable-promise";
-import type { AuthenticationHeaders } from "~/types";
+import type { AuthenticationHeaders } from "relm-common";
 import type { LibraryAsset } from "~/types";
+
+import { CancellablePromise } from "real-cancellable-promise";
 import { simpleFetch } from "~/utils/simpleFetch";
 
 export class RelmRestAPI {

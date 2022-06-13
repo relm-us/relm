@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
   import ChatBar from "./ChatBar.svelte";
   import ChatHistory from "./ChatHistory.svelte";
 
   import { worldManager } from "~/world";
   import { chatOpen, chatFocused } from "~/stores/chat";
-  import { playerId } from "~/identity/playerId";
+  import { participantId } from "~/identity/participantId";
 
   function closeChat() {
     $chatOpen = false;
@@ -14,10 +14,7 @@
 
 <container class="interactive" class:close={!$chatOpen} class:open={$chatOpen}>
   <slide-in>
-    <ChatHistory
-      messages={worldManager.chat.messages}
-      myID={playerId}
-    />
+    <ChatHistory messages={worldManager.chat.messages} myID={participantId} />
     <ChatBar on:close={closeChat} />
   </slide-in>
 </container>

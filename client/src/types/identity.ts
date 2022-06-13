@@ -2,8 +2,6 @@ import type { Entity } from "~/ecs/base";
 import type { Avatar } from "~/identity/Avatar";
 
 export type PlayerStatus = "initial" | "present" | "away";
-export type YClientID = number;
-export type PlayerID = string;
 
 // Used for "simple" AvatarChooser
 export type BinaryGender = "male" | "female";
@@ -64,15 +62,6 @@ export type Equipment = {
   scale: [number, number, number];
   model?: string;
   colors?: any;
-};
-
-export type AuthenticationHeaders = {
-  "x-relm-id": string;
-  "x-relm-s": string;
-  "x-relm-x": string;
-  "x-relm-y": string;
-  "x-relm-jwt"?: string;
-  "x-relm-t"?: string;
 };
 
 export type IdentityData = {

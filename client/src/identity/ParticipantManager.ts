@@ -8,7 +8,7 @@ import type {
 
 import { WebsocketProvider } from "relm-common";
 
-import { playerId } from "./playerId";
+import { participantId } from "./participantId";
 
 import { Dispatch } from "~/main/ProgramTypes";
 import {
@@ -24,7 +24,7 @@ export class ParticipantManager {
   participants: Map<string, Participant>;
 
   get local(): Participant {
-    return this.participants.get(playerId);
+    return this.participants.get(participantId);
   }
 
   get actives(): Participant[] {
@@ -73,7 +73,7 @@ export class ParticipantManager {
     if (!this.broker.awareness.getLocalState()) return;
 
     if (!this.broker.getField("id")) {
-      this.broker.setField("id", playerId);
+      this.broker.setField("id", participantId);
     }
 
     const avatar = this.local.avatar;
@@ -105,10 +105,9 @@ export class ParticipantManager {
     for (let state of states.values()) {
       if (!("id" in state)) continue;
 
-      const participantId = state["id"];
-      if (participantId === playerId) continue;
+      if (state["id"] === participantId) continue;
 
-      const participant: Participant = this.participants.get(participantId);
+      const participant: Participant = this.participants.get(state["id"]);
       if (!participant) continue;
 
       if ("t" in state && "a" in state) {

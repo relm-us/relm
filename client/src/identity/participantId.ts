@@ -2,7 +2,7 @@ import { uuidv4 } from "~/utils/uuid";
 
 const ID_KEY = "participantId";
 
-export const playerId = () => {
+export const participantId: string = (() => {
   let id =
     localStorage.getItem(ID_KEY) ??
     localStorage.getItem("secureId"); /* deprecated */
@@ -11,4 +11,4 @@ export const playerId = () => {
     localStorage.setItem(ID_KEY, id);
   }
   return id;
-};
+})();

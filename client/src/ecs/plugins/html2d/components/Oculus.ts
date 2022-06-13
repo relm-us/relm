@@ -97,7 +97,7 @@ export class Oculus extends LocalComponent {
       default: null,
     },
 
-    // Set automatically. If equal to local playerId, Oculus will show own video stream.
+    // Set automatically. If equal to local participantId, Oculus will show own video stream.
     participantId: {
       type: StringType,
       default: null,

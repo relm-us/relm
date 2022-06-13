@@ -8,11 +8,10 @@
 
   import { viewportSize, viewport } from "~/stores";
   import { localIdentityData } from "~/stores/identityData";
-  import { targetFps } from "~/stores/targetFps";
   import { fpsTime } from "~/stores/stats";
   import { Participant } from "~/types";
   import { State } from "~/main/ProgramTypes";
-  import { playerId } from "~/identity/playerId";
+  import { participantId } from "~/identity/participantId";
 
   export let state: State;
 
@@ -27,7 +26,7 @@
     `@ ${x.toFixed(1)}, ${y.toFixed(1)}, ${z.toFixed(1)}`;
 
   let subtitle;
-  $: subtitle = state.worldDocStatus + " - " + playerId.split("-")[0];
+  $: subtitle = state.worldDocStatus + " - " + participantId.split("-")[0];
 
   let vw;
   $: vw = $viewportSize
@@ -123,7 +122,7 @@
             <tr class="identity-row">
               <th>{identity.get("name")}</th>
               <td>
-                {#if identity.participantId === playerId}
+                {#if identity.participantId === participantId}
                   (local)
                 {:else if identity.lastSeen === undefined}
                   (not seen)
@@ -133,7 +132,7 @@
                 {identity.avatar.distance
                   ? identity.avatar.distance.toFixed(1)
                   : "?"}' [{identity.get("clientId")}]
-                {identity.playerId}
+                {identity.participantId}
               </td>
             </tr>
           {/each}

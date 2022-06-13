@@ -1,4 +1,5 @@
-import { AuthenticationHeaders } from "types/identity";
+import type { AuthenticationHeaders } from "relm-common";
+
 import { PageParams } from "~/types";
 import { config } from "~/config";
 

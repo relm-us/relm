@@ -46,7 +46,7 @@ import { makeLight } from "~/prefab/makeLight";
 import { Entity } from "~/ecs/base";
 import { Collider, ColliderVisible } from "~/ecs/plugins/physics";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
-import { BoundingBox, BoundingHelper } from "~/ecs/plugins/bounding-box";
+import { BoundingHelper } from "~/ecs/plugins/bounding-box";
 import { ControllerState } from "~/ecs/plugins/player-control";
 import { Follow } from "~/ecs/plugins/follow";
 import { intersectionPointWithGround } from "~/ecs/shared/isMakingContactWithGround";
@@ -65,7 +65,7 @@ import { localShareTrackStore } from "~/av/localVisualTrackStore";
 import { localVideoTrack } from "video-mirror";
 import { createScreenTrack } from "~/av/twilio/createScreenTrack";
 
-import { playerId } from "~/identity/playerId";
+import { participantId } from "~/identity/participantId";
 import { Avatar } from "~/identity/Avatar";
 import { Participant } from "~/types/identity";
 import { ParticipantManager } from "~/identity/ParticipantManager";
@@ -679,7 +679,7 @@ export class WorldManager {
    */
 
   get participantId() {
-    return playerId;
+    return participantId;
   }
 
   get avatar(): Avatar {
