@@ -12,20 +12,7 @@
 					"name": "List My Permissions",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"description": "Signed Player ID",
-								"key": "X-Relm-S",
-								"type": "text",
-								"value": "{{relmSig}}"
-							},
-							{
-								"description": "Player ID",
-								"key": "X-Relm-Id",
-								"type": "text",
-								"value": "{{relmId}}"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"relms\": [\"default\", \"test\"]\n}",
@@ -57,32 +44,7 @@
 					"name": "Authenticate (Admin)",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"description": "Signed Player ID",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"description": "Player ID",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-X",
-								"value": "{{relmX}}",
-								"description": "X Component of Public Key",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Y",
-								"value": "{{relmY}}",
-								"description": "Y Component of Public Key",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "",
@@ -116,35 +78,10 @@
 					"name": "Make Admin",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"description": "Signed Player ID",
-								"key": "X-Relm-S",
-								"type": "text",
-								"value": "{{relmSig}}"
-							},
-							{
-								"description": "Player ID",
-								"key": "X-Relm-Id",
-								"type": "text",
-								"value": "{{relmId}}"
-							},
-							{
-								"description": "X Component of Public Key",
-								"key": "X-Relm-X",
-								"type": "text",
-								"value": "{{relmX}}"
-							},
-							{
-								"description": "Y Component of Public Key",
-								"key": "X-Relm-Y",
-								"type": "text",
-								"value": "{{relmY}}"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"playerId\": \"0dce4601-0a92-4c52-ad4a-f355ede669c6\"\n}",
+							"raw": "{\n    \"participantId\": \"0dce4601-0a92-4c52-ad4a-f355ede669c6\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -173,18 +110,7 @@
 					"name": "Take Item",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"relmName\": \"default\",\n    \"entityId\": \"M6OcSdDQ4vyAtykqXOMof\",\n    \"yCenter\": 1.97\n}",
@@ -213,18 +139,7 @@
 					"name": "Drop Item",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"relmName\": \"default\",\n    \"assetId\": \"24492b72-f125-42b3-a657-ef8c6679975e\",\n    \"position\": [0.0, 0.0, 9.1]\n}",
@@ -253,21 +168,10 @@
 					"name": "Query Inventory Items",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"page\": 0,\n    \"per_page\": 100\n}",
+							"raw": "{\n    \"page\": 0,\n    \"perPage\": 100\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -298,18 +202,7 @@
 					"name": "Add Library Asset",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "\n{\n  \"name\": \"Stout Green Tree\",\n  \"description\": \"A wide green oak tree\",\n  \"tags\": [\"furniture\"],\n  \"thumbnail\": \"2a2545dd9143ebffcef254f010c9a5c3-2502.webp\",\n  \"ecsProperties\": {\n    \"entities\": [\n      {\n        \"id\": \"CicA59maCFvhPHm2rvCIq\",\n        \"name\": \"Thing\",\n        \"parent\": null,\n        \"children\": [],\n        \"meta\": {},\n        \"Transform\": {\n          \"position\": [ -0.10751120293617794, 5.69, -9.739551020349131 ],\n          \"rotation\": [ 0, 0.19376653496242194, 0, 0.9810476695495772 ],\n          \"scale\": [ 12, 12, 12 ]\n        },\n        \"Model\": {\n          \"asset\": {\n            \"name\": \"\",\n            \"filename\": \"\",\n            \"url\": \"c81ffa043ec48dbfd92505126bdbb9fa-283272.glb\"\n          }\n        },\n        \"RigidBody\": {\n          \"kind\": \"STATIC\",\n          \"linearVelocity\": [ 0, 0, 0 ],\n          \"angularVelocity\": [ 0, 0, 0 ],\n          \"mass\": 1,\n          \"angularDamping\": 0,\n          \"linearDamping\": 0\n        },\n        \"Collider\": {\n          \"shape\": \"CYLINDER\",\n          \"boxSize\": [ 1, 1, 1 ],\n          \"sphereRadius\": 0.5,\n          \"cylinderRadius\": 0.12999,\n          \"cylinderHeight\": 1,\n          \"capsuleRadius\": 0.5,\n          \"capsuleHeight\": 1,\n          \"offset\": [ 0.04, 0, 0.0399 ],\n          \"density\": 1,\n          \"interaction\": 65543\n        }\n      }\n    ]\n  }\n}\n",
@@ -337,18 +230,7 @@
 					"name": "Modify Library Asset",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "\n{\n  \"assetId\": \"bd5f9ea5-299f-4e1e-90cc-b1e079f94fbf\",\n  \"name\": \"Stout Oak Tree\",\n  \"description\": \"A pleasant oak tree\",\n  \"tags\": [\"nature\", \"tree\"]\n}\n",
@@ -376,18 +258,7 @@
 					"name": "Remove Library Asset",
 					"request": {
 						"method": "DELETE",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "\n{\n    \"assetId\": \"42512d9b-44f1-406e-ad5b-9f8c2e942020\"\n}\n",
@@ -415,18 +286,7 @@
 					"name": "Query Library Assets",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"keywords\": [\"tree\"],\n    \"tags\": [\"nature\"],\n    \"page\": 0,\n    \"per_page\": 100\n}",
@@ -525,18 +385,7 @@
 					"name": "Make Invitation",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"type": "text",
-								"value": "{{relmSig}}"
-							},
-							{
-								"key": "X-Relm-Id",
-								"type": "text",
-								"value": "{{relmId}}"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"relmName\": \"default\",\n    \"maxUses\": 3,\n    \"permits\": [\"access\", \"edit\"]\n}",
@@ -563,18 +412,7 @@
 					"name": "Revoke Invitation",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"relmName\": \"default\",\n    \"token\": \"welcome1\"\n}",
@@ -601,18 +439,7 @@
 					"name": "Get Invitations by Relm",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"relmName\": \"default\"\n}",
@@ -651,21 +478,10 @@
 					"name": "Create Relm",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"new-relm\",\n    \"isPublic\": true,\n    \"seedRelmName\": \"default\"\n}",
+							"raw": "{\n    \"relmName\": \"myrelm\",\n    \"isPublic\": true,\n    \"seedRelmName\": \"default\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -689,21 +505,10 @@
 					"name": "Clone Relm",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"default\"\n}",
+							"raw": "{\n    \"relmName\": \"myrelm\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -728,21 +533,10 @@
 					"name": "Delete Relm",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"new-relm\"\n}",
+							"raw": "{\n    \"relmName\": \"myrelm\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -766,21 +560,10 @@
 					"name": "Get Relm Permissions",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"default\"\n}",
+							"raw": "{\n    \"relmName\": \"myrelm\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -804,21 +587,10 @@
 					"name": "Get Relm Content",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"type": "text",
-								"value": "{{relmSig}}"
-							},
-							{
-								"key": "X-Relm-Id",
-								"type": "text",
-								"value": "{{relmId}}"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"default\"\n}",
+							"raw": "{\n    \"relmName\": \"myrelm\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -842,21 +614,10 @@
 					"name": "Get Relm Metadata",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"default\"\n}",
+							"raw": "{\n    \"relmName\": \"myrelm\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -880,21 +641,10 @@
 					"name": "Set Relm Metadata",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"default\",\n    \"isPublic\": true\n}",
+							"raw": "{\n    \"relmName\": \"myrelm\",\n    \"isPublic\": true\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -919,21 +669,10 @@
 					"name": "Get Variables",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"default\"\n}",
+							"raw": "{\n    \"relmName\": \"myrelm\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -957,21 +696,10 @@
 					"name": "Set Variables",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"default\",\n    \"changes\": {\n        \"set\": {\n            \"door\": \"open\"\n        }\n    }\n}",
+							"raw": "{\n    \"relmName\": \"myrelm\",\n    \"changes\": {\n        \"set\": {\n            \"door\": \"open\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -995,21 +723,10 @@
 					"name": "Edit Relm",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-Relm-S",
-								"value": "{{relmSig}}",
-								"type": "text"
-							},
-							{
-								"key": "X-Relm-Id",
-								"value": "{{relmId}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"default\",\n    \"actions\": [\n        {\n          \"type\": \"setProperty\",\n          \"entity\": \"Stq3SsT0TnkzAbhALNM47\",\n          \"component\": \"Transform\",\n          \"property\": \"position\",\n          \"value\": [ 0, 0.6, -2.7 ]\n        }\n    ]\n}",
+							"raw": "{\n    \"relmName\": \"myrelm\",\n    \"actions\": [\n        {\n          \"type\": \"setProperty\",\n          \"entity\": \"Stq3SsT0TnkzAbhALNM47\",\n          \"component\": \"Transform\",\n          \"property\": \"position\",\n          \"value\": [ 0, 0.6, -2.7 ]\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1060,20 +777,7 @@
 					},
 					"request": {
 						"method": "GET",
-						"header": [
-							{
-								"description": "Signed Player ID",
-								"key": "X-Relm-S",
-								"type": "text",
-								"value": "{{relmSig}}"
-							},
-							{
-								"description": "Player ID",
-								"key": "X-Relm-Id",
-								"type": "text",
-								"value": "{{relmId}}"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "",
@@ -1119,6 +823,35 @@
 					"response": []
 				}
 			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.request.headers.add({ ",
+					"    key: \"x-relm-participant-id\",",
+					"    value: postman.getEnvironmentVariable(\"participantId\")",
+					"});",
+					"",
+					"pm.request.headers.add({ ",
+					"    key: \"x-relm-participant-sig\",",
+					"    value: postman.getEnvironmentVariable(\"participantSig\")",
+					"});",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }
