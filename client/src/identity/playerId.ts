@@ -1,6 +1,14 @@
 import { uuidv4 } from "~/utils/uuid";
-import { getOrCreateStoredItem } from "~/utils/getOrCreateStoredItem";
 
-const SECURE_ID_KEY = "secureId";
+const ID_KEY = "participantId";
 
-export const playerId = getOrCreateStoredItem(SECURE_ID_KEY, () => uuidv4());
+export const playerId = () => {
+  let id =
+    localStorage.getItem(ID_KEY) ??
+    localStorage.getItem("secureId"); /* deprecated */
+  if (!id) {
+    id = uuidv4();
+    localStorage.setItem(ID_KEY, id);
+  }
+  return id;
+};

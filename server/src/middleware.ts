@@ -28,7 +28,7 @@ export function relmName(key = "relmName") {
       req.relmName = normalizeRelmName(req.body[key]);
       next();
     } else {
-      respondWithError(res, "relm name required");
+      respondWithError(res, "relm name required", req.body);
     }
   };
 }
