@@ -3,36 +3,15 @@ export type Config = {
   serverUrl: string;
   serverYjsUrl: string;
   serverUploadUrl: string;
-  mediasoupUrl: string;
 };
+
+// Retrieve the `relmServer` string passed to us via webpack. Webpack sets
+// this value based on the `RELM_SERVER` environment variable. See `src/index.html`.
+export const relmServer = (window as any).relmServer;
 
 export const config: Config = {
   assetUrl: "https://assets.ourrelm.com",
-  ...getServerConfig(window.location),
-  mediasoupUrl: "wss://media2.relm.us:4443",
+  serverUrl: relmServer,
+  serverYjsUrl: relmServer.replace("http", "ws"),
+  serverUploadUrl: `${relmServer}/asset/upload`,
 };
-
-function getServerConfig(
-  location
-): { serverUrl: string; serverYjsUrl: string; serverUploadUrl: string } {
-  let serverUrl: string;
-  let serverYjsUrl: string;
-  let serverUploadUrl: string;
-  if (location.origin === "https://relm.us") {
-    serverUrl = "https://y-prod.relm.us";
-    serverYjsUrl = "wss://y-prod.relm.us";
-  } else if (location.origin === "https://staging.relm.us") {
-    serverUrl = "https://y-staging.relm.us";
-    serverYjsUrl = "wss://y-staging.relm.us";
-  } else {
-    serverUrl = `http://${location.hostname}:3000`;
-    serverYjsUrl = `ws://${location.hostname}:3000`;
-  }
-  serverUploadUrl = `${serverUrl}/asset/upload`;
-
-  return {
-    serverUrl,
-    serverYjsUrl,
-    serverUploadUrl,
-  };
-}

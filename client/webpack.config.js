@@ -80,7 +80,7 @@ module.exports = {
     contentBase: "public", // direct the DevServer to serve static files from public/
     watchContentBase: true,
     compress: true,
-    historyApiFallback: true
+    historyApiFallback: true,
   },
 
   /**
@@ -194,9 +194,17 @@ module.exports = {
      */
     new HtmlWebpackPlugin({
       title: "Relm",
+
       // Use the template at src/index.html to produce dist/index.html
       template: "src/index.html",
-      minify: false, // for aesthetics; makes index.html stay formatted
+
+      // for aesthetics; makes index.html stay formatted
+      minify: false,
+
+      // We can pass any parameters we want to the ejs parser that processes "src/index.html"
+      templateParameters: {
+        relmServer: process.env.RELM_SERVER ?? "http://localhost:3000",
+      },
     }),
 
     /**

@@ -16,9 +16,16 @@
       }
     </style>
 
-    <script>
-      window.jwt = ""; // for third party integration, populate window.jwt with server-side generated jwt token
-    </script>
+    <% // For third party integration, populate window.jwt with server-side generated jwt token: %>
+    <script>window.jwt = "";</script>
+
+    <%
+      // Let the client know where to find the backend relm-server
+      // NOTE: This can be set via the `RELM_SERVER` environment variable
+      //       when running the dev server, or building for production.
+    %>
+    <script>window.relmServer = "<%= htmlWebpackPlugin.options.templateParameters.relmServer %>";</script>
+
     <% // Note: html-webpack-plugin will insert CSS here %>
   </head>
   <body>
