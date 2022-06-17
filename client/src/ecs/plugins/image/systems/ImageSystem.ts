@@ -79,6 +79,10 @@ export class ImageSystem extends System {
     const spec: Image = entity.get(Image);
     const texture = entity.get(AssetLoaded).value;
 
+    if (!texture.image) {
+      this.error(entity, `Image can't be built: ${entity.id}`);
+    }
+
     const plane = { width: spec.width, height: spec.height };
     const image = { width: texture.image.width, height: texture.image.height };
 
