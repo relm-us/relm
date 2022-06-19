@@ -200,7 +200,7 @@ module.exports = {
      * (i.e. chunked JS bundles)
      */
     new HtmlWebpackPlugin({
-      title: "Relm",
+      title: process.env.RELM_TITLE ?? "Relm",
 
       // Use the template at src/index.html to produce dist/index.html
       template: "src/index.html.handlebars",
