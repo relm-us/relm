@@ -3,7 +3,7 @@
 
   import { slide } from "svelte/transition";
 
-  import { config } from "~/config";
+  import { assetUrl } from "~/config/assetUrl";
   import { createPrefab } from "~/prefab";
 
   import LeftPanel, { Header } from "~/ui/lib/LeftPanel";
@@ -103,7 +103,7 @@
         <r-selected transition:slide>
           <r-thumb>
             <img
-              src="{config.assetUrl}/{selectedAsset.thumbnail}"
+              src={assetUrl(selectedAsset.thumbnail)}
               alt={selectedAsset.name}
             />
           </r-thumb>

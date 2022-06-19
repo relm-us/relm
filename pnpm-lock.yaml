@@ -41,6 +41,7 @@ importers:
       css-loader: ^4.2.0
       debug: ^4.3.1
       deep-diff: ^1.0.2
+      dotenv: ^10.0.0
       duplicate-package-checker-webpack-plugin: ^3.0.0
       eventemitter3: ^4.0.7
       file-loader: ^6.2.0
@@ -159,6 +160,7 @@ importers:
       core-js-bundle: 3.22.4
       cross-env: 7.0.3
       css-loader: 4.3.0_webpack@4.46.0
+      dotenv: 10.0.0
       duplicate-package-checker-webpack-plugin: 3.0.0
       file-loader: 6.2.0_webpack@4.46.0
       handlebars: 4.7.7
@@ -6327,7 +6329,6 @@ packages:
   /dotenv/10.0.0:
     resolution: {integrity: sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==}
     engines: {node: '>=10'}
-    dev: false
 
   /duplexify/3.7.1:
     resolution: {integrity: sha512-07z8uv2wMyS51kKhD1KsdXJg5WQ6t93RneqRxUHnskXVtlYYkLqM0gqStQZ3pj073g687jPCHrqNfCzawLYh5g==}

@@ -13,6 +13,9 @@ const path = require("path");
 const BrotliWebpackPlugin = require("brotli-webpack-plugin");
 const sveltePath = path.resolve("node_modules", "svelte");
 
+const dotenv = require("dotenv");
+dotenv.config();
+
 /**
  * Should source maps be generated alongside your production bundle? This will
  * expose your raw source code, so it's disabled by default.
@@ -41,6 +44,9 @@ const useBabelInDevelopment = false;
  * styles will always appear last in the bundle.
  */
 const stylesheets = ["./styles/index.scss"];
+
+// Point the client to the server; default is for development mode
+const relmServer = process.env.RELM_SERVER ?? "http://localhost:3000";
 
 module.exports = {
   // Production or Development mode
@@ -205,7 +211,8 @@ module.exports = {
       // We can pass any parameters we want to the ejs parser that processes "src/index.html"
       templateParameters: {
         config: {
-          server: process.env.RELM_SERVER ?? "http://localhost:3000",
+          server: relmServer,
+          assetsUrl: process.env.RELM_ASSETS_URL ?? `${relmServer}/asset`,
           fontsUrl:
             process.env.RELM_FONTS_URL ??
             "https://fonts.bunny.net/css" /* "https://fonts.googleapis.com/css" */,
