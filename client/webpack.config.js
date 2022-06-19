@@ -100,6 +100,7 @@ module.exports = {
    */
   module: {
     rules: [
+      { test: /\.handlebars$/, loader: "handlebars-loader" },
       {
         test: /\.svelte$/,
         use: {
@@ -196,14 +197,20 @@ module.exports = {
       title: "Relm",
 
       // Use the template at src/index.html to produce dist/index.html
-      template: "src/index.html",
+      template: "src/index.html.handlebars",
 
       // for aesthetics; makes index.html stay formatted
       minify: false,
 
       // We can pass any parameters we want to the ejs parser that processes "src/index.html"
       templateParameters: {
-        relmServer: process.env.RELM_SERVER ?? "http://localhost:3000",
+        config: {
+          server: process.env.RELM_SERVER ?? "http://localhost:3000",
+          fontsUrl:
+            process.env.RELM_FONTS_URL ??
+            "https://fonts.bunny.net/css" /* "https://fonts.googleapis.com/css" */,
+        },
+        analyticsScript: process.env.RELM_ANALYTICS_SCRIPT ?? null,
       },
     }),
 

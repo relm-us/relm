@@ -3,15 +3,19 @@ export type Config = {
   serverUrl: string;
   serverYjsUrl: string;
   serverUploadUrl: string;
+  fontsUrl: string;
 };
 
-// Retrieve the `relmServer` string passed to us via webpack. Webpack sets
-// this value based on the `RELM_SERVER` environment variable. See `src/index.html`.
-export const relmServer = (window as any).relmServer;
+// Retrieve the env vars passed to us via webpack. See `src/index.html.handlebars`.
+export const env = (window as any).config as {
+  server: string;
+  fontsUrl: string;
+};
 
 export const config: Config = {
   assetUrl: "https://assets.ourrelm.com",
-  serverUrl: relmServer,
-  serverYjsUrl: relmServer.replace("http", "ws"),
-  serverUploadUrl: `${relmServer}/asset/upload`,
+  serverUrl: env.server,
+  serverYjsUrl: env.server.replace(/^http/, "ws"),
+  serverUploadUrl: `${env.server}/asset/upload`,
+  fontsUrl: env.fontsUrl,
 };

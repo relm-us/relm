@@ -5,6 +5,7 @@
 
   import { quillBind, quillInit } from "./quillInit";
   import QuillToolbar from "./QuillToolbar.svelte";
+  import { config } from "~/config";
 
   export let docId: string;
   export let bgColor: string;
@@ -47,7 +48,7 @@
 
 <link
   rel="stylesheet"
-  href="https://fonts.googleapis.com/css?family=Quicksand|Cormorant+Garamond|Oswald|Square+Peg"
+  href="{config.fontsUrl}?family=Quicksand|Cormorant+Garamond|Oswald|Square+Peg"
 />
 
 <style>
