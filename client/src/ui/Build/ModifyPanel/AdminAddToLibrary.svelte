@@ -1,14 +1,18 @@
 <script lang="ts">
   import { get } from "svelte/store";
+  import { getNotificationsContext } from "svelte-notifications";
+
+  import { worldManager } from "~/world";
+
   import { Pane } from "~/ui/lib/LeftPanel";
   import UploadButton from "~/ui/Build/shared/UploadButton";
-  import Capsule from "~/ui/lib/Capsule";
   import Button from "~/ui/lib/Button";
-  import { worldManager } from "~/world";
-  import { copy } from "~/events/input/CopyPasteListener/copy";
-  import { copyBuffer } from "~/stores/copyBuffer";
+  import TextInput from "~/ui/lib/TextInput";
+
   import { serializeCopyBuffer } from "~/events/input/CopyPasteListener/common";
-  import { getNotificationsContext } from "svelte-notifications";
+  import { copy } from "~/events/input/CopyPasteListener/copy";
+
+  import { copyBuffer } from "~/stores/copyBuffer";
 
   const notifyContext = getNotificationsContext();
 
@@ -72,24 +76,9 @@
         </r-upload>
       {/if}
     </div>
-    <Capsule
-      label="Name"
-      value={name}
-      maxWidth={false}
-      on:change={({ detail }) => (name = detail)}
-    />
-    <Capsule
-      label="Description"
-      value={description}
-      maxWidth={false}
-      on:change={({ detail }) => (description = detail)}
-    />
-    <Capsule
-      label="Tags (,)"
-      value={tags}
-      maxWidth={false}
-      on:change={({ detail }) => (tags = detail)}
-    />
+    <TextInput label="Name" bind:value={name} />
+    <TextInput label="Description" bind:value={description} />
+    <TextInput label="Tags (,)" bind:value={tags} />
     <Button on:click={addAsset}>Add</Button>
   </r-form>
 </Pane>

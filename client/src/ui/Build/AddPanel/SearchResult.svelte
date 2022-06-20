@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { LibraryAsset } from "~/types";
 
-  import { config } from "~/config";
+  import { assetUrl } from "~/config/assetUrl";
   import Tooltip from "~/ui/lib/Tooltip";
 
   export let result: LibraryAsset;
@@ -9,7 +9,7 @@
 
 <Tooltip tip={result.name} bottom>
   <r-result on:click>
-    <img src={`${config.assetUrl}/${result.thumbnail}`} alt={result.name} />
+    <img src={assetUrl(result.thumbnail)} alt={result.name} />
     {@html `<!-- assetId: ${result.assetId} -->`}
   </r-result>
 </Tooltip>
