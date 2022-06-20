@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <title>{{htmlWebpackPlugin.options.title}}</title>
 
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="preload" href="/loading.png" as="image" />
@@ -28,7 +28,7 @@
     </script>
 
     {{! Optional analytics script; if it is Umami, we track events at higher precision }}
-    {{htmlWebpackPlugin.options.templateParameters.analyticsScript}}
+    {{{htmlWebpackPlugin.options.templateParameters.analyticsScript}}}
     
     {{! Note: html-webpack-plugin will insert CSS here }}
   </head>
