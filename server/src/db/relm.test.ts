@@ -37,6 +37,8 @@ describe("Relm model tests", () => {
       seedRelmId: null,
       relmName,
       isPublic: false,
+      clonePermitAssigned: null,
+      clonePermitRequired: null,
       createdBy: null,
       createdAt: expect.any(Date),
       permanentDocId: expect.stringMatching(UUID_RE),

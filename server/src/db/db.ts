@@ -24,7 +24,7 @@ if (config.DATABASE_URL) {
   if (config.DATABASE_PASSWORD) conn.password = config.DATABASE_PASSWORD;
 }
 
-console.log("Connecting to Postgresql...", conn);
+// console.log("Connecting to Postgresql...", conn);
 
 export const db = pgp(conn);
 

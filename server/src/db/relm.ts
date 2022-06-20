@@ -129,7 +129,6 @@ export async function getAllRelms({
         ) z ON z.doc_id = d.doc_id
         ${WHERE(filter)}
       `;
-  console.log("get all relms", s);
   return (await db.manyOrNone(s)).map((row) => mkRelmSummary(row));
 }
 
