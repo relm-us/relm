@@ -1,20 +1,21 @@
 <script lang="ts">
-  import PageOverlay from "~/ui/lib/PageOverlay";
-  import { getDefaultAppearance } from "~/identity/Avatar/appearance";
   import type { BinaryGender } from "~/types";
 
-  export let dispatch
+  import PageOverlay from "~/ui/lib/PageOverlay";
+  import { getDefaultAppearance } from "~/identity/Avatar/appearance";
+  import { _ } from "~/i18n";
+
+  export let dispatch;
 
   const pick = (gender: BinaryGender) => () => {
     const appearance = getDefaultAppearance(gender);
     dispatch({ id: "didSetUpAvatar", appearance });
   };
-
 </script>
 
 <PageOverlay zIndex={4} justify="center">
   <container>
-    <h1>Choose Your Avatar</h1>
+    <h1>{$_("avatar.choose_yours", { default: "Choose Your Avatar" })}</h1>
     <avatars>
       <avatar on:click={pick("male")}>
         <img src="/humanoid-preset-male.png" alt="male" />
@@ -24,7 +25,11 @@
       </avatar>
     </avatars>
     <div class="spacer" />
-    <note>(you can customize this later)</note>
+    <note>
+      {$_("avatar.customize_later", {
+        default: "(you can customize this later)",
+      })}
+    </note>
   </container>
 </PageOverlay>
 
@@ -73,5 +78,4 @@
   note {
     color: var(--foreground-white);
   }
-
 </style>

@@ -55,6 +55,7 @@
     "svelt-yjs": "1.1.0",
     "svelte": "3.46.3",
     "svelte-dnd-action": "^0.7.3",
+    "svelte-i18n": "^3.4.0",
     "svelte-icons": "2.1.0",
     "svelte-notifications": "0.9.93",
     "svelte-select": "4.4.7",

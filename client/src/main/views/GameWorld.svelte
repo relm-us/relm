@@ -6,7 +6,6 @@
 
   const notifyContext = getNotificationsContext();
 
-  import BlankWithLogo from "./BlankWithLogo.svelte";
   import { onMount } from "svelte/internal";
 
   export let ecsWorld;

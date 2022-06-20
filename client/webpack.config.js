@@ -211,11 +211,13 @@ module.exports = {
       // We can pass any parameters we want to the ejs parser that processes "src/index.html"
       templateParameters: {
         config: {
-          server: relmServer,
           assetsUrl: process.env.RELM_ASSETS_URL ?? `${relmServer}/asset`,
           fontsUrl:
             process.env.RELM_FONTS_URL ??
             "https://fonts.bunny.net/css" /* "https://fonts.googleapis.com/css" */,
+          langDefault: process.env.RELM_LANG_DEFAULT ?? "en",
+          // The URL of the relm-server (backend) we will connect to:
+          server: relmServer,
         },
         analyticsScript: process.env.RELM_ANALYTICS_SCRIPT ?? null,
       },

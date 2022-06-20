@@ -1,13 +1,10 @@
 <script lang="ts">
+  import type { HairType, TopType, BottomType, ShoeType } from "~/types";
+
   import { worldManager } from "~/world";
+  import { _ } from "~/i18n";
 
   import { skinColors, hairColors } from "~/identity/Avatar/appearance";
-  import type {
-    HairType,
-    TopType,
-    BottomType,
-    ShoeType,
-  } from "~/types";
 
   import Slider from "~/ui/lib/Slider";
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
@@ -112,7 +109,7 @@
     <icon class="upper-right" on:click><IoIosClose /></icon>
     Avatar
   </h1>
-  <Section name="Gender">
+  <Section name={$_("avatar.gender", { default: "Gender" })}>
     <Slider on:change={onSlideGender} value={[0, genderSlider]} single />
     <div class="row between">
       <div class="label">Male</div>
@@ -120,15 +117,15 @@
     </div>
   </Section>
 
-  <Section name="Body">
+  <Section name={$_("avatar.body", { default: "Body" })}>
     <Slider on:change={onSlideWidth} value={[0, widthSlider]} single />
     <div class="row between">
-      <div class="label">Narrow</div>
-      <div class="label">Wide</div>
+      <div class="label">{$_("avatar.narrow", { default: "Narrow" })}</div>
+      <div class="label">{$_("avatar.wide", { default: "Wide" })}</div>
     </div>
   </Section>
 
-  <Section name="Skintone">
+  <Section name={$_("avatar.skintone", { default: "Skintone" })}>
     <div class="row">
       <Color
         value={skinColors[0]}
@@ -158,7 +155,7 @@
     </div>
   </Section>
 
-  <Section name="Hair">
+  <Section name={$_("avatar.hair", { default: "Hair" })}>
     <div class="row evenly">
       <Choice
         src={iconNone}
@@ -210,7 +207,7 @@
     </div>
   </Section>
 
-  <Section name="Shirt">
+  <Section name={$_("avatar.shirt", { default: "Shirt" })}>
     <div class="row evenly">
       <Choice
         src={iconShirt01}
@@ -236,7 +233,7 @@
     </div>
   </Section>
 
-  <Section name="Pants">
+  <Section name={$_("avatar.pants", { default: "Pants" })}>
     <div class="row evenly">
       <Choice
         src={iconPants01}
@@ -262,7 +259,7 @@
     </div>
   </Section>
 
-  <Section name="Shoes">
+  <Section name={$_("avatar.shoes", { default: "Shoes" })}>
     <div class="row evenly">
       <Choice
         src={iconShoes01}
@@ -288,7 +285,7 @@
     </div>
   </Section>
 
-  <Section name="Belt" last={true}>
+  <Section name={$_("avatar.belt", { default: "Belt" })} last={true}>
     <div class="row evenly">
       <ToggleSwitch bind:enabled={belt} />
       {#if belt}

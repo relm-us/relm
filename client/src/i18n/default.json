@@ -1,0 +1,15 @@
+{
+  "avatar": {
+    "gender": "Gender",
+    "body": "Body",
+    "narrow": "Narrow",
+    "wide": "Wide",
+    "skintone": "Skintone",
+    "shirt": "Shirt",
+    "pants": "Pants",
+    "shoes": "Shoes",
+    "belt": "Belt",
+    "choose_yours": "Choose Your Avatar",
+    "customize_later": "(you can customize this later)"
+  }
+}

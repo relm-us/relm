@@ -1,14 +1,22 @@
 <!-- This component converts the functional UI state machine (raj) to Svelte -->
 <script>
   import { onMount } from "svelte";
-  import { runtime } from "~/utils/runtime";
   import Notifications from "svelte-notifications";
+
+  import { runtime } from "~/utils/runtime";
+  import { setupI18n, dir } from "~/i18n";
+  import { getLocaleFromNavigator } from "svelte-i18n";
 
   export let createApp;
 
   let programView;
   let programComponent;
   let programProps;
+
+  setupI18n({ withLocale: getLocaleFromNavigator() });
+
+  // Set up locale/language direction (e.g. Arabic is right-to-left)
+  $: document.dir = $dir;
 
   onMount(() => {
     const app = createApp($$props);
