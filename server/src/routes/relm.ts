@@ -265,7 +265,7 @@ relm.post(
     }
 
     const cpReq = req.body.clonePermitRequired;
-    if (cpReq === "access" || cpReq === "edit") {
+    if (cpReq === "read" || cpReq === "access" || cpReq === "edit") {
       attrs.clonePermitRequired = cpReq;
     }
 
