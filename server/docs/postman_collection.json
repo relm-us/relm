@@ -481,7 +481,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"myrelm\",\n    \"isPublic\": true,\n    \"seedRelmName\": \"default\"\n}",
+							"raw": "{\n    \"relmName\": \"newrelm\",\n    \"publicPermits\": {\"access\": true}\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -497,7 +497,8 @@
 								"relm",
 								"create"
 							]
-						}
+						},
+						"description": "Create a relm.\n\n`relmName` is required. It can include numbers, letters of the alphabet, `-` (dash), or `/` (slash).\n\n`publicPermits` is optional, and defines the permissions that will be granted to a public user. For example: `{ \"access\": true }` would grant the public permission to access the relm (\"play mode\")."
 					},
 					"response": []
 				},
@@ -611,6 +612,34 @@
 					"response": []
 				},
 				{
+					"name": "Edit Relm Content",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"relmName\": \"myrelm\",\n    \"actions\": [\n        {\n          \"type\": \"setProperty\",\n          \"entity\": \"Stq3SsT0TnkzAbhALNM47\",\n          \"component\": \"Transform\",\n          \"property\": \"position\",\n          \"value\": [ 0, 0.6, -2.7 ]\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/relm/edit",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"relm",
+								"edit"
+							]
+						},
+						"description": "Edits the content of a relm using the `actions` system. Note that this is primarily useful as to modify the content of the world via API. It cannot be used to change relms' metadata (see `Set Relm Metadata`)."
+					},
+					"response": []
+				},
+				{
 					"name": "Get Relm Metadata",
 					"request": {
 						"method": "POST",
@@ -644,7 +673,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"myrelm\",\n    \"isPublic\": true\n}",
+							"raw": "{\n    \"relmName\": \"myrelm\",\n    \"publicPermits\": {\"access\": true}\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -716,34 +745,6 @@
 								"setvars"
 							]
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "Edit Relm",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"myrelm\",\n    \"actions\": [\n        {\n          \"type\": \"setProperty\",\n          \"entity\": \"Stq3SsT0TnkzAbhALNM47\",\n          \"component\": \"Transform\",\n          \"property\": \"position\",\n          \"value\": [ 0, 0.6, -2.7 ]\n        }\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{serverUrl}}/relm/edit",
-							"host": [
-								"{{serverUrl}}"
-							],
-							"path": [
-								"relm",
-								"edit"
-							]
-						},
-						"description": "Edits the content of a relm using the `actions` system. Note that this is primarily useful as to modify the content of the world via API. It cannot be used to change relms' metadata (see `Set Relm Metadata`)."
 					},
 					"response": []
 				}
