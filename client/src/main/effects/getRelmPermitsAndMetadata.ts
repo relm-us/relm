@@ -22,7 +22,10 @@ export const getRelmPermitsAndMetadata =
       return dispatch({ id: "error", message: err.message });
     }
 
-    if (!result.permits.includes("access")) {
+    if (
+      (pageParams.isCloneRequest && !result.permits.includes("read")) ||
+      (!pageParams.isCloneRequest && !result.permits.includes("access"))
+    ) {
       return dispatch({
         id: "error",
         message: `Sorry! It looks like you don't have permission to enter here.`,

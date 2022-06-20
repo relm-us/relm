@@ -2,9 +2,10 @@ import { db, sql, INSERT, IN, raw } from "./db.js";
 import { arrayToBooleanObject, booleanObjectToArray } from "../utils/index.js";
 import { getRelm } from "./relm.js";
 
-const PERMISSIONS = ["admin", "access", "invite", "edit"];
-export type Permission = "admin" | "access" | "invite" | "edit";
+const PERMISSIONS = ["read", "access", "edit", "invite", "admin"];
+export type Permission = "read" | "access" | "edit" | "invite" | "admin";
 export type Permits = {
+  read?: boolean;
   admin?: boolean;
   access?: boolean;
   invite?: boolean;
@@ -26,15 +27,15 @@ export function filteredPermits(permits) {
  */
 export async function setPermits({
   participantId,
+  permits,
   relmId,
   relmName,
-  permits = ["access"],
   union = true,
 }: {
   participantId: string;
+  permits: Array<Permission>;
   relmId?: string;
   relmName?: string;
-  permits?: Array<Permission>;
   union?: boolean;
 }): Promise<boolean> {
   let relm_id;

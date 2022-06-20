@@ -38,9 +38,9 @@ relm.post(
   cors(),
   middleware.relmExists(),
   middleware.authenticated(),
-  // `clonePermit` will be one of `access`, `edit`, or NULL;
-  // If the participant has the appropriate authorization for
-  // this relm, then they will be allowed to clone a subrelm
+  // `clonePermit` will be one of `read`, `access`, `edit`, or NULL. If the
+  // participant has the appropriate authorization for this relm, then they
+  // will be allowed to clone it to create a subrelm.
   middleware.authorized((req) => req.relm.clonePermitRequired),
   wrapAsync(async (req, res) => {
     const subrelmName = req.body.subrelmName || randomToken();
@@ -131,7 +131,7 @@ relm.post(
       };
 
       const cpReq = req.body.clonePermitRequired;
-      if (cpReq === "access" || cpReq === "edit") {
+      if (cpReq === "read" || cpReq === "access" || cpReq === "edit") {
         attrs.clonePermitRequired = cpReq;
       }
 
@@ -315,11 +315,12 @@ relm.post(
   middleware.authenticated(),
   middleware.acceptToken(),
   middleware.acceptJwt(),
-  middleware.authorized("access"),
+  middleware.authorized("read"),
   wrapAsync(async (req, res) => {
     const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
     req.relm.permanentDocSize = Y.encodeStateAsUpdate(doc).byteLength;
 
+    // TODO: don't reveal twilio token for `read`-level permission
     const twilioToken = twilio.getToken(req.authenticatedParticipantId);
 
     const permits = await getPermitsForRelm(

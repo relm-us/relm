@@ -1,3 +1,5 @@
+import type { Permission } from "../db/permission.js";
+
 /**
  * A venn diagram of what is allowed:
  *
@@ -10,9 +12,23 @@
  *     | | \------/ |          |
  *     | \----------/          |
  *     \-----------------------/
+ *
+ * NOTE: `read` permission is situated inside `access` (not shown)
+ *
  */
-export function isAllowed(permits, requestedPermission) {
+export function isAllowed(
+  permits: Array<Permission>,
+  requestedPermission: Permission
+) {
+  // prettier-ignore
   switch (requestedPermission) {
+    case "read":
+      return (
+        permits.includes("read") ||
+        permits.includes("access") ||
+        permits.includes("edit") ||
+        permits.includes("admin")
+      );
     case "access":
       return (
         permits.includes("access") ||
@@ -20,9 +36,15 @@ export function isAllowed(permits, requestedPermission) {
         permits.includes("admin")
       );
     case "edit":
-      return permits.includes("edit") || permits.includes("admin");
+      return (
+        permits.includes("edit") ||
+        permits.includes("admin")
+      );
     case "invite":
-      return permits.includes("invite") || permits.includes("admin");
+      return (
+        permits.includes("invite") ||
+        permits.includes("admin")
+      );
 
     case "admin":
       return permits.includes("admin");

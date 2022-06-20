@@ -130,7 +130,7 @@ export function authorized(
     let permitted = false;
 
     if (req.relm && req.relm.publicPermits[requestedPermission] === true) {
-      // Public relms don't need special permission to access
+      // Public relms grant permissions unto themselves, regardless of authenticated participant
       permitted = true;
     } else if (requestedPermission) {
       try {
