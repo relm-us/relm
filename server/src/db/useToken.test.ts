@@ -1,4 +1,4 @@
-import { describe, expect, beforeAll, afterAll, it } from '@jest/globals';
+import { describe, expect, beforeAll, afterAll, it } from "@jest/globals";
 
 import { useToken } from "./useToken.js";
 import { createInvitation } from "./invitation.js";
@@ -17,7 +17,7 @@ describe("useToken", () => {
     const participantId = uuidv4();
 
     // Relm must exist for getPermissions to return a result
-    await createRelm({ relmId, relmName: relmId, isPublic: false });
+    await createRelm({ relmId, relmName: relmId });
 
     const invitation = await createInvitation({
       token,

@@ -14,12 +14,15 @@ describe("Relm model tests", () => {
     const relmName1 = pubPrefix + uuidv4();
     const relmName2 = pubPrefix + uuidv4();
     const relmName3 = uuidv4();
-    await Relm.createRelm({ relmName: relmName1, isPublic: true });
-    await Relm.createRelm({ relmName: relmName2, isPublic: true });
     await Relm.createRelm({
-      relmName: relmName3,
-      isPublic: false,
+      relmName: relmName1,
+      publicPermits: { access: true },
     });
+    await Relm.createRelm({
+      relmName: relmName2,
+      publicPermits: { access: true },
+    });
+    await Relm.createRelm({ relmName: relmName3 });
     const relms = await Relm.getAllRelms({
       prefix: pubPrefix,
       isPublic: true,
@@ -36,7 +39,7 @@ describe("Relm model tests", () => {
       relmId: expect.stringMatching(UUID_RE),
       seedRelmId: null,
       relmName,
-      isPublic: false,
+      publicPermits: {},
       clonePermitAssigned: null,
       clonePermitRequired: null,
       createdBy: null,
@@ -69,10 +72,10 @@ describe("Relm model tests", () => {
     const relm = await Relm.updateRelm({
       relmId: createdRelm.relmId,
       relmName: updatedRelmName,
-      isPublic: true,
+      publicPermits: { access: true },
     });
 
-    expect(relm.isPublic).toBe(true);
+    expect(relm.publicPermits).toEqual({ access: true });
     expect(relm.relmName).toEqual(updatedRelmName);
   });
 });

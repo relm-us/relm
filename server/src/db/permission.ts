@@ -4,6 +4,12 @@ import { getRelm } from "./relm.js";
 
 const PERMISSIONS = ["admin", "access", "invite", "edit"];
 export type Permission = "admin" | "access" | "invite" | "edit";
+export type Permits = {
+  admin?: boolean;
+  access?: boolean;
+  invite?: boolean;
+  edit?: boolean;
+};
 
 export function validPermission(permission) {
   return PERMISSIONS.includes(permission);
@@ -105,11 +111,7 @@ export async function getPermissions({
       --
       SELECT
         r.relm_${raw(relmNames ? "name" : "id")}::text AS relm,
-        CASE
-          WHEN p.permits IS NOT NULL THEN p.permits
-          WHEN r.is_public = 't' THEN '{"access":true}'::jsonb
-          WHEN p.permits IS NULL THEN '{}'::jsonb
-        END AS permits
+        COALESCE(p.permits, '{}'::JSONB) || r.public_permits AS permits
       FROM relms AS r
       LEFT JOIN (
         SELECT * FROM permissions

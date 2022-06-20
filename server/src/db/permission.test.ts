@@ -1,4 +1,4 @@
-import { describe, expect, beforeAll, afterAll, it } from '@jest/globals';
+import { describe, expect, beforeAll, afterAll, it } from "@jest/globals";
 
 import * as Permission from "./permission.js";
 
@@ -27,7 +27,7 @@ describe("Permission model tests", () => {
     await Relm.createRelm({
       relmId,
       relmName,
-      isPublic: true,
+      publicPermits: { access: true },
     });
 
     const permitsByRelm = await Permission.getPermissions({
@@ -52,12 +52,10 @@ describe("Permission model tests", () => {
     await Relm.createRelm({
       relmId: relmId1,
       relmName: relmName1,
-      isPublic: false,
     });
     await Relm.createRelm({
       relmId: relmId2,
       relmName: relmName2,
-      isPublic: false,
     });
 
     // Wildcard permits for this participant
@@ -101,7 +99,6 @@ describe("Permission model tests", () => {
     await Relm.createRelm({
       relmId: relmId1,
       relmName: relmName1,
-      isPublic: false,
     });
 
     for (let permit of ["access", "invite", "edit"]) {
@@ -129,7 +126,6 @@ describe("Permission model tests", () => {
     await Relm.createRelm({
       relmId: relmId1,
       relmName: relmName1,
-      isPublic: false,
     });
 
     for (let permit of ["access", "invite", "invite"]) {

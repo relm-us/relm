@@ -1,3 +1,5 @@
+import type { Permits } from "../db/permission.js";
+
 import * as express from "express";
 import cors from "cors";
 import mkConscript from "conscript";
@@ -50,7 +52,6 @@ relm.post(
     const newRelm = await Relm.createRelm({
       relmName: newRelmName,
       seedRelmId: seedRelm.relmId,
-      isPublic: false,
       createdBy: req.authenticatedParticipantId,
     });
 
@@ -94,6 +95,9 @@ relm.post(
 
     let seedRelm;
 
+    // Since only `admin` can create a relm, we trust whatever publicPermits they provide
+    const publicPermits: Permits = req.body.publicPermits;
+
     if (relm !== null) {
       throw Error(`relm '${req.relmName}' already exists`);
     } else {
@@ -122,7 +126,7 @@ relm.post(
       const attrs: any = {
         relmName: req.relmName,
         seedRelmId,
-        isPublic: !!req.body.isPublic,
+        publicPermits,
         createdBy: req.authenticatedParticipantId,
       };
 
@@ -138,24 +142,6 @@ relm.post(
       }
 
       const relm = await Relm.createRelm(attrs);
-
-      // let seedDocId: string;
-      // let newRelmDocId: string = relm.permanentDocId;
-
-      // let relmContent;
-      // if (seedRelmId) {
-      //   seedDocId = await Doc.getSeedDocId({
-      //     docId: newRelmDocId,
-      //   });
-      //   const seedRelmDoc: Y.Doc = await getYDoc(seedDocId);
-
-      //   relmContent = exportWorldDoc(seedRelmDoc);
-      // } else {
-      //   relmContent = config.DEFAULT_RELM_CONTENT;
-      // }
-
-      // const newRelmDoc: Y.Doc = await getYDoc(newRelmDocId);
-      // importWorldDoc(relmContent, newRelmDoc);
 
       if (seedRelmId) {
         // Clone the "seed relm" into this new relm
@@ -274,8 +260,8 @@ relm.post(
       attrs.relmName = req.body.relmName;
     }
 
-    if (req.body.isPublic !== undefined) {
-      attrs.isPublic = !!req.body.isPublic;
+    if (req.body.publicPermits !== undefined) {
+      attrs.publicPermits = req.body.publicPermits;
     }
 
     const cpReq = req.body.clonePermitRequired;

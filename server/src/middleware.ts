@@ -129,11 +129,7 @@ export function authorized(
     // Not permitted by default
     let permitted = false;
 
-    if (
-      req.relm &&
-      req.relm.isPublic === true &&
-      requestedPermission === "access"
-    ) {
+    if (req.relm && req.relm.publicPermits[requestedPermission] === true) {
       // Public relms don't need special permission to access
       permitted = true;
     } else if (requestedPermission) {
@@ -176,4 +172,3 @@ function normalizeRelmName(name) {
     .map((part) => canonicalIdentifier(part))
     .join("/");
 }
-
