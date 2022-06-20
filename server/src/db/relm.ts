@@ -2,7 +2,12 @@ import type { Permission, Permits } from "./permission.js";
 
 import * as Doc from "./doc.js";
 import { db, sql, INSERT, UPDATE, WHERE } from "./db.js";
-import { getDefinedKeys, nullOr } from "../utils/index.js";
+import {
+  arrayToBooleanObject,
+  booleanObjectToArray,
+  getDefinedKeys,
+  nullOr,
+} from "../utils/index.js";
 import { validPermission } from "./permission.js";
 
 type RelmColumns = {
@@ -21,7 +26,7 @@ const mkRelm = nullOr((cols: RelmColumns) => {
     relmId: cols.relm_id,
     relmName: cols.relm_name,
     seedRelmId: cols.seed_relm_id,
-    publicPermits: cols.public_permits,
+    publicPermits: booleanObjectToArray(cols.public_permits),
     clonePermitRequired: cols.clone_permit_required || null,
     clonePermitAssigned: cols.clone_permit_assigned || null,
     createdBy: cols.created_by || null,
@@ -47,7 +52,7 @@ const mkRelmSummary = nullOr((cols: RelmSummaryColumns) => {
     relmId: cols.relm_id,
     relmName: cols.relm_name,
     seedRelmId: cols.seed_relm_id,
-    publicPermits: cols.public_permits,
+    publicPermits: booleanObjectToArray(cols.public_permits),
     clonePermitRequired: cols.clone_permit_required,
     clonePermitAssigned: cols.clone_permit_assigned,
     createdAt: cols.created_at,
@@ -156,7 +161,7 @@ export async function createRelm({
   relmId?: string;
   relmName: string;
   seedRelmId?: string;
-  publicPermits?: Permits;
+  publicPermits?: Array<Permission>;
   clonePermitRequired?: string;
   clonePermitAssigned?: string;
   createdBy?: string;
@@ -166,7 +171,8 @@ export async function createRelm({
   };
   if (relmId !== undefined) attrs.relm_id = relmId;
   if (seedRelmId !== undefined) attrs.seed_relm_id = seedRelmId;
-  if (publicPermits !== undefined) attrs.public_permits = publicPermits;
+  if (publicPermits !== undefined)
+    attrs.public_permits = arrayToBooleanObject(publicPermits);
   if (clonePermitRequired !== undefined)
     attrs.clone_permit_required = clonePermitRequired;
   if (clonePermitAssigned !== undefined)
@@ -201,13 +207,14 @@ export async function updateRelm({
 }: {
   relmId: string;
   relmName?: string;
-  publicPermits?: Permits;
+  publicPermits?: Array<Permission>;
   clonePermitRequired?: string;
   clonePermitAssigned?: string;
 }) {
   const attrs: any = {};
   if (relmName !== undefined) attrs.relm_name = relmName;
-  if (publicPermits !== undefined) attrs.public_permits = publicPermits;
+  if (publicPermits !== undefined)
+    attrs.public_permits = arrayToBooleanObject(publicPermits);
   if (clonePermitRequired !== undefined) {
     if (!validPermission(clonePermitRequired)) return null;
     attrs.clone_permit_required = clonePermitRequired;

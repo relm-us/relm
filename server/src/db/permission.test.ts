@@ -27,7 +27,7 @@ describe("Permission model tests", () => {
     await Relm.createRelm({
       relmId,
       relmName,
-      publicPermits: { access: true },
+      publicPermits: ["access"],
     });
 
     const permitsByRelm = await Permission.getPermissions({

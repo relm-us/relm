@@ -481,7 +481,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"newrelm\",\n    \"publicPermits\": {\"access\": true}\n}",
+							"raw": "{\n    \"relmName\": \"myrelm\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -498,7 +498,7 @@
 								"create"
 							]
 						},
-						"description": "Create a relm.\n\n`relmName` is required. It can include numbers, letters of the alphabet, `-` (dash), or `/` (slash).\n\n`publicPermits` is optional, and defines the permissions that will be granted to a public user. For example: `{ \"access\": true }` would grant the public permission to access the relm (\"play mode\")."
+						"description": "Create a relm.\n\n```\n\"relmName\": string\n\"publicPermits\": permission array\n\"clonePermitRequired\": \"read\" | \"access\" | \"edit\" | null\n\"clonePermitAssigned\": \"access\" | \"edit\" | null\n```\n\n## Params\n\n`relmName` is required. It can include numbers, letters of the alphabet, `-` (dash), or `/` (slash).\n\n`publicPermits` is optional, and defines the permissions that will be granted to a public user. For example: `[\"access\"]` would grant the public permission to access the relm (\"play mode\").\n\n`clonePermitRequired` is optional, and tells the server what level of permission is required to clone the relm. For example `read` permission means the user would at least need \"read\" permission.\n\n`clonePermitAssigned` is optional (unless `clonePermitRequired` is given, in which case `clonePermitAssigned` is required). Tells the server what the assigned permits will be for the participant that clones the relm. For example `edit` would mean the participant will have `edit` (build-mode) permission in the cloned relm."
 					},
 					"response": []
 				},
@@ -673,7 +673,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"myrelm\",\n    \"publicPermits\": {\"access\": true}\n}",
+							"raw": "{\n    \"relmName\": \"myrelm\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
