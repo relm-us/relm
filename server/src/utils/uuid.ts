@@ -1,4 +1,5 @@
-import { uuid } from "uuidv4";
+import { v4 } from "uuid";
+
 /**
  * Generates a random UUID (version 4). This can be used as a decentralized way
  * to create an identifier that has such a low probability of collision that it
@@ -7,7 +8,7 @@ import { uuid } from "uuidv4";
  * @returns {string}
  */
 export function uuidv4() {
-  return uuid();
+  return v4();
 }
 
 export const UUID_RE =

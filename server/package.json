@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@peculiar/webcrypto": "^1.0.27",
-    "aws-sdk": "^2.1046.0",
+    "aws-sdk": "2.1157.0",
     "base64-arraybuffer": "^0.2.0",
     "bcrypt": "^5.0.0",
     "conscript": "^0.3.0",
@@ -52,7 +52,7 @@
     "relm-common": "workspace:*",
     "sharp": "^0.25.4",
     "twilio": "^3.71.2",
-    "uuidv4": "^6.2.13",
+    "uuid": "^8.3.2",
     "ws": "^7.2.3",
     "y-leveldb": "^0.1.0",
     "y-protocols": "1.0.5",
@@ -69,7 +69,7 @@
     "cross-env": "^7.0.2",
     "estrace": "^4.0.0",
     "jest": "27.5.1",
-    "supertest": "6.2.2",
+    "supertest": "6.2.3",
     "ts-jest": "27.1.4",
     "typescript": "4.6.3"
   },
