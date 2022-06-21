@@ -44,7 +44,7 @@
   <div class="ql-formats">
     <button class="ql-bold" />
     <button class="ql-italic" />
-    <button class="ql-underline" />
+    <button class="ql-strike" />
   </div>
 
   <div class="ql-formats">
@@ -58,7 +58,6 @@
   </div>
 
   <div class="ql-formats">
-    <button class="ql-strike" />
     <button class="ql-blockquote" />
     <button class="ql-clean" />
   </div>
