@@ -9,8 +9,7 @@ export class WebPage extends Component {
       type: StringType,
       default: "https://google.com?igu=1",
       editor: {
-        label: "Web Page URL",
-        requires: [{ prop: "kind", value: "WEB_PAGE" }],
+        label: "URL",
       },
     },
 
