@@ -30,7 +30,7 @@
 </script>
 
 {#if bigscreen}
-  <Fullwindow on:click={() => editor.focus()} on:close={deactivate}>
+  <Fullwindow on:close={deactivate}>
     <r-centered>
       <r-page-margin
         transition:slide
@@ -46,6 +46,7 @@
           readOnly={!editable}
           cursors={true}
           showToolbar={editable}
+          on:pageclick={() => editor.focus()}
         />
       </r-page-margin>
     </r-centered>

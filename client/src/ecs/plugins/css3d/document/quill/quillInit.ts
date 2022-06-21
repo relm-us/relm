@@ -25,7 +25,7 @@ Quill.register(Size, true);
 export function quillInit(
   container,
   toolbar,
-  { cursors = true, readOnly = false }
+  { cursors = true, readOnly = false, bounds = container }
 ) {
   const editor = new Quill(container, {
     modules: {
@@ -34,6 +34,7 @@ export function quillInit(
     },
     placeholder: "Start collaborating...",
     theme: "snow", // or 'bubble'
+    bounds,
     readOnly,
   });
 

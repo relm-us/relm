@@ -886,6 +886,7 @@
   content: "Visit URL:";
   line-height: 26px;
   margin-right: 8px;
+  color: var(--background-gray, #343434);
 }
 .ql-snow .ql-tooltip input[type=text] {
   display: none;

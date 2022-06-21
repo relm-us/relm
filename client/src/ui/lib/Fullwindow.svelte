@@ -8,8 +8,8 @@
   let el;
 
   function onClick(event) {
-    if (event.target === el) dispatch("close");
-    else dispatch("click");
+    if (event.target === el) dispatch("close", event.target);
+    else dispatch("click", event.target);
   }
 
   onMount(async () => {

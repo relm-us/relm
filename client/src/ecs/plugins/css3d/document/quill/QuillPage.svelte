@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Color } from "three";
-  import { onMount } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
   import { fly } from "svelte/transition";
 
   import { quillBind, quillInit } from "./quillInit";
@@ -15,18 +15,27 @@
   export let editor = null;
   export let toolbar = null;
 
+  const dispatch = createEventDispatcher();
+
+  let wrapper;
   let container;
+  let bounds;
 
   onMount(() => {
     editor = quillInit(container, showToolbar && toolbar ? toolbar : false, {
       readOnly,
       cursors,
+      bounds,
     });
     return quillBind(docId, editor);
   });
 
   let bgColorDark;
   $: bgColorDark = "#" + new Color(bgColor).multiplyScalar(0.8).getHexString();
+
+  function filterClick(event) {
+    if (event.target === wrapper) dispatch("pageclick", event);
+  }
 
   // ignore warning about missing props
   $$props;
@@ -39,10 +48,12 @@
 {/if}
 
 <r-document-wrapper
+  bind:this={wrapper}
   style="--bg-color: {bgColor}; --bg-color-dark: {bgColorDark}"
-  on:click
+  on:click={filterClick}
 >
   <div bind:this={container} />
+  <div bind:this={bounds} class="bounds" />
   <slot />
 </r-document-wrapper>
 
@@ -97,5 +108,14 @@
 
   :global(.ql-font-squarepeg) {
     font-family: "Square Peg";
+  }
+
+  /* Provide outer bounds for quill tooltip window */
+  .bounds {
+    position: relative;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
   }
 </style>
