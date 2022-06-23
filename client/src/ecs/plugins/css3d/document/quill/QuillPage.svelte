@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Color } from "three";
-  import { onMount, createEventDispatcher } from "svelte";
+  import { onMount, afterUpdate, createEventDispatcher } from "svelte";
   import { fly } from "svelte/transition";
 
   import { quillBind, quillInit } from "./quillInit";
@@ -21,13 +21,42 @@
   let container;
   let bounds;
 
+  let boundDocId = null;
+  let quillUnbind;
+
+  function bind() {
+    quillUnbind = quillBind(docId, editor);
+    boundDocId = docId;
+  }
+
+  function unbind() {
+    quillUnbind?.();
+    boundDocId = null;
+  }
+
   onMount(() => {
+    console.log("mount QuillPage", docId);
     editor = quillInit(container, showToolbar && toolbar ? toolbar : false, {
       readOnly,
       cursors,
       bounds,
     });
-    return quillBind(docId, editor);
+
+    // Initial Quill binding to Y.Text at `docId`
+    bind();
+
+    return () => {
+      // Clean Quill binding up after svelte component is unmounted
+      unbind();
+    };
+  });
+
+  afterUpdate(() => {
+    if (docId !== boundDocId) {
+      // `docId` has changed
+      unbind();
+      bind();
+    }
   });
 
   let bgColorDark;
