@@ -1,53 +1,36 @@
-import { EntityId } from "~/ecs/base";
-import { WorldDoc } from "~/y-integration/WorldDoc";
-import { yEntityToJSON, YEntity } from "relm-common";
+import { exportWorldDoc, MinimalRelmJSON, importWorldDoc } from "relm-common";
 
-const RELM_EXPORT_VERSION = "v1.3";
+import { WorldDoc } from "~/y-integration/WorldDoc";
+
+const RELM_EXPORT_VERSION = "v1.4";
 
 export type FormatOpts = {
   relm?: string;
   scope?: string;
   timestamp?: Date;
   entryways?: Record<string, any>;
+  documents?: Record<string, any>;
   settings?: Record<string, any>;
 };
 
 export function jsonFormat(
-  entities: Array<any>,
-  {
-    relm = "relm",
-    scope = "all",
-    entryways = {},
-    settings = {},
-    timestamp,
-  }: FormatOpts
+  json: MinimalRelmJSON,
+  { relm = "relm", scope = "all", timestamp }: FormatOpts
 ) {
   return {
     relm,
     version: RELM_EXPORT_VERSION,
     timestamp: (timestamp || new Date()).toISOString(),
     scope,
-    entryways,
-    settings,
-    entities,
+    ...json,
   };
 }
 
-function getAll(wdoc: WorldDoc) {
-  return wdoc.entities.map((yentity) => {
-    return yEntityToJSON(yentity as YEntity);
-  });
-}
-
-function getSome(wdoc: WorldDoc, entityIds: Array<EntityId>) {
-  return entityIds.map((entityId) => {
-    const yentity = wdoc.hids.get(entityId);
-    return yEntityToJSON(yentity);
-  });
-}
-
-export function exportRelm(wdoc: WorldDoc, entityIds?: Array<EntityId>) {
-  return entityIds ? getSome(wdoc, entityIds) : getAll(wdoc);
+export function exportRelm(
+  wdoc: WorldDoc,
+  entityIds?: Array<string>
+): MinimalRelmJSON {
+  return exportWorldDoc(wdoc.ydoc, entityIds ? new Set(entityIds) : null);
 }
 
 export function importRelm(wdoc: WorldDoc, json) {
@@ -57,22 +40,16 @@ export function importRelm(wdoc: WorldDoc, json) {
     );
   }
 
+  importWorldDoc(json, wdoc.ydoc);
+
   const entityIds = [];
-  for (let data of json.entities) {
-    entityIds.push(data.id);
+  for (let entityJSON of json.entities) {
     try {
-      wdoc.syncFromJSON(data);
+      entityIds.push(entityJSON.id);
+      wdoc.syncFromJSON(entityJSON);
     } catch (err) {
-      console.warn(data?.id, err);
+      console.warn(entityJSON?.id, err);
     }
-  }
-
-  for (let [key, value] of Object.entries(json.settings as object)) {
-    wdoc.settings.y.set(key, value);
-  }
-
-  for (let [key, value] of Object.entries(json.entryways as object)) {
-    wdoc.entryways.y.set(key, value);
   }
 
   return entityIds;

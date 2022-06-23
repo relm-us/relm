@@ -24,6 +24,7 @@ import {
   YComponent,
   YValues,
   YIDSTR,
+  PROTECTED_WORLD_DOC_KEYS,
 } from "relm-common";
 
 import EventEmitter from "eventemitter3";
@@ -52,6 +53,9 @@ export class WorldDoc extends EventEmitter {
 
   // An array of js objects for chat;
   messages: Y.Array<any>;
+
+  // A map of collaborative documents
+  documents: Y.Map<Y.Text>;
 
   // A map of entryways into this subrelm. Default is [0, 0, 0].
   entryways: YReadableMap<any>;
@@ -85,6 +89,7 @@ export class WorldDoc extends EventEmitter {
     this.unsubs.push(() => this.entities.unobserveDeep(observer));
 
     this.messages = this.ydoc.getArray("messages");
+    this.documents = this.ydoc.getMap("documents");
 
     this.entryways = readableMap(this.ydoc.getMap("entryways"));
     this.settings = readableMap(this.ydoc.getMap("settings"));
@@ -132,6 +137,34 @@ export class WorldDoc extends EventEmitter {
       provider.on("status", ({ status }) => sub(status));
       this.unsubs.push(() => provider.off("status", sub));
     }
+  }
+
+  getDeprecatedDocument(docId: string) {
+    if (PROTECTED_WORLD_DOC_KEYS.includes(docId)) {
+      console.warn("Tried to get invalid docId", docId);
+      return;
+    }
+
+    const textNode = this.ydoc.getText(docId);
+
+    if (textNode.toString() !== "") {
+      return textNode;
+    }
+  }
+
+  getDocument(docId: string) {
+    let document = this.getDeprecatedDocument(docId);
+
+    if (!document) {
+      document = this.documents.get(docId);
+      if (document === undefined) {
+        document = new Y.Text();
+        this.documents.set(docId, document);
+      }
+      console.log("document", document);
+    }
+
+    return document;
   }
 
   reapplyWorld() {

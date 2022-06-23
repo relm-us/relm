@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import { jsonToYEntity, YEntity } from "../yrelm/index.js";
+import { deltaToYText, jsonToYEntity, YEntity } from "../yrelm/index.js";
 import { MinimalRelmJSON } from "./types.js";
 
 export function importWorldDoc(source: MinimalRelmJSON, dest: Y.Doc) {
@@ -15,5 +15,10 @@ export function importWorldDoc(source: MinimalRelmJSON, dest: Y.Doc) {
   const ysettings = dest.getMap("settings") as Y.Map<Array<any>>;
   for (let [name, value] of Object.entries(source.settings)) {
     ysettings.set(name, value);
+  }
+
+  const ydocuments = dest.getMap("documents") as Y.Map<Y.Text>;
+  for (let [name, value] of Object.entries(source.documents)) {
+    ydocuments.set(name, deltaToYText(value));
   }
 }

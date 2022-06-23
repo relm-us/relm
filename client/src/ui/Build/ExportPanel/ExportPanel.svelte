@@ -2,7 +2,6 @@
   import { onMount } from "svelte";
 
   import { worldManager } from "~/world";
-  import { config } from "~/config";
 
   import { exportRelm, jsonFormat } from "~/world/Export";
   import type { FormatOpts } from "~/world/Export";
@@ -21,9 +20,8 @@
     errorState = !worldManager.fromJSON(json);
   }
 
-  onMount(() => {
+  function getExportJSON() {
     const meta: FormatOpts = {
-      // TODO: use whatever is the current relm
       relm: worldManager.getRelmUrl(),
     };
     let exported;
@@ -32,11 +30,13 @@
       meta.scope = "selection";
     } else {
       exported = exportRelm(worldManager.worldDoc);
-      meta.settings = worldManager.worldDoc.settings.y.toJSON();
-      meta.entryways = worldManager.worldDoc.entryways.y.toJSON();
+      meta.scope = "all";
     }
-    const json = jsonFormat(exported, meta);
-    text = JSON.stringify(json, null, 2);
+    return jsonFormat(exported, meta);
+  }
+
+  onMount(() => {
+    text = JSON.stringify(getExportJSON(), null, 2);
   });
 </script>
 

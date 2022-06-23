@@ -89,8 +89,7 @@ const DEFAULT_RELM_CONTENT = {
         image: {
           name: "",
           filename: "",
-          url:
-            "https://assets.ourrelm.com/edc3d0040ef1e1feece33adef09b32c4-7496.webp",
+          url: "https://assets.ourrelm.com/edc3d0040ef1e1feece33adef09b32c4-7496.webp",
         },
       },
     },
@@ -99,6 +98,7 @@ const DEFAULT_RELM_CONTENT = {
     default: [0, 0, 0],
   },
   settings: {},
+  documents: {},
 };
 
 export {

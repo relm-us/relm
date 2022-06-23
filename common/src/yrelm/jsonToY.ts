@@ -80,3 +80,12 @@ export function jsonToYValues(data: object): YValues {
 
   return yvalues;
 }
+
+// Convert a quill/yjs-based JSON "delta" to a Y.Text object. Inverse of yTextToDelta.
+export function deltaToYText(delta: any): Y.Text {
+  const ytext: Y.Text = new Y.Text();
+
+  ytext.applyDelta(delta);
+
+  return ytext;
+}

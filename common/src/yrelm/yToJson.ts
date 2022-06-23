@@ -1,3 +1,5 @@
+import * as Y from "yjs";
+
 import {
   YEntity,
   YMeta,
@@ -34,4 +36,9 @@ export function yComponentToJSON(ycomponent: YComponent) {
   return {
     [name]: yvalues.toJSON(),
   };
+}
+
+// Get the "delta" on a Y.Text object; inverse of deltaToYText
+export function yTextToDelta(ytext: Y.Text) {
+  return ytext.toDelta();
 }

@@ -183,7 +183,6 @@ relm.post(
 async function cloneRelmDoc(seedRelmDocId: string, newRelmDocId: string) {
   const seedRelmDoc: Y.Doc = await getYDoc(seedRelmDocId);
   const relmContent = exportWorldDoc(seedRelmDoc);
-  // console.log("relmContent", relmContent);
 
   const newRelmDoc: Y.Doc = await getYDoc(newRelmDocId);
   importWorldDoc(relmContent, newRelmDoc);

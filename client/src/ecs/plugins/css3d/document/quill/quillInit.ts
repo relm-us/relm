@@ -49,7 +49,7 @@ export function quillBind(docId, editor) {
   worldManager.afterInit(() => {
     const wdoc = worldManager.worldDoc;
     binding = new QuillBinding(
-      wdoc.ydoc.getText(docId),
+      wdoc.getDocument(docId),
       editor,
       wdoc.provider.awareness
     );
