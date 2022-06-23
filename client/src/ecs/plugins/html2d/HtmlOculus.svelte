@@ -126,7 +126,6 @@
     >
       {#if fullscreen}
         <Fullscreen on:close={exitFullscreen}>
-          {console.log($videoStore)}
           <Video track={$videoStore} mirror={false} contain={true} />
 
           <small-pics>
