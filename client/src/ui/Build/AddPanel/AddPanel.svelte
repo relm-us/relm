@@ -65,10 +65,19 @@
   };
 
   const onUpload = ({ detail }) => {
-    console.log("onUpload", detail);
     for (const result of detail.results) {
       if (result.types.webp) {
-        createPrefab("Image", { url: result.types.webp });
+        const maxSide = 3;
+        let width, height;
+        if (result.aspect < 1) {
+          width = maxSide;
+          height = maxSide / result.aspect;
+        } else {
+          height = maxSide;
+          width = maxSide * result.aspect;
+        }
+
+        createPrefab("Image", { url: result.types.webp, w: width, h: height });
       } else if (result.types.gltf) {
         createPrefab("Thing", { url: result.types.gltf });
       }

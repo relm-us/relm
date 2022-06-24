@@ -44,11 +44,35 @@
 
     uppy.on("complete", (result) => {
       if (result.successful.length > 0) {
-        dispatch("uploaded", {
-          results: result.successful.map((r) => ({
-            name: r.meta.name,
-            types: (r.response.body as any).files,
-          })),
+        // Before dispatching the 'uploaded' signal, calculate image aspect ratios
+        const aspects = {};
+        Promise.all(
+          result.successful.map(
+            (file) =>
+              new Promise<void>((resolve) => {
+                if (file.preview) {
+                  const image = new Image();
+                  image.src = file.preview;
+                  image.onload = () => {
+                    aspects[file.id] = image.width / image.height;
+                    resolve();
+                  };
+                } else {
+                  // Not an image, so no need to calculate aspect ratio
+                  resolve();
+                }
+              })
+          )
+        ).then(() => {
+          dispatch("uploaded", {
+            results: result.successful.map((r) => {
+              return {
+                name: r.meta.name,
+                aspect: aspects[r.id],
+                types: (r.response.body as any).files,
+              };
+            }),
+          });
         });
       }
       if (result.failed.length > 0) {

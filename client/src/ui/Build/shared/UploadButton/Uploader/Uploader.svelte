@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-
   import { config } from "~/config";
   import Uppy from "./Uppy.svelte";
 
