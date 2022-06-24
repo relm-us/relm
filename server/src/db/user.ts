@@ -41,11 +41,11 @@ export async function getUserIdByEmail({ email } : { email : string }) {
 }
 
 export async function verifyCredentials({ email, password }) {
-  const data = await db.one(sql`
+  const data = await db.oneOrNone(sql`
       SELECT password_hash FROM users WHERE email=${email}
     `);
 
-  if (!data) {
+  if (data === null) {
     return false;
   }
 
@@ -53,4 +53,16 @@ export async function verifyCredentials({ email, password }) {
   const isCorrectPassword = await compareEncryptedPassword(password, passwordHash);
 
   return isCorrectPassword;
+}
+
+export async function getAppearanceData({ userId }) {
+  const data = await db.oneOrNone(sql`
+      SELECT appearance FROM users WHERE user_id=${userId}
+    `);
+
+  if (data === null) {
+    return null;
+  }
+
+  return data.appearance;
 }

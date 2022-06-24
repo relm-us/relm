@@ -5,5 +5,6 @@ export * as Permission from "./permission.js";
 export * as Participant from "./participant.js";
 export * as Relm from "./relm.js";
 export * as Variable from "./variable.js";
+export * as User from "./user.js";
 
 export { useToken } from "./useToken.js";

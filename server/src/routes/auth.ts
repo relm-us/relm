@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 
 import * as middleware from "../middleware.js";
-import { Permission } from "../db/index.js";
+import { Participant, Permission, User } from "../db/index.js";
 import {
   respondWithSuccess,
   respondWithError,
@@ -42,5 +42,26 @@ auth.post(
         jwt: req.jwtRaw,
       });
     }
+  })
+);
+
+// Return any user data associated with the provided participant id.
+auth.get(
+  "/identity",
+  cors(),
+  middleware.authenticated(),
+  wrapAsync(async (req, res) => {
+      const userId = await Participant.getUserId(req.authenticatedParticipantId); 
+      if (userId === null) {
+        return respondWithSuccess(res, {
+          appearance: null
+        });
+      }
+      
+      const appearance = await User.getAppearanceData({ userId });
+
+      respondWithSuccess(res, {
+        appearance
+      });
   })
 );
