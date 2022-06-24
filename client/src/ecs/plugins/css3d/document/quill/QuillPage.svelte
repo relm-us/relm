@@ -25,6 +25,12 @@
   let quillUnbind;
 
   function bind() {
+    editor = quillInit(container, showToolbar && toolbar ? toolbar : false, {
+      readOnly,
+      cursors,
+      bounds,
+    });
+
     quillUnbind = quillBind(docId, editor);
     boundDocId = docId;
   }
@@ -35,13 +41,6 @@
   }
 
   onMount(() => {
-    console.log("mount QuillPage", docId);
-    editor = quillInit(container, showToolbar && toolbar ? toolbar : false, {
-      readOnly,
-      cursors,
-      bounds,
-    });
-
     // Initial Quill binding to Y.Text at `docId`
     bind();
 

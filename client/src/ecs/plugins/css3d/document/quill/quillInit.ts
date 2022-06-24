@@ -56,6 +56,8 @@ export function quillBind(docId, editor) {
   });
 
   return () => {
-    if (binding) binding.destroy();
+    if (binding) {
+      binding.destroy();
+    }
   };
 }
