@@ -1,4 +1,4 @@
-import { exportWorldDoc, MinimalRelmJSON, importWorldDoc } from "relm-common";
+import { exportWorldDoc, MinimalRelmJSON, importNonEntities } from "relm-common";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
@@ -40,7 +40,7 @@ export function importRelm(wdoc: WorldDoc, json) {
     );
   }
 
-  importWorldDoc(json, wdoc.ydoc);
+  importNonEntities(json, wdoc.ydoc);
 
   const entityIds = [];
   for (let entityJSON of json.entities) {

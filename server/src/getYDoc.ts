@@ -16,6 +16,12 @@ export async function getYDoc(docId: string): Promise<Y.Doc> {
 }
 
 export const ydocStats = async (update, origin, doc: Y.Doc) => {
+  if (!doc) {
+    // can be null if it was deleted
+    console.log("Skipping stats for deleted doc");
+    return;
+  }
+
   const entities: YEntities = doc.getArray("entities");
 
   let assetsCount = 0;
