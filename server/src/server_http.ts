@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import passport from "passport";
 
 import * as middleware from "./middleware.js";
 import * as routes from "./routes/index.js";
@@ -13,6 +14,8 @@ app.use(express.json());
 // Enable CORS pre-flight requests across the board
 // See https://expressjs.com/en/resources/middleware/cors.html#enabling-cors-pre-flight
 app.options("*", cors());
+
+app.use(passport.initialize());
 
 // Courtesy page just to say we're a Relm web server
 app.get("/", function (_req, res) {
