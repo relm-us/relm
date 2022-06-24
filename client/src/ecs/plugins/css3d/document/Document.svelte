@@ -2,11 +2,14 @@
   import { Vector2 } from "three";
   import { slide } from "svelte/transition";
 
+  import { Entity } from "~/ecs/base";
+  import { worldManager } from "~/world";
   import { worldUIMode } from "~/stores/worldUIMode";
   import Fullwindow from "~/ui/lib/Fullwindow.svelte";
 
   import QuillOverlay from "../document/quill/QuillOverlay.svelte";
   import QuillPage from "./quill/QuillPage.svelte";
+  import { Document } from "./Document";
 
   export let docId: string;
   export let bgColor: string;
@@ -15,6 +18,8 @@
   export let kind: string;
   export let radius: number;
   export let size: Vector2;
+  export let pageList: string[];
+  export let entity: Entity;
 
   let editor = null;
   let toolbar = null;
@@ -22,8 +27,36 @@
 
   $: if (editor) editor.enable(editable && bigscreen);
 
+  let page = -1;
+  $: pageList.length, (page = pageList.findIndex((pageId) => docId === pageId));
+
+  let showPrev = false;
+  $: showPrev = page >= 1;
+
+  let showNext = false;
+  $: showNext = page >= 0 && page < pageList.length - 1;
+
   const activate = () => (bigscreen = true);
   const deactivate = () => (bigscreen = false);
+
+  function setDocId(newDocId) {
+    const spec: Document = entity.get(Document);
+
+    spec.docId = newDocId;
+    spec.modified();
+
+    worldManager.worldDoc.syncFrom(entity);
+  }
+
+  function prevPage() {
+    page = page - 1;
+    setDocId(pageList[page]);
+  }
+
+  function nextPage() {
+    page = page + 1;
+    setDocId(pageList[page]);
+  }
 
   // ignore warning about missing props
   $$props;
@@ -63,7 +96,14 @@
     showToolbar={false}
   >
     {#if $worldUIMode === "play"}
-      <QuillOverlay cloudy={false} on:click={activate} />
+      <QuillOverlay
+        cloudy={false}
+        {showPrev}
+        {showNext}
+        on:click={activate}
+        on:prev={prevPage}
+        on:next={nextPage}
+      />
     {:else if $worldUIMode === "build"}
       <QuillOverlay cloudy={true} />
     {/if}

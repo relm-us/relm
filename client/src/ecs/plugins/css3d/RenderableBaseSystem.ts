@@ -31,7 +31,6 @@ export class RenderableBaseSystem extends System {
   build(entity) {
     if (!entity.has(CssPlane)) this.buildCssPlane(entity);
 
-    const spec: any = entity.get(this.EcsComponent);
     const transform: Transform = entity.get(Transform);
     const cssPlane: CssPlane = entity.get(CssPlane);
 
@@ -53,9 +52,6 @@ export class RenderableBaseSystem extends System {
   }
 
   modify(entity) {
-    const spec: any = entity.get(this.EcsComponent);
-    const cssPlane: CssPlane = entity.get(CssPlane);
-
     const css3d = entity.get(this.EcsComponentRef).value;
     if (css3d) {
       const component = css3d.userData.renderable;
@@ -93,6 +89,7 @@ export class RenderableBaseSystem extends System {
     const cssPlane: CssPlane = entity.get(CssPlane);
     const size = cssPlane.getScreenSize();
     return {
+      entity,
       ...spec,
       size,
       kind: cssPlane.kind,

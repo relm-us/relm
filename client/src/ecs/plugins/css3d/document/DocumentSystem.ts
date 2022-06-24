@@ -1,4 +1,4 @@
-import { Not, Modified } from "~/ecs/base";
+import { Not, Modified, Entity } from "~/ecs/base";
 import { Object3DRef } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
 

@@ -161,7 +161,6 @@ export class WorldDoc extends EventEmitter {
         document = new Y.Text();
         this.documents.set(docId, document);
       }
-      console.log("document", document);
     }
 
     return document;

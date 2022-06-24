@@ -65,7 +65,6 @@ export class RenderableSystem extends System {
 
       const spec = entity.get(Renderable);
       const css3d = entity.get(RenderableRef)?.value;
-      const cssPlane: CssPlane = entity.get(CssPlane);
 
       copyTransform(css3d, transform, spec.scale, zeroOffset);
     });

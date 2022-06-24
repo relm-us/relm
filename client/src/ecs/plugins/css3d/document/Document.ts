@@ -1,4 +1,4 @@
-import { Component, StringType, NumberType, BooleanType } from "~/ecs/base";
+import { Component, StringType, BooleanType, JSONType } from "~/ecs/base";
 
 export class Document extends Component {
   docId: string;
@@ -12,6 +12,14 @@ export class Document extends Component {
       default: "doc1",
       editor: {
         label: "Document ID",
+      },
+    },
+
+    pageList: {
+      type: JSONType,
+      default: [],
+      editor: {
+        label: "Pages",
       },
     },
 
