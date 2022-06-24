@@ -42,7 +42,7 @@
   }
 
   .space {
-    padding: 3px 5px;
+    /* padding: 3px 5px; */
   }
 
   span {

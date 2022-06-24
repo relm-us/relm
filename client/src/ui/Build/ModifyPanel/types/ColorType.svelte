@@ -28,7 +28,7 @@
       {value}
       enableSwatches={true}
       enableAlpha={false}
-      enableFormat={false}
+      enableFormat={true}
       open={false}
       width="20px"
       height="20px"
