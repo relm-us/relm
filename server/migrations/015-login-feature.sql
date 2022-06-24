@@ -16,3 +16,6 @@ ADD COLUMN password_hash TEXT NOT NULL;
 
 ALTER TABLE users
 ALTER COLUMN email SET NOT NULL;
+
+ALTER TABLE users
+ADD CONSTRAINT unique_email UNIQUE(email);

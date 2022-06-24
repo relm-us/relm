@@ -73,3 +73,9 @@ export async function findOrCreateVerifiedPubKey({ participantId, x, y, sig }) {
     throw Error(`invalid signature`);
   }
 }
+
+export async function assignToUserId({ participantId, userId }) {
+  await db.none(sql`
+      UPDATE participants WHERE participant_id=${participantId} SET user_id=${userId}
+    `);
+}
