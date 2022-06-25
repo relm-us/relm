@@ -41,6 +41,9 @@ import {
 import { config } from "~/config";
 import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 
+import { DragPlane } from "~/events/input/PointerListener/DragPlane";
+import { SelectionBox } from "~/events/input/PointerListener/SelectionBox";
+
 import { makeLight } from "~/prefab/makeLight";
 
 import { Entity } from "~/ecs/base";
@@ -119,11 +122,24 @@ export class WorldManager {
   photoBooth: PhotoBooth;
   hoverOutlineEntity: Entity;
 
+  _dragPlane: DragPlane;
+  _selectionBox: SelectionBox;
+
   started: boolean = false;
 
   unsubs: Function[] = [];
   afterInitFns: Function[] = [];
   didInit: boolean = false;
+
+  get dragPlane(): DragPlane {
+    if (!this._dragPlane) this._dragPlane = new DragPlane(this.world);
+    return this._dragPlane;
+  }
+
+  get selectionBox(): SelectionBox {
+    if (!this._selectionBox) this._selectionBox = new SelectionBox(this.world);
+    return this._selectionBox;
+  }
 
   async init(
     dispatch: Dispatch,
@@ -364,6 +380,10 @@ export class WorldManager {
     this.camera.deinit();
     this.participants.deinit();
 
+    this.dragPlane.deinit();
+
+    this._dragPlane = null;
+    this._selectionBox = null;
     this.world = null;
     this.worldDoc = null;
     this.subrelm = null;

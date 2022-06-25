@@ -21,6 +21,11 @@ export class DragPlane {
     );
   }
 
+  deinit() {
+    this.world = null;
+    this.planes = null;
+  }
+
   setOrientation(orientation: PlaneOrientation) {
     this.orientation = orientation;
   }
