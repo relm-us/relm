@@ -2,13 +2,14 @@
 	"include": ["src/**/*"],
 	"exclude": ["node_modules/*", "public/*"],
 	"compilerOptions": {
-		"moduleResolution": "node",
 		"target": "es2017",
 		"module": "es2020",
-		"importsNotUsedAsValues": "remove",
-		"isolatedModules": true,
+		"moduleResolution": "node",
 		"esModuleInterop": true,
+		"isolatedModules": true,
 		"resolveJsonModule": true,
+		"importsNotUsedAsValues": "remove",
+    "preserveValueImports": false,
 		"sourceMap": true,
 		"baseUrl": "./src",
 		"paths": { "~/*": ["./*"] },
@@ -22,6 +23,9 @@
 			"svelte/transition",
 			"svelte/animate",
 			"svelte/easing"
-		]
+		],
+		"strict": false,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true
 	}
 }
