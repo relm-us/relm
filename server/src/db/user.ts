@@ -25,13 +25,13 @@ export async function createUser({ email, password, appearance } : UserCreationD
 
 export async function deleteUserByEmail({ email }) {
   await db.none(sql`
-      DELETE FROM users WHERE email=${email}
+      DELETE FROM users WHERE LOWER(email)=LOWER(${email})
     `);
 }
 
 export async function getUserIdByEmail({ email } : { email : string }) {
   const row = await db.oneOrNone(sql`
-    SELECT user_id FROM users WHERE email=${email}
+    SELECT user_id FROM users WHERE LOWER(email)=LOWER(${email})
   `);
 
   if (!row) {
@@ -42,7 +42,7 @@ export async function getUserIdByEmail({ email } : { email : string }) {
 
 export async function verifyCredentials({ email, password }) {
   const data = await db.oneOrNone(sql`
-      SELECT password_hash FROM users WHERE email=${email}
+      SELECT password_hash FROM users WHERE LOWER(email)=LOWER(${email})
     `);
 
   if (data === null) {
