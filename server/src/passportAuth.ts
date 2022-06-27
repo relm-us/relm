@@ -19,7 +19,7 @@ passport.use(new PassportLocalStrategy({
   }
 
   // Get user id and pass it along.
-  const userId = await User.getUserIdByEmail(email);
+  const userId = await User.getUserIdByEmail({ email });
   if (userId === null) {
     return done("Unable to find userId of email after local authentication.");
   }

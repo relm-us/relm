@@ -76,7 +76,7 @@ export async function findOrCreateVerifiedPubKey({ participantId, x, y, sig }) {
 
 export async function assignToUserId({ participantId, userId }) {
   await db.none(sql`
-      UPDATE participants WHERE participant_id=${participantId} SET user_id=${userId}
+      UPDATE participants SET user_id=${userId} WHERE participant_id=${participantId}
     `);
 }
 

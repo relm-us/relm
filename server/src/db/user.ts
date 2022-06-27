@@ -16,12 +16,13 @@ export async function createUser({ email, password, appearance } : UserCreationD
   const userData = {
     email,
     password_hash: hashedPassword,
-    appearance: appearance ? JSON.stringify(appearance) : null
+    appearance: JSON.stringify(appearance || getDefaultAppearance("male"))
   };
 
-  await db.none(sql`
-      ${INSERT("users", userData)}
+  const data = await db.one(sql`
+      ${INSERT("users", userData)} RETURNING user_id
     `);
+  return data.user_id;
 }
 
 export async function deleteUserByEmail({ email }) {
@@ -68,7 +69,7 @@ export async function getAppearanceData({ userId }): Promise<Appearance> {
     `);
 
   if (data === null) {
-    return null;
+    return getDefaultAppearance("male");
   }
 
   return Object.assign(getDefaultAppearance("male"), data.appearance);

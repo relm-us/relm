@@ -8,7 +8,8 @@ import {
   respondWithError,
   wrapAsync,
   intersection,
-  wrapAsyncPassport
+  wrapAsyncPassport,
+  respondWithFailure
 } from "../utils/index.js";
 
 export const auth = express.Router();
@@ -80,19 +81,40 @@ auth.post(
 );
 
 
-// Connect an account via email/password
+
 auth.post(
-  "/connect",
+  "/signup/local",
+  cors(),
+  middleware.authenticated(),
+  wrapAsync(async (req, res) => {
+    const { email, password } = req.body;
+
+    // Check if someone is using that email
+    const userExistsWithEmailProvided = (await User.getUserIdByEmail({ email })) !== null;
+    if (userExistsWithEmailProvided) {
+      return respondWithFailure(res, "email is already in use");
+    }
+
+    const userId = await User.createUser({
+      email,
+      password
+    });
+
+    const participantId = req.authenticatedParticipantId;
+    await Participant.assignToUserId({ participantId, userId });
+
+    return respondWithSuccess(res, {});
+  })
+);
+
+auth.post(
+  "/connect/local",
   cors(),
   middleware.authenticated(),
   wrapAsyncPassport("local", async (req, res, _, userId) => {
     // Authentication was successful! Link the participant to the user.
     const participantId = req.authenticatedParticipantId;
-
-    await Participant.assignToUserId({
-      userId,
-      participantId
-    });
+    await Participant.assignToUserId({ userId, participantId });
 
     respondWithSuccess(res, {});
   })
