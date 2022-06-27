@@ -68,7 +68,6 @@ auth.get(
 );
 
 // Social logins
-
 auth.post(
   "/connect",
   cors(),

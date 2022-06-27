@@ -1,3 +1,4 @@
+import { Appearance, getDefaultAppearance } from "relm-common";
 import { compareEncryptedPassword, encrypt } from "../utils/encryption.js";
 import { db, sql } from "./db.js";
 
@@ -55,7 +56,13 @@ export async function verifyCredentials({ email, password }) {
   return isCorrectPassword;
 }
 
-export async function getAppearanceData({ userId }) {
+export async function setAppearanceData({ userId, appearance } : { userId : any, appearance : Appearance }) {
+  await db.none(sql`
+    UPDATE users WHERE user_id=${userId} SET appearance=${JSON.stringify(appearance)}
+  `);
+}
+
+export async function getAppearanceData({ userId }): Promise<Appearance> {
   const data = await db.oneOrNone(sql`
       SELECT appearance FROM users WHERE user_id=${userId}
     `);
@@ -64,5 +71,5 @@ export async function getAppearanceData({ userId }) {
     return null;
   }
 
-  return data.appearance;
+  return Object.assign(getDefaultAppearance("male"), data.appearance);
 }
