@@ -67,12 +67,25 @@ auth.get(
   })
 );
 
-// Social logins
+// Update the appearance data of a participant id associated with a user.
+auth.post(
+  "/identity",
+  cors(),
+  middleware.authenticated(),
+  middleware.authenticatedWithUser(),
+  wrapAsync(async (req, res) => {
+    const payload = req.body.appearance;
+    // TODO: Verify payload and call setAppearanceData
+  })
+);
+
+
+// Connect an account via email/password
 auth.post(
   "/connect",
   cors(),
   middleware.authenticated(),
-  wrapAsyncPassport("local", async (req, res, next, userId) => {
+  wrapAsyncPassport("local", async (req, res, _, userId) => {
     // Authentication was successful! Link the participant to the user.
     const participantId = req.authenticatedParticipantId;
 

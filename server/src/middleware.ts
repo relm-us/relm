@@ -64,6 +64,21 @@ export function authenticated() {
   };
 }
 
+export function authenticatedWithUser() {
+  return async (req, _res, next) => {
+    const participantId = req.authenticatedParticipantId;
+
+    const userId = await Participant.getUserId({ participantId });
+
+    if (userId !== null) {
+      req.authenticatedUserId = userId;
+      next();
+    } else {
+      next(createError(401, "Not authenticated"));
+    }
+  };
+}
+
 export function acceptToken() {
   return async (req, _res, next) => {
     const token = getParam(req, "x-relm-invite-token");
