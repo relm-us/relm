@@ -1,7 +1,9 @@
+import type { Appearance, BinaryGender } from "relm-common";
+
 import { Morph } from "~/ecs/plugins/morph";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
 
-import { Appearance, BinaryGender, AvatarEntities } from "~/types";
+import { AvatarEntities } from "~/types";
 
 // prettier-ignore
 export const skinColors = [
@@ -11,7 +13,7 @@ export const skinColors = [
 // prettier-ignore
 export const hairColors = [
     "#debe99", "#aa8866", "#241c11", "#0a0a0a", "#9a3300"
-  ];
+];
 
 export function setAppearance(
   this: void,

@@ -1,6 +1,7 @@
 import type { Vector3 } from "three";
 import type { DeviceIds } from "video-mirror";
 import type { Writable } from "svelte/store";
+import type { Appearance } from "relm-common";
 
 import type { AuthenticationHeaders } from "relm-common";
 
@@ -16,7 +17,7 @@ import type {
 } from "~/types";
 import type { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 import type { Avatar } from "~/identity/Avatar";
-import type { Appearance, Participant } from "~/types/identity";
+import type { Participant } from "~/types/identity";
 
 export type State = {
   // initialization
