@@ -8,6 +8,7 @@ import {
   respondWithError,
   wrapAsync,
   intersection,
+  wrapAsyncPassport
 } from "../utils/index.js";
 
 export const auth = express.Router();
@@ -63,5 +64,24 @@ auth.get(
       respondWithSuccess(res, {
         appearance
       });
+  })
+);
+
+// Social logins
+
+auth.post(
+  "/connect",
+  cors(),
+  middleware.authenticated(),
+  wrapAsyncPassport("local", async (req, res, next, userId) => {
+    // Authentication was successful! Link the participant to the user.
+    const participantId = req.authenticatedParticipantId;
+
+    await Participant.assignToUserId({
+      userId,
+      participantId
+    });
+
+    respondWithSuccess(res, {});
   })
 );
