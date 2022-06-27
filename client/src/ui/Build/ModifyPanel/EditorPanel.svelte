@@ -9,7 +9,7 @@
   export let permits;
 
   let entity;
-  $: entity = worldManager.selection.getFirst($selectedEntities);
+  $: $selectedEntities, (entity = worldManager.selection.getFirst());
 
   const destroyEntity = () => {
     worldManager.worldDoc.delete(entity);
@@ -28,7 +28,6 @@
     <info>Nothing selected</info>
     <info>Click on an object to select</info>
   {:else if $selectedEntities.size === 1}
-    <!-- Must pass in $selectedEntities so svelte knows to re-render on new selection -->
     <EntityComponents {entity} />
     <toolbar>
       <Button on:click={destroyEntity}>Delete this Object</Button>

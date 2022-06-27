@@ -23,6 +23,11 @@ import { Entity } from "~/ecs/base";
 import { isInteractive } from "~/utils/isInteractive";
 
 export let isControllingAvatar: boolean = false;
+export let isControllingTransform: boolean = false;
+
+export function setControl(value: boolean) {
+  isControllingTransform = value;
+}
 
 const pointerPosition = new Vector2();
 const pointerStartPosition = new Vector2();
@@ -105,6 +110,11 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
 }
 
 export function onPointerUp(event: MouseEvent | TouchEvent) {
+  if (isControllingTransform) {
+    if (pointerState !== "initial") setNextPointerState("initial");
+    return;
+  }
+
   const $mode = get(worldUIMode);
 
   if ($mode === "build") {
@@ -142,6 +152,11 @@ export function onPointerUp(event: MouseEvent | TouchEvent) {
 }
 
 export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
+  if (isControllingTransform) {
+    if (pointerState !== "initial") setNextPointerState("initial");
+    return;
+  }
+
   const $mode = get(worldUIMode);
   const world = worldManager.world;
   const finder = world.presentation.intersectionFinder;
@@ -224,7 +239,7 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
   }
 }
 
-function setNextPointerState(nextState: PointerState) {
+export function setNextPointerState(nextState: PointerState) {
   if (
     nextState === "drag" ||
     nextState === "drag-select" ||
