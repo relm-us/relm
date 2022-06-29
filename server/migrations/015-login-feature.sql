@@ -12,7 +12,7 @@ CREATE TABLE login_social_connections (
 
 -- Modify existing user table to allow storing passwords and ensure the email cannot be not null.
 ALTER TABLE users
-ADD COLUMN password_hash TEXT NOT NULL;
+ADD COLUMN password_hash TEXT;
 
 ALTER TABLE users
 ALTER COLUMN email SET NOT NULL;
