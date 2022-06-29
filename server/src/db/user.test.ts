@@ -4,12 +4,8 @@ import * as User from "./user.js";
 
 import { init, deinit } from "./db.js";
 
-describe("Relm model tests", () => {
+describe("User model tests", () => {
   beforeAll(init);
-  afterAll(async () => {
-    // Clean up leftover test data.
-    await User.deleteUserByEmail(defaultUserData);
-  });
   afterAll(deinit);
 
   const defaultUserData = {

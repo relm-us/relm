@@ -7,7 +7,7 @@ import { INSERT } from "./pgSqlHelpers.js";
 type UserCreationData = {
   email : string,
   password : string,
-  appearance? : object
+  appearance? : Appearance
 };
 
 export async function createUser({ email, password, appearance } : UserCreationData) {
