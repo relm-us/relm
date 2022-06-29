@@ -59,7 +59,7 @@ export async function verifyCredentials({ email, password }) {
 
 export async function setAppearanceData({ userId, appearance } : { userId : any, appearance : Appearance }) {
   await db.none(sql`
-    UPDATE users WHERE user_id=${userId} SET appearance=${appearance}
+    UPDATE users SET appearance=${appearance} WHERE user_id=${userId}
   `);
 }
 

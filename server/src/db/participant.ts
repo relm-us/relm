@@ -84,7 +84,6 @@ export async function getUserId({ participantId }) {
   const data = await db.oneOrNone(sql`
     SELECT user_id FROM participants WHERE participant_id=${participantId}
   `);
-
   if (data !== null) {
     return data.user_id;
   } else {

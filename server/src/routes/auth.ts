@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import { Appearance, isValidAppearance } from "relm-common";
 
 import * as middleware from "../middleware.js";
 import { Participant, Permission, User } from "../db/index.js";
@@ -53,16 +54,20 @@ auth.get(
   cors(),
   middleware.authenticated(),
   wrapAsync(async (req, res) => {
-      const userId = await Participant.getUserId(req.authenticatedParticipantId); 
+      const userId = await Participant.getUserId({
+        participantId: req.authenticatedParticipantId
+      }); 
+
       if (userId === null) {
         return respondWithSuccess(res, {
+          isConnected: false,
           appearance: null
         });
       }
       
       const appearance = await User.getAppearanceData({ userId });
-
       respondWithSuccess(res, {
+        isConnected: true,
         appearance
       });
   })
@@ -75,8 +80,39 @@ auth.post(
   middleware.authenticated(),
   middleware.authenticatedWithUser(),
   wrapAsync(async (req, res) => {
-    const payload = req.body.appearance;
-    // TODO: Verify payload and call setAppearanceData
+    const userId = req.authenticatedUserId;
+    const { appearance : appearancePayload } = req.body;
+    if (appearancePayload === null) {
+      return respondWithError(res, "missing appearance in payload");
+    }
+
+    if (!isValidAppearance(appearancePayload)) {
+      return respondWithError(res, "invalid appearance");
+    }
+
+    const appearance : Appearance = {
+      genderSlider: appearancePayload.genderSlider,
+      widthSlider: appearancePayload.widthSlider,
+      beard: appearancePayload.beard,
+      belt: appearancePayload.belt,
+      hair: appearancePayload.hair,
+      top: appearancePayload.top,
+      bottom: appearancePayload.bottom,
+      shoes: appearancePayload.shoes,
+      skinColor: appearancePayload.skinColor,
+      hairColor: appearancePayload.hairColor,
+      topColor: appearancePayload.topColor,
+      bottomColor: appearancePayload.bottomColor,
+      beltColor: appearancePayload.beltColor,
+      shoeColor: appearancePayload.shoeColor
+    };
+
+    await User.setAppearanceData({
+      userId,
+      appearance
+    });
+
+    respondWithSuccess(res, {});
   })
 );
 
