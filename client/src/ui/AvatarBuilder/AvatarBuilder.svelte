@@ -1,10 +1,8 @@
 <script lang="ts">
-  import type { HairType, TopType, BottomType, ShoeType } from "~/types";
-
   import { worldManager } from "~/world";
   import { _ } from "~/i18n";
 
-  import { skinColors, hairColors } from "~/identity/Avatar/appearance";
+  import { AVAILABLE_HAIR_COLORS, AVAILABLE_SKIN_COLORS, HairType, TopType, BottomType, ShoeType } from "relm-common";
 
   import Slider from "~/ui/lib/Slider";
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
@@ -128,29 +126,29 @@
   <Section name={$_("avatar.skintone", { default: "Skintone" })}>
     <div class="row">
       <Color
-        value={skinColors[0]}
-        selected={skinColor === skinColors[0]}
-        on:click={setSkinColor(skinColors[0])}
+        value={AVAILABLE_SKIN_COLORS[0]}
+        selected={skinColor === AVAILABLE_SKIN_COLORS[0]}
+        on:click={setSkinColor(AVAILABLE_SKIN_COLORS[0])}
       />
       <Color
-        value={skinColors[1]}
-        selected={skinColor === skinColors[1]}
-        on:click={setSkinColor(skinColors[1])}
+        value={AVAILABLE_SKIN_COLORS[1]}
+        selected={skinColor === AVAILABLE_SKIN_COLORS[1]}
+        on:click={setSkinColor(AVAILABLE_SKIN_COLORS[1])}
       />
       <Color
-        value={skinColors[2]}
-        selected={skinColor === skinColors[2]}
-        on:click={setSkinColor(skinColors[2])}
+        value={AVAILABLE_SKIN_COLORS[2]}
+        selected={skinColor === AVAILABLE_SKIN_COLORS[2]}
+        on:click={setSkinColor(AVAILABLE_SKIN_COLORS[2])}
       />
       <Color
-        value={skinColors[3]}
-        selected={skinColor === skinColors[3]}
-        on:click={setSkinColor(skinColors[3])}
+        value={AVAILABLE_SKIN_COLORS[3]}
+        selected={skinColor === AVAILABLE_SKIN_COLORS[3]}
+        on:click={setSkinColor(AVAILABLE_SKIN_COLORS[3])}
       />
       <Color
-        value={skinColors[4]}
-        selected={skinColor === skinColors[4]}
-        on:click={setSkinColor(skinColors[4])}
+        value={AVAILABLE_SKIN_COLORS[4]}
+        selected={skinColor === AVAILABLE_SKIN_COLORS[4]}
+        on:click={setSkinColor(AVAILABLE_SKIN_COLORS[4])}
       />
     </div>
   </Section>
@@ -180,29 +178,29 @@
     </div>
     <div class="row space-above">
       <Color
-        value={hairColors[0]}
-        selected={hairColor === hairColors[0]}
-        on:click={setHairColor(hairColors[0])}
+        value={AVAILABLE_HAIR_COLORS[0]}
+        selected={hairColor === AVAILABLE_HAIR_COLORS[0]}
+        on:click={setHairColor(AVAILABLE_HAIR_COLORS[0])}
       />
       <Color
-        value={hairColors[1]}
-        selected={hairColor === hairColors[1]}
-        on:click={setHairColor(hairColors[1])}
+        value={AVAILABLE_HAIR_COLORS[1]}
+        selected={hairColor === AVAILABLE_HAIR_COLORS[1]}
+        on:click={setHairColor(AVAILABLE_HAIR_COLORS[1])}
       />
       <Color
-        value={hairColors[2]}
-        selected={hairColor === hairColors[2]}
-        on:click={setHairColor(hairColors[2])}
+        value={AVAILABLE_HAIR_COLORS[2]}
+        selected={hairColor === AVAILABLE_HAIR_COLORS[2]}
+        on:click={setHairColor(AVAILABLE_HAIR_COLORS[2])}
       />
       <Color
-        value={hairColors[3]}
-        selected={hairColor === hairColors[3]}
-        on:click={setHairColor(hairColors[3])}
+        value={AVAILABLE_HAIR_COLORS[3]}
+        selected={hairColor === AVAILABLE_HAIR_COLORS[3]}
+        on:click={setHairColor(AVAILABLE_HAIR_COLORS[3])}
       />
       <Color
-        value={hairColors[4]}
-        selected={hairColor === hairColors[4]}
-        on:click={setHairColor(hairColors[4])}
+        value={AVAILABLE_HAIR_COLORS[4]}
+        selected={hairColor === AVAILABLE_HAIR_COLORS[4]}
+        on:click={setHairColor(AVAILABLE_HAIR_COLORS[4])}
       />
     </div>
   </Section>
