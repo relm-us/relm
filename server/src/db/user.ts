@@ -59,7 +59,7 @@ export async function verifyCredentials({ email, password }) {
 
 export async function setAppearanceData({ userId, appearance } : { userId : any, appearance : Appearance }) {
   await db.none(sql`
-    UPDATE users WHERE user_id=${userId} SET appearance=${JSON.stringify(appearance)}
+    UPDATE users WHERE user_id=${userId} SET appearance=${appearance}
   `);
 }
 
@@ -69,7 +69,7 @@ export async function getAppearanceData({ userId }): Promise<Appearance> {
     `);
 
   if (data === null) {
-    return getDefaultAppearance("male");
+    return null;
   }
 
   return Object.assign(getDefaultAppearance("male"), data.appearance);
