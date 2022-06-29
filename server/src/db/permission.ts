@@ -98,11 +98,24 @@ export async function getPermissions({
   const relms = relmNames ? relmNames : relmIds;
   const rows = await db.manyOrNone(sql`
       --
+      -- Gather all participant ids belonging to the user
+      --
+      WITH puid AS (
+        SELECT user_id FROM participants WHERE participant_id=${participantId}
+      ), user_participant_ids AS (
+        SELECT participant_id FROM participants WHERE user_id=(SELECT user_id FROM puid)
+          GROUP BY participants.participant_id HAVING COUNT((SELECT user_id FROM puid)) > 0
+      )
+      --
       -- Check for wildcard permission (e.g. admin)
       --
       SELECT '*' AS relm, p.permits
       FROM permissions p
-      WHERE p.participant_id = ${participantId}
+      WHERE (
+          p.participant_id = ${participantId} OR p.participant_id IN (
+            SELECT participant_id FROM user_participant_ids
+          )
+        )
         AND p.relm_id IS NULL
 
       UNION
@@ -116,7 +129,11 @@ export async function getPermissions({
       FROM relms AS r
       LEFT JOIN (
         SELECT * FROM permissions
-        WHERE participant_id = ${participantId}
+        WHERE (
+          participant_id = ${participantId} OR participant_id IN (
+            SELECT participant_id FROM user_participant_ids
+          )
+        )
       ) p USING (relm_id)
       WHERE r.relm_${raw(relmNames ? "name" : "id")} ${IN(relms)}
   `);
