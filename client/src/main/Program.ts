@@ -625,7 +625,7 @@ export function makeProgram(): Program {
           clientId: state.worldDoc.ydoc.clientID,
           status: "present",
           name: state.overrideParticipantName || data.name,
-          showAudio: state.initialAudioDesired,
+          showAudio: state.isConnected ? data.showAudio : state.initialAudioDesired,
           showVideo: state.initialVideoDesired,
           speaking: false,
           appearance:
