@@ -1,10 +1,14 @@
-import { isValidColor, isValidAppearance } from "relm-common";
+import { isValidColor, isValidAppearance, PlayerStatus } from "relm-common";
+
+function isValidStatus(status) {
+  return (["initial", "present", "away"] as PlayerStatus[]).includes(status);
+}
 
 export function isValidIdentity(identityPayload) {
   return (typeof identityPayload === "object")
             && (typeof identityPayload.name === "string")
             && (typeof identityPayload.color === "string" && isValidColor(identityPayload.color))
-            && (typeof identityPayload.status === "string")
+            && (isValidStatus(identityPayload.status))
             && (typeof identityPayload.showAudio === "boolean")
             && (typeof identityPayload.showVideo === "boolean")
             && (
