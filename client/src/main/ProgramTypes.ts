@@ -140,7 +140,7 @@ export type Message =
   | { id: "didJoinAudioVideo"; avDisconnect: Function }
   | { id: "setUpAvatar" }
   | { id: "didSetUpAvatar"; appearance?: Appearance }
-  | { id: "gotIdentityData", identity: IdentityData, isConnected: boolean }
+  | { id: "gotIdentityData", identity: SavedIdentityData, isConnected: boolean }
   | { id: "prepareLocalParticipantForWorld" }
   | { id: "initWorldManager" }
   | { id: "didInitWorldManager" }

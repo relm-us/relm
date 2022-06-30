@@ -15,18 +15,14 @@ export const nextSetupStep = (state: State) => async (dispatch: Dispatch) => {
     } else {
       dispatch({ id: "setUpAudioVideo" });
     }
-  } else if (state.avatarSetupDone) {
-    dispatch({ id: "loadStart" });
-  } else {
-    if (state.savedIdentity && state.savedIdentity.appearance) {
-      dispatch({ id: "didSetUpAvatar", appearance: state.savedIdentity.appearance });
+  } else if (!state.avatarSetupDone) {
+    const skipAvatarSetup = get(askAvatarSetup) === false;
+    if (!skipAvatarSetup) {
+      dispatch({ id: "setUpAvatar" });
     } else {
-      const skipAvatarSetup = get(askAvatarSetup) === false;
-      if (!skipAvatarSetup) {
-        dispatch({ id: "setUpAvatar" });
-      } else {
-        dispatch({ id: "didSetUpAvatar", appearance: null });
-      }
+      dispatch({ id: "didSetUpAvatar", appearance: null });
     }
+  } else {
+    dispatch({ id: "loadStart" });
   }
 };

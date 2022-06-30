@@ -124,10 +124,27 @@ export function makeProgram(): Program {
         ];
       }
       case "gotIdentityData": {
+        const newIdentityData: IdentityData = {
+          ...get(state.localIdentityData)
+        };
+        if (msg.identity) {
+          newIdentityData.name = msg.identity.name;
+          newIdentityData.color = msg.identity.color;
+          newIdentityData.appearance = msg.identity.appearance;
+          if (msg.identity.appearance) {
+            state.avatarSetupDone = true;
+          }
+          
+          newIdentityData.equipment = msg.identity.equipment;
+          newIdentityData.status = msg.identity.status;
+          newIdentityData.showAudio = msg.identity.showAudio;
+          newIdentityData.showVideo = msg.identity.showVideo;
+        }
+
+        state.localIdentityData.set(newIdentityData);
         return [
           {
-            ...state,
-            savedIdentity: msg.identity
+            ...state
           },
           getRelmPermitsAndMetadata(state.pageParams, state.authHeaders)
         ];
