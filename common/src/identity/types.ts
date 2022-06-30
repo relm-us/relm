@@ -31,6 +31,31 @@ export type BottomType = 0 | 1 | 2 | 3;
  */
 export type ShoeType = 0 | 1 | 2 | 3 | 4;
 
+export type PlayerStatus = "initial" | "present" | "away";
+
+export interface SavedIdentityData {
+  // Participant's name (chosen randomly at first, "Guest-xyz")
+  name: string;
+
+  // Participant's preferred color (chosen randomly at first)
+  color: string;
+  
+  // Has participant notified that they will be "away"?
+  status: PlayerStatus;
+  
+  // Participant has mic enabled?
+  showAudio: boolean;
+  
+  // Participant has video enabled?
+  showVideo: boolean;
+
+  // Avatar appearance, based on Avatar Builder settings
+  appearance?: Appearance;
+
+  // If the participant is holding / wearing / has something equipped 
+  equipment?: Equipment;
+}
+
 export type Appearance = {
   genderSlider: number;
   widthSlider: number;

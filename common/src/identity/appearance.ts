@@ -1,13 +1,32 @@
-import { HairType } from "./types.js";
+import { Appearance, BinaryGender } from "./types.js";
+import { AVAILABLE_HAIR_COLORS, AVAILABLE_SKIN_COLORS } from "./constants.js";
 
-const HEX_COLOR_CODE_REGEX = /^#[A-Fa-f0-9]{6}$/;
+import { HairType } from "./types.js";
+import { isValidColor } from "../utils/isValidColor.js";
+
+export function getDefaultAppearance(gender: BinaryGender): Appearance {
+  return {
+    genderSlider: gender === "male" ? 0.15 : 0.85,
+    widthSlider: 0.1,
+
+    beard: false,
+    belt: true,
+    hair: gender === "male" ? "short" : "mid",
+    top: 4,
+    bottom: 3,
+    shoes: gender === "male" ? 3 : 4,
+
+    skinColor: AVAILABLE_SKIN_COLORS[2],
+    hairColor: AVAILABLE_HAIR_COLORS[2],
+    topColor: "#fbfbfb",
+    bottomColor: "#2e2b19",
+    beltColor: "#7a6f38",
+    shoeColor: "#080705",
+  };
+}
 
 function inclusiveCheck(value : number, lower : number, upper : number) {
   return value >= lower && value <= upper;
-}
-
-function isValidColor(color : string) {
-  return HEX_COLOR_CODE_REGEX.test(color);
 }
 
 function isValidHair(hair) {
@@ -21,7 +40,8 @@ function isValidHair(hair) {
  * @returns if the appearance contains valid Appearance properties.
  */
 export function isValidAppearance(payload) {
-  return (typeof payload.genderSlider === "number" && inclusiveCheck(payload.genderSlider, 0, 1))
+  return (typeof payload === "object")
+            && (typeof payload.genderSlider === "number" && inclusiveCheck(payload.genderSlider, 0, 1))
             && (typeof payload.widthSlider === "number" && inclusiveCheck(payload.widthSlider, 0, 1))
             && (typeof payload.beard === "boolean")
             && (typeof payload.belt === "boolean")

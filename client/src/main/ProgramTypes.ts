@@ -1,7 +1,7 @@
 import type { Vector3 } from "three";
 import type { DeviceIds } from "video-mirror";
 import type { Writable } from "svelte/store";
-import type { Appearance } from "relm-common";
+import type { Appearance, SavedIdentityData } from "relm-common";
 
 import type { AuthenticationHeaders } from "relm-common";
 
@@ -10,14 +10,13 @@ import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import type { AVConnection } from "~/av/AVConnection";
 
 import type {
-  IdentityData,
   UpdateData,
   PageParams,
   WorldDocStatus,
 } from "~/types";
 import type { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 import type { Avatar } from "~/identity/Avatar";
-import type { Participant } from "~/types/identity";
+import type { IdentityData, Participant } from "~/types/identity";
 
 export type State = {
   // initialization
@@ -26,6 +25,7 @@ export type State = {
   authHeaders?: AuthenticationHeaders;
   entrywayPosition?: Vector3;
   entrywayUnsub?: Function;
+  savedIdentity?: SavedIdentityData;
 
   // relm metadata
   relmDocId?: string; // server-assigned UUID for the relm
@@ -86,6 +86,7 @@ export type Message =
   | { id: "enterPortal"; relmName: string; entryway: string }
   | { id: "didEnterPortal" }
   | { id: "didResetWorld" }
+  | { id: "gotIdentityData", identity: SavedIdentityData }
   | {
       id: "gotRelmPermitsAndMetadata";
       permits: string[];
@@ -139,6 +140,7 @@ export type Message =
   | { id: "didJoinAudioVideo"; avDisconnect: Function }
   | { id: "setUpAvatar" }
   | { id: "didSetUpAvatar"; appearance?: Appearance }
+  | { id: "gotIdentityData", identity: IdentityData, isConnected: boolean }
   | { id: "prepareLocalParticipantForWorld" }
   | { id: "initWorldManager" }
   | { id: "didInitWorldManager" }

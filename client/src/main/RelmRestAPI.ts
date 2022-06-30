@@ -1,4 +1,4 @@
-import type { AuthenticationHeaders } from "relm-common";
+import type { AuthenticationHeaders, SavedIdentityData } from "relm-common";
 import type { LibraryAsset } from "~/types";
 
 import { CancellablePromise } from "real-cancellable-promise";
@@ -262,4 +262,23 @@ export class RelmRestAPI {
       throw Error(`can't clone relm: ${result.reason}`);
     }
   }
+
+  async getIdentityData() {
+    type Result = 
+      | { status: "success", isConnected: boolean, identity: SavedIdentityData }
+      | { status: "error", code?: number, reason : string };
+
+    const result: Result = await this.get("/auth/identity");
+    
+    if (result.status === "success") {
+      const { isConnected, identity } = result;
+      return {
+        isConnected,
+        identity
+      };
+    } else {
+      throw Error(`Failed to retrieve identity data: ${result.reason}`);
+    }
+  }
+
 }

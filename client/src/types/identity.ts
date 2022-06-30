@@ -1,47 +1,7 @@
-import type { Appearance, Equipment } from "relm-common";
+import type { Appearance, Equipment, PlayerStatus, SavedIdentityData } from "relm-common";
 
 import type { Entity } from "~/ecs/base";
 import type { Avatar } from "~/identity/Avatar";
-
-export type PlayerStatus = "initial" | "present" | "away";
-
-export type IdentityData = {
-  // Participant's name (chosen randomly at first, "Guest-xyz")
-  name: string;
-
-  // Participant's preferred color (chosen randomly at first)
-  color: string;
-
-  // Has participant notified that they will be "away"?
-  status: PlayerStatus;
-
-  // Show the speech bubble?
-  speaking: boolean;
-
-  // Show current emoji?
-  emoting: boolean;
-
-  // Participant has mic enabled?
-  showAudio: boolean;
-
-  // Participant has video enabled?
-  showVideo: boolean;
-
-  // Avatar appearance, based on Avatar Builder settings
-  appearance?: Appearance;
-
-  // If the participant is holding / wearing / has something equipped
-  equipment?: Equipment;
-
-  // Last known yjs clientId for this participant
-  clientId?: number;
-
-  // Most recent chat message (used for chat bubble)
-  message?: string;
-
-  // Most recent emoji (used for emote)
-  emoji?: string;
-};
 
 export type UpdateData = {
   name?: string;
@@ -57,6 +17,23 @@ export type UpdateData = {
   message?: string;
   emoji?: string;
 };
+
+export interface IdentityData extends SavedIdentityData {
+  // Show the speech bubble?
+  speaking: boolean;
+
+  // Show current emoji?
+  emoting: boolean;
+
+  // Last known yjs clientId for this participant
+  clientId?: number;
+
+  // Most recent chat message (used for chat bubble)
+  message?: string;
+
+  // Most recent emoji (used for emote)
+  emoji?: string;
+}
 
 export type TransformData = [
   x: number,

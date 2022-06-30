@@ -1,6 +1,6 @@
 -- Appearance data is now saved per user.
 ALTER TABLE users
-ADD COLUMN appearance JSONB;
+ADD COLUMN identity_data JSONB;
 
 -- Create social connections table.
 CREATE TABLE login_social_connections (

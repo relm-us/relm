@@ -1,4 +1,4 @@
-import { Appearance, getDefaultAppearance } from "relm-common";
+import { SavedIdentityData } from "relm-common";
 import { compareEncryptedPassword, encrypt } from "../utils/encryption.js";
 import { db, sql } from "./db.js";
 
@@ -6,17 +6,15 @@ import { INSERT } from "./pgSqlHelpers.js";
 
 type UserCreationData = {
   email : string,
-  password : string,
-  appearance? : Appearance
+  password : string
 };
 
-export async function createUser({ email, password, appearance } : UserCreationData) {
+export async function createUser({ email, password } : UserCreationData) {
   const hashedPassword = await encrypt(password);
 
   const userData = {
     email,
-    password_hash: hashedPassword,
-    appearance: JSON.stringify(appearance || getDefaultAppearance("male"))
+    password_hash: hashedPassword
   };
 
   const data = await db.one(sql`
@@ -57,20 +55,20 @@ export async function verifyCredentials({ email, password }) {
   return isCorrectPassword;
 }
 
-export async function setAppearanceData({ userId, appearance } : { userId : any, appearance : Appearance }) {
+export async function setIdentityData({ userId, identity } : { userId : any, identity : SavedIdentityData }) {
   await db.none(sql`
-    UPDATE users SET appearance=${appearance} WHERE user_id=${userId}
+    UPDATE users SET identity_data=${identity} WHERE user_id=${userId}
   `);
 }
 
-export async function getAppearanceData({ userId }): Promise<Appearance> {
+export async function getIdentityData({ userId }): Promise<SavedIdentityData> {
   const data = await db.oneOrNone(sql`
-      SELECT appearance FROM users WHERE user_id=${userId}
+      SELECT identity_data FROM users WHERE user_id=${userId}
     `);
 
   if (data === null) {
     return null;
   }
 
-  return Object.assign(getDefaultAppearance("male"), data.appearance);
+  return data.identity_data;
 }

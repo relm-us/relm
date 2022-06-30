@@ -50,6 +50,7 @@ import { getDefaultAppearance } from "~/identity/Avatar/appearance";
 import { localIdentityData } from "~/stores/identityData";
 import { IdentityData, UpdateData } from "~/types";
 import { Oculus } from "~/ecs/plugins/html2d";
+import { getIdentityData } from "./effects/getIdentityData";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -119,7 +120,16 @@ export function makeProgram(): Program {
             authHeaders: msg.authHeaders,
             avConnection: new AVConnection(participantId),
           },
-          getRelmPermitsAndMetadata(state.pageParams, msg.authHeaders),
+          getIdentityData(state.pageParams, msg.authHeaders),
+        ];
+      }
+      case "gotIdentityData": {
+        return [
+          {
+            ...state,
+            savedIdentity: msg.identity
+          },
+          getRelmPermitsAndMetadata(state.pageParams, state.authHeaders)
         ];
       }
 

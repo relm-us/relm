@@ -1,6 +1,6 @@
 export * from "./types.js";
 
-export * from "./appearance/index.js";
+export * from "./identity/index.js";
 
 export * from "./serialize/index.js";
 

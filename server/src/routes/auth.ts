@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { Appearance, isValidAppearance } from "relm-common";
+import { Appearance, getDefaultAppearance, SavedIdentityData } from "relm-common";
 
 import * as middleware from "../middleware.js";
 import { Participant, Permission, User } from "../db/index.js";
@@ -9,6 +9,7 @@ import {
   respondWithError,
   wrapAsync,
   intersection,
+  isValidIdentity,
   wrapAsyncPassport,
   respondWithFailure
 } from "../utils/index.js";
@@ -61,14 +62,14 @@ auth.get(
       if (userId === null) {
         return respondWithSuccess(res, {
           isConnected: false,
-          appearance: null
+          identity: null
         });
       }
       
-      const appearance = await User.getAppearanceData({ userId });
+      const identity = await User.getIdentityData({ userId });
       respondWithSuccess(res, {
         isConnected: true,
-        appearance
+        identity
       });
   })
 );
@@ -81,16 +82,17 @@ auth.post(
   middleware.authenticatedWithUser(),
   wrapAsync(async (req, res) => {
     const userId = req.authenticatedUserId;
-    const { appearance : appearancePayload } = req.body;
-    if (appearancePayload === null) {
-      return respondWithError(res, "missing appearance in payload");
+    const { identity : identityPayload } = req.body;
+    if (identityPayload === null) {
+      return respondWithError(res, "missing identity in payload");
     }
 
-    if (!isValidAppearance(appearancePayload)) {
-      return respondWithError(res, "invalid appearance");
+    if (!isValidIdentity(identityPayload)) {
+      return respondWithError(res, "invalid identity");
     }
 
-    const appearance : Appearance = {
+    const appearancePayload = identityPayload.appearance || getDefaultAppearance("male");
+    const appearance: Appearance = {
       genderSlider: appearancePayload.genderSlider,
       widthSlider: appearancePayload.widthSlider,
       beard: appearancePayload.beard,
@@ -107,9 +109,19 @@ auth.post(
       shoeColor: appearancePayload.shoeColor
     };
 
-    await User.setAppearanceData({
-      userId,
+    const identity: SavedIdentityData = {
+      name: identityPayload.name,
+      color: identityPayload.color,
+      status: identityPayload.status,
+      showAudio: identityPayload.showAudio,
+      showVideo: identityPayload.showVideo,
+      equipment: identityPayload.equipment,
       appearance
+    };
+
+    await User.setIdentityData({
+      userId,
+      identity
     });
 
     respondWithSuccess(res, {});
