@@ -26,6 +26,7 @@ export type State = {
   entrywayPosition?: Vector3;
   entrywayUnsub?: Function;
   savedIdentity?: SavedIdentityData;
+  isConnected?: boolean;
 
   // relm metadata
   relmDocId?: string; // server-assigned UUID for the relm
@@ -86,7 +87,7 @@ export type Message =
   | { id: "enterPortal"; relmName: string; entryway: string }
   | { id: "didEnterPortal" }
   | { id: "didResetWorld" }
-  | { id: "gotIdentityData", identity: SavedIdentityData }
+  | { id: "gotIdentityData", identity: SavedIdentityData, isConnected: boolean }
   | {
       id: "gotRelmPermitsAndMetadata";
       permits: string[];

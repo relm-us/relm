@@ -266,7 +266,7 @@ export class RelmRestAPI {
   async getIdentityData() {
     type Result = 
       | { status: "success", isConnected: boolean, identity: SavedIdentityData }
-      | { status: "error", code?: number, reason : string };
+      | { status: "error", code?: number, reason: string };
 
     const result: Result = await this.get("/auth/identity");
     
@@ -278,6 +278,20 @@ export class RelmRestAPI {
       };
     } else {
       throw Error(`Failed to retrieve identity data: ${result.reason}`);
+    }
+  }
+
+  async setIdentityData({ identity } : { identity: SavedIdentityData }) {
+    type Result = 
+      | { status: "success" }
+      | { status: "error", code?: number, reason: string };
+  
+    const result: Result = await this.post("/auth/identity", {
+      identity
+    });
+
+    if (result.status === "error") {
+      throw Error(`Failed to update identity data: ${result.reason}`);
     }
   }
 

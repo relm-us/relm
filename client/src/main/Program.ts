@@ -7,6 +7,7 @@ import { worldManager } from "~/world";
 
 import { Cmd } from "~/utils/runtime";
 import { exists } from "~/utils/exists";
+import { isEqual } from "~/utils/isEqual";
 
 import AvatarChooser from "~/ui/AvatarBuilder/AvatarChooser.svelte";
 
@@ -51,6 +52,7 @@ import { localIdentityData } from "~/stores/identityData";
 import { IdentityData, UpdateData } from "~/types";
 import { Oculus } from "~/ecs/plugins/html2d";
 import { getIdentityData } from "./effects/getIdentityData";
+import { saveIdentityData } from "./effects/saveIdentityData";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -134,7 +136,7 @@ export function makeProgram(): Program {
           if (msg.identity.appearance) {
             state.avatarSetupDone = true;
           }
-          
+
           newIdentityData.equipment = msg.identity.equipment;
           newIdentityData.status = msg.identity.status;
           newIdentityData.showAudio = msg.identity.showAudio;
@@ -144,7 +146,8 @@ export function makeProgram(): Program {
         state.localIdentityData.set(newIdentityData);
         return [
           {
-            ...state
+            ...state,
+            isConnected: msg.isConnected
           },
           getRelmPermitsAndMetadata(state.pageParams, state.authHeaders)
         ];
@@ -265,19 +268,30 @@ export function makeProgram(): Program {
           ...msg.identityData,
         };
 
-        // update identityData on participant
-        Object.assign(localParticipant.identityData, newIdentityData);
+        // Check if we updated the identity data
+        const isNewIdentityUpdate = !isEqual(newIdentityData, get(state.localIdentityData));
 
-        // update identityData in Program state & Svelte store
-        state.localIdentityData.set(newIdentityData);
+        // Do we need to update the identity data to other participants?
+        if (isNewIdentityUpdate) {
+          // update identityData on participant
+          Object.assign(localParticipant.identityData, newIdentityData);
 
-        // broadcast identityData to other participants
-        state.broker.setIdentityData(participantId, newIdentityData);
+          // update identityData in Program state & Svelte store
+          state.localIdentityData.set(newIdentityData);
 
-        // sync identityData to HTML and ECS entities
-        setAvatarFromParticipant(localParticipant);
+          // broadcast identityData to other participants
+          state.broker.setIdentityData(participantId, newIdentityData);
 
-        return [state];
+          // sync identityData to HTML and ECS entities
+          setAvatarFromParticipant(localParticipant);
+        }
+
+        // Save identity data to server if necessary
+        if (isNewIdentityUpdate && state.isConnected) {
+          return [state, saveIdentityData(state)];
+        } else {
+          return [state];
+        }
       }
 
       // does not happen on initial page load; `enterPortal` is
