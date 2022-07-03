@@ -6,7 +6,6 @@ import {
   Matrix4,
   MathUtils,
 } from "three";
-import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 
 import { traverseMaterials } from "~/utils/traverseMaterials";
 
@@ -17,6 +16,7 @@ import { Model, ModelRef, ModelAttached } from "../components";
 import { Presentation, Object3DRef } from "~/ecs/plugins/core";
 import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 
+import { clone } from "./SkeletonUtils";
 import { normalize } from "../normalize";
 
 /**
@@ -82,7 +82,7 @@ export class ModelSystem extends System {
     const invalidErrorMsg = this.invalidModel(scene);
     if (invalidErrorMsg) return this.error(entity, invalidErrorMsg);
 
-    const clonedScene = SkeletonUtils.clone(scene);
+    const clonedScene = clone(scene);
 
     // TODO: Find a better way to fix bounding box for skinned mesh general case
     if (entity.name === "Avatar")
