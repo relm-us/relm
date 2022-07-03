@@ -1,5 +1,5 @@
-import { Vector3, Vector4 } from "three";
-import { Geometry, Face3 } from "three/examples/jsm/deprecated/Geometry";
+import { BufferGeometry, Vector3, Vector4 } from "three";
+import { Face3 } from "three/examples/jsm/deprecated/Geometry";
 
 /*
   Implemented from a technique described here:
@@ -13,7 +13,7 @@ import { Geometry, Face3 } from "three/examples/jsm/deprecated/Geometry";
 */
 
 export function CapsuleGeometry(radius = 1, height = 2, N = 12) {
-  const geometry = new Geometry();
+  const geometry = new BufferGeometry();
   const TWOPI = Math.PI * 2;
 
   const PID2 = 1.570796326794896619231322;
