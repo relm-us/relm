@@ -211,7 +211,7 @@ export class ControllerSystem extends System {
 
     if (isKeyActive(spaceState)) {
       vDir.copy(vUp).multiplyScalar(thrustMagnitude);
-      ref.applyForce(vDir, true);
+      ref.value.addForce(vDir, true);
     }
 
     // Call on alternate damping values & flying animation
@@ -229,7 +229,7 @@ export class ControllerSystem extends System {
 
     const angle = signedAngleBetweenVectors(bodyFacing, direction, vUp);
     torque.set(0, angle * torqueMagnitude, 0);
-    ref.applyTorque(torque, true);
+    ref.value.addTorque(torque, true);
 
     return angle;
   }
@@ -239,7 +239,7 @@ export class ControllerSystem extends System {
 
     thrust.copy(direction);
     thrust.multiplyScalar(thrustMagnitude);
-    ref.applyForce(thrust, true);
+    ref.value.addForce(thrust, true);
   }
 
   repelFromOthers(entity: Entity) {
@@ -258,7 +258,7 @@ export class ControllerSystem extends System {
       if (distance <= 1.25) {
         const distanceSq = distance * distance;
         vDir.copy(p1).sub(p2).normalize().divideScalar(distanceSq);
-        ref.applyForce(vDir, true);
+        ref.value.addForce(vDir, true);
 
         // TODO: don't use magic number 1.0
         // NOTE: 0.75 is approx. "stationary"

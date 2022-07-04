@@ -54,19 +54,9 @@ export class PhysicsSystem extends System {
       body.setRotation(transform.rotation, true);
     });
 
-    RigidBodyRef.actions.forEach(({ ref, name, args }) => {
-      ref.value.resetForces(false);
-      ref.value.resetTorques(false);
-    });
-
-    RigidBodyRef.actions.forEach(({ ref, name, args }) => {
-      ref.value[name].apply(ref.value, args);
-    });
-
     this.fixedUpdate(delta);
 
-    // Clear the actions list, so that it can be re-filled during next ECS world step
-    RigidBodyRef.actions.length = 0;
+    this.copyActiveTransforms(true);
 
     // this.showDebug();
   }
@@ -96,7 +86,11 @@ export class PhysicsSystem extends System {
       }
     };
     eventQueue.drainCollisionEvents(handleContactEvent);
+  }
 
+  // Copy the physics engine's positions and rotations back to our ECS world Transform;
+  // Optionally: Clear the actions list, so that it can be re-filled during next ECS world step
+  copyActiveTransforms(reset = true) {
     this.physics.world.forEachActiveRigidBody((body) => {
       const entity = RigidBodySystem.bodies.get(body.handle);
 
@@ -109,6 +103,11 @@ export class PhysicsSystem extends System {
         transform.modified();
       } else {
         console.log("physics disabled for entity with parent");
+      }
+
+      if (reset) {
+        body.resetForces(false);
+        body.resetTorques(false);
       }
     });
   }

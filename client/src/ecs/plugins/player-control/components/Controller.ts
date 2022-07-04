@@ -37,7 +37,7 @@ export class Controller extends LocalComponent {
     thrusts: {
       type: JSONType,
       // One thrust magnitude per avatar speed, plus flying
-      default: [0, 12, 32, /* flying */ 8],
+      default: [0, 15, 32, /* flying */ 8],
     },
 
     angDamps: {
