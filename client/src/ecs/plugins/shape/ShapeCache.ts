@@ -1,9 +1,9 @@
 import {
+  CapsuleGeometry,
   BoxBufferGeometry,
   SphereBufferGeometry,
   CylinderBufferGeometry,
 } from "three";
-import { CapsuleGeometry } from "./CapsuleGeometry";
 
 const geometryCache: Map<string, any> = new Map();
 
@@ -58,9 +58,10 @@ export function getGeometry(shape) {
       geometryCache.set(cacheKey, cylinder);
       return cylinder;
     case "CAPSULE":
-      const capsule = CapsuleGeometry(
+      const capsule = new CapsuleGeometry(
         shape.capsuleRadius,
         shape.capsuleHeight,
+        shape.capsuleSegments * 4,
         shape.capsuleSegments * 4
       );
       geometryCache.set(cacheKey, capsule);
