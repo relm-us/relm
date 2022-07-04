@@ -16,6 +16,8 @@ import { Physics } from "..";
 import { Impact, RigidBodyRef } from "../components";
 import { RigidBodySystem } from ".";
 
+const empty = new BufferAttribute(new Float32Array(), 0);
+
 export class PhysicsSystem extends System {
   fixedUpdate: Function;
   physics: Physics;
@@ -23,6 +25,8 @@ export class PhysicsSystem extends System {
   lines: LineSegments;
 
   order = Groups.Presentation + 300;
+
+  static showDebug: boolean = false;
 
   static queries = {
     modified: [RigidBodyRef, Modified(Transform)],
@@ -58,7 +62,12 @@ export class PhysicsSystem extends System {
 
     this.copyActiveTransforms(true);
 
-    // this.showDebug();
+    if (PhysicsSystem.showDebug) {
+      this.showDebug();
+    } else if (this.lines) {
+      this.lines.geometry.setAttribute("position", empty);
+      this.lines.geometry.setAttribute("color", empty);
+    }
   }
 
   onFixedUpdate(dt) {
@@ -120,17 +129,16 @@ export class PhysicsSystem extends System {
       let geometry = new BufferGeometry();
       this.lines = new LineSegments(geometry, material);
       this.presentation.scene.add(this.lines);
+      this.presentation.bloomEffect.selection.add(this.lines);
     }
 
     let buffers = this.physics.world.debugRender();
-    this.lines.geometry.setAttribute(
-      "position",
-      new BufferAttribute(buffers.vertices, 3)
-    );
-    this.lines.geometry.setAttribute(
-      "color",
-      new BufferAttribute(buffers.colors, 4)
-    );
+
+    const position = new BufferAttribute(buffers.vertices, 3);
+    this.lines.geometry.setAttribute("position", position);
+
+    const color = new BufferAttribute(buffers.colors, 4);
+    this.lines.geometry.setAttribute("color", color);
   }
 }
 

@@ -12,6 +12,8 @@
   import { Participant } from "~/types";
   import { State } from "~/main/ProgramTypes";
   import { participantId } from "~/identity/participantId";
+  import ToggleSwitch from "~/ui/lib/ToggleSwitch";
+  import { PhysicsSystem } from "~/ecs/plugins/physics/systems";
 
   export let state: State;
 
@@ -76,6 +78,12 @@
   <Pane {title} {subtitle} showMinimize={true} bind:minimized>
     <inner-scroll>
       <table>
+        <tr>
+          <th>debug physics</th>
+          <td>
+            <ToggleSwitch bind:enabled={PhysicsSystem.showDebug} />
+          </td>
+        </tr>
         <tr>
           <th>audio</th>
           <td>
