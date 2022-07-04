@@ -3,16 +3,19 @@ import type { LibraryAsset } from "~/types";
 
 import { CancellablePromise } from "real-cancellable-promise";
 import { simpleFetch } from "~/utils/simpleFetch";
+import { RelmOAuthManager } from "./RelmOAuthAPI";
 
 export class RelmRestAPI {
   url: string;
   relmName: string;
   authHeaders: AuthenticationHeaders;
+  oAuth: RelmOAuthManager;
 
   constructor(url, relmName, authHeaders: AuthenticationHeaders) {
     this.url = url;
     this.relmName = relmName;
     this.authHeaders = authHeaders;
+    this.oAuth = new RelmOAuthManager(url, authHeaders);
   }
 
   get<T>(path): CancellablePromise<T> {
