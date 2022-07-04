@@ -18,4 +18,4 @@ export { unabbreviatedPermits } from "./unabbreviatedPermits.js";
 export { union, difference, intersection } from "./set.js";
 export { uuidv4, UUID_RE } from "./uuid.js";
 export { wrapAsync } from "./wrapAsync.js";
-export { wrapAsyncPassport } from "./wrapPassportAsync.js";
+export { wrapAsyncPassport, PassportResponse } from "./wrapPassportAsync.js";

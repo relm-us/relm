@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import passport from "passport";
 import { Appearance, getDefaultAppearance, SavedIdentityData } from "relm-common";
 
 import * as middleware from "../middleware.js";
@@ -11,7 +12,8 @@ import {
   intersection,
   isValidIdentity,
   wrapAsyncPassport,
-  respondWithFailure
+  respondWithFailure,
+  PassportResponse
 } from "../utils/index.js";
 
 export const auth = express.Router();
@@ -131,7 +133,7 @@ auth.post(
 
 
 auth.post(
-  "/signup/local",
+  "/connect/local/signup",
   cors(),
   middleware.authenticated(),
   wrapAsync(async (req, res) => {
@@ -156,14 +158,49 @@ auth.post(
 );
 
 auth.post(
-  "/connect/local",
+  "/connect/local/login",
   cors(),
   middleware.authenticated(),
-  wrapAsyncPassport("local", async (req, res, _, userId) => {
+  wrapAsyncPassport("local", async (req, res, _, status, data) => {
+    // Was authentication successful?
+    if (status === PassportResponse.ERROR) {
+      return respondWithError(res, data);
+    } else if (status === PassportResponse.NO_USER_FOUND) {
+      return respondWithFailure(res, "invalid credentials");
+    }
+
     // Authentication was successful! Link the participant to the user.
     const participantId = req.authenticatedParticipantId;
-    await Participant.assignToUserId({ userId, participantId });
+    await Participant.assignToUserId({ 
+      userId: data,
+      participantId
+    });
 
     respondWithSuccess(res, {});
   })
 );
+
+auth.get(
+  "/connect/google",
+  cors(),
+  (req, res, next) => passport.authenticate("google", {
+      state: (req.query.state as string)
+    })(req, res, next)
+);
+
+auth.get(
+  "/connect/google/callback",
+  cors(),
+  wrapAsyncPassport("google", async (req, res, _, status, data) => {
+    if (status === PassportResponse.ERROR) {
+      return respondWithError(res, data);
+    }
+
+    // Authentication was successful! Link the participant to the user.
+    const participantId = req.authenticatedParticipantId;
+    await Participant.assignToUserId({ userId: data, participantId });
+
+    // Tell the browser to close the window to let the client know authentication was successful.
+    res.send("<script>window.close();</script>");
+  })
+)

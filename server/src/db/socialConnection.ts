@@ -7,7 +7,7 @@ export async function registerSocial({ social, profileId, userId } : { social : 
         user_id: userId,
         connection_type: social,
         profile_id: profileId
-      })}
+      })} ON CONFLICT DO NOTHING
     `);
 }
 

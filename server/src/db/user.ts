@@ -6,7 +6,7 @@ import { INSERT } from "./pgSqlHelpers.js";
 
 type UserCreationData = {
   email : string,
-  password : string
+  password? : string
 };
 
 function isValidEmail(email: string) {
@@ -23,16 +23,15 @@ function isValidEmail(email: string) {
 }
 
 export async function createUser({ email, password }: UserCreationData) {
-  const hashedPassword = await encrypt(password);
 
   if (!isValidEmail(email)) {
       throw Error("Invalid email provided");
   }
 
-  const userData = {
-    email,
-    password_hash: hashedPassword
-  };
+  const userData: any = { email };
+  if (!password) {
+    userData.password_hash = await encrypt(password);
+  }
 
   const data = await db.one(sql`
       ${INSERT("users", userData)} RETURNING user_id
