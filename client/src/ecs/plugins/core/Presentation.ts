@@ -16,12 +16,10 @@ import {
   EffectPass,
   RenderPass,
   BlendFunction,
-  KernelSize,
   OutlineEffect,
   SelectiveBloomEffect,
   SMAAEffect,
   SMAAPreset,
-  SMAAImageLoader,
   EdgeDetectionMode,
 } from "postprocessing";
 
@@ -123,22 +121,18 @@ export class Presentation {
         new EffectPass(this.camera, this.bloomEffect, this.outlineEffect)
       );
     } else {
-      new SMAAImageLoader().load(([searchImage, areaImage]) => {
-        // Add anti-aliasing last
-        this.composer.addPass(
-          new EffectPass(
-            this.camera,
-            this.outlineEffect,
-            new SMAAEffect(
-              searchImage,
-              areaImage,
-              SMAAPreset.HIGH,
-              EdgeDetectionMode.COLOR
-            ),
-            this.bloomEffect
-          )
-        );
-      });
+      // Add anti-aliasing last
+      this.composer.addPass(
+        new EffectPass(
+          this.camera,
+          this.outlineEffect,
+          new SMAAEffect({
+            preset: SMAAPreset.HIGH,
+            edgeDetectionMode: EdgeDetectionMode.COLOR,
+          }),
+          this.bloomEffect
+        )
+      );
     }
 
     this.cameraTarget = null; // can be set later with setCameraTarget

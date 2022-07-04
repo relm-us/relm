@@ -20,7 +20,7 @@ importers:
       '@types/node': ^17.0.5
       '@types/protoo-client': ^4.0.1
       '@types/resize-observer-browser': ^0.1.5
-      '@types/three': 0.131.0
+      '@types/three': 0.138.0
       '@uppy/core': 2.3.1
       '@uppy/dashboard': 2.3.0
       '@uppy/drag-drop': 2.1.1
@@ -55,7 +55,7 @@ importers:
       nanoid: ^3.1.20
       optimize-css-assets-webpack-plugin: ^5.0.3
       postcss-loader: ^3.0.0
-      postprocessing: 6.23.5
+      postprocessing: 6.28.1
       protoo-client: ^4.0.6
       quill: ^1.3.7
       quill-cursors: ^3.1.2
@@ -63,7 +63,7 @@ importers:
       redux: ^4.0.5
       redux-thunk: ^2.3.0
       regenerator-runtime: ^0.13.7
-      relm-common: workspace:*
+      relm-common: workspace:1.0.0
       sanitize-html: ^2.3.2
       sass: ^1.26.10
       sass-loader: ^10.0.1
@@ -83,7 +83,7 @@ importers:
       svelte-preprocess: ^4.2.0
       svelte-select: 4.4.7
       terser-webpack-plugin: ^4.0.0
-      three: 0.131.3
+      three: 0.138.3
       three-nebula: 10.0.3
       tiny-typed-emitter: 2.1.0
       ts-jest: ^27.1.2
@@ -118,7 +118,7 @@ importers:
       lodash: 4.17.21
       mediasoup-client: github.com/versatica/mediasoup-client/f17500642dcdd305c546f323c9eb232425d30e8e
       nanoid: 3.3.4
-      postprocessing: 6.23.5_three@0.131.3
+      postprocessing: link:../../../tmp/postprocessing
       protoo-client: 4.0.6
       quill: 1.3.7
       quill-cursors: 3.1.2
@@ -137,8 +137,8 @@ importers:
       svelte-icons: 2.1.0
       svelte-notifications: 0.9.93
       svelte-select: 4.4.7
-      three: 0.131.3
-      three-nebula: 10.0.3_three@0.131.3
+      three: 0.138.3
+      three-nebula: 10.0.3_three@0.138.3
       tiny-typed-emitter: 2.1.0
       twilio-video: 2.20.1
       video-mirror: 4.6.0
@@ -153,7 +153,7 @@ importers:
       '@types/jest': 27.5.2
       '@types/node': 17.0.23
       '@types/protoo-client': 4.0.1
-      '@types/three': 0.131.0
+      '@types/three': 0.138.0
       autoprefixer: 9.8.8
       babel-loader: 8.2.5_lgfes7hlvohbl3uptzldef4omm
       brotli-webpack-plugin: 1.1.0
@@ -192,11 +192,11 @@ importers:
   common:
     specifiers:
       '@jest/types': 27.5.1
-      '@types/three': 0.131.0
+      '@types/three': 0.138.0
       jest: 27.5.1
       lib0: 0.2.51
       lodash.debounce: 4.0.8
-      three: 0.131.3
+      three: 0.138.3
       ts-jest: 27.1.4
       typescript: ^4.0.2
       y-leveldb: ^0.1.0
@@ -205,12 +205,12 @@ importers:
     dependencies:
       lib0: 0.2.51
       lodash.debounce: 4.0.8
-      three: 0.131.3
+      three: 0.138.3
       y-leveldb: 0.1.1_yjs@13.5.27
       y-protocols: 1.0.5
     devDependencies:
       '@jest/types': 27.5.1
-      '@types/three': 0.131.0
+      '@types/three': 0.138.0
       jest: 27.5.1
       ts-jest: 27.1.4_eufcckiefljihjhutvg5ibw4rq
       typescript: 4.6.3
@@ -3934,8 +3934,8 @@ packages:
     resolution: {integrity: sha512-ipixuVrh2OdNmauvtT51o3d8z12p6LtFW9in7U79der/kwejjdNchQC5UMn5u/KxNoM7VHHOs/l8KS8uHxhODQ==}
     dev: true
 
-  /@types/three/0.131.0:
-    resolution: {integrity: sha512-4VCtsDi6mIId96GcGKG91e2Y6VwU2T0u/YB7vCFJh1kXik93arxn7l9tVZHo1LXOtgCJJDdC+e1fwf2Vu/4ySw==}
+  /@types/three/0.138.0:
+    resolution: {integrity: sha512-D8AoV7h2kbCfrv/DcebHOFh1WDwyus3HdooBkAwcBikXArdqnsQ38PQ85JCunnvun160oA9jz53GszF3zch3tg==}
     dev: true
 
   /@types/uglify-js/3.16.0:
@@ -12592,15 +12592,6 @@ packages:
       - pg-native
     dev: false
 
-  /postprocessing/6.23.5_three@0.131.3:
-    resolution: {integrity: sha512-WpzKg6nUbRWVOISCfup/1rzJjYtxj8kCow/YOkzYq+/879mISewWZAUXwfXaRO8Mu3yM6dH+WAWzxWROjrxM7A==}
-    engines: {node: '>= 0.13.2'}
-    peerDependencies:
-      three: '>= 0.102.0 < 0.137.0'
-    dependencies:
-      three: 0.131.3
-    dev: false
-
   /potpack/1.0.2:
     resolution: {integrity: sha512-choctRBIV9EMT9WGAZHn3V7t0Z2pMQyl0EZE6pFc/6ml3ssw7Dlf/oAOvFwjm1HVsqfQN8GfeFyJ+d8tRzqueQ==}
     dev: false
@@ -15057,19 +15048,19 @@ packages:
       minimatch: 3.1.2
     dev: true
 
-  /three-nebula/10.0.3_three@0.131.3:
+  /three-nebula/10.0.3_three@0.138.3:
     resolution: {integrity: sha512-cX0UVkCGKx1r36z/yo26HAjsMGa3NcSvGZlODTLo6lfNikpK7oYXgq5r4yVrjaGjhpeKnFalNTI8LsHiZ8KlYw==}
     peerDependencies:
       three: '>=0.122.0 <1.0.0'
     dependencies:
       lodash: 4.17.21
       potpack: 1.0.2
-      three: 0.131.3
+      three: 0.138.3
       uuid: 3.3.2
     dev: false
 
-  /three/0.131.3:
-    resolution: {integrity: sha512-VkZAv8ZTJqiE/fyEmoWLxcNHImpVcjqW7RO0GzMu3tRpwO0KUvK9pjTmJzJcAbc51BOeB2G38zh80yjHTbP8gQ==}
+  /three/0.138.3:
+    resolution: {integrity: sha512-4t1cKC8gimNyJChJbaklg8W/qj3PpsLJUIFm5LIuAy/hVxxNm1ru2FGTSfbTSsuHmC/7ipsyuGKqrSAKLNtkzg==}
     dev: false
 
   /throat/6.0.1:
