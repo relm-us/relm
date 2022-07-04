@@ -4,7 +4,6 @@ import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
 import { Impact, Impactable } from "~/ecs/plugins/physics";
 import { Controller } from "~/ecs/plugins/player-control";
-import { Particles } from "~/ecs/plugins/particles";
 
 import { worldManager } from "~/world";
 

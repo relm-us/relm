@@ -55,17 +55,7 @@ export class ColliderSystem extends System {
       transform.scale
     );
 
-    colliderDesc.setActiveCollisionTypes(
-      rapier.ActiveCollisionTypes.DEFAULT |
-        // Participant is Dynamic, portals etc. are Static
-        rapier.ActiveCollisionTypes.DYNAMIC_STATIC
-    );
-    colliderDesc.setActiveEvents(
-      // Impact with non-sensors
-      rapier.ActiveEvents.CONTACT_EVENTS |
-        // Impact with sensors
-        rapier.ActiveEvents.INTERSECTION_EVENTS
-    );
+    colliderDesc.setActiveCollisionTypes(rapier.ActiveCollisionTypes.ALL);
 
     colliderDesc.setTranslation(
       spec.offset.x * transform.scale.x,
@@ -82,10 +72,9 @@ export class ColliderSystem extends System {
       this.physics.handleToEntity.delete(colliderRef.value.handle);
     }
 
-    let collider = world.createCollider(
-      colliderDesc,
-      rigidBodyRef.value.handle
-    );
+    // Create the collider & attach to rigid body
+    let collider = world.createCollider(colliderDesc, rigidBodyRef.value);
+
     if (collider.handle === undefined) {
       console.error("Collider handle undefined", collider, rigidBodyRef.value);
     } else {

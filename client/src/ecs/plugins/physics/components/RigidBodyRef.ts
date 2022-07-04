@@ -20,7 +20,7 @@ export class RigidBodyRef extends StateComponent {
   applyForce(force: Vector, wakeUp: boolean) {
     RigidBodyRef.actions.push({
       ref: this,
-      name: "applyForce",
+      name: "addForce",
       args: [force, wakeUp],
     });
   }
@@ -28,7 +28,7 @@ export class RigidBodyRef extends StateComponent {
   applyTorque(force: Vector, wakeUp: boolean) {
     RigidBodyRef.actions.push({
       ref: this,
-      name: "applyTorque",
+      name: "addTorque",
       args: [force, wakeUp],
     });
   }

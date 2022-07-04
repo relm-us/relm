@@ -7,11 +7,11 @@ import { RigidBody, RigidBodyRef } from "../components";
 function getBodyStatus(rapier, kind) {
   switch (kind) {
     case "STATIC":
-      return rapier.RigidBodyType.Static;
+      return rapier.RigidBodyType.Fixed;
     case "DYNAMIC":
       return rapier.RigidBodyType.Dynamic;
     case "KINEMATIC":
-      return rapier.RigidBodyType.Kinematic;
+      return rapier.RigidBodyType.KinematicPositionBased;
     default:
       throw new Error(`Kind of body status unknown: '${kind}'`);
   }
