@@ -183,6 +183,7 @@ auth.post(
 auth.get(
   "/connect/google",
   cors(),
+  middleware.authenticated(),
   (req, res, next) => passport.authenticate("google", {
       state: (req.query.state as string)
     })(req, res, next)
@@ -191,6 +192,7 @@ auth.get(
 auth.get(
   "/connect/google/callback",
   cors(),
+  middleware.authenticated(),
   wrapAsyncPassport("google", async (req, res, _, status, data) => {
     if (status === PassportResponse.ERROR) {
       return respondWithError(res, data);
