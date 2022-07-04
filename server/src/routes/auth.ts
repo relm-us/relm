@@ -150,7 +150,12 @@ auth.post(
       password
     });
 
+    // Ensure the participant being registered isn't already linked.
     const participantId = req.authenticatedParticipantId;
+    const existingUserId = await Participant.getUserId({ participantId });
+    if (existingUserId !== null) {
+      return respondWithError(res, "participant is already linked to an email");
+    }
     await Participant.assignToUserId({ participantId, userId });
 
     return respondWithSuccess(res, {});
@@ -169,12 +174,15 @@ auth.post(
       return respondWithFailure(res, "invalid credentials");
     }
 
-    // Authentication was successful! Link the participant to the user.
+    // Authentication was successful! Ensure the participant is not linked to another user already.
     const participantId = req.authenticatedParticipantId;
-    await Participant.assignToUserId({ 
-      userId: data,
-      participantId
-    });
+    const existingUserId = await Participant.getUserId({ participantId });
+    if (existingUserId !== null && (data !== existingUserId)) {
+      return respondWithError(res, "participant is already linked to an email");
+    }
+
+    // Assign participant to user!
+    await Participant.assignToUserId({ userId: data, participantId });
 
     respondWithSuccess(res, {});
   })
@@ -198,8 +206,14 @@ auth.get(
       return respondWithError(res, data);
     }
 
-    // Authentication was successful! Link the participant to the user.
+    // Authentication was successful! Ensure the participant is not linked to another user already.
     const participantId = req.authenticatedParticipantId;
+    const existingUserId = await Participant.getUserId({ participantId });
+    if (existingUserId !== null && (data !== existingUserId)) {
+      return respondWithError(res, "participant is already linked to an email");
+    }
+
+    // Assign participant to user!
     await Participant.assignToUserId({ userId: data, participantId });
 
     // Tell the browser to close the window to let the client know authentication was successful.
