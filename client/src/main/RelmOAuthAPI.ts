@@ -38,8 +38,10 @@ export class RelmOAuthManager {
         if (isFromAPI && closeInterval !== null) {
           cleanUp();
           const data = JSON.parse(atob(message.data));
-
-          console.log(data);
+          
+          if (callback) {
+            callback(data);
+          }
         }
       };
 
