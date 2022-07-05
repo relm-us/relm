@@ -16,7 +16,6 @@ export class RelmRestAPI {
     this.relmName = relmName;
     this.authHeaders = authHeaders;
     this.oAuth = new RelmOAuthManager(url, authHeaders);
-    this.oAuth.showGoogleOAuth();
   }
 
   get<T>(path): CancellablePromise<T> {
