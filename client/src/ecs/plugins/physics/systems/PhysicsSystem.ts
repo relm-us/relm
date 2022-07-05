@@ -15,6 +15,7 @@ import { Presentation, Transform } from "~/ecs/plugins/core";
 import { Physics } from "..";
 import { Impact, RigidBodyRef } from "../components";
 import { RigidBodySystem } from ".";
+import { createFixedTimestep } from "./createFixedTimestep";
 
 const empty = new BufferAttribute(new Float32Array(), 0);
 
@@ -81,20 +82,17 @@ export class PhysicsSystem extends System {
     // Add Impacts when contact or intersection takes place. We need to
     // do this here, rather than in a separate system, because the Physics
     // System is happening faster than the regular loop.
-    const handleContactEvent = (
-      handle1: number,
-      handle2: number,
-      contactStarted: boolean
-    ) => {
-      const entity1 = this.physics.handleToEntity.get(handle1);
-      const entity2 = this.physics.handleToEntity.get(handle2);
+    eventQueue.drainCollisionEvents(
+      (handle1: number, handle2: number, contactStarted: boolean) => {
+        const entity1 = this.physics.handleToEntity.get(handle1);
+        const entity2 = this.physics.handleToEntity.get(handle2);
 
-      if (contactStarted) {
-        entity1.add(Impact, { other: entity2 });
-        entity2.add(Impact, { other: entity1 });
+        if (contactStarted) {
+          entity1.add(Impact, { other: entity2 });
+          entity2.add(Impact, { other: entity1 });
+        }
       }
-    };
-    eventQueue.drainCollisionEvents(handleContactEvent);
+    );
   }
 
   // Copy the physics engine's positions and rotations back to our ECS world Transform;
@@ -129,7 +127,7 @@ export class PhysicsSystem extends System {
       let geometry = new BufferGeometry();
       this.lines = new LineSegments(geometry, material);
       this.presentation.scene.add(this.lines);
-      this.presentation.bloomEffect.selection.add(this.lines);
+      // this.presentation.bloomEffect.selection.add(this.lines);
     }
 
     let buffers = this.physics.world.debugRender();
@@ -140,32 +138,4 @@ export class PhysicsSystem extends System {
     const color = new BufferAttribute(buffers.colors, 4);
     this.lines.geometry.setAttribute("color", color);
   }
-}
-
-// Return a function that calls a callback as many times
-// as needed in order to "catch up" to the current time
-function createFixedTimestep(
-  timestep: number /* e.g. 1/60 of a second */,
-  callback: (delta: number) => void
-) {
-  let accumulator = 0;
-  return (delta: number) => {
-    // catch up via physics engine dt
-    if (delta <= 2 * timestep) {
-      callback(delta);
-      accumulator = 0;
-    } else {
-      // catch up via multiple physics engine steps
-      accumulator += delta;
-      while (accumulator >= timestep) {
-        callback(timestep);
-        if (accumulator >= 1) {
-          // give up, too slow to catch up
-          accumulator = 0;
-        } else {
-          accumulator -= timestep;
-        }
-      }
-    }
-  };
 }
