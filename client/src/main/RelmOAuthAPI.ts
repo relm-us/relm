@@ -1,4 +1,5 @@
 import type { AuthenticationHeaders } from "relm-common";
+import { config } from "~/config";
 
 export class RelmOAuthManager {
   url: string;
@@ -12,18 +13,38 @@ export class RelmOAuthManager {
   open(url, callback?) {
     const openedWindow = window.open(url, null, 'width=800,height=600,resizeable');
     if (openedWindow) {
-      // Listen for when the window is closed.
 
-      const closeInterval = setInterval(() => {
-        // Repeat until window was closed.
+      // make sure that the popup was not closed.
+      let closeInterval = setInterval(() => {
         if (openedWindow.closed) {
-          clearInterval(closeInterval);
-          
-          if (callback) {
-            callback();
-          }
+          cleanUp();
         }
       }, 1000);
+
+      // Remove timer, listener, and close popup.
+      const cleanUp = () => {
+        clearInterval(closeInterval);
+        window.removeEventListener("message", messageListener);
+        closeInterval = null;
+
+        if (!openedWindow.closed) {
+          openedWindow.close();
+        }
+      };
+      
+      // Listener for when the popup sends data back
+      const messageListener = message => {
+        const isFromAPI = message.origin.startsWith(config.serverUrl);
+        if (isFromAPI && closeInterval !== null) {
+          cleanUp();
+          const data = JSON.parse(atob(message.data));
+
+          console.log(data);
+        }
+      };
+
+      // Register the message listener
+      window.addEventListener("message", messageListener);
     } else {
       throw new Error("Browser blocked opening OAuth link");
     }

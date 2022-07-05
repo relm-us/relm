@@ -3,15 +3,22 @@ import passport from 'passport';
 import { Strategy as PassportLocalStrategy } from "passport-local";
 import { Strategy as PassportGoogleStrategy } from "passport-google-oauth2";
 
-import { SocialConnection, User } from "./db/index.js";
+import { Participant, SocialConnection, User } from "./db/index.js";
 
 const passportMiddleware = express.Router();
 passportMiddleware.use(passport.initialize());
 
+/*
+  These passport strategies have the following goals.
+  - Authenticate details of the user
+*/
+
+// Username/password OAuth
 passport.use(new PassportLocalStrategy({
   usernameField: "email",
-  passwordField: "password"
-}, async function(email, password, done) {
+  passwordField: "password",
+  passReqToCallback: true
+}, async function(req, email, password, done) {
 
   // Check if user credentials are valid.
   const validCredentials = await User.verifyCredentials({ email, password });
@@ -29,30 +36,69 @@ passport.use(new PassportLocalStrategy({
   done(null, userId);
 }));
 
+// Google OAuth
 passport.use(new PassportGoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: "/auth/connect/google/callback",
-  scope: ["email"]
-}, async function(_, __, profile, done) {
+  scope: ["email"],
+  passReqToCallback: true
+}, async function(req, _, __, profile, done) {
+  const participantId = req.authenticatedParticipantId;
   const { email, id : profileId } = profile;
 
-  // Contrary to user/email, social logins will automatically create the account.
-  // Get the user id of the user, or create one.
-  let userId = await User.getUserIdByEmail({ email });
-  if (userId === null) {
-    return done(null, false);
-  }
+  // First check if the participant has an existing user id.
+  const existingParticipantUserId = await Participant.getUserId({ participantId });
 
-  // Register the connection.
-  await SocialConnection.registerSocial({
+  // If the social is connected, find the user id associated with it.
+  let connectedSocialUserId = await SocialConnection.getUserIdBySocial({
     social: "google",
-    userId,
     profileId
   });
+  if (connectedSocialUserId === null) {
+    // Try and create the user.
+    if (existingParticipantUserId !== null) {
+      // Use the existing social connection as long as 
+      // the social has not already been linked with another account.
+      const existingSocialConnectionProfileId = await SocialConnection.getProfileIdBySocial({
+        social: "google",
+        userId: existingParticipantUserId
+      });
+
+      if (existingSocialConnectionProfileId !== null && existingSocialConnectionProfileId !== profileId) {
+        return done("This participant is already linked with another social account.");
+      }
+
+      connectedSocialUserId = existingParticipantUserId;
+    } else {
+      // The participant is not linked to any user.
+      // The social we are trying to use is not linked to any account either.
+      // Try searching for an user id using the email, otherwise create an account.
+      const existingEmailUserId = await User.getUserIdByEmail({ email });
+      if (existingEmailUserId !== null) {
+        connectedSocialUserId = existingEmailUserId;
+      } else {
+        connectedSocialUserId = await User.createUser({ email });
+      }
+    }
+
+    // Now that we are guaranteed a user id,
+    // register the connection!
+    await SocialConnection.registerSocial({
+      social: "google",
+      profileId,
+      userId: connectedSocialUserId
+    });
+  } else {
+    // The social used is associated with a user and a connection exists.
+    
+    if (existingParticipantUserId !== null && existingParticipantUserId !== connectedSocialUserId) {
+      return done("This participant is already linked with another social account.");
+    }
+  }
 
   // Authentication was successful!
-  done(null, userId);
+  done(null, connectedSocialUserId);
 }));
 
 export default passportMiddleware;

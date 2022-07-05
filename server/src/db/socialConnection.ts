@@ -7,7 +7,7 @@ export async function registerSocial({ social, profileId, userId } : { social : 
         user_id: userId,
         connection_type: social,
         profile_id: profileId
-      })} ON CONFLICT DO NOTHING
+      })}
     `);
 }
 
@@ -18,6 +18,29 @@ export async function isUserConnectedViaSocial({ social, userId } : { social : s
    `)).rows > 0;
 
    return isConnected;
+}
+
+export async function isUserConnectedViaEmail({ email, social } : { email : string, social : string }) {
+  const isConnected = (await db.one(sql`
+    SELECT COUNT(*) AS rows FROM login_social_connections 
+      WHERE 
+        connection_type=${social} 
+        AND user_id IN (SELECT user_id FROM users u WHERE LOWER(u.email)=LOWER(${email}))
+   `)).rows > 0;
+
+   return isConnected;
+}
+
+export async function getProfileIdBySocial({ social, userId } : { social : string, userId : string }) {
+  const data = await db.one(sql`
+    SELECT profile_id FROM login_social_connections WHERE connection_type=${social} AND user_id=${userId}
+  `);
+
+  if (!data) {
+    return null;
+  } else {
+    return data.profile_id;
+  }
 }
 
 // Get a user from their social platform and platform profileId

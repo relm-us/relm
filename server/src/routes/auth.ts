@@ -13,7 +13,9 @@ import {
   isValidIdentity,
   wrapAsyncPassport,
   respondWithFailure,
-  PassportResponse
+  PassportResponse,
+  respondWithErrorPostMessage,
+  respondWithSuccessPostMessage
 } from "../utils/index.js";
 
 export const auth = express.Router();
@@ -203,20 +205,14 @@ auth.get(
   middleware.authenticated(),
   wrapAsyncPassport("google", async (req, res, _, status, data) => {
     if (status === PassportResponse.ERROR) {
-      return respondWithError(res, data);
-    }
-
-    // Authentication was successful! Ensure the participant is not linked to another user already.
-    const participantId = req.authenticatedParticipantId;
-    const existingUserId = await Participant.getUserId({ participantId });
-    if (existingUserId !== null && (data !== existingUserId)) {
-      return respondWithError(res, "participant is already linked to an email");
+      return respondWithErrorPostMessage(res, data);
     }
 
     // Assign participant to user!
+    const participantId = req.authenticatedParticipantId;
     await Participant.assignToUserId({ userId: data, participantId });
 
     // Tell the browser to close the window to let the client know authentication was successful.
-    res.send("<script>window.close();</script>");
+    respondWithSuccessPostMessage(res, {});
   })
 )
