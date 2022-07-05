@@ -8,7 +8,7 @@
   import { getAncestor } from "~/utils/hasAncestor";
   import { worldUIMode } from "~/stores/worldUIMode";
 
-  import { Oculus } from "./components";
+  import { Oculus } from "../components";
   import { Entity } from "~/ecs/base";
 
   export let name: string = "";

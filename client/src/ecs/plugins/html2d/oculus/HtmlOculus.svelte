@@ -4,17 +4,19 @@
 
   import { worldManager } from "~/world";
   import { audioMode } from "~/stores/audioMode";
-  import Fullscreen from "./Fullscreen.svelte";
-  import shineImg from "./shine.svg";
   import { participantId as localParticipantId } from "~/identity/participantId";
   import { localShareTrackStore } from "~/av/localVisualTrackStore";
   import {
     PROXIMITY_AUDIO_INNER_RADIUS,
     PROXIMITY_AUDIO_OUTER_RADIUS,
   } from "~/config/constants";
-  import NameTag from "./NameTag.svelte";
   import { Entity } from "~/ecs/base";
   import { worldUIMode } from "~/stores";
+
+  import Fullscreen from "./Fullscreen.svelte";
+  import NameTag from "./NameTag.svelte";
+
+  import shineImg from "./shine.svg";
 
   export let participantName: string;
   export let color: string;

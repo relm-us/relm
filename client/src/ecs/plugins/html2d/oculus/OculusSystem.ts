@@ -1,14 +1,20 @@
 import { Object3D, Vector3 } from "three";
 import { Tween, Easing } from "@tweenjs/tween.js";
 
+import { worldManager } from "~/world";
+
 import { System, Groups, Not, Entity, Modified } from "~/ecs/base";
 import { Object3DRef, Presentation } from "~/ecs/plugins/core";
 import { Perspective } from "~/ecs/plugins/perspective";
 
-import HtmlOculus from "../HtmlOculus.svelte";
 import { Oculus, OculusRef } from "../components";
 import { HtmlPresentation } from "../HtmlPresentation";
-import { worldManager } from "~/world";
+
+import HtmlOculus from "./HtmlOculus.svelte";
+
+// type Cut = [{ x: number; y: number }, { x: number; y: number }];
+// type Circle = { x: number; y: number; r: number };
+// type CircleCuts = { x: number; y: number; r: number; cuts: Cut[] };
 
 const v1 = new Vector3();
 /**
@@ -43,7 +49,10 @@ export class OculusSystem extends System {
       this.remove(entity);
       this.build(entity);
     });
+
+    // let circles: Circle[] = [];
     this.queries.active.forEach((entity) => {
+      // circles.push(this.updatePosition(entity));
       this.updatePosition(entity);
     });
     this.queries.removed.forEach((entity) => {
@@ -134,7 +143,10 @@ export class OculusSystem extends System {
     container.style.top = v1.y.toFixed(2) + "px";
 
     // calculate width
-    container.style.width = `${Math.round(1200 / dist)}px`;
-    container.style.height = `${Math.round(1200 / dist)}px`;
+    const r = Math.round(1200 / dist);
+    container.style.width = `${r}px`;
+    container.style.height = `${r}px`;
+
+    // return { x: v1.x, y: v1.y, r };
   }
 }
