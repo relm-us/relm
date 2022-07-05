@@ -8,18 +8,22 @@ import { Participant, SocialConnection, User } from "./db/index.js";
 const passportMiddleware = express.Router();
 passportMiddleware.use(passport.initialize());
 
+// Wraps async passport functions to allow proper async error handling
+const wrapPassportSync = fn => ((...args) => {
+  const done = args[args.length - 1];
+  fn.apply(null, args).catch(done);
+});
+
 /*
-  These passport strategies have the following goals.
-  - Authenticate details of the user
+  These passport strategies have the following goal.
+    - Authenticate details of the user
 */
 
 // Username/password OAuth
 passport.use(new PassportLocalStrategy({
   usernameField: "email",
   passwordField: "password",
-  passReqToCallback: true
-}, async function(req, email, password, done) {
-
+}, wrapPassportSync(async function(email, password, done) {
   // Check if user credentials are valid.
   const validCredentials = await User.verifyCredentials({ email, password });
   if (!validCredentials) {
@@ -34,7 +38,7 @@ passport.use(new PassportLocalStrategy({
 
   // Authentication was successful!
   done(null, userId);
-}));
+})));
 
 // Google OAuth
 passport.use(new PassportGoogleStrategy({
@@ -43,7 +47,7 @@ passport.use(new PassportGoogleStrategy({
   callbackURL: "/auth/connect/google/callback",
   scope: ["email"],
   passReqToCallback: true
-}, async function(req, _, __, profile, done) {
+}, wrapPassportSync(async function(req, _, __, profile, done) {
   const participantId = req.authenticatedParticipantId;
   const { email, id : profileId } = profile;
 
@@ -99,6 +103,6 @@ passport.use(new PassportGoogleStrategy({
 
   // Authentication was successful!
   done(null, connectedSocialUserId);
-}));
+})));
 
 export default passportMiddleware;
