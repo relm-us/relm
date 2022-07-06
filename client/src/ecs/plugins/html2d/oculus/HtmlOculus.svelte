@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { Audio, Video } from "video-mirror";
-  import { Readable, get } from "svelte/store";
+  import { Readable } from "svelte/store";
 
   import { worldManager } from "~/world";
   import { participantId as localParticipantId } from "~/identity/participantId";
@@ -11,14 +10,13 @@
   } from "~/config/constants";
   import { worldUIMode } from "~/stores";
   import { audioMode } from "~/stores/audioMode";
+  import { fullscreenMeeting } from "~/stores/fullscreenMeeting";
 
   import { Entity } from "~/ecs/base";
   import { Oculus } from "../components";
 
-  import Fullscreen from "./Fullscreen.svelte";
-  import NameTag from "./NameTag.svelte";
-
-  import shineImg from "./shine.svg";
+  import Presence from "./Presence.svelte";
+  import FullscreenMeeting from "./FullscreenMeeting.svelte";
 
   export let participantName: string;
   export let color: string;
@@ -28,7 +26,6 @@
   export let clients: Readable<Set<number>>;
   export let entity: Entity;
 
-  let fullscreen = false;
   // TODO: add `size` var instead of hardcoding volume to be size
   let volume = 1;
 
@@ -62,14 +59,14 @@
   // TODO: (privacy) Make it so full screen is only possible when remote is sharing screen
   function enterFullscreen() {
     if (!isLocal) {
-      fullscreen = true;
+      $fullscreenMeeting = true;
       worldManager.setFps(1);
     }
   }
 
   function exitFullscreen() {
     if (!isLocal) {
-      fullscreen = false;
+      $fullscreenMeeting = false;
       worldManager.setFps(60);
     }
   }
@@ -79,20 +76,6 @@
     oculus.name = detail.name;
 
     if (oculus.onChange) oculus.onChange(detail.name);
-  }
-
-  function getMeAndOtherParticipants(clientIds) {
-    const participants = worldManager.participants.getByClientIds(clientIds);
-
-    // Add me so I can see myself
-    const me = worldManager.participants.participants.get(localParticipantId);
-    participants.push(me);
-
-    // Don't show the "big screen" participant as a little screen also
-    const filtered = participants.filter(
-      (p) => p.participantId !== participantId
-    );
-    return filtered;
   }
 
   let interval;
@@ -123,129 +106,24 @@
   $$props;
 </script>
 
-{#if showVideo}
-  <container
-    style="--background-image:url({shineImg}); --oculus-size: {(
-      volume * 100
-    ).toFixed(3)}%"
-  >
-    <oculus
-      class="round"
-      class:contain={fullscreen}
-      style="--oculus-border-color: {color}"
-      on:click={enterFullscreen}
-    >
-      {#if fullscreen}
-        <Fullscreen on:close={exitFullscreen}>
-          <Video track={$videoStore} mirror={false} contain={true} />
-
-          <small-pics>
-            {#each [...getMeAndOtherParticipants($clients)] as participant}
-              <div>
-                <oculus
-                  class="round"
-                  style="--oculus-border-color: {participant.identityData
-                    .color}"
-                >
-                  <Video
-                    track={get(
-                      worldManager.avConnection.getTrackStore(
-                        participant.participantId,
-                        "video"
-                      )
-                    )}
-                    mirror={participant.participantId === localParticipantId}
-                  />
-                </oculus>
-                <NameTag
-                  name={participant.identityData.name}
-                  editable={false}
-                  color={participant.identityData.color}
-                />
-              </div>
-            {/each}
-          </small-pics>
-        </Fullscreen>
-      {:else}
-        <Video track={$videoStore} mirror={isLocal && !isLocalSharing} />
-      {/if}
-    </oculus>
-    <NameTag
-      name={participantName}
-      editable={isLocal && $worldUIMode !== "build"}
-      {color}
-      on:change={onChangeName}
-    />
-  </container>
+{#if $fullscreenMeeting}
+  <FullscreenMeeting
+    {clients}
+    fullscreenParticipantId={participantId}
+    videoTrack={showVideo && $videoStore}
+    audioTrack={showAudio && !isLocal && $audioStore}
+    on:close={exitFullscreen}
+  />
 {:else}
-  <!-- Just show name -->
-  <NameTag
-    name={participantName}
-    editable={isLocal && $worldUIMode !== "build"}
+  <Presence
     {color}
+    name={participantName}
     on:change={onChangeName}
+    on:click={!isLocal && enterFullscreen}
+    mirror={isLocal && !isLocalSharing}
+    editable={isLocal && $worldUIMode !== "build"}
+    videoTrack={showVideo && $videoStore}
+    audioTrack={showAudio && !isLocal && $audioStore}
+    {volume}
   />
 {/if}
-
-{#if showAudio && !isLocal}
-  <Audio track={$audioStore} {volume} />
-{/if}
-
-<style>
-  container {
-    display: block;
-    position: relative;
-    width: var(--oculus-size, 100%);
-    height: var(--oculus-size, 100%);
-    pointer-events: auto;
-  }
-
-  oculus {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    width: 100%;
-    height: 100%;
-    box-shadow: 0 0 5px var(--oculus-border-color, #cccccc);
-    background-color: #959595;
-
-    overflow: hidden;
-    border: 2px solid var(--oculus-border-color, #cccccc);
-    border-radius: 100%;
-
-    /* Safari needs this in order to clip the video as a circle */
-    transform: translate3d(-2px, 0, 0);
-  }
-
-  .contain :global(video) {
-    object-fit: contain;
-  }
-
-  oculus::after {
-    content: " ";
-    display: block;
-    width: 100%;
-    height: 100%;
-    background-image: var(--background-image);
-    position: absolute;
-    background-size: 100%;
-    opacity: 0.45;
-  }
-
-  small-pics {
-    display: flex;
-    position: absolute;
-    height: 100px;
-    left: 24px;
-    right: 24px;
-    bottom: 24px;
-  }
-
-  small-pics div {
-    margin: 5px 15px;
-    width: 100px;
-    height: 100px;
-    position: relative;
-  }
-</style>
