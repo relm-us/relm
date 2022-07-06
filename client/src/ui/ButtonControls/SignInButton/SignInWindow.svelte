@@ -1,7 +1,7 @@
 <script>
-  import Button from "~/ui/lib/Button";
   import Fullwindow from "~/ui/lib/Fullwindow.svelte";
   import { worldManager } from "~/world";
+import SignInTextInput from "./components/SignInTextInput.svelte";
 
   export let enabled;
 
@@ -13,15 +13,26 @@
 </script>
 
 <Fullwindow>
+  <r-background></r-background>
   <r-window>
-    <div>
-      <Button on:click={onClick}>Test</Button>
-      <Button>Logout</Button>
-    </div>
+    <r-content>
+      <SignInTextInput type="email" label="EMAIL" />
+    </r-content>
   </r-window>
 </Fullwindow>
 
 <style>
+  r-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background: #000000;
+    opacity: 0.7;
+  }
+
   r-window {
     display: flex;
     justify-content: center;
@@ -29,9 +40,11 @@
     height: 100%;
   }
 
-  div {
-    width: 50%;
-    height: 50%;
-    background-color: white;
+  r-content {
+    display: flex;
+    justify-content: center;
+    width: 25%;
+    height: 100%;
+    padding-top: 25vh;
   }
 </style>
