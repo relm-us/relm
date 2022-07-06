@@ -1,7 +1,9 @@
 <script lang="ts">
   /**
    * IndividualContainer: The highest-level svelte component for audio/video. Manages switching to/from fullscreen mode.
-  */
+   */
+
+  import type { Cut } from "./types";
 
   import { Readable } from "svelte/store";
 
@@ -29,6 +31,9 @@
   export let participantId: string;
   export let clients: Readable<Set<number>>;
   export let entity: Entity;
+
+  export let r: number;
+  export let cuts: Cut[];
 
   let volume = 1;
   let fullscreen = false;
@@ -124,5 +129,7 @@
     videoTrack={showVideo && $videoStore}
     audioTrack={showAudio && !isLocal && $audioStore}
     {volume}
+    diameter={r * 2}
+    {cuts}
   />
 {/if}

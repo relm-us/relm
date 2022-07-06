@@ -1,8 +1,10 @@
 <script lang="ts">
   /**
    * Individual: A combination of a participant's video stream (Oculus), audio stream, and name (NameTag).
-  */
- 
+   */
+
+  import type { Cut } from "./types";
+
   import { Audio, Video } from "video-mirror";
 
   import NameTag from "./NameTag.svelte";
@@ -16,15 +18,19 @@
   export let volume: number = 1.0;
   export let audioTrack = null;
   export let videoTrack = null;
+  export let diameter: number = null;
+  export let cuts: Cut[] = null;
+
+  // TODO: Restore proximity audio
+  //
+  // style="--background-image:url({shineImg}); --oculus-size: {(
+  //   volume * 100
+  // ).toFixed(3)}%"
 </script>
 
-<container
-  style="--background-image:url({shineImg}); --oculus-size: {(
-    volume * 100
-  ).toFixed(3)}%"
->
+<container style="--background-image:url({shineImg})">
   {#if videoTrack}
-    <Oculus {color} on:click>
+    <Oculus {color} {diameter} {cuts} on:click>
       <Video track={videoTrack} {mirror} />
     </Oculus>
   {/if}
@@ -39,8 +45,8 @@
   container {
     display: block;
     position: relative;
-    width: var(--oculus-size, 100%);
-    height: var(--oculus-size, 100%);
+    /* width: var(--oculus-size, 100%); */
+    /* height: var(--oculus-size, 100%); */
     pointer-events: auto;
   }
 </style>

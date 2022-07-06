@@ -11,12 +11,11 @@ import { Oculus, OculusRef } from "../components";
 import { HtmlPresentation } from "../HtmlPresentation";
 
 import IndividualContainer from "./IndividualContainer.svelte";
-
-// type Cut = [{ x: number; y: number }, { x: number; y: number }];
-// type Circle = { x: number; y: number; r: number };
-// type CircleCuts = { x: number; y: number; r: number; cuts: Cut[] };
+import { CutCircle } from "./types";
+import { circleOverlapIntersectionPoints } from "./circleOverlapIntersectionPoints";
 
 const v1 = new Vector3();
+
 /**
  * An Oculus is a "round window" in architectural design. Similarly, this Oculus
  * refers to the circular video feeds above participants' heads.
@@ -25,6 +24,7 @@ export class OculusSystem extends System {
   presentation: Presentation;
   htmlPresentation: HtmlPresentation;
   perspective: Perspective;
+  circles: CutCircle[] = [];
 
   order = Groups.Presentation + 251;
 
@@ -50,11 +50,13 @@ export class OculusSystem extends System {
       this.build(entity);
     });
 
-    // let circles: Circle[] = [];
+    this.circles.length = 0;
     this.queries.active.forEach((entity) => {
-      // circles.push(this.updatePosition(entity));
-      this.updatePosition(entity);
+      this.circles.push(this.updatePosition(entity));
     });
+
+    this.cutCircles();
+
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
     });
@@ -99,7 +101,7 @@ export class OculusSystem extends System {
     entity.remove(OculusRef);
   }
 
-  updatePosition(entity: Entity) {
+  updatePosition(entity: Entity): CutCircle {
     if (this.presentation.skipUpdate > 0) return;
 
     const object3d: Object3D = entity.get(Object3DRef)?.value;
@@ -138,15 +140,41 @@ export class OculusSystem extends System {
 
     this.htmlPresentation.project(v1);
 
-    const container = entity.get(OculusRef).container;
+    const { container, component } = entity.get(OculusRef) as OculusRef;
     container.style.left = v1.x.toFixed(2) + "px";
     container.style.top = v1.y.toFixed(2) + "px";
 
     // calculate width
-    const r = Math.round(1200 / dist);
-    container.style.width = `${r}px`;
-    container.style.height = `${r}px`;
+    const diameter = Math.round(1200 / dist);
+    container.style.width = `${diameter}px`;
+    container.style.height = `${diameter}px`;
 
-    // return { x: v1.x, y: v1.y, r };
+    return { component, x: v1.x, y: v1.y, r: diameter / 2, cuts: null };
+  }
+
+  cutCircles() {
+    for (const c1 of this.circles) {
+      // Reset cuts
+      c1.cuts = null;
+
+      for (const c2 of this.circles) {
+        // Don't try overlapping with self
+        if (c1 === c2) continue;
+
+        const isect = circleOverlapIntersectionPoints(c1, c2);
+
+        if (isect) {
+          if (!c1.cuts) c1.cuts = [];
+          c1.cuts.push([
+            { x: isect.x1, y: isect.y1 },
+            { x: isect.x2, y: isect.y2 },
+          ]);
+        }
+      }
+    }
+
+    for (const circle of this.circles) {
+      circle.component.$set(circle);
+    }
   }
 }
