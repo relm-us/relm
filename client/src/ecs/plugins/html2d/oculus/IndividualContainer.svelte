@@ -1,4 +1,8 @@
 <script lang="ts">
+  /**
+   * IndividualContainer: The highest-level svelte component for audio/video. Manages switching to/from fullscreen mode.
+  */
+
   import { Readable } from "svelte/store";
 
   import { worldManager } from "~/world";
@@ -15,7 +19,7 @@
   import { Entity } from "~/ecs/base";
   import { Oculus } from "../components";
 
-  import Presence from "./Presence.svelte";
+  import Individual from "./Individual.svelte";
   import FullscreenMeeting from "./FullscreenMeeting.svelte";
 
   export let participantName: string;
@@ -49,12 +53,6 @@
     participantId,
     "audio"
   );
-
-  // let localVideoStore;
-  // $: localVideoStore = worldManager.avConnection.getTrackStore(
-  //   localParticipantId,
-  //   "video"
-  // );
 
   // TODO: (privacy) Make it so full screen is only possible when remote is sharing screen
   function enterFullscreen() {
@@ -116,7 +114,7 @@
     on:close={exitFullscreen}
   />
 {:else if !$fullscreenMeeting}
-  <Presence
+  <Individual
     {color}
     name={participantName}
     on:change={onChangeName}

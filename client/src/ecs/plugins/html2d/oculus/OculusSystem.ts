@@ -10,7 +10,7 @@ import { Perspective } from "~/ecs/plugins/perspective";
 import { Oculus, OculusRef } from "../components";
 import { HtmlPresentation } from "../HtmlPresentation";
 
-import HtmlOculus from "./HtmlOculus.svelte";
+import IndividualContainer from "./IndividualContainer.svelte";
 
 // type Cut = [{ x: number; y: number }, { x: number; y: number }];
 // type Circle = { x: number; y: number; r: number };
@@ -75,7 +75,7 @@ export class OculusSystem extends System {
     this.htmlPresentation.domElement.appendChild(container);
 
     // Create the Svelte component
-    const component = new HtmlOculus({
+    const component = new IndividualContainer({
       target: container,
       props: {
         ...spec,

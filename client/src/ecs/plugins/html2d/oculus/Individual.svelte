@@ -1,4 +1,8 @@
 <script lang="ts">
+  /**
+   * Individual: A combination of a participant's video stream (Oculus), audio stream, and name (NameTag).
+  */
+ 
   import { Audio, Video } from "video-mirror";
 
   import NameTag from "./NameTag.svelte";

@@ -6,7 +6,7 @@
   import { worldManager } from "~/world";
 
   import Fullscreen from "./Fullscreen.svelte";
-  import Presence from "./Presence.svelte";
+  import Individual from "./Individual.svelte";
 
   export let fullscreenParticipantId: string;
   export let videoTrack = null;
@@ -37,7 +37,7 @@
   <small-pics>
     {#each [...getMeAndOtherParticipants($clients)] as participant}
       <div>
-        <Presence
+        <Individual
           color={participant.identityData.color}
           name={participant.identityData.name}
           mirror={participant.participantId === localParticipantId}
