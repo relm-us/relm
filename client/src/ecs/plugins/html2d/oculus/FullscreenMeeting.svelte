@@ -13,9 +13,6 @@
   export let audioTrack = null;
   export let clients: Readable<Set<number>>;
 
-  let isLocal = false;
-  $: isLocal = fullscreenParticipantId === localParticipantId;
-
   function getMeAndOtherParticipants(clientIds) {
     const participants = worldManager.participants.getByClientIds(clientIds);
 
@@ -43,8 +40,8 @@
         <Presence
           color={participant.identityData.color}
           name={participant.identityData.name}
-          mirror={isLocal}
-          audioTrack={!isLocal &&
+          mirror={participant.participantId === localParticipantId}
+          audioTrack={participant.participantId !== localParticipantId &&
             get(
               worldManager.avConnection.getTrackStore(
                 participant.participantId,

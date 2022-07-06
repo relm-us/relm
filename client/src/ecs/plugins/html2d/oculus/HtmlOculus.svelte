@@ -26,8 +26,8 @@
   export let clients: Readable<Set<number>>;
   export let entity: Entity;
 
-  // TODO: add `size` var instead of hardcoding volume to be size
   let volume = 1;
+  let fullscreen = false;
 
   let isLocalSharing = false;
   $: isLocalSharing = Boolean($localShareTrackStore);
@@ -50,23 +50,24 @@
     "audio"
   );
 
-  let localVideoStore;
-  $: localVideoStore = worldManager.avConnection.getTrackStore(
-    localParticipantId,
-    "video"
-  );
+  // let localVideoStore;
+  // $: localVideoStore = worldManager.avConnection.getTrackStore(
+  //   localParticipantId,
+  //   "video"
+  // );
 
   // TODO: (privacy) Make it so full screen is only possible when remote is sharing screen
   function enterFullscreen() {
     if (!isLocal) {
-      $fullscreenMeeting = true;
+      fullscreen = $fullscreenMeeting = true;
+      // TODO: implement 'lockFps' so framerate does not revert automatically to 20 fps or so
       worldManager.setFps(1);
     }
   }
 
   function exitFullscreen() {
     if (!isLocal) {
-      $fullscreenMeeting = false;
+      fullscreen = $fullscreenMeeting = false;
       worldManager.setFps(60);
     }
   }
@@ -106,7 +107,7 @@
   $$props;
 </script>
 
-{#if $fullscreenMeeting}
+{#if fullscreen}
   <FullscreenMeeting
     {clients}
     fullscreenParticipantId={participantId}
@@ -114,7 +115,7 @@
     audioTrack={showAudio && !isLocal && $audioStore}
     on:close={exitFullscreen}
   />
-{:else}
+{:else if !$fullscreenMeeting}
   <Presence
     {color}
     name={participantName}
