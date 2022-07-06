@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Color, HSL } from "three";
-  import { onMount } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
   import { fade } from "svelte/transition";
 
   import { cleanHtml } from "~/utils/cleanHtml";
@@ -8,13 +8,11 @@
   import { getAncestor } from "~/utils/hasAncestor";
   import { worldUIMode } from "~/stores/worldUIMode";
 
-  import { Oculus } from "../components";
-  import { Entity } from "~/ecs/base";
-
   export let name: string = "";
   export let color: string;
   export let editable: boolean = true;
-  export let entity: Entity = null;
+
+  const dispatch = createEventDispatcher();
 
   let fgColor = "black";
 
@@ -34,10 +32,8 @@
   function doneEditing() {
     if (!editing) return;
 
-    const oculus: Oculus = entity.get(Oculus);
-    oculus.name = name = labelEl.innerText.trim();
-
-    if (oculus.onChange) oculus.onChange(name);
+    const name = labelEl.innerText.trim();
+    dispatch("change", { name });
 
     editing = false;
   }

@@ -3,15 +3,17 @@
   import { Readable, get } from "svelte/store";
 
   import { worldManager } from "~/world";
-  import { audioMode } from "~/stores/audioMode";
   import { participantId as localParticipantId } from "~/identity/participantId";
   import { localShareTrackStore } from "~/av/localVisualTrackStore";
   import {
     PROXIMITY_AUDIO_INNER_RADIUS,
     PROXIMITY_AUDIO_OUTER_RADIUS,
   } from "~/config/constants";
-  import { Entity } from "~/ecs/base";
   import { worldUIMode } from "~/stores";
+  import { audioMode } from "~/stores/audioMode";
+
+  import { Entity } from "~/ecs/base";
+  import { Oculus } from "../components";
 
   import Fullscreen from "./Fullscreen.svelte";
   import NameTag from "./NameTag.svelte";
@@ -70,6 +72,13 @@
       fullscreen = false;
       worldManager.setFps(60);
     }
+  }
+
+  function onChangeName({ detail }) {
+    const oculus: Oculus = entity.get(Oculus);
+    oculus.name = detail.name;
+
+    if (oculus.onChange) oculus.onChange(detail.name);
   }
 
   function getMeAndOtherParticipants(clientIds) {
@@ -165,7 +174,7 @@
       name={participantName}
       editable={isLocal && $worldUIMode !== "build"}
       {color}
-      {entity}
+      on:change={onChangeName}
     />
   </container>
 {:else}
@@ -174,7 +183,7 @@
     name={participantName}
     editable={isLocal && $worldUIMode !== "build"}
     {color}
-    {entity}
+    on:change={onChangeName}
   />
 {/if}
 
@@ -211,15 +220,6 @@
 
   .contain :global(video) {
     object-fit: contain;
-  }
-
-  @keyframes white {
-    from {
-      color: #959595;
-    }
-    to {
-      color: white;
-    }
   }
 
   oculus::after {
