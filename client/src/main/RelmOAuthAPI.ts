@@ -1,6 +1,14 @@
 import type { AuthenticationHeaders } from "relm-common";
 import { config } from "~/config";
 
+export type AuthenticationResponse = {
+  status: "success"
+} | {
+  status: "error",
+  reason: string,
+  details?: string
+};
+
 export class RelmOAuthManager {
   url: string;
   authHeaders: AuthenticationHeaders;
@@ -56,8 +64,12 @@ export class RelmOAuthManager {
     return btoa(JSON.stringify(this.authHeaders));
   }
 
-  showGoogleOAuth(callback?) {
-    this.open(`${this.url}/auth/connect/google?state=${this.getAuthenticationPayload()}`, callback);
+  showGoogleOAuth(): Promise<AuthenticationResponse> {
+    return new Promise(resolve => {
+      this.open(
+        `${this.url}/auth/connect/google?state=${this.getAuthenticationPayload()}`,
+         resolve);
+    });
   }
 
 

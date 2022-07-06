@@ -17,6 +17,7 @@ import type {
 import type { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 import type { Avatar } from "~/identity/Avatar";
 import type { IdentityData, Participant } from "~/types/identity";
+import { Security } from "~/identity/Security";
 
 export type State = {
   // initialization
@@ -27,6 +28,7 @@ export type State = {
   entrywayUnsub?: Function;
   savedIdentity?: SavedIdentityData;
   isConnected?: boolean;
+  security?: Security;
 
   // relm metadata
   relmDocId?: string; // server-assigned UUID for the relm

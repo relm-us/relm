@@ -7,6 +7,7 @@ import { Dispatch, State } from "../ProgramTypes";
 import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 import { AVConnection } from "~/av";
 import { PageParams } from "~/types";
+import { Security } from "~/identity/Security";
 
 export const initWorldManager =
   (
@@ -17,7 +18,8 @@ export const initWorldManager =
     pageParams: PageParams,
     relmDocId: string,
     avConnection: AVConnection,
-    participants: Map<string, Participant>
+    participants: Map<string, Participant>,
+    security: Security
   ) =>
   async (dispatch: Dispatch) => {
     await worldManager.init(
@@ -29,7 +31,8 @@ export const initWorldManager =
       pageParams,
       relmDocId,
       avConnection,
-      participants
+      participants,
+      security
     );
     dispatch({ id: "didInitWorldManager" });
   };

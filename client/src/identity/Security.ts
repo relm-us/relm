@@ -9,38 +9,40 @@ const SECURITY_CONFIG = {
   namedHash: "SHA-384",
 };
 
+export type SecretMethods = {
+  getSecret: () => any;
+  setSecret: (secret: any) => void
+};
+
 export class Security {
   secureId;
-  secret;
   keypair;
+  secretMethods: SecretMethods;
 
-  constructor() {
+  constructor(secretMethods: SecretMethods) {
     if (!window.crypto.subtle) {
       throw new Error(
         `Unable to authenticate: please use a browser that ` +
           `supports signing with public keys, such as Firefox or Chrome.`
       );
     }
+    
+    this.secretMethods = secretMethods;
   }
 
   async getOrCreateSecret() {
     if (!this.secret) {
-      const secretJson = localStorage.getItem("secret");
-      if (!secretJson) {
-        const pair = await window.crypto.subtle.generateKey(
-          SECURITY_CONFIG,
-          true, // can export
-          ["sign", "verify"]
-        );
-        this.secret = {
-          pu: await window.crypto.subtle.exportKey("jwk", pair.publicKey),
-          pr: await window.crypto.subtle.exportKey("jwk", pair.privateKey),
-        };
-        localStorage.setItem("secret", JSON.stringify(this.secret));
-      } else {
-        this.secret = JSON.parse(secretJson);
-      }
+      const pair = await window.crypto.subtle.generateKey(
+        SECURITY_CONFIG,
+        true, // can export
+        ["sign", "verify"]
+      );
+      this.secret = {
+        pu: await window.crypto.subtle.exportKey("jwk", pair.publicKey),
+        pr: await window.crypto.subtle.exportKey("jwk", pair.privateKey),
+      };
     }
+    
     return this.secret;
   }
 
@@ -110,5 +112,13 @@ export class Security {
       encoded
     );
     return result;
+  }
+
+  get secret() {
+    return this.secretMethods.getSecret();
+  }
+
+  set secret(newSecret : any) {
+    this.secretMethods.setSecret(newSecret);
   }
 }

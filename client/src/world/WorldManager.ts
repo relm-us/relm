@@ -65,7 +65,7 @@ import { localShareTrackStore } from "~/av/localVisualTrackStore";
 import { localVideoTrack } from "video-mirror";
 import { createScreenTrack } from "~/av/twilio/createScreenTrack";
 
-import { participantId } from "~/identity/participantId";
+import { destroyParticipantId, participantId } from "~/identity/participantId";
 import { Avatar } from "~/identity/Avatar";
 import { Participant } from "~/types/identity";
 import { ParticipantManager } from "~/identity/ParticipantManager";
@@ -77,6 +77,8 @@ import { audioMode, AudioMode } from "~/stores/audioMode";
 import { Outline } from "~/ecs/plugins/outline";
 import { InteractorSystem } from "~/ecs/plugins/interactor";
 import { Object3DRef } from "~/ecs/plugins/core";
+import { Security } from "~/identity/Security";
+import { getRandomInitializedIdentityData, localIdentityData } from "~/stores/identityData";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -89,10 +91,11 @@ export class WorldManager {
   broker: ParticipantYBroker;
   api: RelmRestAPI;
   clock: Clock;
+  security: Security;
 
   world: DecoratedECSWorld;
   worldDoc: WorldDoc;
-  subrelm: string;
+  relmName: string;
   entryway: string;
   relmDocId: string;
   avConnection: AVConnection;
@@ -134,7 +137,8 @@ export class WorldManager {
     pageParams: PageParams,
     relmDocId: string,
     avConnection: AVConnection,
-    participants: Map<string, Participant>
+    participants: Map<string, Participant>,
+    security: Security
   ) {
     this.dispatch = dispatch;
     this.state = state;
@@ -145,10 +149,11 @@ export class WorldManager {
       state.authHeaders
     );
     this.clock = new Clock();
+    this.security = security;
 
     this.world = ecsWorld;
     this.worldDoc = worldDoc;
-    this.subrelm = pageParams.relmName;
+    this.relmName = pageParams.relmName;
     this.entryway = pageParams.entryway;
     this.relmDocId = relmDocId;
     this.avConnection = avConnection;
@@ -366,7 +371,7 @@ export class WorldManager {
 
     this.world = null;
     this.worldDoc = null;
-    this.subrelm = null;
+    this.relmName = null;
     this.entryway = null;
     this.relmDocId = null;
     this.avConnection = null;
@@ -672,6 +677,25 @@ export class WorldManager {
     } else {
       entity.add(Transition, { position, positionSpeed: 0.1 });
     }
+  }
+
+  async login() {
+    const data = await this.api.oAuth.showGoogleOAuth();
+    if (data.status === "error") {
+      throw Error(data.reason);
+    }
+  }
+
+  async logout() {
+    destroyParticipantId();
+    this.security.secret = null;
+    localIdentityData.set(getRandomInitializedIdentityData());
+
+    this.dispatch({
+      id: "enterPortal",
+      relmName: this.relmName,
+      entryway: this.entryway
+    });
   }
 
   /**

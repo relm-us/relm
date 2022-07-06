@@ -39,6 +39,7 @@
   import { selectedEntities } from "~/stores/selection";
   import { showCenterButtons } from "~/stores/showCenterButtons";
   import { AV_ENABLED } from "~/config/constants";
+import SignInButton from "../ButtonControls/SignInButton";
 
   export let dispatch;
   export let permits;
@@ -174,6 +175,12 @@
           <InviteButton {permits} />
         </Tooltip>
       {/if}
+
+      <Tooltip
+        tip={_("Connect your account!", "signin_button")}
+        top>
+          <SignInButton />
+      </Tooltip>
     </play-buttons>
   </overlay-center>
 {/if}
