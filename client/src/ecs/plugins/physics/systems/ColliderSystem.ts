@@ -56,6 +56,7 @@ export class ColliderSystem extends System {
     );
 
     colliderDesc.setActiveCollisionTypes(rapier.ActiveCollisionTypes.ALL);
+    colliderDesc.setActiveEvents(rapier.ActiveEvents.COLLISION_EVENTS);
 
     colliderDesc.setTranslation(
       spec.offset.x * transform.scale.x,
