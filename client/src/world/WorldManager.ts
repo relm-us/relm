@@ -135,6 +135,7 @@ export class WorldManager {
   unsubs: Function[] = [];
   afterInitFns: Function[] = [];
   didInit: boolean = false;
+  fpsLocked: boolean = false;
 
   get dragPlane(): DragPlane {
     if (!this._dragPlane) this._dragPlane = new DragPlane(this.world);
@@ -277,9 +278,18 @@ export class WorldManager {
 
     // Make colliders visible in build mode
     this.unsubs.push(
-      derived([worldUIMode, keyShift], ([$mode, $keyShift], set) => {
-        set({ buildMode: $mode === "build", overrideInvisible: $keyShift });
-      }).subscribe(({ buildMode, overrideInvisible }) => {
+      derived(
+        [worldUIMode, keyShift],
+        (
+          [$mode, $keyShift],
+          set: (value: {
+            buildMode: boolean;
+            overrideInvisible: boolean;
+          }) => void
+        ) => {
+          set({ buildMode: $mode === "build", overrideInvisible: $keyShift });
+        }
+      ).subscribe(({ buildMode, overrideInvisible }) => {
         this.avatar.enableCanFly(buildMode);
         this.avatar.enableNonInteractive(buildMode);
         if (overrideInvisible) {
@@ -337,11 +347,11 @@ export class WorldManager {
     );
 
     const fpsCheckInterval = setInterval(() => {
-      if (!this.started) return;
+      if (!this.started || this.fpsLocked) return;
 
       const now = performance.now();
       if (now - this.lastActivity > FPS_SLOWDOWN_TIMEOUT) {
-        const currFps = this.getFps();
+        const currFps = this.getTargetFps();
         if (
           now - this.lastFpsChange > FPS_SLOWDOWN_TIMEOUT &&
           currFps > FPS_SLOWDOWN_MIN_FPS
@@ -402,6 +412,7 @@ export class WorldManager {
     this.participants = null;
 
     this.didInit = false;
+    this.fpsLocked = false;
   }
 
   afterInit(fn: Function) {
@@ -619,8 +630,21 @@ export class WorldManager {
     requestAnimationFrame(this.loop.bind(this));
   }
 
-  setFps(fps: number) {
+  getTargetFps(): number {
+    // prettier-ignore
+    switch (this.loopType.type) {
+      case "reqAnimFrame": return 60;
+      case "nolimit": return 60;
+      case "interval": return this.loopType.targetFps;
+    }
+  }
+
+  setFps(fps: number, lock = false) {
     this.stop();
+
+    if (lock) this.lockFps();
+
+    console.log("setFps", fps, lock);
 
     if (fps === 60) {
       targetFps.set(60);
@@ -642,13 +666,12 @@ export class WorldManager {
     this.start();
   }
 
-  getFps(): number {
-    // prettier-ignore
-    switch (this.loopType.type) {
-      case "reqAnimFrame": return 60;
-      case "nolimit": return 60;
-      case "interval": return this.loopType.targetFps;
-    }
+  lockFps() {
+    this.fpsLocked = true;
+  }
+
+  unlockFps() {
+    this.fpsLocked = false;
   }
 
   worldStep(delta?: number) {
