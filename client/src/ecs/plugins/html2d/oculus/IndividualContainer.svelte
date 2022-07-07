@@ -32,7 +32,7 @@
   export let clients: Readable<Set<number>>;
   export let entity: Entity;
 
-  export let r: number;
+  export let diameter: number;
   export let cuts: Cut[];
 
   let volume = 1;
@@ -129,7 +129,7 @@
     videoTrack={showVideo && $videoStore}
     audioTrack={showAudio && !isLocal && $audioStore}
     {volume}
-    diameter={r * 2}
+    diameter={diameter * volume}
     {cuts}
   />
 {/if}

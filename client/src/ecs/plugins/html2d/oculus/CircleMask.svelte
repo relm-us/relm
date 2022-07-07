@@ -8,10 +8,10 @@
 
   // A default clip path that clips nothing.
   const box: Point[] = [
-    { x: -10, y: -10 },
-    { x: 110, y: -10 },
-    { x: 110, y: 110 },
-    { x: -10, y: 110 },
+    { x: -100, y: -100 },
+    { x: 200, y: -100 },
+    { x: 200, y: 200 },
+    { x: -100, y: 200 },
   ];
 
   /**
