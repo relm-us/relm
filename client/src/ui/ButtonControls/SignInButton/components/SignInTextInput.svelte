@@ -1,27 +1,24 @@
 <script lang="ts">
-
   export let label = "";
-  export let type : "text"|"email"|"password" = "text";
+  export let type: "text" | "email" | "password" = "text";
   export let name;
-
 </script>
 
 <r-signin-text-input>
-  <input type={type} placeholder={label} name={name} />
+  <input {type} placeholder={label} {name} />
 </r-signin-text-input>
 
 <style lang="scss">
   r-signin-text-input {
     width: 100%;
-    height: 3em;
   }
 
   input {
     width: 100%;
-    height: 100%;
+    height: 1.5em;
     text-align: center;
     font-size: 1.8em;
-    background-image: radial-gradient(circle, #d3ad0b, #a77822);
+    background: radial-gradient(circle, #d3ad0b, #a77822);
     color: #ffffff;
     border: none;
     outline: none;
@@ -38,7 +35,6 @@
     opacity: 0;
   }
 
-
   // Glowing animation when the input is clicked
   input:focus {
     animation: glow;
@@ -53,8 +49,7 @@
       box-shadow: #bf8823 0 0 0 0;
     }
     50% {
-      box-shadow: #bf8823 0 0 10px 10px;
+      box-shadow: #bf8823 0 0 5px 2px;
     }
   }
-
 </style>
