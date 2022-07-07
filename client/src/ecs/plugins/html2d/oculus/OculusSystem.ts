@@ -14,6 +14,8 @@ import IndividualContainer from "./IndividualContainer.svelte";
 import { CutCircle } from "./types";
 import { circleOverlapIntersectionPoints } from "./circleOverlapIntersectionPoints";
 
+const HTML2D_MOTION_THRESHOLD = 0.1;
+
 const v1 = new Vector3();
 
 /**
@@ -141,15 +143,32 @@ export class OculusSystem extends System {
     this.htmlPresentation.project(v1);
 
     const { container, component } = entity.get(OculusRef) as OculusRef;
-    container.style.left = v1.x.toFixed(2) + "px";
-    container.style.top = v1.y.toFixed(2) + "px";
 
-    // calculate width
-    const diameter = Math.round(1200 / dist);
-    container.style.width = `${diameter}px`;
-    container.style.height = `${diameter}px`;
+    if (
+      spec.x === undefined ||
+      spec.y === undefined ||
+      Math.abs(spec.x - v1.x) >= HTML2D_MOTION_THRESHOLD ||
+      Math.abs(spec.y - v1.y) >= HTML2D_MOTION_THRESHOLD
+    ) {
+      spec.x = v1.x;
+      spec.y = v1.y;
+      spec.diameter = Math.round(1200 / dist);
 
-    return { component, x: v1.x, y: v1.y, r: diameter / 2, cuts: null };
+      container.style.left = spec.x.toFixed(3) + "px";
+      container.style.top = spec.y.toFixed(3) + "px";
+
+      const diameter = spec.diameter.toFixed(3);
+      container.style.width = `${diameter}px`;
+      container.style.height = `${diameter}px`;
+    }
+
+    return {
+      component,
+      diameter: spec.diameter,
+      x: spec.x,
+      y: spec.y,
+      cuts: null,
+    };
   }
 
   cutCircles() {
@@ -174,7 +193,10 @@ export class OculusSystem extends System {
     }
 
     for (const circle of this.circles) {
-      circle.component.$set(circle);
+      circle.component.$set({
+        diameter: circle.diameter,
+        cuts: circle.cuts,
+      });
     }
   }
 }
