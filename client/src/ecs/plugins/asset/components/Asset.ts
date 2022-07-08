@@ -1,7 +1,11 @@
 import { LocalComponent } from "~/ecs/base";
 import { AssetType } from "~/ecs/plugins/core";
+import { Asset as CoreAsset } from "~/ecs/plugins/core/Asset";
 
 export class Asset extends LocalComponent {
+  texture: CoreAsset;
+  model: CoreAsset;
+
   static props = {
     texture: {
       type: AssetType,
