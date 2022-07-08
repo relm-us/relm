@@ -32,7 +32,7 @@ export async function isUserConnectedViaEmail({ email, social } : { email : stri
 }
 
 export async function getProfileIdBySocial({ social, userId } : { social : string, userId : string }) {
-  const data = await db.one(sql`
+  const data = await db.oneOrNone(sql`
     SELECT profile_id FROM login_social_connections WHERE connection_type=${social} AND user_id=${userId}
   `);
 

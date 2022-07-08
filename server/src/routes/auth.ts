@@ -190,29 +190,54 @@ auth.post(
   })
 );
 
+// OAuth routes
+
+function socialOAuthRedirect(socialId) {
+  return (req, res, next) => passport.authenticate(socialId, {
+      state: (req.query.state as string)
+    })(req, res, next);
+}
+
+function socialOAuthCallback(socialId) {
+  return (req, res, next) => wrapAsyncPassport(socialId, async (req, res, _, status, data) => {
+      if (status === PassportResponse.ERROR) {
+        return respondWithErrorPostMessage(res, data);
+      }
+
+      // Assign participant to user!
+      const participantId = req.authenticatedParticipantId;
+      await Participant.assignToUserId({ userId: data, participantId });
+
+      // Tell the browser to close the window to let the client know authentication was successful.
+      respondWithSuccessPostMessage(res, {});
+    })(req, res, next);
+}
+
+
 auth.get(
   "/connect/google",
   cors(),
   middleware.authenticated(),
-  (req, res, next) => passport.authenticate("google", {
-      state: (req.query.state as string)
-    })(req, res, next)
+  socialOAuthRedirect("google")
 );
 
 auth.get(
   "/connect/google/callback",
   cors(),
   middleware.authenticated(),
-  wrapAsyncPassport("google", async (req, res, _, status, data) => {
-    if (status === PassportResponse.ERROR) {
-      return respondWithErrorPostMessage(res, data);
-    }
+  socialOAuthCallback("google")
+);
 
-    // Assign participant to user!
-    const participantId = req.authenticatedParticipantId;
-    await Participant.assignToUserId({ userId: data, participantId });
+auth.get(
+  "/connect/linkedin",
+  cors(),
+  middleware.authenticated(),
+  socialOAuthRedirect("linkedin")
+);
 
-    // Tell the browser to close the window to let the client know authentication was successful.
-    respondWithSuccessPostMessage(res, {});
-  })
-)
+auth.get(
+  "/connect/linkedin/callback",
+  cors(),
+  middleware.authenticated(),
+  socialOAuthCallback("linkedin")
+);

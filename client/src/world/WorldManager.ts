@@ -79,6 +79,7 @@ import { InteractorSystem } from "~/ecs/plugins/interactor";
 import { Object3DRef } from "~/ecs/plugins/core";
 import { Security } from "~/identity/Security";
 import { getRandomInitializedIdentityData, localIdentityData } from "~/stores/identityData";
+import { AuthenticationResponse, SocialId } from "~/main/RelmOAuthAPI";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -679,11 +680,24 @@ export class WorldManager {
     }
   }
 
-  async login() {
-    const data = await this.api.oAuth.showGoogleOAuth();
-    if (data.status === "error") {
-      throw Error(data.reason);
+  async login(socialId : SocialId): Promise<AuthenticationResponse> {
+    let data;
+    switch (socialId) {
+      case "google":
+        data = await this.api.oAuth.showGoogleOAuth();
+        break;
+      case "facebook":
+        break;
+      case "linkedin":
+        data = await this.api.oAuth.showLinkedinOAuth();
+        break;
+      case "twitter":
+        break;
+      default:
+        throw Error(`Unhandled social id when logging in: ${socialId}`);
     }
+
+    return data;
   }
 
   async logout() {

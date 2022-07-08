@@ -226,6 +226,7 @@ importers:
       '@types/node': ^17.0.5
       '@types/passport': ^1.0.9
       '@types/passport-google-oauth2': ^0.1.5
+      '@types/passport-linkedin-oauth2': ^1.5.3
       '@types/sharp': ^0.28.0
       '@types/ws': ^7.4.1
       aws-sdk: 2.1157.0
@@ -253,6 +254,7 @@ importers:
       object.fromentries: ^2.0.5
       passport: ^0.6.0
       passport-google-oauth2: ^0.2.0
+      passport-linkedin-oauth2: ^2.0.0
       passport-local: ^1.0.0
       pg: ^8.2.1
       pg-promise: ^10.5.8
@@ -293,6 +295,7 @@ importers:
       object.fromentries: 2.0.5
       passport: 0.6.0
       passport-google-oauth2: 0.2.0
+      passport-linkedin-oauth2: 2.0.0
       passport-local: 1.0.0
       pg: 8.7.3
       pg-promise: 10.11.1
@@ -317,6 +320,7 @@ importers:
       '@types/node': 17.0.23
       '@types/passport': 1.0.9
       '@types/passport-google-oauth2': 0.1.5
+      '@types/passport-linkedin-oauth2': 1.5.3
       '@types/sharp': 0.28.6
       '@types/ws': 7.4.7
       cross-env: 7.0.3
@@ -3656,6 +3660,13 @@ packages:
     resolution: {integrity: sha512-naBOrmo8IC6nVb565nKD5S3BCQTIOlGQP7HkDyLJ3taujG9O33Obi0chQa4PtXz82kPSdC7zoBd50hBVQVojtA==}
     dependencies:
       '@types/express': 4.17.13
+    dev: true
+
+  /@types/passport-linkedin-oauth2/1.5.3:
+    resolution: {integrity: sha512-xe6z/5eMUrU8MbITMRQXrfpZSWkyhyvdgIQsk7B2k6OxEL+zyi3cuPRnOIYAnM5rYs0XHc63PF4gWI/oIEB+4Q==}
+    dependencies:
+      '@types/express': 4.17.13
+      '@types/passport': 1.0.9
     dev: true
 
   /@types/passport/1.0.9:
@@ -11230,6 +11241,12 @@ packages:
 
   /passport-google-oauth2/0.2.0:
     resolution: {integrity: sha512-62EdPtbfVdc55nIXi0p1WOa/fFMM8v/M8uQGnbcXA4OexZWCnfsEi3wo2buag+Is5oqpuHzOtI64JpHk0Xi5RQ==}
+    dependencies:
+      passport-oauth2: 1.6.1
+    dev: false
+
+  /passport-linkedin-oauth2/2.0.0:
+    resolution: {integrity: sha512-PnSeq2HzFQ/y1/p2RTF/kG2zhJ7kwGVg4xO3E+JNxz2aI0pFJGAqC503FVpUksYbhQdNhL6QYlK9qrEXD7ZYCg==}
     dependencies:
       passport-oauth2: 1.6.1
     dev: false

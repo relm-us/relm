@@ -2,6 +2,7 @@ import * as express from 'express';
 import passport from 'passport';
 import { Strategy as PassportLocalStrategy } from "passport-local";
 import { Strategy as PassportGoogleStrategy } from "passport-google-oauth2";
+import { Strategy as PassportLinkedinStrategy } from "passport-linkedin-oauth2";
 
 import { Participant, SocialConnection, User } from "./db/index.js";
 
@@ -40,23 +41,16 @@ passport.use(new PassportLocalStrategy({
   done(null, userId);
 })));
 
-// Google OAuth
-passport.use(new PassportGoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "/auth/connect/google/callback",
-  scope: ["email"],
-  passReqToCallback: true
-}, wrapPassportSync(async function(req, _, __, profile, done) {
+// OAuth handler to handle OAuth callback
+async function handleOAuthPassport(socialId, req, email, profileId, done) {
   const participantId = req.authenticatedParticipantId;
-  const { email, id : profileId } = profile;
 
   // First check if the participant has an existing user id.
   const existingParticipantUserId = await Participant.getUserId({ participantId });
 
   // If the social is connected, find the user id associated with it.
   let connectedSocialUserId = await SocialConnection.getUserIdBySocial({
-    social: "google",
+    social: socialId,
     profileId
   });
   if (connectedSocialUserId === null) {
@@ -65,7 +59,7 @@ passport.use(new PassportGoogleStrategy({
       // Use the existing social connection as long as 
       // the social has not already been linked with another account.
       const existingSocialConnectionProfileId = await SocialConnection.getProfileIdBySocial({
-        social: "google",
+        social: socialId,
         userId: existingParticipantUserId
       });
 
@@ -89,7 +83,7 @@ passport.use(new PassportGoogleStrategy({
     // Now that we are guaranteed a user id,
     // register the connection!
     await SocialConnection.registerSocial({
-      social: "google",
+      social: socialId,
       profileId,
       userId: connectedSocialUserId
     });
@@ -103,6 +97,24 @@ passport.use(new PassportGoogleStrategy({
 
   // Authentication was successful!
   done(null, connectedSocialUserId);
-})));
+}
+
+// Google OAuth
+passport.use(new PassportGoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "/auth/connect/google/callback",
+  scope: ["email"],
+  passReqToCallback: true
+}, (req, _, __, profile, done) => handleOAuthPassport("google", req, profile.email, profile.id, done).catch(done)));
+
+// Linkedin
+passport.use(new PassportLinkedinStrategy({
+  clientID: process.env.LINKEDIN_CLIENT_ID,
+  clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
+  callbackURL: "/auth/connect/linkedin/callback",
+  scope: ["r_emailaddress", "r_liteprofile"],
+  passReqToCallback: true
+}, (req, _, __, profile, done) => handleOAuthPassport("linkedin", req, profile.emails[0], profile.id, done).catch(done)));
 
 export default passportMiddleware;

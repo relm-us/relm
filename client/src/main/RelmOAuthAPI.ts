@@ -9,6 +9,8 @@ export type AuthenticationResponse = {
   details?: string
 };
 
+export type SocialId = "google"|"twitter"|"facebook"|"linkedin";
+
 export class RelmOAuthManager {
   url: string;
   authHeaders: AuthenticationHeaders;
@@ -68,6 +70,14 @@ export class RelmOAuthManager {
     return new Promise(resolve => {
       this.open(
         `${this.url}/auth/connect/google?state=${this.getAuthenticationPayload()}`,
+         resolve);
+    });
+  }
+
+  showLinkedinOAuth(): Promise<AuthenticationResponse> {
+    return new Promise(resolve => {
+      this.open(
+        `${this.url}/auth/connect/linkedin?state=${this.getAuthenticationPayload()}`,
          resolve);
     });
   }

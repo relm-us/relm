@@ -8,9 +8,11 @@
   
   let showingSignin = true;
 
-  function onClick() {
-    worldManager.logout();
-    enabled = false;
+  async function onSocialClick({ target }) {
+    const socialId = target.getAttribute("data-login");
+
+    const response = await worldManager.login(socialId);
+    console.log(response);
   }
 
   function switchScreen() {
@@ -54,10 +56,10 @@
           <div class="socials add-padding-if-tall-enough small">
             <span>or enter via:</span><br />
             <r-connections>
-              <img src="/social/facebook.png" alt="Facebook" />
-              <img src="/social/twitter.png" alt="Twitter" />
-              <img src="/social/google.png" alt="Google" />
-              <img src="/social/linkedin.png" alt="Linkedin" />
+              <img src="/social/facebook.png" data-login="facebook" alt="Facebook" on:click={onSocialClick} />
+              <img src="/social/twitter.png" data-login="twitter" alt="Twitter" on:click={onSocialClick} />
+              <img src="/social/google.png" data-login="google" alt="Google" on:click={onSocialClick} />
+              <img src="/social/linkedin.png" data-login="linkedin" alt="Linkedin" on:click={onSocialClick} />
             </r-connections>
           </div>
         </r-group>
@@ -82,10 +84,10 @@
         </r-section>
         <r-section class="socials">
           <r-connections>
-            <img src="/social/facebook.png" alt="Facebook" />
-            <img src="/social/twitter.png" alt="Twitter" />
-            <img src="/social/google.png" alt="Google" />
-            <img src="/social/linkedin.png" alt="Linkedin" />
+            <img src="/social/facebook.png" data-login="facebook" alt="Facebook" on:click={onSocialClick} />
+            <img src="/social/twitter.png" data-login="twitter" alt="Twitter" on:click={onSocialClick} />
+            <img src="/social/google.png" data-login="google" alt="Google" on:click={onSocialClick} />
+            <img src="/social/linkedin.png" data-login="linkedin" alt="Linkedin" on:click={onSocialClick} />
           </r-connections>
         </r-section>
         <r-section style="position: absolute; transform: translateX(-15%); width: 150%;">
@@ -145,6 +147,10 @@
     width: 48px;
     height: 48px;
     padding-right: 10px;
+  }
+
+  .socials r-connections img:hover {
+    cursor: pointer;
   }
 
   r-background {
@@ -208,6 +214,7 @@
     }
   }
 
+  // Adding padding above CREATE ACCOUNT only if the height will allow it
   @media only screen and (max-height: 800px) {
     #register .submit {
       padding-top: 2em;
