@@ -58,8 +58,8 @@ export class ImageSystem extends System {
 
   update() {
     this.queries.missingAsset.forEach((entity) => {
-      const model = entity.get(Image);
-      entity.add(Asset, { texture: model.asset });
+      const spec: Image = entity.get(Image);
+      entity.add(Asset, { kind: "TEXTURE", value: spec.asset });
     });
 
     this.queries.added.forEach((entity) => this.build(entity));

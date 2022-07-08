@@ -60,12 +60,12 @@ export class ShapeSystem extends System {
     if (!blank(shape.texture.url)) {
       entity.add(ShapeNeedsTexture);
 
-      let asset = entity.get(Asset);
+      let asset: Asset = entity.get(Asset);
       if (asset) {
-        asset.texture = shape.texture;
+        asset.value = shape.texture;
         asset.modified();
       } else {
-        entity.add(Asset, { texture: shape.texture });
+        entity.add(Asset, { kind: "TEXTURE", value: shape.texture });
       }
     } else {
       entity.maybeRemove(Asset);

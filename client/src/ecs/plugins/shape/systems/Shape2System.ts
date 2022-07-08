@@ -51,7 +51,7 @@ export class Shape2System extends System {
       const asset: Asset = entity.get(Asset);
       const texture: Texture = entity.get(AssetLoaded)?.value;
       if (!blank(shape.texture.url)) {
-        if (texture && shape.texture.url === asset?.texture.url) {
+        if (texture && shape.texture.url === asset?.value.url) {
           this.buildWithTexture(entity);
         } else {
           this.build(entity);
@@ -75,10 +75,10 @@ export class Shape2System extends System {
 
       let asset: Asset = entity.get(Asset);
       if (asset) {
-        asset.texture = shape.texture;
+        asset.value = shape.texture;
         asset.modified();
       } else {
-        entity.add(Asset, { texture: shape.texture });
+        entity.add(Asset, { kind: "TEXTURE", value: shape.texture });
       }
     } else {
       entity.maybeRemove(Asset);

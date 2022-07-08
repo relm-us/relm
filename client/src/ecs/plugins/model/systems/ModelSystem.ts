@@ -60,7 +60,7 @@ export class ModelSystem extends System {
   update() {
     this.queries.missingAsset.forEach((entity) => {
       const model = entity.get(Model);
-      if (model.asset.url !== "") entity.add(Asset, { model: model.asset });
+      if (model.asset.url !== "") entity.add(Asset, { kind: "MODEL", value: model.asset });
     });
 
     this.queries.added.forEach((entity) => this.build(entity));

@@ -1,25 +1,33 @@
-import { LocalComponent } from "~/ecs/base";
+import { LocalComponent, StringType } from "~/ecs/base";
 import { AssetType } from "~/ecs/plugins/core";
 import { Asset as CoreAsset } from "~/ecs/plugins/core/Asset";
 
 export class Asset extends LocalComponent {
-  texture: CoreAsset;
-  model: CoreAsset;
+  kind: "TEXTURE" | "MODEL";
+  value: CoreAsset;
 
   static props = {
-    texture: {
-      type: AssetType,
+    kind: {
+      type: StringType,
       editor: {
-        label: "Texture",
-        accept: ".png,.jpg,.jpeg,.webp",
+        label: "Kind",
+        input: "Select",
+        options: [
+          { label: "Texture", value: "TEXTURE" },
+          { label: "3D Model", value: "MODEL" },
+        ],
       },
     },
-    model: {
+
+    value: {
       type: AssetType,
       editor: {
-        label: "Model",
-        accept: ".glb,.gltf",
+        label: "File",
       },
     },
+  };
+
+  static editor = {
+    label: "Asset",
   };
 }
