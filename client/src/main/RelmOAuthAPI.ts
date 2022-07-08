@@ -82,5 +82,13 @@ export class RelmOAuthManager {
     });
   }
 
+  showFacebookOAuth(): Promise<AuthenticationResponse> {
+    return new Promise(resolve => {
+      this.open(
+        `${this.url}/auth/connect/facebook?state=${this.getAuthenticationPayload()}`,
+         resolve);
+    });
+  }
+
 
 }

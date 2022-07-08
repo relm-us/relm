@@ -687,6 +687,7 @@ export class WorldManager {
         data = await this.api.oAuth.showGoogleOAuth();
         break;
       case "facebook":
+        data = await this.api.oAuth.showFacebookOAuth();
         break;
       case "linkedin":
         data = await this.api.oAuth.showLinkedinOAuth();

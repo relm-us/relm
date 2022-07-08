@@ -225,6 +225,7 @@ importers:
       '@types/express': ^4.17.11
       '@types/node': ^17.0.5
       '@types/passport': ^1.0.9
+      '@types/passport-facebook': ^2.1.11
       '@types/passport-google-oauth2': ^0.1.5
       '@types/passport-linkedin-oauth2': ^1.5.3
       '@types/sharp': ^0.28.0
@@ -253,6 +254,7 @@ importers:
       multer: ^1.4.2
       object.fromentries: ^2.0.5
       passport: ^0.6.0
+      passport-facebook: ^3.0.0
       passport-google-oauth2: ^0.2.0
       passport-linkedin-oauth2: ^2.0.0
       passport-local: ^1.0.0
@@ -294,6 +296,7 @@ importers:
       multer: 1.4.4
       object.fromentries: 2.0.5
       passport: 0.6.0
+      passport-facebook: 3.0.0
       passport-google-oauth2: 0.2.0
       passport-linkedin-oauth2: 2.0.0
       passport-local: 1.0.0
@@ -319,6 +322,7 @@ importers:
       '@types/express': 4.17.13
       '@types/node': 17.0.23
       '@types/passport': 1.0.9
+      '@types/passport-facebook': 2.1.11
       '@types/passport-google-oauth2': 0.1.5
       '@types/passport-linkedin-oauth2': 1.5.3
       '@types/sharp': 0.28.6
@@ -3654,6 +3658,13 @@ packages:
 
   /@types/parse-json/4.0.0:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
+    dev: true
+
+  /@types/passport-facebook/2.1.11:
+    resolution: {integrity: sha512-YsZUZryJvHt2E/WdR22FlnCi9ckMwkGR+FwCcXq830rOvruhXJHJtKSXSD+Kn4phBsrEpqoP4xX6fFuEodk20A==}
+    dependencies:
+      '@types/express': 4.17.13
+      '@types/passport': 1.0.9
     dev: true
 
   /@types/passport-google-oauth2/0.1.5:
@@ -11238,6 +11249,13 @@ packages:
     resolution: {integrity: sha512-XHXfu/yOQRy9vYOtUDVMN60OEJjW013GoObG1o+xwQTpB9eYJX/BjXMsdW13ZDPruFhYYn0AG22w0xgQMwl3Nw==}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /passport-facebook/3.0.0:
+    resolution: {integrity: sha512-K/qNzuFsFISYAyC1Nma4qgY/12V3RSLFdFVsPKXiKZt434wOvthFW1p7zKa1iQihQMRhaWorVE1o3Vi1o+ZgeQ==}
+    engines: {node: '>= 0.4.0'}
+    dependencies:
+      passport-oauth2: 1.6.1
+    dev: false
 
   /passport-google-oauth2/0.2.0:
     resolution: {integrity: sha512-62EdPtbfVdc55nIXi0p1WOa/fFMM8v/M8uQGnbcXA4OexZWCnfsEi3wo2buag+Is5oqpuHzOtI64JpHk0Xi5RQ==}

@@ -192,10 +192,17 @@ auth.post(
 
 // OAuth routes
 
-function socialOAuthRedirect(socialId) {
-  return (req, res, next) => passport.authenticate(socialId, {
+function socialOAuthRedirect(socialId, scope?) {
+  return (req, res, next) => {
+    const options: any = {
       state: (req.query.state as string)
-    })(req, res, next);
+    };
+    if (scope) {
+      options.scope = scope;
+    }
+
+    passport.authenticate(socialId, options)(req, res, next);
+  };
 }
 
 function socialOAuthCallback(socialId) {
@@ -220,7 +227,6 @@ auth.get(
   middleware.authenticated(),
   socialOAuthRedirect("google")
 );
-
 auth.get(
   "/connect/google/callback",
   cors(),
@@ -234,10 +240,22 @@ auth.get(
   middleware.authenticated(),
   socialOAuthRedirect("linkedin")
 );
-
 auth.get(
   "/connect/linkedin/callback",
   cors(),
   middleware.authenticated(),
   socialOAuthCallback("linkedin")
+);
+
+auth.get(
+  "/connect/facebook",
+  cors(),
+  middleware.authenticated(),
+  socialOAuthRedirect("facebook", ["email"])
+);
+auth.get(
+  "/connect/facebook/callback",
+  cors(),
+  middleware.authenticated(),
+  socialOAuthCallback("facebook")
 );
