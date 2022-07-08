@@ -32,8 +32,8 @@
   export let clients: Readable<Set<number>>;
   export let entity: Entity;
 
-  export let diameter: number;
-  export let cuts: Cut[];
+  export let diameter: number = null;
+  export let cuts: Cut[] = null;
 
   let volume = 1;
   let fullscreen = false;
