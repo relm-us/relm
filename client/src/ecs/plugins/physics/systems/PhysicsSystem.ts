@@ -123,11 +123,11 @@ export class PhysicsSystem extends System {
     if (!this.lines) {
       let material = new LineBasicMaterial({
         color: 0xffffff,
+        vertexColors: true,
       });
       let geometry = new BufferGeometry();
       this.lines = new LineSegments(geometry, material);
       this.presentation.scene.add(this.lines);
-      // this.presentation.bloomEffect.selection.add(this.lines);
     }
 
     let buffers = this.physics.world.debugRender();
