@@ -1,4 +1,10 @@
-import { Mesh, MeshStandardMaterial, Object3D, RepeatWrapping } from "three";
+import {
+  Material,
+  Mesh,
+  MeshStandardMaterial,
+  RepeatWrapping,
+  Texture,
+} from "three";
 
 import { isBrowser } from "~/utils/isBrowser";
 
@@ -6,22 +12,29 @@ import { Entity, System, Not, Modified, Groups } from "~/ecs/base";
 import { Object3DRef } from "~/ecs/plugins/core";
 import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 
-import { Shape, ShapeBuilt, ShapeNeedsTexture, ShapeMesh } from "../components";
-
-import { getGeometry } from "../ShapeCache";
+import {
+  Shape2,
+  Shape2Mesh,
+  ShapeNeedsTexture,
+  ShapeBuilt,
+} from "../components";
+import {
+  shapeParamsToGeometry,
+  shapeToShapeParams,
+} from "~/ecs/shared/createShape";
 
 function blank(str: string) {
   return str === undefined || str === null || str === "";
 }
-export class ShapeSystem extends System {
+export class Shape2System extends System {
   active = isBrowser();
   order = Groups.Initialization;
 
   static queries = {
-    added: [Shape, Not(ShapeBuilt)],
-    addedWithTexture: [Shape, ShapeNeedsTexture, AssetLoaded, Not(ShapeMesh)],
-    modified: [Modified(Shape)],
-    removed: [Not(Shape), ShapeMesh],
+    added: [Shape2, Not(ShapeBuilt)],
+    addedWithTexture: [Shape2, ShapeNeedsTexture, AssetLoaded, Not(Shape2Mesh)],
+    modified: [Modified(Shape2)],
+    removed: [Not(Shape2), Shape2Mesh],
   };
 
   update() {
@@ -34,9 +47,9 @@ export class ShapeSystem extends System {
     this.queries.modified.forEach((entity) => {
       this.remove(entity);
 
-      const shape = entity.get(Shape);
-      const asset = entity.get(Asset);
-      const texture = entity.get(AssetLoaded)?.value;
+      const shape: Shape2 = entity.get(Shape2);
+      const asset: Asset = entity.get(Asset);
+      const texture: Texture = entity.get(AssetLoaded)?.value;
       if (!blank(shape.texture.url)) {
         if (texture && shape.texture.url === asset?.texture.url) {
           this.buildWithTexture(entity);
@@ -54,13 +67,13 @@ export class ShapeSystem extends System {
   }
 
   build(entity: Entity) {
-    const shape = entity.get(Shape);
+    const shape: Shape2 = entity.get(Shape2);
     entity.add(ShapeBuilt);
 
     if (!blank(shape.texture.url)) {
       entity.add(ShapeNeedsTexture);
 
-      let asset = entity.get(Asset);
+      let asset: Asset = entity.get(Asset);
       if (asset) {
         asset.texture = shape.texture;
         asset.modified();
@@ -74,16 +87,16 @@ export class ShapeSystem extends System {
   }
 
   buildWithTexture(entity: Entity) {
-    const shape = entity.get(Shape);
-    const texture = entity.get(AssetLoaded)?.value;
+    const spec: Shape2 = entity.get(Shape2);
+    const texture: Texture = entity.get(AssetLoaded)?.value;
 
     if (!texture) {
       console.error("Can't build with null texture", entity.id);
-      entity.remove(Shape);
+      entity.remove(Shape2);
       return;
     }
 
-    texture.repeat.set(shape.textureScale, shape.textureScale);
+    texture.repeat.set(spec.textureScale, spec.textureScale);
     texture.wrapS = RepeatWrapping;
     texture.wrapT = RepeatWrapping;
 
@@ -93,13 +106,13 @@ export class ShapeSystem extends System {
       map: texture,
     });
 
-    const mesh = this.makeMesh(shape, material);
-    entity.add(ShapeMesh, { value: mesh });
+    const mesh = this.makeMesh(spec, material);
+    entity.add(Shape2Mesh, { value: mesh });
     this.attach(entity);
   }
 
   buildWithoutTexture(entity: Entity) {
-    const shape = entity.get(Shape);
+    const shape: Shape2 = entity.get(Shape2);
 
     const material = new MeshStandardMaterial({
       color: shape.color,
@@ -109,21 +122,19 @@ export class ShapeSystem extends System {
     });
 
     const mesh = this.makeMesh(shape, material);
-    entity.add(ShapeMesh, { value: mesh });
+    entity.add(Shape2Mesh, { value: mesh });
     this.attach(entity);
   }
 
   remove(entity: Entity) {
-    const mesh = entity.get(ShapeMesh)?.value;
+    const mesh: Mesh = entity.get(Shape2Mesh)?.value;
 
     if (mesh) {
       this.detach(entity);
 
       mesh.geometry?.dispose();
-      mesh.material?.dispose();
-      mesh.dispose?.();
 
-      entity.remove(ShapeMesh);
+      entity.remove(Shape2Mesh);
     }
     entity.maybeRemove(ShapeNeedsTexture);
   }
@@ -134,7 +145,7 @@ export class ShapeSystem extends System {
     if (object3dref) {
       const object3d = object3dref.value;
 
-      const child = entity.get(ShapeMesh).value;
+      const child = entity.get(Shape2Mesh).value;
       object3d.add(child);
 
       // Notify dependencies, e.g. BoundingBox, that object3d has changed
@@ -148,7 +159,7 @@ export class ShapeSystem extends System {
     if (object3dref) {
       const object3d = object3dref.value;
 
-      const child = entity.get(ShapeMesh).value;
+      const child = entity.get(Shape2Mesh).value;
       object3d.remove(child);
 
       // Notify dependencies, e.g. BoundingBox, that object3d has changed
@@ -156,12 +167,11 @@ export class ShapeSystem extends System {
     }
   }
 
-  makeMesh(shape, material) {
-    const geometry = getGeometry(shape);
+  makeMesh(shape: Shape2, material: Material) {
+    const geometry = shapeParamsToGeometry(
+      shapeToShapeParams(shape.kind, shape.size, shape.detail)
+    );
 
-    if (shape.kind === "CYLINDER" && shape.cylinderSegments <= 6) {
-      material.flatShading = true;
-    }
     const mesh = new Mesh(geometry, material);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
