@@ -20,6 +20,9 @@ import {
 import { Collider2 } from "../plugins/physics";
 
 const MIN_DETAIL = 0.01;
+const MIN_DIAMETER = 0.01;
+const MIN_HEIGHT = 0.01;
+
 const MAX_SPHERE_WIDTH_SEGMENTS = 64;
 const MAX_SPHERE_HEIGHT_SEGMENTS = 64;
 const MAX_CYLINDER_SEGMENTS = 64;
@@ -43,7 +46,7 @@ export function createSphere(
 ): SphereParams {
   return {
     type: "SPHERE",
-    diameter,
+    diameter: Math.max(diameter, MIN_DIAMETER),
     widthSegments: segments(detail, MAX_SPHERE_WIDTH_SEGMENTS),
     heightSegments: segments(detail, MAX_SPHERE_HEIGHT_SEGMENTS),
   };
@@ -56,8 +59,8 @@ export function createCylinder(
 ): CylinderParams {
   return {
     type: "CYLINDER",
-    diameter,
-    height,
+    diameter: Math.max(diameter, MIN_DIAMETER),
+    height: Math.max(height, MIN_HEIGHT),
     segments: segments(detail, MAX_CYLINDER_SEGMENTS),
   };
 }
@@ -69,8 +72,8 @@ export function createCapsule(
 ): CapsuleParams {
   return {
     type: "CAPSULE",
-    diameter,
-    height,
+    diameter: Math.max(diameter, MIN_DIAMETER),
+    height: Math.max(height, MIN_HEIGHT),
     capSegments: segments(detail, MAX_CAPSULE_CAP_SEGMENTS),
     radialSegments: segments(detail, MAX_CAPSULE_RADIAL_SEGMENTS),
   };
@@ -93,10 +96,8 @@ export function shapeToShapeParams(
   }
 }
 
-export function colliderToShapeParams(
-  collider: Collider2,
-  scale: Vector3
-): ShapeParams {
+// TODO: Combine with shapeToShapeParams?
+export function colliderToShapeParams(collider: Collider2): ShapeParams {
   switch (collider.shape) {
     case "BOX":
       return createBox(collider.size);
@@ -109,30 +110,37 @@ export function colliderToShapeParams(
   }
 }
 
-export function shapeParamsToGeometry(shape: ShapeParams): BufferGeometry {
+export function shapeParamsToGeometry(
+  shape: ShapeParams,
+  padding: number = 0
+): BufferGeometry {
   switch (shape.type) {
     case "BOX":
-      return new BoxBufferGeometry(shape.size.x, shape.size.y, shape.size.z);
+      return new BoxBufferGeometry(
+        shape.size.x + padding * 2,
+        shape.size.y + padding * 2,
+        shape.size.z + padding * 2
+      );
 
     case "SPHERE":
       return new SphereBufferGeometry(
-        shape.diameter / 2,
+        shape.diameter / 2 + padding,
         shape.widthSegments,
         shape.heightSegments
       );
 
     case "CYLINDER":
       return new CylinderBufferGeometry(
-        shape.diameter / 2,
-        shape.diameter / 2,
-        shape.height,
+        shape.diameter / 2 + padding,
+        shape.diameter / 2 + padding,
+        shape.height + padding * 2,
         shape.segments
       );
 
     case "CAPSULE":
       return new CapsuleGeometry(
-        shape.diameter / 2,
-        shape.height,
+        shape.diameter / 2 + padding,
+        shape.height + padding * 2,
         shape.capSegments,
         shape.radialSegments
       );
@@ -146,9 +154,9 @@ export function shapeParamsToColliderDesc(
   switch (shape.type) {
     case "BOX":
       return rapier.ColliderDesc.cuboid(
-        shape.size.x,
-        shape.size.y,
-        shape.size.z
+        shape.size.x / 2,
+        shape.size.y / 2,
+        shape.size.z / 2
       );
 
     case "SPHERE":

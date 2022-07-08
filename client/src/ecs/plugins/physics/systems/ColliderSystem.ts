@@ -70,7 +70,7 @@ export class ColliderSystem extends System {
     const colliderRef = entity.get(ColliderRef);
     if (colliderRef) {
       world.removeCollider(colliderRef.value);
-      this.physics.handleToEntity.delete(colliderRef.value.handle);
+      this.physics.colliders.delete(colliderRef.value.handle);
     }
 
     // Create the collider & attach to rigid body
@@ -79,7 +79,7 @@ export class ColliderSystem extends System {
     if (collider.handle === undefined) {
       console.error("Collider handle undefined", collider, rigidBodyRef.value);
     } else {
-      this.physics.handleToEntity.set(collider.handle, entity);
+      this.physics.colliders.set(collider.handle, entity);
     }
 
     entity.add(ColliderRef, { value: collider });
@@ -90,7 +90,7 @@ export class ColliderSystem extends System {
     const colliderRef = entity.get(ColliderRef);
 
     world.removeCollider(colliderRef.value);
-    this.physics.handleToEntity.delete(colliderRef.value.handle);
+    this.physics.colliders.delete(colliderRef.value.handle);
     entity.remove(ColliderRef);
   }
 }

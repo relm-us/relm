@@ -84,8 +84,8 @@ export class PhysicsSystem extends System {
     // System is happening faster than the regular loop.
     eventQueue.drainCollisionEvents(
       (handle1: number, handle2: number, contactStarted: boolean) => {
-        const entity1 = this.physics.handleToEntity.get(handle1);
-        const entity2 = this.physics.handleToEntity.get(handle2);
+        const entity1 = this.physics.colliders.get(handle1);
+        const entity2 = this.physics.colliders.get(handle2);
 
         if (contactStarted) {
           entity1.add(Impact, { other: entity2 });
@@ -99,7 +99,7 @@ export class PhysicsSystem extends System {
   // Optionally: Clear the actions list, so that it can be re-filled during next ECS world step
   copyActiveTransforms(reset = true) {
     this.physics.world.forEachActiveRigidBody((body) => {
-      const entity = RigidBodySystem.bodies.get(body.handle);
+      const entity = this.physics.bodies.get(body.handle);
 
       const parent = entity.getParent();
       const transform = entity.get(Transform);

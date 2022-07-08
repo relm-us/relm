@@ -1,3 +1,5 @@
+import type { ShapeType } from "~/types/shapes";
+
 import { Component, StringType, NumberType, BooleanType } from "~/ecs/base";
 import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
@@ -7,7 +9,7 @@ import {
 } from "~/config/colliderInteractions";
 
 export class Collider extends Component {
-  shape: "BOX" | "SPHERE" | "CYLINDER" | "CAPSULE";
+  shape: ShapeType;
   boxSize: Vector3;
   sphereRadius: number;
   cylinderRadius: number;
@@ -148,6 +150,6 @@ export class Collider extends Component {
   };
 
   static editor = {
-    label: "Collider",
+    label: "Collider - Old",
   };
 }

@@ -48,7 +48,7 @@ import { SelectionBox } from "~/events/input/PointerListener/SelectionBox";
 import { makeLight } from "~/prefab/makeLight";
 
 import { Entity } from "~/ecs/base";
-import { Collider, ColliderVisible } from "~/ecs/plugins/physics";
+import { Collider, Collider2, ColliderVisible } from "~/ecs/plugins/physics";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { BoundingHelper } from "~/ecs/plugins/bounding-box";
 import { ControllerState } from "~/ecs/plugins/player-control";
@@ -432,7 +432,9 @@ export class WorldManager {
   }
 
   enableCollidersVisible(enabled = true, includeNonInteractive = false) {
-    const entities = this.world.entities.getAllByComponent(Collider);
+    const entities = this.world.entities.getAllBy(
+      (entity) => entity.has(Collider) || entity.has(Collider2)
+    );
     for (const entity of entities) {
       const interactive = !entity.get(NonInteractive);
       entity.maybeRemove(ColliderVisible);

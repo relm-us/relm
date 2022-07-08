@@ -3,6 +3,7 @@ import type { RigidBodyDesc as RapierRigidBodyDesc } from "@dimforge/rapier3d";
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
 import { RigidBody, RigidBodyRef } from "../components";
+import { Physics } from "../Physics";
 
 function getBodyStatus(rapier, kind) {
   switch (kind) {
@@ -19,6 +20,7 @@ function getBodyStatus(rapier, kind) {
 
 export class RigidBodySystem extends System {
   order = Groups.Initialization;
+  physics: Physics;
 
   static queries = {
     added: [RigidBody, Not(RigidBodyRef)],
@@ -26,7 +28,9 @@ export class RigidBodySystem extends System {
     removed: [Not(RigidBody), RigidBodyRef],
   };
 
-  static bodies: Map<number, Entity> = new Map();
+  init({ physics }) {
+    this.physics = physics;
+  }
 
   update() {
     // create RigidBodyRef from spec
@@ -71,7 +75,7 @@ export class RigidBodySystem extends System {
     if (spec.mass) rigidBodyDesc.setAdditionalMass(spec.mass);
 
     let rigidBody = world.createRigidBody(rigidBodyDesc);
-    RigidBodySystem.bodies.set(rigidBody.handle, entity);
+    this.physics.bodies.set(rigidBody.handle, entity);
 
     entity.add(RigidBodyRef, { value: rigidBody });
   }
@@ -81,11 +85,7 @@ export class RigidBodySystem extends System {
     const bodyRef = entity.get(RigidBodyRef);
 
     world.removeRigidBody(bodyRef.value);
-    RigidBodySystem.bodies.delete(bodyRef.value.handle);
+    this.physics.bodies.delete(bodyRef.value.handle);
     entity.remove(RigidBodyRef);
-  }
-
-  reset(): void {
-    RigidBodySystem.bodies.clear();
   }
 }

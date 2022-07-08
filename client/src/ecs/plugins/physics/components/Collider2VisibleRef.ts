@@ -1,8 +1,6 @@
 import { StateComponent, RefType } from "~/ecs/base";
 
-export class ColliderRef extends StateComponent {
-  value: any;
-
+export class Collider2VisibleRef extends StateComponent {
   static props = {
     value: {
       type: RefType,
