@@ -65,6 +65,9 @@
       }
     }
   }
+
+  // ignore warning about missing props
+  $$props;
 </script>
 
 <r-asset-type>

@@ -20,6 +20,9 @@
   function getLabelForKey(key) {
     return prop.editor.options.find((item) => item.value === component[key]);
   }
+
+  // ignore warning about missing props
+  $$props;
 </script>
 
 <r-select-type>

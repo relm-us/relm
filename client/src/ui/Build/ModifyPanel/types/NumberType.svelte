@@ -44,6 +44,9 @@
       editing = true;
     },
   });
+
+  // ignore warning about missing props
+  $$props;
 </script>
 
 <r-number-type>

@@ -644,8 +644,6 @@ export class WorldManager {
 
     if (lock) this.lockFps();
 
-    console.log("setFps", fps, lock);
-
     if (fps === 60) {
       targetFps.set(60);
       this.loopType = { type: "reqAnimFrame" };

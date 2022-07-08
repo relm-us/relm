@@ -8,6 +8,7 @@
   export let key: string;
   export let component;
   export let prop;
+  export let attrs: { labels?: string[] } = {};
 
   const dispatch = createEventDispatcher();
 
@@ -16,6 +17,13 @@
     y: false,
     z: false,
   };
+
+  let labels = [];
+  $: if (attrs.labels) {
+    labels = attrs.labels;
+  } else {
+    labels = ["x", "y", "z"];
+  }
 
   let value: { x: number; y: number; z: number };
   $: value = component[key];
@@ -76,13 +84,13 @@
 <r-vector3-type>
   <div>{(prop.editor && prop.editor.label) || key}:</div>
   <div class="capsules">
-    {#each ["x", "y", "z"] as dim}
+    {#each ["x", "y", "z"].slice(0, labels.length) as dim, i}
       <Capsule
         editing={editing[dim]}
         on:mousedown={draggers[dim].mousedown}
         on:change={onInputChange(dim)}
         on:cancel={onInputCancel(dim)}
-        label={dim.toUpperCase()}
+        label={labels[i].toUpperCase()}
         value={formatNumber(value[dim], editing[dim])}
         type="number"
       />

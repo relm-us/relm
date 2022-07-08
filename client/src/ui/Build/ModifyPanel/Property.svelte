@@ -10,11 +10,11 @@
   import SelectType from "./types/SelectType.svelte";
   import StringType from "./types/StringType.svelte";
   import Vector3Type from "./types/Vector3Type.svelte";
-  import Vector2Type from "./types/Vector2Type.svelte";
 
   export let key;
   export let component;
   export let prop;
+  export let attrs = {};
 
   const Type = getTypeComponent(prop.editor?.input || prop.type.name);
 
@@ -42,8 +42,6 @@
         return StringType;
       case "Vector3":
         return Vector3Type;
-      case "Vector2":
-        return Vector2Type;
       default:
         return MiscType;
     }
@@ -54,7 +52,14 @@
   {Type}
 {:else if component}
   <div>
-    <svelte:component this={Type} {key} {component} {prop} on:modified />
+    <svelte:component
+      this={Type}
+      {key}
+      {component}
+      {prop}
+      {attrs}
+      on:modified
+    />
   </div>
 {/if}
 
