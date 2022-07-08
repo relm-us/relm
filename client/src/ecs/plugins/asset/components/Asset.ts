@@ -1,24 +1,12 @@
-import { LocalComponent, StringType } from "~/ecs/base";
+import { Component, StringType } from "~/ecs/base";
 import { AssetType } from "~/ecs/plugins/core";
 import { Asset as CoreAsset } from "~/ecs/plugins/core/Asset";
 
-export class Asset extends LocalComponent {
-  kind: "TEXTURE" | "MODEL";
+type Kind = "TEXTURE" | "MODEL" | null;
+export class Asset extends Component {
   value: CoreAsset;
 
   static props = {
-    kind: {
-      type: StringType,
-      editor: {
-        label: "Kind",
-        input: "Select",
-        options: [
-          { label: "Texture", value: "TEXTURE" },
-          { label: "3D Model", value: "MODEL" },
-        ],
-      },
-    },
-
     value: {
       type: AssetType,
       editor: {
@@ -30,4 +18,21 @@ export class Asset extends LocalComponent {
   static editor = {
     label: "Asset",
   };
+
+  get url(): string {
+    return (this.value?.url || "").toLowerCase();
+  }
+
+  get kind(): Kind {
+    const url = this.url;
+    if (url !== "") {
+      // TODO: Get the asset type from MIME info at time of upload
+      if (/\.(glb|gltf)$/.test(url)) {
+        return "MODEL";
+      } else if (/\.(png|jpg|jpeg|webp)$/.test(url)) {
+        return "TEXTURE";
+      }
+    }
+    return null;
+  }
 }

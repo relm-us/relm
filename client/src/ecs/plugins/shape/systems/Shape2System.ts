@@ -12,12 +12,7 @@ import { Entity, System, Not, Modified, Groups } from "~/ecs/base";
 import { Object3DRef } from "~/ecs/plugins/core";
 import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 
-import {
-  Shape2,
-  Shape2Mesh,
-  ShapeNeedsTexture,
-  ShapeBuilt,
-} from "../components";
+import { Shape2, Shape2Mesh, ShapeHasTexture } from "../components";
 import {
   shapeParamsToGeometry,
   shapeToShapeParams,
@@ -28,87 +23,50 @@ function blank(str: string) {
 }
 export class Shape2System extends System {
   active = isBrowser();
-  order = Groups.Initialization;
+
+  // Must be after AssetSystem
+  order = Groups.Initialization + 10;
 
   static queries = {
-    added: [Shape2, Not(ShapeBuilt)],
-    addedWithTexture: [Shape2, ShapeNeedsTexture, AssetLoaded, Not(Shape2Mesh)],
+    added: [Shape2, Not(Shape2Mesh)],
+    addedAsset: [Shape2, AssetLoaded, Not(ShapeHasTexture)],
+
     modified: [Modified(Shape2)],
+    modifiedAsset: [Shape2, Modified(Asset)],
+
     removed: [Not(Shape2), Shape2Mesh],
+    removedAsset: [Shape2, Not(Asset), ShapeHasTexture],
   };
 
   update() {
     this.queries.added.forEach((entity) => {
-      this.build(entity);
+      this.buildWithoutTexture(entity);
     });
-    this.queries.addedWithTexture.forEach((entity) => {
-      this.buildWithTexture(entity);
+    this.queries.addedAsset.forEach((entity) => {
+      this.addTexture(entity);
     });
+
     this.queries.modified.forEach((entity) => {
       this.remove(entity);
-
-      const shape: Shape2 = entity.get(Shape2);
-      const asset: Asset = entity.get(Asset);
-      const texture: Texture = entity.get(AssetLoaded)?.value;
-      if (!blank(shape.texture.url)) {
-        if (texture && shape.texture.url === asset?.value.url) {
-          this.buildWithTexture(entity);
-        } else {
-          this.build(entity);
-        }
-      } else {
-        this.buildWithoutTexture(entity);
+      this.buildWithoutTexture(entity);
+      if (entity.has(ShapeHasTexture)) {
+        this.addTexture(entity);
       }
     });
+    this.queries.modifiedAsset.forEach((entity) => {
+      if (entity.has(AssetLoaded)) {
+        this.addTexture(entity);
+      } else {
+        entity.maybeRemove(ShapeHasTexture);
+      }
+    });
+
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
-      entity.maybeRemove(ShapeBuilt);
     });
-  }
-
-  build(entity: Entity) {
-    const shape: Shape2 = entity.get(Shape2);
-    entity.add(ShapeBuilt);
-
-    if (!blank(shape.texture.url)) {
-      entity.add(ShapeNeedsTexture);
-
-      let asset: Asset = entity.get(Asset);
-      if (asset) {
-        asset.value = shape.texture;
-        asset.modified();
-      } else {
-        entity.add(Asset, { kind: "TEXTURE", value: shape.texture });
-      }
-    } else {
-      entity.maybeRemove(Asset);
-      this.buildWithoutTexture(entity);
-    }
-  }
-
-  buildWithTexture(entity: Entity) {
-    const spec: Shape2 = entity.get(Shape2);
-    const texture: Texture = entity.get(AssetLoaded)?.value;
-
-    if (!texture) {
-      console.error("Can't build with null texture", entity.id);
-      entity.remove(Shape2);
-      return;
-    }
-
-    texture.repeat.set(spec.textureScale, spec.textureScale);
-    texture.wrapS = RepeatWrapping;
-    texture.wrapT = RepeatWrapping;
-
-    const material = new MeshStandardMaterial({
-      roughness: 0.8,
-      metalness: 0,
-      map: texture,
+    this.queries.removedAsset.forEach((entity) => {
+      this.removeTexture(entity);
     });
-
-    const mesh = this.makeMesh(spec, material);
-    entity.add(Shape2Mesh, { value: mesh });
-    this.attach(entity);
   }
 
   buildWithoutTexture(entity: Entity) {
@@ -126,6 +84,40 @@ export class Shape2System extends System {
     this.attach(entity);
   }
 
+  addTexture(entity: Entity) {
+    const asset: Asset = entity.get(Asset);
+    if (asset.kind === "TEXTURE") {
+      const spec: Shape2 = entity.get(Shape2);
+      const texture: Texture = entity.get(AssetLoaded)?.value;
+      const mesh: Shape2Mesh = entity.get(Shape2Mesh);
+
+      (mesh.value.material as MeshStandardMaterial).map = texture;
+
+      texture.repeat.set(spec.textureScale, spec.textureScale);
+      texture.wrapS = RepeatWrapping;
+      texture.wrapT = RepeatWrapping;
+
+      entity.add(ShapeHasTexture);
+    } else if (asset.kind === null) {
+      this.removeTexture(entity);
+      console.warn("removing texture", entity.id);
+    } else {
+      this.removeTexture(entity);
+      console.warn("not adding non-texture asset to shape", entity.id);
+
+      // Add ShapeHasTexture so we don't loop infinitely
+      entity.add(ShapeHasTexture);
+    }
+  }
+
+  removeTexture(entity: Entity) {
+    const mesh: Shape2Mesh = entity.get(Shape2Mesh);
+
+    (mesh.value.material as MeshStandardMaterial).map = null;
+
+    entity.remove(ShapeHasTexture);
+  }
+
   remove(entity: Entity) {
     const mesh: Mesh = entity.get(Shape2Mesh)?.value;
 
@@ -136,7 +128,7 @@ export class Shape2System extends System {
 
       entity.remove(Shape2Mesh);
     }
-    entity.maybeRemove(ShapeNeedsTexture);
+    entity.maybeRemove(ShapeHasTexture);
   }
 
   attach(entity: Entity) {

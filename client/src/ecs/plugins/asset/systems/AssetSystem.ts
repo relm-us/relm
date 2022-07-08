@@ -40,6 +40,13 @@ export class AssetSystem extends System {
   }
 
   async load(entity) {
+    const spec: Asset = entity.get(Asset);
+
+    if (spec.url === "") {
+      this.loadingError(entity, "empty");
+      return;
+    }
+
     const id = ++loaderIds;
 
     entity.add(AssetLoading, { id });
@@ -59,6 +66,8 @@ export class AssetSystem extends System {
       return this.loadingError(entity, `unable to load asset: "${err}"`);
     }
 
+    if (!value) return;
+
     const loadingId = entity.get(AssetLoading).id;
     entity.remove(AssetLoading);
 
@@ -72,7 +81,7 @@ export class AssetSystem extends System {
   loadingError(entity, msg) {
     this.remove(entity);
     entity.add(AssetError, { error: msg });
-    console.warn(`AssetSystem: ${msg}`, entity);
+    console.warn(`AssetSystem: ${msg}`, entity?.id);
   }
 
   remove(entity) {
@@ -84,8 +93,7 @@ export class AssetSystem extends System {
   async loadByKind(entity) {
     const spec: Asset = entity.get(Asset);
 
-    let url = spec.value.url;
-    if (!url) return this.loadingError(entity, `missing url`);
+    let url = spec.url;
     if (
       !url.startsWith("http") &&
       // Some assets such as humanoid-003.glb are loaded from our local server's

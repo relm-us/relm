@@ -14,7 +14,6 @@ export class Shape2 extends Component {
   roughness: number;
   metalness: number;
 
-  texture: Asset;
   textureScale: number;
 
   static props = {
@@ -57,7 +56,7 @@ export class Shape2 extends Component {
 
     color: {
       type: StringType,
-      default: "#333333",
+      default: "#f0f0f0",
       editor: {
         label: "Color",
         input: "Color",
@@ -75,7 +74,7 @@ export class Shape2 extends Component {
 
     roughness: {
       type: NumberType,
-      default: 0.8,
+      default: 0.25,
       editor: {
         label: "Roughness",
       },
@@ -83,19 +82,12 @@ export class Shape2 extends Component {
 
     metalness: {
       type: NumberType,
-      default: 0.9,
+      default: 0.0,
       editor: {
         label: "Metalness",
       },
     },
 
-    texture: {
-      type: AssetType,
-      default: null,
-      editor: {
-        label: "Texture",
-      },
-    },
     textureScale: {
       type: NumberType,
       default: 1.0,
@@ -106,6 +98,6 @@ export class Shape2 extends Component {
   };
 
   static editor = {
-    label: "Shape2",
+    label: "Shape",
   };
 }

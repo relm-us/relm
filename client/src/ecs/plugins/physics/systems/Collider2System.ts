@@ -162,6 +162,8 @@ export class Collider2System extends System {
         return { interaction: GROUND_INTERACTION, bodyType: BodyType.Fixed };
       case "DYNAMIC":
         return { interaction: OBJECT_INTERACTION, bodyType: BodyType.Dynamic };
+      default:
+        throw Error(`unknown collider kind ${kind}`);
     }
   }
 }
