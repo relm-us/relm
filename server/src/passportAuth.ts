@@ -4,6 +4,7 @@ import { Strategy as PassportLocalStrategy } from "passport-local";
 import { Strategy as PassportGoogleStrategy } from "passport-google-oauth2";
 import { Strategy as PassportLinkedinStrategy } from "passport-linkedin-oauth2";
 import { Strategy as PassportFacebookStrategy } from "passport-facebook";
+import { Strategy as PassportTwitterStrategy } from "passport-twitter-oauth2";
 
 import { Participant, SocialConnection, User } from "./db/index.js";
 
@@ -130,6 +131,19 @@ passport.use(new PassportFacebookStrategy({
     return done("Missing emails in oAuth data.");
   }
   handleOAuthPassport("facebook", req, profile.emails[0], profile.id, done).catch(done);
+}));
+
+passport.use(new PassportTwitterStrategy({
+  clientID: process.env.TWITTER_CLIENT_ID,
+  clientSecret: process.env.TWITTER_CLIENT_SECRET,
+  callbackURL: "/auth/connect/twitter/callback",
+  includeEmail: true,
+  passReqToCallback: true
+}, (req, _, __, profile, done) => {
+  if (!profile.emails) {
+    return done("Missing emails in oAuth data.");
+  }
+  handleOAuthPassport("twitter", req, profile.emails[0], profile.id, done).catch(done);
 }));
 
 export default passportMiddleware;

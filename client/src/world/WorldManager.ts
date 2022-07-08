@@ -693,6 +693,7 @@ export class WorldManager {
         data = await this.api.oAuth.showLinkedinOAuth();
         break;
       case "twitter":
+        data = await this.api.oAuth.showTwitterOAuth();
         break;
       default:
         throw Error(`Unhandled social id when logging in: ${socialId}`);

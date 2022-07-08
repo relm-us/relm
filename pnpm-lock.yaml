@@ -258,6 +258,7 @@ importers:
       passport-google-oauth2: ^0.2.0
       passport-linkedin-oauth2: ^2.0.0
       passport-local: ^1.0.0
+      passport-twitter-oauth2: ^2.1.1
       pg: ^8.2.1
       pg-promise: ^10.5.8
       pg-sql: ^1.1.0
@@ -300,6 +301,7 @@ importers:
       passport-google-oauth2: 0.2.0
       passport-linkedin-oauth2: 2.0.0
       passport-local: 1.0.0
+      passport-twitter-oauth2: 2.1.1
       pg: 8.7.3
       pg-promise: 10.11.1
       pg-sql: 1.1.0
@@ -11292,6 +11294,14 @@ packages:
     engines: {node: '>= 0.4.0'}
     dev: false
 
+  /passport-twitter-oauth2/2.1.1:
+    resolution: {integrity: sha512-wkJLfsms4xIS5MO9IK243rJI9cASJBma9CYJAnVf0alj4blp/wykeQrr0i0HgBwrtAiJUN/nqx3P9rzwS5ytAQ==}
+    engines: {node: '>= 0.4.0'}
+    dependencies:
+      passport-oauth2: 1.6.1
+      xtraverse: 0.1.0
+    dev: false
+
   /passport/0.6.0:
     resolution: {integrity: sha512-0fe+p3ZnrWRW74fe8+SvCyf4a3Pb2/h7gFkQ8yTJpAO50gDzlfjZUZTO1k5Eg9kUct22OxHLqDZoKUWRHOh9ug==}
     engines: {node: '>= 0.4.0'}
@@ -15697,6 +15707,12 @@ packages:
     resolution: {integrity: sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==}
     dev: true
 
+  /xmldom/0.1.31:
+    resolution: {integrity: sha512-yS2uJflVQs6n+CyjHoaBmVSqIDevTAWrzMmjG1Gc7h1qQ7uVozNhEPJAwZXWyGQ/Gafo3fCwrcaokezLPupVyQ==}
+    engines: {node: '>=0.1'}
+    deprecated: Deprecated due to CVE-2021-21366 resolved in 0.5.0
+    dev: false
+
   /xmlhttprequest/1.8.0:
     resolution: {integrity: sha512-58Im/U0mlVBLM38NdZjHyhuMtCqa61469k2YP/AaPbvCoV9aQGUpbJBj1QRm2ytRiVQBD/fsw7L2bJGDVQswBA==}
     engines: {node: '>=0.4.0'}
@@ -15705,6 +15721,13 @@ packages:
   /xtend/4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
     engines: {node: '>=0.4'}
+
+  /xtraverse/0.1.0:
+    resolution: {integrity: sha512-MANQdlG2hl1nQobxz1Rv8hsS1RuBS0C1N6qTOupv+9vmfrReePdxhmB2ecYjvsp4stJ80HD7erjkoF1Hd/FK9A==}
+    engines: {node: '>= 0.4.0'}
+    dependencies:
+      xmldom: 0.1.31
+    dev: false
 
   /y-indexeddb/9.0.7_yjs@13.5.27:
     resolution: {integrity: sha512-58rDlwtRgXucgR9Kxc49AepAR6uGNGfcvPPAMrmMfSvRBQ/tPnx6NoHNyrRkhbALEAjV9tPEAIP0a/KkVqAIyA==}

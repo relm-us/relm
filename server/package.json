@@ -49,6 +49,7 @@
     "passport-google-oauth2": "^0.2.0",
     "passport-linkedin-oauth2": "^2.0.0",
     "passport-local": "^1.0.0",
+    "passport-twitter-oauth2": "^2.1.1",
     "pg": "^8.2.1",
     "pg-promise": "^10.5.8",
     "pg-sql": "^1.1.0",

@@ -259,3 +259,16 @@ auth.get(
   middleware.authenticated(),
   socialOAuthCallback("facebook")
 );
+
+auth.get(
+  "/connect/twitter",
+  cors(),
+  middleware.authenticated(),
+  socialOAuthRedirect("twitter")
+);
+auth.get(
+  "/connect/twitter/callback",
+  cors(),
+  middleware.authenticated(),
+  socialOAuthCallback("twitter")
+);

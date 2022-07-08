@@ -90,5 +90,13 @@ export class RelmOAuthManager {
     });
   }
 
+  showTwitterOAuth(): Promise<AuthenticationResponse> {
+    return new Promise(resolve => {
+      this.open(
+        `${this.url}/auth/connect/twitter?state=${this.getAuthenticationPayload()}`,
+         resolve);
+    });
+  }
+
 
 }
