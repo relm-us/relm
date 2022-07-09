@@ -2,19 +2,11 @@ import type {
   ColliderDesc,
   RigidBody,
   RigidBodyDesc,
-  RigidBodyType,
 } from "@dimforge/rapier3d";
+
 import type { DecoratedECSWorld } from "~/types";
 
 import { Object3D, MathUtils, Box3, Quaternion } from "three";
-
-import {
-  AVATAR_BUILDER_INTERACTION,
-  AVATAR_INTERACTION,
-  GROUND_INTERACTION,
-  NO_INTERACTION,
-  OBJECT_INTERACTION,
-} from "~/config/colliderInteractions";
 
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
@@ -31,11 +23,7 @@ import {
   ColliderImplicit,
   PhysicsOptions,
 } from "../components";
-
-type Behavior = {
-  interaction: number;
-  bodyType: RigidBodyType;
-};
+import { Behavior } from "../components/Collider2";
 
 const _b3 = new Box3();
 
@@ -49,7 +37,12 @@ export class Collider2System extends System {
     modified: [Modified(Collider2), Collider2Ref],
     removed: [Not(Collider2), Collider2Ref, Not(ColliderImplicit)],
 
-    addImplicit: [Object3DRef, Not(Collider), Not(Collider2), Not(ColliderImplicit)],
+    addImplicit: [
+      Object3DRef,
+      Not(Collider),
+      Not(Collider2),
+      Not(ColliderImplicit),
+    ],
     modifiedImplicit: [Modified(Object3DRef), ColliderImplicit],
   };
 
@@ -99,12 +92,10 @@ export class Collider2System extends System {
       rotation.copy(transform.rotation).invert();
     }
 
-    const behavior = this.getBehavior(spec.kind);
-
-    const body = this.createRigidBody(entity, behavior);
+    const body = this.createRigidBody(entity, spec.behavior);
     this.physics.bodies.set(body.handle, entity);
 
-    const collider = this.createCollider(spec, body, rotation, behavior);
+    const collider = this.createCollider(spec, body, rotation, spec.behavior);
     this.physics.colliders.set(collider.handle, entity);
 
     entity.add(Collider2Ref, { body, collider });
@@ -181,34 +172,5 @@ export class Collider2System extends System {
 
     entity.remove(Collider2Ref);
     entity.maybeRemove(ColliderImplicit);
-  }
-
-  getBehavior(kind: Collider2["kind"]): Behavior {
-    const BodyType = this.physics.rapier.RigidBodyType;
-
-    switch (kind) {
-      case "ETHEREAL":
-        return { interaction: NO_INTERACTION, bodyType: BodyType.Fixed };
-      case "SOLID":
-        return { interaction: OBJECT_INTERACTION, bodyType: BodyType.Fixed };
-      case "GROUND":
-        return { interaction: GROUND_INTERACTION, bodyType: BodyType.Fixed };
-      case "DYNAMIC":
-        return { interaction: OBJECT_INTERACTION, bodyType: BodyType.Dynamic };
-      case "PLAY":
-        return {
-          interaction: AVATAR_INTERACTION,
-          // bodyType: BodyType.KinematicPositionBased,
-          bodyType: BodyType.Dynamic,
-        };
-      case "BUILD": {
-        return {
-          interaction: AVATAR_BUILDER_INTERACTION,
-          bodyType: BodyType.KinematicPositionBased,
-        };
-      }
-      default:
-        throw Error(`unknown collider kind ${kind}`);
-    }
   }
 }

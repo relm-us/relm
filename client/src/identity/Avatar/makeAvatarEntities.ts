@@ -51,7 +51,7 @@ export function makeAvatarEntities(
       rotRestrict: "Y",
     })
     .add(Collider2, {
-      kind: "PLAY",
+      kind: "AVATAR-PLAY",
       shape: "CAPSULE",
       size: new Vector3(0.5, 1.8, 0),
       offset: new Vector3(0, 1.1, 0),

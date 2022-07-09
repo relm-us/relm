@@ -29,8 +29,11 @@ export class PhysicsSystem extends System {
   static showDebug: boolean = false;
 
   static queries = {
-    modified: [RigidBodyRef, Modified(Transform)],
+    // Deprecated colliders
+    modified: [Modified(Transform), RigidBodyRef],
+    // New colliders
     modified2: [Modified(Transform), Collider2Ref],
+
     impacts: [Impact],
   };
 
