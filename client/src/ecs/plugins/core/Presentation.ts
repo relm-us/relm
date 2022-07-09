@@ -10,6 +10,7 @@ import {
   Matrix4,
   Object3D,
 } from "three";
+import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 import {
   EffectComposer,
@@ -26,7 +27,6 @@ import {
 import { World } from "~/ecs/base";
 
 import { IntersectionFinder } from "./IntersectionFinder";
-import { Loader } from "./Loader";
 import type { SpatialIndex } from "~/ecs/plugins/spatial-index/SpatialIndex";
 import { Object3DRef } from ".";
 import { SPATIAL_INDEX_THRESHOLD } from "~/config/constants";
@@ -34,7 +34,7 @@ import { Taken } from "../item";
 
 export type PlaneOrientation = "xz" | "xy";
 
-let gltfLoader: Loader;
+let gltfLoader: GLTFLoader;
 let textureLoader: TextureLoader;
 
 declare class ResizeObserver {
@@ -106,8 +106,6 @@ export class Presentation {
       blur: true,
       xRay: true,
     });
-    // this.outlineEffect.blendMode.opacity = 0.5;
-    // this.outlineEffect.blurPass.alpha = false;
 
     this.bloomEffect = new SelectiveBloomEffect(this.scene, this.camera, {
       blendFunction: BlendFunction.ADD,
@@ -144,7 +142,7 @@ export class Presentation {
     this.mouseMoveListener = this.handleMouseMove.bind(this);
     this.touchMoveListener = this.handleTouchMove.bind(this);
 
-    if (!gltfLoader) gltfLoader = new Loader();
+    if (!gltfLoader) gltfLoader = new GLTFLoader();
 
     if (!textureLoader) textureLoader = new TextureLoader();
   }
@@ -187,13 +185,10 @@ export class Presentation {
     this.renderer.setAnimationLoop(fn);
   }
 
-  loadGltf(url) {
-    try {
-      return gltfLoader.load(url);
-    } catch (err) {
-      console.error("Error while loading GLB/GLTF", url);
-      throw err;
-    }
+  async loadGltf(url): Promise<GLTF> {
+    return new Promise((resolve, reject) => {
+      gltfLoader.load(url, (data) => resolve(data), null, reject);
+    });
   }
 
   async loadTexture(url: string): Promise<Texture> {
