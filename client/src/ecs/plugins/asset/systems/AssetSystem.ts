@@ -66,20 +66,23 @@ export class AssetSystem extends System {
       return this.loadingError(entity, `unable to load asset: "${err}"`);
     }
 
-    if (!value) return;
+    // if (!value) return;
+    if (!value) {
+      console.warn("nothing loaded", entity.id);
+    }
 
     const loadingId = entity.get(AssetLoading).id;
-    entity.remove(AssetLoading);
 
     if (loadingId === id) {
+      entity.remove(AssetLoading);
       entity.add(AssetLoaded, { value });
     } else {
-      return this.loadingError(entity, `${id} was cancelled`);
+      this.loadingError(entity, `${id} was cancelled (!= ${loadingId})`, false);
     }
   }
 
-  loadingError(entity, msg) {
-    this.remove(entity);
+  loadingError(entity, msg, remove = true) {
+    if (remove) this.remove(entity);
     entity.add(AssetError, { error: msg });
     console.warn(`AssetSystem: ${msg}`, entity?.id);
   }
