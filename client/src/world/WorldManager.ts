@@ -299,7 +299,6 @@ export class WorldManager {
         const buildModeShift = buildMode && overrideInvisible;
 
         this.enableNonInteractiveGround(!buildModeShift);
-        this.enableBoundingVisible(buildModeShift);
 
         // Need to call enableCollidersVisible after enableNonInteractiveGround
         // because visible colliders test checks for NonInteractive component:
@@ -420,35 +419,39 @@ export class WorldManager {
     else this.afterInitFns.push(fn);
   }
 
+  getColliderEntities() {
+    return this.world.entities.getAllBy(
+      (entity) => entity.has(Collider) || entity.has(Collider2)
+    );
+  }
+
   enableNonInteractiveGround(enabled = true) {
     const action = enabled ? "add" : "maybeRemove";
-    const entities = this.world.entities.getAllByComponent(Collider);
+    const entities = this.getColliderEntities();
     for (const entity of entities) {
-      const collider = entity.get(Collider);
-      if (collider.interaction === GROUND_INTERACTION) {
-        entity[action](NonInteractive);
+      if (entity.has(Collider2)) {
+        const collider: Collider2 = entity.get(Collider2);
+        if (collider.kind === "GROUND") {
+          entity[action](NonInteractive);
+        }
+      }
+      if (entity.has(Collider)) {
+        const collider: Collider = entity.get(Collider);
+        if (collider.interaction === GROUND_INTERACTION) {
+          entity[action](NonInteractive);
+        }
       }
     }
   }
 
   enableCollidersVisible(enabled = true, includeNonInteractive = false) {
-    const entities = this.world.entities.getAllBy(
-      (entity) => entity.has(Collider) || entity.has(Collider2)
-    );
+    const entities = this.getColliderEntities();
     for (const entity of entities) {
       const interactive = !entity.get(NonInteractive);
       entity.maybeRemove(ColliderVisible);
       if (enabled && (interactive || includeNonInteractive)) {
         entity.add(ColliderVisible);
       }
-    }
-  }
-
-  enableBoundingVisible(enabled = true) {
-    const action = enabled ? "add" : "maybeRemove";
-    const entities = this.world.entities.getAllBy((entity) => !entity.parent);
-    for (const entity of entities) {
-      entity[action](BoundingHelper);
     }
   }
 
