@@ -9,6 +9,7 @@ import {
   Frustum,
   Matrix4,
   Object3D,
+  Box3,
 } from "three";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
@@ -30,12 +31,14 @@ import { IntersectionFinder } from "./IntersectionFinder";
 import type { SpatialIndex } from "~/ecs/plugins/spatial-index/SpatialIndex";
 import { Object3DRef } from ".";
 import { SPATIAL_INDEX_THRESHOLD } from "~/config/constants";
-import { Taken } from "../item";
 
 export type PlaneOrientation = "xz" | "xy";
 
 let gltfLoader: GLTFLoader;
 let textureLoader: TextureLoader;
+
+const _v: Vector3 = new Vector3();
+const _b: Box3 = new Box3();
 
 declare class ResizeObserver {
   constructor(fn: () => void);
@@ -313,5 +316,42 @@ export class Presentation {
     }
 
     return frustum;
+  }
+
+  getCameraAABB() {
+    const camera = this.camera;
+    // camera.updateWorldMatrix(true, false);
+    // camera.updateMatrixWorld(true);
+    // camera.updateProjectionMatrix();
+
+    const mw = camera.matrixWorld;
+    const n = camera.near;
+    // const f = camera.far;
+    const f = 50;
+
+    const halfPI = Math.PI / 180;
+    const fov = camera.fov * halfPI; // convert degrees to radians
+
+    // Near Plane dimensions (near width, near height)
+    const nH = 2 * Math.tan(fov / 2) * n;
+    const nW = nH * camera.aspect; // width
+
+    // Far Plane dimensions (far width, far height)
+    const fH = 2 * Math.tan(fov / 2) * f; // height
+    const fW = fH * camera.aspect; // width
+
+    _b.makeEmpty();
+
+    _b.expandByPoint(_v.set(nW / 2, nH / 2, -n).applyMatrix4(mw));
+    _b.expandByPoint(_v.set(-nW / 2, nH / 2, -n).applyMatrix4(mw));
+    _b.expandByPoint(_v.set(nW / 2, -nH / 2, -n).applyMatrix4(mw));
+    _b.expandByPoint(_v.set(-nW / 2, -nH / 2, -n).applyMatrix4(mw));
+
+    _b.expandByPoint(_v.set(fW / 2, fH / 2, -f).applyMatrix4(mw));
+    _b.expandByPoint(_v.set(-fW / 2, fH / 2, -f).applyMatrix4(mw));
+    _b.expandByPoint(_v.set(fW / 2, -fH / 2, -f).applyMatrix4(mw));
+    _b.expandByPoint(_v.set(-fW / 2, -fH / 2, -f).applyMatrix4(mw));
+
+    return _b;
   }
 }
