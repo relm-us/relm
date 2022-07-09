@@ -9,7 +9,13 @@ import { Entity } from "~/ecs/base";
 import { Asset, Transform } from "~/ecs/plugins/core";
 import { Model } from "~/ecs/plugins/model";
 import { PointerPosition } from "~/ecs/plugins/pointer-position";
-import { RigidBody, Collider, Impactable } from "~/ecs/plugins/physics";
+import {
+  RigidBody,
+  Collider,
+  Impactable,
+  PhysicsOptions,
+  Collider2,
+} from "~/ecs/plugins/physics";
 import { Animation } from "~/ecs/plugins/animation";
 import { Repulsive } from "~/ecs/plugins/player-control";
 import { TranslucentOptions } from "~/ecs/plugins/translucent";
@@ -41,17 +47,14 @@ export function makeAvatarEntities(
     .add(Animation, {
       clipName: IDLE,
     })
-    .add(RigidBody, {
-      kind: kinematic ? "KINEMATIC" : "DYNAMIC",
-      linearDamping: 20,
-      angularDamping: 25,
+    .add(PhysicsOptions, {
+      rotRestrict: "Y",
     })
-    .add(Collider, {
+    .add(Collider2, {
+      kind: "PLAY",
       shape: "CAPSULE",
-      capsuleHeight: 5.5,
-      capsuleRadius: 1,
-      offset: new Vector3(0, AVATAR_HEIGHT_UNSCALED / 2, 0),
-      interaction: AVATAR_INTERACTION,
+      size: new Vector3(0.5, 1.8, 0),
+      offset: new Vector3(0, 1.1, 0),
     });
 
   const head = makeEntity(world, "AvatarHead").add(Transform, {

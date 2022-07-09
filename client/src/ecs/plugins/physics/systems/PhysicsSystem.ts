@@ -13,8 +13,7 @@ import { System, Modified, Groups } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
 
 import { Physics } from "..";
-import { Impact, RigidBodyRef } from "../components";
-import { RigidBodySystem } from ".";
+import { Collider2Ref, Impact, RigidBodyRef } from "../components";
 import { createFixedTimestep } from "./createFixedTimestep";
 
 const empty = new BufferAttribute(new Float32Array(), 0);
@@ -31,6 +30,7 @@ export class PhysicsSystem extends System {
 
   static queries = {
     modified: [RigidBodyRef, Modified(Transform)],
+    modified2: [Modified(Transform), Collider2Ref],
     impacts: [Impact],
   };
 
@@ -57,6 +57,13 @@ export class PhysicsSystem extends System {
       const transform = entity.get(Transform);
       body.setTranslation(transform.position, true);
       body.setRotation(transform.rotation, true);
+    });
+    this.queries.modified2.forEach((entity) => {
+      const transform: Transform = entity.get(Transform);
+      const ref: Collider2Ref = entity.get(Collider2Ref);
+
+      ref.body.setTranslation(transform.position, true);
+      ref.body.setRotation(transform.rotation, true);
     });
 
     this.fixedUpdate(delta);
@@ -107,6 +114,10 @@ export class PhysicsSystem extends System {
       if (!parent) {
         transform.position.copy(body.translation());
         transform.rotation.copy(body.rotation());
+
+        // Notify all dependent systems that the Transform has changed
+        // NOTE: other systems should NOT update physics directly, or
+        // an infinite loop can occur, and physics goes wonky
         transform.modified();
       } else {
         console.log("physics disabled for entity with parent");

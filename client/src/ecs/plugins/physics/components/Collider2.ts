@@ -9,7 +9,9 @@ export class Collider2 extends Component {
   // - SOLID: Immobile; will only collide with player in play mode
   // - GROUND: Immobile; will always collide with player (even in build mode)
   // - DYNAMIC: Can be moved via physics simulation; will only collide with player in play mode
-  kind: "ETHEREAL" | "SOLID" | "GROUND" | "DYNAMIC";
+  // - PLAY: Kinematic Avatar
+  // - BUILD: Kinematic Avatar (Build Mode)
+  kind: "ETHEREAL" | "SOLID" | "GROUND" | "DYNAMIC" | "PLAY" | "BUILD";
 
   // Collider shapes
   shape: ShapeType;

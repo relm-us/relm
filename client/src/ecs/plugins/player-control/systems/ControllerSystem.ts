@@ -6,7 +6,7 @@ import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
 
 import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
-import { Physics, RigidBodyRef } from "~/ecs/plugins/physics";
+import { Collider2Ref, Physics, RigidBodyRef } from "~/ecs/plugins/physics";
 import { Animation } from "~/ecs/plugins/animation";
 import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
 import { isMakingContactWithGround } from "~/ecs/shared/isMakingContactWithGround";
@@ -78,7 +78,7 @@ export class ControllerSystem extends System {
 
   static queries = {
     added: [Controller, Not(ControllerState)],
-    active: [Controller, ControllerState, Transform, RigidBodyRef],
+    active: [Controller, ControllerState, Transform, Collider2Ref],
     repulsive: [Repulsive, Transform],
   };
 
@@ -123,7 +123,7 @@ export class ControllerSystem extends System {
         this.considerFlying(entity, state, spec.thrusts[FLYING_SPEED]);
       }
 
-      const rigidBody: RapierRigidBody = entity.get(RigidBodyRef)?.value;
+      const rigidBody: RapierRigidBody = entity.get(Collider2Ref)?.body;
       if (rigidBody) {
         rigidBody.setGravityScale(
           state.grounded || spec.canFly ? FALL_NORMAL : FALL_FAST,
@@ -207,11 +207,11 @@ export class ControllerSystem extends System {
     state: ControllerState,
     thrustMagnitude: number
   ) {
-    const ref: RigidBodyRef = entity.get(RigidBodyRef);
+    const body: RapierRigidBody = entity.get(Collider2Ref).body;
 
     if (isKeyActive(spaceState)) {
       vDir.copy(vUp).multiplyScalar(thrustMagnitude);
-      ref.value.addForce(vDir, true);
+      body.addForce(vDir, true);
     }
 
     // Call on alternate damping values & flying animation
@@ -221,7 +221,7 @@ export class ControllerSystem extends System {
   }
 
   torqueTowards(entity: Entity, direction: Vector3, torqueMagnitude: number) {
-    const ref: RigidBodyRef = entity.get(RigidBodyRef);
+    const body: RapierRigidBody = entity.get(Collider2Ref).body;
     const rotation = entity.get(Transform).rotation;
 
     bodyFacing.copy(vOut);
@@ -229,21 +229,22 @@ export class ControllerSystem extends System {
 
     const angle = signedAngleBetweenVectors(bodyFacing, direction, vUp);
     torque.set(0, angle * torqueMagnitude, 0);
-    ref.value.addTorque(torque, true);
+    body.addTorque(torque, true);
 
     return angle;
   }
 
   thrustTowards(entity: Entity, direction: Vector3, thrustMagnitude: number) {
-    const ref: RigidBodyRef = entity.get(RigidBodyRef);
+    const body: RapierRigidBody = entity.get(Collider2Ref).body;
 
     thrust.copy(direction);
     thrust.multiplyScalar(thrustMagnitude);
-    ref.value.addForce(thrust, true);
+    body.addForce(thrust, true);
   }
 
   repelFromOthers(entity: Entity) {
-    const ref: RigidBodyRef = entity.get(RigidBodyRef);
+    const body: RapierRigidBody = entity.get(Collider2Ref).body;
+
     p1.copy(entity.get(Transform).position);
     // Add a little noise so that if entities are exactly on
     // top of each other, they can still move apart.
@@ -258,7 +259,7 @@ export class ControllerSystem extends System {
       if (distance <= 1.25) {
         const distanceSq = distance * distance;
         vDir.copy(p1).sub(p2).normalize().divideScalar(distanceSq);
-        ref.value.addForce(vDir, true);
+        body.addForce(vDir, true);
 
         // TODO: don't use magic number 1.0
         // NOTE: 0.75 is approx. "stationary"

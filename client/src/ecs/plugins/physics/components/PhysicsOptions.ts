@@ -30,7 +30,7 @@ export class PhysicsOptions extends Component {
 
     rotRestrict: {
       type: StringType,
-      default: "",
+      default: "XYZ",
       editor: {
         label: "Rotation Restrictions",
       },

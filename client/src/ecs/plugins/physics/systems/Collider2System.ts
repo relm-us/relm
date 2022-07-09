@@ -4,10 +4,13 @@ import type {
   RigidBodyDesc,
   RigidBodyType,
 } from "@dimforge/rapier3d";
+import type { DecoratedECSWorld } from "~/types";
 
-import { Vector3, Object3D, MathUtils, Box3, Quaternion, Euler } from "three";
+import { Object3D, MathUtils, Box3, Quaternion } from "three";
 
 import {
+  AVATAR_BUILDER_INTERACTION,
+  AVATAR_INTERACTION,
   GROUND_INTERACTION,
   NO_INTERACTION,
   OBJECT_INTERACTION,
@@ -15,19 +18,19 @@ import {
 
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
+import {
+  shapeParamsToColliderDesc,
+  toShapeParams,
+} from "~/ecs/shared/createShape";
 
 import { Physics } from "../Physics";
 import {
+  Collider,
   Collider2,
   Collider2Ref,
   ColliderImplicit,
   PhysicsOptions,
 } from "../components";
-import {
-  shapeParamsToColliderDesc,
-  toShapeParams,
-} from "~/ecs/shared/createShape";
-import { DecoratedECSWorld } from "~/types";
 
 type Behavior = {
   interaction: number;
@@ -46,9 +49,8 @@ export class Collider2System extends System {
     modified: [Modified(Collider2), Collider2Ref],
     removed: [Not(Collider2), Collider2Ref, Not(ColliderImplicit)],
 
-    addImplicit: [Object3DRef, Not(Collider2), Not(ColliderImplicit)],
+    addImplicit: [Object3DRef, Not(Collider), Not(Collider2), Not(ColliderImplicit)],
     modifiedImplicit: [Modified(Object3DRef), ColliderImplicit],
-    modifiedTransform: [Modified(Transform), Collider2Ref],
   };
 
   init({ physics }) {
@@ -78,13 +80,6 @@ export class Collider2System extends System {
       entity.add(ColliderImplicit);
       this.build(entity);
     });
-    this.queries.modifiedTransform.forEach((entity) => {
-      const transform: Transform = entity.get(Transform);
-      const ref: Collider2Ref = entity.get(Collider2Ref);
-
-      ref.body.setTranslation(transform.position, false);
-      ref.body.setRotation(transform.rotation, false);
-    });
   }
 
   build(entity: Entity) {
@@ -109,13 +104,7 @@ export class Collider2System extends System {
     const body = this.createRigidBody(entity, behavior);
     this.physics.bodies.set(body.handle, entity);
 
-    const collider = this.createCollider(
-      spec,
-      body,
-      rotation,
-      transform.scale,
-      behavior
-    );
+    const collider = this.createCollider(spec, body, rotation, behavior);
     this.physics.colliders.set(collider.handle, entity);
 
     entity.add(Collider2Ref, { body, collider });
@@ -141,9 +130,9 @@ export class Collider2System extends System {
 
     const rr = options.rotRestrict.toUpperCase();
     bodyDesc.restrictRotations(
-      !rr.includes("X"),
-      !rr.includes("Y"),
-      !rr.includes("Z")
+      rr.includes("X"),
+      rr.includes("Y"),
+      rr.includes("Z")
     );
 
     // if (spec.mass) rigidBodyDesc.setAdditionalMass(spec.mass);
@@ -155,7 +144,6 @@ export class Collider2System extends System {
     collider: Collider2,
     body: RigidBody,
     rotation: Quaternion,
-    scale: Vector3,
     behavior: Behavior
   ) {
     const { world, rapier } = (this.world as any).physics;
@@ -166,15 +154,11 @@ export class Collider2System extends System {
     )
       .setActiveCollisionTypes(rapier.ActiveCollisionTypes.ALL)
       .setActiveEvents(rapier.ActiveEvents.COLLISION_EVENTS)
-      .setTranslation(
-        collider.offset.x, // * scale.x,
-        collider.offset.y, // * scale.y,
-        collider.offset.z, // * scale.z
-      )
+      .setTranslation(collider.offset.x, collider.offset.y, collider.offset.z)
       .setRotation(rotation);
 
-    collider;
     // colliderDesc.setSensor(spec.isSensor);
+
     colliderDesc.setDensity(MathUtils.clamp(collider.density, 0, 1000));
 
     // Create the collider, and (optionally) attach to rigid body
@@ -211,6 +195,18 @@ export class Collider2System extends System {
         return { interaction: GROUND_INTERACTION, bodyType: BodyType.Fixed };
       case "DYNAMIC":
         return { interaction: OBJECT_INTERACTION, bodyType: BodyType.Dynamic };
+      case "PLAY":
+        return {
+          interaction: AVATAR_INTERACTION,
+          // bodyType: BodyType.KinematicPositionBased,
+          bodyType: BodyType.Dynamic,
+        };
+      case "BUILD": {
+        return {
+          interaction: AVATAR_BUILDER_INTERACTION,
+          bodyType: BodyType.KinematicPositionBased,
+        };
+      }
       default:
         throw Error(`unknown collider kind ${kind}`);
     }
