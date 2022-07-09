@@ -213,7 +213,7 @@ export class Presentation {
     this.camera.updateProjectionMatrix();
     this.composer.setSize(this.size.x, this.size.y);
     if (this.viewport) {
-      this.renderer.render(this.scene, this.camera);
+      this.composer.render();
     }
   }
 
