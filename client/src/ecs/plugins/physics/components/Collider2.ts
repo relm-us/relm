@@ -30,7 +30,7 @@ export class Collider2 extends Component {
   static props = {
     kind: {
       type: StringType,
-      default: "SOLID",
+      default: "ETHEREAL",
       editor: {
         label: "Kind",
         input: "Select",

@@ -15,7 +15,7 @@ import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 import { Shape2, Shape2Mesh, ShapeHasTexture } from "../components";
 import {
   shapeParamsToGeometry,
-  shapeToShapeParams,
+  toShapeParams,
 } from "~/ecs/shared/createShape";
 
 function blank(str: string) {
@@ -161,7 +161,7 @@ export class Shape2System extends System {
 
   makeMesh(shape: Shape2, material: Material) {
     const geometry = shapeParamsToGeometry(
-      shapeToShapeParams(shape.kind, shape.size, shape.detail)
+      toShapeParams(shape.kind, shape.size, shape.detail)
     );
 
     const mesh = new Mesh(geometry, material);

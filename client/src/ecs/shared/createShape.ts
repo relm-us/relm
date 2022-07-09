@@ -21,7 +21,7 @@ import { Collider2 } from "../plugins/physics";
 
 const MIN_DETAIL = 0.01;
 const MIN_DIAMETER = 0.01;
-const MIN_HEIGHT = 0.01;
+const MIN_HEIGHT = 0.04;
 
 const MAX_SPHERE_WIDTH_SEGMENTS = 64;
 const MAX_SPHERE_HEIGHT_SEGMENTS = 64;
@@ -36,7 +36,11 @@ function segments(proportion: number, max: number) {
 export function createBox(size: Vector3): BoxParams {
   return {
     type: "BOX",
-    size: new Vector3().copy(size),
+    size: new Vector3(
+      Math.max(size.x, MIN_HEIGHT),
+      Math.max(size.y, MIN_HEIGHT),
+      Math.max(size.z, MIN_HEIGHT)
+    ),
   };
 }
 
@@ -79,7 +83,7 @@ export function createCapsule(
   };
 }
 
-export function shapeToShapeParams(
+export function toShapeParams(
   type: ShapeType,
   size: Vector3,
   detail: number = 1.0
@@ -93,20 +97,6 @@ export function shapeToShapeParams(
       return createCylinder(size.x, size.y, detail);
     case "CAPSULE":
       return createCapsule(size.x, size.y, detail);
-  }
-}
-
-// TODO: Combine with shapeToShapeParams?
-export function colliderToShapeParams(collider: Collider2): ShapeParams {
-  switch (collider.shape) {
-    case "BOX":
-      return createBox(collider.size);
-    case "SPHERE":
-      return createSphere(collider.size.x);
-    case "CYLINDER":
-      return createCylinder(collider.size.x, collider.size.y);
-    case "CAPSULE":
-      return createCapsule(collider.size.x, collider.size.y);
   }
 }
 
