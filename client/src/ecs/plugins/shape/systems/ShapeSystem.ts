@@ -65,7 +65,7 @@ export class ShapeSystem extends System {
         asset.value = shape.texture;
         asset.modified();
       } else {
-        entity.add(Asset, { kind: "TEXTURE", value: shape.texture });
+        entity.add(Asset, { value: shape.texture });
       }
     } else {
       entity.maybeRemove(Asset);

@@ -3,7 +3,8 @@ import { Transform, Asset } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
 import { RigidBody, Collider } from "~/ecs/plugins/physics";
-import { Model } from "~/ecs/plugins/model";
+import { Asset as AssetComp } from "~/ecs/plugins/asset";
+import { Model2 } from "~/ecs/plugins/form";
 
 import { makeEntity } from "./makeEntity";
 
@@ -17,9 +18,8 @@ export function makeThing(
       position: new Vector3(x, y + yOffset, z),
       scale: new Vector3(w, h, d),
     })
-    .add(Model, {
-      asset: new Asset(url),
-    })
+    .add(AssetComp, { value: new Asset(url) })
+    .add(Model2)
     .add(RigidBody, {
       kind: dynamic ? "DYNAMIC" : "STATIC",
     })

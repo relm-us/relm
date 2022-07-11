@@ -150,6 +150,6 @@ export class Collider extends Component {
   };
 
   static editor = {
-    label: "Collider - Old",
+    label: "Collider (Old)",
   };
 }

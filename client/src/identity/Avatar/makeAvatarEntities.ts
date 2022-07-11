@@ -1,13 +1,13 @@
 import { Vector3 } from "three";
 
-import { AVATAR_INTERACTION } from "~/config/colliderInteractions";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
 import { makeEntity } from "~/prefab/makeEntity";
 
 import { Entity } from "~/ecs/base";
 import { Asset, Transform } from "~/ecs/plugins/core";
-import { Model } from "~/ecs/plugins/model";
+import { Model2 } from "~/ecs/plugins/form";
+import { Asset as AssetComp } from "~/ecs/plugins/asset";
 import { PointerPosition } from "~/ecs/plugins/pointer-position";
 import {
   RigidBody,
@@ -40,9 +40,10 @@ export function makeAvatarEntities(
       position: new Vector3().copy(position),
       scale: new Vector3(0.25, 0.25, 0.25),
     })
-    .add(Model, {
-      asset: new Asset("/humanoid-003.glb"),
+    .add(AssetComp, {
+      value: new Asset("/humanoid-003.glb"),
     })
+    .add(Model2)
     .add(TranslucentOptions, { time: 100 })
     .add(Animation, {
       clipName: IDLE,
@@ -60,12 +61,12 @@ export function makeAvatarEntities(
   const head = makeEntity(world, "AvatarHead").add(Transform, {
     position: new Vector3(0, AVATAR_HEIGHT_UNSCALED, 0),
   });
-  head.setParent(body);
+  // head.setParent(body);
 
   const emoji = makeEntity(world, "AvatarEmoji").add(Transform, {
     position: new Vector3(0, AVATAR_HEIGHT_UNSCALED, 0),
   });
-  emoji.setParent(body);
+  // emoji.setParent(body);
 
   // Move these things as a unit on portal
   body.subgroup = [];

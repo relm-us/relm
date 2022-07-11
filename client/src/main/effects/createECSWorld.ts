@@ -5,7 +5,7 @@ import { World } from "~/ecs/base";
 import { createRenderer } from "../../world/createRenderer";
 import { createScene } from "../../world/createScene";
 
-import CorePlugin from "~/ecs/plugins/core";
+import CorePlugin, { Asset } from "~/ecs/plugins/core";
 import ShapePlugin from "~/ecs/plugins/shape";
 import WallPlugin from "~/ecs/plugins/wall";
 import PerspectivePlugin from "~/ecs/plugins/perspective";
@@ -105,6 +105,8 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
     systems: [PerformanceStatsSystem],
   }) as DecoratedECSWorld;
 
+  registerComponentMigrations(ecsWorld);
+
   const interval = setInterval(() => {
     ecsWorld.update(40);
   }, 40);
@@ -112,3 +114,17 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
 
   dispatch({ id: "createdECSWorld", ecsWorld, ecsWorldLoaderUnsub: unsub });
 };
+
+function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
+  ecsWorld.migrations.register("Model", (world, entity, data) => {
+    const key = "Model2";
+
+    if (entity.hasByName("Asset")) entity.removeByName("Asset");
+
+    entity.add(world.components.getByName("Asset"), {
+      value: new Asset(data.asset.url),
+    });
+
+    entity.add(world.components.getByName("Model2"), { compat: true });
+  });
+}

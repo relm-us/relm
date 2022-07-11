@@ -5,7 +5,7 @@ import { Presentation } from "~/ecs/plugins/core";
 import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
 
 import { BoneTwist, BoneTwistError, BoneTwistRef } from "../components";
-import { ModelAttached } from "~/ecs/plugins/model";
+import { Model2Ref } from "~/ecs/plugins/form";
 
 const vUp = new Vector3(0, 1, 0);
 const vOrigin = new Vector3(0, 0, 0);
@@ -21,7 +21,7 @@ export class BoneTwistSystem extends System {
   order = Groups.Simulation + 15;
 
   static queries = {
-    added: [BoneTwist, ModelAttached, Not(BoneTwistRef), Not(BoneTwistError)],
+    added: [BoneTwist, Model2Ref, Not(BoneTwistRef), Not(BoneTwistError)],
     active: [BoneTwist, BoneTwistRef, PointerPositionRef],
     removed: [Not(BoneTwist), BoneTwistRef],
   };
@@ -50,10 +50,12 @@ export class BoneTwistSystem extends System {
 
   build(entity: Entity) {
     const spec = entity.get(BoneTwist);
-    const { parent, child } = entity.get(ModelAttached);
+    const ref: Model2Ref = entity.get(Model2Ref);
+    const parent = ref.value.scene.parent;
+    const child = ref.value.scene;
     let bone;
     child.traverse((node) => {
-      if (node.isBone && node.name === spec.boneName) {
+      if ((node as any).isBone && node.name === spec.boneName) {
         bone = node;
       }
     });

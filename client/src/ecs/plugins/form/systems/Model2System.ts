@@ -43,6 +43,7 @@ export class Model2System extends System {
   }
 
   build(entity: Entity) {
+    const spec: Model2 = entity.get(Model2);
     const gltf: GLTF = entity.get(AssetLoaded).value;
 
     const clonedScene = clone(gltf.scene);
@@ -53,7 +54,7 @@ export class Model2System extends System {
     clonedScene.traverse((e) => (e.castShadow = true));
 
     // TODO: Optimization: move `normalize` to Loader?
-    normalize(clonedScene);
+    normalize(clonedScene, { backwardsCompatMode: spec.compat });
 
     applyMaterialSettings(clonedScene);
 

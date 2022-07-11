@@ -4,6 +4,7 @@ import { Asset, AssetLoading, AssetLoaded, AssetError } from "../components";
 import { Presentation } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
 import { assetUrl } from "~/config/assetUrl";
+import { checkModelValid } from "../utils/checkModelValid";
 
 let loaderIds = 0;
 
@@ -111,7 +112,10 @@ export class AssetSystem extends System {
       case "TEXTURE":
         return await this.presentation.loadTexture(url);
       case "MODEL":
-        return await this.presentation.loadGltf(url);
+        const gltf = await this.presentation.loadGltf(url);
+        const valid = checkModelValid(gltf.scene);
+        if (valid.type === "ok") return gltf;
+        else throw Error(`invalid glTF: ${valid.reason}`);
       default:
         throw Error("unknown asset kind");
     }
