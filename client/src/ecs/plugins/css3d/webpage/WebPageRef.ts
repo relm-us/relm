@@ -1,6 +1,6 @@
-import { LocalComponent, RefType } from "~/ecs/base";
+import { StateComponent, RefType } from "~/ecs/base";
 
-export class WebPageRef extends LocalComponent {
+export class WebPageRef extends StateComponent {
   value: any;
 
   static props = {
