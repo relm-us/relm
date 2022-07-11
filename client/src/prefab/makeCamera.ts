@@ -1,5 +1,7 @@
-import { Transform, Camera } from "~/ecs/plugins/core";
-import { Vector3, Quaternion, Euler } from "three";
+import { Quaternion, Euler } from "three";
+
+import { Transform } from "~/ecs/plugins/core";
+import { Camera } from "~/ecs/plugins/camera";
 
 import { makeEntity } from "./makeEntity";
 

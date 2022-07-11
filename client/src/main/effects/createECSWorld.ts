@@ -16,6 +16,7 @@ import BloomPlugin from "~/ecs/plugins/bloom";
 import BoneAttachPlugin from "~/ecs/plugins/bone-attach";
 import BoneTwistPlugin from "~/ecs/plugins/bone-twist";
 import BoundingBoxPlugin from "~/ecs/plugins/bounding-box";
+import CameraPlugin from "~/ecs/plugins/camera";
 import ClickablePlugin from "~/ecs/plugins/clickable";
 import ColorationPlugin from "~/ecs/plugins/coloration";
 import ConversationPlugin from "~/ecs/plugins/conversation";
@@ -74,6 +75,7 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       BoneAttachPlugin,
       BoneTwistPlugin,
       BoundingBoxPlugin,
+      CameraPlugin,
       ClickablePlugin,
       ColorationPlugin,
       ConversationPlugin,
