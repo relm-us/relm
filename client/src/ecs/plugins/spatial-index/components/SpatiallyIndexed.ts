@@ -1,9 +1,9 @@
 import { Vector3 } from "three";
-import { StateComponent } from "~/ecs/base";
+import { LocalComponent } from "~/ecs/base";
 
 import { Vector3Type } from "../../core/types";
 
-export class SpatiallyIndexed extends StateComponent {
+export class SpatiallyIndexed extends LocalComponent {
   index: Vector3;
 
   static props = {

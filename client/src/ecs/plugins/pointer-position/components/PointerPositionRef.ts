@@ -1,7 +1,7 @@
 import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
-import { StateComponent, RefType, NumberType } from "~/ecs/base";
+import { LocalComponent, RefType, NumberType } from "~/ecs/base";
 
-export class PointerPositionRef extends StateComponent {
+export class PointerPositionRef extends LocalComponent {
   value: WorldPlanes;
   updateCount: number;
   acknowledgedAt: number;

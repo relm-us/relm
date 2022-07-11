@@ -1,7 +1,7 @@
 import { Object3D } from "three";
-import { StateComponent, RefType } from "~/ecs/base";
+import { LocalComponent, RefType } from "~/ecs/base";
 
-export class BloomApplied extends StateComponent {
+export class BloomApplied extends LocalComponent {
   object: Object3D;
 
   static props = {

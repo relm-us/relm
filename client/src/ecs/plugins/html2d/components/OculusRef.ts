@@ -1,7 +1,7 @@
 import { SvelteComponent } from "svelte";
-import { StateComponent, RefType } from "~/ecs/base";
+import { LocalComponent, RefType } from "~/ecs/base";
 
-export class OculusRef extends StateComponent {
+export class OculusRef extends LocalComponent {
   container: HTMLElement;
   component: SvelteComponent;
 

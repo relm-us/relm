@@ -1,6 +1,6 @@
-import { StateComponent, RefType } from "~/ecs/base";
+import { LocalComponent, RefType } from "~/ecs/base";
 
-export class Html2dRef extends StateComponent {
+export class Html2dRef extends LocalComponent {
   container: HTMLElement;
 
   static props = {

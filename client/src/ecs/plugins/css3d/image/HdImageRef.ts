@@ -1,6 +1,6 @@
-import { StateComponent, RefType } from "~/ecs/base";
+import { LocalComponent, RefType } from "~/ecs/base";
 
-export class HdImageRef extends StateComponent {
+export class HdImageRef extends LocalComponent {
   value: any;
 
   static props = {

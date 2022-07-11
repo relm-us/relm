@@ -1,6 +1,6 @@
-import { StateComponent, RefType, StringType } from "~/ecs/base";
+import { LocalComponent, RefType } from "~/ecs/base";
 
-export class AssetLoaded extends StateComponent {
+export class AssetLoaded extends LocalComponent {
   static props = {
     value: {
       type: RefType,

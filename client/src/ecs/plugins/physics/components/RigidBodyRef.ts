@@ -1,7 +1,8 @@
-import { StateComponent, RefType } from "~/ecs/base";
 import type { RigidBody as RapierRigidBody } from "@dimforge/rapier3d";
 
-export class RigidBodyRef extends StateComponent {
+import { LocalComponent, RefType } from "~/ecs/base";
+
+export class RigidBodyRef extends LocalComponent {
   value: RapierRigidBody;
 
   static props = {

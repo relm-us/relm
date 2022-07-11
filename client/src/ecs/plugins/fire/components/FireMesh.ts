@@ -1,6 +1,6 @@
-import { StateComponent, RefType, BooleanType, NumberType } from "~/ecs/base";
+import { LocalComponent, RefType, BooleanType, NumberType } from "~/ecs/base";
 
-export class FireMesh extends StateComponent {
+export class FireMesh extends LocalComponent {
   static props = {
     value: {
       type: RefType,

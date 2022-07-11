@@ -1,6 +1,6 @@
-import { StateComponent, RefType, NumberType } from "~/ecs/base";
+import { LocalComponent, RefType, NumberType } from "~/ecs/base";
 
-export class SkyboxRef extends StateComponent {
+export class SkyboxRef extends LocalComponent {
   static props = {
     texture: {
       type: RefType,

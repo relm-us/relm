@@ -1,3 +1,3 @@
-import { StateComponent } from "~/ecs/base";
+import { LocalComponent } from "~/ecs/base";
 
-export class ColliderImplicit extends StateComponent {}
+export class ColliderImplicit extends LocalComponent {}

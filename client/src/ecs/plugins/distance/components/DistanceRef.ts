@@ -1,6 +1,6 @@
-import { NumberType, StateComponent } from "~/ecs/base";
+import { NumberType, LocalComponent } from "~/ecs/base";
 
-export class DistanceRef extends StateComponent {
+export class DistanceRef extends LocalComponent {
   static props = {
     value: {
       type: NumberType,

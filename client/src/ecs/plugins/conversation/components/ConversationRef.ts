@@ -1,6 +1,6 @@
-import { StateComponent, RefType } from "~/ecs/base";
+import { LocalComponent, RefType } from "~/ecs/base";
 
-export class ConversationRef extends StateComponent {
+export class ConversationRef extends LocalComponent {
   container: HTMLElement;
   component: any;
 

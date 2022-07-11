@@ -1,10 +1,4 @@
-import { Vector3 } from "three";
-import {
-  RefType,
-  LocalComponent,
-  StateComponent,
-  StringType,
-} from "~/ecs/base";
+import { RefType, LocalComponent, StringType } from "~/ecs/base";
 
 export class BoundingHelper extends LocalComponent {
   static props = {
@@ -35,7 +29,7 @@ export class BoundingHelper extends LocalComponent {
   };
 }
 
-export class BoundingHelperRef extends StateComponent {
+export class BoundingHelperRef extends LocalComponent {
   static props = {
     value: {
       type: RefType,

@@ -1,6 +1,6 @@
-import { StateComponent, RefType } from "~/ecs/base";
+import { LocalComponent, RefType } from "~/ecs/base";
 
-export class BallJointRef extends StateComponent {
+export class BallJointRef extends LocalComponent {
   static props = {
     value: {
       type: RefType,

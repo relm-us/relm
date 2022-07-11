@@ -1,7 +1,8 @@
 import type { Mesh } from "three";
-import { StateComponent, RefType } from "~/ecs/base";
 
-export class Collider2VisibleRef extends StateComponent {
+import { LocalComponent, RefType } from "~/ecs/base";
+
+export class Collider2VisibleRef extends LocalComponent {
   value: Mesh;
 
   static props = {

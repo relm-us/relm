@@ -1,3 +1,3 @@
-import { StateComponent } from "~/ecs/base";
+import { LocalComponent } from "~/ecs/base";
 
-export class ShapeNeedsTexture extends StateComponent {}
+export class ShapeNeedsTexture extends LocalComponent {}

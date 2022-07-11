@@ -1,3 +1,3 @@
-import { StateComponent } from "~/ecs/base";
+import { LocalComponent } from "~/ecs/base";
 
-export class ShapeBuilt extends StateComponent {}
+export class ShapeBuilt extends LocalComponent {}

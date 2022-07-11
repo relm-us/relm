@@ -1,7 +1,7 @@
 import { Object3D } from "three";
-import { StateComponent, RefType } from "~/ecs/base";
+import { LocalComponent, RefType } from "~/ecs/base";
 
-export class BoneAttachRef extends StateComponent {
+export class BoneAttachRef extends LocalComponent {
   bone: Object3D;
   child: Object3D;
 

@@ -1,3 +1,3 @@
-import { StateComponent } from "~/ecs/base";
+import { LocalComponent } from "~/ecs/base";
 
-export class ColorApplied extends StateComponent {}
+export class ColorApplied extends LocalComponent {}

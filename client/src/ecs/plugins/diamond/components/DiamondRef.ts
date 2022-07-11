@@ -1,6 +1,6 @@
-import { StateComponent, RefType, BooleanType, NumberType } from "~/ecs/base";
+import { LocalComponent, RefType, BooleanType, NumberType } from "~/ecs/base";
 
-export class DiamondRef extends StateComponent {
+export class DiamondRef extends LocalComponent {
   static props = {
     diamond: {
       type: RefType,
