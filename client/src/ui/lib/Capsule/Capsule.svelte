@@ -19,21 +19,28 @@
     inputElement.select();
   }
 
-  const onChange = (event) => {
+  function onChange(event) {
     dispatch("change", event.target.value);
-  };
+  }
 
-  const onBlur = () => {
+  function onBlur() {
     if (editable) {
       dispatch("cancel");
     }
-  };
+  }
 
-  const onFocus = () => {
+  function onFocus() {
     if (editable) {
       editing = true;
     }
-  };
+  }
+
+  function onKeyDown(event) {
+    if (event.key === "Escape") {
+      editing = false;
+      event.target.blur();
+    }
+  }
 </script>
 
 <capsule>
@@ -44,6 +51,7 @@
     class:no-label={!label}
     class:max-width={maxWidth}
     on:mousedown
+    on:keydown={onKeyDown}
     on:focus={onFocus}
     style={`cursor: ${cursor}`}
     tabindex="0"
