@@ -34,3 +34,9 @@ export type ShapeParams =
   | CapsuleParams;
 
 export type ShapeType = ShapeParams["type"];
+
+export const MAX_SPHERE_WIDTH_SEGMENTS = 64;
+export const MAX_SPHERE_HEIGHT_SEGMENTS = 64;
+export const MAX_CYLINDER_SEGMENTS = 64;
+export const MAX_CAPSULE_CAP_SEGMENTS = 16;
+export const MAX_CAPSULE_RADIAL_SEGMENTS = 64;

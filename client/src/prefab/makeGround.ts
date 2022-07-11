@@ -1,11 +1,9 @@
 import { Color, Vector3 } from "three";
 
 import { Transform } from "~/ecs/plugins/core";
-import { RigidBody, Collider } from "~/ecs/plugins/physics";
-import { Shape } from "~/ecs/plugins/shape";
+import { Collider2 } from "~/ecs/plugins/physics";
+import { Shape2 } from "~/ecs/plugins/form";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
-
-import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 
 import { makeEntity } from "./makeEntity";
 
@@ -14,24 +12,19 @@ export function makeGround(world, { x = 0, y = 0, z = 0, h = 1 }) {
 
   return makeEntity(world, "Ground")
     .add(Transform, { position: new Vector3(x, y - h / 2, z) })
-    .add(Shape, {
-      color: "#" + color.getHexString(),
+    .add(Shape2, {
       kind: "CYLINDER",
-      cylinderRadius: 15,
-      cylinderHeight: h,
-      cylinderSegments: 60,
+      size: new Vector3(30, h, 1),
+      color: "#" + color.getHexString(),
+      detail: 1,
       metalness: 0.2,
       roughness: 0.8,
       emissive: "#000000",
     })
-    .add(RigidBody, {
-      kind: "STATIC",
-    })
-    .add(Collider, {
+    .add(Collider2, {
+      kind: "GROUND",
       shape: "CYLINDER",
-      cylinderRadius: 15,
-      cylinderHeight: h,
-      interaction: GROUND_INTERACTION,
+      size: new Vector3(30, h, 1),
     })
     .add(NonInteractive);
 }

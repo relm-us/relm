@@ -1,6 +1,6 @@
 import { BufferGeometry, Mesh, Object3D, Vector3 } from "three";
 import { System, Groups, Not, Modified } from "~/ecs/base";
-import { Collider2, ColliderVisible, Collider2VisibleRef } from "../components";
+import { Collider2, Collider2Visible, Collider2VisibleRef } from "../components";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { colliderMaterial } from "~/ecs/shared/colliderMaterial";
 import { shapeParamsToGeometry, toShapeParams } from "~/ecs/shared/createShape";
@@ -11,9 +11,9 @@ export class Collider2VisibleSystem extends System {
   order = Groups.Initialization;
 
   static queries = {
-    added: [Object3DRef, Collider2, ColliderVisible, Not(Collider2VisibleRef)],
-    removed: [Object3DRef, Not(ColliderVisible), Collider2VisibleRef],
-    modifiedCollider: [Object3DRef, Modified(Collider2), ColliderVisible],
+    added: [Object3DRef, Collider2, Collider2Visible, Not(Collider2VisibleRef)],
+    removed: [Object3DRef, Not(Collider2Visible), Collider2VisibleRef],
+    modifiedCollider: [Object3DRef, Modified(Collider2), Collider2Visible],
     modifiedTransform: [Modified(Transform), Collider2VisibleRef],
     removedCollider: [Object3DRef, Not(Collider2), Collider2VisibleRef],
   };

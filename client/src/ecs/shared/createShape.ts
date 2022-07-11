@@ -1,12 +1,4 @@
 import type { ColliderDesc as RapierColliderDesc } from "@dimforge/rapier3d";
-import type {
-  ShapeType,
-  ShapeParams,
-  BoxParams,
-  CapsuleParams,
-  CylinderParams,
-  SphereParams,
-} from "~/types/shapes";
 
 import {
   Vector3,
@@ -17,17 +9,24 @@ import {
   CylinderBufferGeometry,
   MathUtils,
 } from "three";
-import { Collider2 } from "../plugins/physics";
+
+import {
+  ShapeType,
+  ShapeParams,
+  BoxParams,
+  CapsuleParams,
+  CylinderParams,
+  SphereParams,
+  MAX_SPHERE_WIDTH_SEGMENTS,
+  MAX_SPHERE_HEIGHT_SEGMENTS,
+  MAX_CYLINDER_SEGMENTS,
+  MAX_CAPSULE_CAP_SEGMENTS,
+  MAX_CAPSULE_RADIAL_SEGMENTS,
+} from "~/types/shapes";
 
 const MIN_DETAIL = 0.01;
 const MIN_DIAMETER = 0.01;
 const MIN_HEIGHT = 0.04;
-
-const MAX_SPHERE_WIDTH_SEGMENTS = 64;
-const MAX_SPHERE_HEIGHT_SEGMENTS = 64;
-const MAX_CYLINDER_SEGMENTS = 64;
-const MAX_CAPSULE_CAP_SEGMENTS = 16;
-const MAX_CAPSULE_RADIAL_SEGMENTS = 64;
 
 function segments(proportion: number, max: number) {
   return Math.ceil(MathUtils.clamp(proportion, MIN_DETAIL, 1.0) * max);

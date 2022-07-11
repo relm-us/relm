@@ -10,8 +10,6 @@ import { Model2 } from "~/ecs/plugins/form";
 import { Asset as AssetComp } from "~/ecs/plugins/asset";
 import { PointerPosition } from "~/ecs/plugins/pointer-position";
 import {
-  RigidBody,
-  Collider,
   Impactable,
   PhysicsOptions,
   Collider2,

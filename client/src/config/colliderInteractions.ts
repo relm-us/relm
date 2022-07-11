@@ -21,7 +21,7 @@
  * builder x avatar   gx0004 & mx0002 (0) && gx0004 & mx0003 (0) = false
  */
 
-export const NO_INTERACTION = 0x00010000;
+export const NO_INTERACTION = 0x00010008;
 export const OBJECT_INTERACTION = 0x00010007;
 export const GROUND_INTERACTION = 0x00020007;
 export const AVATAR_INTERACTION = 0x00040003;

@@ -2,7 +2,7 @@ import { Transform, Asset } from "~/ecs/plugins/core";
 
 import { Vector3 } from "three";
 
-import { RigidBody, Collider } from "~/ecs/plugins/physics";
+import { Collider2 } from "~/ecs/plugins/physics";
 import { Asset as AssetComp } from "~/ecs/plugins/asset";
 import { Model2 } from "~/ecs/plugins/form";
 
@@ -20,12 +20,9 @@ export function makeThing(
     })
     .add(AssetComp, { value: new Asset(url) })
     .add(Model2)
-    .add(RigidBody, {
-      kind: dynamic ? "DYNAMIC" : "STATIC",
-    })
-    .add(Collider, {
-      kind: "BOX",
-      boxSize: new Vector3(w, h, d),
+    .add(Collider2, {
+      size: new Vector3(w, h, d),
+      kind: dynamic ? "DYNAMIC" : "BARRIER",
     });
   return thing;
 }

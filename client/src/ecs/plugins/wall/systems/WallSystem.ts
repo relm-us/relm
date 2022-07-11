@@ -5,7 +5,7 @@ import { OBJECT_INTERACTION } from "~/config/colliderInteractions";
 
 import { System, Not, Modified, Groups } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
-import { RigidBodyRef } from "~/ecs/plugins/physics";
+// import { RigidBodyRef } from "~/ecs/plugins/physics";
 import { colliderMaterial } from "~/ecs/shared/colliderMaterial";
 
 import { worldUIMode } from "~/stores/worldUIMode";
@@ -19,7 +19,7 @@ export class WallSystem extends System {
 
   static queries = {
     added: [Object3DRef, Wall, Not(WallMesh)],
-    needsCollider: [Wall, RigidBodyRef, Not(WallColliderRef)],
+    // needsCollider: [Wall, RigidBodyRef, Not(WallColliderRef)],
     modified: [Object3DRef, Modified(Wall), WallMesh],
     modifiedTransform: [WallColliderRef, Modified(Transform)],
     removedObj: [Not(Object3DRef), WallMesh],
@@ -43,9 +43,9 @@ export class WallSystem extends System {
     this.queries.modifiedTransform.forEach((entity) => {
       this.removeCollider(entity);
     });
-    this.queries.needsCollider.forEach((entity) => {
-      this.buildCollider(entity);
-    });
+    // this.queries.needsCollider.forEach((entity) => {
+    //   this.buildCollider(entity);
+    // });
     this.queries.removedObj.forEach((entity) => {
       const mesh = entity.get(WallMesh).value;
       mesh.parent.remove(mesh);
@@ -132,33 +132,33 @@ export class WallSystem extends System {
     entity.remove(WallColliderRef);
   }
 
-  buildCollider(entity) {
-    const rigidBodyRef = entity.get(RigidBodyRef);
+  // buildCollider(entity) {
+  //   const rigidBodyRef = entity.get(RigidBodyRef);
 
-    const { world, rapier } = (this.world as any).physics;
+  //   const { world, rapier } = (this.world as any).physics;
 
-    const wall = entity.get(Wall);
-    const { vertices, indices } = wallGeometryData(
-      wall.size.x,
-      wall.size.y,
-      wall.size.z,
-      wall.convexity,
-      wall.segments
-    );
+  //   const wall = entity.get(Wall);
+  //   const { vertices, indices } = wallGeometryData(
+  //     wall.size.x,
+  //     wall.size.y,
+  //     wall.size.z,
+  //     wall.convexity,
+  //     wall.segments
+  //   );
 
-    const colliderDesc = rapier.ColliderDesc.trimesh(
-      new Float32Array(vertices),
-      new Uint32Array(indices)
-    );
+  //   const colliderDesc = rapier.ColliderDesc.trimesh(
+  //     new Float32Array(vertices),
+  //     new Uint32Array(indices)
+  //   );
 
-    // TODO: Make this configurable, like ColliderSystem
-    colliderDesc.setCollisionGroups(OBJECT_INTERACTION);
+  //   // TODO: Make this configurable, like ColliderSystem
+  //   colliderDesc.setCollisionGroups(OBJECT_INTERACTION);
 
-    const collider = world.createCollider(
-      colliderDesc,
-      rigidBodyRef.value.handle
-    );
+  //   const collider = world.createCollider(
+  //     colliderDesc,
+  //     rigidBodyRef.value.handle
+  //   );
 
-    entity.add(WallColliderRef, { value: collider });
-  }
+  //   entity.add(WallColliderRef, { value: collider });
+  // }
 }

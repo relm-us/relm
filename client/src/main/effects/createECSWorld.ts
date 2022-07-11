@@ -5,8 +5,7 @@ import { World } from "~/ecs/base";
 import { createRenderer } from "../../world/createRenderer";
 import { createScene } from "../../world/createScene";
 
-import CorePlugin, { Asset } from "~/ecs/plugins/core";
-import ShapePlugin from "~/ecs/plugins/shape";
+import CorePlugin from "~/ecs/plugins/core";
 import WallPlugin from "~/ecs/plugins/wall";
 import PerspectivePlugin from "~/ecs/plugins/perspective";
 
@@ -33,7 +32,6 @@ import ItemPlugin from "~/ecs/plugins/item";
 import LightingPlugin from "~/ecs/plugins/lighting";
 import LineHelperPlugin from "~/ecs/plugins/line-helper";
 import LookAtPlugin from "~/ecs/plugins/look-at";
-import ModelPlugin from "~/ecs/plugins/model";
 import MorphPlugin from "~/ecs/plugins/morph";
 import NonInteractivePlugin from "~/ecs/plugins/non-interactive";
 import OutlinePlugin from "~/ecs/plugins/outline";
@@ -50,6 +48,7 @@ import TranslucentPlugin from "~/ecs/plugins/translucent";
 import { PerformanceStatsSystem } from "~/ecs/systems/PerformanceStatsSystem";
 import { Dispatch } from "../ProgramTypes";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
+import { registerComponentMigrations } from "./registerComponentMigrations";
 
 export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
   const ecsWorld = new World({
@@ -64,7 +63,6 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
         // Pass the physics engine in to the plugin
         rapier,
       }),
-      ShapePlugin,
       WallPlugin,
       FirePlugin,
       PerspectivePlugin,
@@ -74,7 +72,7 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       BloomPlugin,
       BoneAttachPlugin,
       BoneTwistPlugin,
-      BoundingBoxPlugin,
+      // BoundingBoxPlugin,
       CameraPlugin,
       ClickablePlugin,
       ColorationPlugin,
@@ -91,7 +89,6 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       LightingPlugin,
       LineHelperPlugin,
       LookAtPlugin,
-      ModelPlugin,
       MorphPlugin,
       NonInteractivePlugin,
       OutlinePlugin,
@@ -100,7 +97,7 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       PointerPositionPlugin,
       PortalPlugin,
       SkyboxPlugin,
-      SpatialIndexPlugin,
+      // SpatialIndexPlugin,
       TransitionPlugin,
       TranslucentPlugin,
     ],
@@ -116,17 +113,3 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
 
   dispatch({ id: "createdECSWorld", ecsWorld, ecsWorldLoaderUnsub: unsub });
 };
-
-function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
-  ecsWorld.migrations.register("Model", (world, entity, data) => {
-    const key = "Model2";
-
-    if (entity.hasByName("Asset")) entity.removeByName("Asset");
-
-    entity.add(world.components.getByName("Asset"), {
-      value: new Asset(data.asset.url),
-    });
-
-    entity.add(world.components.getByName("Model2"), { compat: true });
-  });
-}

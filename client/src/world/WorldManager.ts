@@ -48,7 +48,7 @@ import { SelectionBox } from "~/events/input/PointerListener/SelectionBox";
 import { makeLight } from "~/prefab/makeLight";
 
 import { Entity } from "~/ecs/base";
-import { Collider, Collider2, ColliderVisible } from "~/ecs/plugins/physics";
+import { Collider2, Collider2Visible } from "~/ecs/plugins/physics";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { BoundingHelper } from "~/ecs/plugins/bounding-box";
 import { ControllerState } from "~/ecs/plugins/player-control";
@@ -420,9 +420,7 @@ export class WorldManager {
   }
 
   getColliderEntities() {
-    return this.world.entities.getAllBy(
-      (entity) => entity.has(Collider) || entity.has(Collider2)
-    );
+    return this.world.entities.getAllBy((entity) => entity.has(Collider2));
   }
 
   enableNonInteractiveGround(enabled = true) {
@@ -435,12 +433,6 @@ export class WorldManager {
           entity[action](NonInteractive);
         }
       }
-      if (entity.has(Collider)) {
-        const collider: Collider = entity.get(Collider);
-        if (collider.interaction === GROUND_INTERACTION) {
-          entity[action](NonInteractive);
-        }
-      }
     }
   }
 
@@ -448,9 +440,9 @@ export class WorldManager {
     const entities = this.getColliderEntities();
     for (const entity of entities) {
       const interactive = !entity.get(NonInteractive);
-      entity.maybeRemove(ColliderVisible);
+      entity.maybeRemove(Collider2Visible);
       if (enabled && (interactive || includeNonInteractive)) {
-        entity.add(ColliderVisible);
+        entity.add(Collider2Visible);
       }
     }
   }

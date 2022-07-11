@@ -2,11 +2,10 @@ import { Transform } from "~/ecs/plugins/core";
 
 import { Color, Vector3 } from "three";
 
-import { Shape } from "~/ecs/plugins/shape";
-import { RigidBody, Collider } from "~/ecs/plugins/physics";
+import { Shape2 } from "~/ecs/plugins/form";
+import { Collider2 } from "~/ecs/plugins/physics";
 
 import { makeEntity } from "./makeEntity";
-import { OBJECT_INTERACTION } from "~/config/colliderInteractions";
 
 export function makeBall(
   world,
@@ -26,7 +25,6 @@ export function makeBall(
     roughness = 0.8,
     emissive = "#000000",
     collider = true,
-    interaction = OBJECT_INTERACTION,
   }
 ) {
   const linearColor = new Color(color);
@@ -36,10 +34,10 @@ export function makeBall(
     .add(Transform, {
       position: new Vector3(x, y + r, z),
     })
-    .add(Shape, {
+    .add(Shape2, {
       kind: "SPHERE",
+      size: new Vector3(r * 2, 1, 1),
       color: "#" + linearColor.getHexString(),
-      sphereRadius: r,
       metalness,
       roughness,
       emissive,
@@ -47,19 +45,12 @@ export function makeBall(
 
   // Optionally add a collider that matches the dimensions of the visible shape
   if (collider) {
-    entity
-      .add(RigidBody, {
-        kind: dynamic ? "DYNAMIC" : "STATIC",
-        linearDamping,
-        angularDamping,
-        mass,
-      })
-      .add(Collider, {
-        shape: "SPHERE",
-        sphereRadius: r,
-        density,
-        interaction,
-      });
+    entity.add(Collider2, {
+      shape: "SPHERE",
+      size: new Vector3(r * 2, 1, 1),
+      kind: dynamic ? "DYNAMIC" : "BARRIER",
+      density,
+    });
   }
   return entity;
 }

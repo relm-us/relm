@@ -17,10 +17,9 @@ import {
 
 import { Physics } from "../Physics";
 import {
-  Collider,
   Collider2,
   Collider2Ref,
-  ColliderImplicit,
+  Collider2Implicit,
   PhysicsOptions,
 } from "../components";
 import { Behavior } from "../components/Collider2";
@@ -33,17 +32,17 @@ export class Collider2System extends System {
   order = Groups.Presentation + 301; // After WorldTransform
 
   static queries = {
-    added: [Collider2, Not(Collider2Ref)],
-    modified: [Modified(Collider2), Collider2Ref],
-    removed: [Not(Collider2), Collider2Ref, Not(ColliderImplicit)],
+    added: [Transform, Collider2, Not(Collider2Ref)],
+    modified: [Transform, Modified(Collider2), Collider2Ref],
+    removed: [Transform, Not(Collider2), Collider2Ref, Not(Collider2Implicit)],
 
     addImplicit: [
+      Transform,
       Object3DRef,
-      Not(Collider),
       Not(Collider2),
-      Not(ColliderImplicit),
+      Not(Collider2Implicit),
     ],
-    modifiedImplicit: [Modified(Object3DRef), ColliderImplicit],
+    modifiedImplicit: [Transform, Modified(Object3DRef), Collider2Implicit],
   };
 
   init({ physics }) {
@@ -65,12 +64,12 @@ export class Collider2System extends System {
     });
 
     this.queries.addImplicit.forEach((entity) => {
-      entity.add(ColliderImplicit);
+      entity.add(Collider2Implicit);
       this.build(entity);
     });
     this.queries.modifiedImplicit.forEach((entity) => {
       this.remove(entity);
-      entity.add(ColliderImplicit);
+      entity.add(Collider2Implicit);
       this.build(entity);
     });
   }
@@ -171,6 +170,6 @@ export class Collider2System extends System {
     }
 
     entity.remove(Collider2Ref);
-    entity.maybeRemove(ColliderImplicit);
+    entity.maybeRemove(Collider2Implicit);
   }
 }

@@ -36,7 +36,7 @@ export class TransformSystem extends System {
       // Update this entity and its children, since we only flag the
       // top-most Transform as "modified()":
       entity.traverse((e) => {
-        this.updateWorldTransform(e);
+        if (e.active) this.updateWorldTransform(e);
       });
     });
 
@@ -85,7 +85,9 @@ export class TransformSystem extends System {
   // Here's where we tell each Three.js object what its position, rotation,
   // and scale is, both within local and world coordinate systems.
   updateWorldTransform(entity: Entity) {
-    const object3d: Object3D = entity.get(Object3DRef).value;
+    const o3dref: Object3DRef = entity.get(Object3DRef);
+    if (!o3dref) debugger;
+    const object3d: Object3D = o3dref.value;
     const transform: Transform = entity.get(Transform);
     const parent = entity.getParent();
 

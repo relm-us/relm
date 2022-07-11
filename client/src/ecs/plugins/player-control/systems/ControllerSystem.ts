@@ -6,7 +6,7 @@ import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
 
 import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
-import { Collider2Ref, Physics, RigidBodyRef } from "~/ecs/plugins/physics";
+import { Collider2Ref, Physics } from "~/ecs/plugins/physics";
 import { Animation } from "~/ecs/plugins/animation";
 import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
 import { isMakingContactWithGround } from "~/ecs/shared/isMakingContactWithGround";
