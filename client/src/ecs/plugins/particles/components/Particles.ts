@@ -1,6 +1,7 @@
 import {
   Component,
   LocalComponent,
+  StateComponent,
   RefType,
   StringType,
   BooleanType,
@@ -37,7 +38,7 @@ export class Particles extends Component {
   };
 }
 
-export class ParticlesRef extends LocalComponent {
+export class ParticlesRef extends StateComponent {
   static props = {
     value: {
       type: RefType,
