@@ -202,6 +202,6 @@ export class Shape extends Component {
   };
 
   static editor = {
-    label: "Shape - Old",
+    label: "Shape (Old)",
   };
 }

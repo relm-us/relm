@@ -12,15 +12,9 @@ import { Entity, System, Not, Modified, Groups } from "~/ecs/base";
 import { Object3DRef } from "~/ecs/plugins/core";
 import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 
-import { Shape2, Shape2Mesh, ShapeHasTexture } from "../components";
-import {
-  shapeParamsToGeometry,
-  toShapeParams,
-} from "~/ecs/shared/createShape";
+import { Shape2, Shape2Mesh, Shape2HasTexture } from "../components";
+import { shapeParamsToGeometry, toShapeParams } from "~/ecs/shared/createShape";
 
-function blank(str: string) {
-  return str === undefined || str === null || str === "";
-}
 export class Shape2System extends System {
   active = isBrowser();
 
@@ -29,13 +23,13 @@ export class Shape2System extends System {
 
   static queries = {
     added: [Shape2, Not(Shape2Mesh)],
-    addedAsset: [Shape2, AssetLoaded, Not(ShapeHasTexture)],
+    addedAsset: [Shape2, AssetLoaded, Not(Shape2HasTexture)],
 
     modified: [Modified(Shape2)],
     modifiedAsset: [Shape2, Modified(Asset)],
 
     removed: [Not(Shape2), Shape2Mesh],
-    removedAsset: [Shape2, Not(Asset), ShapeHasTexture],
+    removedAsset: [Shape2, Not(Asset), Shape2HasTexture],
   };
 
   update() {
@@ -49,7 +43,7 @@ export class Shape2System extends System {
     this.queries.modified.forEach((entity) => {
       this.remove(entity);
       this.buildWithoutTexture(entity);
-      if (entity.has(ShapeHasTexture)) {
+      if (entity.has(Shape2HasTexture)) {
         this.addTexture(entity);
       }
     });
@@ -57,14 +51,16 @@ export class Shape2System extends System {
       if (entity.has(AssetLoaded)) {
         this.addTexture(entity);
       } else {
-        entity.maybeRemove(ShapeHasTexture);
+        entity.maybeRemove(Shape2HasTexture);
       }
     });
 
     this.queries.removed.forEach((entity) => {
+      console.log("shape2 removed", entity.id);
       this.remove(entity);
     });
     this.queries.removedAsset.forEach((entity) => {
+      console.log("shape2 removedAsset", entity.id);
       this.removeTexture(entity);
     });
   }
@@ -97,7 +93,7 @@ export class Shape2System extends System {
       texture.wrapS = RepeatWrapping;
       texture.wrapT = RepeatWrapping;
 
-      entity.add(ShapeHasTexture);
+      entity.add(Shape2HasTexture);
     } else if (asset.kind === null) {
       this.removeTexture(entity);
       console.warn("removing texture", entity.id);
@@ -105,8 +101,8 @@ export class Shape2System extends System {
       this.removeTexture(entity);
       console.warn("not adding non-texture asset to shape", entity.id);
 
-      // Add ShapeHasTexture so we don't loop infinitely
-      entity.add(ShapeHasTexture);
+      // Add Shape2HasTexture so we don't loop infinitely
+      entity.add(Shape2HasTexture);
     }
   }
 
@@ -115,7 +111,7 @@ export class Shape2System extends System {
 
     (mesh.value.material as MeshStandardMaterial).map = null;
 
-    entity.remove(ShapeHasTexture);
+    entity.remove(Shape2HasTexture);
   }
 
   remove(entity: Entity) {
@@ -128,7 +124,7 @@ export class Shape2System extends System {
 
       entity.remove(Shape2Mesh);
     }
-    entity.maybeRemove(ShapeHasTexture);
+    entity.maybeRemove(Shape2HasTexture);
   }
 
   attach(entity: Entity) {

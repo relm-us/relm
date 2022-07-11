@@ -24,6 +24,7 @@ import DiamondPlugin from "~/ecs/plugins/diamond";
 import DistancePlugin from "~/ecs/plugins/distance";
 import FirePlugin from "~/ecs/plugins/fire";
 import FollowPlugin from "~/ecs/plugins/follow";
+import FormPlugin from "~/ecs/plugins/form";
 import Html2dPlugin from "~/ecs/plugins/html2d";
 import ImagePlugin from "~/ecs/plugins/image";
 import InteractorPlugin from "~/ecs/plugins/interactor";
@@ -48,8 +49,6 @@ import TranslucentPlugin from "~/ecs/plugins/translucent";
 import { PerformanceStatsSystem } from "~/ecs/systems/PerformanceStatsSystem";
 import { Dispatch } from "../ProgramTypes";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
-
-let errCount = 0;
 
 export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
   const ecsWorld = new World({
@@ -82,6 +81,7 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       DiamondPlugin,
       DistancePlugin,
       FollowPlugin,
+      FormPlugin,
       Html2dPlugin,
       ImagePlugin,
       InteractorPlugin,

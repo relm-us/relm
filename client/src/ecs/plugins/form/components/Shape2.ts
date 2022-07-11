@@ -1,5 +1,5 @@
 import { Component, StringType, NumberType } from "~/ecs/base";
-import { Asset, AssetType, Vector3Type } from "~/ecs/plugins/core";
+import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 import { ShapeType } from "~/types/shapes";
 
