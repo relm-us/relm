@@ -32,7 +32,7 @@
   };
 
   const onInputChange = (event) => {
-    let url = event.target.value;
+    let url = event.detail;
     if (url.match(/^\s*$/)) value = "";
     setAssetUrl(url);
   };
