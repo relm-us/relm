@@ -91,7 +91,7 @@ export class Shape2System extends System {
 
   buildTexture(entity: Entity) {
     const spec: Shape2 = entity.get(Shape2);
-    const texture: Texture = entity.get(AssetLoaded)?.value;
+    const texture: Texture = entity.get(AssetLoaded).value;
     const mesh: Shape2Mesh = entity.get(Shape2Mesh);
 
     (mesh.value.material as MeshStandardMaterial).map = texture;

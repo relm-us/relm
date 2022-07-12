@@ -1,8 +1,8 @@
-import { Component, StringType } from "~/ecs/base";
+import { Component } from "~/ecs/base";
 import { AssetType } from "~/ecs/plugins/core";
 import { Asset as CoreAsset } from "~/ecs/plugins/core/Asset";
 
-type Kind = "TEXTURE" | "MODEL" | null;
+type Kind = "TEXTURE" | "GLTF" | null;
 export class Asset extends Component {
   value: CoreAsset;
 
@@ -28,7 +28,7 @@ export class Asset extends Component {
     if (url !== "") {
       // TODO: Get the asset type from MIME info at time of upload
       if (/\.(glb|gltf)$/.test(url)) {
-        return "MODEL";
+        return "GLTF";
       } else if (/\.(png|jpg|jpeg|webp)$/.test(url)) {
         return "TEXTURE";
       }

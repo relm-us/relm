@@ -6,6 +6,7 @@ import { StateComponent, StringType, RefType } from "~/ecs/base";
 export class AssetLoaded extends StateComponent {
   kind: "TEXTURE" | "GLTF";
   value: Texture | GLTF;
+  cacheKey: string;
   error: string;
 
   static props = {
@@ -15,6 +16,10 @@ export class AssetLoaded extends StateComponent {
 
     value: {
       type: RefType,
+    },
+
+    cacheKey: {
+      type: StringType
     },
 
     error: {

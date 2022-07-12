@@ -72,7 +72,7 @@ export class AssetSystem extends System {
 
     if (loadingId === id) {
       entity.remove(AssetLoading);
-      entity.add(AssetLoaded, { kind: spec.kind, value });
+      entity.add(AssetLoaded, { kind: spec.kind, cacheKey: spec.url, value });
     } else {
       this.loadingError(entity, `${id} was cancelled (!= ${loadingId})`, false);
     }
@@ -106,7 +106,7 @@ export class AssetSystem extends System {
     switch (spec.kind) {
       case "TEXTURE":
         return await this.presentation.loadTexture(url);
-      case "MODEL":
+      case "GLTF":
         const gltf = await this.presentation.loadGltf(url);
         const valid = checkModelValid(gltf.scene);
         if (valid.type === "ok") return gltf;
