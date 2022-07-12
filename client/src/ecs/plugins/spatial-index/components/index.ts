@@ -1,1 +1,0 @@
-export { SpatiallyIndexed } from "./SpatiallyIndexed";

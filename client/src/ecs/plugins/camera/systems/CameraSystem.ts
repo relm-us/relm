@@ -29,7 +29,7 @@ export class CameraSystem extends System {
 
   init({ physics, presentation }) {
     this.physics = physics;
-    this.camera = presentation?.camera;
+    this.camera = presentation.camera;
 
     this.buildFrustum();
 

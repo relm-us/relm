@@ -14,7 +14,6 @@ import AssetPlugin from "~/ecs/plugins/asset";
 import BloomPlugin from "~/ecs/plugins/bloom";
 import BoneAttachPlugin from "~/ecs/plugins/bone-attach";
 import BoneTwistPlugin from "~/ecs/plugins/bone-twist";
-import BoundingBoxPlugin from "~/ecs/plugins/bounding-box";
 import CameraPlugin from "~/ecs/plugins/camera";
 import ClickablePlugin from "~/ecs/plugins/clickable";
 import ColorationPlugin from "~/ecs/plugins/coloration";
@@ -41,7 +40,6 @@ import PointerPositionPlugin from "~/ecs/plugins/pointer-position";
 import PortalPlugin from "~/ecs/plugins/portal";
 import PhysicsPlugin from "~/ecs/plugins/physics";
 import SkyboxPlugin from "~/ecs/plugins/skybox";
-import SpatialIndexPlugin from "~/ecs/plugins/spatial-index";
 import TransitionPlugin from "~/ecs/plugins/transition";
 import TranslucentPlugin from "~/ecs/plugins/translucent";
 
@@ -72,7 +70,6 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       BloomPlugin,
       BoneAttachPlugin,
       BoneTwistPlugin,
-      // BoundingBoxPlugin,
       CameraPlugin,
       ClickablePlugin,
       ColorationPlugin,
@@ -97,7 +94,6 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       PointerPositionPlugin,
       PortalPlugin,
       SkyboxPlugin,
-      // SpatialIndexPlugin,
       TransitionPlugin,
       TranslucentPlugin,
     ],
