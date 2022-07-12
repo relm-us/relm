@@ -1,7 +1,7 @@
 import { Euler, PerspectiveCamera, Quaternion, Vector3 } from "three";
 
 import { Entity } from "~/ecs/base";
-import { Camera, Object3DRef, Transform } from "~/ecs/plugins/core";
+import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { Follow } from "~/ecs/plugins/follow";
 import { LookAt } from "~/ecs/plugins/look-at";
 
