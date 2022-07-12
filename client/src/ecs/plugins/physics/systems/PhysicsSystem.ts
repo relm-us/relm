@@ -24,8 +24,7 @@ export class PhysicsSystem extends System {
 
   order = Groups.Presentation + 300;
 
-  // DEBUGGING
-  static showDebug: boolean = true;
+  static showDebug: boolean = false;
 
   static queries = {
     modified: [Modified(Transform), Collider2Ref],
