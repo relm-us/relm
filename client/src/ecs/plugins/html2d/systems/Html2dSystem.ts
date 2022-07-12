@@ -71,6 +71,8 @@ export class Html2dSystem extends System {
     });
 
     entity.add(Html2dRef, { container, component });
+
+    this.updatePosition(entity);
   }
 
   remove(entity: Entity) {
@@ -103,5 +105,4 @@ export class Html2dSystem extends System {
     const y = this.htmlPresentation.percent(spec.vanchor);
     container.style.transform = `translate(-50%,-50%) scale(${scale}) translate(${x},${y})`;
   }
-
 }
