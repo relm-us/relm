@@ -40,7 +40,6 @@ import {
 } from "~/config/constants";
 
 import { config } from "~/config";
-import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 
 import { DragPlane } from "~/events/input/PointerListener/DragPlane";
 import { SelectionBox } from "~/events/input/PointerListener/SelectionBox";
@@ -50,7 +49,6 @@ import { makeLight } from "~/prefab/makeLight";
 import { Entity } from "~/ecs/base";
 import { Collider2, Collider2Visible } from "~/ecs/plugins/physics";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
-import { BoundingHelper } from "~/ecs/plugins/bounding-box";
 import { ControllerState } from "~/ecs/plugins/player-control";
 import { Follow } from "~/ecs/plugins/follow";
 import { intersectionPointWithGround } from "~/ecs/shared/isMakingContactWithGround";
