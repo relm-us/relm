@@ -80,36 +80,14 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
     });
   });
 
-  // Migrate from 'RigidBody' to 'Collider2'
-  ecsWorld.migrations.register("RigidBody", (world, entity, data) => {
-    const transform = entity.getByName("Transform");
-    const Collider2 = world.components.getByName("Collider2");
-    let collider = entity.get(Collider2);
-    if (!collider)
-      collider = entity.add(
-        Collider2,
-        { size: new Vector3().copy(transform.scale) },
-        true
-      );
-
-    switch (data.kind) {
-      case "STATIC":
-        collider.kind = "ETHEREAL";
-        break;
-
-      case "KINEMATIC":
-      case "DYNAMIC":
-        collider.kind = "DYNAMIC";
-        break;
-    }
-  });
+  // Ignore RigidBody
+  ecsWorld.migrations.register("RigidBody", (world, entity, data) => {});
 
   // Migrate from 'Collider' to 'Collider2'
   ecsWorld.migrations.register("Collider", (world, entity, data) => {
     const transform = entity.getByName("Transform");
     const Collider2 = world.components.getByName("Collider2");
-    let collider = entity.get(Collider2);
-    if (!collider) collider = entity.add(Collider2, undefined, true);
+    const collider = entity.add(Collider2, undefined, true);
 
     collider.shape = data.shape;
     collider.offset.fromArray(data.offset).multiply(transform.scale);
@@ -117,6 +95,8 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
 
     if (data.interaction === GROUND_INTERACTION) {
       collider.kind = "GROUND";
+    } else {
+      collider.kind = "BARRIER";
     }
 
     let size = new Vector3();
