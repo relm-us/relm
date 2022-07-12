@@ -40,6 +40,7 @@
         return SelectType;
       case "String":
         return StringType;
+      case "Vector2":
       case "Vector3":
         return Vector3Type;
       default:

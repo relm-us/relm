@@ -22,7 +22,12 @@
   $: if (attrs.labels) {
     labels = attrs.labels;
   } else {
-    labels = ["x", "y", "z"];
+    if (component[key].z === undefined) {
+      // Vector2Type
+      labels = ["x", "y"];
+    } else {
+      labels = ["x", "y", "z"];
+    }
   }
 
   let value: { x: number; y: number; z: number };
