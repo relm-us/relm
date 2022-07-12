@@ -36,7 +36,7 @@ export class TransformSystem extends System {
       // Update this entity and its children, since we only flag the
       // top-most Transform as "modified()":
       entity.traverse((e) => {
-        if (e.active) this.updateWorldTransform(e);
+        this.updateWorldTransform(e);
       });
     });
 
@@ -50,23 +50,14 @@ export class TransformSystem extends System {
     object3d.uuid = entity.id as string;
     object3d.name = entity.name;
     object3d.matrixAutoUpdate = false;
-    // We don't need frustum culling, because we use sparse-octree to
-    // make objects visible when inside the camera frustum:
-    object3d.frustumCulled = false;
-    // We start objects as not visible, so that the entire world doesn't
-    // need to be rendered on the first frame; instead, we will use
-    // the spatial index to quickly turn on visible, in-frustum objects
-    if (entity.name === "Held") {
-      // TODO: make equipped items visible in a less hacky way
-      object3d.visible = true;
-    } else {
-      object3d.visible = false;
-    }
-
     object3d.userData.entityId = entity.id;
+    // We have our own frustum culling, so disable built-in threejs culling
+    object3d.frustumCulled = false;
 
-    let parent = this.presentation.scene;
-    if (entity.parent) {
+    let parent;
+    if (!entity.parent) {
+      parent = this.presentation.scene;
+    } else {
       const object3d = entity.getParent()?.get(Object3DRef)?.value;
       if (object3d) {
         parent = object3d;
@@ -85,10 +76,12 @@ export class TransformSystem extends System {
   // Here's where we tell each Three.js object what its position, rotation,
   // and scale is, both within local and world coordinate systems.
   updateWorldTransform(entity: Entity) {
-    const o3dref: Object3DRef = entity.get(Object3DRef);
-    if (!o3dref) debugger;
-    const object3d: Object3D = o3dref.value;
     const transform: Transform = entity.get(Transform);
+    if (!transform) return;
+
+    const o3dref: Object3DRef = entity.get(Object3DRef);
+    const object3d: Object3D = o3dref.value;
+
     const parent = entity.getParent();
 
     if (transform.frame === this.frame) {
