@@ -1,7 +1,9 @@
+import { MathUtils, Color, Object3D } from "three";
+
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
 import { Presentation, Object3DRef } from "~/ecs/plugins/core";
+
 import { Fire, FireMesh } from "../components";
-import { MathUtils, Color, Object3D } from "three";
 import { Fire as ThreeFire } from "../Fire";
 
 export class FireSystem extends System {
