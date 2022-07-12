@@ -8,7 +8,6 @@ import {
   Clock,
 } from "three";
 import * as THREE from "three";
-import { TransformControls } from "three/examples/jsm/controls/TransformControls";
 
 (window as any).THREE = THREE;
 
@@ -79,8 +78,8 @@ import { audioMode, AudioMode } from "~/stores/audioMode";
 import { Outline } from "~/ecs/plugins/outline";
 import { InteractorSystem } from "~/ecs/plugins/interactor";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
-import { setControl } from "~/events/input/PointerListener/pointerActions";
 import { CameraSystem } from "~/ecs/plugins/camera/systems";
+import { TransformControls } from "~/ecs/plugins/transform-controls";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -123,7 +122,6 @@ export class WorldManager {
   photoBooth: PhotoBooth;
 
   hoverOutlineEntity: Entity;
-  transformControls: TransformControls;
   transformEntity: Entity;
 
   _dragPlane: DragPlane;
@@ -397,8 +395,6 @@ export class WorldManager {
 
     this.camera.deinit();
     this.participants.deinit();
-    this.transformControls?.detach();
-    this.transformControls?.dispose();
 
     this.dragPlane.deinit();
 
@@ -496,58 +492,21 @@ export class WorldManager {
     }
   }
 
-  showTransformControls(entity, onChanged?: Function) {
-    if (this.transformControls) {
-      this.hideTransformControls();
-    }
+  showTransformControls(entity, onChange?: Function) {
+    this.transformEntity = entity;
 
-    const transform = entity.get(Transform);
-    const object = entity.get(Object3DRef).value;
-
-    this.transformControls = new TransformControls(
-      this.camera.threeCamera,
-      this.world.presentation.renderer.domElement.parentElement
-    );
-    this.world.presentation.scene.add(this.transformControls);
-
-    let changed = false;
-    this.transformControls.addEventListener("change", () => {
-      // Update physics engine
-      if (!transform.position.equals(object.position)) {
-        transform.position.copy(object.position);
-        changed = true;
-      }
-      if (!transform.rotation.equals(object.quaternion)) {
-        transform.rotation.copy(object.quaternion);
-        changed = true;
-      }
-      if (!transform.scale.equals(object.scale)) {
-        transform.scale.copy(object.scale);
-        changed = true;
-      }
-      if (changed) {
-        transform.modified();
-        onChanged?.();
-      }
+    entity.add(TransformControls, {
+      onChange,
+      onMouseUp: (entity) => {
+        this.worldDoc.syncFrom(entity);
+      },
     });
-    this.transformControls.addEventListener("mouseDown", () => {
-      setControl(true);
-    });
-    this.transformControls.addEventListener("mouseUp", () => {
-      setControl(false);
-      this.worldDoc.syncFrom(entity);
-    });
-
-    this.transformControls.attach(object);
-
-    return this.transformControls;
   }
 
   hideTransformControls() {
-    if (this.transformControls) {
-      this.transformControls.detach();
-      this.transformControls.dispose();
-      this.transformControls = null;
+    if (this.transformEntity) {
+      this.transformEntity.remove(TransformControls);
+      this.transformEntity = null;
     }
   }
 
