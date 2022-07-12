@@ -1,6 +1,6 @@
-import { LocalComponent, StringType } from "~/ecs/base";
+import { StateComponent, StringType } from "~/ecs/base";
 
-export class AssetError extends LocalComponent {
+export class AssetError extends StateComponent {
   static props = {
     error: {
       type: StringType,

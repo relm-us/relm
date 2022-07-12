@@ -1,6 +1,6 @@
 import { System, Not, Modified, Groups } from "~/ecs/base";
 
-import { Asset, AssetLoading, AssetLoaded, AssetError } from "../components";
+import { Asset, AssetLoading, AssetLoaded } from "../components";
 import { Presentation } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
 import { assetUrl } from "~/config/assetUrl";
@@ -14,10 +14,9 @@ export class AssetSystem extends System {
   order = Groups.Initialization;
 
   static queries: Queries = {
-    added: [Asset, Not(AssetLoading), Not(AssetLoaded), Not(AssetError)],
+    added: [Asset, Not(AssetLoading), Not(AssetLoaded)],
     modified: [Modified(Asset)],
     removed: [Not(Asset), AssetLoaded],
-    removedWhileLoading: [Not(Asset), AssetLoading],
   };
 
   init({ presentation }) {
@@ -33,9 +32,6 @@ export class AssetSystem extends System {
       this.load(entity);
     });
     this.queries.removed.forEach((entity) => {
-      this.remove(entity);
-    });
-    this.queries.removedWhileLoading.forEach((entity) => {
       this.remove(entity);
     });
   }
@@ -76,7 +72,7 @@ export class AssetSystem extends System {
 
     if (loadingId === id) {
       entity.remove(AssetLoading);
-      entity.add(AssetLoaded, { value });
+      entity.add(AssetLoaded, { kind: spec.kind, value });
     } else {
       this.loadingError(entity, `${id} was cancelled (!= ${loadingId})`, false);
     }
@@ -84,14 +80,13 @@ export class AssetSystem extends System {
 
   loadingError(entity, msg, remove = true) {
     if (remove) this.remove(entity);
-    entity.add(AssetError, { error: msg });
+    entity.add(AssetLoaded, { error: msg });
     console.warn(`AssetSystem: ${msg}`, entity?.id);
   }
 
   remove(entity) {
     entity.maybeRemove(AssetLoading);
     entity.maybeRemove(AssetLoaded);
-    entity.maybeRemove(AssetError);
   }
 
   async loadByKind(entity) {

@@ -82,6 +82,7 @@ import { Outline } from "~/ecs/plugins/outline";
 import { InteractorSystem } from "~/ecs/plugins/interactor";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { setControl } from "~/events/input/PointerListener/pointerActions";
+import { CameraSystem } from "~/ecs/plugins/camera/systems";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -373,6 +374,8 @@ export class WorldManager {
     this.afterInitFns.forEach((fn) => fn());
     this.afterInitFns.length = 0;
     this.didInit = true;
+
+    CameraSystem.deactivateOffCamera = true;
   }
 
   async deinit() {
@@ -412,6 +415,8 @@ export class WorldManager {
 
     this.didInit = false;
     this.fpsLocked = false;
+
+    CameraSystem.deactivateOffCamera = false;
   }
 
   afterInit(fn: Function) {

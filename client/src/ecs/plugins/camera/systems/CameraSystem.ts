@@ -1,88 +1,93 @@
-import {
-  Collider,
-  ColliderDesc,
-  ConvexPolyhedron,
-  RigidBody,
-} from "@dimforge/rapier3d";
-import { Vector3, PerspectiveCamera, Quaternion } from "three";
-import { OBJECT_INTERACTION } from "~/config/colliderInteractions";
+import { Collider, ConvexPolyhedron } from "@dimforge/rapier3d";
+import { Vector3, PerspectiveCamera } from "three";
 
 import { System, Not, Groups, Entity } from "~/ecs/base";
 import { Queries } from "~/ecs/base/Query";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
-import { Physics, Collider2Ref } from "~/ecs/plugins/physics";
+import { Physics } from "~/ecs/plugins/physics";
 
-import { Camera, CameraAttached, OnStage } from "../components";
+import { Camera, CameraAttached, AlwaysOnStage } from "../components";
 
 export class CameraSystem extends System {
   physics: Physics;
   camera: PerspectiveCamera;
   frustumShape: ConvexPolyhedron;
+  frustumAspect: number;
+
+  recentlyOnSet: Set<Entity>;
+  nowOnSet: Set<Entity>;
 
   order = Groups.Initialization;
+
+  static deactivateOffCamera: boolean = false;
 
   static queries: Queries = {
     added: [Object3DRef, Camera, Not(CameraAttached)],
     removed: [Not(Camera), CameraAttached],
 
     active: [Camera, CameraAttached],
-    notCamera: [Not(Camera), Collider2Ref],
+    // notCamera: [Not(Camera), Collider2Ref],
+
+    // onStage: [OnStage],
   };
 
   init({ physics, presentation }) {
     this.physics = physics;
     this.camera = presentation?.camera;
 
-    this.frustumShape = this.getFrustumShape();
+    this.buildFrustum();
 
     // const helper = new CameraHelper(this.camera);
     // presentation.scene.add(helper);
+
+    this.recentlyOnSet = new Set();
   }
 
   update() {
+    // TODO: combine this with resize observer?
+    if (this.camera.aspect !== this.frustumAspect) {
+      this.buildFrustum();
+    }
+
     this.queries.added.forEach((entity) => this.build(entity));
     this.queries.removed.forEach((entity) => this.remove(entity));
 
-    const entitiesOnStage: Set<Entity> = new Set();
-
+    // There should be just 1 active camera, but we access it via forEach
     this.queries.active.forEach((entity) => {
       const transform: Transform = entity.get(Transform);
 
-      let count = 0;
       this.physics.world.intersectionsWithShape(
         transform.position,
         transform.rotation,
         this.frustumShape,
         0xffffffff,
         (collider: Collider) => {
-          count++;
           const entity = this.physics.colliders.get(collider.handle);
-          entitiesOnStage.add(entity);
-          if (!entity.active) {
-            // console.log("activating", entity.id);
-            // entity.activate();
-            // if (count > 18) debugger;
+
+          if (!entity.has(AlwaysOnStage)) {
+            (entity as any).lastSeenOnSet = this.world.version;
+            this.recentlyOnSet.add(entity);
           }
+
+          // Activate anything within the Frustum that is inactive
+          if (!entity.active) {
+            entity.activate();
+          }
+
           return true;
         }
       );
-
-      // console.log("frustum count", count);
     });
 
-    this.queries.notCamera.forEach((entity) => {
-      if (!entitiesOnStage.has(entity)) {
-        if (
-          !entity.hasByName("Asset") ||
-          (entity.hasByName("Asset") && !entity.hasByName("AssetLoading"))
-        ) {
-          if (entity.active) {
-            // console.log("deactivating", entity.id);
-            // entity.deactivate();
-          }
-        }
+    if (!CameraSystem.deactivateOffCamera) return;
+
+    for (const entity of this.recentlyOnSet) {
+      const lastSeen = (entity as any).lastSeenOnSet;
+      if (this.world.version - lastSeen > 30) {
+        this.recentlyOnSet.delete(entity);
+        entity.deactivate();
       }
-    });
+    }
   }
 
   build(entity: Entity) {
@@ -98,8 +103,13 @@ export class CameraSystem extends System {
     entity.remove(CameraAttached);
   }
 
+  buildFrustum() {
+    this.frustumAspect = this.camera.aspect;
+    this.frustumShape = this.getFrustumShape();
+  }
+
   getFrustumShape(): ConvexPolyhedron {
-    const vertices = getCameraFrustumVertices(this.camera, null, 0);
+    const vertices = getCameraFrustumVertices(this.camera, null, -2);
     return new this.physics.rapier.ConvexPolyhedron(
       vertices.flatMap((v) => [v.x, v.y, v.z])
     );
@@ -140,6 +150,7 @@ function getCameraFrustumVertices(
     new Vector3(-fW / 2, fH / 2, -f),
     new Vector3(fW / 2, -fH / 2, -f),
     new Vector3(-fW / 2, -fH / 2, -f),
+
     // new Vector3(nW / 2, nH / 2, -n).applyMatrix4(mw),
     // new Vector3(-nW / 2, nH / 2, -n).applyMatrix4(mw),
     // new Vector3(nW / 2, -nH / 2, -n).applyMatrix4(mw),

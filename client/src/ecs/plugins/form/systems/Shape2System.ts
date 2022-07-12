@@ -12,7 +12,7 @@ import { Entity, System, Not, Modified, Groups } from "~/ecs/base";
 import { Object3DRef } from "~/ecs/plugins/core";
 import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 
-import { Shape2, Shape2Mesh, Shape2HasTexture } from "../components";
+import { Shape2, Shape2Mesh, Shape2Texture } from "../components";
 import { shapeParamsToGeometry, toShapeParams } from "~/ecs/shared/createShape";
 
 export class Shape2System extends System {
@@ -22,137 +22,115 @@ export class Shape2System extends System {
   order = Groups.Initialization + 10;
 
   static queries = {
-    added: [Shape2, Not(Shape2Mesh)],
-    addedAsset: [Shape2, AssetLoaded, Not(Shape2HasTexture)],
-
     modified: [Modified(Shape2)],
-    modifiedAsset: [Shape2, Modified(Asset)],
+    modifiedAsset: [Modified(Asset), Shape2Texture],
+
+    added: [Shape2, Object3DRef, Not(Shape2Mesh)],
+    addedAsset: [Shape2, Shape2Mesh, AssetLoaded, Not(Shape2Texture)],
 
     removed: [Not(Shape2), Shape2Mesh],
-    removedAsset: [Shape2, Not(Asset), Shape2HasTexture],
+    removedAsset: [Not(Asset), Shape2Texture],
   };
 
   update() {
-    this.queries.added.forEach((entity) => {
-      this.buildWithoutTexture(entity);
-    });
-    this.queries.addedAsset.forEach((entity) => {
-      this.addTexture(entity);
-    });
-
     this.queries.modified.forEach((entity) => {
       this.remove(entity);
-      this.buildWithoutTexture(entity);
-      if (entity.has(Shape2HasTexture)) {
-        this.addTexture(entity);
-      }
     });
     this.queries.modifiedAsset.forEach((entity) => {
-      if (entity.has(AssetLoaded)) {
-        this.addTexture(entity);
-      } else {
-        entity.maybeRemove(Shape2HasTexture);
+      this.removeTexture(entity);
+    });
+
+    this.queries.added.forEach((entity) => {
+      this.build(entity);
+    });
+    this.queries.addedAsset.forEach((entity) => {
+      const loaded: AssetLoaded = entity.get(AssetLoaded);
+      if (loaded.kind === "TEXTURE") this.buildTexture(entity);
+      else {
+        console.warn("ignoring non-texture asset for shape", entity.id);
+        entity.add(Shape2Texture);
       }
     });
 
     this.queries.removed.forEach((entity) => {
-      console.log("shape2 removed", entity.id);
       this.remove(entity);
     });
     this.queries.removedAsset.forEach((entity) => {
-      console.log("shape2 removedAsset", entity.id);
       this.removeTexture(entity);
     });
   }
 
-  buildWithoutTexture(entity: Entity) {
+  build(entity: Entity) {
     const shape: Shape2 = entity.get(Shape2);
 
-    const material = new MeshStandardMaterial({
-      color: shape.color,
-      roughness: shape.roughness,
-      metalness: shape.metalness,
-      emissive: shape.emissive,
-    });
-
-    const mesh = this.makeMesh(shape, material);
+    const mesh = this.makeMesh(
+      shape,
+      new MeshStandardMaterial({
+        color: shape.color,
+        roughness: shape.roughness,
+        metalness: shape.metalness,
+        emissive: shape.emissive,
+      })
+    );
     entity.add(Shape2Mesh, { value: mesh });
+
+    // Final step, attach the mesh to the entity's object3d container
     this.attach(entity);
   }
 
-  addTexture(entity: Entity) {
-    const asset: Asset = entity.get(Asset);
-    if (asset.kind === "TEXTURE") {
-      const spec: Shape2 = entity.get(Shape2);
-      const texture: Texture = entity.get(AssetLoaded)?.value;
-      const mesh: Shape2Mesh = entity.get(Shape2Mesh);
+  remove(entity: Entity) {
+    this.detach(entity);
 
-      (mesh.value.material as MeshStandardMaterial).map = texture;
+    const mesh: Shape2Mesh = entity.get(Shape2Mesh);
 
-      texture.repeat.set(spec.textureScale, spec.textureScale);
-      texture.wrapS = RepeatWrapping;
-      texture.wrapT = RepeatWrapping;
-
-      entity.add(Shape2HasTexture);
-    } else if (asset.kind === null) {
-      this.removeTexture(entity);
-      console.warn("removing texture", entity.id);
-    } else {
-      this.removeTexture(entity);
-      console.warn("not adding non-texture asset to shape", entity.id);
-
-      // Add Shape2HasTexture so we don't loop infinitely
-      entity.add(Shape2HasTexture);
+    if (mesh) {
+      mesh.value.geometry?.dispose();
+      entity.remove(Shape2Mesh);
     }
+  }
+
+  buildTexture(entity: Entity) {
+    const spec: Shape2 = entity.get(Shape2);
+    const texture: Texture = entity.get(AssetLoaded)?.value;
+    const mesh: Shape2Mesh = entity.get(Shape2Mesh);
+
+    (mesh.value.material as MeshStandardMaterial).map = texture;
+
+    texture.repeat.set(spec.textureScale, spec.textureScale);
+    texture.wrapS = RepeatWrapping;
+    texture.wrapT = RepeatWrapping;
+
+    entity.add(Shape2Texture);
   }
 
   removeTexture(entity: Entity) {
     const mesh: Shape2Mesh = entity.get(Shape2Mesh);
-
-    (mesh.value.material as MeshStandardMaterial).map = null;
-
-    entity.remove(Shape2HasTexture);
-  }
-
-  remove(entity: Entity) {
-    const mesh: Mesh = entity.get(Shape2Mesh)?.value;
-
     if (mesh) {
-      this.detach(entity);
-
-      mesh.geometry?.dispose();
-
-      entity.remove(Shape2Mesh);
+      (mesh.value.material as MeshStandardMaterial).map = null;
     }
-    entity.maybeRemove(Shape2HasTexture);
+
+    entity.remove(Shape2Texture);
   }
 
   attach(entity: Entity) {
     const object3dref: Object3DRef = entity.get(Object3DRef);
 
-    if (object3dref) {
-      const object3d = object3dref.value;
+    // Attach shape mesh to container object3d
+    const mesh: Shape2Mesh = entity.get(Shape2Mesh);
+    object3dref.value.add(mesh.value);
 
-      const child = entity.get(Shape2Mesh).value;
-      object3d.add(child);
-
-      // Notify dependencies, e.g. BoundingBox, that object3d has changed
-      object3dref.modified();
-    }
+    // Notify dependencies, e.g. BoundingBox, that object3d has changed
+    object3dref.modified();
   }
 
   detach(entity: Entity) {
+    // Detach shape mesh from container object3d
+    const mesh: Shape2Mesh = entity.get(Shape2Mesh);
+    mesh?.value.removeFromParent();
+
+    // Notify dependencies, (e.g. collider), that object3d has changed
     const object3dref: Object3DRef = entity.get(Object3DRef);
-
-    if (object3dref) {
-      const object3d = object3dref.value;
-
-      const child = entity.get(Shape2Mesh).value;
-      object3d.remove(child);
-
-      // Notify dependencies, e.g. BoundingBox, that object3d has changed
-      object3dref.modified();
-    }
+    object3dref?.modified();
   }
 
   makeMesh(shape: Shape2, material: Material) {
