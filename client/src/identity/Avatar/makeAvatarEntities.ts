@@ -12,16 +12,11 @@ import { Asset, Transform } from "~/ecs/plugins/core";
 import { Model2 } from "~/ecs/plugins/form";
 import { Asset as AssetComp } from "~/ecs/plugins/asset";
 import { PointerPosition } from "~/ecs/plugins/pointer-position";
-import {
-  Impactable,
-  PhysicsOptions,
-  Collider2,
-} from "~/ecs/plugins/physics";
+import { Impactable, PhysicsOptions, Collider2 } from "~/ecs/plugins/physics";
 import { Animation } from "~/ecs/plugins/animation";
 import { Repulsive } from "~/ecs/plugins/player-control";
 import { TranslucentOptions } from "~/ecs/plugins/translucent";
 import { AlwaysOnStage } from "~/ecs/plugins/camera";
-
 
 export function makeAvatarEntities(
   world: DecoratedECSWorld,
@@ -53,7 +48,7 @@ export function makeAvatarEntities(
     })
     .add(AlwaysOnStage)
     .add(Collider2, {
-      kind: "AVATAR-PLAY",
+      kind: kinematic ? "AVATAR-OTHER" : "AVATAR-PLAY",
       shape: "CAPSULE",
       size: new Vector3(0.5, 1.8, 0),
       offset: new Vector3(0, 1.1, 0),
@@ -62,12 +57,12 @@ export function makeAvatarEntities(
   const head = makeEntity(world, "AvatarHead").add(Transform, {
     position: new Vector3(0, AVATAR_HEIGHT_UNSCALED, 0),
   });
-  // head.setParent(body);
+  head.setParent(body);
 
   const emoji = makeEntity(world, "AvatarEmoji").add(Transform, {
     position: new Vector3(0, AVATAR_HEIGHT_UNSCALED, 0),
   });
-  // emoji.setParent(body);
+  emoji.setParent(body);
 
   // Move these things as a unit on portal
   body.subgroup = [];

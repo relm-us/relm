@@ -41,7 +41,8 @@ export class Collider2 extends Component {
     | "GROUND"
     | "DYNAMIC"
     | "AVATAR-PLAY"
-    | "AVATAR-BUILD";
+    | "AVATAR-BUILD"
+    | "AVATAR-OTHER";
 
   // Collider shapes
   shape: ShapeType;
@@ -153,6 +154,12 @@ export class Collider2 extends Component {
         return {
           interaction: AVATAR_BUILDER_INTERACTION,
           bodyType: RigidBodyType.Dynamic,
+        };
+      }
+      case "AVATAR-OTHER": {
+        return {
+          interaction: AVATAR_INTERACTION,
+          bodyType: RigidBodyType.KinematicPositionBased,
         };
       }
       default:
