@@ -28,20 +28,19 @@
 
   }
 
-  async function onSignIn() {
+  async function onUsernamePasswordAction(action: "signin"|"register") {
     const email = (document.querySelector('input[name="email"]') as HTMLInputElement).value;
     const password = (document.querySelector('input[name="password"]') as HTMLInputElement).value;
 
-    const response = await worldManager.login({ email, password });
+    const response = action === "register"
+      ? await worldManager.register({ email, password }) 
+      : await worldManager.login({ email, password });
+    
     if (response.status === "success") {
       await onAccountConnection();
     } else {
       // TODO: show error screen
     }
-  }
-
-  async function onSignUp() {
-    
   }
 
   async function onAccountConnection() {
@@ -64,7 +63,7 @@
     }
 
     // Close the sign in window.
-    enabled = false;
+    exitScreen();
     notifyContext.addNotification({
       text: successText,
       position: "bottom-center",
@@ -77,10 +76,15 @@
     showingSignin = !showingSignin;
   }
 
+  function exitScreen() {
+    enabled = false;
+  }
+
 </script>
 
 <Fullwindow>
   <r-background></r-background>
+  <r-exit on:click={exitScreen}>ESC</r-exit>
   <r-window>
     <!-- SIGNIN WINDOW -->
     {#if showingSignin}
@@ -109,7 +113,7 @@
         <!-- SIGN IN/Socials -->
         <r-group>
           <div class="submit add-padding-if-tall-enough small">
-            <span class="fake-link" on:click={onSignIn} >SIGN IN</span>
+            <span class="fake-link" on:click={() => onUsernamePasswordAction("signin")} >SIGN IN</span>
           </div>
           <div class="socials add-padding-if-tall-enough small">
             <span>or enter via:</span><br />
@@ -150,7 +154,7 @@
         </r-section>
         <r-section style="position: absolute; transform: translateX(-15%); width: 150%;">
           <div class="submit">
-            <span class="fake-link" on:click={onSignUp} >CREATE ACCOUNT</span>
+            <span class="fake-link" on:click={() => onUsernamePasswordAction("register")} >CREATE ACCOUNT</span>
           </div>
 
           <r-group class="switch-screen-text" on:click={switchScreen}>
@@ -219,6 +223,13 @@
     z-index: -1;
     background: #000000;
     opacity: 0.7;
+  }
+
+  r-exit {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
   }
 
   r-window {

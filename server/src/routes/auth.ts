@@ -147,17 +147,17 @@ auth.post(
       return respondWithFailure(res, "email is already in use");
     }
 
-    const userId = await User.createUser({
-      email,
-      password
-    });
-
     // Ensure the participant being registered isn't already linked.
     const participantId = req.authenticatedParticipantId;
     const existingUserId = await Participant.getUserId({ participantId });
     if (existingUserId !== null) {
       return respondWithError(res, "participant is already linked to an email");
     }
+
+    const userId = await User.createUser({
+      email,
+      password
+    });
     await Participant.assignToUserId({ participantId, userId });
 
     return respondWithSuccess(res, {});

@@ -303,6 +303,14 @@ export class RelmRestAPI {
     }
   }
 
+  async registerParticipant(credentials: LoginCredentials): Promise<AuthenticationResponse> {
+    const result: AuthenticationResponse = await this.post("/auth/connect/local/signup", {
+      ...credentials
+    });
+
+    return result;
+  }
+
   async login(credentials: LoginCredentials): Promise<AuthenticationResponse> {
     const result: AuthenticationResponse = await this.post("/auth/connect/local/signin", {
       ...credentials

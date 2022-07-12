@@ -680,7 +680,12 @@ export class WorldManager {
     }
   }
 
-  async login(socialIdOrCred : SocialId|LoginCredentials): Promise<AuthenticationResponse|null> {
+  async register(credentials: LoginCredentials): Promise<AuthenticationResponse> {
+    const data = await this.api.registerParticipant(credentials);
+    return data;
+  }
+
+  async login(socialIdOrCred: SocialId|LoginCredentials): Promise<AuthenticationResponse|null> {
     let data;
 
     if (typeof socialIdOrCred === "object") {
