@@ -27,8 +27,6 @@ import {
 import { World } from "~/ecs/base";
 
 import { IntersectionFinder } from "./IntersectionFinder";
-import { Object3DRef } from ".";
-import { SPATIAL_INDEX_THRESHOLD } from "~/config/constants";
 
 export type PlaneOrientation = "xz" | "xy";
 
@@ -85,9 +83,15 @@ export class Presentation {
     this.renderer = options.renderer;
 
     const isWebGL2 = this.renderer.capabilities.isWebGL2;
+    const maxSamples = Math.min(
+      4,
+      (this.renderer.capabilities as any).maxSamples || 1
+    );
 
     if (isWebGL2) {
-      this.composer = new EffectComposer(this.renderer, { multisampling: 4 });
+      this.composer = new EffectComposer(this.renderer, {
+        multisampling: maxSamples,
+      });
     } else {
       this.composer = new EffectComposer(this.renderer);
     }
@@ -97,6 +101,7 @@ export class Presentation {
     // prepare outline effect for outline EffectPass
     this.outlineEffect = new OutlineEffect(this.scene, this.camera, {
       blendFunction: BlendFunction.ALPHA,
+      multisampling: maxSamples,
       edgeStrength: 5,
       visibleEdgeColor: 0xffffff,
       hiddenEdgeColor: 0x5f5f5f,
@@ -228,8 +233,6 @@ export class Presentation {
     this.frame++;
 
     this.renderer.info.reset();
-
-    // this.hideOffCameraObjects();
 
     this.composer.render(delta);
 
