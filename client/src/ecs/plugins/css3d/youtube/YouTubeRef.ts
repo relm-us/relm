@@ -1,6 +1,6 @@
-import { LocalComponent, RefType } from "~/ecs/base";
+import { StateComponent, RefType } from "~/ecs/base";
 
-export class YouTubeRef extends LocalComponent {
+export class YouTubeRef extends StateComponent {
   value: any;
 
   static props = {

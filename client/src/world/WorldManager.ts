@@ -375,7 +375,9 @@ export class WorldManager {
     this.afterInitFns.length = 0;
     this.didInit = true;
 
-    CameraSystem.deactivateOffCamera = true;
+    const camsys = this.world.systems.get(CameraSystem) as CameraSystem;
+    camsys.beginDeactivatingOffCameraEntities();
+    camsys.addEverythingToSet();
   }
 
   async deinit() {
@@ -416,7 +418,8 @@ export class WorldManager {
     this.didInit = false;
     this.fpsLocked = false;
 
-    CameraSystem.deactivateOffCamera = false;
+    const camsys = this.world.systems.get(CameraSystem) as CameraSystem;
+    camsys.endDeactivatingOffCameraEntities();
   }
 
   afterInit(fn: Function) {
@@ -490,7 +493,7 @@ export class WorldManager {
     this.lastActivity = performance.now();
 
     // As soon as avatar moves, restore full 60fps framerate
-    if (this.loopType.type !== "reqAnimFrame") {
+    if (this.loopType.type !== "reqAnimFrame" && !this.fpsLocked) {
       this.setFps(60);
     }
   }

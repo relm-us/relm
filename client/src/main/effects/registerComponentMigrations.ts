@@ -82,19 +82,22 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
 
   // Migrate from 'RigidBody' to 'Collider2'
   ecsWorld.migrations.register("RigidBody", (world, entity, data) => {
+    const transform = entity.getByName("Transform");
     const Collider2 = world.components.getByName("Collider2");
     let collider = entity.get(Collider2);
-    if (!collider) collider = entity.add(Collider2, undefined, true);
+    if (!collider)
+      collider = entity.add(
+        Collider2,
+        { size: new Vector3().copy(transform.scale) },
+        true
+      );
 
     switch (data.kind) {
       case "STATIC":
-        collider.kind = "BARRIER";
+        collider.kind = "ETHEREAL";
         break;
 
       case "KINEMATIC":
-        collider.kind = "DYNAMIC";
-        break;
-
       case "DYNAMIC":
         collider.kind = "DYNAMIC";
         break;

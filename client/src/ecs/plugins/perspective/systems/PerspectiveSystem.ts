@@ -1,4 +1,4 @@
-import { Object3D, Vector3 } from "three";
+import { Object3D, Vector3, PerspectiveCamera } from "three";
 
 import { difference } from "~/utils/setOps";
 import { AVATAR_HEIGHT } from "~/config/constants";
@@ -8,15 +8,18 @@ import { Presentation, Transform, Object3DRef } from "~/ecs/plugins/core";
 import { Translucent } from "~/ecs/plugins/translucent";
 
 import { Perspective } from "../Perspective";
+import { Physics } from "../../physics";
 
 export class PerspectiveSystem extends System {
+  physics: Physics;
   perspective: Perspective;
   presentation: Presentation;
 
   entitiesWeMadeTranslucent: Set<Entity> = new Set();
   target: Vector3 = new Vector3();
 
-  init({ perspective, presentation }) {
+  init({ physics, perspective, presentation }) {
+    this.physics = physics;
     this.perspective = perspective;
     this.presentation = presentation;
   }

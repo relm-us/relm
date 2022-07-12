@@ -13,13 +13,12 @@ export class CameraSystem extends System {
   camera: PerspectiveCamera;
   frustumShape: ConvexPolyhedron;
   frustumAspect: number;
+  deactivateOffCameraEntities: boolean;
 
   recentlyOnSet: Set<Entity>;
   nowOnSet: Set<Entity>;
 
   order = Groups.Initialization;
-
-  static deactivateOffCamera: boolean = false;
 
   static queries: Queries = {
     added: [Object3DRef, Camera, Not(CameraAttached)],
@@ -41,6 +40,7 @@ export class CameraSystem extends System {
     // presentation.scene.add(helper);
 
     this.recentlyOnSet = new Set();
+    this.deactivateOffCameraEntities = false;
   }
 
   update() {
@@ -79,7 +79,7 @@ export class CameraSystem extends System {
       );
     });
 
-    if (!CameraSystem.deactivateOffCamera) return;
+    if (!this.deactivateOffCameraEntities) return;
 
     for (const entity of this.recentlyOnSet) {
       const lastSeen = (entity as any).lastSeenOnSet;
@@ -113,6 +113,23 @@ export class CameraSystem extends System {
     return new this.physics.rapier.ConvexPolyhedron(
       vertices.flatMap((v) => [v.x, v.y, v.z])
     );
+  }
+
+  addEverythingToSet() {
+    for (const entity of this.world.entities.entities.values()) {
+      if (!entity.has(AlwaysOnStage)) {
+        (entity as any).lastSeenOnSet = this.world.version;
+        this.recentlyOnSet.add(entity);
+      }
+    }
+  }
+  
+  beginDeactivatingOffCameraEntities() {
+    this.deactivateOffCameraEntities = true;
+  }
+
+  endDeactivatingOffCameraEntities() {
+    this.deactivateOffCameraEntities = false;
   }
 }
 
