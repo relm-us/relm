@@ -179,7 +179,7 @@ import SignInButton from "../ButtonControls/SignInButton";
       <Tooltip
         tip={_("Connect your account!", "signin_button")}
         top>
-          <SignInButton />
+          <SignInButton {dispatch} />
       </Tooltip>
     </play-buttons>
   </overlay-center>

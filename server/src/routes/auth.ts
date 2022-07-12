@@ -165,7 +165,7 @@ auth.post(
 );
 
 auth.post(
-  "/connect/local/login",
+  "/connect/local/signin",
   cors(),
   middleware.authenticated(),
   wrapAsyncPassport("local", async (req, res, _, status, data) => {

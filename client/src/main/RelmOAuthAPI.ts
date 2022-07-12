@@ -27,6 +27,7 @@ export class RelmOAuthManager {
       // make sure that the popup was not closed.
       let closeInterval = setInterval(() => {
         if (openedWindow.closed) {
+          callback(null);
           cleanUp();
         }
       }, 1000);
@@ -66,7 +67,7 @@ export class RelmOAuthManager {
     return btoa(JSON.stringify(this.authHeaders));
   }
 
-  showGoogleOAuth(): Promise<AuthenticationResponse> {
+  showGoogleOAuth(): Promise<AuthenticationResponse|null> {
     return new Promise(resolve => {
       this.open(
         `${this.url}/auth/connect/google?state=${this.getAuthenticationPayload()}`,
@@ -74,7 +75,7 @@ export class RelmOAuthManager {
     });
   }
 
-  showLinkedinOAuth(): Promise<AuthenticationResponse> {
+  showLinkedinOAuth(): Promise<AuthenticationResponse|null> {
     return new Promise(resolve => {
       this.open(
         `${this.url}/auth/connect/linkedin?state=${this.getAuthenticationPayload()}`,
@@ -82,7 +83,7 @@ export class RelmOAuthManager {
     });
   }
 
-  showFacebookOAuth(): Promise<AuthenticationResponse> {
+  showFacebookOAuth(): Promise<AuthenticationResponse|null> {
     return new Promise(resolve => {
       this.open(
         `${this.url}/auth/connect/facebook?state=${this.getAuthenticationPayload()}`,
@@ -90,7 +91,7 @@ export class RelmOAuthManager {
     });
   }
 
-  showTwitterOAuth(): Promise<AuthenticationResponse> {
+  showTwitterOAuth(): Promise<AuthenticationResponse|null> {
     return new Promise(resolve => {
       this.open(
         `${this.url}/auth/connect/twitter?state=${this.getAuthenticationPayload()}`,

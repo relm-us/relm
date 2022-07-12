@@ -3,7 +3,12 @@ import type { LibraryAsset } from "~/types";
 
 import { CancellablePromise } from "real-cancellable-promise";
 import { simpleFetch } from "~/utils/simpleFetch";
-import { RelmOAuthManager } from "./RelmOAuthAPI";
+import { AuthenticationResponse, RelmOAuthManager } from "./RelmOAuthAPI";
+
+export type LoginCredentials = {
+  email: string,
+  password: string
+};
 
 export class RelmRestAPI {
   url: string;
@@ -296,6 +301,14 @@ export class RelmRestAPI {
     if (result.status === "error") {
       throw Error(`Failed to update identity data: ${result.reason}`);
     }
+  }
+
+  async login(credentials: LoginCredentials): Promise<AuthenticationResponse> {
+    const result: AuthenticationResponse = await this.post("/auth/connect/local/signin", {
+      ...credentials
+    });
+
+    return result;
   }
 
 }

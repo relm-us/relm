@@ -71,7 +71,7 @@ import { Participant } from "~/types/identity";
 import { ParticipantManager } from "~/identity/ParticipantManager";
 import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 import { delay } from "~/utils/delay";
-import { RelmRestAPI } from "~/main/RelmRestAPI";
+import { LoginCredentials, RelmRestAPI } from "~/main/RelmRestAPI";
 import { PhotoBooth } from "./PhotoBooth";
 import { audioMode, AudioMode } from "~/stores/audioMode";
 import { Outline } from "~/ecs/plugins/outline";
@@ -680,23 +680,30 @@ export class WorldManager {
     }
   }
 
-  async login(socialId : SocialId): Promise<AuthenticationResponse> {
+  async login(socialIdOrCred : SocialId|LoginCredentials): Promise<AuthenticationResponse|null> {
     let data;
-    switch (socialId) {
-      case "google":
-        data = await this.api.oAuth.showGoogleOAuth();
-        break;
-      case "facebook":
-        data = await this.api.oAuth.showFacebookOAuth();
-        break;
-      case "linkedin":
-        data = await this.api.oAuth.showLinkedinOAuth();
-        break;
-      case "twitter":
-        data = await this.api.oAuth.showTwitterOAuth();
-        break;
-      default:
-        throw Error(`Unhandled social id when logging in: ${socialId}`);
+
+    if (typeof socialIdOrCred === "object") {
+      // login with username/password
+      data = await this.api.login(socialIdOrCred as LoginCredentials);
+    } else {
+      // social login
+      switch (socialIdOrCred) {
+        case "google":
+          data = await this.api.oAuth.showGoogleOAuth();
+          break;
+        case "facebook":
+          data = await this.api.oAuth.showFacebookOAuth();
+          break;
+        case "linkedin":
+          data = await this.api.oAuth.showLinkedinOAuth();
+          break;
+        case "twitter":
+          data = await this.api.oAuth.showTwitterOAuth();
+          break;
+        default:
+          throw Error(`Unhandled social id when logging in: ${socialIdOrCred}`);
+      }
     }
 
     return data;

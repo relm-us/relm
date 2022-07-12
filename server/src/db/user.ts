@@ -60,8 +60,8 @@ export async function verifyCredentials({ email, password }) {
   const data = await db.oneOrNone(sql`
       SELECT password_hash FROM users WHERE LOWER(email)=LOWER(${email})
     `);
-
-  if (data === null) {
+  if (data === null || data.password_hash === null) {
+    // user doesn't exist or no password is assigned with user.
     return false;
   }
 

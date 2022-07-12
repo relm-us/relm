@@ -1,19 +1,77 @@
-<script>
+<script lang="ts">
   import Fullwindow from "~/ui/lib/Fullwindow.svelte";
   import { worldManager } from "~/world";
   import SignInCheckInput from "./components/SignInCheckInput.svelte";
   import SignInTextInput from "./components/SignInTextInput.svelte";
+  import type { Dispatch } from "~/main/ProgramTypes";
+  import { getNotificationsContext } from "svelte-notifications";
 
   export let enabled;
-  
+  export let dispatch: Dispatch;
+
+  const notifyContext = getNotificationsContext();
+
   let showingSignin = true;
 
   async function onSocialClick({ target }) {
     const socialId = target.getAttribute("data-login");
 
     const response = await worldManager.login(socialId);
-    console.log(response);
+    if (response === null) {
+      return; // Window was closed.
+    }
+
+    if (response.status === "success") {
+      // Request identity data from server again and update our local identity if data from the server exists.
+      await onAccountConnection();
+    }
+
   }
+
+  async function onSignIn() {
+    const email = (document.querySelector('input[name="email"]') as HTMLInputElement).value;
+    const password = (document.querySelector('input[name="password"]') as HTMLInputElement).value;
+
+    const response = await worldManager.login({ email, password });
+    if (response.status === "success") {
+      await onAccountConnection();
+    } else {
+      // TODO: show error screen
+    }
+  }
+
+  async function onSignUp() {
+    
+  }
+
+  async function onAccountConnection() {
+    const savedData = await worldManager.api.getIdentityData();
+
+    let successText;
+    if (savedData.identity === null) {
+      // No identity data saved? Create some!
+      await worldManager.api.setIdentityData({
+        identity: worldManager.participants.local.identityData
+      });
+      successText = "Your account has been created!";
+    } else {
+      // Load existing identity data!
+      dispatch({
+        id: "updateLocalIdentityData",
+        identityData: savedData.identity
+      });
+      successText = "Your account has been connected!";
+    }
+
+    // Close the sign in window.
+    enabled = false;
+    notifyContext.addNotification({
+      text: successText,
+      position: "bottom-center",
+      removeAfter: 5000
+    });
+  }
+
 
   function switchScreen() {
     showingSignin = !showingSignin;
@@ -30,16 +88,16 @@
         <!-- Email/password/toggles -->
         <r-group>
           <r-section class="add-padding-if-tall-enough medium">
-            <SignInTextInput type="email" label="EMAIL" />
+            <SignInTextInput name="email" type="email" label="EMAIL" />
           </r-section>
 
           <r-section>
-            <SignInTextInput type="password" label="PASS CODE" />
+            <SignInTextInput name="password" type="password" label="PASS CODE" />
           </r-section>
 
           <r-section id="stay-logged-forget-section">
             <div style="float: left; padding-bottom: 1em;">
-              <SignInCheckInput label="Stay unlocked on this device" />
+              <SignInCheckInput name="staylogged" label="Stay unlocked on this device" />
             </div>
             <div style="float: right;">
               <r-forget-passcode-link class="fake-link">Forgot Pass Code</r-forget-passcode-link>
@@ -51,7 +109,7 @@
         <!-- SIGN IN/Socials -->
         <r-group>
           <div class="submit add-padding-if-tall-enough small">
-            <span class="fake-link">SIGN IN</span>
+            <span class="fake-link" on:click={onSignIn} >SIGN IN</span>
           </div>
           <div class="socials add-padding-if-tall-enough small">
             <span>or enter via:</span><br />
@@ -77,10 +135,10 @@
       <!-- REGISTER WINDOW -->
       <r-content style="position: relative;" id="register">
         <r-section class="add-padding-if-tall-enough biggest">
-          <SignInTextInput type="email" label="EMAIL" />
+          <SignInTextInput name="email" type="email" label="EMAIL" />
         </r-section>
         <r-section>
-          <SignInTextInput type="password" label="PASS CODE" />
+          <SignInTextInput name="password" type="password" label="PASS CODE" />
         </r-section>
         <r-section class="socials">
           <r-connections>
@@ -92,7 +150,7 @@
         </r-section>
         <r-section style="position: absolute; transform: translateX(-15%); width: 150%;">
           <div class="submit">
-            <span class="fake-link">CREATE ACCOUNT</span>
+            <span class="fake-link" on:click={onSignUp} >CREATE ACCOUNT</span>
           </div>
 
           <r-group class="switch-screen-text" on:click={switchScreen}>
@@ -105,7 +163,6 @@
 </Fullwindow>
 
 <style type="scss">
-
   #stay-logged-forget-section {
     display: flex;
     text-align: initial;

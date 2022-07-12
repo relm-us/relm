@@ -17,6 +17,11 @@ const wrapPassportSync = fn => ((...args) => {
   fn.apply(null, args).catch(done);
 });
 
+// Ensure all the variable names in the array exist in the process.env object.
+const ensureEnvVarsExist = (variables = []) => {
+  return !variables.some(v => !process.env[v]);
+}
+
 /*
   These passport strategies have the following goal.
     - Authenticate details of the user
@@ -102,48 +107,56 @@ async function handleOAuthPassport(socialId, req, email, profileId, done) {
 }
 
 // Google OAuth
-passport.use(new PassportGoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "/auth/connect/google/callback",
-  scope: ["email"],
-  passReqToCallback: true
-}, (req, _, __, profile, done) => handleOAuthPassport("google", req, profile.email, profile.id, done).catch(done)));
+if (ensureEnvVarsExist(["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"])) {
+  passport.use(new PassportGoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "/auth/connect/google/callback",
+    scope: ["email"],
+    passReqToCallback: true
+  }, (req, _, __, profile, done) => handleOAuthPassport("google", req, profile.email, profile.id, done).catch(done)));
+}
 
 // Linkedin
-passport.use(new PassportLinkedinStrategy({
-  clientID: process.env.LINKEDIN_CLIENT_ID,
-  clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
-  callbackURL: "/auth/connect/linkedin/callback",
-  scope: ["r_emailaddress", "r_liteprofile"],
-  passReqToCallback: true
-}, (req, _, __, profile, done) => handleOAuthPassport("linkedin", req, profile.emails[0], profile.id, done).catch(done)));
+if (ensureEnvVarsExist(["LINKEDIN_CLIENT_ID", "LINKEDIN_CLIENT_SECRET"])) {
+  passport.use(new PassportLinkedinStrategy({
+    clientID: process.env.LINKEDIN_CLIENT_ID,
+    clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
+    callbackURL: "/auth/connect/linkedin/callback",
+    scope: ["r_emailaddress", "r_liteprofile"],
+    passReqToCallback: true
+  }, (req, _, __, profile, done) => handleOAuthPassport("linkedin", req, profile.emails[0], profile.id, done).catch(done)));
+}
 
 // Facebook
-passport.use(new PassportFacebookStrategy({
-  clientID: process.env.FACEBOOK_CLIENT_ID,
-  clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-  callbackURL: "/auth/connect/facebook/callback",
-  profileFields: ["id", "email"],
-  passReqToCallback: true
-}, (req, _, __, profile, done) => {
-  if (!profile.emails) {
-    return done("Missing emails in oAuth data.");
-  }
-  handleOAuthPassport("facebook", req, profile.emails[0], profile.id, done).catch(done);
-}));
+if (ensureEnvVarsExist(["FACEBOOK_CLIENT_ID", "FACEBOOK_CLIENT_SECRET"])) {
+  passport.use(new PassportFacebookStrategy({
+    clientID: process.env.FACEBOOK_CLIENT_ID,
+    clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+    callbackURL: "/auth/connect/facebook/callback",
+    profileFields: ["id", "email"],
+    passReqToCallback: true
+  }, (req, _, __, profile, done) => {
+    if (!profile.emails) {
+      return done("Missing emails in oAuth data.");
+    }
+    handleOAuthPassport("facebook", req, profile.emails[0], profile.id, done).catch(done);
+  }));
+}
 
-passport.use(new PassportTwitterStrategy({
-  clientID: process.env.TWITTER_CLIENT_ID,
-  clientSecret: process.env.TWITTER_CLIENT_SECRET,
-  callbackURL: "/auth/connect/twitter/callback",
-  includeEmail: true,
-  passReqToCallback: true
-}, (req, _, __, profile, done) => {
-  if (!profile.emails) {
-    return done("Missing emails in oAuth data.");
-  }
-  handleOAuthPassport("twitter", req, profile.emails[0], profile.id, done).catch(done);
-}));
+if (ensureEnvVarsExist(["TWITTER_CLIENT_ID", "TWITTER_CLIENT_SECRET"])) {
+  passport.use(new PassportTwitterStrategy({
+    clientID: process.env.TWITTER_CLIENT_ID,
+    clientSecret: process.env.TWITTER_CLIENT_SECRET,
+    callbackURL: "/auth/connect/twitter/callback",
+    includeEmail: true,
+    passReqToCallback: true
+  }, (req, _, __, profile, done) => {
+    if (!profile.emails) {
+      return done("Missing emails in oAuth data.");
+    }
+    handleOAuthPassport("twitter", req, profile.emails[0], profile.id, done).catch(done);
+  }));
+}
 
 export default passportMiddleware;
