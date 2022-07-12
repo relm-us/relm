@@ -68,7 +68,7 @@ export class Collider2 extends Component {
         label: "Kind",
         input: "Select",
         options: [
-          { label: "Ethereal", value: "ETHEREAL" },
+          { label: "No Collision", value: "ETHEREAL" },
           { label: "Barrier", value: "BARRIER" },
           { label: "Ground", value: "GROUND" },
           { label: "Interactive", value: "DYNAMIC" },
