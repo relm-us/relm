@@ -2,6 +2,9 @@ import { Vector3 } from "three";
 
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
+import { AVATAR_HEIGHT_UNSCALED, IDLE } from "~/config/constants";
+import { AvatarEntities } from "~/types";
+
 import { makeEntity } from "~/prefab/makeEntity";
 
 import { Entity } from "~/ecs/base";
@@ -17,9 +20,8 @@ import {
 import { Animation } from "~/ecs/plugins/animation";
 import { Repulsive } from "~/ecs/plugins/player-control";
 import { TranslucentOptions } from "~/ecs/plugins/translucent";
-import { AVATAR_HEIGHT_UNSCALED, IDLE } from "~/config/constants";
+import { AlwaysOnStage } from "~/ecs/plugins/camera";
 
-import { AvatarEntities } from "~/types";
 
 export function makeAvatarEntities(
   world: DecoratedECSWorld,
@@ -49,6 +51,7 @@ export function makeAvatarEntities(
     .add(PhysicsOptions, {
       rotRestrict: "Y",
     })
+    .add(AlwaysOnStage)
     .add(Collider2, {
       kind: "AVATAR-PLAY",
       shape: "CAPSULE",
