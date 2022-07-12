@@ -112,7 +112,7 @@ export class PhotoBooth {
     const srcUrl = this.renderer.domElement.toDataURL("image/png");
 
     // Restore object to its original place
-    parent.add(object);
+    parent?.add(object);
 
     // Create new Image object
     var image = new Image();
