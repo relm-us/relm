@@ -46,7 +46,7 @@ import { SelectionBox } from "~/events/input/PointerListener/SelectionBox";
 import { makeLight } from "~/prefab/makeLight";
 
 import { Entity } from "~/ecs/base";
-import { Collider2, Collider2Visible } from "~/ecs/plugins/physics";
+import { Collider2 } from "~/ecs/plugins/physics";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { ControllerState } from "~/ecs/plugins/player-control";
 import { Follow } from "~/ecs/plugins/follow";
@@ -80,6 +80,7 @@ import { InteractorSystem } from "~/ecs/plugins/interactor";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { CameraSystem } from "~/ecs/plugins/camera/systems";
 import { TransformControls } from "~/ecs/plugins/transform-controls";
+import { Collider2Visible } from "~/ecs/plugins/collider-visible";
 
 type LoopType =
   | { type: "reqAnimFrame" }

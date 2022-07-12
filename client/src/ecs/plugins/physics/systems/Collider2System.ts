@@ -32,6 +32,8 @@ export class Collider2System extends System {
   order = Groups.Presentation + 301; // After WorldTransform
 
   static queries = {
+    implicitToExplicit: [Collider2, Collider2Implicit],
+
     added: [Transform, Collider2, Not(Collider2Ref)],
     modified: [Transform, Modified(Collider2), Collider2Ref],
     removed: [Transform, Not(Collider2), Collider2Ref, Not(Collider2Implicit)],
@@ -50,24 +52,41 @@ export class Collider2System extends System {
   }
 
   update() {
+    this.queries.implicitToExplicit.forEach((entity) => {
+      if (entity.id === 'JgSBIiKPACgomyaL2iiyF')
+      console.log('implicitToExplicit')
+      entity.remove(Collider2Implicit);
+      entity.maybeRemove(Collider2Ref);
+    });
+
     this.queries.added.forEach((entity) => {
+      if (entity.id === 'JgSBIiKPACgomyaL2iiyF')
+      console.log('added')
       this.build(entity);
     });
 
     this.queries.modified.forEach((entity) => {
+      if (entity.id === 'JgSBIiKPACgomyaL2iiyF')
+      console.log('modified')
       this.remove(entity);
       this.build(entity);
     });
 
     this.queries.removed.forEach((entity) => {
+      if (entity.id === 'JgSBIiKPACgomyaL2iiyF')
+      console.log('removed')
       this.remove(entity);
     });
 
     this.queries.addImplicit.forEach((entity) => {
+      if (entity.id === 'JgSBIiKPACgomyaL2iiyF')
+      console.log('addImplicit')
       entity.add(Collider2Implicit);
       this.build(entity);
     });
     this.queries.modifiedImplicit.forEach((entity) => {
+      if (entity.id === 'JgSBIiKPACgomyaL2iiyF')
+      console.log('modifiedImplicit')
       this.remove(entity);
       entity.add(Collider2Implicit);
       this.build(entity);
@@ -145,7 +164,7 @@ export class Collider2System extends System {
       .setActiveCollisionTypes(rapier.ActiveCollisionTypes.ALL)
       .setActiveEvents(rapier.ActiveEvents.COLLISION_EVENTS)
       .setTranslation(collider.offset.x, collider.offset.y, collider.offset.z)
-      .setRotation(rotation);
+      .setRotation(rotation.multiply(collider.rotation));
 
     // colliderDesc.setSensor(spec.isSensor);
 

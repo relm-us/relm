@@ -1,9 +1,9 @@
-import { Vector3 } from "three";
+import { Quaternion, Vector3 } from "three";
 
 import { ShapeType } from "~/types/shapes";
 
 import { Component, StringType, NumberType } from "~/ecs/base";
-import { Vector3Type } from "~/ecs/plugins/core";
+import { QuaternionType, Vector3Type } from "~/ecs/plugins/core";
 
 import {
   AVATAR_BUILDER_INTERACTION,
@@ -56,6 +56,9 @@ export class Collider2 extends Component {
 
   // Collider offset from center
   offset: Vector3;
+
+  // Collider rotation after offset
+  rotation: Quaternion;
 
   // Collider density. Mass is calculated based on collider volume * density.
   density: number;
@@ -110,6 +113,14 @@ export class Collider2 extends Component {
       default: new Vector3(0, 0, 0),
       editor: {
         label: "Offset",
+      },
+    },
+
+    rotation: {
+      type: QuaternionType,
+      default: new Quaternion(),
+      editor: {
+        label: "Rotation",
       },
     },
 

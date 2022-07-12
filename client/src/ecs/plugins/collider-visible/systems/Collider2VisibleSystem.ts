@@ -1,9 +1,11 @@
 import { BufferGeometry, Mesh, Object3D, Vector3 } from "three";
 import { System, Groups, Not, Modified } from "~/ecs/base";
-import { Collider2, Collider2Visible, Collider2VisibleRef } from "../components";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { colliderMaterial } from "~/ecs/shared/colliderMaterial";
 import { shapeParamsToGeometry, toShapeParams } from "~/ecs/shared/createShape";
+
+import { Collider2 } from "~/ecs/plugins/physics";
+import { Collider2Visible, Collider2VisibleRef } from "../components";
 
 const _v3 = new Vector3();
 
