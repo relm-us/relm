@@ -1,9 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-
-  import Capsule from "~/ui/lib/Capsule";
-  import { NumberDragger } from "./utils/NumberDragger";
-  import { formatNumber } from "./utils/formatNumber";
+  import NumberInput from "./utils/NumberInput.svelte";
 
   export let key: string;
   export let component;
@@ -12,98 +9,51 @@
 
   const dispatch = createEventDispatcher();
 
-  let editing = {
-    x: false,
-    y: false,
-    z: false,
-  };
-
-  let labels = [];
-  $: if (attrs.labels) {
-    labels = attrs.labels;
-  } else {
-    if (component[key].z === undefined) {
-      // Vector2Type
-      labels = ["x", "y"];
-    } else {
-      labels = ["x", "y", "z"];
-    }
-  }
-
-  let value: { x: number; y: number; z: number };
-  $: value = component[key];
-
-  const onInputChange =
-    (dimension) =>
+  const onValueChanged =
+    (dim) =>
     ({ detail }) => {
-      const newValue = parseFloat(detail);
-      if (!Number.isNaN(newValue) && component[key][dimension] !== newValue) {
-        component[key][dimension] = newValue;
-        component.modified();
+      component[key][dim] = detail.value;
+      component.modified();
+      if (detail.final) {
         dispatch("modified");
-        editing[dimension] = false;
       }
     };
 
-  const onInputCancel = (dimension) => (event) => {
-    editing[dimension] = false;
-  };
+  function getLabel(i, defaultLabel) {
+    let label = defaultLabel;
+    if (attrs.labels) label = attrs.labels[i];
+    return label ? label.toUpperCase() : label;
+  }
 
-  const makeDragger = (dimension) => {
-    return new NumberDragger({
-      getValue: () => value[dimension],
-      onDrag: (newValue) => {
-        component[key][dimension] = newValue;
-        component.modified();
-      },
-      onChange: (newValue) => {
-        component[key][dimension] = newValue;
-        component.modified();
-        dispatch("modified");
-      },
-      onClick: () => {
-        editing[dimension] = true;
-      },
-      scaleFactor: 0.01,
-    });
-  };
+  let fields;
+  // Create a set of 2 or 3 fields, e.g. X, Y, and Z. These fields may optionally
+  // be re-labeled, based on parameters passed by `attrs.labels`.
+  // NOTE: We re-purpose Vector3Type for Vector2Type as well, to avoid redundancy.
+  $: fields = (prop.type.name === "Vector2" ? ["x", "y"] : ["x", "y", "z"]).map(
+    (dim, i) => ({
+      dim,
+      label: getLabel(i, dim),
+    })
+  );
 
-  const draggers = {
-    x: makeDragger("x"),
-    y: makeDragger("y"),
-    z: makeDragger("z"),
-  };
-
-  const mousemove = (event) => {
-    draggers.x.mousemove(event);
-    draggers.y.mousemove(event);
-    draggers.z.mousemove(event);
-  };
-  const mouseup = (event) => {
-    draggers.x.mouseup(event);
-    draggers.y.mouseup(event);
-    draggers.z.mouseup(event);
-  };
+  // ignore warning about missing props
+  $$props;
 </script>
 
 <r-vector3-type>
   <div>{(prop.editor && prop.editor.label) || key}:</div>
   <div class="capsules">
-    {#each ["x", "y", "z"].slice(0, labels.length) as dim, i}
-      <Capsule
-        editing={editing[dim]}
-        on:mousedown={draggers[dim].mousedown}
-        on:change={onInputChange(dim)}
-        on:cancel={onInputCancel(dim)}
-        label={labels[i].toUpperCase()}
-        value={formatNumber(value[dim], editing[dim])}
-        type="number"
-      />
+    {#each fields as field}
+      {#if field.label}
+        <NumberInput
+          label={field.label}
+          value={component[key][field.dim]}
+          on:value={onValueChanged(field.dim)}
+        />
+      {/if}
     {/each}
   </div>
 </r-vector3-type>
-
-<svelte:window on:mousemove={mousemove} on:mouseup={mouseup} />
 
 <style>
   r-vector3-type {

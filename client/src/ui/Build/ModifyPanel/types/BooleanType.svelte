@@ -67,7 +67,5 @@
     display: flex;
     justify-content: flex-end;
     flex-grow: 1;
-
-    margin-top: 4px;
   }
 </style>

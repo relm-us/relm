@@ -25,6 +25,7 @@
 
   function onBlur() {
     if (editable) {
+      editing = false;
       dispatch("cancel");
     }
   }

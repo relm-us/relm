@@ -30,13 +30,14 @@
   function propAttrs(prop) {
     const reqs = propRequires(prop) || [];
 
+    let attrs = {};
     for (const item of reqs) {
       if (component[item.prop] === item.value) {
-        return item;
+        attrs = item;
       }
     }
 
-    return {};
+    return attrs;
   }
 
   const onModified = () => {
