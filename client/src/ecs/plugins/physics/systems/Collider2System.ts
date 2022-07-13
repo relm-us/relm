@@ -53,40 +53,28 @@ export class Collider2System extends System {
 
   update() {
     this.queries.implicitToExplicit.forEach((entity) => {
-      if (entity.id === 'JgSBIiKPACgomyaL2iiyF')
-      console.log('implicitToExplicit')
       entity.remove(Collider2Implicit);
       entity.maybeRemove(Collider2Ref);
     });
 
     this.queries.added.forEach((entity) => {
-      if (entity.id === 'JgSBIiKPACgomyaL2iiyF')
-      console.log('added')
       this.build(entity);
     });
 
     this.queries.modified.forEach((entity) => {
-      if (entity.id === 'JgSBIiKPACgomyaL2iiyF')
-      console.log('modified')
       this.remove(entity);
       this.build(entity);
     });
 
     this.queries.removed.forEach((entity) => {
-      if (entity.id === 'JgSBIiKPACgomyaL2iiyF')
-      console.log('removed')
       this.remove(entity);
     });
 
     this.queries.addImplicit.forEach((entity) => {
-      if (entity.id === 'JgSBIiKPACgomyaL2iiyF')
-      console.log('addImplicit')
       entity.add(Collider2Implicit);
       this.build(entity);
     });
     this.queries.modifiedImplicit.forEach((entity) => {
-      if (entity.id === 'JgSBIiKPACgomyaL2iiyF')
-      console.log('modifiedImplicit')
       this.remove(entity);
       entity.add(Collider2Implicit);
       this.build(entity);

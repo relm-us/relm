@@ -81,6 +81,7 @@ import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { CameraSystem } from "~/ecs/plugins/camera/systems";
 import { TransformControls } from "~/ecs/plugins/transform-controls";
 import { Collider2Visible } from "~/ecs/plugins/collider-visible";
+import { Collider2VisibleSystem } from "~/ecs/plugins/collider-visible/systems";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -440,14 +441,9 @@ export class WorldManager {
   }
 
   enableCollidersVisible(enabled = true, includeNonInteractive = false) {
-    const entities = this.getColliderEntities();
-    for (const entity of entities) {
-      const interactive = !entity.get(NonInteractive);
-      entity.maybeRemove(Collider2Visible);
-      if (enabled && (interactive || includeNonInteractive)) {
-        entity.add(Collider2Visible);
-      }
-    }
+    Collider2VisibleSystem.enabled = enabled;
+    // TODO: make C2VS use includeNonInteractive flag
+    Collider2VisibleSystem.includeNonInteractive = includeNonInteractive;
   }
 
   hoverOutline(found: Entity) {

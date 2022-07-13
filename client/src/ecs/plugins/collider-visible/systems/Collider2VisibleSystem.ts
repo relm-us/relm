@@ -5,6 +5,8 @@ import { colliderMaterial } from "~/ecs/shared/colliderMaterial";
 import { shapeParamsToGeometry, toShapeParams } from "~/ecs/shared/createShape";
 
 import { Collider2 } from "~/ecs/plugins/physics";
+import { NonInteractive } from "~/ecs/plugins/non-interactive";
+
 import { Collider2Visible, Collider2VisibleRef } from "../components";
 
 const _v3 = new Vector3();
@@ -12,31 +14,34 @@ const _v3 = new Vector3();
 export class Collider2VisibleSystem extends System {
   order = Groups.Initialization;
 
+  static enabled: boolean = false;
+  static includeNonInteractive: boolean = false;
+
   static queries = {
-    added: [Object3DRef, Collider2, Collider2Visible, Not(Collider2VisibleRef)],
-    removed: [Object3DRef, Not(Collider2Visible), Collider2VisibleRef],
-    modifiedCollider: [Object3DRef, Modified(Collider2), Collider2Visible],
-    modifiedTransform: [Modified(Transform), Collider2VisibleRef],
-    removedCollider: [Object3DRef, Not(Collider2), Collider2VisibleRef],
+    all: [Collider2VisibleRef],
+
+    modified: [Object3DRef, Modified(Collider2), Collider2VisibleRef],
+    modifiedTransform: [Object3DRef, Modified(Transform), Collider2VisibleRef],
+    added: [
+      Object3DRef,
+      Collider2,
+      Not(NonInteractive),
+      Not(Collider2VisibleRef),
+    ],
+    removed: [Object3DRef, Not(Collider2), Collider2VisibleRef],
   };
 
   update() {
-    this.queries.added.forEach((entity) => {
-      this.build(entity);
-    });
-    this.queries.removed.forEach((entity) => {
-      this.remove(entity);
-    });
-    this.queries.modifiedCollider.forEach((entity) => {
-      this.remove(entity);
-      this.build(entity);
-    });
-    this.queries.modifiedTransform.forEach((entity) => {
-      this.setInverseScale(entity);
-    });
-    this.queries.removedCollider.forEach((entity) => {
-      this.remove(entity);
-    });
+    if (Collider2VisibleSystem.enabled) {
+      this.queries.modified.forEach((entity) => this.remove(entity));
+      this.queries.modifiedTransform.forEach((entity) => this.remove(entity));
+      this.queries.added.forEach((entity) => this.build(entity));
+      this.queries.removed.forEach((entity) => this.remove(entity));
+    } else {
+      this.queries.all.forEach((entity) => {
+        this.remove(entity);
+      });
+    }
   }
 
   // Set an inverse scale on the mesh to "undo" the scale transform;
@@ -68,6 +73,7 @@ export class Collider2VisibleSystem extends System {
     );
 
     const mesh = new Mesh(geometry, colliderMaterial);
+    mesh.quaternion.copy(collider.rotation);
 
     object3d.add(mesh);
     entity.add(Collider2VisibleRef, { value: mesh });
@@ -76,12 +82,10 @@ export class Collider2VisibleSystem extends System {
   }
 
   remove(entity) {
-    const object3d: Object3D = entity.get(Object3DRef).value;
     const mesh = entity.get(Collider2VisibleRef).value;
 
-    object3d.remove(mesh);
     mesh.geometry.dispose();
-    mesh.material.dispose();
+    mesh.removeFromParent();
 
     entity.remove(Collider2VisibleRef);
   }
