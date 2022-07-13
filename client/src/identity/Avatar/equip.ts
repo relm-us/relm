@@ -13,6 +13,7 @@ import { Asset as AssetComp } from "~/ecs/plugins/asset";
 import { Model2 } from "~/ecs/plugins/form";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
 import { makeBox } from "~/prefab/makeBox";
+import { AlwaysOnStage } from "~/ecs/plugins/camera";
 
 const HAND_LENGTH = 0.25;
 const BACK_OFFSET = 0.25;
@@ -72,6 +73,7 @@ function makeHeldEntity(world: DecoratedECSWorld, equipment: Equipment) {
 
   if (equipment?.model) {
     entity = makeEntity(world, "Held")
+      .add(AlwaysOnStage)
       .add(Transform)
       .add(AssetComp, { value: new Asset(equipment.model) })
       .add(Model2);
