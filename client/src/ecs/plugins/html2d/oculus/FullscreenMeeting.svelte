@@ -38,6 +38,7 @@
     {#each [...getMeAndOtherParticipants($clients)] as participant}
       <div>
         <Individual
+          diameter={100}
           color={participant.identityData.color}
           name={participant.identityData.name}
           mirror={participant.participantId === localParticipantId}
