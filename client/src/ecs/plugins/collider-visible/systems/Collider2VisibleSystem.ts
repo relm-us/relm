@@ -7,7 +7,7 @@ import { shapeParamsToGeometry, toShapeParams } from "~/ecs/shared/createShape";
 import { Collider2 } from "~/ecs/plugins/physics";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 
-import { Collider2Visible, Collider2VisibleRef } from "../components";
+import { Collider2VisibleRef } from "../components";
 
 const _v3 = new Vector3();
 
@@ -15,7 +15,6 @@ export class Collider2VisibleSystem extends System {
   order = Groups.Initialization;
 
   static enabled: boolean = false;
-  static includeNonInteractive: boolean = false;
 
   static queries = {
     all: [Collider2VisibleRef],
@@ -29,6 +28,7 @@ export class Collider2VisibleSystem extends System {
       Not(Collider2VisibleRef),
     ],
     removed: [Object3DRef, Not(Collider2), Collider2VisibleRef],
+    removedInteractive: [Object3DRef, NonInteractive, Collider2VisibleRef],
   };
 
   update() {
@@ -37,6 +37,7 @@ export class Collider2VisibleSystem extends System {
       this.queries.modifiedTransform.forEach((entity) => this.remove(entity));
       this.queries.added.forEach((entity) => this.build(entity));
       this.queries.removed.forEach((entity) => this.remove(entity));
+      this.queries.removedInteractive.forEach((entity) => this.remove(entity));
     } else {
       this.queries.all.forEach((entity) => {
         this.remove(entity);

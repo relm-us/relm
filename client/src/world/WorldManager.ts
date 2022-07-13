@@ -77,10 +77,9 @@ import { PhotoBooth } from "./PhotoBooth";
 import { audioMode, AudioMode } from "~/stores/audioMode";
 import { Outline } from "~/ecs/plugins/outline";
 import { InteractorSystem } from "~/ecs/plugins/interactor";
-import { Object3DRef, Transform } from "~/ecs/plugins/core";
+import { Object3DRef } from "~/ecs/plugins/core";
 import { CameraSystem } from "~/ecs/plugins/camera/systems";
 import { TransformControls } from "~/ecs/plugins/transform-controls";
-import { Collider2Visible } from "~/ecs/plugins/collider-visible";
 import { Collider2VisibleSystem } from "~/ecs/plugins/collider-visible/systems";
 
 type LoopType =
@@ -278,32 +277,24 @@ export class WorldManager {
     // Make colliders visible in build mode
     this.unsubs.push(
       derived(
-        [worldUIMode, keyShift],
+        [worldUIMode, key1],
         (
-          [$mode, $keyShift],
+          [$mode, $key1],
           set: (value: {
             buildMode: boolean;
             overrideInvisible: boolean;
           }) => void
         ) => {
-          set({ buildMode: $mode === "build", overrideInvisible: $keyShift });
+          set({ buildMode: $mode === "build", overrideInvisible: $key1 });
         }
       ).subscribe(({ buildMode, overrideInvisible }) => {
         this.avatar.enableCanFly(buildMode);
         this.avatar.enableNonInteractive(buildMode);
-        if (overrideInvisible) {
-          this.enableCollidersVisible(buildMode, true);
-        }
+
+        this.enableCollidersVisible(buildMode);
 
         const buildModeShift = buildMode && overrideInvisible;
-
         this.enableNonInteractiveGround(!buildModeShift);
-
-        // Need to call enableCollidersVisible after enableNonInteractiveGround
-        // because visible colliders test checks for NonInteractive component:
-        if (!overrideInvisible) {
-          this.enableCollidersVisible(buildMode, false);
-        }
       })
     );
 
@@ -440,10 +431,8 @@ export class WorldManager {
     }
   }
 
-  enableCollidersVisible(enabled = true, includeNonInteractive = false) {
+  enableCollidersVisible(enabled = true) {
     Collider2VisibleSystem.enabled = enabled;
-    // TODO: make C2VS use includeNonInteractive flag
-    Collider2VisibleSystem.includeNonInteractive = includeNonInteractive;
   }
 
   hoverOutline(found: Entity) {
