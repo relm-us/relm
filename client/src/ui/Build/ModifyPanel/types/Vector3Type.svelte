@@ -48,6 +48,7 @@
         <NumberInput
           label={field.label}
           value={component[key][field.dim]}
+          scaleFactor={0.01}
           on:value={onValueChanged(field.dim)}
         />
       {/if}

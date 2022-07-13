@@ -6,9 +6,10 @@
   import { NumberDragger } from "./NumberDragger";
   import { formatNumber } from "./formatNumber";
 
-  export let label = null
+  export let label = null;
   export let value: number;
   export let decimals = 1;
+  export let scaleFactor = 1;
 
   const dispatch = createEventDispatcher();
 
@@ -38,6 +39,7 @@
   }
 
   const dragger = new NumberDragger({
+    scaleFactor,
     getValue: () => value,
     onDrag: setValue(false),
     onChange: setValue(true),
