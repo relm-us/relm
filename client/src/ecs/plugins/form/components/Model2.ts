@@ -6,8 +6,10 @@ export class Model2 extends Component {
   static props = {
     compat: {
       type: BooleanType,
-      label: "Compatibility Mode",
       default: false,
+      editor: {
+        label: "Compatibility Mode",
+      },
     },
   };
 
