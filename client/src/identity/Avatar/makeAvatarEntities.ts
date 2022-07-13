@@ -54,14 +54,18 @@ export function makeAvatarEntities(
       offset: new Vector3(0, 1.1, 0),
     });
 
-  const head = makeEntity(world, "AvatarHead").add(Transform, {
-    position: new Vector3(0, AVATAR_HEIGHT_UNSCALED, 0),
-  });
+  const head = makeEntity(world, "AvatarHead")
+    .add(Transform, {
+      position: new Vector3(0, AVATAR_HEIGHT_UNSCALED, 0),
+    })
+    .add(AlwaysOnStage);
   head.setParent(body);
 
-  const emoji = makeEntity(world, "AvatarEmoji").add(Transform, {
-    position: new Vector3(0, AVATAR_HEIGHT_UNSCALED, 0),
-  });
+  const emoji = makeEntity(world, "AvatarEmoji")
+    .add(Transform, {
+      position: new Vector3(0, AVATAR_HEIGHT_UNSCALED, 0),
+    })
+    .add(AlwaysOnStage);
   emoji.setParent(body);
 
   // Move these things as a unit on portal
