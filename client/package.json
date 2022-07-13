@@ -99,7 +99,7 @@
     "source-map-loader": "^1.1.2",
     "svelte-check": "^1.0.32",
     "svelte-jester": "^2.3.0",
-    "svelte-loader": "^2.13.6",
+    "svelte-loader": "3.1.2",
     "svelte-loader-hot": "^0.3.1",
     "svelte-preprocess": "^4.2.0",
     "terser-webpack-plugin": "^4.0.0",

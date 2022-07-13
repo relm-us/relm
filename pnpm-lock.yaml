@@ -77,7 +77,7 @@ importers:
       svelte-i18n: ^3.4.0
       svelte-icons: 2.1.0
       svelte-jester: ^2.3.0
-      svelte-loader: ^2.13.6
+      svelte-loader: 3.1.2
       svelte-loader-hot: ^0.3.1
       svelte-notifications: 0.9.93
       svelte-preprocess: ^4.2.0
@@ -177,7 +177,7 @@ importers:
       source-map-loader: 1.1.3_webpack@4.46.0
       svelte-check: 1.6.0_i7y7do4skexc5viayczggthqea
       svelte-jester: 2.3.2_jest@27.5.1+svelte@3.46.3
-      svelte-loader: 2.13.6_svelte@3.46.3
+      svelte-loader: 3.1.2_svelte@3.46.3
       svelte-loader-hot: 0.3.1_svelte@3.46.3
       svelte-preprocess: 4.10.7_44oy7jraaqvhajc255tdyafll4
       terser-webpack-plugin: 4.2.3_webpack@4.46.0
@@ -14780,6 +14780,15 @@ packages:
       svelte: 3.46.3
     dev: true
 
+  /svelte-hmr/0.14.12_svelte@3.46.3:
+    resolution: {integrity: sha512-4QSW/VvXuqVcFZ+RhxiR8/newmwOCTlbYIezvkeN6302YFRE8cXy0naamHcjz8Y9Ce3ITTZtrHrIL0AGfyo61w==}
+    engines: {node: ^12.20 || ^14.13.1 || >= 16}
+    peerDependencies:
+      svelte: '>=3.19.0'
+    dependencies:
+      svelte: 3.46.3
+    dev: true
+
   /svelte-i18n/3.4.0_svelte@3.46.3:
     resolution: {integrity: sha512-590N+YIRlebDT3fXmuAxd4guQZLR3vm4kCs5UhWYmw3SxOlJNZ7HwYYiw6d4jDr7P+Cx7DSopk1Z1K9wn8B6EA==}
     engines: {node: '>= 11.15.0'}
@@ -14821,14 +14830,15 @@ packages:
       svelte-hmr: 0.10.3_svelte@3.46.3
     dev: true
 
-  /svelte-loader/2.13.6_svelte@3.46.3:
-    resolution: {integrity: sha512-7uf7ZQdPAl+lwb1ldUYJFY/raZRUCuaNx7lMJ+F16jrVwN1+c35C2pBMGIY0mCqdKm5sm45jqELJJLGM3UG9Pw==}
+  /svelte-loader/3.1.2_svelte@3.46.3:
+    resolution: {integrity: sha512-RhVIvitb+mtIwKNyvNQoDQ0EhXg2KH8LhQiiqeJh8u6vqJyGWoMoFcYCar69TT+1iaK5IYe0wPNYJ6TILcsurw==}
     peerDependencies:
-      svelte: '>1.44.0'
+      svelte: '>3.0.0'
     dependencies:
-      loader-utils: 1.4.0
+      loader-utils: 2.0.2
       svelte: 3.46.3
       svelte-dev-helper: 1.1.9
+      svelte-hmr: 0.14.12_svelte@3.46.3
     dev: true
 
   /svelte-notifications/0.9.93:
