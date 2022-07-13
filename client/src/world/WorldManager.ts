@@ -81,6 +81,8 @@ import { Object3DRef } from "~/ecs/plugins/core";
 import { CameraSystem } from "~/ecs/plugins/camera/systems";
 import { TransformControls } from "~/ecs/plugins/transform-controls";
 import { Collider2VisibleSystem } from "~/ecs/plugins/collider-visible/systems";
+import { globalEvents } from "~/events";
+import { advancedEdit } from "~/stores/advancedEdit";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -265,6 +267,10 @@ export class WorldManager {
           case "build":
             this.hoverOutline(null);
             this.world.systems.get(InteractorSystem).active = false;
+
+            // Always turn advanced edit off when entering build mode
+            advancedEdit.set(false);
+
             break;
           case "play":
             this.world.systems.get(InteractorSystem).active = true;
@@ -274,18 +280,24 @@ export class WorldManager {
       })
     );
 
+    const toggleAdvancedEdit = () => advancedEdit.update((value) => !value);
+    globalEvents.on("advanced-edit", toggleAdvancedEdit);
+    this.unsubs.push(() =>
+      globalEvents.off("advanced-edit", toggleAdvancedEdit)
+    );
+
     // Make colliders visible in build mode
     this.unsubs.push(
       derived(
-        [worldUIMode, key1],
+        [worldUIMode, advancedEdit],
         (
-          [$mode, $key1],
+          [$mode, $advanced],
           set: (value: {
             buildMode: boolean;
             overrideInvisible: boolean;
           }) => void
         ) => {
-          set({ buildMode: $mode === "build", overrideInvisible: $key1 });
+          set({ buildMode: $mode === "build", overrideInvisible: $advanced });
         }
       ).subscribe(({ buildMode, overrideInvisible }) => {
         this.avatar.enableCanFly(buildMode);
