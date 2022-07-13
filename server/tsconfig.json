@@ -2,6 +2,12 @@
   "include": [
     "src", "tests"
   ],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "es2020",
+      "target": "es2020"
+    }
+  },
   "compilerOptions": {
     "module": "es2020",
     "target": "es2020",
