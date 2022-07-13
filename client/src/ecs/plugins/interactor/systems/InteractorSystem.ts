@@ -81,10 +81,8 @@ export class InteractorSystem extends System {
         ? this.candidates[0]
         : null;
 
-      const selected = InteractorSystem.selected;
-      if (selected && selected !== shouldOutline && selected.has(Outline)) {
-        selected.remove(Outline);
-        InteractorSystem.selected = null;
+      if (shouldOutline !== InteractorSystem.selected) {
+        this.deselect();
       }
 
       if (shouldOutline && !shouldOutline.has(Outline)) {
@@ -119,5 +117,13 @@ export class InteractorSystem extends System {
       this.presentation.scene.add(interactor.sphereHelper);
     }
     interactor.sphereHelper.position.copy(center);
+  }
+
+  deselect() {
+    const selected = InteractorSystem.selected;
+    if (selected && selected.has(Outline)) {
+      selected.remove(Outline);
+      InteractorSystem.selected = null;
+    }
   }
 }

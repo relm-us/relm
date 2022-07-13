@@ -290,6 +290,7 @@ export class WorldManager {
       ).subscribe(({ buildMode, overrideInvisible }) => {
         this.avatar.enableCanFly(buildMode);
         this.avatar.enableNonInteractive(buildMode);
+        this.avatar.enableInteractor(!buildMode);
 
         this.enableCollidersVisible(buildMode);
 
