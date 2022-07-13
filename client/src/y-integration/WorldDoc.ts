@@ -347,7 +347,8 @@ export class WorldDoc extends EventEmitter {
               this._addYComponent(entity, ycomponent);
             },
             onDelete: (yid) => {
-              const items = getDeletedItems(event, transaction);
+              // The component name we're looking for is a pathLength of 2 within the data structure
+              const items = getDeletedItems(event, transaction, 2);
               const componentName = items
                 .map((item) => item.content.getContent()[0])
                 .find((item) => typeof item === "string");
