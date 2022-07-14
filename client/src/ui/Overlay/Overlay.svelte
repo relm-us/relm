@@ -40,11 +40,14 @@
   import { showCenterButtons } from "~/stores/showCenterButtons";
   import { AV_ENABLED } from "~/config/constants";
 import SignInButton from "../ButtonControls/SignInButton";
+import SignInWindow from "../ButtonControls/SignInButton/SignInWindow.svelte";
 
   export let dispatch;
   export let permits;
   export let state: State;
   export let tr = {};
+
+  let signinEnabled = false;
 
   // i18n translations available, if passed in
   const _ = (phrase, key) => tr[key] || tr[phrase] || phrase;
@@ -179,12 +182,15 @@ import SignInButton from "../ButtonControls/SignInButton";
       <Tooltip
         tip={_("Connect your account!", "signin_button")}
         top>
-          <SignInButton {dispatch} />
+          <SignInButton bind:enabled={signinEnabled} />
       </Tooltip>
     </play-buttons>
   </overlay-center>
 {/if}
 
+{#if signinEnabled}
+  <SignInWindow bind:enabled={signinEnabled} {dispatch} />
+{/if}
 <Chat />
 
 <!-- The virtual world! -->

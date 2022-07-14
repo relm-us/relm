@@ -4,6 +4,7 @@
   import SignInCheckInput from "./components/SignInCheckInput.svelte";
   import SignInTextInput from "./components/SignInTextInput.svelte";
   import type { Dispatch } from "~/main/ProgramTypes";
+  import { showCenterButtons } from "~/stores/showCenterButtons";
   import { getNotificationsContext } from "svelte-notifications";
 
   export let enabled;
@@ -78,13 +79,16 @@
 
   function exitScreen() {
     enabled = false;
+    $showCenterButtons = true;
   }
 
 </script>
 
 <Fullwindow>
   <r-background></r-background>
-  <r-exit on:click={exitScreen}>ESC</r-exit>
+  <r-exit on:click={exitScreen}>
+    <img src="/ESC_button.png" style="width: 48px;" alt="Signout" />
+  </r-exit>
   <r-window>
     <!-- SIGNIN WINDOW -->
     {#if showingSignin}
@@ -138,7 +142,7 @@
     {:else}
       <!-- REGISTER WINDOW -->
       <r-content style="position: relative;" id="register">
-        <r-section class="add-padding-if-tall-enough biggest">
+        <r-section class="add-padding-if-tall-enough large">
           <SignInTextInput name="email" type="email" label="EMAIL" />
         </r-section>
         <r-section>
@@ -228,8 +232,9 @@
   r-exit {
     display: block;
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
   }
 
   r-window {
@@ -264,11 +269,8 @@
 
   // Only show padding at top if the screen is tall enough.
   @media only screen and (min-height: 800px) {
-    .add-padding-if-tall-enough.biggest {
-      padding-top: 75%;
-    }
     .add-padding-if-tall-enough.large {
-      padding-top: 50%;
+      padding-top: 75%;
     }
     .add-padding-if-tall-enough.medium {
       padding-top: 30%;
