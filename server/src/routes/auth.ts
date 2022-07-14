@@ -117,8 +117,6 @@ auth.post(
       name: identityPayload.name,
       color: identityPayload.color,
       status: identityPayload.status,
-      showAudio: identityPayload.showAudio,
-      showVideo: identityPayload.showVideo,
       equipment: identityPayload.equipment,
       appearance
     };
@@ -144,14 +142,14 @@ auth.post(
     // Check if someone is using that email
     const userExistsWithEmailProvided = (await User.getUserIdByEmail({ email })) !== null;
     if (userExistsWithEmailProvided) {
-      return respondWithFailure(res, "email is already in use");
+      return respondWithFailure(res, "This email is already used by another user!");
     }
 
     // Ensure the participant being registered isn't already linked.
     const participantId = req.authenticatedParticipantId;
     const existingUserId = await Participant.getUserId({ participantId });
     if (existingUserId !== null) {
-      return respondWithError(res, "participant is already linked to an email");
+      return respondWithFailure(res, "This participant is already linked to another email!");
     }
 
     const userId = await User.createUser({
@@ -173,14 +171,14 @@ auth.post(
     if (status === PassportResponse.ERROR) {
       return respondWithError(res, data);
     } else if (status === PassportResponse.NO_USER_FOUND) {
-      return respondWithFailure(res, "invalid credentials");
+      return respondWithFailure(res, "Hmm... That doesn't seem like it was the correct credentials!");
     }
 
     // Authentication was successful! Ensure the participant is not linked to another user already.
     const participantId = req.authenticatedParticipantId;
     const existingUserId = await Participant.getUserId({ participantId });
     if (existingUserId !== null && (data !== existingUserId)) {
-      return respondWithError(res, "participant is already linked to an email");
+      return respondWithError(res, "This participant is already linked to another email!");
     }
 
     // Assign participant to user!

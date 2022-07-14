@@ -25,6 +25,13 @@
     if (response.status === "success") {
       // Request identity data from server again and update our local identity if data from the server exists.
       await onAccountConnection();
+    } else {
+      // Error!
+      notifyContext.addNotification({
+        text: response.reason,
+        position: "top-left",
+        removeAfter: 3000
+      });
     }
 
   }
@@ -38,9 +45,15 @@
       : await worldManager.login({ email, password });
     
     if (response.status === "success") {
+      // Username/password was successfully registered.
       await onAccountConnection();
     } else {
-      // TODO: show error screen
+      // Error!
+      notifyContext.addNotification({
+        text: response.reason,
+        position: "top-left",
+        removeAfter: 3000
+      });
     }
   }
 
@@ -171,6 +184,10 @@
 </Fullwindow>
 
 <style type="scss">
+  :global(.notifications div) {
+    z-index: 9999;
+  }
+
   #stay-logged-forget-section {
     display: flex;
     text-align: initial;
