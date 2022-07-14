@@ -101,7 +101,7 @@ export class Presentation {
     // prepare outline effect for outline EffectPass
     this.outlineEffect = new OutlineEffect(this.scene, this.camera, {
       blendFunction: BlendFunction.ALPHA,
-      // multisampling: maxSamples,
+      multisampling: maxSamples,
       edgeStrength: 5,
       visibleEdgeColor: 0xffffff,
       hiddenEdgeColor: 0x5f5f5f,
