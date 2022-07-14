@@ -2,11 +2,13 @@ import * as Y from "yjs";
 import { deltaToYText, jsonToYEntity, YEntity } from "../yrelm/index.js";
 import { MinimalRelmJSON } from "./types.js";
 
-export function importWorldDoc(source: MinimalRelmJSON, dest: Y.Doc) {
+export function importEntities(entities: any[], dest: Y.Doc) {
   const yentities = dest.getArray("entities") as Y.Array<YEntity>;
   // Y.Array#push takes many items, unlike regular Array#push
-  yentities.push(source.entities.map((e) => jsonToYEntity(e)));
+  yentities.push(entities.map((e) => jsonToYEntity(e)));
+}
 
+export function importNonEntities(source: MinimalRelmJSON, dest: Y.Doc) {
   const yentryways = dest.getMap("entryways") as Y.Map<Array<number>>;
   for (let [name, coords] of Object.entries(source.entryways)) {
     yentryways.set(name, coords);
@@ -21,4 +23,9 @@ export function importWorldDoc(source: MinimalRelmJSON, dest: Y.Doc) {
   for (let [name, value] of Object.entries(source.documents)) {
     ydocuments.set(name, deltaToYText(value));
   }
+}
+
+export function importWorldDoc(source: MinimalRelmJSON, dest: Y.Doc) {
+  importEntities(source.entities, dest);
+  importNonEntities(source, dest);
 }

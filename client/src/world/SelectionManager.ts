@@ -1,23 +1,30 @@
+import type { WorldManager } from "./WorldManager";
+
 import { get } from "svelte/store";
-import { Vector3 } from "three";
+import { Object3D, Vector3 } from "three";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import { first, difference } from "~/utils/setOps";
 
 import { Entity, EntityId } from "~/ecs/base";
 import { Outline } from "~/ecs/plugins/outline";
-import { Transform } from "~/ecs/plugins/core";
+import { Object3DRef, Transform } from "~/ecs/plugins/core";
 
 import { selectedEntities, selectedGroups } from "~/stores/selection";
 import { openPanel } from "~/stores";
+import { worldUIMode } from "~/stores/worldUIMode";
 
 export class SelectionManager {
-  wdoc: WorldDoc;
+  worldManager: WorldManager;
 
-  constructor(worldDoc) {
-    this.wdoc = worldDoc;
+  constructor(worldManager) {
+    this.worldManager = worldManager;
 
     this.subscribe();
+  }
+
+  get wdoc(): WorldDoc {
+    return this.worldManager.worldDoc;
   }
 
   get ids(): Array<string> {
@@ -63,7 +70,7 @@ export class SelectionManager {
     selectedEntities.delete(entityId);
   }
 
-  getFirst(_): Entity {
+  getFirst(): Entity {
     const $selected = get(selectedEntities);
     const entityId = first($selected);
     if (entityId) {
@@ -127,6 +134,17 @@ export class SelectionManager {
 
       if ($selected.size === 1 && added.size === 1) {
         openPanel.set("modify");
+      }
+
+      if (get(worldUIMode) === "build") {
+        if ($selected.size > 0) {
+          // Transform Controls
+          const entityId = first($selected);
+          const entity = this.wdoc.world.entities.getById(entityId);
+          this.worldManager.showTransformControls(entity);
+        } else {
+          this.worldManager.hideTransformControls();
+        }
       }
 
       for (const entityId of removed) {

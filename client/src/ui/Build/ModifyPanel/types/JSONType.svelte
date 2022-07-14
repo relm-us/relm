@@ -19,6 +19,9 @@
       dispatch("modified");
     }
   };
+
+  // ignore warning about missing props
+  $$props;
 </script>
 
 <r-json-type>

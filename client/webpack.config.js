@@ -192,7 +192,17 @@ module.exports = {
      * Useful for detecting issues with svelte components, for example, which sometimes
      * try to sneak in another copy of the svelte compiler's prolog
      */
-    new DuplicatePackageCheckerPlugin(),
+    new DuplicatePackageCheckerPlugin({
+      exclude(instance) {
+        // We know about the following library duplications, but it is safe to ignore
+        return [
+          "abstract-leveldown",
+          "inherits",
+          "readable-stream",
+          "safe-buffer",
+        ].includes(instance.name);
+      },
+    }),
 
     /**
      * This plugin analyzes all of our imports & chunks, and produces an HTML

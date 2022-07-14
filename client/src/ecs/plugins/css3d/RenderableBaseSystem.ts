@@ -1,4 +1,4 @@
-import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer";
+import { CSS3DObject } from "./CSS3DRenderer";
 
 import { System, Groups } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";

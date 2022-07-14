@@ -25,7 +25,7 @@ export class CssPlaneSystem extends System {
   static queries = {
     added: [Object3DRef, CssPlane, Not(CssShapeMesh)],
     modified: [Object3DRef, Modified(CssPlane), CssShapeMesh],
-    removed: [Object3DRef, Not(CssPlane), CssShapeMesh],
+    removed: [Not(CssPlane), CssShapeMesh],
   };
 
   update() {
@@ -106,19 +106,17 @@ export class CssPlaneSystem extends System {
   }
 
   remove(entity) {
-    const object3dref = entity.get(Object3DRef);
     const mesh = entity.get(CssShapeMesh).value;
 
     mesh.userData.cssPlaneUnsub?.();
 
     mesh.geometry.dispose();
-    mesh.material.dispose();
-    object3dref.value.remove(mesh);
+    mesh.removeFromParent();
 
     entity.remove(CssShapeMesh);
 
     // Notify dependencies, e.g. BoundingBox, that object3d has changed
-    object3dref.modified();
+    entity.get(Object3DRef)?.modified();
   }
 }
 

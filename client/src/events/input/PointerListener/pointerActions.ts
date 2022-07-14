@@ -18,13 +18,16 @@ import { worldUIMode } from "~/stores/worldUIMode";
 import { mouse } from "~/stores/mouse";
 
 import { DRAG_DISTANCE_THRESHOLD } from "~/config/constants";
-import { DragPlane } from "./DragPlane";
-import { SelectionBox } from "./SelectionBox";
 import { Draggable } from "~/ecs/plugins/clickable/components/Draggable";
 import { Entity } from "~/ecs/base";
 import { isInteractive } from "~/utils/isInteractive";
 
 export let isControllingAvatar: boolean = false;
+export let isControllingTransform: boolean = false;
+
+export function setControl(value: boolean) {
+  isControllingTransform = value;
+}
 
 const pointerPosition = new Vector2();
 const pointerStartPosition = new Vector2();
@@ -45,9 +48,6 @@ let dragOffset: Vector3 = new Vector3();
 let pointerPoint: Vector3;
 let interactiveEntity: Entity;
 let shiftKeyOnClick = false;
-
-let dragPlane;
-let selectionBox;
 
 export function onPointerDown(x: number, y: number, shiftKey: boolean) {
   const $mode = get(worldUIMode);
@@ -70,7 +70,7 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
       pointerDownFound
     );
 
-    if (pointerPoint) getDragPlane().setOrigin(pointerPoint);
+    if (pointerPoint) worldManager.dragPlane.setOrigin(pointerPoint);
   } else if ($mode === "play") {
     interactiveEntity = firstInteractiveEntity(pointerDownFound);
 
@@ -84,7 +84,7 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
       setNextPointerState("interactive-click");
 
       const draggable = interactiveEntity.get(Draggable);
-      const dragPlane = getDragPlane();
+      const dragPlane = worldManager.dragPlane;
       dragPlane.setOrientation(draggable.plane);
       dragPlane.setOrigin(clickedPosition(interactiveEntity.id, world));
 
@@ -93,23 +93,28 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
     } else {
       // At this point, at least a 'click' has started. TBD if it's a drag.
       setNextPointerState("click");
-      getDragPlane().setOrientation("XZ");
+      worldManager.dragPlane.setOrientation("XZ");
 
       if (pointerDownFound.length > 0) {
         const position = clickedPosition(pointerDownFound[0], world);
-        getDragPlane().setOrigin(position);
+        worldManager.dragPlane.setOrigin(position);
       } else {
         const planes: WorldPlanes =
           worldManager.world.perspective.getAvatarPlanes();
         const position = new Vector3();
         planes.getWorldFromScreen(pointerPosition, position);
-        getDragPlane().setOrigin(position);
+        worldManager.dragPlane.setOrigin(position);
       }
     }
   }
 }
 
 export function onPointerUp(event: MouseEvent | TouchEvent) {
+  if (isControllingTransform) {
+    if (pointerState !== "initial") setNextPointerState("initial");
+    return;
+  }
+
   const $mode = get(worldUIMode);
 
   if ($mode === "build") {
@@ -140,13 +145,18 @@ export function onPointerUp(event: MouseEvent | TouchEvent) {
   }
 
   // dragPlane.hide();
-  getSelectionBox().hide();
+  worldManager.selectionBox.hide();
 
   // reset mouse mode
   setNextPointerState("initial");
 }
 
 export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
+  if (isControllingTransform) {
+    if (pointerState !== "initial") setNextPointerState("initial");
+    return;
+  }
+
   const $mode = get(worldUIMode);
   const world = worldManager.world;
   const finder = world.presentation.intersectionFinder;
@@ -165,25 +175,25 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
       if (worldManager.selection.length > 0 && pointerPoint) {
         setNextPointerState("drag");
         worldManager.selection.savePositions();
-        getDragPlane().setOrientation(shiftKeyOnClick ? "XY" : "XZ");
+        worldManager.dragPlane.setOrientation(shiftKeyOnClick ? "XY" : "XZ");
       } else {
         setNextPointerState("drag-select");
-        getSelectionBox().show();
-        getSelectionBox().setStart(pointerStartPosition);
-        getSelectionBox().setEnd(pointerStartPosition);
+        worldManager.selectionBox.show();
+        worldManager.selectionBox.setStart(pointerStartPosition);
+        worldManager.selectionBox.setEnd(pointerStartPosition);
       }
     } else if (pointerState === "drag") {
       // drag mode
-      const delta = getDragPlane().getDelta(pointerPosition);
+      const delta = worldManager.dragPlane.getDelta(pointerPosition);
       worldManager.selection.moveRelativeToSavedPositions(delta);
     } else if (pointerState === "drag-select") {
       if (shiftKeyOnMove) {
-        getSelectionBox().setTop(pointerPosition);
+        worldManager.selectionBox.setTop(pointerPosition);
       } else {
-        getSelectionBox().setEnd(pointerPosition);
+        worldManager.selectionBox.setEnd(pointerPosition);
       }
 
-      const contained = getSelectionBox().getContainedEntityIds();
+      const contained = worldManager.selectionBox.getContainedEntityIds();
 
       worldManager.selection.clear(true);
       worldManager.selection.addEntityIds(contained);
@@ -193,7 +203,7 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
       setNextPointerState("interactive-drag");
       worldManager.selection.savePositions();
     } else if (pointerState === "interactive-drag") {
-      const delta = getDragPlane().getDelta(pointerPosition);
+      const delta = worldManager.dragPlane.getDelta(pointerPosition);
       const draggable = interactiveEntity.get(Draggable);
       worldManager.selection.moveRelativeToSavedPositions(delta, (position) => {
         if (draggable.grid) {
@@ -219,7 +229,7 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
       setNextPointerState("drag");
       cameraPanOffset.copy(worldManager.camera.pan);
     } else if (pointerState === "drag") {
-      const delta = getDragPlane().getDelta(pointerPosition);
+      const delta = worldManager.dragPlane.getDelta(pointerPosition);
       dragOffset.copy(delta).sub(cameraPanOffset);
       worldManager.camera.setPan(-dragOffset.x, -dragOffset.z);
     } else {
@@ -229,22 +239,7 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
   }
 }
 
-// TODO: Make selectionBox and dragPlane aspects of World?
-function getDragPlane(): DragPlane {
-  if (!dragPlane) {
-    dragPlane = new DragPlane(worldManager.world);
-  }
-  return dragPlane;
-}
-
-function getSelectionBox(): SelectionBox {
-  if (!selectionBox) {
-    selectionBox = new SelectionBox(worldManager.world);
-  }
-  return selectionBox;
-}
-
-function setNextPointerState(nextState: PointerState) {
+export function setNextPointerState(nextState: PointerState) {
   if (
     nextState === "drag" ||
     nextState === "drag-select" ||

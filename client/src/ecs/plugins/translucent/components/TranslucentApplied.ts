@@ -1,7 +1,7 @@
 import { Object3D } from "three";
-import { StateComponent, RefType, NumberType } from "~/ecs/base";
+import { LocalComponent, RefType, NumberType } from "~/ecs/base";
 
-export class TranslucentApplied extends StateComponent {
+export class TranslucentApplied extends LocalComponent {
   value: Object3D;
   opacity: number;
 

@@ -22,6 +22,9 @@
   const onInputCancel = (event) => {
     value = initialValue;
   };
+
+  // ignore warning about missing props
+  $$props;
 </script>
 
 <r-string-type>

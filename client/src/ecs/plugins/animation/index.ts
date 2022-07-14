@@ -1,6 +1,6 @@
 import { createPlugin } from "~/ecs/base";
 import CorePlugin from "~/ecs/plugins/core";
-import ModelPlugin from "~/ecs/plugins/model";
+import FormPlugin from "~/ecs/plugins/form";
 
 import * as Components from "./components";
 import * as Systems from "./systems";
@@ -11,7 +11,7 @@ export { Components };
 
 export default createPlugin({
   name: "animation",
-  plugins: [CorePlugin, ModelPlugin],
+  plugins: [CorePlugin, FormPlugin],
   systems: Object.values(Systems),
   components: Object.values(Components),
 });

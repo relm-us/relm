@@ -3,7 +3,7 @@ import type { TransformData, AnimationData, Participant } from "~/types";
 import { Vector3, Euler, AnimationClip } from "three";
 
 import { Transform } from "~/ecs/plugins/core";
-import { ModelRef } from "~/ecs/plugins/model";
+import { Model2Ref } from "~/ecs/plugins/form";
 import { Animation } from "~/ecs/plugins/animation";
 
 import { Avatar } from "../Avatar";
@@ -57,7 +57,8 @@ export function avatarToAnimationData(
     animLoop: false,
   };
 
-  const clips: AnimationClip[] = entities.body.get(ModelRef)?.animations;
+  const ref: Model2Ref = entities.body.get(Model2Ref);
+  const clips: AnimationClip[] = ref?.value?.animations;
   const animation: Animation = entities.body.get(Animation);
   if (clips && animation) {
     animationData.clipIndex = clips.findIndex(
@@ -113,7 +114,8 @@ export function setAnimationDataOnAvatar(
   const entities = avatar.entities;
   if (!entities.body) return;
 
-  const clips = entities.body.get(ModelRef)?.animations;
+  const ref: Model2Ref = entities.body.get(Model2Ref);
+  const clips = ref?.value.animations;
   const animation = entities.body.get(Animation);
   if (clips && clipIndex >= 0 && clipIndex < clips.length) {
     const newClipName = clips[clipIndex]?.name;

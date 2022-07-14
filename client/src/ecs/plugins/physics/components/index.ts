@@ -1,12 +1,6 @@
-export { Collider } from "./Collider";
-export { ColliderRef } from "./ColliderRef";
-export { ColliderMapped } from "./ColliderMapped";
-export { ColliderVisible } from "./ColliderVisible";
-export { ColliderVisibleRef } from "./ColliderVisibleRef";
-export { BallJoint } from "./BallJoint";
-export { BallJointBroke } from "./BallJointBroke";
-export { BallJointRef } from "./BallJointRef";
+export { Collider2 } from "./Collider2";
+export { Collider2Ref } from "./Collider2Ref";
+export { Collider2Implicit } from "./Collider2Implicit";
 export { Impact } from "./Impact";
 export { Impactable } from "./Impactable";
-export { RigidBody } from "./RigidBody";
-export { RigidBodyRef } from "./RigidBodyRef";
+export { PhysicsOptions } from "./PhysicsOptions";

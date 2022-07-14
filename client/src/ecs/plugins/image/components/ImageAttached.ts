@@ -1,7 +1,7 @@
 import { Object3D, Group } from "three";
-import { StateComponent, RefType } from "~/ecs/base";
+import { LocalComponent, RefType } from "~/ecs/base";
 
-export class ImageAttached extends StateComponent {
+export class ImageAttached extends LocalComponent {
   parent: Object3D;
   scene: Group;
 

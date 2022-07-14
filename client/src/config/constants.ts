@@ -18,7 +18,7 @@ export const PROXIMITY_AUDIO_OUTER_RADIUS = 6;
 export const PHYSICS_TIMESTEP = 1 / 60;
 
 // When to slow down framerate after inactivity
-export const FPS_SLOWDOWN_TIMEOUT = 5000;
+export const FPS_SLOWDOWN_TIMEOUT = 60000;
 export const FPS_SLOWDOWN_MIN_FPS = 20;
 
 // How large (x, z) can an object be before it no longer makes sense

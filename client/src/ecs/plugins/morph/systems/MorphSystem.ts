@@ -1,13 +1,13 @@
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
-import { ModelRef } from "~/ecs/plugins/model";
+import { Model2Ref } from "~/ecs/plugins/form";
 import { Morph, MorphApplied } from "../components";
 
 export class MorphSystem extends System {
   order = Groups.Simulation + 1;
 
   static queries = {
-    new: [Morph, ModelRef, Not(MorphApplied)],
-    modified: [Modified(Morph), ModelRef],
+    new: [Morph, Model2Ref, Not(MorphApplied)],
+    modified: [Modified(Morph), Model2Ref],
     removed: [Not(Morph), MorphApplied],
   };
 
@@ -29,12 +29,13 @@ export class MorphSystem extends System {
   }
 
   resetInfluences(entity: Entity) {
-    const scene = entity.get(ModelRef)?.scene;
+    const ref: Model2Ref = entity.get(Model2Ref);
+    const scene = ref?.value?.scene;
     if (!scene) return;
 
     scene.traverse((node) => {
-      const influences = node.morphTargetInfluences;
-      if (node.isMesh && influences) {
+      const influences = (node as any).morphTargetInfluences;
+      if ((node as any).isMesh && influences) {
         for (let i = 0; i < influences.length; i++) {
           influences[i] = 0;
         }
@@ -43,7 +44,8 @@ export class MorphSystem extends System {
   }
 
   setInfluences(entity: Entity) {
-    const { scene } = entity.get(ModelRef);
+    const ref: Model2Ref = entity.get(Model2Ref);
+    const scene = ref?.value?.scene;
     if (!scene) return;
 
     const spec = entity.get(Morph);
@@ -51,11 +53,11 @@ export class MorphSystem extends System {
     if (!spec.influences) return;
 
     scene.traverse((node) => {
-      const influences = node.morphTargetInfluences;
-      if (node.isMesh && influences) {
+      const influences = (node as any).morphTargetInfluences;
+      if ((node as any).isMesh && influences) {
         const mesh = node;
         for (const [key, influence] of Object.entries(spec.influences)) {
-          const index = mesh.morphTargetDictionary[key];
+          const index = (mesh as any).morphTargetDictionary[key];
           influences[index] = influence;
         }
       }

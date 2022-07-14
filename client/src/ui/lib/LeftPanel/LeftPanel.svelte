@@ -25,6 +25,7 @@
     color: var(--foreground-white);
 
     overflow-y: auto;
+    overflow-x: hidden;
     pointer-events: all;
   }
   button {

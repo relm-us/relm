@@ -1,7 +1,7 @@
-import { Euler, Quaternion, Vector3 } from "three";
+import { Euler, PerspectiveCamera, Quaternion, Vector3 } from "three";
 
 import { Entity } from "~/ecs/base";
-import { Transform } from "~/ecs/plugins/core";
+import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { Follow } from "~/ecs/plugins/follow";
 import { LookAt } from "~/ecs/plugins/look-at";
 
@@ -85,6 +85,11 @@ export class CameraManager {
   zoomedOutOffset: Vector3 = new Vector3(0, 25.5, 25.0);
 
   unsubs: Function[] = [];
+
+  get threeCamera(): PerspectiveCamera {
+    const camera: Object3DRef = this.entity.get(Object3DRef);
+    return camera.value.children[0] as PerspectiveCamera;
+  }
 
   constructor(ecsWorld: DecoratedECSWorld, avatar: Entity) {
     this.ecsWorld = ecsWorld;

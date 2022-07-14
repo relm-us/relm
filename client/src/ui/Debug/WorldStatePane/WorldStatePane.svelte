@@ -1,17 +1,23 @@
 <script lang="ts">
+  import type { Participant } from "~/types";
+
   import { onMount } from "svelte";
   import Pane from "./Pane.svelte";
 
   import { localAudioTrack, localVideoTrack } from "video-mirror";
 
   import { worldManager } from "~/world";
+  import { State } from "~/main/ProgramTypes";
+  import { participantId } from "~/identity/participantId";
 
   import { viewportSize, viewport } from "~/stores";
   import { localIdentityData } from "~/stores/identityData";
   import { fpsTime } from "~/stores/stats";
-  import { Participant } from "~/types";
-  import { State } from "~/main/ProgramTypes";
-  import { participantId } from "~/identity/participantId";
+
+  import ToggleSwitch from "~/ui/lib/ToggleSwitch";
+  import TextInput from "~/ui/lib/TextInput";
+
+  import { PhysicsSystem } from "~/ecs/plugins/physics/systems";
 
   export let state: State;
 
@@ -76,6 +82,22 @@
   <Pane {title} {subtitle} showMinimize={true} bind:minimized>
     <inner-scroll>
       <table>
+        <tr>
+          <th>debug physics</th>
+          <td>
+            <ToggleSwitch bind:enabled={PhysicsSystem.showDebug} />
+          </td>
+        </tr>
+        <tr>
+          <th>framerate</th>
+          <td>
+            <TextInput
+              label="FPS"
+              value={worldManager.getTargetFps()}
+              on:change={({ detail }) => worldManager.setFps(detail, true)}
+            />
+          </td>
+        </tr>
         <tr>
           <th>audio</th>
           <td>

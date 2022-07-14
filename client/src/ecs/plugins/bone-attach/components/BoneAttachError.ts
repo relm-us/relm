@@ -1,3 +1,3 @@
-import { StateComponent } from "~/ecs/base";
+import { LocalComponent } from "~/ecs/base";
 
-export class BoneAttachError extends StateComponent {}
+export class BoneAttachError extends LocalComponent {}

@@ -1,7 +1,7 @@
 import { AnimationMixer, LoopOnce } from "three";
 
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
-import { ModelRef } from "~/ecs/plugins/model";
+import { Model2Ref } from "~/ecs/plugins/form";
 
 import { Animation, MixerRef } from "../components";
 
@@ -9,7 +9,7 @@ export class AnimationSystem extends System {
   order = Groups.Simulation + 1;
 
   static queries = {
-    new: [Animation, ModelRef, Not(MixerRef)],
+    new: [Animation, Model2Ref, Not(MixerRef)],
     modified: [Modified(Animation)],
     active: [Animation, MixerRef],
     removed: [Not(Animation), MixerRef],
@@ -34,15 +34,15 @@ export class AnimationSystem extends System {
 
   build(entity: Entity) {
     // Create Mixer
-    const { scene } = entity.get(ModelRef);
-    const mixer = new AnimationMixer(scene);
+    const ref: Model2Ref = entity.get(Model2Ref);
+    const mixer = new AnimationMixer(ref.value.scene);
     entity.add(MixerRef, { value: mixer });
 
     // Flag Skinned Meshes as non-frustum-cullable, except avatar,
     // which we handle as a special case in ModelSystem normalize
-    if (scene.parent.name === "Avatar") return;
-    scene.traverse((node) => {
-      if (node.isSkinnedMesh) node.frustumCulled = false;
+    if (ref.value.scene.parent.name === "Avatar") return;
+    ref.value.scene.traverse((node) => {
+      if ((node as any).isSkinnedMesh) node.frustumCulled = false;
     });
   }
 
@@ -51,14 +51,14 @@ export class AnimationSystem extends System {
     const mixer = entity.get(MixerRef)?.value;
     if (!mixer) return;
 
-    const { animations } = entity.get(ModelRef);
+    const ref: Model2Ref = entity.get(Model2Ref);
 
     if (spec.transition === 0) {
       mixer.stopAllAction();
       mixer.uncacheRoot(mixer.getRoot());
 
       mixer.timeScale = spec.timeScale;
-      const clip = animations.find((c) => c.name === spec.clipName);
+      const clip = ref.value.animations.find((c) => c.name === spec.clipName);
       if (clip) {
         mixer.activeAction = mixer.clipAction(clip).reset().play();
         if (!spec.loop) {
@@ -68,7 +68,7 @@ export class AnimationSystem extends System {
       }
     } else {
       mixer.previousAction = mixer.activeAction;
-      const clip = animations.find((c) => c.name === spec.clipName);
+      const clip = ref.value.animations.find((c) => c.name === spec.clipName);
       if (!clip) return;
 
       mixer.activeAction = mixer.clipAction(clip);

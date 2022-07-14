@@ -3,7 +3,7 @@ import { System, Groups, Entity, Not, Modified } from "~/ecs/base";
 import { Object3DRef, Presentation } from "~/ecs/plugins/core";
 
 import { BoneAttach, BoneAttachError, BoneAttachRef } from "../components";
-import { ModelAttached } from "~/ecs/plugins/model";
+import { Model2Ref } from "~/ecs/plugins/form";
 
 export class BoneAttachSystem extends System {
   presentation: Presentation;
@@ -11,12 +11,7 @@ export class BoneAttachSystem extends System {
   order = Groups.Simulation + 15;
 
   static queries = {
-    added: [
-      BoneAttach,
-      ModelAttached,
-      Not(BoneAttachRef),
-      Not(BoneAttachError),
-    ],
+    added: [BoneAttach, Model2Ref, Not(BoneAttachRef), Not(BoneAttachError)],
     modified: [Modified(BoneAttach)],
     removed: [Not(BoneAttach), BoneAttachRef],
   };
@@ -42,7 +37,8 @@ export class BoneAttachSystem extends System {
 
   build(entity: Entity) {
     const spec: BoneAttach = entity.get(BoneAttach);
-    const { parent, child } = entity.get(ModelAttached);
+    const ref: Model2Ref = entity.get(Model2Ref);
+    const child = ref.value.scene;
     const bone = this.findBone(child, spec.boneName);
     if (bone) {
       const child = this.attach(entity, bone);

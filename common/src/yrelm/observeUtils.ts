@@ -63,17 +63,17 @@ export function withMapEdits<T>(
   }
 }
 
-export function getDeletedItems(event, transaction) {
+export function getDeletedItems(event, transaction, pathLengthMatch) {
   const items = [];
 
   Y.iterateDeletedStructs(
     transaction,
     transaction.deleteSet,
-    /** @param {Item|GC} item */ (item) => {
+    /** @param {Item|GC} item */ (item: Y.Item) => {
       if (
         item instanceof Y.Item &&
         item.deleted &&
-        pathLength(event.target, item) == event.path[0]
+        pathLength(event.target, item) == pathLengthMatch
       ) {
         items.push(item);
       }

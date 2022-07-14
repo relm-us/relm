@@ -1,34 +1,36 @@
 import {
   Vector3,
-  Box3,
-  Sphere,
   Mesh,
   SphereGeometry,
   MeshBasicMaterial,
+  Quaternion,
 } from "three";
 
-import { SPATIAL_INDEX_THRESHOLD } from "~/config/constants";
 import { isInteractiveNearby } from "~/utils/isInteractive";
 
 import { System, Groups, Entity } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
-import { SpatiallyIndexed, SpatialIndex } from "~/ecs/plugins/spatial-index";
 import { Outline } from "~/ecs/plugins/outline";
-import { BoundingBox } from "~/ecs/plugins/bounding-box";
+import { Physics } from "~/ecs/plugins/physics";
 
 import { Interactor } from "../components";
+import { Ball, Collider } from "@dimforge/rapier3d";
 
 const vOut = new Vector3(0, 0, 1);
 const vProjectOutward = new Vector3();
-const probe = new Sphere();
+const vProbeCenter = new Vector3();
+const PROBE_DISTANCE = 0.75;
+const PROBE_RADIUS = 1.0;
+const NO_ROTATION = new Quaternion();
 
 export class InteractorSystem extends System {
   static selected: Entity = null;
 
   presentation: Presentation;
-  spatial: SpatialIndex;
+  physics: Physics;
   sphereHelper: Mesh;
   candidates: Entity[];
+  probe: Ball;
 
   order = Groups.Simulation;
 
@@ -36,47 +38,51 @@ export class InteractorSystem extends System {
     active: [Interactor],
   };
 
-  init({ presentation }) {
+  init({ presentation, physics }) {
     this.presentation = presentation;
-    this.spatial = presentation.spatial;
+    this.physics = physics;
     this.candidates = [];
+    this.probe = new this.physics.rapier.Ball(PROBE_RADIUS);
   }
 
   update(delta) {
     this.queries.active.forEach((entity) => {
       const spec = entity.get(Interactor);
-      const entitiesNearby = this.getEntitiesNearby(entity);
-      const probe = this.makeProbe(entity);
+      const probeCenter = this.getProbeCenter(entity);
 
       if (spec.debug)
-        this.updateSphereHelper(entity, probe.center, probe.radius);
+        this.updateSphereHelper(entity, probeCenter, PROBE_RADIUS);
 
       // Add intersecting entities to candidates list
       this.candidates.length = 0;
-      for (let entity of entitiesNearby) {
-        if (entity.parent) continue;
-        if (!isInteractiveNearby(entity)) continue;
-        const box: Box3 = entity.get(BoundingBox)?.box;
-        if (box && probe.intersectsBox(box)) {
-          this.candidates.push(entity);
+
+      this.physics.world.intersectionsWithShape(
+        probeCenter,
+        NO_ROTATION,
+        this.probe,
+        0xffffffff,
+        (collider: Collider) => {
+          const entity = this.physics.colliders.get(collider.handle);
+          if (!entity.parent && isInteractiveNearby(entity)) {
+            this.candidates.push(entity);
+          }
+          return true;
         }
-      }
+      );
 
       // Sort candidates by centers' proximity to probe center
       this.candidates.sort((a: Entity, b: Entity) => {
         const aPos = a.get(Transform).positionWorld;
         const bPos = b.get(Transform).positionWorld;
-        return aPos.distanceTo(probe.center) - bPos.distanceTo(probe.center);
+        return aPos.distanceTo(probeCenter) - bPos.distanceTo(probeCenter);
       });
 
       const shouldOutline: Entity = this.candidates.length
         ? this.candidates[0]
         : null;
 
-      const selected = InteractorSystem.selected;
-      if (selected && selected !== shouldOutline && selected.has(Outline)) {
-        selected.remove(Outline);
-        InteractorSystem.selected = null;
+      if (shouldOutline !== InteractorSystem.selected) {
+        this.deselect();
       }
 
       if (shouldOutline && !shouldOutline.has(Outline)) {
@@ -86,31 +92,17 @@ export class InteractorSystem extends System {
     });
   }
 
-  getEntitiesNearby(entity: Entity) {
-    const spatiallyIndexed = entity.get(SpatiallyIndexed);
-    if (!spatiallyIndexed) return [];
-    return this.spatial.octree
-      .findPoints(spatiallyIndexed.index, SPATIAL_INDEX_THRESHOLD, true)
-      .filter((found) => Boolean(found.data))
-      .map((found) => found.data);
-  }
-
-  makeProbe(entity: Entity): Sphere {
+  getProbeCenter(entity: Entity): Vector3 {
     const transform: Transform = entity.get(Transform);
-    const boundingBox: BoundingBox = entity.get(BoundingBox);
 
-    // TODO: consider making radius relative to this entity's size?
-    // TODO: make radius adjustable via a Component prop?
-    const radius = 1.0;
-    boundingBox.box.getCenter(probe.center);
     vProjectOutward
       .copy(vOut)
       .applyQuaternion(transform.rotation)
-      .multiplyScalar(radius * 0.75);
-    probe.center.add(vProjectOutward);
-    probe.radius = radius;
+      .multiplyScalar(PROBE_DISTANCE);
 
-    return probe;
+    vProbeCenter.copy(transform.position).add(vProjectOutward);
+
+    return vProbeCenter;
   }
 
   updateSphereHelper(entity: Entity, center: Vector3, radius: number) {
@@ -125,5 +117,13 @@ export class InteractorSystem extends System {
       this.presentation.scene.add(interactor.sphereHelper);
     }
     interactor.sphereHelper.position.copy(center);
+  }
+
+  deselect() {
+    const selected = InteractorSystem.selected;
+    if (selected && selected.has(Outline)) {
+      selected.remove(Outline);
+      InteractorSystem.selected = null;
+    }
   }
 }

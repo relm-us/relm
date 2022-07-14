@@ -1,14 +1,15 @@
+import { Color, BufferAttribute, Mesh } from "three";
+
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
-import { ModelRef } from "~/ecs/plugins/model";
+import { Model2Ref } from "~/ecs/plugins/form";
 import { FaceMapColors, ColorApplied } from "../components";
-import { Color, BufferAttribute } from "three";
 
 export class ColorationSystem extends System {
   order = Groups.Simulation + 1;
 
   static queries = {
-    new: [FaceMapColors, ModelRef, Not(ColorApplied)],
-    modified: [Modified(FaceMapColors), ModelRef],
+    new: [FaceMapColors, Model2Ref, Not(ColorApplied)],
+    modified: [Modified(FaceMapColors), Model2Ref],
     removed: [Not(FaceMapColors), ColorApplied],
   };
 
@@ -31,11 +32,12 @@ export class ColorationSystem extends System {
   }
 
   resetFaceMapColors(entity: Entity) {
-    const scene = entity.get(ModelRef)?.scene;
+    const ref: Model2Ref = entity.get(Model2Ref);
+    const scene = ref?.value?.scene;
     if (!scene) return;
 
     scene.traverse((node) => {
-      if (node.isMesh) {
+      if ((node as any).isMesh) {
         const facemapNames: Array<any> = getFacemapNames(node);
         if (facemapNames) {
           for (let i = 0; i < facemapNames.length; i++) {
@@ -47,7 +49,8 @@ export class ColorationSystem extends System {
   }
 
   setFaceMapColors(entity: Entity) {
-    const { scene } = entity.get(ModelRef);
+    const ref: Model2Ref = entity.get(Model2Ref);
+    const scene = ref?.value?.scene;
     if (!scene) return;
 
     const spec = entity.get(FaceMapColors);
@@ -55,7 +58,7 @@ export class ColorationSystem extends System {
     if (!spec.colors) return;
 
     scene.traverse((node) => {
-      if (node.isMesh) {
+      if ((node as any).isMesh) {
         const facemapNames: Array<any> = getFacemapNames(node);
         if (facemapNames) {
           getOrCreateOriginalColorAttribute(node);
@@ -79,11 +82,13 @@ export class ColorationSystem extends System {
   }
 
   cloneGeometry(entity: Entity) {
-    const { scene } = entity.get(ModelRef);
+    const ref: Model2Ref = entity.get(Model2Ref);
+    const scene = ref?.value?.scene;
+    if (!scene) return;
 
     scene.traverse((node) => {
-      if (node.isMesh) {
-        node.geometry = node.geometry.clone();
+      if ((node as any).isMesh) {
+        (node as Mesh).geometry = (node as Mesh).geometry.clone();
       }
     });
   }

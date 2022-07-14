@@ -1,5 +1,5 @@
-import { PerspectiveCamera, sRGBEncoding } from "three";
-import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer";
+import { PerspectiveCamera } from "three";
+import { CSS3DRenderer } from "./CSS3DRenderer";
 
 const ResizeObserver = (window as any).ResizeObserver;
 
@@ -63,7 +63,9 @@ export class CssPresentation {
     if (!camera) return;
 
     this.camera.quaternion.copy(camera.quaternion);
-    this.camera.position.copy(camera.position).multiplyScalar(CssPresentation.FACTOR);
+    this.camera.position
+      .copy(camera.position)
+      .multiplyScalar(CssPresentation.FACTOR);
   }
 
   render() {

@@ -5,6 +5,9 @@
 
   let value;
   $: value = component[key];
+
+  // ignore warning about missing props
+  $$props;
 </script>
 
 <r-misc-type>

@@ -1,27 +1,40 @@
-import type { RigidBody } from "@dimforge/rapier3d";
+import {
+  LineSegments,
+  LineBasicMaterial,
+  BufferGeometry,
+  BufferAttribute,
+} from "three";
 
 import { PHYSICS_TIMESTEP } from "~/config/constants";
 
 import { System, Modified, Groups } from "~/ecs/base";
-import { Transform } from "~/ecs/plugins/core";
+import { Presentation, Transform } from "~/ecs/plugins/core";
 
 import { Physics } from "..";
-import { Impact, RigidBodyRef } from "../components";
-import { RigidBodySystem } from ".";
+import { Collider2Ref, Impact } from "../components";
+import { createFixedTimestep } from "./createFixedTimestep";
+
+const empty = new BufferAttribute(new Float32Array(), 0);
 
 export class PhysicsSystem extends System {
   fixedUpdate: Function;
   physics: Physics;
+  presentation: Presentation;
+  lines: LineSegments;
 
   order = Groups.Presentation + 300;
 
+  static showDebug: boolean = false;
+
   static queries = {
-    modified: [RigidBodyRef, Modified(Transform)],
+    modified: [Modified(Transform), Collider2Ref],
+
     impacts: [Impact],
   };
 
-  init({ physics }) {
+  init({ physics, presentation }) {
     this.physics = physics;
+    this.presentation = presentation;
 
     // Create a regular, fixed physics time-step, regardless of rendering framerate
     this.fixedUpdate = createFixedTimestep(
@@ -38,16 +51,23 @@ export class PhysicsSystem extends System {
     });
 
     this.queries.modified.forEach((entity) => {
-      const body: RigidBody = entity.get(RigidBodyRef).value;
-      const transform = entity.get(Transform);
-      body.setTranslation(transform.position, true);
-      body.setRotation(transform.rotation, true);
+      const transform: Transform = entity.get(Transform);
+      const ref: Collider2Ref = entity.get(Collider2Ref);
+
+      ref.body.setTranslation(transform.position, true);
+      ref.body.setRotation(transform.rotation, true);
     });
 
     this.fixedUpdate(delta);
 
-    // Clear the actions list, so that it can be re-filled during next ECS world step
-    RigidBodyRef.actions.length = 0;
+    this.copyActiveTransforms(true);
+
+    if (PhysicsSystem.showDebug) {
+      this.showDebug();
+    } else if (this.lines) {
+      this.lines.geometry.setAttribute("position", empty);
+      this.lines.geometry.setAttribute("color", empty);
+    }
   }
 
   onFixedUpdate(dt) {
@@ -55,80 +75,70 @@ export class PhysicsSystem extends System {
 
     const { world, eventQueue } = this.physics;
 
-    /**
-     * We re-apply forces and torques during each fixedUpdate, so that
-     * avatars move at a constant rate even when render framerate changes.
-     */
-    RigidBodyRef.actions.forEach(({ ref, name, args }) => {
-      ref.value[name].apply(ref.value, args);
-    });
-
     world.integrationParameters.dt = dt;
     world.step(eventQueue);
 
     // Add Impacts when contact or intersection takes place. We need to
     // do this here, rather than in a separate system, because the Physics
     // System is happening faster than the regular loop.
-    const handleContactEvent = (
-      handle1: number,
-      handle2: number,
-      contactStarted: boolean
-    ) => {
-      const entity1 = this.physics.handleToEntity.get(handle1);
-      const entity2 = this.physics.handleToEntity.get(handle2);
+    eventQueue.drainCollisionEvents(
+      (handle1: number, handle2: number, contactStarted: boolean) => {
+        const entity1 = this.physics.colliders.get(handle1);
+        const entity2 = this.physics.colliders.get(handle2);
 
-      if (contactStarted) {
-        entity1.add(Impact, { other: entity2 });
-        entity2.add(Impact, { other: entity1 });
+        if (contactStarted) {
+          entity1.add(Impact, { other: entity2 });
+          entity2.add(Impact, { other: entity1 });
+        }
       }
-    };
-    eventQueue.drainContactEvents(handleContactEvent);
-    eventQueue.drainIntersectionEvents(handleContactEvent);
+    );
+  }
 
+  // Copy the physics engine's positions and rotations back to our ECS world Transform;
+  // Optionally: Clear the actions list, so that it can be re-filled during next ECS world step
+  copyActiveTransforms(reset = true) {
     this.physics.world.forEachActiveRigidBody((body) => {
-      const entity = RigidBodySystem.bodies.get(body.handle);
-      // console.log("active rigidbody", body.handle, body.numColliders(), entity);
+      const entity = this.physics.bodies.get(body.handle);
 
       const parent = entity.getParent();
       const transform = entity.get(Transform);
 
       if (!parent) {
-        // console.log("phys body translation", transform.position, body.translation());
         transform.position.copy(body.translation());
-        // console.log("phys body rotation", transform.rotation, body.rotation());
         transform.rotation.copy(body.rotation());
+
+        // Notify all dependent systems that the Transform has changed
+        // NOTE: other systems should NOT update physics directly, or
+        // an infinite loop can occur, and physics goes wonky
         transform.modified();
       } else {
         console.log("physics disabled for entity with parent");
       }
+
+      if (reset) {
+        body.resetForces(false);
+        body.resetTorques(false);
+      }
     });
   }
-}
 
-// Return a function that calls a callback as many times
-// as needed in order to "catch up" to the current time
-function createFixedTimestep(
-  timestep: number /* e.g. 1/60 of a second */,
-  callback: (delta: number) => void
-) {
-  let accumulator = 0;
-  return (delta: number) => {
-    // catch up via physics engine dt
-    if (delta <= 2 * timestep) {
-      callback(delta);
-      accumulator = 0;
-    } else {
-      // catch up via multiple physics engine steps
-      accumulator += delta;
-      while (accumulator >= timestep) {
-        callback(timestep);
-        if (accumulator >= 1) {
-          // give up, too slow to catch up
-          accumulator = 0;
-        } else {
-          accumulator -= timestep;
-        }
-      }
+  showDebug() {
+    if (!this.lines) {
+      let material = new LineBasicMaterial({
+        color: 0xffffff,
+        vertexColors: true,
+      });
+      let geometry = new BufferGeometry();
+      this.lines = new LineSegments(geometry, material);
+      this.presentation.scene.add(this.lines);
     }
-  };
+
+    let buffers = this.physics.world.debugRender();
+
+    const position = new BufferAttribute(buffers.vertices, 3);
+    this.lines.geometry.setAttribute("position", position);
+
+    const color = new BufferAttribute(buffers.colors, 4);
+    this.lines.geometry.setAttribute("color", color);
+  }
 }

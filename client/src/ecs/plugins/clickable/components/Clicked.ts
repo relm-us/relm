@@ -1,3 +1,3 @@
-import { StateComponent } from "~/ecs/base";
+import { LocalComponent } from "~/ecs/base";
 
-export class Clicked extends StateComponent {}
+export class Clicked extends LocalComponent {}
