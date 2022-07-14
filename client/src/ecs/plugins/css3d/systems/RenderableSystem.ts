@@ -1,5 +1,5 @@
 import { Vector3 } from "three";
-import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer";
+import { CSS3DObject } from "../CSS3DRenderer";
 
 import { System, Groups, Not, Modified } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";

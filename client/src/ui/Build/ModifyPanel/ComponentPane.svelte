@@ -11,17 +11,34 @@
 
   const dispatch = createEventDispatcher();
 
-  const propVisible = (prop) => {
-    if (prop.editor && prop.editor.requires) {
-      // if the `editor.requires` field exists, check if we meet criteria
-      return prop.editor.requires.reduce((acc, item) => {
-        return acc || component[item.prop] === item.value;
-      }, false);
-    } else {
-      // by default, all props are shown
-      return true;
+  function propRequires(prop) {
+    return prop.editor && prop.editor.requires;
+  }
+
+  function propVisible(prop) {
+    const reqs = propRequires(prop);
+
+    // by default, all props are shown (no `requires` constraints)
+    if (!reqs) return true;
+
+    // if the `requires` field exists, check if we meet criteria
+    return prop.editor.requires.reduce((acc, item) => {
+      return acc || component[item.prop] === item.value;
+    }, false);
+  }
+
+  function propAttrs(prop) {
+    const reqs = propRequires(prop) || [];
+
+    let attrs = {};
+    for (const item of reqs) {
+      if (component[item.prop] === item.value) {
+        attrs = item;
+      }
     }
-  };
+
+    return attrs;
+  }
 
   const onModified = () => {
     Component = Component;
@@ -52,7 +69,13 @@
 >
   {#each Object.entries(Component.props) as [key, prop] (key)}
     {#if propVisible(prop)}
-      <Property {key} {component} {prop} on:modified={onModified} />
+      <Property
+        {key}
+        {component}
+        {prop}
+        attrs={propAttrs(prop)}
+        on:modified={onModified}
+      />
     {/if}
   {/each}
 </Pane>

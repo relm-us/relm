@@ -1,5 +1,2 @@
-export { ColliderSystem } from "./ColliderSystem";
-export { ColliderVisibleSystem } from "./ColliderVisibleSystem";
-export { JointSystem } from "./JointSystem";
+export { Collider2System } from "./Collider2System";
 export { PhysicsSystem } from "./PhysicsSystem";
-export { RigidBodySystem } from "./RigidBodySystem";

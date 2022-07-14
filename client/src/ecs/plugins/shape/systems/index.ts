@@ -1,1 +1,0 @@
-export { ShapeSystem } from "./ShapeSystem";

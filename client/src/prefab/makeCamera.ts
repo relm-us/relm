@@ -1,5 +1,7 @@
-import { Transform, Camera } from "~/ecs/plugins/core";
-import { Vector3, Quaternion, Euler } from "three";
+import { Quaternion, Euler } from "three";
+
+import { Transform } from "~/ecs/plugins/core";
+import { AlwaysOnStage, Camera } from "~/ecs/plugins/camera";
 
 import { makeEntity } from "./makeEntity";
 
@@ -12,6 +14,7 @@ export function makeCamera(world, perspectiveAngle = 5.6) {
         new Euler(perspectiveAngle, 0, 0, "XYZ")
       ),
     })
+    .add(AlwaysOnStage)
     .add(Camera);
 
   return camera;

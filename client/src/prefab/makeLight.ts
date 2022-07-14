@@ -6,6 +6,7 @@ import { DirectionalLight } from "~/ecs/plugins/lighting";
 
 import { makeEntity } from "./makeEntity";
 import { DEFAULT_DIRECTIONAL_LIGHT_POSITION } from "~/config/constants";
+import { AlwaysOnStage } from "~/ecs/plugins/camera";
 
 export function makeLight(world, avatar, color = 0xffffff) {
   const shadowSize = 6;
@@ -16,6 +17,7 @@ export function makeLight(world, avatar, color = 0xffffff) {
       offset: new Vector3().fromArray(DEFAULT_DIRECTIONAL_LIGHT_POSITION),
       lerpAlpha: 1,
     })
+    .add(AlwaysOnStage)
     .add(DirectionalLight, {
       target: avatar.id,
       color,

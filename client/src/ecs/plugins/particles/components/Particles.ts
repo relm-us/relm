@@ -1,5 +1,6 @@
 import {
   Component,
+  LocalComponent,
   StateComponent,
   RefType,
   StringType,
@@ -45,4 +46,4 @@ export class ParticlesRef extends StateComponent {
   };
 }
 
-export class ParticlesLoading extends StateComponent {}
+export class ParticlesLoading extends LocalComponent {}

@@ -9,9 +9,10 @@ import { AvatarEntities } from "~/types";
 
 import { Transform } from "~/ecs/plugins/core";
 import { Controller } from "~/ecs/plugins/player-control";
-import { Collider } from "~/ecs/plugins/physics";
+import { Collider2 } from "~/ecs/plugins/physics";
 import { Translucent } from "~/ecs/plugins/translucent";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
+import { InteractorSystem } from "~/ecs/plugins/interactor";
 
 export { setAppearance } from "./appearance";
 export { setEmoji } from "./emoji";
@@ -69,13 +70,10 @@ export class Avatar {
 
   enablePhysics(enabled = true) {
     this.entities.body.traverse((entity) => {
-      const collider = entity.components.get(Collider);
+      const collider: Collider2 = entity.get(Collider2);
       if (!collider) return;
 
-      // prettier-ignore
-      (collider as any).interaction =
-        enabled ? AVATAR_INTERACTION : // interact with normal things
-                  AVATAR_BUILDER_INTERACTION ; // interact only with ground
+      collider.kind = enabled ? "AVATAR-PLAY" : "AVATAR-BUILD";
 
       collider.modified();
     });
@@ -94,6 +92,16 @@ export class Avatar {
       this.entities.body.add(NonInteractive);
     } else {
       this.entities.body.maybeRemove(NonInteractive);
+    }
+  }
+
+  enableInteractor(enabled = true) {
+    const system = this.ecsWorld.systems.get(
+      InteractorSystem
+    ) as InteractorSystem;
+    system.active = enabled;
+    if (!enabled) {
+      system.deselect();
     }
   }
 }

@@ -1,3 +1,3 @@
-import { StateComponent } from "~/ecs/base";
+import { LocalComponent } from "~/ecs/base";
 
-export class MorphApplied extends StateComponent {}
+export class MorphApplied extends LocalComponent {}

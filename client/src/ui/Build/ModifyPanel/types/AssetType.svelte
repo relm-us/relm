@@ -32,7 +32,7 @@
   };
 
   const onInputChange = (event) => {
-    let url = event.target.value;
+    let url = event.detail;
     if (url.match(/^\s*$/)) value = "";
     setAssetUrl(url);
   };
@@ -65,6 +65,9 @@
       }
     }
   }
+
+  // ignore warning about missing props
+  $$props;
 </script>
 
 <r-asset-type>

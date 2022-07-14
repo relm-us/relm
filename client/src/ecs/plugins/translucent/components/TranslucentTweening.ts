@@ -1,8 +1,8 @@
 import { Tween } from "@tweenjs/tween.js";
 
-import { StateComponent, RefType, NumberType } from "~/ecs/base";
+import { LocalComponent, RefType, NumberType } from "~/ecs/base";
 
-export class TranslucentTweening extends StateComponent {
+export class TranslucentTweening extends LocalComponent {
   tween?: Tween<{ opacity }>;
 
   static props = {

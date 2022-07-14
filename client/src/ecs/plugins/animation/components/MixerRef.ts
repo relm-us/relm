@@ -1,6 +1,6 @@
-import { StateComponent, RefType } from "~/ecs/base";
+import { LocalComponent, RefType } from "~/ecs/base";
 
-export class MixerRef extends StateComponent {
+export class MixerRef extends LocalComponent {
   static props = {
     value: {
       type: RefType,

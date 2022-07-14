@@ -3,7 +3,6 @@ import { Color, Vector3 } from "three";
 
 import { makeEntity } from "./makeEntity";
 import { Wall } from "~/ecs/plugins/wall";
-import { RigidBody } from "~/ecs/plugins/physics";
 
 export function makeWall(
   world,
@@ -36,9 +35,6 @@ export function makeWall(
       emissive,
       segments,
       convexity,
-    })
-    .add(RigidBody, {
-      kind: "STATIC",
     });
 
   return entity;

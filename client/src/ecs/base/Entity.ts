@@ -283,6 +283,9 @@ export class Entity {
     this.parent = data.parent;
     this.children = data.children;
     this.meta = data.meta;
+
+    const migratableKeys = [];
+
     for (const key in data) {
       if (
         key === "id" ||
@@ -290,8 +293,15 @@ export class Entity {
         key === "parent" ||
         key === "children" ||
         key === "meta"
-      )
+      ) {
         continue;
+      }
+
+      if (this.world.migrations.has(key)) {
+        migratableKeys.push(key);
+        continue;
+      }
+
       const Component = this.world.components.getByName(key);
       if (Component) {
         this.add(Component, undefined, true).fromJSON(data[key]);
@@ -301,6 +311,11 @@ export class Entity {
         );
       }
     }
+
+    for (const key of migratableKeys) {
+      this.world.migrations.migrate(key, this, data[key]);
+    }
+
     this.needsBind = true;
     return this;
   }

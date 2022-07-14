@@ -18,6 +18,10 @@ export function onKeydown(event) {
   if (event.repeat) return;
   if (event.ctrlKey || event.metaKey) return;
 
+  if (event.key === "1") {
+    globalEvents.emit("advanced-edit");
+  }
+
   if (event.key === "2") {
     globalEvents.emit("sit");
   }

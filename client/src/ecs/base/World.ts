@@ -4,6 +4,7 @@ import { QueryManager } from "./QueryManager";
 import { ArchetypeManager } from "./ArchetypeManager";
 import { EntityManager } from "./EntityManager";
 import { ComponentManager } from "./ComponentManager";
+import { MigrationManager } from "./MigrationManager";
 import { createPlugin, Pluginable, PluginOptions } from "./createPlugin";
 
 type GetTimeFn = () => number;
@@ -22,6 +23,7 @@ export class World extends EventEmitter {
   archetypes: ArchetypeManager;
   entities: EntityManager;
   components: ComponentManager;
+  migrations: MigrationManager;
   getTime: GetTimeFn;
 
   constructor(options: WorldOptions = {}) {
@@ -35,6 +37,7 @@ export class World extends EventEmitter {
     this.archetypes = new ArchetypeManager(this);
     this.entities = new EntityManager(this);
     this.components = new ComponentManager(this);
+    this.migrations = new MigrationManager(this);
     this.getTime = options.getTime;
     this.registerPlugin(
       createPlugin({

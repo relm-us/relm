@@ -10,6 +10,7 @@ import {
   Matrix4,
   Object3D,
 } from "three";
+import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 import {
   EffectComposer,
@@ -26,15 +27,10 @@ import {
 import { World } from "~/ecs/base";
 
 import { IntersectionFinder } from "./IntersectionFinder";
-import { Loader } from "./Loader";
-import type { SpatialIndex } from "~/ecs/plugins/spatial-index/SpatialIndex";
-import { Object3DRef } from ".";
-import { SPATIAL_INDEX_THRESHOLD } from "~/config/constants";
-import { Taken } from "../item";
 
 export type PlaneOrientation = "xz" | "xy";
 
-let gltfLoader: Loader;
+let gltfLoader: GLTFLoader;
 let textureLoader: TextureLoader;
 
 declare class ResizeObserver {
@@ -53,7 +49,6 @@ export class Presentation {
   world: World;
   viewport: HTMLElement;
   size: Vector2;
-  spatial: SpatialIndex;
   frame: number;
 
   scene: Scene;
@@ -88,9 +83,15 @@ export class Presentation {
     this.renderer = options.renderer;
 
     const isWebGL2 = this.renderer.capabilities.isWebGL2;
+    const maxSamples = Math.min(
+      4,
+      (this.renderer.capabilities as any).maxSamples || 1
+    );
 
     if (isWebGL2) {
-      this.composer = new EffectComposer(this.renderer, { multisampling: 4 });
+      this.composer = new EffectComposer(this.renderer, {
+        multisampling: maxSamples,
+      });
     } else {
       this.composer = new EffectComposer(this.renderer);
     }
@@ -100,14 +101,13 @@ export class Presentation {
     // prepare outline effect for outline EffectPass
     this.outlineEffect = new OutlineEffect(this.scene, this.camera, {
       blendFunction: BlendFunction.ALPHA,
+      multisampling: maxSamples,
       edgeStrength: 5,
       visibleEdgeColor: 0xffffff,
       hiddenEdgeColor: 0x5f5f5f,
       blur: true,
       xRay: true,
     });
-    // this.outlineEffect.blendMode.opacity = 0.5;
-    // this.outlineEffect.blurPass.alpha = false;
 
     this.bloomEffect = new SelectiveBloomEffect(this.scene, this.camera, {
       blendFunction: BlendFunction.ADD,
@@ -144,8 +144,7 @@ export class Presentation {
     this.mouseMoveListener = this.handleMouseMove.bind(this);
     this.touchMoveListener = this.handleTouchMove.bind(this);
 
-    if (!gltfLoader) gltfLoader = new Loader();
-
+    if (!gltfLoader) gltfLoader = new GLTFLoader();
     if (!textureLoader) textureLoader = new TextureLoader();
   }
 
@@ -187,13 +186,10 @@ export class Presentation {
     this.renderer.setAnimationLoop(fn);
   }
 
-  loadGltf(url) {
-    try {
-      return gltfLoader.load(url);
-    } catch (err) {
-      console.error("Error while loading GLB/GLTF", url);
-      throw err;
-    }
+  async loadGltf(url): Promise<GLTF> {
+    return new Promise((resolve, reject) => {
+      gltfLoader.load(url, (data) => resolve(data), null, reject);
+    });
   }
 
   async loadTexture(url: string): Promise<Texture> {
@@ -213,7 +209,7 @@ export class Presentation {
     this.camera.updateProjectionMatrix();
     this.composer.setSize(this.size.x, this.size.y);
     if (this.viewport) {
-      this.renderer.render(this.scene, this.camera);
+      this.composer.render();
     }
   }
 
@@ -238,67 +234,9 @@ export class Presentation {
 
     this.renderer.info.reset();
 
-    this.hideOffCameraObjects();
-
     this.composer.render(delta);
 
     this.frame++;
-  }
-
-  fastFindBetween(source: Vector3, target: Vector3): Object3D[] {
-    if (!this.spatial) throw new Error("fastRaycast requires spatial index");
-
-    const raycaster = this.intersectionFinder.prepareRaycastBetween(
-      source,
-      target
-    );
-    raycaster.params.Points.threshold = SPATIAL_INDEX_THRESHOLD / 2;
-
-    const nodes = this.spatial.octree.raycast(raycaster);
-    const candidateObjects = [];
-    for (let node of nodes) {
-      const { data: entity } = node;
-      if (entity) {
-        const object3d = entity.get(Object3DRef)?.value;
-        if (!object3d) continue;
-
-        // Gather all children, because intersectionFinder needs meshes, not
-        // just top-level Object3D container
-        object3d.traverse((obj) => {
-          candidateObjects.push(obj);
-        });
-      }
-    }
-
-    return this.intersectionFinder.find(candidateObjects);
-  }
-
-  hideOffCameraObjects() {
-    const frustum = this.getFrustum({ grow: SPATIAL_INDEX_THRESHOLD / 2 });
-
-    // Make off-camera things invisible
-    if (this.spatial) {
-      // Optimization: since we don't *have* to set off-screen entities to
-      // invisible, rotate through a few of them each frame; Basically, a
-      // rotating cache invalidation
-      const entities = Array.from(this.world.entities.entities.values());
-      for (let i = 0; i < 100; i++) {
-        const entity = entities[(this.frame * 100 + i) % entities.length];
-        const object3d = entity.get(Object3DRef)?.value;
-        // TODO: "Held" items disappear, because they are attached to the avatar.
-        // As a workaround, we use the special entity name "Held" here, but it
-        // would be ideal to use some other more generic rule.
-        if (object3d && entity.name !== "Held") object3d.visible = false;
-      }
-
-      // Only turn objects within camera frustum back to 'visible' state
-      for (let entity of this.spatial.entitiesInView(frustum)) {
-        const object3d = entity.get(Object3DRef)?.value;
-        if (object3d) {
-          object3d.visible = true;
-        }
-      }
-    }
   }
 
   getFrustum({ scale = 1.0, grow = 0 } = {}) {

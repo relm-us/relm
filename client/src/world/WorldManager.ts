@@ -8,7 +8,6 @@ import {
   Clock,
 } from "three";
 import * as THREE from "three";
-import { TransformControls } from "three/examples/jsm/controls/TransformControls";
 
 (window as any).THREE = THREE;
 
@@ -40,7 +39,6 @@ import {
 } from "~/config/constants";
 
 import { config } from "~/config";
-import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 
 import { DragPlane } from "~/events/input/PointerListener/DragPlane";
 import { SelectionBox } from "~/events/input/PointerListener/SelectionBox";
@@ -48,9 +46,8 @@ import { SelectionBox } from "~/events/input/PointerListener/SelectionBox";
 import { makeLight } from "~/prefab/makeLight";
 
 import { Entity } from "~/ecs/base";
-import { Collider, ColliderVisible } from "~/ecs/plugins/physics";
+import { Collider2 } from "~/ecs/plugins/physics";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
-import { BoundingHelper } from "~/ecs/plugins/bounding-box";
 import { ControllerState } from "~/ecs/plugins/player-control";
 import { Follow } from "~/ecs/plugins/follow";
 import { intersectionPointWithGround } from "~/ecs/shared/isMakingContactWithGround";
@@ -80,8 +77,12 @@ import { PhotoBooth } from "./PhotoBooth";
 import { audioMode, AudioMode } from "~/stores/audioMode";
 import { Outline } from "~/ecs/plugins/outline";
 import { InteractorSystem } from "~/ecs/plugins/interactor";
-import { Object3DRef, Transform } from "~/ecs/plugins/core";
-import { setControl } from "~/events/input/PointerListener/pointerActions";
+import { Object3DRef } from "~/ecs/plugins/core";
+import { CameraSystem } from "~/ecs/plugins/camera/systems";
+import { TransformControls } from "~/ecs/plugins/transform-controls";
+import { Collider2VisibleSystem } from "~/ecs/plugins/collider-visible/systems";
+import { globalEvents } from "~/events";
+import { advancedEdit } from "~/stores/advancedEdit";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -124,7 +125,6 @@ export class WorldManager {
   photoBooth: PhotoBooth;
 
   hoverOutlineEntity: Entity;
-  transformControls: TransformControls;
   transformEntity: Entity;
 
   _dragPlane: DragPlane;
@@ -135,6 +135,7 @@ export class WorldManager {
   unsubs: Function[] = [];
   afterInitFns: Function[] = [];
   didInit: boolean = false;
+  fpsLocked: boolean = false;
 
   get dragPlane(): DragPlane {
     if (!this._dragPlane) this._dragPlane = new DragPlane(this.world);
@@ -266,6 +267,10 @@ export class WorldManager {
           case "build":
             this.hoverOutline(null);
             this.world.systems.get(InteractorSystem).active = false;
+
+            // Always turn advanced edit off when entering build mode
+            advancedEdit.set(false);
+
             break;
           case "play":
             this.world.systems.get(InteractorSystem).active = true;
@@ -275,27 +280,34 @@ export class WorldManager {
       })
     );
 
+    const toggleAdvancedEdit = () => advancedEdit.update((value) => !value);
+    globalEvents.on("advanced-edit", toggleAdvancedEdit);
+    this.unsubs.push(() =>
+      globalEvents.off("advanced-edit", toggleAdvancedEdit)
+    );
+
     // Make colliders visible in build mode
     this.unsubs.push(
-      derived([worldUIMode, keyShift], ([$mode, $keyShift], set) => {
-        set({ buildMode: $mode === "build", overrideInvisible: $keyShift });
-      }).subscribe(({ buildMode, overrideInvisible }) => {
+      derived(
+        [worldUIMode, advancedEdit],
+        (
+          [$mode, $advanced],
+          set: (value: {
+            buildMode: boolean;
+            overrideInvisible: boolean;
+          }) => void
+        ) => {
+          set({ buildMode: $mode === "build", overrideInvisible: $advanced });
+        }
+      ).subscribe(({ buildMode, overrideInvisible }) => {
         this.avatar.enableCanFly(buildMode);
         this.avatar.enableNonInteractive(buildMode);
-        if (overrideInvisible) {
-          this.enableCollidersVisible(buildMode, true);
-        }
+        this.avatar.enableInteractor(!buildMode);
+
+        this.enableCollidersVisible(buildMode);
 
         const buildModeShift = buildMode && overrideInvisible;
-
         this.enableNonInteractiveGround(!buildModeShift);
-        this.enableBoundingVisible(buildModeShift);
-
-        // Need to call enableCollidersVisible after enableNonInteractiveGround
-        // because visible colliders test checks for NonInteractive component:
-        if (!overrideInvisible) {
-          this.enableCollidersVisible(buildMode, false);
-        }
       })
     );
 
@@ -337,11 +349,11 @@ export class WorldManager {
     );
 
     const fpsCheckInterval = setInterval(() => {
-      if (!this.started) return;
+      if (!this.started || this.fpsLocked) return;
 
       const now = performance.now();
       if (now - this.lastActivity > FPS_SLOWDOWN_TIMEOUT) {
-        const currFps = this.getFps();
+        const currFps = this.getTargetFps();
         if (
           now - this.lastFpsChange > FPS_SLOWDOWN_TIMEOUT &&
           currFps > FPS_SLOWDOWN_MIN_FPS
@@ -364,6 +376,10 @@ export class WorldManager {
     this.afterInitFns.forEach((fn) => fn());
     this.afterInitFns.length = 0;
     this.didInit = true;
+
+    const camsys = this.world.systems.get(CameraSystem) as CameraSystem;
+    camsys.beginDeactivatingOffCameraEntities();
+    camsys.addEverythingToSet();
   }
 
   async deinit() {
@@ -385,8 +401,6 @@ export class WorldManager {
 
     this.camera.deinit();
     this.participants.deinit();
-    this.transformControls?.detach();
-    this.transformControls?.dispose();
 
     this.dragPlane.deinit();
 
@@ -402,6 +416,10 @@ export class WorldManager {
     this.participants = null;
 
     this.didInit = false;
+    this.fpsLocked = false;
+
+    const camsys = this.world.systems.get(CameraSystem) as CameraSystem;
+    camsys.endDeactivatingOffCameraEntities();
   }
 
   afterInit(fn: Function) {
@@ -409,34 +427,25 @@ export class WorldManager {
     else this.afterInitFns.push(fn);
   }
 
+  getColliderEntities() {
+    return this.world.entities.getAllBy((entity) => entity.has(Collider2));
+  }
+
   enableNonInteractiveGround(enabled = true) {
     const action = enabled ? "add" : "maybeRemove";
-    const entities = this.world.entities.getAllByComponent(Collider);
+    const entities = this.getColliderEntities();
     for (const entity of entities) {
-      const collider = entity.get(Collider);
-      if (collider.interaction === GROUND_INTERACTION) {
-        entity[action](NonInteractive);
+      if (entity.has(Collider2)) {
+        const collider: Collider2 = entity.get(Collider2);
+        if (collider.kind === "GROUND") {
+          entity[action](NonInteractive);
+        }
       }
     }
   }
 
-  enableCollidersVisible(enabled = true, includeNonInteractive = false) {
-    const entities = this.world.entities.getAllByComponent(Collider);
-    for (const entity of entities) {
-      const interactive = !entity.get(NonInteractive);
-      entity.maybeRemove(ColliderVisible);
-      if (enabled && (interactive || includeNonInteractive)) {
-        entity.add(ColliderVisible);
-      }
-    }
-  }
-
-  enableBoundingVisible(enabled = true) {
-    const action = enabled ? "add" : "maybeRemove";
-    const entities = this.world.entities.getAllBy((entity) => !entity.parent);
-    for (const entity of entities) {
-      entity[action](BoundingHelper);
-    }
+  enableCollidersVisible(enabled = true) {
+    Collider2VisibleSystem.enabled = enabled;
   }
 
   hoverOutline(found: Entity) {
@@ -477,63 +486,26 @@ export class WorldManager {
     this.lastActivity = performance.now();
 
     // As soon as avatar moves, restore full 60fps framerate
-    if (this.loopType.type !== "reqAnimFrame") {
+    if (this.loopType.type !== "reqAnimFrame" && !this.fpsLocked) {
       this.setFps(60);
     }
   }
 
-  showTransformControls(entity, onChanged?: Function) {
-    if (this.transformControls) {
-      this.hideTransformControls();
-    }
+  showTransformControls(entity, onChange?: Function) {
+    this.transformEntity = entity;
 
-    const transform = entity.get(Transform);
-    const object = entity.get(Object3DRef).value;
-
-    this.transformControls = new TransformControls(
-      this.camera.threeCamera,
-      this.world.presentation.renderer.domElement.parentElement
-    );
-    this.world.presentation.scene.add(this.transformControls);
-
-    let changed = false;
-    this.transformControls.addEventListener("change", () => {
-      // Update physics engine
-      if (!transform.position.equals(object.position)) {
-        transform.position.copy(object.position);
-        changed = true;
-      }
-      if (!transform.rotation.equals(object.quaternion)) {
-        transform.rotation.copy(object.quaternion);
-        changed = true;
-      }
-      if (!transform.scale.equals(object.scale)) {
-        transform.scale.copy(object.scale);
-        changed = true;
-      }
-      if (changed) {
-        transform.modified();
-        onChanged?.();
-      }
+    entity.add(TransformControls, {
+      onChange,
+      onMouseUp: (entity) => {
+        this.worldDoc.syncFrom(entity);
+      },
     });
-    this.transformControls.addEventListener("mouseDown", () => {
-      setControl(true);
-    });
-    this.transformControls.addEventListener("mouseUp", () => {
-      setControl(false);
-      this.worldDoc.syncFrom(entity);
-    });
-
-    this.transformControls.attach(object);
-
-    return this.transformControls;
   }
 
   hideTransformControls() {
-    if (this.transformControls) {
-      this.transformControls.detach();
-      this.transformControls.dispose();
-      this.transformControls = null;
+    if (this.transformEntity) {
+      this.transformEntity.remove(TransformControls);
+      this.transformEntity = null;
     }
   }
 
@@ -619,8 +591,19 @@ export class WorldManager {
     requestAnimationFrame(this.loop.bind(this));
   }
 
-  setFps(fps: number) {
+  getTargetFps(): number {
+    // prettier-ignore
+    switch (this.loopType.type) {
+      case "reqAnimFrame": return 60;
+      case "nolimit": return 60;
+      case "interval": return this.loopType.targetFps;
+    }
+  }
+
+  setFps(fps: number, lock = false) {
     this.stop();
+
+    if (lock) this.lockFps();
 
     if (fps === 60) {
       targetFps.set(60);
@@ -642,13 +625,12 @@ export class WorldManager {
     this.start();
   }
 
-  getFps(): number {
-    // prettier-ignore
-    switch (this.loopType.type) {
-      case "reqAnimFrame": return 60;
-      case "nolimit": return 60;
-      case "interval": return this.loopType.targetFps;
-    }
+  lockFps() {
+    this.fpsLocked = true;
+  }
+
+  unlockFps() {
+    this.fpsLocked = false;
   }
 
   worldStep(delta?: number) {

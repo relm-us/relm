@@ -55,7 +55,7 @@ importers:
       nanoid: ^3.1.20
       optimize-css-assets-webpack-plugin: ^5.0.3
       postcss-loader: ^3.0.0
-      postprocessing: github:canadaduane/postprocessing#es6
+      postprocessing: 6.28.3
       protoo-client: ^4.0.6
       quill: ^1.3.7
       quill-cursors: ^3.1.2
@@ -77,7 +77,7 @@ importers:
       svelte-i18n: ^3.4.0
       svelte-icons: 2.1.0
       svelte-jester: ^2.3.0
-      svelte-loader: ^2.13.6
+      svelte-loader: 3.1.2
       svelte-loader-hot: ^0.3.1
       svelte-notifications: 0.9.93
       svelte-preprocess: ^4.2.0
@@ -116,9 +116,9 @@ importers:
       eventemitter3: 4.0.7
       install: 0.13.0
       lodash: 4.17.21
-      mediasoup-client: github.com/versatica/mediasoup-client/f17500642dcdd305c546f323c9eb232425d30e8e
+      mediasoup-client: github.com/versatica/mediasoup-client/aba1d0e46a8226f83e50c76e76a4704283119ac9
       nanoid: 3.3.4
-      postprocessing: github.com/canadaduane/postprocessing/ea4c95d66c61532482bc0b9ac57226ac2e1802b3_three@0.141.0
+      postprocessing: 6.28.3_three@0.141.0
       protoo-client: 4.0.6
       quill: 1.3.7
       quill-cursors: 3.1.2
@@ -177,7 +177,7 @@ importers:
       source-map-loader: 1.1.3_webpack@4.46.0
       svelte-check: 1.6.0_i7y7do4skexc5viayczggthqea
       svelte-jester: 2.3.2_jest@27.5.1+svelte@3.46.3
-      svelte-loader: 2.13.6_svelte@3.46.3
+      svelte-loader: 3.1.2_svelte@3.46.3
       svelte-loader-hot: 0.3.1_svelte@3.46.3
       svelte-preprocess: 4.10.7_44oy7jraaqvhajc255tdyafll4
       terser-webpack-plugin: 4.2.3_webpack@4.46.0
@@ -7732,19 +7732,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dev: false
-
-  /follow-redirects/1.14.9_debug@4.3.4:
-    resolution: {integrity: sha512-MQDfihBQYMcyy5dhRDJUHcw7lb2Pv/TuE6xP1vyraLukNDHKbDxDNaOE3NbCAdKQApno+GPRyo1YAp89yCjK4w==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
-    dependencies:
-      debug: 4.3.4_supports-color@6.1.0
-    dev: true
 
   /for-in/1.0.2:
     resolution: {integrity: sha512-7EwmXrOjyL+ChxMhmG5lnW9MPt1aIeZEwKhQzoBUdTV0N3zuwWDZYVJatDvZ2OyzPUvdIAZDsCetk3coyMfcnQ==}
@@ -8398,7 +8385,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.14.9_debug@4.3.4
+      follow-redirects: 1.14.9
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -12642,6 +12629,15 @@ packages:
       - pg-native
     dev: false
 
+  /postprocessing/6.28.3_three@0.141.0:
+    resolution: {integrity: sha512-Y3VzV2pa+EJlzXOFyNTV/6htDQsHdhhYhpALyfv/9fk9H+GbUR/Zw2wjpZO1JWqO1x/nYbhmZficwvVk981EEw==}
+    engines: {node: '>= 0.13.2'}
+    peerDependencies:
+      three: '>= 0.107.0 < 0.143.0'
+    dependencies:
+      three: 0.141.0
+    dev: false
+
   /potpack/1.0.2:
     resolution: {integrity: sha512-choctRBIV9EMT9WGAZHn3V7t0Z2pMQyl0EZE6pFc/6ml3ssw7Dlf/oAOvFwjm1HVsqfQN8GfeFyJ+d8tRzqueQ==}
     dev: false
@@ -14808,6 +14804,15 @@ packages:
       svelte: 3.46.3
     dev: true
 
+  /svelte-hmr/0.14.12_svelte@3.46.3:
+    resolution: {integrity: sha512-4QSW/VvXuqVcFZ+RhxiR8/newmwOCTlbYIezvkeN6302YFRE8cXy0naamHcjz8Y9Ce3ITTZtrHrIL0AGfyo61w==}
+    engines: {node: ^12.20 || ^14.13.1 || >= 16}
+    peerDependencies:
+      svelte: '>=3.19.0'
+    dependencies:
+      svelte: 3.46.3
+    dev: true
+
   /svelte-i18n/3.4.0_svelte@3.46.3:
     resolution: {integrity: sha512-590N+YIRlebDT3fXmuAxd4guQZLR3vm4kCs5UhWYmw3SxOlJNZ7HwYYiw6d4jDr7P+Cx7DSopk1Z1K9wn8B6EA==}
     engines: {node: '>= 11.15.0'}
@@ -14849,14 +14854,15 @@ packages:
       svelte-hmr: 0.10.3_svelte@3.46.3
     dev: true
 
-  /svelte-loader/2.13.6_svelte@3.46.3:
-    resolution: {integrity: sha512-7uf7ZQdPAl+lwb1ldUYJFY/raZRUCuaNx7lMJ+F16jrVwN1+c35C2pBMGIY0mCqdKm5sm45jqELJJLGM3UG9Pw==}
+  /svelte-loader/3.1.2_svelte@3.46.3:
+    resolution: {integrity: sha512-RhVIvitb+mtIwKNyvNQoDQ0EhXg2KH8LhQiiqeJh8u6vqJyGWoMoFcYCar69TT+1iaK5IYe0wPNYJ6TILcsurw==}
     peerDependencies:
-      svelte: '>1.44.0'
+      svelte: '>3.0.0'
     dependencies:
-      loader-utils: 1.4.0
+      loader-utils: 2.0.2
       svelte: 3.46.3
       svelte-dev-helper: 1.1.9
+      svelte-hmr: 0.14.12_svelte@3.46.3
     dev: true
 
   /svelte-notifications/0.9.93:
@@ -16531,20 +16537,8 @@ packages:
     resolution: {integrity: sha512-JZxotl7SxAJH0j7dN4pxsTV6ZLXoLdGME+PsjkL/DaBrVryK9kTGq06GfKrwcSOqypP+fdXGoCHE36b99fWVoA==}
     dev: true
 
-  github.com/canadaduane/postprocessing/ea4c95d66c61532482bc0b9ac57226ac2e1802b3_three@0.141.0:
-    resolution: {tarball: https://codeload.github.com/canadaduane/postprocessing/tar.gz/ea4c95d66c61532482bc0b9ac57226ac2e1802b3}
-    id: github.com/canadaduane/postprocessing/ea4c95d66c61532482bc0b9ac57226ac2e1802b3
-    name: postprocessing
-    version: 6.28.1
-    engines: {node: '>= 0.13.2'}
-    peerDependencies:
-      three: '>= 0.107.0 < 0.142.0'
-    dependencies:
-      three: 0.141.0
-    dev: false
-
-  github.com/versatica/mediasoup-client/f17500642dcdd305c546f323c9eb232425d30e8e:
-    resolution: {tarball: https://codeload.github.com/versatica/mediasoup-client/tar.gz/f17500642dcdd305c546f323c9eb232425d30e8e}
+  github.com/versatica/mediasoup-client/aba1d0e46a8226f83e50c76e76a4704283119ac9:
+    resolution: {tarball: https://codeload.github.com/versatica/mediasoup-client/tar.gz/aba1d0e46a8226f83e50c76e76a4704283119ac9}
     name: mediasoup-client
     version: 3.6.53
     engines: {node: '>=10'}

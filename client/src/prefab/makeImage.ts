@@ -4,7 +4,7 @@ import { Vector2, Vector3, Quaternion, Euler } from "three";
 
 import { makeEntity } from "./makeEntity";
 
-import { RigidBody, Collider } from "~/ecs/plugins/physics";
+import { Collider2 } from "~/ecs/plugins/physics";
 import { CssPlane, HdImage } from "~/ecs/plugins/css3d";
 import { Draggable } from "~/ecs/plugins/clickable";
 
@@ -18,7 +18,7 @@ export function makeImage(
     h = 2,
     d = 0.1,
     xa = 0,
-    ya = - Math.PI / 16,
+    ya = -Math.PI / 16,
     za = 0,
     url = "http://localhost:3000/asset/9809768b0111d0e82a05e5ecd82cdc8e-286840.webp",
     collide = false,
@@ -39,14 +39,11 @@ export function makeImage(
     });
 
   if (collide) {
-    thing
-      .add(RigidBody, {
-        kind: "DYNAMIC",
-      })
-      .add(Collider, {
-        kind: "BOX",
-        boxSize: new Vector3(w, h, d),
-      });
+    thing.add(Collider2, {
+      kind: "DYNAMIC",
+      shape: "BOX",
+      size: new Vector3(w, h, d),
+    });
   }
 
   return thing;

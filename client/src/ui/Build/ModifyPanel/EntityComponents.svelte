@@ -12,6 +12,7 @@
   import MdRotateLeft from "svelte-icons/md/MdRotateLeft.svelte";
   import MdTransform from "svelte-icons/md/MdTransform.svelte";
   import MdAspectRatio from "svelte-icons/md/MdAspectRatio.svelte";
+  import { TransformControlsRef } from "~/ecs/plugins/transform-controls";
 
   export let entity;
 
@@ -81,7 +82,11 @@
     };
   });
 
-  const choose = (mode) => () => worldManager.transformControls?.setMode(mode);
+  const choose = (mode) => () => {
+    worldManager.transformEntity
+      ?.get(TransformControlsRef)
+      ?.value.setMode(mode);
+  };
 </script>
 
 <EntityDetails {entity} on:modified={onModified} />

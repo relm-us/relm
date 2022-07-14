@@ -1,13 +1,13 @@
 import {
   BooleanType,
   NumberType,
-  StateComponent,
   StringType,
+  LocalComponent,
 } from "~/ecs/base";
 import { Vector3 } from "three";
 import { Vector3Type } from "~/ecs/plugins/core";
 
-export class ControllerState extends StateComponent {
+export class ControllerState extends LocalComponent {
   speed: number;
   grounded: boolean;
   direction: Vector3;

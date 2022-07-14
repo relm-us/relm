@@ -1,10 +1,5 @@
 import { Vector3 } from "three";
-import {
-  RefType,
-  LocalComponent,
-  StateComponent,
-  StringType,
-} from "~/ecs/base";
+import { RefType, LocalComponent, StringType } from "~/ecs/base";
 
 export class LineHelper extends LocalComponent {
   static props = {
@@ -24,7 +19,7 @@ export class LineHelper extends LocalComponent {
   };
 }
 
-export class LineHelperRef extends StateComponent {
+export class LineHelperRef extends LocalComponent {
   static props = {
     value: {
       type: RefType,

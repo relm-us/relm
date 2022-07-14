@@ -89,6 +89,9 @@
     draggers.y.mouseup(event);
     draggers.z.mouseup(event);
   };
+
+  // ignore warning about missing props
+  $$props;
 </script>
 
 <r-quaternion-type>
