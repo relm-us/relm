@@ -54,6 +54,7 @@ import { Oculus } from "~/ecs/plugins/html2d";
 import { getIdentityData } from "./effects/getIdentityData";
 import { saveIdentityData } from "./effects/saveIdentityData";
 import { Security } from "~/identity/Security";
+import { connectedAccount } from "~/stores/connectedAccount";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -150,15 +151,14 @@ export function makeProgram(): Program {
 
           newIdentityData.equipment = msg.identity.equipment;
           newIdentityData.status = msg.identity.status;
-          newIdentityData.showAudio = msg.identity.showAudio;
-          newIdentityData.showVideo = msg.identity.showVideo;
         }
 
         state.localIdentityData.set(newIdentityData);
+        connectedAccount.set(msg.isConnected);
+      
         return [
           {
-            ...state,
-            isConnected: msg.isConnected
+            ...state
           },
           getRelmPermitsAndMetadata(state.pageParams, state.authHeaders)
         ];
@@ -298,7 +298,7 @@ export function makeProgram(): Program {
         }
 
         // Save identity data to server if necessary
-        if (isNewIdentityUpdate && state.isConnected) {
+        if (get(connectedAccount)) {
           return [state, saveIdentityData(state)];
         } else {
           return [state];
@@ -637,7 +637,7 @@ export function makeProgram(): Program {
           clientId: state.worldDoc.ydoc.clientID,
           status: "present",
           name: state.overrideParticipantName || data.name,
-          showAudio: state.isConnected ? data.showAudio : state.initialAudioDesired,
+          showAudio: state.initialAudioDesired,
           showVideo: state.initialVideoDesired,
           speaking: false,
           appearance:

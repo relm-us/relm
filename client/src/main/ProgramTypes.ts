@@ -27,7 +27,6 @@ export type State = {
   entrywayPosition?: Vector3;
   entrywayUnsub?: Function;
   savedIdentity?: SavedIdentityData;
-  isConnected?: boolean;
   security?: Security;
 
   // relm metadata

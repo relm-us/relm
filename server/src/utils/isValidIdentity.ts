@@ -9,8 +9,6 @@ export function isValidIdentity(identityPayload) {
             && (typeof identityPayload.name === "string")
             && (typeof identityPayload.color === "string" && isValidColor(identityPayload.color))
             && (isValidStatus(identityPayload.status))
-            && (typeof identityPayload.showAudio === "boolean")
-            && (typeof identityPayload.showVideo === "boolean")
             && (
               ((typeof identityPayload.appearance === "object") && isValidAppearance(identityPayload.appearance))
                 || (typeof identityPayload.appearance === "undefined")

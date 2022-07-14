@@ -25,6 +25,12 @@ export interface IdentityData extends SavedIdentityData {
   // Show current emoji?
   emoting: boolean;
 
+  // Participant has mic enabled?
+  showAudio: boolean;
+
+  // Participant has video enabled?
+  showVideo: boolean;
+
   // Last known yjs clientId for this participant
   clientId?: number;
 

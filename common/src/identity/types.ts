@@ -42,12 +42,6 @@ export interface SavedIdentityData {
   
   // Has participant notified that they will be "away"?
   status: PlayerStatus;
-  
-  // Participant has mic enabled?
-  showAudio: boolean;
-  
-  // Participant has video enabled?
-  showVideo: boolean;
 
   // Avatar appearance, based on Avatar Builder settings
   appearance?: Appearance;

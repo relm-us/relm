@@ -86,6 +86,7 @@ import { TransformControls } from "~/ecs/plugins/transform-controls";
 import { Collider2VisibleSystem } from "~/ecs/plugins/collider-visible/systems";
 import { globalEvents } from "~/events";
 import { advancedEdit } from "~/stores/advancedEdit";
+import { connectedAccount } from "~/stores/connectedAccount";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -410,6 +411,9 @@ export class WorldManager {
 
     this.dragPlane.deinit();
 
+    const camsys = this.world.systems.get(CameraSystem) as CameraSystem;
+    camsys.endDeactivatingOffCameraEntities();
+
     this._dragPlane = null;
     this._selectionBox = null;
     this.world = null;
@@ -423,9 +427,6 @@ export class WorldManager {
 
     this.didInit = false;
     this.fpsLocked = false;
-
-    const camsys = this.world.systems.get(CameraSystem) as CameraSystem;
-    camsys.endDeactivatingOffCameraEntities();
   }
 
   afterInit(fn: Function) {
@@ -747,11 +748,17 @@ export class WorldManager {
 
   async register(credentials: LoginCredentials): Promise<AuthenticationResponse> {
     const data = await this.api.registerParticipant(credentials);
+
+    // If we login, ensure we are connected.
+    if (data && data.status === "success") {
+      connectedAccount.set(true);
+    }
+
     return data;
   }
 
   async login(socialIdOrCred: SocialId|LoginCredentials): Promise<AuthenticationResponse|null> {
-    let data;
+    let data: AuthenticationResponse;
 
     if (typeof socialIdOrCred === "object") {
       // login with username/password
@@ -776,6 +783,11 @@ export class WorldManager {
       }
     }
 
+    // If we login, ensure we are connected.
+    if (data && data.status === "success") {
+      connectedAccount.set(true);
+    }
+
     return data;
   }
 
@@ -783,6 +795,7 @@ export class WorldManager {
     destroyParticipantId();
     this.security.secret = null;
     localIdentityData.set(getRandomInitializedIdentityData());
+    connectedAccount.set(false);
 
     this.dispatch({
       id: "enterPortal",

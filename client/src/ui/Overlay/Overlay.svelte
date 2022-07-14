@@ -5,6 +5,7 @@
   import VideoButton from "~/ui/ButtonControls/VideoButton";
   import AvatarSetupButton from "~/ui/ButtonControls/AvatarSetupButton";
   import ShareScreenButton from "~/ui/ButtonControls/ShareScreenButton";
+  import { SignInButton } from "~/ui/ButtonControls/ConnectionButton";
   import InviteButton from "~/ui/ButtonControls/InviteButton";
   import ChatButton from "~/ui/Chat/ChatButton.svelte";
   import Button from "~/ui/lib/Button";
@@ -39,8 +40,9 @@
   import { selectedEntities } from "~/stores/selection";
   import { showCenterButtons } from "~/stores/showCenterButtons";
   import { AV_ENABLED } from "~/config/constants";
-import SignInButton from "../ButtonControls/SignInButton";
-import SignInWindow from "../ButtonControls/SignInButton/SignInWindow.svelte";
+  import SignInWindow from "../ButtonControls/ConnectionButton/SignInWindow.svelte";
+import LogoutButton from "../ButtonControls/ConnectionButton/LogoutButton.svelte";
+import { connectedAccount } from "~/stores/connectedAccount";
 
   export let dispatch;
   export let permits;
@@ -179,11 +181,19 @@ import SignInWindow from "../ButtonControls/SignInButton/SignInWindow.svelte";
         </Tooltip>
       {/if}
 
-      <Tooltip
+      {#if $connectedAccount}
+        <Tooltip
+          tip={_("Logout", "logout")}
+          top>
+            <LogoutButton />
+        </Tooltip>
+      {:else}
+        <Tooltip
         tip={_("Connect your account!", "signin_button")}
         top>
           <SignInButton bind:enabled={signinEnabled} />
       </Tooltip>
+      {/if}
     </play-buttons>
   </overlay-center>
 {/if}

@@ -1,6 +1,6 @@
 <script lang="ts">
   import CircleButton from "~/ui/lib/CircleButton";
-  import IoMdLogIn from 'svelte-icons/io/IoMdLogIn.svelte'
+  import IoMdLogIn from "svelte-icons/io/IoMdLogIn.svelte";
   import { showCenterButtons } from "~/stores/showCenterButtons";
 
   export let enabled = false;
