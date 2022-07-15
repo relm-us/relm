@@ -1,7 +1,6 @@
 <script lang="ts">
   import Fullwindow from "~/ui/lib/Fullwindow.svelte";
   import { worldManager } from "~/world";
-  import SignInCheckInput from "./components/SignInCheckInput.svelte";
   import SignInTextInput from "./components/SignInTextInput.svelte";
   import type { Dispatch } from "~/main/ProgramTypes";
   import { showCenterButtons } from "~/stores/showCenterButtons";
@@ -116,20 +115,17 @@
             <SignInTextInput name="password" type="password" label="PASS CODE" />
           </r-section>
 
-          <r-section id="stay-logged-forget-section">
-            <div style="float: left; padding-bottom: 1em;">
-              <SignInCheckInput name="staylogged" label="Stay unlocked on this device" />
-            </div>
-            <div style="float: right;">
+          <!-- <r-section id="forget-section">
+            <div style="float: left;">
               <r-forget-passcode-link class="fake-link">Forgot Pass Code</r-forget-passcode-link>
             </div>
-          </r-section>
+          </r-section> -->
 
         </r-group>
 
         <!-- SIGN IN/Socials -->
         <r-group>
-          <div class="submit add-padding-if-tall-enough small">
+          <div class="submit">
             <span class="fake-link" on:click={() => onUsernamePasswordAction("signin")} >SIGN IN</span>
           </div>
           <div class="socials add-padding-if-tall-enough small">
@@ -188,12 +184,12 @@
     z-index: 9999;
   }
 
-  #stay-logged-forget-section {
-    display: flex;
-    text-align: initial;
-    justify-content: space-between;
-    font-size: 1.1em;
-  }
+  // #forget-section {
+  //   display: flex;
+  //   text-align: initial;
+  //   justify-content: space-between;
+  //   font-size: 1.1em;
+  // }
 
   .submit span {
     color: #7f7f7f;
@@ -279,10 +275,10 @@
     margin-top: 0.5em;
   }
 
-  r-forget-passcode-link {
-    color: #a77822;
-    cursor: pointer;
-  }
+  // r-forget-passcode-link {
+  //   color: #a77822;
+  //   cursor: pointer;
+  // }
 
   // Only show padding at top if the screen is tall enough.
   @media only screen and (min-height: 800px) {
