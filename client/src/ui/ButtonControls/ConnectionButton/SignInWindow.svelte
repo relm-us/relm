@@ -18,7 +18,7 @@
     const socialId = target.getAttribute("data-login");
 
     const response = await worldManager.login(socialId);
-    if (response === null || !showingSignin) {
+    if (response === null || !enabled) {
       return; // Window was closed or ui is no longer shown.
     }
 
