@@ -41,8 +41,8 @@
   import { showCenterButtons } from "~/stores/showCenterButtons";
   import { AV_ENABLED } from "~/config/constants";
   import SignInWindow from "../ButtonControls/ConnectionButton/SignInWindow.svelte";
-import LogoutButton from "../ButtonControls/ConnectionButton/LogoutButton.svelte";
-import { connectedAccount } from "~/stores/connectedAccount";
+  import LogoutButton from "../ButtonControls/ConnectionButton/LogoutButton.svelte";
+  import { connectedAccount } from "~/stores/connectedAccount";
 
   export let dispatch;
   export let permits;
