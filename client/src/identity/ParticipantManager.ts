@@ -12,8 +12,8 @@ import { participantId } from "./participantId";
 
 import { Dispatch } from "~/main/ProgramTypes";
 import {
-  avatarToAnimationData,
-  avatarToTransformData,
+  avatarGetAnimationData,
+  avatarGetTransformData,
   setDataOnParticipant,
 } from "./Avatar/transform";
 import { ParticipantYBroker } from "./ParticipantYBroker";
@@ -79,10 +79,10 @@ export class ParticipantManager {
     const avatar = this.local.avatar;
     if (!this.local.avatar) return;
 
-    const transformData = avatarToTransformData(avatar);
+    const transformData = avatarGetTransformData(avatar);
     this.broker.setField("t", transformData);
 
-    const animationData = avatarToAnimationData(avatar);
+    const animationData = avatarGetAnimationData(avatar);
     const currClipIndex = this.broker.getField("a")?.clipIndex;
     if (animationData.clipIndex !== currClipIndex) {
       this.broker.setField("a", animationData);
@@ -200,6 +200,7 @@ export function participantIsActive(
 }
 
 export function participantRemoveAvatar(this: void, participant: Participant) {
+  console.log("participantRemoveAvatar", participant.avatar);
   if (participant.avatar?.entities) {
     Object.values(participant.avatar.entities).forEach((entity) =>
       entity?.destroy()

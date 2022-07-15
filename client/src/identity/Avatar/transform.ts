@@ -15,7 +15,7 @@ import { Oculus } from "~/ecs/plugins/html2d";
 const e1 = new Euler(0, 0, 0, "YXZ");
 const v1 = new Vector3();
 
-export function avatarToTransformData(
+export function avatarGetTransformData(
   this: void,
   avatar: Avatar
 ): TransformData {
@@ -45,7 +45,7 @@ export function avatarToTransformData(
   return transformData as TransformData;
 }
 
-export function avatarToAnimationData(
+export function avatarGetAnimationData(
   this: void,
   avatar: Avatar
 ): AnimationData {
@@ -70,7 +70,7 @@ export function avatarToAnimationData(
   return animationData;
 }
 
-function setTransformDataOnAvatar(
+function avatarSetTransformData(
   avatar: Avatar,
   [x, y, z, bodyAngle, headAngle, oculusOffset]: TransformData
 ) {
@@ -107,7 +107,7 @@ function setTransformDataOnAvatar(
   if (oculus) oculus.targetOffset.y = oculusOffset;
 }
 
-export function setAnimationDataOnAvatar(
+export function avatarSetAnimationData(
   avatar: Avatar,
   { clipIndex, animLoop }: AnimationData
 ) {
@@ -155,10 +155,10 @@ export function setDataOnParticipant(
     onAddParticipant(participant);
   }
 
-  setTransformDataOnAvatar(participant.avatar, transformData);
+  avatarSetTransformData(participant.avatar, transformData);
 
   if (animationData)
-    setAnimationDataOnAvatar(participant.avatar, animationData);
+    avatarSetAnimationData(participant.avatar, animationData);
 
   // If the remote participant is active (if we've reached this point,
   // they are), and some IdentityData has been modified, then take the
