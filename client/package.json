@@ -30,7 +30,6 @@
     "@uppy/utils": "4.1.0",
     "@uppy/xhr-upload": "2.1.2",
     "anchorme": "^2.1.2",
-    "base64-arraybuffer-es6": "^0.6.0",
     "bowser": "^2.11.0",
     "byte-size": "^7.0.0",
     "debug": "^4.3.1",

@@ -2,7 +2,7 @@ import type { Vector3 } from "three";
 import type { DeviceIds } from "video-mirror";
 import type { Writable } from "svelte/store";
 
-import type { AuthenticationHeaders } from "relm-common";
+import type { AuthenticationHeaders, Security } from "relm-common";
 
 import type { WorldDoc } from "~/y-integration/WorldDoc";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
@@ -25,6 +25,7 @@ export type State = {
   authHeaders?: AuthenticationHeaders;
   entrywayPosition?: Vector3;
   entrywayUnsub?: Function;
+  security?: Security;
 
   // relm metadata
   relmDocId?: string; // server-assigned UUID for the relm
