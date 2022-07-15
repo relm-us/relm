@@ -47,6 +47,7 @@ const stylesheets = ["./styles/index.scss"];
 
 // Point the client to the server; default is for development mode
 const relmServer = process.env.RELM_SERVER ?? "http://localhost:3000";
+const relmScreenshotServer = process.env.RELM_SCREENSHOT_SERVER ?? "http://localhost:3001";
 
 module.exports = {
   // Production or Development mode
@@ -228,6 +229,8 @@ module.exports = {
           langDefault: process.env.RELM_LANG_DEFAULT ?? "en",
           // The URL of the relm-server (backend) we will connect to:
           server: relmServer,
+          // The URL of the screenshot server (backend) to request screenshots from.
+          screenshotServer: relmScreenshotServer
         },
         analyticsScript: process.env.RELM_ANALYTICS_SCRIPT ?? null,
       },
