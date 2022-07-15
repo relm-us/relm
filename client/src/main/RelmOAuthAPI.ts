@@ -21,7 +21,7 @@ export class RelmOAuthManager {
   }
 
   open(url, callback?) {
-    const openedWindow = window.open(url, null, 'width=800,height=600,resizeable');
+    const openedWindow = window.open(url, "_blank");
     if (openedWindow) {
 
       // make sure that the popup was not closed.
