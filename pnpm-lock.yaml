@@ -192,6 +192,7 @@ importers:
       '@jest/types': 27.5.1
       '@types/three': 0.141.0
       base64-arraybuffer-es6: ^0.6.0
+      core-js-bundle: ^3.21.1
       jest: 27.5.1
       lib0: 0.2.51
       lodash.debounce: 4.0.8
@@ -202,7 +203,7 @@ importers:
       y-protocols: 1.0.5
       yjs: 13.5.27
     dependencies:
-      base64-arraybuffer-es6: 0.6.0
+      base64-arraybuffer-es6: 0.6.0_core-js-bundle@3.23.1
       lib0: 0.2.51
       lodash.debounce: 4.0.8
       three: 0.141.0
@@ -211,6 +212,7 @@ importers:
     devDependencies:
       '@jest/types': 27.5.1
       '@types/three': 0.141.0
+      core-js-bundle: 3.23.1
       jest: 27.5.1
       ts-jest: 27.1.4_eufcckiefljihjhutvg5ibw4rq
       typescript: 4.6.3
@@ -245,7 +247,7 @@ importers:
       lib0: 0.2.51
       lodash.debounce: ^4.0.8
       md5-file: ^5.0.0
-      minimalist: ^1.0.0
+      minimist: ^1.2.6
       moment: ^2.27.0
       multer: ^1.4.2
       node-fetch: ^3.2.6
@@ -285,7 +287,7 @@ importers:
       lib0: 0.2.51
       lodash.debounce: 4.0.8
       md5-file: 5.0.0
-      minimalist: 1.0.0
+      minimist: 1.2.6
       moment: 2.29.2
       multer: 1.4.4
       object.fromentries: 2.0.5
@@ -4833,11 +4835,13 @@ packages:
       pascalcase: 0.1.1
     dev: true
 
-  /base64-arraybuffer-es6/0.6.0:
+  /base64-arraybuffer-es6/0.6.0_core-js-bundle@3.23.1:
     resolution: {integrity: sha512-57nLqKj4ShsDwFJWJsM4sZx6u60WbCge35rWRSevUwqxDtRwwxiKAO800zD2upPv4CfdWjQp//wSLar35nDKvA==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
       core-js-bundle: ^3.6.5
+    dependencies:
+      core-js-bundle: 3.23.1
     dev: false
 
   /base64-arraybuffer/0.2.0:
@@ -5833,8 +5837,8 @@ packages:
 
   /core-js-bundle/3.23.1:
     resolution: {integrity: sha512-xO6ULM0KDSkNSIyRuY/3XsX4hEcXe/2gPVQTVB6t/wgFnLsiswFd2rQDziMx8KVy9qre4pXlzhStg4WSZNoEwg==}
+    deprecated: core-js-bundle@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js-bundle.
     requiresBuild: true
-    dev: true
 
   /core-js-compat/3.23.1:
     resolution: {integrity: sha512-KeYrEc8t6FJsKYB2qnDwRHWaC0cJNaqlHfCpMe5q3j/W1nje3moib/txNklddLPCtGb+etcBIyJ8zuMa/LN5/A==}
@@ -10903,10 +10907,6 @@ packages:
       webpack: 4.46.0_webpack-cli@3.3.12
       webpack-sources: 1.4.3
     dev: true
-
-  /minimalist/1.0.0:
-    resolution: {integrity: sha512-T6oJUBnYEDlcbyk5DwxnoCSDcaOlQPaODJkoaNtb1ueg1OkxowihbBd53FBfXrCNK116VQI9sCP8j7drx5GJyA==}
-    dev: false
 
   /minimalistic-assert/1.0.1:
     resolution: {integrity: sha512-UtJcAD4yEaGtjPezWuO9wC4nwUnVH/8/Im3yEHQP4b67cXlD/Qr9hdITCU1xDbSEXg2XKNaP8jsReV7vQd00/A==}
