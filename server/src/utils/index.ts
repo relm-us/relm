@@ -10,6 +10,7 @@ export { isAllowed } from "./isAllowed.js";
 export { isArray } from "./isArray.js";
 export { isValidEmailFormat } from "./isValidEmailFormat.js";
 export { isValidIdentity } from "./isValidIdentity.js";
+export { isValidPasswordFormat } from "./isValidPasswordFormat.js";
 export { joinError } from "./joinError.js";
 export { nullOr } from "./nullOr.js";
 export { randomToken } from "./randomToken.js";

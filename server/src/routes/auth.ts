@@ -10,14 +10,15 @@ import {
   respondWithError,
   wrapAsync,
   intersection,
+  isValidEmailFormat,
   isValidIdentity,
+  isValidPasswordFormat,
   wrapAsyncPassport,
   respondWithFailure,
   PassportResponse,
   respondWithErrorPostMessage,
   respondWithSuccessPostMessage,
-  respondWithFailurePostMessage,
-  isValidEmailFormat
+  respondWithFailurePostMessage
 } from "../utils/index.js";
 
 export const auth = express.Router();
@@ -142,8 +143,11 @@ auth.post(
     const { email, password } = req.body;
 
     // Check that the email is valid
-    if (isValidEmailFormat(email)) {
+    if (!isValidEmailFormat(email)) {
       return respondWithFailure(res, "invalid_email", "You did not specify a valid email!");
+    }
+    if (!isValidPasswordFormat(password)) {
+      return respondWithFailure(res, "invalid_password", "Your password needs to be at least 8 characters long!");
     }
 
     // Check if someone is using that email
