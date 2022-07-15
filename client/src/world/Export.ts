@@ -2,7 +2,7 @@ import { exportWorldDoc, MinimalRelmJSON, importNonEntities } from "relm-common"
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
-const RELM_EXPORT_VERSION = "v1.4";
+const RELM_EXPORT_VERSION = "v1.5";
 
 export type FormatOpts = {
   relm?: string;
