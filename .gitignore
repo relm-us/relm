@@ -4,6 +4,7 @@
 **/.DS_Store
 **/dist/
 server/data/
+screenshot-server/data/
 deploy/
 **/.env
 relm-*.tgz

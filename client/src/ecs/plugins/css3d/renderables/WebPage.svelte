@@ -57,7 +57,7 @@
 
   function screenshot(url, width = 800, height = 600) {
     return (
-      config.serverUrl +
+      config.serverScreenshotUrl +
       `/screenshot/${width}x${height}/${encodeURIComponent(url)}`
     );
   }
