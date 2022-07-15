@@ -9,25 +9,7 @@ type UserCreationData = {
   password? : string
 };
 
-function isValidEmail(email: string) {
-  const emailAtSplitIndex = email.lastIndexOf("@");
-  
-  // Split it into userPart @ domainPart.com
-  const userPart = email.substring(0, emailAtSplitIndex);
-  const domainPart = email.substring(emailAtSplitIndex + 1);
-
-  const userPartIsValid = userPart.length > 0;
-  const domainPartIsValid = domainPart.includes(".") && domainPart.length >= 3;
-
-  return userPartIsValid && domainPartIsValid;
-}
-
 export async function createUser({ email, password }: UserCreationData) {
-
-  if (!isValidEmail(email)) {
-      throw Error("Invalid email provided");
-  }
-
   const userData: any = { email };
   if (!password) {
     userData.password_hash = await encrypt(password);

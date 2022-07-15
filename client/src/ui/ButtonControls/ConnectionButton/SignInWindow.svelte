@@ -5,6 +5,7 @@
   import type { Dispatch } from "~/main/ProgramTypes";
   import { showCenterButtons } from "~/stores/showCenterButtons";
   import { getNotificationsContext } from "svelte-notifications";
+  import { _ } from "~/i18n";
 
   export let enabled;
   export let dispatch: Dispatch;
@@ -27,7 +28,9 @@
     } else {
       // Error!
       notifyContext.addNotification({
-        text: response.reason,
+        text: $_(response.reason, {
+          default: response.details
+        }),
         position: "top-left",
         removeAfter: 3000
       });
@@ -49,7 +52,9 @@
     } else {
       // Error!
       notifyContext.addNotification({
-        text: response.reason,
+        text: $_(response.reason, {
+          default: response.details
+        }),
         position: "top-left",
         removeAfter: 3000
       });
@@ -65,14 +70,18 @@
       await worldManager.api.setIdentityData({
         identity: worldManager.participants.local.identityData
       });
-      successText = "Your account has been created!";
+      successText = $_("account_creation", {
+          default: "Your account has been created!"
+       });
     } else {
       // Load existing identity data!
       dispatch({
         id: "updateLocalIdentityData",
         identityData: savedData.identity
       });
-      successText = "Your account has been connected!";
+      successText = $_("account_connected", {
+        default: "Your account has been connected!"
+      });
     }
 
     // Close the sign in window.

@@ -41,7 +41,11 @@ passport.use(new PassportLocalStrategy({
   // Get user id and pass it along.
   const userId = await User.getUserIdByEmail({ email });
   if (userId === null) {
-    return done("Unable to find userId of email after local authentication.");
+    return done({
+      isError: true,
+      reason: "server_error_authenticated_user_id_email_missing",
+      details: "Unable to find userId of email after local authentication."
+    });
   }
 
   // Authentication was successful!
@@ -71,7 +75,11 @@ async function handleOAuthPassport(socialId, req, email, profileId, done) {
       });
 
       if (existingSocialConnectionProfileId !== null && existingSocialConnectionProfileId !== profileId) {
-        return done("This participant is already linked with another social account.");
+        return done({
+          isError: false,
+          reason: "participant_social_already_linked",
+          details: "This participant is already linked with another social account."
+        });
       }
 
       connectedSocialUserId = existingParticipantUserId;
@@ -98,7 +106,11 @@ async function handleOAuthPassport(socialId, req, email, profileId, done) {
     // The social used is associated with a user and a connection exists.
     
     if (existingParticipantUserId !== null && existingParticipantUserId !== connectedSocialUserId) {
-      return done("This participant is already linked with another social account.");
+      return done({
+        isError: false,
+        reason: "participant_social_already_linked",
+        details: "This participant is already linked with another social account."
+      });
     }
   }
 
@@ -138,7 +150,11 @@ if (ensureEnvVarsExist(["FACEBOOK_CLIENT_ID", "FACEBOOK_CLIENT_SECRET"])) {
     passReqToCallback: true
   }, (req, _, __, profile, done) => {
     if (!profile.emails) {
-      return done("Missing emails in oAuth data.");
+      return done({
+        isError: true,
+        reason: "missing_email_oauth_response",
+        details: "Missing emails in oAuth data."
+      });
     }
     handleOAuthPassport("facebook", req, profile.emails[0], profile.id, done).catch(done);
   }));
@@ -153,7 +169,11 @@ if (ensureEnvVarsExist(["TWITTER_CLIENT_ID", "TWITTER_CLIENT_SECRET"])) {
     passReqToCallback: true
   }, (req, _, __, profile, done) => {
     if (!profile.emails) {
-      return done("Missing emails in oAuth data.");
+      return done({
+        isError: true,
+        reason: "missing_email_oauth_response",
+        details: "Missing emails in oAuth data."
+      });
     }
     handleOAuthPassport("twitter", req, profile.emails[0], profile.id, done).catch(done);
   }));

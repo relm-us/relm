@@ -15,7 +15,9 @@ import {
   respondWithFailure,
   PassportResponse,
   respondWithErrorPostMessage,
-  respondWithSuccessPostMessage
+  respondWithSuccessPostMessage,
+  respondWithFailurePostMessage,
+  isValidEmailFormat
 } from "../utils/index.js";
 
 export const auth = express.Router();
@@ -139,17 +141,22 @@ auth.post(
   wrapAsync(async (req, res) => {
     const { email, password } = req.body;
 
+    // Check that the email is valid
+    if (isValidEmailFormat(email)) {
+      return respondWithFailure(res, "invalid_email", "You did not specify a valid email!");
+    }
+
     // Check if someone is using that email
     const userExistsWithEmailProvided = (await User.getUserIdByEmail({ email })) !== null;
     if (userExistsWithEmailProvided) {
-      return respondWithFailure(res, "This email is already used by another user!");
+      return respondWithFailure(res, "invalid_credentials", "This email is already used by another user!");
     }
 
     // Ensure the participant being registered isn't already linked.
     const participantId = req.authenticatedParticipantId;
     const existingUserId = await Participant.getUserId({ participantId });
     if (existingUserId !== null) {
-      return respondWithFailure(res, "This participant is already linked to another email!");
+      return respondWithFailure(res, "participant_already_linked", "This participant is already linked to another email!");
     }
 
     const userId = await User.createUser({
@@ -169,16 +176,18 @@ auth.post(
   wrapAsyncPassport("local", async (req, res, _, status, data) => {
     // Was authentication successful?
     if (status === PassportResponse.ERROR) {
-      return respondWithError(res, data);
+      return respondWithError(res, data.reason, data.details);
+    } else if (status === PassportResponse.FAILURE) {
+      return respondWithFailure(res, data.reason, data.details);
     } else if (status === PassportResponse.NO_USER_FOUND) {
-      return respondWithFailure(res, "Hmm... That doesn't seem like it was the correct credentials!");
+      return respondWithFailure(res, "invalid_credentials", "Hmm... Those don't seem like the correct credentials!");
     }
 
     // Authentication was successful! Ensure the participant is not linked to another user already.
     const participantId = req.authenticatedParticipantId;
     const existingUserId = await Participant.getUserId({ participantId });
     if (existingUserId !== null && (data !== existingUserId)) {
-      return respondWithError(res, "This participant is already linked to another email!");
+      return respondWithError(res, "participant_already_linked", "This participant is already linked to another email!");
     }
 
     // Assign participant to user!
@@ -206,7 +215,9 @@ function socialOAuthRedirect(socialId, scope?) {
 function socialOAuthCallback(socialId) {
   return (req, res, next) => wrapAsyncPassport(socialId, async (req, res, _, status, data) => {
       if (status === PassportResponse.ERROR) {
-        return respondWithErrorPostMessage(res, data);
+        return respondWithErrorPostMessage(res, data.reason, data.details);
+      } else if (status === PassportResponse.FAILURE) {
+        return respondWithFailurePostMessage(res, data.reason, data.details);
       }
 
       // Assign participant to user!
