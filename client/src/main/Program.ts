@@ -50,6 +50,7 @@ import { getDefaultAppearance } from "~/identity/Avatar/appearance";
 import { localIdentityData } from "~/stores/identityData";
 import { IdentityData, UpdateData } from "~/types";
 import { Oculus } from "~/ecs/plugins/html2d";
+import { Security } from "~/../../common/dist";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -104,9 +105,14 @@ export function makeProgram(): Program {
         // Hack to make state available to worldManager as soon as possible (debugging)
         worldManager.state = state;
 
+        const security = new Security({
+          getSecret: () => JSON.parse(localStorage.getItem("secret") ?? "null"),
+          setSecret: secret => localStorage.setItem("secret", JSON.stringify(secret))
+        });
+
         return [
-          { ...state, pageParams: msg.pageParams },
-          getAuthenticationHeaders(msg.pageParams),
+          { ...state, pageParams: msg.pageParams, security },
+          getAuthenticationHeaders(msg.pageParams, security),
         ];
       }
 
@@ -316,7 +322,7 @@ export function makeProgram(): Program {
         return [
           state,
           Cmd.batch([
-            getAuthenticationHeaders(state.pageParams),
+            getAuthenticationHeaders(state.pageParams, state.security),
             resetArrowKeys,
           ]),
         ];
