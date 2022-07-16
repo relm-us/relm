@@ -14,7 +14,7 @@ import { FACEBOOK_CLIENT_ID,
   LINKEDIN_CLIENT_ID, 
   LINKEDIN_CLIENT_SECRET, 
   TWITTER_CLIENT_ID, 
-  TWITTER_CLIENT_SECRET } from 'config.js';
+  TWITTER_CLIENT_SECRET } from "./config.js";
 
 const passportMiddleware = express.Router();
 passportMiddleware.use(passport.initialize());
