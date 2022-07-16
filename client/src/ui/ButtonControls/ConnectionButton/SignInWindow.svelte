@@ -189,6 +189,8 @@
 </Fullwindow>
 
 <style type="scss">
+
+  // svelte-notifications does not have a high enough z-index.
   :global(.notifications div) {
     z-index: 9999;
   }

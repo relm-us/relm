@@ -11,7 +11,7 @@ type UserCreationData = {
 
 export async function createUser({ email, password }: UserCreationData) {
   const userData: any = { email };
-  if (!password) {
+  if (password) {
     userData.password_hash = await encrypt(password);
   }
 
