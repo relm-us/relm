@@ -8,6 +8,7 @@ import {
   Clock,
 } from "three";
 import * as THREE from "three";
+import { Security } from "relm-common";
 
 (window as any).THREE = THREE;
 
@@ -78,7 +79,6 @@ import { audioMode, AudioMode } from "~/stores/audioMode";
 import { Outline } from "~/ecs/plugins/outline";
 import { InteractorSystem } from "~/ecs/plugins/interactor";
 import { Object3DRef } from "~/ecs/plugins/core";
-import { Security } from "~/identity/Security";
 import { getRandomInitializedIdentityData, localIdentityData } from "~/stores/identityData";
 import { AuthenticationResponse, SocialId } from "~/main/RelmOAuthAPI";
 import { CameraSystem } from "~/ecs/plugins/camera/systems";

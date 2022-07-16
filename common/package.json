@@ -21,12 +21,14 @@
   "devDependencies": {
     "@jest/types": "27.5.1",
     "@types/three": "0.141.0",
+    "core-js-bundle": "^3.21.1",
     "jest": "27.5.1",
     "ts-jest": "27.1.4",
     "typescript": "^4.0.2",
     "yjs": "13.5.27"
   },
   "dependencies": {
+    "base64-arraybuffer-es6": "^0.6.0",
     "lib0": "0.2.51",
     "lodash.debounce": "4.0.8",
     "three": "0.141.0",

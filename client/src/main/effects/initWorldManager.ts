@@ -1,3 +1,4 @@
+import { Security } from "relm-common";
 import { Participant } from "types/identity";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import { WorldDoc } from "~/y-integration/WorldDoc";
@@ -7,7 +8,6 @@ import { Dispatch, State } from "../ProgramTypes";
 import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 import { AVConnection } from "~/av";
 import { PageParams } from "~/types";
-import { Security } from "~/identity/Security";
 
 export const initWorldManager =
   (

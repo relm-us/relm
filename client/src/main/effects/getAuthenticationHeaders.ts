@@ -1,10 +1,9 @@
-import type { AuthenticationHeaders } from "relm-common";
 import type { PageParams } from "~/types";
+import { AuthenticationHeaders, Security } from "relm-common";
 
 import { Dispatch } from "../ProgramTypes";
 
 import { participantId } from "~/identity/participantId";
-import { Security } from "~/identity/Security";
 
 export const getAuthenticationHeaders =
   (pageParams: PageParams, security: Security) => async (dispatch: Dispatch) => {

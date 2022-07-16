@@ -3,7 +3,7 @@ import type { DeviceIds } from "video-mirror";
 import type { Writable } from "svelte/store";
 import type { Appearance, SavedIdentityData } from "relm-common";
 
-import type { AuthenticationHeaders } from "relm-common";
+import type { AuthenticationHeaders, Security } from "relm-common";
 
 import type { WorldDoc } from "~/y-integration/WorldDoc";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
@@ -17,7 +17,6 @@ import type {
 import type { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 import type { Avatar } from "~/identity/Avatar";
 import type { IdentityData, Participant } from "~/types/identity";
-import { Security } from "~/identity/Security";
 
 export type State = {
   // initialization

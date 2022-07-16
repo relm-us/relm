@@ -1,18 +1,35 @@
 import * as base64 from "base64-arraybuffer-es6";
 
-const TextEncoder = window.TextEncoder;
+export type SecretMethods = {
+  getSecret: () => any,
+  setSecret: (secret : any) => void
+};
 
 // see https://github.com/PeculiarVentures/webcrypto-docs/blob/master/ECDSA.md
 const SECURITY_CONFIG = {
   name: "ECDSA",
   namedCurve: "P-384",
-  namedHash: "SHA-384",
+  namedHash: "SHA-384"
 };
 
-export type SecretMethods = {
-  getSecret: () => any;
-  setSecret: (secret: any) => void
-};
+const TextEncoder = globalThis.TextEncoder;
+
+async function getCrypto(): Promise<any> {
+  if (typeof window !== "undefined") {
+    // browser
+    if (!window.crypto.subtle) {
+      throw new Error(
+        `Unable to authenticate: please use a browser that ` +
+          `supports signing with public keys, such as Firefox or Chrome.`
+      );
+    }
+    return window.crypto;
+  } else {
+    // node
+    //@ts-ignore
+    return (await import("crypto")).webcrypto;
+  }
+}
 
 export class Security {
   secureId;
@@ -20,26 +37,21 @@ export class Security {
   secretMethods: SecretMethods;
 
   constructor(secretMethods: SecretMethods) {
-    if (!window.crypto.subtle) {
-      throw new Error(
-        `Unable to authenticate: please use a browser that ` +
-          `supports signing with public keys, such as Firefox or Chrome.`
-      );
-    }
-    
     this.secretMethods = secretMethods;
   }
 
   async getOrCreateSecret() {
+    const crypto = await getCrypto();
+
     if (!this.secret) {
-      const pair = await window.crypto.subtle.generateKey(
+      const pair = await crypto.subtle.generateKey(
         SECURITY_CONFIG,
         true, // can export
         ["sign", "verify"]
       );
       this.secret = {
-        pu: await window.crypto.subtle.exportKey("jwk", pair.publicKey),
-        pr: await window.crypto.subtle.exportKey("jwk", pair.privateKey),
+        pu: await crypto.subtle.exportKey("jwk", pair.publicKey),
+        pr: await crypto.subtle.exportKey("jwk", pair.privateKey),
       };
     }
     
@@ -47,16 +59,18 @@ export class Security {
   }
 
   async getOrCreateKeyPair() {
+    const crypto = await getCrypto();
     const secret = await this.getOrCreateSecret();
+
     return {
-      pu: await window.crypto.subtle.importKey(
+      pu: await crypto.subtle.importKey(
         "jwk",
         secret.pu,
         SECURITY_CONFIG,
         true,
         ["verify"]
       ),
-      pr: await window.crypto.subtle.importKey(
+      pr: await crypto.subtle.importKey(
         "jwk",
         secret.pr,
         SECURITY_CONFIG,
@@ -67,8 +81,10 @@ export class Security {
   }
 
   async exportPublicKey() {
+    const crypto = await getCrypto();
     const keypair = await this.getOrCreateKeyPair();
-    return await window.crypto.subtle.exportKey("jwk", keypair.pu);
+
+    return await crypto.subtle.exportKey("jwk", keypair.pu);
   }
 
   async publicKey() {
@@ -80,9 +96,10 @@ export class Security {
   }
 
   async sign(message) {
+    const crypto = await getCrypto();
     const encoded = new TextEncoder().encode(message);
     const privateKey = await this.privateKey();
-    const signatureArrayBuffer = await window.crypto.subtle.sign(
+    const signatureArrayBuffer = await crypto.subtle.sign(
       {
         name: SECURITY_CONFIG.name,
         hash: { name: SECURITY_CONFIG.namedHash },
@@ -98,11 +115,12 @@ export class Security {
   }
 
   async verify(message, signature) {
+    const crypto = await getCrypto();
     const encoded = new TextEncoder().encode(message);
     const publicKey = await this.publicKey();
     const signatureArrayBuffer = base64.decode(signature);
 
-    const result = await window.crypto.subtle.verify(
+    const result = await crypto.subtle.verify(
       {
         name: SECURITY_CONFIG.name,
         hash: { name: SECURITY_CONFIG.namedHash },

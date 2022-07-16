@@ -1,13 +1,7 @@
 {
   "include": [
-    "src", "tests"
+    "src"
   ],
-  "ts-node": {
-    "compilerOptions": {
-      "module": "es2020",
-      "target": "es2020"
-    }
-  },
   "compilerOptions": {
     "module": "es2020",
     "target": "es2020",
@@ -19,8 +13,7 @@
     "outDir": "dist",
     "baseUrl": "src",
     "rootDirs": [
-      "src",
-      "tests"
+      "src"
     ]
   }
 }

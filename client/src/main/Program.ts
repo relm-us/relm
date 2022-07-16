@@ -53,9 +53,9 @@ import { IdentityData, UpdateData } from "~/types";
 import { Oculus } from "~/ecs/plugins/html2d";
 import { getIdentityData } from "./effects/getIdentityData";
 import { saveIdentityData } from "./effects/saveIdentityData";
-import { Security } from "~/identity/Security";
 import { connectedAccount } from "~/stores/connectedAccount";
 import { permits } from "~/stores/permits";
+import { Security } from "~/../../common/dist";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -112,16 +112,11 @@ export function makeProgram(): Program {
 
         const security = new Security({
           getSecret: () => JSON.parse(localStorage.getItem("secret") ?? "null"),
-          setSecret: (secret) =>
-            localStorage.setItem("secret", JSON.stringify(secret)),
+          setSecret: secret => localStorage.setItem("secret", JSON.stringify(secret))
         });
 
         return [
-          { 
-            ...state,
-            pageParams: msg.pageParams,
-            security
-          },
+          { ...state, pageParams: msg.pageParams, security },
           getAuthenticationHeaders(msg.pageParams, security),
         ];
       }

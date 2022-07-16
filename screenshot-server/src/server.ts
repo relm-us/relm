@@ -1,35 +1,28 @@
 import express from "express";
 import cors from "cors";
-import * as middleware from "./middleware.js";
+import { v4 as uuidv4 } from "uuid";
+
+import { respondWithError } from "./utils/index.js";
 import * as routes from "./routes/index.js";
-import passportMiddleware from "./passportAuth.js";
-import { respondWithError, uuidv4 } from "./utils/index.js";
 
-export const app = express();
+import { SCREENSHOT_API_PORT } from "./config.js";
 
-// Automatically parse JSON body when received in REST requests
-app.use(express.json());
+const app = express();
 
 // Enable CORS pre-flight requests across the board
 // See https://expressjs.com/en/resources/middleware/cors.html#enabling-cors-pre-flight
 app.options("*", cors());
 
-app.use(passportMiddleware);
-
-// Courtesy page just to say we're a Relm web server
+// Courtesy page just to say we're a Relm screenshot server
 app.get("/", function (_req, res) {
-  res.send("Relm Server is OK");
+  res.send("Relm Screenshot Server is OK");
 });
 
-app.use("/admin", routes.admin);
-app.use("/asset", routes.asset);
-app.use("/auth", routes.auth);
-app.use("/invite", middleware.relmName(), routes.invite);
-app.use("/relm", middleware.relmName(), routes.relm);
-app.use("/relms", routes.relms);
+// routes
+app.use("/screenshot", routes.screenshot);
 
 // Error handling: catch-all for 404s
-app.use((req, res) => {
+app.use((_, res) => {
   respondWithError(res, `Not found`);
 });
 
@@ -51,3 +44,7 @@ app.use((error, req, res, next) => {
 function getRemoteIP(req) {
   return req.headers["x-forwarded-for"] || req.connection.remoteAddress;
 }
+
+app.listen(SCREENSHOT_API_PORT, () => {
+  console.log(`screenshot server listening on ${SCREENSHOT_API_PORT}`);
+});

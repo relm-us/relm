@@ -4,4 +4,3 @@ export { auth } from "./auth.js";
 export { invite } from "./invite.js";
 export { relm } from "./relm.js";
 export { relms } from "./relms.js";
-export { screenshot } from "./screenshot.js";

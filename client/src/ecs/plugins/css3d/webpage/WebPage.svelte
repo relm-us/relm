@@ -58,7 +58,7 @@
 
   function screenshot(url: string, size: Vector2) {
     return (
-      config.serverUrl +
+      config.serverScreenshotUrl +
       `/screenshot/${size.x}x${size.y}/${encodeURIComponent(url)}`
     );
   }
