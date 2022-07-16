@@ -1,5 +1,5 @@
-import * as express from 'express';
-import passport from 'passport';
+import * as express from "express";
+import passport from "passport";
 import { Strategy as PassportLocalStrategy } from "passport-local";
 import { Strategy as PassportGoogleStrategy } from "passport-google-oauth2";
 import { Strategy as PassportLinkedinStrategy } from "passport-linkedin-oauth2";
@@ -7,6 +7,14 @@ import { Strategy as PassportFacebookStrategy } from "passport-facebook";
 import { Strategy as PassportTwitterStrategy } from "passport-twitter-oauth2";
 
 import { Participant, SocialConnection, User } from "./db/index.js";
+import { FACEBOOK_CLIENT_ID, 
+  FACEBOOK_CLIENT_SECRET, 
+  GOOGLE_CLIENT_ID, 
+  GOOGLE_CLIENT_SECRET, 
+  LINKEDIN_CLIENT_ID, 
+  LINKEDIN_CLIENT_SECRET, 
+  TWITTER_CLIENT_ID, 
+  TWITTER_CLIENT_SECRET } from 'config.js';
 
 const passportMiddleware = express.Router();
 passportMiddleware.use(passport.initialize());
@@ -16,11 +24,6 @@ const wrapPassportSync = fn => ((...args) => {
   const done = args[args.length - 1];
   fn.apply(null, args).catch(done);
 });
-
-// Ensure all the variable names in the array exist in the process.env object.
-const ensureEnvVarsExist = (variables = []) => {
-  return !variables.some(v => !process.env[v]);
-}
 
 /*
   These passport strategies have the following goal.
@@ -119,10 +122,10 @@ async function handleOAuthPassport(socialId, req, email, profileId, done) {
 }
 
 // Google OAuth
-if (ensureEnvVarsExist(["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"])) {
+if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET) {
   passport.use(new PassportGoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    clientID: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
     callbackURL: "/auth/connect/google/callback",
     scope: ["email"],
     passReqToCallback: true
@@ -130,10 +133,10 @@ if (ensureEnvVarsExist(["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"])) {
 }
 
 // Linkedin
-if (ensureEnvVarsExist(["LINKEDIN_CLIENT_ID", "LINKEDIN_CLIENT_SECRET"])) {
+if (LINKEDIN_CLIENT_ID && LINKEDIN_CLIENT_SECRET) {
   passport.use(new PassportLinkedinStrategy({
-    clientID: process.env.LINKEDIN_CLIENT_ID,
-    clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
+    clientID: LINKEDIN_CLIENT_ID,
+    clientSecret: LINKEDIN_CLIENT_SECRET,
     callbackURL: "/auth/connect/linkedin/callback",
     scope: ["r_emailaddress", "r_liteprofile"],
     passReqToCallback: true
@@ -141,10 +144,10 @@ if (ensureEnvVarsExist(["LINKEDIN_CLIENT_ID", "LINKEDIN_CLIENT_SECRET"])) {
 }
 
 // Facebook
-if (ensureEnvVarsExist(["FACEBOOK_CLIENT_ID", "FACEBOOK_CLIENT_SECRET"])) {
+if (FACEBOOK_CLIENT_ID && FACEBOOK_CLIENT_SECRET) {
   passport.use(new PassportFacebookStrategy({
-    clientID: process.env.FACEBOOK_CLIENT_ID,
-    clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+    clientID: FACEBOOK_CLIENT_ID,
+    clientSecret: FACEBOOK_CLIENT_SECRET,
     callbackURL: "/auth/connect/facebook/callback",
     profileFields: ["id", "email"],
     passReqToCallback: true
@@ -160,10 +163,10 @@ if (ensureEnvVarsExist(["FACEBOOK_CLIENT_ID", "FACEBOOK_CLIENT_SECRET"])) {
   }));
 }
 
-if (ensureEnvVarsExist(["TWITTER_CLIENT_ID", "TWITTER_CLIENT_SECRET"])) {
+if (TWITTER_CLIENT_ID && TWITTER_CLIENT_SECRET) {
   passport.use(new PassportTwitterStrategy({
-    clientID: process.env.TWITTER_CLIENT_ID,
-    clientSecret: process.env.TWITTER_CLIENT_SECRET,
+    clientID: TWITTER_CLIENT_ID,
+    clientSecret: TWITTER_CLIENT_SECRET,
     callbackURL: "/auth/connect/twitter/callback",
     includeEmail: true,
     passReqToCallback: true
