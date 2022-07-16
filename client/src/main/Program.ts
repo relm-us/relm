@@ -55,6 +55,7 @@ import { getIdentityData } from "./effects/getIdentityData";
 import { saveIdentityData } from "./effects/saveIdentityData";
 import { Security } from "~/identity/Security";
 import { connectedAccount } from "~/stores/connectedAccount";
+import { permits } from "~/stores/permits";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -171,11 +172,12 @@ export function makeProgram(): Program {
         exists(msg.assetsMax, "assetsMax");
         exists(msg.twilioToken, "twilioToken");
 
+        permits.set(msg.permits);
+
         return [
           {
             ...state,
             overrideParticipantName: msg.overrideParticipantName,
-            permits: msg.permits,
             relmDocId: msg.relmDocId,
             entitiesMax: msg.entitiesMax,
             assetsMax: msg.assetsMax,
@@ -733,7 +735,6 @@ export function makeProgram(): Program {
             {
               dispatch,
               ecsWorld: state.ecsWorld,
-              permits: state.permits,
               state,
             },
           ];

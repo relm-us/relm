@@ -1,6 +1,6 @@
 <script lang="ts">
   import CircleButton from "~/ui/lib/CircleButton";
-  import IoMdLogIn from "svelte-icons/io/IoMdLogIn.svelte";
+  import IoMdExit from 'svelte-icons/io/IoMdExit.svelte'
   import { worldManager } from "~/world";
 
   async function logout() {
@@ -11,7 +11,7 @@
 <div>
   <CircleButton
     on:click={logout}
-    Icon={IoMdLogIn}
+    Icon={IoMdExit}
   />
 </div>
 

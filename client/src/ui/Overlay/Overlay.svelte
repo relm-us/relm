@@ -43,9 +43,9 @@
   import SignInWindow from "../ButtonControls/ConnectionButton/SignInWindow.svelte";
   import LogoutButton from "../ButtonControls/ConnectionButton/LogoutButton.svelte";
   import { connectedAccount } from "~/stores/connectedAccount";
+  import { permits } from "~/stores/permits";
 
   export let dispatch;
-  export let permits;
   export let state: State;
   export let tr = {};
 
@@ -55,7 +55,7 @@
   const _ = (phrase, key) => tr[key] || tr[phrase] || phrase;
 
   let buildMode = false;
-  $: buildMode = permits.includes("edit") && $worldUIMode === "build";
+  $: buildMode = $permits.includes("edit") && $worldUIMode === "build";
 
   const toPlayMode = () => {
     globalEvents.emit("switch-mode", "play");
@@ -85,7 +85,7 @@
       {/if}
 
       {#if $openPanel === "modify"}
-        <ModifyPanel on:minimize={toPlayMode} {permits} />
+        <ModifyPanel on:minimize={toPlayMode} />
       {/if}
 
       {#if $openPanel === "actions"}
@@ -172,12 +172,12 @@
       <Tooltip tip={_("Change how you look", "avatar_setup")} top>
         <AvatarSetupButton />
       </Tooltip>
-      {#if permits.includes("invite")}
+      {#if $permits.includes("invite")}
         <Tooltip
           tip={_("Invite someone to be with you here", "invite_someone")}
           top
         >
-          <InviteButton {permits} />
+          <InviteButton />
         </Tooltip>
       {/if}
 

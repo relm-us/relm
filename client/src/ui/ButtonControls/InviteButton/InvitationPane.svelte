@@ -4,8 +4,7 @@
   import TextInput from "~/ui/lib/TextInput";
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import { worldManager } from "~/world";
-
-  export let permits;
+  import { permits } from "~/stores/permits";
 
   let withEditPermission = false;
   let withInvitePermission = false;
@@ -41,7 +40,7 @@
     <input value={inviteUrl} placeholder="Loading ..." on:focus={selectUrl} />
   </div>
   <r-switches>
-    {#if permits.includes("edit")}
+    {#if $permits.includes("edit")}
       <div>
         <span>Allow Build Mode?</span>
         <ToggleSwitch
@@ -51,7 +50,7 @@
         />
       </div>
     {/if}
-    {#if permits.includes("invite")}
+    {#if $permits.includes("invite")}
       <div>
         <span>Allow Inviting Others?</span>
         <ToggleSwitch

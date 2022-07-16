@@ -31,7 +31,6 @@ export type State = {
 
   // relm metadata
   relmDocId?: string; // server-assigned UUID for the relm
-  permits?: string[];
   assetsMax?: number;
   assetsCount?: number;
   entitiesMax?: number;

@@ -87,6 +87,7 @@ import { Collider2VisibleSystem } from "~/ecs/plugins/collider-visible/systems";
 import { globalEvents } from "~/events";
 import { advancedEdit } from "~/stores/advancedEdit";
 import { connectedAccount } from "~/stores/connectedAccount";
+import { permits } from "~/stores/permits";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -751,7 +752,16 @@ export class WorldManager {
 
     // If we login, ensure we are connected.
     if (data && data.status === "success") {
+      // Update permits
+      try {
+        const { permits: relmPermits } = await this.api.getPermitsAndMeta();
+        permits.set(relmPermits);
+      } catch (error) {
+        this.dispatch({ id: "error", message: error.message });
+        return null;
+      }
       connectedAccount.set(true);
+      
     }
 
     return data;
@@ -785,6 +795,14 @@ export class WorldManager {
 
     // If we login, ensure we are connected.
     if (data && data.status === "success") {
+      // Update permits
+      try {
+        const { permits: relmPermits } = await this.api.getPermitsAndMeta();
+        permits.set(relmPermits);
+      } catch (error) {
+        this.dispatch({ id: "error", message: error.message });
+        return null;
+      }
       connectedAccount.set(true);
     }
 

@@ -6,7 +6,6 @@
   import CopyPasteListener from "./CopyPasteListener";
 
   export let world;
-  export let permits;
 
   import * as arrowKeys from "./handlers/arrowKeys";
   import * as debugKey from "./handlers/debugKey";
@@ -21,6 +20,8 @@
   import * as tabKey from "./handlers/tabKey";
   import * as undoRedoKeys from "./handlers/undoRedoKeys";
 
+  import { permits } from "~/stores/permits";
+
   function onKeydown(event) {
     if (isInputEvent(event)) return;
 
@@ -34,7 +35,7 @@
     pauseKey.onKeydown(event);
     shiftKey.onKeydown(event);
     spaceKey.onKeydown(event);
-    if (permits.includes("edit")) {
+    if ($permits.includes("edit")) {
       tabKey.onKeydown(event);
     }
     undoRedoKeys.onKeydown(event);
