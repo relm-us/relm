@@ -45,6 +45,8 @@ if (typeof persistenceDir === "string") {
     },
     writeState: async (docName, ydoc) => {},
   };
+} else {
+  console.warn("Missing YPERSISTENCE environment variable. y-websocket data will NOT be saved.");
 }
 
 /**
