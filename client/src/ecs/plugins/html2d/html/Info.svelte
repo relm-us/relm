@@ -127,7 +127,7 @@
           contenteditable="true"
         />
       {:else}
-        <r-row>
+        <r-row data-pointer-interact="true">
           {#if notEmpty(content)}
             <icon on:click={toggleExpanded}>
               {#if expanded}
@@ -248,5 +248,9 @@
     height: 24px;
     color: var(--fg-color, rgba(221, 221, 221, 0.9));
     cursor: pointer;
+  }
+  icon > :global(*) {
+    /* Don't let SVG take pointer events */
+    pointer-events: none;
   }
 </style>
