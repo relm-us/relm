@@ -1,14 +1,14 @@
 <script lang="ts">
+  import { get } from "svelte/store";
+
   import { worldUIMode } from "~/stores/worldUIMode";
 
+  import { getCanonicalAction } from "./comboTable";
   import { isInputEvent } from "./isInputEvent";
 
   import PointerListener from "./PointerListener";
   import WheelListener from "./WheelListener";
   import CopyPasteListener from "./CopyPasteListener";
-
-  export let world;
-  export let permits;
 
   import * as arrowKeys from "./handlers/arrowKeys";
   import * as debugKey from "./handlers/debugKey";
@@ -22,8 +22,9 @@
   import * as spaceKey from "./handlers/spaceKey";
   import * as tabKey from "./handlers/tabKey";
   import * as undoRedoKeys from "./handlers/undoRedoKeys";
-  import { getCanonicalAction } from "./comboTable";
-  import { get } from "svelte/store";
+
+  export let world;
+  export let permits;
 
   arrowKeys.register();
   debugKey.register();
