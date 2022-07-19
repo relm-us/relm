@@ -1,12 +1,8 @@
 import { globalEvents } from "~/events";
+import { registerAction } from "../comboTable";
 
-export function onKeydown(event) {
-  if (event.key === "Backspace" || event.key === "Delete") {
-    event.preventDefault();
-
-    // "delete" event includes key repetition events
-    globalEvents.emit("delete");
-  }
+export function register() {
+  registerAction(["play"], ["backspace", "delete"], (pressed) => {
+    pressed && globalEvents.emit("delete");
+  });
 }
-
-export function onKeyup(event) {}
