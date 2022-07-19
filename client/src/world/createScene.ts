@@ -3,7 +3,7 @@ import { Scene, FogExp2, Color, AmbientLight, HemisphereLight } from "three";
 export function createScene() {
   const scene = new Scene();
   scene.background = new Color(0xaec7ed);
-  scene.name = "scene";
+  scene.name = "Relm Scene";
 
   scene.fog = new FogExp2(0xe5e0dd, 0.022);
 
