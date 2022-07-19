@@ -5,8 +5,14 @@ import { StateComponent, StringType, RefType } from "~/ecs/base";
 
 export class AssetLoaded extends StateComponent {
   kind: "TEXTURE" | "GLTF";
+
+  // if an image, then Texture (for Shape); if a glTF, then GLTF (for Model)
   value: Texture | GLTF;
+
+  // something to uniquely identify the asset, such as its URL
   cacheKey: string;
+
+  // null if no error; otherwise, an explanation of the error
   error: string;
 
   static props = {

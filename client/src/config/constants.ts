@@ -68,3 +68,5 @@ export const UNIQUE_COLOR_PALETTE = [
 
 // Feature Flag: enable or disable audio/video capabilities (e.g. Twilio)
 export const AV_ENABLED: boolean = true;
+
+export const ERROR_GLTF = "/diamond.glb";
