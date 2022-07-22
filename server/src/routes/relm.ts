@@ -4,6 +4,7 @@ import * as express from "express";
 import cors from "cors";
 import mkConscript from "conscript";
 import * as Y from "yjs";
+import { nanoid } from "nanoid";
 
 import {
   exportWorldDoc,
@@ -12,7 +13,13 @@ import {
   YComponents,
   YEntities,
   YEntity,
-  YValues,
+  jsonToYComponents,
+  jsonToYMeta,
+  jsonToYChildren,
+  yComponentToJSON,
+  yComponentsToJSON,
+  jsonToYEntity,
+  yEntityToJSON,
 } from "relm-common";
 
 import * as config from "../config.js";
@@ -337,12 +344,23 @@ relm.post(
   })
 );
 
+type EntityComponentData = {
+  [component: string]: {
+    [property: string]: any
+  }
+};
+
 type Action = {
-  type: "setProperty";
+  type: "updateEntity";
   entity: string;
-  component: string;
-  property: string;
-  value: any;
+  components: EntityComponentData;
+} | {
+  type: "createEntity",
+  prefabId: string,
+  components: EntityComponentData;
+} | {
+  type: "deleteEntity",
+  entity: string
 };
 
 type Possibility = {
@@ -516,23 +534,58 @@ async function setVariable(doc, variables, relmId, name, value) {
 
 function applyActions(doc: Y.Doc, actions: Action[]) {
   const errors = [];
-  for (let { type, entity, component, property, value } of actions || []) {
-    switch (type) {
-      case "setProperty": {
-        errors.push(...setProperty(doc, entity, component, property, value));
+  for (const data of actions || []) {
+    switch (data.type) {
+      case "createEntity":
+        errors.push(...createEntity(doc, data.components));
+        break;
+      case "deleteEntity":
+        errors.push(...deleteEntity(doc, data.entity));
+        break;
+      case "updateEntity": {
+        errors.push(...setProperties(doc, data.entity, data.components));
         break;
       }
     }
+
+    if (errors.length > 0) {
+      return errors;
+    }
   }
-  return errors;
+  return [];
 }
 
-function setProperty(
+function createEntity(
+  doc: Y.Doc,
+  components: EntityComponentData
+) {
+  const entities = doc.getArray("entities") as YEntities;
+  
+  const entity = {
+    ...components,
+    id: nanoid(),
+    name: "",
+    parent: null,
+    children: [],
+    meta: {}
+  };
+  const serializedEntity = jsonToYEntity(entity);
+
+  entities.push([ serializedEntity ]);
+  return [];
+}
+
+function deleteEntity(
+  doc: Y.Doc,
+  entityId: string
+) {
+  return [];
+}
+
+function setProperties(
   doc: Y.Doc,
   entityId: string,
-  componentName: string,
-  propertyName: string,
-  value: any
+  components: EntityComponentData
 ) {
   const errors = [];
 
@@ -547,19 +600,19 @@ function setProperty(
     (yentity: YEntity) => yentity.get("id") === entityId
   );
   if (entity) {
-    const components = entity.get("components") as YComponents;
-    if (components) {
-      const component = findInYArray(
-        components,
-        (ycomponent) => ycomponent.get("name") === componentName
-      );
-      if (component) {
-        const values = component.get("values") as YValues;
-        values.set(propertyName, value);
-      } else {
-        errorNotify(
-          `setProperty: component not found ${entityId}, '${componentName}'`
+    const entityComponents = entity.get("components") as YComponents;
+    if (entityComponents) {
+      for (const componentName in components) {
+        const component = findInYArray(
+          entityComponents,
+          (ycomponent) => ycomponent.get("name") === componentName
         );
+        
+        if (component) {
+          errorNotify(
+            `setProperty: component not found ${entityId}, '${componentName}'`
+          );
+        }
       }
     } else {
       errorNotify(`setProperty: components not found ${entityId}`);
