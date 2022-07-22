@@ -20,6 +20,7 @@ import {
   yComponentsToJSON,
   jsonToYEntity,
   yEntityToJSON,
+  yIdToString,
 } from "relm-common";
 
 import * as config from "../config.js";
@@ -579,7 +580,21 @@ function deleteEntity(
   doc: Y.Doc,
   entityId: string
 ) {
-  return [];
+  const entities = doc.getArray("entities") as YEntities;
+  const errors = [];
+  
+  for (let i = 0; i < entities.length; i++) {
+    const entity = entities.get(i);
+    const iteratedEntityId = entity.get("id");
+
+    if (iteratedEntityId === entityId) {
+      entities.delete(i);
+      return errors;
+    }
+  }
+
+  errors.push(`No entity by the id ${entityId} could be found.`);
+  return errors;
 }
 
 function setProperties(
