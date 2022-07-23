@@ -22,6 +22,7 @@ import {
   yEntityToJSON,
   yIdToString,
   YValues,
+  YComponent,
 } from "relm-common";
 
 import * as config from "../config.js";
@@ -555,13 +556,26 @@ function applyActions(doc: Y.Doc, actions: Action[]) {
 type ActionResultCreateEntity = {
   type: "createEntity",
   status: "success",
-  entityId: string
+  entity: string
+} | {
+  type: "createEntity",
+  status: "error",
+  reason: string
 };
 
 function createEntity(
   doc: Y.Doc,
   components: EntityComponentData
 ): ActionResultCreateEntity {
+  // Ensure components passed are valid
+  if (typeof components !== "object") {
+    return {
+      type: "createEntity",
+      status: "error",
+      reason: "Invalid components provided."
+    };
+  }
+
   const entities = doc.getArray("entities") as YEntities;
   
   const entity = {
@@ -579,7 +593,7 @@ function createEntity(
   return {
     type: "createEntity",
     status: "success",
-    entityId: entity.id
+    entity: entity.id
   };
 }
 
@@ -632,6 +646,15 @@ function setProperties(
   entityId: string,
   componentsToSet: EntityComponentData
 ): ActionResultSetProperties {
+  // Ensure components passed are valid
+  if (typeof componentsToSet !== "object") {
+    return {
+      type: "updateEntity",
+      status: "error",
+      reason: "Invalid components provided."
+    };
+  }
+
   const entities = doc.getArray("entities") as YEntities;
   const entity = findInYArray(
     entities,
@@ -648,27 +671,56 @@ function setProperties(
   if (!entity.has("components")) {
     entity.set("components", new Y.Map());
   }
-  const entityComponents = yComponentsToJSON(entity.get("components") as YComponents);
+  const entityComponents = entity.get("components") as YComponents;
 
   // Set components
-  for (const componentName in componentsToSet) {
-    if (!entityComponents[componentName]) {
-      entityComponents[componentName] = {};
-    }
-    const component = entityComponents[componentName];
+  doc.transact(() => {
+    for (const componentName in componentsToSet) {
+      // Retrieve the index of the component in the components array.
+      let componentIndex = -1;
+      let componentValues: YValues;
+      for (let i = 0; i < entityComponents.length; i++) {
+        if (entityComponents.get(i).get("name") === componentName) {
+          componentIndex = i;
+          componentValues = entityComponents.get(i).get("values") as YValues;
+          break;
+        }
+      }
 
-    for (const propertyName in componentsToSet[componentName]) {
-      const value = componentsToSet[componentName][propertyName];
+      // Do we need to delete the component?
+      if (componentsToSet[componentName] === null) {
+        if (componentIndex !== -1) {
+          entityComponents.delete(componentIndex);
+        }
+        return;
+      }
 
-      if (value !== null) {
-        component[propertyName] = value;
-      } else {
-        delete component[propertyName];
+      if (componentIndex === -1) {
+        // Create values map to be used for creating the actual component later.
+        // Store all components to be set in this map.
+        componentValues = new Y.Map();
+      }
+      
+      // We are updating the properties of the component.
+      for (const propertyName in componentsToSet[componentName]) {
+        const value = componentsToSet[componentName][propertyName];
+  
+        if (value !== null) {
+          componentValues.set(propertyName, value);
+        } else {
+          componentValues.delete(propertyName);
+        }
+      }
+
+      // Do we need to add this component? (if it never existed and we had to create one)
+      if (componentIndex === -1) {
+        const component: YComponent = new Y.Map();
+        component.set("name", componentName);
+        component.set("values", componentValues);
+        entityComponents.push([ component ]);
       }
     }
-  }
-
-  entity.set("components", jsonToYComponents(entityComponents));
+  });
 
   return {
     type: "updateEntity",
