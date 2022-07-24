@@ -114,7 +114,7 @@ importers:
       deep-diff: 1.0.2
       eventemitter3: 4.0.7
       lodash: 4.17.21
-      mediasoup-client: github.com/versatica/mediasoup-client/2b359a276ceec3c1a7ff2f8c663fa7a7082f0ce8
+      mediasoup-client: github.com/versatica/mediasoup-client/d510a4d3e8a76a67f4b6ef1a1287c1a308ee3c38
       nanoid: 3.3.4
       postprocessing: 6.28.3_three@0.141.0
       protoo-client: 4.0.6
@@ -269,7 +269,7 @@ importers:
       minimist: ^1.2.6
       moment: ^2.27.0
       multer: ^1.4.2
-      nanoid: ^3.1.20
+      nanoid: ^3.3.4
       node-fetch: ^3.2.6
       object.fromentries: ^2.0.5
       pg: ^8.2.1
@@ -16539,8 +16539,8 @@ packages:
     resolution: {integrity: sha512-JZxotl7SxAJH0j7dN4pxsTV6ZLXoLdGME+PsjkL/DaBrVryK9kTGq06GfKrwcSOqypP+fdXGoCHE36b99fWVoA==}
     dev: true
 
-  github.com/versatica/mediasoup-client/2b359a276ceec3c1a7ff2f8c663fa7a7082f0ce8:
-    resolution: {tarball: https://codeload.github.com/versatica/mediasoup-client/tar.gz/2b359a276ceec3c1a7ff2f8c663fa7a7082f0ce8}
+  github.com/versatica/mediasoup-client/d510a4d3e8a76a67f4b6ef1a1287c1a308ee3c38:
+    resolution: {tarball: https://codeload.github.com/versatica/mediasoup-client/tar.gz/d510a4d3e8a76a67f4b6ef1a1287c1a308ee3c38}
     name: mediasoup-client
     version: 3.6.54
     engines: {node: '>=10'}
