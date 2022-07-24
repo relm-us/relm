@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "11b5364a-0518-40e7-87c0-7b1f0745db18",
+		"_postman_id": "cae134f4-d572-45c8-94a9-a109a23e61b0",
 		"name": "Relm Server",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -618,7 +618,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"myrelm\",\n    \"actions\": [\n        {\n          \"type\": \"setProperty\",\n          \"entity\": \"Stq3SsT0TnkzAbhALNM47\",\n          \"component\": \"Transform\",\n          \"property\": \"position\",\n          \"value\": [ 0, 0.6, -2.7 ]\n        }\n    ]\n}",
+							"raw": "{\n    \"relmName\": \"myrelm\",\n    \"actions\": [\n        {\n          \"type\": \"updateEntity\",\n          \"entity\": \"\",\n          \"components\": {\n              \"Transform\": {\n                  \"position\": [ 0, 0, 0 ]\n              }\n          }\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
