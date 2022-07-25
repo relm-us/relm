@@ -315,10 +315,6 @@ import ConnectionSubmitInput from "./components/ConnectionSubmitInput.svelte";
 
   // If on Mobile, make the submit text smaller
   @media only screen and (max-width: 450px) {
-    .submit span {
-      font-size: 2.5em;
-    }
-
     r-group {
       height: 25%;
     }
