@@ -776,7 +776,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"\",\n    \"publicPermits\": [],\n    \"clonePermitRequired\": \"read\",\n    \"clonePermitAssigned\": \"edit\"\n}",
+							"raw": "{\n    \"relmName\": \"myrelm\",\n    \"publicPermits\": [],\n    \"clonePermitRequired\": \"read\",\n    \"clonePermitAssigned\": \"edit\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
