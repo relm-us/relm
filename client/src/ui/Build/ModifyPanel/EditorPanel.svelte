@@ -5,8 +5,7 @@
   import { worldManager } from "~/world";
   import EntityComponents from "./EntityComponents.svelte";
   import AdminAddToLibrary from "./AdminAddToLibrary.svelte";
-
-  export let permits;
+  import { permits } from "~/stores/permits";
 
   let entity;
   $: $selectedEntities, (entity = worldManager.selection.getFirst());
@@ -34,7 +33,7 @@
       <div style="margin-bottom:8px" />
       <Button on:click={debugEntity}>Debug in Console</Button>
     </toolbar>
-    {#if permits.includes("admin")}
+    {#if $permits.includes("admin")}
       <AdminAddToLibrary />
     {/if}
   {:else}

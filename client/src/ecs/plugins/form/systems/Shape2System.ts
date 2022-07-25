@@ -35,6 +35,7 @@ export class Shape2System extends System {
   update() {
     this.queries.modified.forEach((entity) => {
       this.remove(entity);
+      this.removeTexture(entity);
     });
     this.queries.modifiedAsset.forEach((entity) => {
       this.removeTexture(entity);

@@ -1,12 +1,10 @@
 import type {
-  Appearance,
   DecoratedECSWorld,
-  Equipment,
   Participant,
   UpdateData,
 } from "~/types";
 
-import { WebsocketProvider } from "relm-common";
+import { WebsocketProvider, Appearance, Equipment } from "relm-common";
 
 import { participantId } from "./participantId";
 

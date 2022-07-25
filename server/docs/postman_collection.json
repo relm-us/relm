@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relms\": [\"default\", \"test\"]\n}",
+							"raw": "{\n    \"relms\": []\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -30,6 +30,109 @@
 							"path": [
 								"auth",
 								"permissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Connect (Email/Password)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"\",\r\n    \"password\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/auth/connect/local/signin",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"auth",
+								"connect",
+								"local",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign Up (Email/Password)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"\",\r\n    \"password\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/auth/connect/local/signup",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"auth",
+								"connect",
+								"local",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Set Identity",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"identity\": {\r\n        \"name\": \"\",\r\n        \"color\": \"#ffffff\",\r\n        \"showVideo\": true,\r\n        \"showAudio\": true,\r\n        \"status\": \"idle\",\r\n        \"appearance\": {\r\n            \"genderSlider\": 0,\r\n            \"widthSlider\": 0,\r\n            \"beard\": false,\r\n            \"belt\": false,\r\n            \"hair\": \"bald\",\r\n            \"top\": 0,\r\n            \"bottom\": 0,\r\n            \"shoes\": 0,\r\n            \"skinColor\": \"#ffffff\",\r\n            \"hairColor\": \"#ffffff\",\r\n            \"topColor\": \"#ffffff\",\r\n            \"bottomColor\": \"#ffffff\",\r\n            \"beltColor\": \"#ffffff\",\r\n            \"shoeColor\": \"#ffffff\"\r\n        }\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{serverUrl}}/auth/identity",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"auth",
+								"identity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Identity",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{serverUrl}}/auth/identity",
+							"host": [
+								"{{serverUrl}}"
+							],
+							"path": [
+								"auth",
+								"identity"
 							]
 						}
 					},
@@ -481,7 +584,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"myrelm\"\n}",
+							"raw": "{\n    \"relmName\": \"\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -646,7 +749,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"myrelm\"\n}",
+							"raw": "{\n    \"relmName\": \"\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -673,7 +776,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"myrelm\"\n}",
+							"raw": "{\n    \"relmName\": \"\",\n    \"publicPermits\": [],\n    \"clonePermitRequired\": \"read\",\n    \"clonePermitAssigned\": \"edit\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

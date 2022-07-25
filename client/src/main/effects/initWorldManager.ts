@@ -1,3 +1,4 @@
+import { Security } from "relm-common";
 import { Participant } from "types/identity";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import { WorldDoc } from "~/y-integration/WorldDoc";
@@ -17,7 +18,8 @@ export const initWorldManager =
     pageParams: PageParams,
     relmDocId: string,
     avConnection: AVConnection,
-    participants: Map<string, Participant>
+    participants: Map<string, Participant>,
+    security: Security
   ) =>
   async (dispatch: Dispatch) => {
     await worldManager.init(
@@ -29,7 +31,8 @@ export const initWorldManager =
       pageParams,
       relmDocId,
       avConnection,
-      participants
+      participants,
+      security
     );
     dispatch({ id: "didInitWorldManager" });
   };

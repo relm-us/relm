@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BinaryGender } from "~/types";
+  import type { BinaryGender } from "relm-common";
 
   import PageOverlay from "~/ui/lib/PageOverlay";
   import { getDefaultAppearance } from "~/identity/Avatar/appearance";

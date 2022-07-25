@@ -1,14 +1,23 @@
 import { uuidv4 } from "~/utils/uuid";
 
 const ID_KEY = "participantId";
+const ID_KEY_DEPRECATED = "secureId";
 
-export const participantId: string = (() => {
+function getParticipantId() {
   let id =
     localStorage.getItem(ID_KEY) ??
-    localStorage.getItem("secureId"); /* deprecated */
+    localStorage.getItem(ID_KEY_DEPRECATED);
   if (!id) {
     id = uuidv4();
     localStorage.setItem(ID_KEY, id);
   }
   return id;
-})();
+}
+
+export let participantId: string = getParticipantId();
+
+export const destroyParticipantId = () => {
+  localStorage.removeItem(ID_KEY);
+  localStorage.removeItem(ID_KEY_DEPRECATED);
+  participantId = getParticipantId();
+};

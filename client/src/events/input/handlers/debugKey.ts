@@ -1,12 +1,8 @@
 import { debugMode } from "~/stores/debugMode";
+import { registerAction } from "../comboTable";
 
-export function onKeydown(event) {
-  if (event.key.toLowerCase() === "d") {
-    if (event.ctrlKey || event.metaKey) {
-      event.preventDefault();
-      debugMode.update(($mode) => !$mode);
-    }
-  }
+export function register() {
+  registerAction(["play"], ["C d", "M d"], (pressed) => {
+    pressed && debugMode.update(($mode) => !$mode);
+  });
 }
-
-export function onKeyup(event) {}

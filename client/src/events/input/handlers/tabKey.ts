@@ -1,11 +1,10 @@
 import { globalEvents } from "~/events";
+import { registerAction } from "../comboTable";
 
-export function onKeydown(event) {
-  if (event.key === "Tab") {
-    event.preventDefault();
-
-    globalEvents.emit("switch-mode");
-  }
+export function register() {
+  registerAction(["play", "build"], ["tab"], (pressed, options) => {
+    options.permits.includes("edit") &&
+      pressed &&
+      globalEvents.emit("switch-mode");
+  });
 }
-
-export function onKeyup(event) {}

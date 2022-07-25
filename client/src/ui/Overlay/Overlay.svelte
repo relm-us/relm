@@ -5,6 +5,7 @@
   import VideoButton from "~/ui/ButtonControls/VideoButton";
   import AvatarSetupButton from "~/ui/ButtonControls/AvatarSetupButton";
   import ShareScreenButton from "~/ui/ButtonControls/ShareScreenButton";
+  import { SignInButton } from "~/ui/ButtonControls/ConnectionButton";
   import InviteButton from "~/ui/ButtonControls/InviteButton";
   import ChatButton from "~/ui/Chat/ChatButton.svelte";
   import Button from "~/ui/lib/Button";
@@ -39,17 +40,22 @@
   import { selectedEntities } from "~/stores/selection";
   import { showCenterButtons } from "~/stores/showCenterButtons";
   import { AV_ENABLED } from "~/config/constants";
+  import SignInWindow from "../ButtonControls/ConnectionButton/SignInWindow.svelte";
+  import LogoutButton from "../ButtonControls/ConnectionButton/LogoutButton.svelte";
+  import { connectedAccount } from "~/stores/connectedAccount";
+  import { permits } from "~/stores/permits";
 
   export let dispatch;
-  export let permits;
   export let state: State;
   export let tr = {};
+
+  let signinEnabled = false;
 
   // i18n translations available, if passed in
   const _ = (phrase, key) => tr[key] || tr[phrase] || phrase;
 
   let buildMode = false;
-  $: buildMode = permits.includes("edit") && $worldUIMode === "build";
+  $: buildMode = $permits.includes("edit") && $worldUIMode === "build";
 
   const toPlayMode = () => {
     globalEvents.emit("switch-mode", "play");
@@ -79,7 +85,7 @@
       {/if}
 
       {#if $openPanel === "modify"}
-        <ModifyPanel on:minimize={toPlayMode} {permits} />
+        <ModifyPanel on:minimize={toPlayMode} />
       {/if}
 
       {#if $openPanel === "actions"}
@@ -166,18 +172,35 @@
       <Tooltip tip={_("Change how you look", "avatar_setup")} top>
         <AvatarSetupButton />
       </Tooltip>
-      {#if permits.includes("invite")}
+      {#if $permits.includes("invite")}
         <Tooltip
           tip={_("Invite someone to be with you here", "invite_someone")}
           top
         >
-          <InviteButton {permits} />
+          <InviteButton />
         </Tooltip>
+      {/if}
+
+      {#if $connectedAccount}
+        <Tooltip
+          tip={_("Logout", "logout")}
+          top>
+            <LogoutButton />
+        </Tooltip>
+      {:else}
+        <Tooltip
+        tip={_("Connect your account!", "signin_button")}
+        top>
+          <SignInButton bind:enabled={signinEnabled} />
+      </Tooltip>
       {/if}
     </play-buttons>
   </overlay-center>
 {/if}
 
+{#if signinEnabled}
+  <SignInWindow bind:enabled={signinEnabled} {dispatch} />
+{/if}
 <Chat />
 
 <!-- The virtual world! -->

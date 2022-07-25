@@ -1,3 +1,4 @@
+import type { Equipment } from "relm-common";
 import type { Avatar } from ".";
 
 import { Vector3, Quaternion } from "three";
@@ -5,7 +6,7 @@ import { Vector3, Quaternion } from "three";
 import { BoneAttach } from "~/ecs/plugins/bone-attach";
 import { Item } from "~/ecs/plugins/item";
 
-import { AvatarEntities, DecoratedECSWorld, Equipment } from "~/types";
+import { AvatarEntities, DecoratedECSWorld } from "~/types";
 import { Entity } from "~/ecs/base";
 import { makeEntity } from "~/prefab/makeEntity";
 import { Asset, Transform } from "~/ecs/plugins/core";

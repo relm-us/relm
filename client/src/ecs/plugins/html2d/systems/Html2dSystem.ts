@@ -1,4 +1,4 @@
-import { Object3D, Vector3 } from "three";
+import { Vector3 } from "three";
 
 import { System, Groups, Not, Entity, Modified } from "~/ecs/base";
 import { Presentation, Object3DRef, Transform } from "~/ecs/plugins/core";
@@ -30,8 +30,6 @@ export class Html2dSystem extends System {
   }
 
   update(delta) {
-    const vb = this.perspective.visibleBounds;
-
     this.queries.new.forEach((entity) => {
       this.build(entity);
     });

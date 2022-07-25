@@ -1,10 +1,8 @@
 import { globalEvents } from "~/events";
+import { registerAction } from "../comboTable";
 
-export function onKeydown(event) {
-  if (event.key === "Escape") {
-    // "delete" event includes key repetition events
-    globalEvents.emit("escape");
-  }
+export function register() {
+  registerAction(["play"], ["escape"], (pressed) => {
+    pressed && globalEvents.emit("escape");
+  });
 }
-
-export function onKeyup(event) {}

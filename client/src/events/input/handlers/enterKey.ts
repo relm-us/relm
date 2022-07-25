@@ -1,12 +1,11 @@
 import { chatOpen, chatFocused } from "~/stores/chat";
+import { registerAction } from "../comboTable";
 
-export function onKeydown(event) {
-  if (event.key === "Enter" || event.key === "Return") {
-    event.preventDefault();
-
-    chatOpen.set(true);
-    chatFocused.set(true);
-  }
+export function register() {
+  registerAction(["play"], ["enter", "return"], (pressed) => {
+    if (pressed) {
+      chatOpen.set(true);
+      chatFocused.set(true);
+    }
+  });
 }
-
-export function onKeyup(event) {}

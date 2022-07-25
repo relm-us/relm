@@ -7,7 +7,6 @@ import { participantId } from "~/identity/participantId";
 
 export const getAuthenticationHeaders =
   (pageParams: PageParams, security: Security) => async (dispatch: Dispatch) => {
-
     const pubkey = await security.exportPublicKey();
     const signature = await security.sign(participantId);
 
