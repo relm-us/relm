@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "cae134f4-d572-45c8-94a9-a109a23e61b0",
+		"_postman_id": "70b2d48e-8867-43db-a04b-3782871997d3",
 		"name": "Relm Server",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relms\": []\n}",
+							"raw": "{\n    \"relms\": [\"default\", \"test\"]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -584,7 +584,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"\"\n}",
+							"raw": "{\n    \"relmName\": \"myrelm\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -749,7 +749,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"\"\n}",
+							"raw": "{\n    \"relmName\": \"myrelm\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -776,7 +776,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"relmName\": \"\",\n    \"publicPermits\": [],\n    \"clonePermitRequired\": \"read\",\n    \"clonePermitAssigned\": \"edit\"\n}",
+							"raw": "{\n    \"relmName\": \"myrelm\",\n    \"publicPermits\": [],\n    \"clonePermitRequired\": \"read\",\n    \"clonePermitAssigned\": \"edit\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
