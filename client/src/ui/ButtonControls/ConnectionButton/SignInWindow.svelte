@@ -6,6 +6,7 @@
   import { showCenterButtons } from "~/stores/showCenterButtons";
   import { getNotificationsContext } from "svelte-notifications";
   import { _ } from "~/i18n";
+import ConnectionSubmitInput from "./components/ConnectionSubmitInput.svelte";
 
   export let enabled;
   export let dispatch: Dispatch;
@@ -113,9 +114,6 @@
   <r-window>
     <!-- SIGNIN WINDOW -->
     <form on:submit|preventDefault={onEmailPasswordAction}>
-      <!-- on:submit will never be called without a submit input -->
-      <input type="submit" style="display: none;" />
-
       {#if showingSignin}
         <r-content>
           <!-- Email/password/toggles -->
@@ -139,7 +137,7 @@
           <!-- SIGN IN/Socials -->
           <r-group>
             <div class="submit">
-              <span class="fake-link" on:click={onEmailPasswordAction} >SIGN IN</span>
+              <ConnectionSubmitInput label="SIGN IN" />
             </div>
             <div class="socials add-padding-if-tall-enough small">
               <span>or enter via:</span><br />
@@ -180,7 +178,7 @@
           </r-section>
           <r-section style="position: absolute; transform: translateX(-15%); width: 150%;">
             <div class="submit">
-              <span class="fake-link" on:click={onEmailPasswordAction} >CREATE ACCOUNT</span>
+              <ConnectionSubmitInput label="CREATE ACCOUNT" />
             </div>
 
             <r-group class="switch-screen-text" on:click={switchScreen}>
@@ -206,11 +204,6 @@
   //   justify-content: space-between;
   //   font-size: 1.1em;
   // }
-
-  .submit span {
-    color: #7f7f7f;
-    font-size: 4em;
-  }
 
   .switch-screen-text {
     color: #d3ad0b;
