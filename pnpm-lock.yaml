@@ -51,7 +51,7 @@ importers:
       lodash: ^4.17.21
       mediasoup-client: github:versatica/mediasoup-client#v3
       mini-css-extract-plugin: ^0.9.0
-      nanoid: ^3.1.20
+      nanoid: ^3.3.4
       optimize-css-assets-webpack-plugin: ^5.0.3
       postcss-loader: ^3.0.0
       postprocessing: 6.28.3
@@ -114,7 +114,7 @@ importers:
       deep-diff: 1.0.2
       eventemitter3: 4.0.7
       lodash: 4.17.21
-      mediasoup-client: github.com/versatica/mediasoup-client/aba1d0e46a8226f83e50c76e76a4704283119ac9
+      mediasoup-client: github.com/versatica/mediasoup-client/d510a4d3e8a76a67f4b6ef1a1287c1a308ee3c38
       nanoid: 3.3.4
       postprocessing: 6.28.3_three@0.141.0
       protoo-client: 4.0.6
@@ -7755,6 +7755,19 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
+    dev: false
+
+  /follow-redirects/1.14.9_debug@4.3.4:
+    resolution: {integrity: sha512-MQDfihBQYMcyy5dhRDJUHcw7lb2Pv/TuE6xP1vyraLukNDHKbDxDNaOE3NbCAdKQApno+GPRyo1YAp89yCjK4w==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dependencies:
+      debug: 4.3.4_supports-color@6.1.0
+    dev: true
 
   /for-in/1.0.2:
     resolution: {integrity: sha512-7EwmXrOjyL+ChxMhmG5lnW9MPt1aIeZEwKhQzoBUdTV0N3zuwWDZYVJatDvZ2OyzPUvdIAZDsCetk3coyMfcnQ==}
@@ -8412,7 +8425,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.14.9
+      follow-redirects: 1.14.9_debug@4.3.4
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -16659,10 +16672,10 @@ packages:
     resolution: {integrity: sha512-JZxotl7SxAJH0j7dN4pxsTV6ZLXoLdGME+PsjkL/DaBrVryK9kTGq06GfKrwcSOqypP+fdXGoCHE36b99fWVoA==}
     dev: true
 
-  github.com/versatica/mediasoup-client/aba1d0e46a8226f83e50c76e76a4704283119ac9:
-    resolution: {tarball: https://codeload.github.com/versatica/mediasoup-client/tar.gz/aba1d0e46a8226f83e50c76e76a4704283119ac9}
+  github.com/versatica/mediasoup-client/d510a4d3e8a76a67f4b6ef1a1287c1a308ee3c38:
+    resolution: {tarball: https://codeload.github.com/versatica/mediasoup-client/tar.gz/d510a4d3e8a76a67f4b6ef1a1287c1a308ee3c38}
     name: mediasoup-client
-    version: 3.6.53
+    version: 3.6.54
     engines: {node: '>=10'}
     dependencies:
       '@types/debug': 4.1.7
