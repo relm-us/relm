@@ -1,5 +1,7 @@
 export * from "./types.js";
 
+export * from "./identity/index.js";
+
 export * from "./serialize/index.js";
 
 export * from "./yrelm/index.js";

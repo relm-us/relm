@@ -8,6 +8,7 @@ import {
   Clock,
 } from "three";
 import * as THREE from "three";
+import { Security } from "relm-common";
 
 (window as any).THREE = THREE;
 
@@ -66,23 +67,27 @@ import { localShareTrackStore } from "~/av/localVisualTrackStore";
 import { localVideoTrack } from "video-mirror";
 import { createScreenTrack } from "~/av/twilio/createScreenTrack";
 
-import { participantId } from "~/identity/participantId";
+import { destroyParticipantId, participantId } from "~/identity/participantId";
 import { Avatar } from "~/identity/Avatar";
 import { Participant } from "~/types/identity";
 import { ParticipantManager } from "~/identity/ParticipantManager";
 import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 import { delay } from "~/utils/delay";
-import { RelmRestAPI } from "~/main/RelmRestAPI";
+import { LoginCredentials, RelmRestAPI } from "~/main/RelmRestAPI";
 import { PhotoBooth } from "./PhotoBooth";
 import { audioMode, AudioMode } from "~/stores/audioMode";
 import { Outline } from "~/ecs/plugins/outline";
 import { InteractorSystem } from "~/ecs/plugins/interactor";
 import { Object3DRef } from "~/ecs/plugins/core";
+import { getRandomInitializedIdentityData, localIdentityData } from "~/stores/identityData";
+import { AuthenticationResponse, SocialId } from "~/main/RelmOAuthAPI";
 import { CameraSystem } from "~/ecs/plugins/camera/systems";
 import { TransformControls } from "~/ecs/plugins/transform-controls";
 import { Collider2VisibleSystem } from "~/ecs/plugins/collider-visible/systems";
 import { globalEvents } from "~/events";
 import { advancedEdit } from "~/stores/advancedEdit";
+import { connectedAccount } from "~/stores/connectedAccount";
+import { permits } from "~/stores/permits";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -95,10 +100,11 @@ export class WorldManager {
   broker: ParticipantYBroker;
   api: RelmRestAPI;
   clock: Clock;
+  security: Security;
 
   world: DecoratedECSWorld;
   worldDoc: WorldDoc;
-  subrelm: string;
+  relmName: string;
   entryway: string;
   relmDocId: string;
   avConnection: AVConnection;
@@ -156,7 +162,8 @@ export class WorldManager {
     pageParams: PageParams,
     relmDocId: string,
     avConnection: AVConnection,
-    participants: Map<string, Participant>
+    participants: Map<string, Participant>,
+    security: Security
   ) {
     this.dispatch = dispatch;
     this.state = state;
@@ -167,10 +174,11 @@ export class WorldManager {
       state.authHeaders
     );
     this.clock = new Clock();
+    this.security = security;
 
     this.world = ecsWorld;
     this.worldDoc = worldDoc;
-    this.subrelm = pageParams.relmName;
+    this.relmName = pageParams.relmName;
     this.entryway = pageParams.entryway;
     this.relmDocId = relmDocId;
     this.avConnection = avConnection;
@@ -404,11 +412,14 @@ export class WorldManager {
 
     this.dragPlane.deinit();
 
+    const camsys = this.world.systems.get(CameraSystem) as CameraSystem;
+    camsys.endDeactivatingOffCameraEntities();
+
     this._dragPlane = null;
     this._selectionBox = null;
     this.world = null;
     this.worldDoc = null;
-    this.subrelm = null;
+    this.relmName = null;
     this.entryway = null;
     this.relmDocId = null;
     this.avConnection = null;
@@ -417,9 +428,6 @@ export class WorldManager {
 
     this.didInit = false;
     this.fpsLocked = false;
-
-    const camsys = this.world.systems.get(CameraSystem) as CameraSystem;
-    camsys.endDeactivatingOffCameraEntities();
   }
 
   afterInit(fn: Function) {
@@ -737,6 +745,81 @@ export class WorldManager {
     } else {
       entity.add(Transition, { position, positionSpeed: 0.1 });
     }
+  }
+
+  async register(credentials: LoginCredentials): Promise<AuthenticationResponse> {
+    const data = await this.api.registerParticipant(credentials);
+
+    // If we login, ensure we are connected.
+    if (data && data.status === "success") {
+      // Update permits
+      try {
+        const { permits: relmPermits } = await this.api.getPermitsAndMeta();
+        permits.set(relmPermits);
+      } catch (error) {
+        this.dispatch({ id: "error", message: error.message });
+        return null;
+      }
+      connectedAccount.set(true);
+      
+    }
+
+    return data;
+  }
+
+  async login(socialIdOrCred: SocialId|LoginCredentials): Promise<AuthenticationResponse|null> {
+    let data: AuthenticationResponse;
+
+    if (typeof socialIdOrCred === "object") {
+      // login with username/password
+      data = await this.api.login(socialIdOrCred as LoginCredentials);
+    } else {
+      // social login
+      switch (socialIdOrCred) {
+        case "google":
+          data = await this.api.oAuth.showGoogleOAuth();
+          break;
+        case "facebook":
+          data = await this.api.oAuth.showFacebookOAuth();
+          break;
+        case "linkedin":
+          data = await this.api.oAuth.showLinkedinOAuth();
+          break;
+        case "twitter":
+          data = await this.api.oAuth.showTwitterOAuth();
+          break;
+        default:
+          throw Error(`Unhandled social id when logging in: ${socialIdOrCred}`);
+      }
+    }
+
+    // If we login, ensure we are connected.
+    if (data && data.status === "success") {
+      // Update permits
+      try {
+        const { permits: relmPermits } = await this.api.getPermitsAndMeta();
+        permits.set(relmPermits);
+      } catch (error) {
+        this.dispatch({ id: "error", message: error.message });
+        return null;
+      }
+      connectedAccount.set(true);
+    }
+
+    return data;
+  }
+
+  async logout() {
+    destroyParticipantId();
+    this.security.secret = null;
+    localIdentityData.set(getRandomInitializedIdentityData());
+    connectedAccount.set(false);
+
+    this.dispatch({
+      id: "enterPortal",
+      relmName: this.relmName,
+      entryway: this.entryway
+    });
   }
 
   /**

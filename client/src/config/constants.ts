@@ -69,4 +69,7 @@ export const UNIQUE_COLOR_PALETTE = [
 // Feature Flag: enable or disable audio/video capabilities (e.g. Twilio)
 export const AV_ENABLED: boolean = true;
 
+// How often should identity data be saved after being updated?
+export const IDENTITY_SAVE_INTERVAL = 2000;
+
 export const ERROR_GLTF = "/diamond.glb";

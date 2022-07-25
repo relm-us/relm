@@ -1,17 +1,9 @@
+import { Appearance, AVAILABLE_HAIR_COLORS, AVAILABLE_SKIN_COLORS, BinaryGender } from "relm-common";
+
 import { Morph } from "~/ecs/plugins/morph";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
 
-import { Appearance, BinaryGender, AvatarEntities } from "~/types";
-
-// prettier-ignore
-export const skinColors = [
-    "#e3d0cf", "#d5b9ad", "#d08778", "#a56049", "#342723",
-  ];
-
-// prettier-ignore
-export const hairColors = [
-    "#debe99", "#aa8866", "#241c11", "#0a0a0a", "#9a3300"
-  ];
+import { AvatarEntities } from "~/types";
 
 export function setAppearance(
   this: void,
@@ -81,8 +73,8 @@ export function getDefaultAppearance(gender: BinaryGender): Appearance {
     bottom: 3,
     shoes: gender === "male" ? 3 : 4,
 
-    skinColor: skinColors[2],
-    hairColor: hairColors[2],
+    skinColor: AVAILABLE_SKIN_COLORS[2],
+    hairColor: AVAILABLE_HAIR_COLORS[2],
     topColor: "#fbfbfb",
     bottomColor: "#2e2b19",
     beltColor: "#7a6f38",

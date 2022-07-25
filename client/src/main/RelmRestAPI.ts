@@ -1,18 +1,26 @@
-import type { AuthenticationHeaders } from "relm-common";
+import type { AuthenticationHeaders, SavedIdentityData } from "relm-common";
 import type { LibraryAsset } from "~/types";
 
 import { CancellablePromise } from "real-cancellable-promise";
 import { simpleFetch } from "~/utils/simpleFetch";
+import { AuthenticationResponse, RelmOAuthManager } from "./RelmOAuthAPI";
+
+export type LoginCredentials = {
+  email: string,
+  password: string
+};
 
 export class RelmRestAPI {
   url: string;
   relmName: string;
   authHeaders: AuthenticationHeaders;
+  oAuth: RelmOAuthManager;
 
   constructor(url, relmName, authHeaders: AuthenticationHeaders) {
     this.url = url;
     this.relmName = relmName;
     this.authHeaders = authHeaders;
+    this.oAuth = new RelmOAuthManager(url, authHeaders);
   }
 
   get<T>(path): CancellablePromise<T> {
@@ -262,4 +270,53 @@ export class RelmRestAPI {
       throw Error(`can't clone relm: ${result.reason}`);
     }
   }
+
+  async getIdentityData() {
+    type Result = 
+      | { status: "success", isConnected: boolean, identity: SavedIdentityData }
+      | { status: "error", code?: number, reason: string };
+
+    const result: Result = await this.get("/auth/identity");
+    
+    if (result.status === "success") {
+      const { isConnected, identity } = result;
+      return {
+        isConnected,
+        identity
+      };
+    } else {
+      throw Error(`Failed to retrieve identity data: ${result.reason}`);
+    }
+  }
+
+  async setIdentityData({ identity } : { identity: SavedIdentityData }) {
+    type Result = 
+      | { status: "success" }
+      | { status: "error", code?: number, reason: string };
+  
+    const result: Result = await this.post("/auth/identity", {
+      identity
+    });
+
+    if (result.status === "error") {
+      throw Error(`Failed to update identity data: ${result.reason}`);
+    }
+  }
+
+  async registerParticipant(credentials: LoginCredentials): Promise<AuthenticationResponse> {
+    const result: AuthenticationResponse = await this.post("/auth/connect/local/signup", {
+      ...credentials
+    });
+
+    return result;
+  }
+
+  async login(credentials: LoginCredentials): Promise<AuthenticationResponse> {
+    const result: AuthenticationResponse = await this.post("/auth/connect/local/signin", {
+      ...credentials
+    });
+
+    return result;
+  }
+
 }

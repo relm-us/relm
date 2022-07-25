@@ -10,7 +10,6 @@
 
   export let ecsWorld;
   export let dispatch;
-  export let permits;
   export let state;
 
   $$props;
@@ -24,7 +23,7 @@
 
 <Viewport {ecsWorld} />
 
-<Overlay {dispatch} {permits} {state} />
+<Overlay {dispatch} {state} />
 
 <!-- Keyboard, Mouse input -->
-<Input world={ecsWorld} {permits} />
+<Input world={ecsWorld} />

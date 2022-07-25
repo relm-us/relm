@@ -1,106 +1,7 @@
+import type { Appearance, Equipment, PlayerStatus, SavedIdentityData } from "relm-common";
+
 import type { Entity } from "~/ecs/base";
 import type { Avatar } from "~/identity/Avatar";
-
-export type PlayerStatus = "initial" | "present" | "away";
-
-// Used for "simple" AvatarChooser
-export type BinaryGender = "male" | "female";
-
-export type HairType = "bald" | "short" | "mid" | "long";
-/**
- * TopType
- *   0: No Top
- *   1: Sports Bra
- *   2: T-Shirt
- *   3: Midsleeve Shirt
- *   4: Longsleeve Shirt
- */
-export type TopType = 0 | 1 | 2 | 3 | 4;
-
-/**
- * BottomType
- *   0: Shorts
- *   1: Long Shorts
- *   2: Capris
- *   3: Pants
- */
-export type BottomType = 0 | 1 | 2 | 3;
-
-/**
- * ShoeType
- *   0: Barefoot
- *   1: Dance Slippers
- *   2: Runners
- *   3: Hightops
- *   4: Boots
- */
-export type ShoeType = 0 | 1 | 2 | 3 | 4;
-
-export type Appearance = {
-  genderSlider: number;
-  widthSlider: number;
-
-  beard: boolean;
-  belt: boolean;
-  hair: HairType;
-  top: TopType;
-  bottom: BottomType;
-  shoes: ShoeType;
-
-  skinColor: string;
-  hairColor: string;
-  topColor: string;
-  bottomColor: string;
-  beltColor: string;
-  shoeColor: string;
-};
-
-export type Equipment = {
-  bone: string;
-  position: [number, number, number];
-  rotation: [number, number, number, number];
-  scale: [number, number, number];
-  model?: string;
-  colors?: any;
-};
-
-export type IdentityData = {
-  // Participant's name (chosen randomly at first, "Guest-xyz")
-  name: string;
-
-  // Participant's preferred color (chosen randomly at first)
-  color: string;
-
-  // Has participant notified that they will be "away"?
-  status: PlayerStatus;
-
-  // Show the speech bubble?
-  speaking: boolean;
-
-  // Show current emoji?
-  emoting: boolean;
-
-  // Participant has mic enabled?
-  showAudio: boolean;
-
-  // Participant has video enabled?
-  showVideo: boolean;
-
-  // Avatar appearance, based on Avatar Builder settings
-  appearance?: Appearance;
-
-  // If the participant is holding / wearing / has something equipped
-  equipment?: Equipment;
-
-  // Last known yjs clientId for this participant
-  clientId?: number;
-
-  // Most recent chat message (used for chat bubble)
-  message?: string;
-
-  // Most recent emoji (used for emote)
-  emoji?: string;
-};
 
 export type UpdateData = {
   name?: string;
@@ -116,6 +17,29 @@ export type UpdateData = {
   message?: string;
   emoji?: string;
 };
+
+export interface IdentityData extends SavedIdentityData {
+  // Show the speech bubble?
+  speaking: boolean;
+
+  // Show current emoji?
+  emoting: boolean;
+
+  // Participant has mic enabled?
+  showAudio: boolean;
+
+  // Participant has video enabled?
+  showVideo: boolean;
+
+  // Last known yjs clientId for this participant
+  clientId?: number;
+
+  // Most recent chat message (used for chat bubble)
+  message?: string;
+
+  // Most recent emoji (used for emote)
+  emoji?: string;
+}
 
 export type TransformData = [
   x: number,
