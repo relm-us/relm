@@ -1,19 +1,42 @@
 import { globalEvents } from "~/events";
 import { key1, key2, key3 } from "~/stores/keys";
-import { registerAction } from "../comboTable";
+import { callEach } from "~/utils/callEach";
+import { Action, registerAction } from "../comboTable";
 
-export function register() {
-  registerAction(["play"], ["1"], (pressed) => {
-    key1.set(pressed);
-  });
-  registerAction(["build"], ["1"], (pressed) => {
-    pressed && globalEvents.emit("advanced-edit");
-  });
-  registerAction(["play"], ["2"], (pressed) => {
-    key2.set(pressed);
-    pressed && globalEvents.emit("sit");
-  });
-  registerAction(["play"], ["3"], (pressed) => {
-    key3.set(pressed);
-  });
+export function register(): Function {
+  const unregisters = [
+    [
+      ["play"],
+      ["1"],
+      (pressed) => {
+        key1.set(pressed);
+      },
+    ],
+    [
+      ["build"],
+      ["1"],
+      (pressed) => {
+        pressed && globalEvents.emit("advanced-edit");
+      },
+    ],
+    [
+      ["play"],
+      ["2"],
+      (pressed) => {
+        key2.set(pressed);
+        pressed && globalEvents.emit("sit");
+      },
+    ],
+    [
+      ["play"],
+      ["3"],
+      (pressed) => {
+        key3.set(pressed);
+      },
+    ],
+  ].flatMap(([contexts, keys, action]: [string[], string[], Action]) =>
+    registerAction(contexts, keys, action)
+  );
+
+  return () => callEach(unregisters);
 }
