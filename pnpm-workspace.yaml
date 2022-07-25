@@ -2,3 +2,4 @@ packages:
   - client
   - common
   - server
+  - screenshot-server

@@ -1,11 +1,14 @@
 <script lang="ts">
+  import { get } from "svelte/store";
+
+  import { worldUIMode } from "~/stores/worldUIMode";
+
+  import { getCanonicalAction } from "./comboTable";
   import { isInputEvent } from "./isInputEvent";
 
   import PointerListener from "./PointerListener";
   import WheelListener from "./WheelListener";
   import CopyPasteListener from "./CopyPasteListener";
-
-  export let world;
 
   import * as arrowKeys from "./handlers/arrowKeys";
   import * as debugKey from "./handlers/debugKey";
@@ -20,40 +23,60 @@
   import * as tabKey from "./handlers/tabKey";
   import * as undoRedoKeys from "./handlers/undoRedoKeys";
 
-  import { permits } from "~/stores/permits";
+  export let world;
+  export let permits;
 
-  function onKeydown(event) {
+  arrowKeys.register();
+  debugKey.register();
+  deleteKey.register();
+  dropKey.register();
+  enterKey.register();
+  escapeKey.register();
+  numberKeys.register();
+  pauseKey.register();
+  spaceKey.register();
+  tabKey.register();
+  undoRedoKeys.register();
+
+  function getActionFromEvent(event: KeyboardEvent) {
+    const mods = [];
+
+    if (event.altKey) mods.push("A");
+    if (event.ctrlKey) mods.push("C");
+    if (event.metaKey) mods.push("M");
+    if (event.shiftKey) mods.push("S");
+
+    let combo = mods.join("-");
+
+    if (combo.length > 0) combo += " ";
+
+    if (event.key === " ") {
+      // treat ' ' specially, since we use whitespace to parse key combos
+      combo += "space";
+    } else {
+      combo += event.key.toLowerCase();
+    }
+
+    return getCanonicalAction(get(worldUIMode), combo);
+  }
+
+  function onKeydown(event: KeyboardEvent) {
     if (isInputEvent(event)) return;
 
-    arrowKeys.onKeydown(event);
-    debugKey.onKeydown(event);
-    deleteKey.onKeydown(event);
-    dropKey.onKeydown(event);
-    enterKey.onKeydown(event);
-    escapeKey.onKeydown(event);
-    numberKeys.onKeydown(event);
-    pauseKey.onKeydown(event);
-    shiftKey.onKeydown(event);
-    spaceKey.onKeydown(event);
-    if ($permits.includes("edit")) {
-      tabKey.onKeydown(event);
+    const action = getActionFromEvent(event);
+    if (action) {
+      action(true, { permits });
+      event.preventDefault();
     }
-    undoRedoKeys.onKeydown(event);
+
+    shiftKey.onKeydown(event);
   }
 
   function onKeyup(event) {
-    arrowKeys.onKeyup(event);
-    debugKey.onKeyup(event);
-    deleteKey.onKeyup(event);
-    dropKey.onKeyup(event);
-    enterKey.onKeyup(event);
-    escapeKey.onKeyup(event);
-    numberKeys.onKeyup(event);
-    pauseKey.onKeyup(event);
+    const action = getActionFromEvent(event);
+    if (action) action(false, { permits });
+
     shiftKey.onKeyup(event);
-    spaceKey.onKeyup(event);
-    tabKey.onKeyup(event);
-    undoRedoKeys.onKeyup(event);
   }
 </script>
 

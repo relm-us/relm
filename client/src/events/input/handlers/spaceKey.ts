@@ -5,35 +5,28 @@ import { keySpace } from "~/stores/keys";
 
 import { globalEvents } from "~/events";
 
+import { registerAction } from "../comboTable";
+
 let pressTimeStart;
 
-export function onKeydown(event) {
-  if (event.key === " ") {
-    event.preventDefault();
-
-    // We only need to track "first time" key press
-    if (event.repeat) return;
-
+export function register() {
+  registerAction(["play"], ["space"], (pressed) => {
     // workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1594003
-    if (get(keySpace)) return;
+    // TODO: still needed?
+    if (pressed && get(keySpace)) return;
 
-    pressTimeStart = performance.now();
+    keySpace.set(pressed);
 
-    keySpace.set(true);
-  }
-}
-
-export function onKeyup(event) {
-  if (event.key === " ") {
-    event.preventDefault();
-    keySpace.set(false);
-
-    const pressTimeEnd = performance.now();
-    const heldTime = pressTimeEnd - pressTimeStart;
-    if (heldTime > LONG_PRESS_THRESHOLD) {
-      globalEvents.emit("action-long");
+    if (pressed) {
+      pressTimeStart = performance.now();
     } else {
-      globalEvents.emit("action");
+      const pressTimeEnd = performance.now();
+      const heldTime = pressTimeEnd - pressTimeStart;
+      if (heldTime > LONG_PRESS_THRESHOLD) {
+        globalEvents.emit("action-long");
+      } else {
+        globalEvents.emit("action");
+      }
     }
-  }
+  });
 }

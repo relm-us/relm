@@ -1,9 +1,8 @@
 import { worldManager } from "~/world";
+import { registerAction } from "../comboTable";
 
-export function onKeydown(event) {
-  if (event.key.toLowerCase() === "z") {
-    worldManager.inventory.drop();
-  }
+export function register() {
+  registerAction(["play"], ["z"], (pressed) => {
+    pressed && worldManager.inventory.drop();
+  });
 }
-
-export function onKeyup(event) {}

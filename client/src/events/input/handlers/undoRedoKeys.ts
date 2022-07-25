@@ -1,23 +1,11 @@
 import { globalEvents } from "~/events";
+import { registerAction } from "../comboTable";
 
-export function onKeydown(event) {
-  if (
-    (event.key === "z" && event.ctrlKey) ||
-    (event.key === "z" && event.metaKey && !event.shiftKey)
-  ) {
-    event.preventDefault();
-
-    // "undo" event includes key repetition events
-    globalEvents.emit("undo");
-  } else if (
-    (event.key === "y" && event.ctrlKey) ||
-    (event.key === "z" && event.metaKey && event.shiftKey)
-  ) {
-    event.preventDefault();
-
-    // "redo" event includes key repetition events
-    globalEvents.emit("redo");
-  }
+export function register() {
+  registerAction(["build"], ["C z", "M z"], (pressed) => {
+    pressed && globalEvents.emit("undo");
+  });
+  registerAction(["build"], ["C y", "S-M z", "S-C z"], (pressed) => {
+    pressed && globalEvents.emit("redo");
+  });
 }
-
-export function onKeyup(event) {}

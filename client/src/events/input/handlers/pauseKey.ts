@@ -1,9 +1,8 @@
 import { worldManager } from "~/world";
+import { registerAction } from "../comboTable";
 
-export function onKeydown(event) {
-  if (event.key.toLowerCase() === "p") {
-    worldManager.togglePaused();
-  }
+export function register() {
+  registerAction(["play", "build"], ["p"], (pressed) => {
+    pressed && worldManager.togglePaused();
+  });
 }
-
-export function onKeyup(event) {}
