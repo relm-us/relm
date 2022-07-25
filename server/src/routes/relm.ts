@@ -673,10 +673,11 @@ function setProperties(
   }
   const entityComponents = entity.get("components") as YComponents;
 
-  // Set components
+  // Update the components provided in the request.
   doc.transact(() => {
     for (const componentName in componentsToSet) {
-      // Retrieve the index of the component in the components array.
+      // For each component to update, retrieve the index of the component in the components array.
+      // If it does not exist, we will create the component ourselves later.
       let componentIndex = -1;
       let componentValues: YValues;
       for (let i = 0; i < entityComponents.length; i++) {
@@ -687,32 +688,35 @@ function setProperties(
         }
       }
 
-      // Do we need to delete the component?
+      // If the request wants us to delete the component, delete the component from the components array and move on.
       if (componentsToSet[componentName] === null) {
         if (componentIndex !== -1) {
           entityComponents.delete(componentIndex);
         }
-        return;
+        continue;
       }
 
+      // If the component to be created does not currently exist, create it!
       if (componentIndex === -1) {
         // Create values map to be used for creating the actual component later.
         // Store all components to be set in this map.
         componentValues = new Y.Map();
       }
       
-      // We are updating the properties of the component.
+      // Apply any property changes requested.
       for (const propertyName in componentsToSet[componentName]) {
         const value = componentsToSet[componentName][propertyName];
   
         if (value !== null) {
           componentValues.set(propertyName, value);
         } else {
+          // Request explicitly specified to delete the property. ({ [property: string]: null })
           componentValues.delete(propertyName);
         }
       }
 
-      // Do we need to add this component? (if it never existed and we had to create one)
+      // All changes to the component are made!
+      // Do we need to add this component to the entity components? (if it wasn't in the array already!)
       if (componentIndex === -1) {
         const component: YComponent = new Y.Map();
         component.set("name", componentName);
