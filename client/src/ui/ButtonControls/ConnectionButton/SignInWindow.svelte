@@ -31,20 +31,20 @@
         text: $_(response.reason, {
           default: response.details
         }),
-        position: "top-left",
+        position: "bottom-center",
         removeAfter: 3000
       });
     }
 
   }
 
-  async function onUsernamePasswordAction(action: "signin"|"register") {
+  async function onEmailPasswordAction() {
     const email = (document.querySelector('input[name="email"]') as HTMLInputElement).value;
     const password = (document.querySelector('input[name="password"]') as HTMLInputElement).value;
 
-    const response = action === "register"
-      ? await worldManager.register({ email, password }) 
-      : await worldManager.login({ email, password });
+    const response = showingSignin
+      ? await worldManager.login({ email, password }) 
+      : await worldManager.register({ email, password });
     
     if (response.status === "success") {
       // Username/password was successfully registered.
@@ -55,7 +55,7 @@
         text: $_(response.reason, {
           default: response.details
         }),
-        position: "top-left",
+        position: "bottom-center",
         removeAfter: 3000
       });
     }
@@ -112,79 +112,84 @@
   </r-exit>
   <r-window>
     <!-- SIGNIN WINDOW -->
-    {#if showingSignin}
-      <r-content>
-        <!-- Email/password/toggles -->
-        <r-group>
-          <r-section class="add-padding-if-tall-enough medium">
+    <form on:submit|preventDefault={onEmailPasswordAction}>
+      <!-- on:submit will never be called without a submit input -->
+      <input type="submit" style="display: none;" />
+
+      {#if showingSignin}
+        <r-content>
+          <!-- Email/password/toggles -->
+          <r-group>
+            <r-section class="add-padding-if-tall-enough medium">
+              <SignInTextInput name="email" type="email" label="EMAIL" />
+            </r-section>
+
+            <r-section>
+              <SignInTextInput name="password" type="password" label="PASS CODE" />
+            </r-section>
+
+            <!-- <r-section id="forget-section">
+              <div style="float: left;">
+                <r-forget-passcode-link class="fake-link">Forgot Pass Code</r-forget-passcode-link>
+              </div>
+            </r-section> -->
+
+          </r-group>
+
+          <!-- SIGN IN/Socials -->
+          <r-group>
+            <div class="submit">
+              <span class="fake-link" on:click={onEmailPasswordAction} >SIGN IN</span>
+            </div>
+            <div class="socials add-padding-if-tall-enough small">
+              <span>or enter via:</span><br />
+              <r-connections>
+                <img src="/social/facebook.png" data-login="facebook" alt="Facebook" on:click={onSocialClick} />
+                <img src="/social/twitter.png" data-login="twitter" alt="Twitter" on:click={onSocialClick} />
+                <img src="/social/google.png" data-login="google" alt="Google" on:click={onSocialClick} />
+                <img src="/social/linkedin.png" data-login="linkedin" alt="Linkedin" on:click={onSocialClick} />
+              </r-connections>
+            </div>
+          </r-group>
+
+          <!-- Sign up text -->
+          <r-group class="switch-screen-text" style="padding-top: 10%;" on:click={switchScreen}>
+            <div class="fake-link">
+              <span>New here? Create Identity</span>
+              <br />
+              <span>START FOR FREE</span>
+            </div>
+          </r-group>
+        </r-content>
+      {:else}
+        <!-- REGISTER WINDOW -->
+        <r-content style="position: relative;" id="register">
+          <r-section class="add-padding-if-tall-enough large">
             <SignInTextInput name="email" type="email" label="EMAIL" />
           </r-section>
-
           <r-section>
             <SignInTextInput name="password" type="password" label="PASS CODE" />
           </r-section>
-
-          <!-- <r-section id="forget-section">
-            <div style="float: left;">
-              <r-forget-passcode-link class="fake-link">Forgot Pass Code</r-forget-passcode-link>
-            </div>
-          </r-section> -->
-
-        </r-group>
-
-        <!-- SIGN IN/Socials -->
-        <r-group>
-          <div class="submit">
-            <span class="fake-link" on:click={() => onUsernamePasswordAction("signin")} >SIGN IN</span>
-          </div>
-          <div class="socials add-padding-if-tall-enough small">
-            <span>or enter via:</span><br />
+          <r-section class="socials">
             <r-connections>
               <img src="/social/facebook.png" data-login="facebook" alt="Facebook" on:click={onSocialClick} />
               <img src="/social/twitter.png" data-login="twitter" alt="Twitter" on:click={onSocialClick} />
               <img src="/social/google.png" data-login="google" alt="Google" on:click={onSocialClick} />
               <img src="/social/linkedin.png" data-login="linkedin" alt="Linkedin" on:click={onSocialClick} />
             </r-connections>
-          </div>
-        </r-group>
+          </r-section>
+          <r-section style="position: absolute; transform: translateX(-15%); width: 150%;">
+            <div class="submit">
+              <span class="fake-link" on:click={onEmailPasswordAction} >CREATE ACCOUNT</span>
+            </div>
 
-        <!-- Sign up text -->
-        <r-group class="switch-screen-text" style="padding-top: 10%;" on:click={switchScreen}>
-          <div class="fake-link">
-            <span>New here? Create Identity</span>
-            <br />
-            <span>START FOR FREE</span>
-          </div>
-        </r-group>
-      </r-content>
-    {:else}
-      <!-- REGISTER WINDOW -->
-      <r-content style="position: relative;" id="register">
-        <r-section class="add-padding-if-tall-enough large">
-          <SignInTextInput name="email" type="email" label="EMAIL" />
-        </r-section>
-        <r-section>
-          <SignInTextInput name="password" type="password" label="PASS CODE" />
-        </r-section>
-        <r-section class="socials">
-          <r-connections>
-            <img src="/social/facebook.png" data-login="facebook" alt="Facebook" on:click={onSocialClick} />
-            <img src="/social/twitter.png" data-login="twitter" alt="Twitter" on:click={onSocialClick} />
-            <img src="/social/google.png" data-login="google" alt="Google" on:click={onSocialClick} />
-            <img src="/social/linkedin.png" data-login="linkedin" alt="Linkedin" on:click={onSocialClick} />
-          </r-connections>
-        </r-section>
-        <r-section style="position: absolute; transform: translateX(-15%); width: 150%;">
-          <div class="submit">
-            <span class="fake-link" on:click={() => onUsernamePasswordAction("register")} >CREATE ACCOUNT</span>
-          </div>
-
-          <r-group class="switch-screen-text" on:click={switchScreen}>
-            <span class="fake-link">Already have an account? Sign in</span>
-          </r-group>
-        </r-section>
-      </r-content>
-    {/if}
+            <r-group class="switch-screen-text" on:click={switchScreen}>
+              <span class="fake-link">Already have an account? Sign in</span>
+            </r-group>
+          </r-section>
+        </r-content>
+      {/if}
+    </form>
   </r-window>
 </Fullwindow>
 
@@ -261,7 +266,7 @@
     cursor: pointer;
   }
 
-  r-window {
+  r-window form {
     display: flex;
     justify-content: center;
     align-items: center;
