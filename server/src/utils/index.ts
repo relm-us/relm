@@ -12,6 +12,7 @@ export { isValidEmailFormat } from "./isValidEmailFormat.js";
 export { isValidIdentity } from "./isValidIdentity.js";
 export { isValidPasswordFormat } from "./isValidPasswordFormat.js";
 export { joinError } from "./joinError.js";
+export { getMailClient, sendEmail } from "./mail.js";
 export { nullOr } from "./nullOr.js";
 export { randomToken } from "./randomToken.js";
 export { required, req } from "./required.js";
