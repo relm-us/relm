@@ -15,6 +15,7 @@ import ConnectionSubmitInput from "./components/ConnectionSubmitInput.svelte";
 
   let showingSignin = true;
 
+  // Handles login via social oAuths
   async function onSocialClick({ target }) {
     const socialId = target.getAttribute("data-login");
 
@@ -108,7 +109,7 @@ import ConnectionSubmitInput from "./components/ConnectionSubmitInput.svelte";
 
 <Fullwindow>
   <r-background></r-background>
-  <r-exit on:click={exitScreen}>
+  <r-exit on:click={exitScreen} id="top-right-exit">
     <img src="/ESC_button.png" style="width: 48px;" alt="Signout" />
   </r-exit>
   <r-window>
@@ -156,6 +157,11 @@ import ConnectionSubmitInput from "./components/ConnectionSubmitInput.svelte";
               <span>New here? Create Identity</span>
               <br />
               <span>START FOR FREE</span>
+            </div>
+            <div id="bottom-center-exit">
+              <r-exit on:click={exitScreen}>
+                <img src="/ESC_button.png" style="width: 48px;" alt="Signout" />
+              </r-exit>
             </div>
           </r-group>
         </r-content>
@@ -205,6 +211,17 @@ import ConnectionSubmitInput from "./components/ConnectionSubmitInput.svelte";
   //   font-size: 1.1em;
   // }
 
+  #bottom-center-exit {
+    margin-top: 1em;
+    display: none;
+  }
+
+  #top-right-exit {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  }
+
   .switch-screen-text {
     color: #d3ad0b;
   }
@@ -251,14 +268,6 @@ import ConnectionSubmitInput from "./components/ConnectionSubmitInput.svelte";
     opacity: 0.7;
   }
 
-  r-exit {
-    display: block;
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    cursor: pointer;
-  }
-
   r-window form {
     display: flex;
     justify-content: center;
@@ -277,11 +286,16 @@ import ConnectionSubmitInput from "./components/ConnectionSubmitInput.svelte";
   r-group {
     display: block;
     height: 33%;
+    min-height: 5em;
   }
 
   r-section {
     display: block;
     margin-top: 0.5em;
+  }
+
+  r-exit {
+    cursor: pointer;
   }
 
   // r-forget-passcode-link {
@@ -314,9 +328,19 @@ import ConnectionSubmitInput from "./components/ConnectionSubmitInput.svelte";
   }
 
   // If on Mobile, make the submit text smaller
-  @media only screen and (max-width: 450px) {
+  @media only screen and (min-width: 520px) {
     r-group {
       height: 25%;
+    }
+  }
+
+  @media only screen and (max-width: 520px) {
+    #bottom-center-exit {
+      display: block;
+    }
+
+    #top-right-exit {
+      display: none;
     }
   }
 </style>

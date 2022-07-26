@@ -5,7 +5,7 @@
   import VideoButton from "~/ui/ButtonControls/VideoButton";
   import AvatarSetupButton from "~/ui/ButtonControls/AvatarSetupButton";
   import ShareScreenButton from "~/ui/ButtonControls/ShareScreenButton";
-  import { SignInButton } from "~/ui/ButtonControls/ConnectionButton";
+  import { SignInButton, LogoutButton } from "~/ui/ButtonControls/ConnectionButton";
   import InviteButton from "~/ui/ButtonControls/InviteButton";
   import ChatButton from "~/ui/Chat/ChatButton.svelte";
   import Button from "~/ui/lib/Button";
@@ -31,7 +31,7 @@
 
   import { globalEvents } from "~/events";
 
-  import { worldUIMode, openPanel, audioMode } from "~/stores";
+  import { worldUIMode, openPanel } from "~/stores";
   import { playState } from "~/stores/playState";
   import { chatOpen, unreadCount } from "~/stores/chat";
   import { localIdentityData } from "~/stores/identityData";
@@ -41,7 +41,6 @@
   import { showCenterButtons } from "~/stores/showCenterButtons";
   import { AV_ENABLED } from "~/config/constants";
   import SignInWindow from "../ButtonControls/ConnectionButton/SignInWindow.svelte";
-  import LogoutButton from "../ButtonControls/ConnectionButton/LogoutButton.svelte";
   import { connectedAccount } from "~/stores/connectedAccount";
   import { permits } from "~/stores/permits";
 
