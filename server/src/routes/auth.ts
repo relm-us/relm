@@ -207,6 +207,25 @@ auth.post(
   })
 );
 
+auth.get(
+  "/connect/local/verify",
+  cors(),
+  wrapAsync(async (req, res) => {
+    if (!req.query.code) {
+      return respondWithError(res, "Missing verification code.");
+    }
+    const code = req.query.code;
+    
+    const completedVerification = await User.markAsCompletedEmailVerification({ code });
+    if (completedVerification) {
+      return respondWithSuccess(res, {});
+    } else {
+      return respondWithError(res, "No pending verification found with that code.");
+    }
+
+  })
+);
+
 // OAuth routes
 
 function socialOAuthRedirect(socialId, scope?) {
