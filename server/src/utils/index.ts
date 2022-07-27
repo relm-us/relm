@@ -2,6 +2,7 @@ export {
   arrayToBooleanObject,
   booleanObjectToArray,
 } from "./booleanObjects.js";
+export { createEmailFromTemplate } from "./createEmailFromTemplate.js";
 export { decodedValidJwt } from "./decodedValidJwt.js";
 export { encrypt, compareEncryptedPassword } from "./encryption.js";
 export { getDefinedKeys } from "./getDefinedKeys.js";
