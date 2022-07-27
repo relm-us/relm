@@ -18,7 +18,9 @@ import {
   PassportResponse,
   respondWithErrorPostMessage,
   respondWithSuccessPostMessage,
-  respondWithFailurePostMessage
+  respondWithFailurePostMessage,
+  createEmailFromTemplate,
+  sendEmail
 } from "../utils/index.js";
 
 export const auth = express.Router();
@@ -169,6 +171,9 @@ auth.post(
       emailVerificationRequired: true
     });
     await Participant.assignToUserId({ participantId, userId });
+
+    const verifyEmailDetails = createEmailFromTemplate("verify");;
+    await sendEmail(email, verifyEmailDetails);
 
     return respondWithSuccess(res, {});
   })
