@@ -163,9 +163,10 @@ auth.post(
       return respondWithFailure(res, "participant_already_linked", "This participant is already linked to another email!");
     }
 
-    const userId = await User.createUser({
+    const { userId } = await User.createUser({
       email,
-      password
+      password,
+      emailVerificationRequired: true
     });
     await Participant.assignToUserId({ participantId, userId });
 

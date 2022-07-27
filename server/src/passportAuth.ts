@@ -94,7 +94,7 @@ async function handleOAuthPassport(socialId, req, email, profileId, done) {
       if (existingEmailUserId !== null) {
         connectedSocialUserId = existingEmailUserId;
       } else {
-        connectedSocialUserId = await User.createUser({ email });
+        connectedSocialUserId = (await User.createUser({ email, emailVerificationRequired: false })).userId;
       }
     }
 

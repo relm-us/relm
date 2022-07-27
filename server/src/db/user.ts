@@ -1,15 +1,22 @@
 import { SavedIdentityData } from "relm-common";
 import { compareEncryptedPassword, encrypt } from "../utils/encryption.js";
 import { db, sql } from "./db.js";
+import { nanoid } from "nanoid";
 
 import { INSERT } from "./pgSqlHelpers.js";
 
 type UserCreationData = {
   email : string,
-  password? : string
+  password? : string,
+  emailVerificationRequired?: boolean
 };
 
-export async function createUser({ email, password }: UserCreationData) {
+type UserCreationResult = {
+  userId: string,
+  emailCode?: string
+};
+
+export async function createUser({ email, password, emailVerificationRequired }: UserCreationData): Promise<UserCreationResult> {
   const userData: any = { email };
   if (password) {
     userData.password_hash = await encrypt(password);
@@ -18,7 +25,23 @@ export async function createUser({ email, password }: UserCreationData) {
   const data = await db.one(sql`
       ${INSERT("users", userData)} RETURNING user_id
     `);
-  return data.user_id;
+
+  const { user_id : userId } = data;
+
+  if (emailVerificationRequired) {
+    const emailCode = nanoid();
+
+    await db.none(sql`INSERT INTO pending_email_verifications (user_id, code) VALUES (${userId}, ${emailCode}) ON CONFLICT DO NOTHING`);
+
+    return {
+      userId,
+      emailCode
+    };
+  }
+
+  return {
+    userId
+  };
 }
 
 export async function deleteUserByEmail({ email }) {
@@ -69,4 +92,8 @@ export async function getIdentityData({ userId }): Promise<SavedIdentityData> {
   }
 
   return data.identity_data;
+}
+
+export async function markAsCompletedEmailVerification({ userId }) {
+  await db.none(sql`DELETE FROM pending_email_verifications WHERE user_id=${userId}`);
 }

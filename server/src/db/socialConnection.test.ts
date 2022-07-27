@@ -11,10 +11,10 @@ describe("Social connection model tests", () => {
   // All tests require this user created.
   let userId;
   beforeAll(async () => {
-    userId = await User.createUser({
+    userId = (await User.createUser({
       email: "example-social@example.com",
       password: "example"
-    });
+    })).userId;
   });
 
   it("Registers a social connection", async () => {
