@@ -1,16 +1,19 @@
+process.traceDeprecation = true;
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const OptimizeCSSAssetsPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const Preprocess = require("svelte-preprocess");
-const DuplicatePackageCheckerPlugin = require("duplicate-package-checker-webpack-plugin");
+const DuplicatePackageCheckerPlugin = require("@cerner/duplicate-package-checker-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const CompressionPlugin = require("compression-webpack-plugin");
+const { ProvidePlugin } = require("webpack");
+
+const Preprocess = require("svelte-preprocess");
 
 const mode = process.env.NODE_ENV || "development";
 const prod = mode === "production";
 const path = require("path");
-const BrotliWebpackPlugin = require("brotli-webpack-plugin");
 const sveltePath = path.resolve("node_modules", "svelte");
 
 const dotenv = require("dotenv");
@@ -84,12 +87,14 @@ module.exports = {
   devServer: {
     hot: false,
     port: 8080,
-    stats: "minimal", // use "normal" to show what chunks are built and what files are copied
-    contentBase: "public", // direct the DevServer to serve static files from public/
-    watchContentBase: true,
+    static: {
+      directory: path.join(__dirname, "public")
+    },
     compress: true,
-    historyApiFallback: true,
+    historyApiFallback: true
   },
+
+  stats: "minimal", // use "normal" to show what chunks are built and what files are copied
 
   /**
    * Direct webpack to understand our app's internal patterns for imports. For example,
@@ -97,10 +102,20 @@ module.exports = {
    */
   resolve: {
     alias: {
-      "~": path.resolve(__dirname, "src"),
+      "~": path.resolve(__dirname, "src")
     },
-    extensions: [".mjs", ".js", ".ts", ".svelte"],
+    fallback: {
+      crypto: false,
+      buffer: false,
+      http: false,
+      assert: false
+    },
+    extensions: [".js", ".ts", ".svelte"],
     mainFields: ["svelte", "browser", "module", "main"],
+  },
+
+  experiments: {
+    asyncWebAssembly: true
   },
 
   /**
@@ -134,18 +149,21 @@ module.exports = {
         test: /\.(scss|sass)$/,
         use: [
           {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: !prod,
-              sourceMap: !prod || sourceMapsInProduction,
-            },
+            loader: MiniCssExtractPlugin.loader
           },
-          "css-loader",
+          {
+            loader: "css-loader",
+            options: {
+              sourceMap: !prod || sourceMapsInProduction
+            }
+          },
           {
             loader: "postcss-loader",
             options: {
-              plugins: [require("autoprefixer")],
-            },
+              postcssOptions: {
+                plugins: [require("autoprefixer")]
+              }
+            }
           },
           "sass-loader",
         ],
@@ -154,13 +172,14 @@ module.exports = {
         test: /\.css$/,
         use: [
           {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: !prod,
-              sourceMap: !prod || sourceMapsInProduction,
-            },
+            loader: MiniCssExtractPlugin.loader
           },
-          "css-loader",
+          {
+            loader: "css-loader",
+            options: {
+              sourceMap: !prod || sourceMapsInProduction
+            }
+          }
         ],
       },
       {
@@ -176,16 +195,13 @@ module.exports = {
       },
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
-        use: [
-          {
-            loader: "file-loader",
-          },
-        ],
+        type: "asset/resource"
       },
     ],
   },
 
   plugins: [
+    new ProvidePlugin({ process: "process/browser.js" }),
     new MiniCssExtractPlugin({
       filename: "[name].css",
     }),
@@ -203,6 +219,7 @@ module.exports = {
           "readable-stream",
           "safe-buffer",
           "bn.js",
+          "util"
         ].includes(instance.name);
       },
     }),
@@ -241,7 +258,9 @@ module.exports = {
     /**
      * In production: Copy our static files from public/ to dist/
      */
-    new CopyWebpackPlugin([{ from: "public", to: "." }]),
+    new CopyWebpackPlugin({
+      patterns: [{ from: "public", to: "." }]
+    })
   ],
   optimization: {
     minimizer: [],
@@ -305,7 +324,7 @@ if (prod) {
 
   // Compress assets
   module.exports.plugins.push(
-    new BrotliWebpackPlugin({
+    new CompressionPlugin({
       test: /\.(js|css|html|svg|png|jpg|wasm)$/,
       threshold: 10240,
       minRatio: 0.8,
@@ -315,38 +334,28 @@ if (prod) {
   // Minify CSS
   module.exports.optimization.minimizer.push(
     new OptimizeCSSAssetsPlugin({
-      cssProcessorOptions: {
-        map: sourceMapsInProduction
-          ? {
-              inline: false,
-              annotation: true,
+      minimizerOptions: {
+          preset: [
+            "default",
+            {
+              discardComments: {
+                removeAll: !sourceMapsInProduction,
+              },
             }
-          : false,
-      },
-      cssProcessorPluginOptions: {
-        preset: [
-          "default",
-          {
-            discardComments: {
-              removeAll: !sourceMapsInProduction,
-            },
-          },
-        ],
-      },
+          ],
+      }
     })
   );
 
   // Minify and treeshake JS
   module.exports.optimization.minimizer.push(
     new TerserPlugin({
-      sourceMap: sourceMapsInProduction,
-      extractComments: false,
-      // Exclude physics engine glue javascript (necessary for iOS devices)
-      exclude: "dimforge",
       terserOptions: {
         keep_classnames: true,
-        keep_fnames: true,
+        keep_fnames: true
       },
+      exclude: "dimforge",
+      extractComments: false
     })
   );
 }

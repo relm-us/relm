@@ -9,8 +9,8 @@ import { registerAction } from "../comboTable";
 
 let pressTimeStart;
 
-export function register() {
-  registerAction(["play"], ["space"], (pressed) => {
+export function register(): Function {
+  return registerAction(["play"], ["space"], (pressed) => {
     // workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1594003
     // TODO: still needed?
     if (pressed && get(keySpace)) return;

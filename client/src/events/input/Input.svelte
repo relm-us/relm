@@ -1,5 +1,6 @@
 <script lang="ts">
   import { get } from "svelte/store";
+  import { onMount } from "svelte";
 
   import { worldUIMode } from "~/stores/worldUIMode";
 
@@ -22,21 +23,9 @@
   import * as spaceKey from "./handlers/spaceKey";
   import * as tabKey from "./handlers/tabKey";
   import * as undoRedoKeys from "./handlers/undoRedoKeys";
+  import { callEach } from "~/utils/callEach";
 
   export let world;
-  export let permits;
-
-  arrowKeys.register();
-  debugKey.register();
-  deleteKey.register();
-  dropKey.register();
-  enterKey.register();
-  escapeKey.register();
-  numberKeys.register();
-  pauseKey.register();
-  spaceKey.register();
-  tabKey.register();
-  undoRedoKeys.register();
 
   function getActionFromEvent(event: KeyboardEvent) {
     const mods = [];
@@ -65,19 +54,34 @@
 
     const action = getActionFromEvent(event);
     if (action) {
-      action(true, { permits });
+      action(true);
       event.preventDefault();
     }
-
-    shiftKey.onKeydown(event);
   }
 
   function onKeyup(event) {
     const action = getActionFromEvent(event);
-    if (action) action(false, { permits });
-
-    shiftKey.onKeyup(event);
+    if (action) action(false);
   }
+
+  onMount(() => {
+    const unregisters = [
+      arrowKeys.register(),
+      debugKey.register(),
+      deleteKey.register(),
+      dropKey.register(),
+      enterKey.register(),
+      escapeKey.register(),
+      numberKeys.register(),
+      pauseKey.register(),
+      shiftKey.register(),
+      spaceKey.register(),
+      tabKey.register(),
+      undoRedoKeys.register(),
+    ];
+
+    return () => callEach(unregisters);
+  });
 </script>
 
 <svelte:window on:keydown={onKeydown} on:keyup={onKeyup} />

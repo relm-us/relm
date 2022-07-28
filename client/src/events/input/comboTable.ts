@@ -1,3 +1,5 @@
+import { callEach } from "~/utils/callEach";
+
 export type Action = (pressed: boolean, options?) => void;
 
 export const comboTable = new Map();
@@ -35,17 +37,19 @@ export function registerAction(
   contexts: string[],
   keyCombos: string[],
   action: Action
-) {
-  contexts.forEach((context) => {
-    keyCombos.forEach((combo) => {
+): Function {
+  const unregisters = contexts.flatMap((context) =>
+    keyCombos.map((combo) => {
       const id = context + ":" + canonical(combo);
       if (comboTable.has(id)) {
         throw Error(`comboTable already has ${id}`);
       } else {
         comboTable.set(id, action);
       }
-    });
-  });
+      return () => comboTable.delete(id);
+    })
+  );
+  return () => callEach(unregisters);
 }
 
 /**
