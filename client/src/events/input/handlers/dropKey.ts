@@ -1,8 +1,8 @@
 import { worldManager } from "~/world";
 import { registerAction } from "../comboTable";
 
-export function register() {
-  registerAction(["play"], ["z"], (pressed) => {
+export function register(): Function {
+  return registerAction(["play"], ["z"], (pressed) => {
     pressed && worldManager.inventory.drop();
   });
 }

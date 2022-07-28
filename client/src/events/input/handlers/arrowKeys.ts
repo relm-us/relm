@@ -1,17 +1,15 @@
 import { keyUp, keyDown, keyLeft, keyRight, keyQ, keyE } from "~/stores/keys";
-import { registerAction } from "../comboTable";
+import { callEach } from "~/utils/callEach";
+import { Action, registerAction } from "../comboTable";
 
-export function register() {
-  registerAction(["play", "build"], ["arrowup", "w", "k"], (pressed) => {
-    keyUp.set(pressed);
-  });
-  registerAction(["play", "build"], ["arrowdown", "s", "j"], (pressed) => {
-    keyDown.set(pressed);
-  });
-  registerAction(["play", "build"], ["arrowleft", "a", "h"], (pressed) => {
-    keyLeft.set(pressed);
-  });
-  registerAction(["play", "build"], ["arrowright", "d", "l"], (pressed) => {
-    keyRight.set(pressed);
-  });
+export function register(): Function {
+  const unregisters = [
+    [["arrowup", "w", "k"], (pressed: boolean) => keyUp.set(pressed)],
+    [["arrowdown", "s", "j"], (pressed: boolean) => keyDown.set(pressed)],
+    [["arrowleft", "a", "h"], (pressed: boolean) => keyLeft.set(pressed)],
+    [["arrowright", "d", "l"], (pressed: boolean) => keyRight.set(pressed)],
+  ].flatMap(([keys, action]: [string[], Action]) =>
+    registerAction(["play", "build"], keys, action)
+  );
+  return () => callEach(unregisters);
 }

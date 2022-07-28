@@ -112,7 +112,8 @@ export function makeProgram(): Program {
 
         const security = new Security({
           getSecret: () => JSON.parse(localStorage.getItem("secret") ?? "null"),
-          setSecret: secret => localStorage.setItem("secret", JSON.stringify(secret))
+          setSecret: (secret) =>
+            localStorage.setItem("secret", JSON.stringify(secret)),
         });
 
         return [
@@ -135,7 +136,7 @@ export function makeProgram(): Program {
       }
       case "gotIdentityData": {
         const newIdentityData: IdentityData = {
-          ...get(state.localIdentityData)
+          ...get(state.localIdentityData),
         };
         if (msg.identity) {
           newIdentityData.name = msg.identity.name;
@@ -151,12 +152,12 @@ export function makeProgram(): Program {
 
         state.localIdentityData.set(newIdentityData);
         connectedAccount.set(msg.isConnected);
-      
+
         return [
           {
-            ...state
+            ...state,
           },
-          getRelmPermitsAndMetadata(state.pageParams, state.authHeaders)
+          getRelmPermitsAndMetadata(state.pageParams, state.authHeaders),
         ];
       }
 
@@ -277,7 +278,10 @@ export function makeProgram(): Program {
         };
 
         // Check if we updated the identity data
-        const isNewIdentityUpdate = !isEqual(newIdentityData, get(state.localIdentityData));
+        const isNewIdentityUpdate = !isEqual(
+          newIdentityData,
+          get(state.localIdentityData)
+        );
 
         // Do we need to update the identity data to other participants?
         if (isNewIdentityUpdate) {
