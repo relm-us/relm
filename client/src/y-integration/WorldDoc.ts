@@ -363,19 +363,23 @@ export class WorldDoc extends EventEmitter {
         // e.g. event.path = [ 0, "components", 2, "values" ]
         const entity = this._getEntityFromEventPath(event.path);
 
-        const onUpdateOrAdd = (key, content) => {
+        // Retrieve the updated component
+        const getComponentFromPath = path => {
           const componentName = (
             this.entities
-              .get(event.path[0] as number)
+              .get(path[0] as number)
               .get("components") as YComponents
           )
-            .get(event.path[2] as number)
+            .get(path[2] as number)
             .get("name") as string;
-          let component = entity.getByName(componentName);
+          
+          return entity.getByName(componentName);
+        };
 
-          // Exceptional case is the "Transform" component which controls position, rotation, scale
-          // In this case, rather than jumping immediately to the new orientation, we ease gently to it.
-          if (componentName === "Transform") {
+        // Exceptional case is the "Transform" component which controls position, rotation, scale
+        // In this case, rather than jumping immediately to the new orientation, we ease gently to it.
+        const updateComponentIfRequired = (entity, component, key) => {
+          if (component.name === "Transform") {
             if (!entity.has(Transition)) {
               entity.add(Transition);
             }
@@ -385,6 +389,13 @@ export class WorldDoc extends EventEmitter {
             if (key === "rotation") component.rotationSpeed = 0.1;
             if (key === "scale") component.scaleSpeed = 0.1;
           }
+
+          return component;
+        };
+
+
+        const onUpdateOrAdd = (key, content) => {
+          let component = updateComponentIfRequired(entity, getComponentFromPath(event.path), key);
 
           // Similar to HECS Component.fromJSON, but for just one prop
           const prop = component.constructor.props[key];
@@ -398,29 +409,10 @@ export class WorldDoc extends EventEmitter {
         withMapEdits(event as Y.YMapEvent<YValues>, {
           onUpdate: onUpdateOrAdd,
           onAdd: onUpdateOrAdd,
-          onDelete: (removedProperty, _, oldContent) => {
-            const componentName = (
-              this.entities
-                .get(event.path[0] as number)
-                .get("components") as YComponents
-            )
-              .get(event.path[2] as number)
-              .get("name") as string;
-            let component = entity.getByName(componentName);
+          onDelete: removedProperty => {
+            let component = updateComponentIfRequired(entity, getComponentFromPath(event.path), removedProperty);
 
-            // Exceptional case is the "Transform" component which controls position, rotation, scale
-            // In this case, rather than jumping immediately to the new orientation, we ease gently to it.
-            if (componentName === "Transform") {
-              if (!entity.has(Transition)) {
-                entity.add(Transition);
-              }
-              component = entity.get(Transition);
-
-              if (removedProperty === "position") component.positionSpeed = 0.1;
-              if (removedProperty === "rotation") component.rotationSpeed = 0.1;
-              if (removedProperty === "scale") component.scaleSpeed = 0.1;
-            }
-
+            // Set component property to default value.
             const prop = component.constructor.props[removedProperty];
             const type = prop.type || prop;
             component[removedProperty] = type.initial();
