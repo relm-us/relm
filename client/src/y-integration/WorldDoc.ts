@@ -363,8 +363,42 @@ export class WorldDoc extends EventEmitter {
         // e.g. event.path = [ 0, "components", 2, "values" ]
         const entity = this._getEntityFromEventPath(event.path);
 
+        const onUpdateOrAdd = (key, content) => {
+          const componentName = (
+            this.entities
+              .get(event.path[0] as number)
+              .get("components") as YComponents
+          )
+            .get(event.path[2] as number)
+            .get("name") as string;
+          let component = entity.getByName(componentName);
+
+          // Exceptional case is the "Transform" component which controls position, rotation, scale
+          // In this case, rather than jumping immediately to the new orientation, we ease gently to it.
+          if (componentName === "Transform") {
+            if (!entity.has(Transition)) {
+              entity.add(Transition);
+            }
+            component = entity.get(Transition);
+
+            if (key === "position") component.positionSpeed = 0.1;
+            if (key === "rotation") component.rotationSpeed = 0.1;
+            if (key === "scale") component.scaleSpeed = 0.1;
+          }
+
+          // Similar to HECS Component.fromJSON, but for just one prop
+          const prop = component.constructor.props[key];
+          const type = prop.type || prop;
+          component[key] = type.fromJSON(content, component[key]);
+
+          // Mark as modified so any updates can occur
+          component.modified();
+        };
+
         withMapEdits(event as Y.YMapEvent<YValues>, {
-          onUpdate: (key, content, oldContent) => {
+          onUpdate: onUpdateOrAdd,
+          onAdd: onUpdateOrAdd,
+          onDelete: (removedProperty, _, oldContent) => {
             const componentName = (
               this.entities
                 .get(event.path[0] as number)
@@ -382,19 +416,18 @@ export class WorldDoc extends EventEmitter {
               }
               component = entity.get(Transition);
 
-              if (key === "position") component.positionSpeed = 0.1;
-              if (key === "rotation") component.rotationSpeed = 0.1;
-              if (key === "scale") component.scaleSpeed = 0.1;
+              if (removedProperty === "position") component.positionSpeed = 0.1;
+              if (removedProperty === "rotation") component.rotationSpeed = 0.1;
+              if (removedProperty === "scale") component.scaleSpeed = 0.1;
             }
 
-            // Similar to HECS Component.fromJSON, but for just one prop
-            const prop = component.constructor.props[key];
+            const prop = component.constructor.props[removedProperty];
             const type = prop.type || prop;
-            component[key] = type.fromJSON(content, component[key]);
+            component[removedProperty] = type.initial();
 
             // Mark as modified so any updates can occur
             component.modified();
-          },
+          }
         });
 
         // const ycomponent =
