@@ -187,15 +187,11 @@ export class Presentation {
   }
 
   async loadGltf(url): Promise<GLTF> {
-    return new Promise((resolve, reject) => {
-      gltfLoader.load(url, (data) => resolve(data), null, reject);
-    });
+    return await gltfLoader.loadAsync(url);
   }
 
   async loadTexture(url: string): Promise<Texture> {
-    return new Promise((resolve, reject) => {
-      textureLoader.load(url, resolve, null, reject);
-    });
+    return await textureLoader.loadAsync(url);
   }
 
   updateSize() {

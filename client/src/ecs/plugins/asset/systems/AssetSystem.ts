@@ -40,7 +40,7 @@ export class AssetSystem extends System {
     const spec: Asset = entity.get(Asset);
 
     if (spec.url === "") {
-      this.loadingError(entity, "empty");
+      this.loadingError(entity, "url is blank");
       return;
     }
 
@@ -63,7 +63,6 @@ export class AssetSystem extends System {
       return this.loadingError(entity, `unable to load asset: "${err}"`);
     }
 
-    // if (!value) return;
     if (!value) {
       console.warn("nothing loaded", entity.id);
     }
