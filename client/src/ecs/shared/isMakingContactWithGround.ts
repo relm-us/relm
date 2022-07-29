@@ -53,5 +53,8 @@ export function intersectionPointWithGround(
 }
 
 export function isMakingContactWithGround(physics: Physics, position: Vector3) {
-  return Boolean(intersectionPointWithGround(physics, position, CONTACT_TOI));
+  const contact = Boolean(
+    intersectionPointWithGround(physics, position, CONTACT_TOI)
+  );
+  return contact;
 }
