@@ -4,6 +4,7 @@ import * as express from "express";
 import cors from "cors";
 import mkConscript from "conscript";
 import * as Y from "yjs";
+import { nanoid } from "nanoid";
 
 import {
   exportWorldDoc,
@@ -12,7 +13,16 @@ import {
   YComponents,
   YEntities,
   YEntity,
+  jsonToYComponents,
+  jsonToYMeta,
+  jsonToYChildren,
+  yComponentToJSON,
+  yComponentsToJSON,
+  jsonToYEntity,
+  yEntityToJSON,
+  yIdToString,
   YValues,
+  YComponent,
 } from "relm-common";
 
 import * as config from "../config.js";
@@ -337,12 +347,23 @@ relm.post(
   })
 );
 
+type EntityComponentData = {
+  [component: string]: {
+    [property: string]: any
+  }
+};
+
 type Action = {
-  type: "setProperty";
+  type: "updateEntity";
   entity: string;
-  component: string;
-  property: string;
-  value: any;
+  components: EntityComponentData;
+} | {
+  type: "createEntity",
+  prefabId: string,
+  components: EntityComponentData;
+} | {
+  type: "deleteEntity",
+  entity: string
 };
 
 type Possibility = {
@@ -475,13 +496,9 @@ relm.post(
 
     const actions = req.body.actions;
 
-    const errors = applyActions(doc, actions);
-
-    if (errors.length === 0) {
-      return respondWithSuccess(res, { action: "edit" });
-    } else {
-      return respondWithError(res, "applyActions had errors", errors);
-    }
+    return respondWithSuccess(res, {
+      result: applyActions(doc, actions)
+    });
   })
 );
 
@@ -514,60 +531,205 @@ async function setVariable(doc, variables, relmId, name, value) {
   }
 }
 
+type ActionResult = ActionResultCreateEntity | ActionResultDeleteEntity | ActionResultSetProperties;
+
 function applyActions(doc: Y.Doc, actions: Action[]) {
-  const errors = [];
-  for (let { type, entity, component, property, value } of actions || []) {
-    switch (type) {
-      case "setProperty": {
-        errors.push(...setProperty(doc, entity, component, property, value));
+  const result: ActionResult[] = [];
+  for (const data of actions || []) {
+    switch (data.type) {
+      case "createEntity":
+        result.push(createEntity(doc, data.components));
+        break;
+      case "deleteEntity":
+        result.push(deleteEntity(doc, data.entity));
+        break;
+      case "updateEntity": {
+        result.push(setProperties(doc, data.entity, data.components));
         break;
       }
     }
+
   }
-  return errors;
+  return result;
 }
 
-function setProperty(
+type ActionResultCreateEntity = {
+  type: "createEntity",
+  status: "success",
+  entity: string
+} | {
+  type: "createEntity",
+  status: "error",
+  reason: string
+};
+
+function createEntity(
+  doc: Y.Doc,
+  components: EntityComponentData
+): ActionResultCreateEntity {
+  // Ensure components passed are valid
+  if (typeof components !== "object") {
+    return {
+      type: "createEntity",
+      status: "error",
+      reason: "Invalid components provided."
+    };
+  }
+
+  const entities = doc.getArray("entities") as YEntities;
+  
+  const entity = {
+    ...components,
+    id: nanoid(),
+    name: "",
+    parent: null,
+    children: [],
+    meta: {}
+  };
+  const serializedEntity = jsonToYEntity(entity);
+
+  entities.push([ serializedEntity ]);
+
+  return {
+    type: "createEntity",
+    status: "success",
+    entity: entity.id
+  };
+}
+
+type ActionResultDeleteEntity = {
+  type: "deleteEntity",
+  status: "success"
+} | {
+  type: "deleteEntity",
+  status: "error",
+  reason: string
+};
+
+function deleteEntity(
+  doc: Y.Doc,
+  entityId: string
+): ActionResultDeleteEntity {
+  const entities = doc.getArray("entities") as YEntities;
+  
+  for (let i = 0; i < entities.length; i++) {
+    const entity = entities.get(i);
+    const iteratedEntityId = entity.get("id");
+
+    if (iteratedEntityId === entityId) {
+      entities.delete(i);
+      return {
+        type: "deleteEntity",
+        status: "success"
+      };
+    }
+  }
+
+  return {
+    type: "deleteEntity",
+    status: "error",
+    reason: `No entity by the id ${entityId} could be found.`
+  };
+}
+
+type ActionResultSetProperties = {
+  type: "updateEntity",
+  status: "success"
+} | {
+  type: "updateEntity",
+  status: "error",
+  reason: string
+};
+
+function setProperties(
   doc: Y.Doc,
   entityId: string,
-  componentName: string,
-  propertyName: string,
-  value: any
-) {
-  const errors = [];
-
-  const errorNotify = (msg) => {
-    console.log(msg);
-    errors.push(msg);
-  };
+  componentsToSet: EntityComponentData
+): ActionResultSetProperties {
+  // Ensure components passed are valid
+  if (typeof componentsToSet !== "object") {
+    return {
+      type: "updateEntity",
+      status: "error",
+      reason: "Invalid components provided."
+    };
+  }
 
   const entities = doc.getArray("entities") as YEntities;
   const entity = findInYArray(
     entities,
     (yentity: YEntity) => yentity.get("id") === entityId
   );
-  if (entity) {
-    const components = entity.get("components") as YComponents;
-    if (components) {
-      const component = findInYArray(
-        components,
-        (ycomponent) => ycomponent.get("name") === componentName
-      );
-      if (component) {
-        const values = component.get("values") as YValues;
-        values.set(propertyName, value);
-      } else {
-        errorNotify(
-          `setProperty: component not found ${entityId}, '${componentName}'`
-        );
-      }
-    } else {
-      errorNotify(`setProperty: components not found ${entityId}`);
+  if (!entity) {
+    return {
+      type: "updateEntity",
+      status: "error",
+      reason: `entity not found ${entityId}`
     }
-  } else {
-    errorNotify(`setProperty: entity not found ${entityId}`);
   }
-  return errors;
+
+  if (!entity.has("components")) {
+    entity.set("components", new Y.Map());
+  }
+  const entityComponents = entity.get("components") as YComponents;
+
+  // Update the components provided in the request.
+  doc.transact(() => {
+    for (const componentName in componentsToSet) {
+      // For each component to update, retrieve the index of the component in the components array.
+      // If it does not exist, we will create the component ourselves later.
+      let componentIndex = -1;
+      let componentValues: YValues;
+      for (let i = 0; i < entityComponents.length; i++) {
+        if (entityComponents.get(i).get("name") === componentName) {
+          componentIndex = i;
+          componentValues = entityComponents.get(i).get("values") as YValues;
+          break;
+        }
+      }
+
+      // If the request wants us to delete the component, delete the component from the components array and move on.
+      if (componentsToSet[componentName] === null) {
+        if (componentIndex !== -1) {
+          entityComponents.delete(componentIndex);
+        }
+        continue;
+      }
+
+      // If the component to be created does not currently exist, create it!
+      if (componentIndex === -1) {
+        // Create values map to be used for creating the actual component later.
+        // Store all components to be set in this map.
+        componentValues = new Y.Map();
+      }
+      
+      // Apply any property changes requested.
+      for (const propertyName in componentsToSet[componentName]) {
+        const value = componentsToSet[componentName][propertyName];
+  
+        if (value !== null) {
+          componentValues.set(propertyName, value);
+        } else {
+          // Request explicitly specified to delete the property. ({ [property: string]: null })
+          componentValues.delete(propertyName);
+        }
+      }
+
+      // All changes to the component are made!
+      // Do we need to add this component to the entity components? (if it wasn't in the array already!)
+      if (componentIndex === -1) {
+        const component: YComponent = new Y.Map();
+        component.set("name", componentName);
+        component.set("values", componentValues);
+        entityComponents.push([ component ]);
+      }
+    }
+  });
+
+  return {
+    type: "updateEntity",
+    status: "success"
+  };
 }
 
 async function getPermitsForRelm(relmName: string, participantId: string) {

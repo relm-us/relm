@@ -363,38 +363,63 @@ export class WorldDoc extends EventEmitter {
         // e.g. event.path = [ 0, "components", 2, "values" ]
         const entity = this._getEntityFromEventPath(event.path);
 
-        withMapEdits(event as Y.YMapEvent<YValues>, {
-          onUpdate: (key, content, oldContent) => {
-            const componentName = (
-              this.entities
-                .get(event.path[0] as number)
-                .get("components") as YComponents
-            )
-              .get(event.path[2] as number)
-              .get("name") as string;
-            let component = entity.getByName(componentName);
+        // Retrieve the updated component
+        const getComponentFromPath = path => {
+          const componentName = (
+            this.entities
+              .get(path[0] as number)
+              .get("components") as YComponents
+          )
+            .get(path[2] as number)
+            .get("name") as string;
+          
+          return entity.getByName(componentName);
+        };
 
-            // Exceptional case is the "Transform" component which controls position, rotation, scale
-            // In this case, rather than jumping immediately to the new orientation, we ease gently to it.
-            if (componentName === "Transform") {
-              if (!entity.has(Transition)) {
-                entity.add(Transition);
-              }
-              component = entity.get(Transition);
-
-              if (key === "position") component.positionSpeed = 0.1;
-              if (key === "rotation") component.rotationSpeed = 0.1;
-              if (key === "scale") component.scaleSpeed = 0.1;
+        // Exceptional case is the "Transform" component which controls position, rotation, scale
+        // In this case, rather than jumping immediately to the new orientation, we ease gently to it.
+        const updateComponentIfRequired = (entity, component, key) => {
+          if (component.name === "Transform") {
+            if (!entity.has(Transition)) {
+              entity.add(Transition);
             }
+            component = entity.get(Transition);
 
-            // Similar to HECS Component.fromJSON, but for just one prop
-            const prop = component.constructor.props[key];
+            if (key === "position") component.positionSpeed = 0.1;
+            if (key === "rotation") component.rotationSpeed = 0.1;
+            if (key === "scale") component.scaleSpeed = 0.1;
+          }
+
+          return component;
+        };
+
+
+        const onUpdateOrAdd = (key, content) => {
+          let component = updateComponentIfRequired(entity, getComponentFromPath(event.path), key);
+
+          // Similar to HECS Component.fromJSON, but for just one prop
+          const prop = component.constructor.props[key];
+          const type = prop.type || prop;
+          component[key] = type.fromJSON(content, component[key]);
+
+          // Mark as modified so any updates can occur
+          component.modified();
+        };
+
+        withMapEdits(event as Y.YMapEvent<YValues>, {
+          onUpdate: onUpdateOrAdd,
+          onAdd: onUpdateOrAdd,
+          onDelete: removedProperty => {
+            let component = updateComponentIfRequired(entity, getComponentFromPath(event.path), removedProperty);
+
+            // Set component property to default value.
+            const prop = component.constructor.props[removedProperty];
             const type = prop.type || prop;
-            component[key] = type.fromJSON(content, component[key]);
+            component[removedProperty] = type.initial();
 
             // Mark as modified so any updates can occur
             component.modified();
-          },
+          }
         });
 
         // const ycomponent =
