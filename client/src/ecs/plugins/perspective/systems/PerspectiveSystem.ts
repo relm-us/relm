@@ -5,7 +5,7 @@ import { AVATAR_HEIGHT } from "~/config/constants";
 
 import { Entity, System } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
-import { Translucent } from "~/ecs/plugins/translucent";
+import { TranslucentApplied } from "~/ecs/plugins/translucent";
 
 import { Perspective } from "../Perspective";
 import { Physics } from "../../physics";
@@ -38,8 +38,10 @@ export class PerspectiveSystem extends System {
     const blockingEntities = this.getVisuallyBlockingEntities();
 
     for (let entity of blockingEntities) {
-      if (entity && !this.entitiesWeMadeTranslucent.has(entity)) {
-        entity.add(Translucent);
+      const applied = entity.get(TranslucentApplied);
+      if (entity && applied && !this.entitiesWeMadeTranslucent.has(entity)) {
+        applied.direction = "END";
+        applied.modified();
         this.entitiesWeMadeTranslucent.add(entity);
       }
     }
@@ -49,7 +51,9 @@ export class PerspectiveSystem extends System {
       blockingEntities
     );
     for (let entity of noLongerTranslucents) {
-      entity.remove(Translucent);
+      const applied = entity.get(TranslucentApplied);
+      applied.direction = "START";
+      applied.modified();
       this.entitiesWeMadeTranslucent.delete(entity);
     }
   }
@@ -82,11 +86,10 @@ export class PerspectiveSystem extends System {
     if (source && transform) {
       this.target.copy(transform.position);
       this.target.y += AVATAR_HEIGHT / 2;
-      if (source) {
-        const entities: Set<Entity> = this.fastFindBetween(source, this.target);
-        entities.delete(this.perspective.avatar);
-        return entities;
-      }
+
+      const entities: Set<Entity> = this.fastFindBetween(source, this.target);
+      entities.delete(this.perspective.avatar);
+      return entities;
     }
     return emptySet;
   }

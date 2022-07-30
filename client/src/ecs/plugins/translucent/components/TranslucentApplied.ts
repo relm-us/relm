@@ -1,17 +1,23 @@
 import { Object3D } from "three";
-import { LocalComponent, RefType, NumberType } from "~/ecs/base";
+import { LocalComponent, RefType, NumberType, StringType } from "~/ecs/base";
 
 export class TranslucentApplied extends LocalComponent {
   value: Object3D;
-  opacity: number;
+  currentOpacity: number;
+  direction: "START" | "END";
 
   static props = {
     value: {
       type: RefType,
     },
 
-    opacity: {
+    currentOpacity: {
       type: NumberType,
+    },
+
+    direction: {
+      type: StringType,
+      default: "START",
     },
   };
 }
