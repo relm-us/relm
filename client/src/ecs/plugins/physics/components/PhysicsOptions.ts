@@ -7,11 +7,22 @@ export class PhysicsOptions extends Component {
   // Angular damping
   angDamp: number;
 
+  // Additional Mass (beyond collider mass)
+  additionalMass: number;
+
   // Rotation restrictions
   // e.g. "Y" would restrict rotations to only the Y axis
   rotRestrict: string;
 
   static props = {
+    additionalMass: {
+      type: NumberType,
+      default: 0,
+      editor: {
+        label: "Additional Mass",
+      },
+    },
+
     linDamp: {
       type: NumberType,
       default: 0.1,

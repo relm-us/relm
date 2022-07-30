@@ -4,7 +4,7 @@ import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { colliderMaterial } from "~/ecs/shared/colliderMaterial";
 import { shapeParamsToGeometry, toShapeParams } from "~/ecs/shared/createShape";
 
-import { Collider2 } from "~/ecs/plugins/physics";
+import { Collider2, Collider2Implicit } from "~/ecs/plugins/physics";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 
 import { Collider2VisibleRef } from "../components";
@@ -24,6 +24,7 @@ export class Collider2VisibleSystem extends System {
     added: [
       Object3DRef,
       Collider2,
+      // Not(Collider2Implicit),
       Not(NonInteractive),
       Not(Collider2VisibleRef),
     ],
