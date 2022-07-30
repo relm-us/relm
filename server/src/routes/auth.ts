@@ -22,6 +22,7 @@ import {
   createEmailFromTemplate,
   sendEmail
 } from "../utils/index.js";
+import { SERVER_BASE_URL } from "../config.js";
 
 export const auth = express.Router();
 
@@ -165,14 +166,16 @@ auth.post(
       return respondWithFailure(res, "participant_already_linked", "This participant is already linked to another email!");
     }
 
-    const { userId } = await User.createUser({
+    const { userId, emailCode } = await User.createUser({
       email,
       password,
       emailVerificationRequired: true
     });
     await Participant.assignToUserId({ participantId, userId });
 
-    const verifyEmailDetails = createEmailFromTemplate("verify");;
+    const verifyEmailDetails = createEmailFromTemplate("verify", {
+      link: `${SERVER_BASE_URL}/${emailCode}`
+    });
     await sendEmail(email, verifyEmailDetails);
 
     return respondWithSuccess(res, {});
