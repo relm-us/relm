@@ -1,5 +1,5 @@
 import { Object3D } from "three";
-import { TransformControls as ThreeTransformControls } from "three/examples/jsm/controls/TransformControls";
+import { TransformControls as ThreeTransformControls } from "./TransformControls";
 
 import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Presentation, Object3DRef, Transform } from "~/ecs/plugins/core";
