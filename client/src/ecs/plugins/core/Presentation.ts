@@ -219,9 +219,12 @@ export class Presentation {
 
   update(delta) {
     if (!this.viewport) return;
+
+    // With scene.autoUpdate set to false, we need to
+    // updateMatrixWorld manually (just once per loop)
+    this.scene.updateMatrixWorld();
+
     if (this.skipUpdate > 0) {
-      this.scene.updateMatrixWorld();
-      this.camera.updateMatrixWorld();
       this.skipUpdate--;
       return;
     }

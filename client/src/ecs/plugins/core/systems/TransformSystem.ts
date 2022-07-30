@@ -88,10 +88,7 @@ export class TransformSystem extends System {
       return object3d;
     }
 
-    object3d.position.copy(transform.position);
-    object3d.quaternion.copy(transform.rotation);
-    object3d.scale.copy(transform.scale);
-    object3d.updateMatrix();
+    this.updateObject3DFromTransform(object3d, transform);
 
     if (parent && parent.has(Object3DRef)) {
       // Recursively update any parent WorldTransform whose frame
@@ -115,6 +112,13 @@ export class TransformSystem extends System {
     transform.frame = this.frame;
 
     return object3d;
+  }
+
+  updateObject3DFromTransform(object3d: Object3D, transform: Transform) {
+    object3d.position.copy(transform.position);
+    object3d.quaternion.copy(transform.rotation);
+    object3d.scale.copy(transform.scale);
+    object3d.updateMatrix();
   }
 
   removeObject3D(entity: Entity) {
