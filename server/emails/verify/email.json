@@ -1,4 +1,4 @@
 {
-  "subject": "Welcome!",
-  "content": "You registered lol"
+  "subject": "Welcome to Relm!",
+  "content": "Hey! To verify your email account, please click here: {{LINK}}"
 }

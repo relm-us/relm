@@ -24,6 +24,7 @@ app.get("/", function (_req, res) {
 app.use("/admin", routes.admin);
 app.use("/asset", routes.asset);
 app.use("/auth", routes.auth);
+app.use("/email", routes.email);
 app.use("/invite", middleware.relmName(), routes.invite);
 app.use("/relm", middleware.relmName(), routes.relm);
 app.use("/relms", routes.relms);
