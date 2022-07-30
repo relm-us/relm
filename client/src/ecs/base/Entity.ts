@@ -90,7 +90,7 @@ export class Entity {
 
   remove(Component: TypeOfComponent): Entity {
     if (!this.components.has(Component)) {
-      console.warn("Entity: cannot remove component as it doesnt have one");
+      console.trace("Entity: cannot remove component as it doesnt have one");
       return;
     }
     this.components.delete(Component);
