@@ -1,5 +1,7 @@
 import { Component, NumberType, StringType, BooleanType } from "~/ecs/base";
 
+// For humanoid animation clip names see `src/config/constants.ts`
+// For all other clip names, see individual GLB assets.
 export class Animation extends Component {
   clipName: string;
   transition: number;

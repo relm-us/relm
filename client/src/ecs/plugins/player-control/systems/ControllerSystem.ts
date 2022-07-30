@@ -23,8 +23,13 @@ import {
   KPR,
 } from "~/ecs/shared/KeyState";
 import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
+import { JUMPING, T_POSE } from "~/config/constants";
 
+const STILL_SPEED = 0;
+const WALK_SPEED = 1;
+const RUN_SPEED = 2;
 const FLYING_SPEED = 3;
+
 const FALL_NORMAL = 1;
 const FALL_FAST = 8;
 
@@ -152,8 +157,15 @@ export class ControllerSystem extends System {
         if (state.animOverride) {
           anim.maybeChangeClip(state.animOverride);
         } else {
-          if (!state.grounded && !spec.canFly) state.speed = 0;
-          const targetAnim = spec.animations[state.speed];
+          const wGrounded = this.willBeGrounded(entity);
+          let targetAnim = spec.animations[state.speed];
+          if (!state.grounded && !spec.canFly && !wGrounded) {
+            // Falling
+            state.speed = STILL_SPEED;
+            targetAnim = T_POSE;
+          } else {
+            targetAnim = spec.animations[state.speed];
+          }
           anim.maybeChangeClip(targetAnim);
         }
       }
@@ -168,8 +180,27 @@ export class ControllerSystem extends System {
   }
 
   isGrounded(entity: Entity) {
-    const position = entity.get(Transform).position;
-    return isMakingContactWithGround(this.physics, position);
+    const transform = entity.get(Transform);
+    return isMakingContactWithGround(this.physics, transform.position);
+  }
+
+  willBeGrounded(entity: Entity) {
+    const transform = entity.get(Transform);
+
+    // check if there will be ground in the direction the avatar is headed...
+    p1.copy(vOut);
+    p1.applyQuaternion(transform.rotation);
+    // about 1/4 unit "away" from the avatar
+    p1.multiplyScalar(0.25);
+    // and 3/4 units "down"
+    p1.y -= 0.75;
+
+    p1.add(transform.position);
+
+    return (
+      isMakingContactWithGround(this.physics, transform.position) ||
+      isMakingContactWithGround(this.physics, p1)
+    );
   }
 
   useKeys(state: ControllerState) {
