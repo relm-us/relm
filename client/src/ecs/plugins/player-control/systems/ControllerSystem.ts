@@ -6,7 +6,7 @@ import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
 
 import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
-import { Collider2Ref, Physics } from "~/ecs/plugins/physics";
+import { Collider2, Collider2Ref, Physics } from "~/ecs/plugins/physics";
 import { Animation } from "~/ecs/plugins/animation";
 import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
 import { isMakingContactWithGround } from "~/ecs/shared/isMakingContactWithGround";
@@ -152,6 +152,19 @@ export class ControllerSystem extends System {
         spec.onActivity?.();
       }
 
+      let newFriction;
+      if (state.speed === STILL_SPEED) {
+        newFriction = 1.5;
+      } else {
+        newFriction = 0.01;
+      }
+
+      const collider: Collider2 = entity.get(Collider2);
+      if (collider.friction !== newFriction) {
+        collider.friction = newFriction;
+        collider.modified();
+      }
+
       const anim: Animation = entity.get(Animation);
       if (anim) {
         if (state.animOverride) {
@@ -289,7 +302,12 @@ export class ControllerSystem extends System {
       const distance = Math.max(0.5, p1.distanceTo(p2));
       if (distance <= 1.25) {
         const distanceSq = distance * distance;
-        vDir.copy(p1).sub(p2).normalize().divideScalar(distanceSq);
+        vDir
+          .copy(p1)
+          .sub(p2)
+          .normalize()
+          .divideScalar(distanceSq)
+          .multiplyScalar(2);
         body.addForce(vDir, true);
 
         // TODO: don't use magic number 1.0
