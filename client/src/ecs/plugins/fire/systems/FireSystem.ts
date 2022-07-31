@@ -22,7 +22,7 @@ export class FireSystem extends System {
     this.presentation = presentation;
   }
 
-  update() {
+  update(delta) {
     this.queries.new.forEach((entity) => {
       this.build(entity);
     });
@@ -35,7 +35,7 @@ export class FireSystem extends System {
       const mesh = entity.get(FireMesh);
       if (mesh.loaded) {
         mesh.value.update(mesh.time);
-        mesh.time += spec.speed;
+        mesh.time += spec.speed * (delta * 60);
       }
     });
     this.queries.removed.forEach((entity) => {
