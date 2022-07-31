@@ -49,8 +49,19 @@
     return getCanonicalAction(get(worldUIMode), combo);
   }
 
+  const pressed: Set<string> = new Set();
   function onKeydown(event: KeyboardEvent) {
     if (isInputEvent(event)) return;
+
+    if (
+      event.repeat ||
+      /* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1594003 */
+      pressed.has(event.key)
+    ) {
+      return;
+    }
+
+    pressed.add(event.key);
 
     const action = getActionFromEvent(event);
     if (action) {
@@ -60,6 +71,8 @@
   }
 
   function onKeyup(event) {
+    pressed.delete(event.key);
+
     const action = getActionFromEvent(event);
     if (action) action(false);
   }
