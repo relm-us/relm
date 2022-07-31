@@ -6,6 +6,8 @@ import { Presentation, Object3DRef } from "~/ecs/plugins/core";
 import { Fire, FireMesh } from "../components";
 import { Fire as ThreeFire } from "../Fire";
 
+let fireTex;
+
 export class FireSystem extends System {
   order = Groups.Simulation + 1;
 
@@ -20,9 +22,14 @@ export class FireSystem extends System {
 
   init({ presentation }) {
     this.presentation = presentation;
+    this.presentation
+      .loadTexture("/fire.png")
+      .then((texture) => (fireTex = texture));
   }
 
   update(delta) {
+    if (!fireTex) return;
+
     this.queries.new.forEach((entity) => {
       this.build(entity);
     });
@@ -52,7 +59,6 @@ export class FireSystem extends System {
       entity.add(FireMesh);
     }
 
-    const fireTex = await this.presentation.loadTexture("/fire.png");
     const fireMesh = entity.get(FireMesh);
     if (fireMesh) {
       fireMesh.loaded = true;
