@@ -72,4 +72,4 @@ export const AV_ENABLED: boolean = true;
 // How often should identity data be saved after being updated?
 export const IDENTITY_SAVE_INTERVAL = 2000;
 
-export const ERROR_GLTF = "/diamond.glb";
+export const ERROR_GLTF = "/error-cat.glb";
