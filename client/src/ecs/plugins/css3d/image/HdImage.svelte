@@ -25,8 +25,7 @@
   <Fullwindow on:click={deactivate} on:close={deactivate}>
     <r-frame transition:fade>
       <img
-        class:cover={fit === "COVER"}
-        class:contain={fit === "CONTAIN"}
+        class="contain"
         src={assetUrl(asset.url)}
         alt={asset.name}
       />

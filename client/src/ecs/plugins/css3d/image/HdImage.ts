@@ -8,27 +8,6 @@ export class HdImage extends Component {
   fit: "COVER" | "CONTAIN";
 
   static props = {
-    asset: {
-      type: AssetType,
-      editor: {
-        label: "Asset",
-        accept: ".png,.jpg,.jpeg",
-      },
-    },
-    width: {
-      type: NumberType,
-      default: 1,
-      editor: {
-        label: "Width",
-      },
-    },
-    height: {
-      type: NumberType,
-      default: 1,
-      editor: {
-        label: "Height",
-      },
-    },
     fit: {
       type: StringType,
       default: "CONTAIN",
@@ -39,6 +18,14 @@ export class HdImage extends Component {
           { label: "Contain", value: "CONTAIN" },
           { label: "Cover", value: "COVER" },
         ],
+      },
+    },
+    
+    asset: {
+      type: AssetType,
+      editor: {
+        label: "Asset",
+        accept: ".png,.jpg,.jpeg",
       },
     },
   };
