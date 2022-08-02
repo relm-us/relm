@@ -23,7 +23,7 @@ import {
   KPR,
 } from "~/ecs/shared/KeyState";
 import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
-import { JUMPING, T_POSE } from "~/config/constants";
+import { FALLING } from "~/config/constants";
 
 const STILL_SPEED = 0;
 const WALK_SPEED = 1;
@@ -175,7 +175,7 @@ export class ControllerSystem extends System {
           if (!state.grounded && !spec.canFly && !wGrounded) {
             // Falling
             state.speed = STILL_SPEED;
-            targetAnim = T_POSE;
+            targetAnim = FALLING;
           } else {
             targetAnim = spec.animations[state.speed];
           }

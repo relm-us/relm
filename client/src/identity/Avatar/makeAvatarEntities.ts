@@ -36,7 +36,7 @@ export function makeAvatarEntities(
       scale: new Vector3(0.25, 0.25, 0.25),
     })
     .add(AssetComp, {
-      value: new Asset("/humanoid-003.glb"),
+      value: new Asset("/avatars.glb"),
     })
     .add(Model2)
     .add(TranslucentOptions, { time: 100 })
