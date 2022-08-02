@@ -22,7 +22,7 @@
   import GroupUngroupButton from "~/ui/Build/GroupUngroupButton";
 
   // Debug UI
-  import WorldStatePane from "~/ui/Debug/WorldStatePane";
+  import DebugPane from "~/ui/Debug/DebugPane";
   import PerformancePanel from "~/ui/Debug/PerformancePanel";
 
   import { PauseAutomatically, PauseMessage } from "~/ui/Pause";
@@ -130,7 +130,7 @@
   <overlay-content>
     <overlay-left class="interactive">
       {#if $playState === "paused" || $debugMode}
-        <WorldStatePane {state} />
+        <DebugPane {state} />
       {/if}
       {#if buildMode && $selectedEntities.size > 0}
         <GroupUngroupButton />
@@ -182,17 +182,13 @@
       {/if}
 
       {#if $connectedAccount}
-        <Tooltip
-          tip={_("Logout", "logout")}
-          top>
-            <LogoutButton />
+        <Tooltip tip={_("Logout", "logout")} top>
+          <LogoutButton />
         </Tooltip>
       {:else}
-        <Tooltip
-        tip={_("Connect your account!", "signin_button")}
-        top>
+        <Tooltip tip={_("Connect your account!", "signin_button")} top>
           <SignInButton bind:enabled={signinEnabled} />
-      </Tooltip>
+        </Tooltip>
       {/if}
     </play-buttons>
   </overlay-center>
