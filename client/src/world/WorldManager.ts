@@ -264,6 +264,7 @@ export class WorldManager {
           .getAllBy((e) => e.name === "Error")
           .forEach((entity) => {
             const html2d = entity.getByName("Html2d");
+            if (!html2d) return;
             html2d.visible = $enabled;
             html2d.modified();
           });
