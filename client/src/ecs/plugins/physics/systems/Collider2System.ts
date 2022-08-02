@@ -111,28 +111,21 @@ export class Collider2System extends System {
     const { world, rapier } = (this.world as any).physics;
     const transform = entity.get(Transform);
 
+    const options: PhysicsOptions =
+      entity.get(PhysicsOptions) || new PhysicsOptions(world);
+    const rr = options.rotRestrict.toUpperCase();
+
     let bodyDesc: RigidBodyDesc = new rapier.RigidBodyDesc(behavior.bodyType)
       .setTranslation(
         transform.position.x,
         transform.position.y,
         transform.position.z
       )
-      .setRotation(transform.rotation);
-
-    let options: PhysicsOptions =
-      entity.get(PhysicsOptions) || new PhysicsOptions(world);
-
-    bodyDesc.setLinearDamping(options.linDamp);
-    bodyDesc.setAngularDamping(options.angDamp);
-
-    const rr = options.rotRestrict.toUpperCase();
-    bodyDesc.restrictRotations(
-      rr.includes("X"),
-      rr.includes("Y"),
-      rr.includes("Z")
-    );
-
-    // if (spec.mass) rigidBodyDesc.setAdditionalMass(spec.mass);
+      .setRotation(transform.rotation)
+      .setAdditionalMass(options.additionalMass)
+      .setLinearDamping(options.linDamp)
+      .setAngularDamping(options.angDamp)
+      .restrictRotations(rr.includes("X"), rr.includes("Y"), rr.includes("Z"));
 
     return world.createRigidBody(bodyDesc);
   }
@@ -152,14 +145,14 @@ export class Collider2System extends System {
       .setActiveCollisionTypes(rapier.ActiveCollisionTypes.ALL)
       .setActiveEvents(rapier.ActiveEvents.COLLISION_EVENTS)
       .setTranslation(collider.offset.x, collider.offset.y, collider.offset.z)
-      .setRotation(rotation.multiply(collider.rotation));
+      .setRotation(rotation.multiply(collider.rotation))
+      .setDensity(MathUtils.clamp(collider.density, 0, 1000))
+      .setFriction(collider.friction)
+      .setCollisionGroups(behavior.interaction);
 
-    // colliderDesc.setSensor(spec.isSensor);
-
-    colliderDesc.setDensity(MathUtils.clamp(collider.density, 0, 1000));
+    // .setSensor(spec.isSensor);
 
     // Create the collider, and (optionally) attach to rigid body
-    colliderDesc.setCollisionGroups(behavior.interaction);
 
     return world.createCollider(colliderDesc, body);
   }
