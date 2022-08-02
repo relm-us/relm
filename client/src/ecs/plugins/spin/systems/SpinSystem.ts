@@ -1,7 +1,10 @@
-import { Vector3, Matrix4, Quaternion, Euler } from "three";
-import { System, Entity, Groups } from "~/ecs/base";
+import { get } from "svelte/store";
+import { Quaternion, Euler } from "three";
 
-import { Transform, Presentation } from "~/ecs/plugins/core";
+import { worldUIMode } from "~/stores/worldUIMode";
+
+import { System, Entity, Groups } from "~/ecs/base";
+import { Transform } from "~/ecs/plugins/core";
 import { Spin } from "../components";
 
 const e1 = new Euler();
@@ -15,6 +18,9 @@ export class SpinSystem extends System {
   };
 
   update(delta) {
+    const $mode = get(worldUIMode);
+    if ($mode === "build") return;
+
     const time = performance.now() / 1000;
     this.queries.active.forEach((entity) => {
       this.spinning(entity, time);
