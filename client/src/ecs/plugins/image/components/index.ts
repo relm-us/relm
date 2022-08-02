@@ -1,3 +1,3 @@
 export { Image } from "./Image";
-export { ImageRef } from "./ImageRef";
-export { ImageAttached } from "./ImageAttached";
+export { ImageMesh } from "./ImageMesh";
+export { ImageTexture } from "./ImageTexture";
