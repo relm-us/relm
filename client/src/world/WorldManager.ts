@@ -79,7 +79,10 @@ import { audioMode, AudioMode } from "~/stores/audioMode";
 import { Outline } from "~/ecs/plugins/outline";
 import { InteractorSystem } from "~/ecs/plugins/interactor";
 import { Object3DRef } from "~/ecs/plugins/core";
-import { getRandomInitializedIdentityData, localIdentityData } from "~/stores/identityData";
+import {
+  getRandomInitializedIdentityData,
+  localIdentityData,
+} from "~/stores/identityData";
 import { AuthenticationResponse, SocialId } from "~/main/RelmOAuthAPI";
 import { CameraSystem } from "~/ecs/plugins/camera/systems";
 import { TransformControls } from "~/ecs/plugins/transform-controls";
@@ -88,6 +91,7 @@ import { globalEvents } from "~/events";
 import { advancedEdit } from "~/stores/advancedEdit";
 import { connectedAccount } from "~/stores/connectedAccount";
 import { permits } from "~/stores/permits";
+import { errorCat } from "~/stores/errorCat";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -253,6 +257,18 @@ export class WorldManager {
     this.camera.init();
 
     this.world.perspective.setAvatar(this.avatar.entities.body);
+
+    this.unsubs.push(
+      errorCat.subscribe(($enabled) => {
+        this.world.entities
+          .getAllBy((e) => e.name === "Error")
+          .forEach((entity) => {
+            const html2d = entity.getByName("Html2d");
+            html2d.visible = $enabled;
+            html2d.modified();
+          });
+      })
+    );
 
     this.unsubs.push(
       shadowsEnabled.subscribe(($enabled) => {
@@ -747,7 +763,9 @@ export class WorldManager {
     }
   }
 
-  async register(credentials: LoginCredentials): Promise<AuthenticationResponse> {
+  async register(
+    credentials: LoginCredentials
+  ): Promise<AuthenticationResponse> {
     const data = await this.api.registerParticipant(credentials);
 
     // If we login, ensure we are connected.
@@ -761,13 +779,14 @@ export class WorldManager {
         return null;
       }
       connectedAccount.set(true);
-      
     }
 
     return data;
   }
 
-  async login(socialIdOrCred: SocialId|LoginCredentials): Promise<AuthenticationResponse|null> {
+  async login(
+    socialIdOrCred: SocialId | LoginCredentials
+  ): Promise<AuthenticationResponse | null> {
     let data: AuthenticationResponse;
 
     if (typeof socialIdOrCred === "object") {
@@ -818,7 +837,7 @@ export class WorldManager {
     this.dispatch({
       id: "enterPortal",
       relmName: this.relmName,
-      entryway: this.entryway
+      entryway: this.entryway,
     });
   }
 

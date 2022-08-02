@@ -1,6 +1,6 @@
 import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
-import { Mesh, Group } from "three";
+import { Mesh, Group, Object3D } from "three";
 
 import { Entity, System, Not, Modified, Groups, EntityId } from "~/ecs/base";
 import { Object3DRef } from "~/ecs/plugins/core";
@@ -8,8 +8,9 @@ import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 import { clone } from "~/ecs/shared/SkeletonUtils";
 
 import { Model2, Model2Ref } from "../components";
-import { showErrorModel } from "~/ecs/shared/showErrorModel";
-import { firstTimePrepareScene } from "~/ecs/shared/firstTimePrepareScene";
+import { makeError } from "~/ecs/shared/makeError";
+
+import { firstTimePrepareScene } from "../utils/firstTimePrepareScene";
 
 const cache: Map<string, Group> = new Map();
 
@@ -122,15 +123,17 @@ export class Model2System extends System {
   }
 
   error(entity: Entity, msg: string) {
-    showErrorModel(entity, msg, (scene) => {
-      entity.add(Model2Ref, {
-        value: {
-          scene,
-          animations: [],
-        },
-      });
-      this.attach(entity);
+    makeError(entity, msg);
+
+    // Empty object
+    entity.add(Model2Ref, {
+      value: {
+        scene: new Object3D(),
+        animations: [],
+      },
     });
+
+    this.attach(entity);
   }
 
   // Use cached GLTF scene if available; otherwise cache fresh scene and return
