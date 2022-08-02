@@ -83,12 +83,17 @@ export class Model2System extends System {
   }
 
   remove(entity: Entity) {
-    const ref: Mesh = entity.get(Model2Ref)?.value;
+    const ref: Model2Ref = entity.get(Model2Ref);
 
     if (ref) {
-      this.detach(entity);
+      if (ref.value) {
+        this.detach(entity);
 
-      ref.geometry?.dispose();
+        // ref.value.geometry?.dispose();
+      }
+      if (ref.errorEntity) {
+        ref.errorEntity.destroy();
+      }
     }
 
     entity.maybeRemove(Model2Ref);
@@ -123,7 +128,7 @@ export class Model2System extends System {
   }
 
   error(entity: Entity, msg: string) {
-    makeError(entity, msg);
+    const errorEntity = makeError(entity, msg);
 
     // Empty object
     entity.add(Model2Ref, {
@@ -131,6 +136,7 @@ export class Model2System extends System {
         scene: new Object3D(),
         animations: [],
       },
+      errorEntity,
     });
 
     this.attach(entity);
