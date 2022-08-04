@@ -78,12 +78,12 @@ export class ParticipantManager {
     if (!this.local.avatar) return;
 
     const transformData = avatarGetTransformData(avatar);
-    this.broker.setField("t", transformData);
+    this.broker.setField("transform", transformData);
 
     const animationData = avatarGetAnimationData(avatar);
-    const currClipIndex = this.broker.getField("a")?.clipIndex;
+    const currClipIndex = this.broker.getField("animation")?.clipIndex;
     if (animationData.clipIndex !== currClipIndex) {
-      this.broker.setField("a", animationData);
+      this.broker.setField("animation", animationData);
     }
 
     const currName = this.broker.getField("user")?.name;
@@ -108,9 +108,9 @@ export class ParticipantManager {
       const participant: Participant = this.participants.get(state["id"]);
       if (!participant) continue;
 
-      if ("t" in state && "a" in state) {
-        const transformData = state["t"];
-        const animationData = state["a"];
+      if ("transform" in state && "animation" in state) {
+        const transformData = state["transform"];
+        const animationData = state["animation"];
 
         setDataOnParticipant(
           world,
