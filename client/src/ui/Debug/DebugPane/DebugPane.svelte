@@ -13,6 +13,7 @@
   import { viewportSize, viewport } from "~/stores";
   import { localIdentityData } from "~/stores/identityData";
   import { fpsTime } from "~/stores/stats";
+  import { errorCat } from "~/stores/errorCat";
 
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import TextInput from "~/ui/lib/TextInput";
@@ -86,6 +87,12 @@
           <th>debug physics</th>
           <td>
             <ToggleSwitch bind:enabled={PhysicsSystem.showDebug} />
+          </td>
+        </tr>
+        <tr>
+          <th>show errors</th>
+          <td>
+            <ToggleSwitch bind:enabled={$errorCat} />
           </td>
         </tr>
         <tr>

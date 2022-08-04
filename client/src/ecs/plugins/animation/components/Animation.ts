@@ -46,16 +46,7 @@ export class Animation extends Component {
     label: "Animation",
   };
 
-  maybeChangeClip(newClip: string | { clipName: string; loop: boolean }) {
-    let clipName;
-    let loop;
-    if (typeof newClip === "object") {
-      clipName = newClip.clipName;
-      loop = newClip.loop;
-    } else {
-      clipName = newClip;
-      loop = true;
-    }
+  maybeChangeClip(clipName: string, loop: boolean = false) {
     if (this.clipName !== clipName) {
       this.clipName = clipName;
       this.loop = loop;

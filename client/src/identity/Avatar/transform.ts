@@ -11,6 +11,8 @@ import { makeRemoteAvatarEntities } from "./makeRemoteAvatarEntities";
 import { setAvatarFromParticipant } from "./setAvatarFromParticipant";
 import { DecoratedECSWorld } from "types/DecoratedECSWorld";
 import { Oculus } from "~/ecs/plugins/html2d";
+import { FALLING } from "~/config/constants";
+import { changeAnimationClip } from "./changeAnimationClip";
 
 const e1 = new Euler(0, 0, 0, "YXZ");
 const v1 = new Vector3();
@@ -116,14 +118,9 @@ export function avatarSetAnimationData(
 
   const ref: Model2Ref = entities.body.get(Model2Ref);
   const clips = ref?.value.animations;
-  const animation = entities.body.get(Animation);
   if (clips && clipIndex >= 0 && clipIndex < clips.length) {
     const newClipName = clips[clipIndex]?.name;
-    if (animation.clipName !== newClipName) {
-      animation.clipName = newClipName;
-      animation.loop = animLoop;
-      animation.modified();
-    }
+    changeAnimationClip(entities.body, newClipName, animLoop);
   }
 }
 
@@ -157,8 +154,7 @@ export function setDataOnParticipant(
 
   avatarSetTransformData(participant.avatar, transformData);
 
-  if (animationData)
-    avatarSetAnimationData(participant.avatar, animationData);
+  if (animationData) avatarSetAnimationData(participant.avatar, animationData);
 
   // If the remote participant is active (if we've reached this point,
   // they are), and some IdentityData has been modified, then take the

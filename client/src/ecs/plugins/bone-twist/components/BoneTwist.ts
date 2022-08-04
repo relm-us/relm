@@ -11,6 +11,7 @@ export class BoneTwist extends LocalComponent {
   boneName: string;
   function: Vector3;
   speed: number;
+  enabled: boolean;
 
   static props = {
     boneName: {

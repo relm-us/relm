@@ -1,34 +1,11 @@
 import { Component, StringType, NumberType } from "~/ecs/base";
-import { Asset, AssetType } from "~/ecs/plugins/core";
 
 export class Image extends Component {
-  asset: Asset;
+  fit: "COVER" | "CONTAIN";
   width: number;
   height: number;
-  fit: "COVER" | "CONTAIN";
 
   static props = {
-    asset: {
-      type: AssetType,
-      editor: {
-        label: "Asset",
-        accept: ".png,.jpg,.jpeg",
-      },
-    },
-    width: {
-      type: NumberType,
-      default: 1,
-      editor: {
-        label: "Width",
-      },
-    },
-    height: {
-      type: NumberType,
-      default: 1,
-      editor: {
-        label: "Height",
-      },
-    },
     fit: {
       type: StringType,
       default: "CONTAIN",
@@ -39,6 +16,22 @@ export class Image extends Component {
           { label: "Contain", value: "CONTAIN" },
           { label: "Cover", value: "COVER" },
         ],
+      },
+    },
+
+    width: {
+      type: NumberType,
+      default: 1,
+      editor: {
+        label: "Width",
+      },
+    },
+
+    height: {
+      type: NumberType,
+      default: 1,
+      editor: {
+        label: "Height",
       },
     },
   };
