@@ -15,7 +15,6 @@ import { PointerPosition } from "~/ecs/plugins/pointer-position";
 import { Impactable, PhysicsOptions, Collider2 } from "~/ecs/plugins/physics";
 import { Animation } from "~/ecs/plugins/animation";
 import { Repulsive } from "~/ecs/plugins/player-control";
-import { TranslucentOptions } from "~/ecs/plugins/translucent";
 import { AlwaysOnStage } from "~/ecs/plugins/camera";
 
 export function makeAvatarEntities(
@@ -39,7 +38,6 @@ export function makeAvatarEntities(
       value: new Asset("/avatars.glb"),
     })
     .add(Model2)
-    .add(TranslucentOptions, { time: 100 })
     .add(Animation, {
       clipName: IDLE,
     })
