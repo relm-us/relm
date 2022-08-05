@@ -29,7 +29,19 @@ const _b3 = new Box3();
 export class Collider2System extends System {
   physics: Physics;
 
-  order = Groups.Presentation + 301; // After WorldTransform
+  /**
+   * If the Collider2 is modified in rapid succession (such as when
+   * a designer is actively resizing a collider), then it's possible
+   * the physics world will not yet include the newly re-built collider
+   * in its calculation of what is "on stage" (i.e. within view of the
+   * camera frustum). If the entity does not appear to be on stage, the
+   * entity will be de-activated, and all ECS Components will be removed
+   * (including the Collider2 being modified).
+   *
+   * Therefore, it's important that Collider2System occur after CameraSystem
+   * and before PhysicsSystem.
+   */
+  order = Groups.Presentation + 299;
 
   static queries = {
     implicitToExplicit: [Collider2, Collider2Implicit],
