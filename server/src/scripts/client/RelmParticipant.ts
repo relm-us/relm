@@ -39,7 +39,7 @@ export class RelmParticipant {
     // Broadcast our spawning to other players
     this.options.awareness.states.set(this.options.clientId, {});
     this.setLocalField("id", this.options.participantId);
-    this.setLocalField("a", { clipIndex: 2, animLoop: true });
+    this.setLocalField("animation", { clipIndex: 2, animLoop: true });
     this.setLocalField("user", { color: randomColor(), name: this.options.name });
     this.setTransform([spawnX, spawnY, spawnZ, 0, 0, 0]);
   }
@@ -49,11 +49,11 @@ export class RelmParticipant {
   }
 
   getTransform() {
-    return this.getLocalField("t");
+    return this.getLocalField("transform");
   }
 
   setTransform(transform: number[]) {
-    this.setLocalField("t", transform);
+    this.setLocalField("transform", transform);
   }
 
   getLocalState() {

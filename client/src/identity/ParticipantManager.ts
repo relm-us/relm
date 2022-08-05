@@ -70,9 +70,7 @@ export class ParticipantManager {
   sendMyState() {
     if (!this.broker.awareness.getLocalState()) return;
 
-    if (!this.broker.getField("id")) {
-      this.broker.setField("id", participantId);
-    }
+    this.broker.setField("id", participantId);
 
     const avatar = this.local.avatar;
     if (!this.local.avatar) return;
@@ -81,20 +79,16 @@ export class ParticipantManager {
     this.broker.setField("transform", transformData);
 
     const animationData = avatarGetAnimationData(avatar);
-    const currClipIndex = this.broker.getField("animation")?.clipIndex;
-    if (animationData.clipIndex !== currClipIndex) {
-      this.broker.setField("animation", animationData);
-    }
+    this.broker.setField("animation", animationData);
 
-    const currName = this.broker.getField("user")?.name;
     const { name, color } = this.local.identityData;
-    if (name !== currName) {
-      // Set quill cursor name and color
-      this.broker.setField("user", {
-        name,
-        color,
-      });
-    }
+    // Set quill cursor name and color
+    this.broker.setField("user", {
+      name,
+      color,
+    });
+
+    this.broker.setField("identity", this.local.identityData);
   }
 
   applyOthersState(world: DecoratedECSWorld, provider: WebsocketProvider) {
@@ -108,15 +102,19 @@ export class ParticipantManager {
       const participant: Participant = this.participants.get(state["id"]);
       if (!participant) continue;
 
-      if ("transform" in state && "animation" in state) {
+      if ("transform" in state
+           && "animation" in state
+           && "identity" in state) {
         const transformData = state["transform"];
         const animationData = state["animation"];
+        const identityData = state["identity"];
 
         setDataOnParticipant(
           world,
           participant,
           transformData,
           animationData,
+          identityData,
           (participant) => {
             this.dispatch({ id: "participantJoined", participant });
           }
