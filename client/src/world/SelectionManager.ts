@@ -1,14 +1,14 @@
 import type { WorldManager } from "./WorldManager";
 
 import { get } from "svelte/store";
-import { Object3D, Vector3 } from "three";
+import { Vector3 } from "three";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import { first, difference } from "~/utils/setOps";
 
 import { Entity, EntityId } from "~/ecs/base";
 import { Outline } from "~/ecs/plugins/outline";
-import { Object3DRef, Transform } from "~/ecs/plugins/core";
+import { Transform } from "~/ecs/plugins/core";
 
 import { selectedEntities, selectedGroups } from "~/stores/selection";
 import { openPanel } from "~/stores";

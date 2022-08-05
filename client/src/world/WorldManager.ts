@@ -519,12 +519,7 @@ export class WorldManager {
   showTransformControls(entity, onChange?: Function) {
     this.transformEntity = entity;
 
-    entity.add(TransformControls, {
-      onChange,
-      onMouseUp: (entity) => {
-        this.worldDoc.syncFrom(entity);
-      },
-    });
+    entity.add(TransformControls, { onChange });
   }
 
   hideTransformControls() {

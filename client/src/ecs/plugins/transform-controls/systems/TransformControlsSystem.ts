@@ -1,4 +1,4 @@
-import { Object3D } from "three";
+import { Object3D, Vector3 } from "three";
 import { TransformControls as ThreeTransformControls } from "./TransformControls";
 
 import { System, Groups, Entity, Not } from "~/ecs/base";
@@ -6,6 +6,11 @@ import { Presentation, Object3DRef, Transform } from "~/ecs/plugins/core";
 
 import { TransformControls, TransformControlsRef } from "../components";
 import { setControl } from "~/events/input/PointerListener/pointerActions";
+
+import { worldManager } from "~/world";
+
+const start = new Vector3();
+const delta = new Vector3();
 
 export class TransformControlsSystem extends System {
   static selected: Entity = null;
@@ -49,7 +54,8 @@ export class TransformControlsSystem extends System {
     controls.addEventListener("change", () => {
       // Update physics engine
       if (!transform.position.equals(object3d.position)) {
-        transform.position.copy(object3d.position);
+        delta.copy(object3d.position).sub(start);
+        worldManager.selection.moveRelativeToSavedPositions(delta);
         changed = true;
       }
       if (!transform.rotation.equals(object3d.quaternion)) {
@@ -68,10 +74,13 @@ export class TransformControlsSystem extends System {
 
     controls.addEventListener("mouseDown", () => {
       setControl(true);
+      start.copy(transform.position);
+      worldManager.selection.savePositions();
     });
     controls.addEventListener("mouseUp", () => {
       setControl(false);
       spec.onMouseUp?.(entity);
+      worldManager.selection.syncEntities();
     });
 
     controls.attach(object3d);
