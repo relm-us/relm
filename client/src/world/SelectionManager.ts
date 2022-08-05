@@ -119,6 +119,30 @@ export class SelectionManager {
     }
   }
 
+  rotate(
+    center: Vector3,
+    radians: number,
+    axis: Vector3 = new Vector3(0, 1, 0)
+  ) {
+    for (const entity of this.entities) {
+      // Only rotate root entities:
+      if (entity.getParent()) continue;
+
+      const transform = entity.get(Transform);
+      const savedPos = (entity as any).savedPosition;
+      const pos = transform.position
+
+      pos.copy(savedPos);
+      pos.sub(center);
+      pos.applyAxisAngle(axis, radians);
+      pos.add(center);
+
+      transform.rotation.setFromAxisAngle(axis, radians);
+
+      transform.modified();
+    }
+  }
+
   syncEntities() {
     this.entities.forEach((entity) => {
       this.wdoc.syncFrom(entity);

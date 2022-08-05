@@ -43,6 +43,7 @@ import { config } from "~/config";
 
 import { DragPlane } from "~/events/input/PointerListener/DragPlane";
 import { SelectionBox } from "~/events/input/PointerListener/SelectionBox";
+import { setControl } from "~/events/input/PointerListener/pointerActions";
 
 import { makeLight } from "~/prefab/makeLight";
 
@@ -519,7 +520,23 @@ export class WorldManager {
   showTransformControls(entity, onChange?: Function) {
     this.transformEntity = entity;
 
-    entity.add(TransformControls, { onChange });
+    entity.add(TransformControls, {
+      onChange,
+      onBegin: (entity) => {
+        setControl(true);
+        this.selection.savePositions();
+      },
+      onComplete: (entity) => {
+        setControl(false);
+        this.selection.syncEntities();
+      },
+      onMove: (entity, delta) => {
+        this.selection.moveRelativeToSavedPositions(delta);
+      },
+      onRotate: (entity, center, theta, axis) => {
+        this.selection.rotate(center, theta, axis);
+      },
+    });
   }
 
   hideTransformControls() {
