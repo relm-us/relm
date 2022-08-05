@@ -1,15 +1,15 @@
 import {
-  Object3D,
   PlaneBufferGeometry,
   MeshStandardMaterial,
   Mesh,
   DoubleSide,
+  Texture,
 } from "three";
 
 import { System, Not, Modified, Groups, Entity } from "~/ecs/base";
 import { Queries } from "~/ecs/base/Query";
 
-import { Image, ImageRef, ImageAttached } from "../components";
+import { Image, ImageMesh, ImageTexture } from "../components";
 import { Presentation, Object3DRef } from "~/ecs/plugins/core";
 import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 
@@ -36,20 +36,15 @@ export class ImageSystem extends System {
 
   order = Groups.Initialization;
 
-  /**
-   * AssetLoaded <-> ImageRef
-   * Object3D <-> ImageAttached
-   */
   static queries: Queries = {
-    missingAsset: [Image, Not(Asset)],
+    modified: [Modified(Image)],
+    modifiedAsset: [Modified(Asset), ImageTexture],
 
-    added: [Image, AssetLoaded, Not(ImageRef)],
-    modified: [Modified(Image), AssetLoaded],
-    removed: [Not(Image), ImageRef],
+    added: [Image, Object3DRef, Not(ImageMesh)],
+    addedAsset: [Image, ImageMesh, AssetLoaded, Not(ImageTexture)],
 
-    detached: [Object3DRef, ImageRef, Not(ImageAttached)],
-    attached: [Object3DRef, Not(ImageRef), ImageAttached],
-    dangling: [Not(Object3DRef), ImageRef],
+    removed: [Not(Image), ImageMesh],
+    removedAsset: [Not(Asset), ImageTexture],
   };
 
   init({ presentation }) {
@@ -57,94 +52,134 @@ export class ImageSystem extends System {
   }
 
   update() {
-    this.queries.missingAsset.forEach((entity) => {
-      const spec: Image = entity.get(Image);
-      entity.add(Asset, { kind: "TEXTURE", value: spec.asset });
+    this.queries.modified.forEach((entity) => {
+      console.log("modified", entity.id);
+      this.removeTexture(entity);
+      this.remove(entity);
+    });
+    this.queries.modifiedAsset.forEach((entity) => {
+      this.removeTexture(entity);
     });
 
-    this.queries.added.forEach((entity) => this.build(entity));
+    this.queries.added.forEach((entity) => {
+      this.build(entity);
+    });
+    this.queries.addedAsset.forEach((entity) => {
+      const loaded: AssetLoaded = entity.get(AssetLoaded);
+      if (loaded.kind === "TEXTURE") this.buildTexture(entity);
+      else {
+        console.warn("ignoring non-texture asset for shape", entity.id);
+        entity.add(ImageTexture);
+      }
+    });
 
-    // once ImageRef is removed, Asset & Image will be built again
-    this.queries.modified.forEach((entity) => this.remove(entity));
-
-    // since Image is already gone, remove ImageRef and clean up (it won't be built again)
-    this.queries.removed.forEach((entity) => this.remove(entity));
-
-    this.queries.detached.forEach((entity) => this.attach(entity));
-    this.queries.attached.forEach((entity) => this.detach(entity));
-    this.queries.dangling.forEach((entity) => this.remove(entity));
-  }
-
-  build(entity: Entity) {
-    const spec: Image = entity.get(Image);
-    const texture = entity.get(AssetLoaded).value;
-
-    if (!texture.image) {
-      this.error(entity, `Image can't be built: ${entity.id}`);
-    }
-
-    const plane = { width: spec.width, height: spec.height };
-    const image = { width: texture.image.width, height: texture.image.height };
-
-    if (spec.fit === "COVER") {
-      const cover = this.getCover(plane, image);
-      texture.repeat.set(cover.width, cover.height);
-      texture.offset.set(cover.x, cover.y);
-    } else if (spec.fit === "CONTAIN") {
-      const contain = this.getContain(plane, image);
-      plane.width = contain.width;
-      plane.height = contain.height;
-    }
-
-    const mesh = this.makeMesh(plane, texture);
-
-    entity.add(ImageRef, { value: mesh });
-  }
-
-  remove(entity: Entity) {
-    const mesh = entity.get(ImageRef).value;
-
-    mesh.geometry?.dispose();
-    mesh.material?.dispose();
-    mesh.dispose?.();
-
-    entity.remove(ImageRef);
-    entity.maybeRemove(Asset);
+    this.queries.removedAsset.forEach((entity) => {
+      this.removeTexture(entity);
+    });
+    this.queries.removed.forEach((entity) => {
+      this.remove(entity);
+    });
   }
 
   attach(entity: Entity) {
     const object3dref: Object3DRef = entity.get(Object3DRef);
-    const parent = object3dref.value;
-    const child = entity.get(ImageRef).value;
-    parent.add(child);
-    entity.add(ImageAttached, { parent, child });
+
+    // Attach shape mesh to container object3d
+    const mesh: ImageMesh = entity.get(ImageMesh);
+    object3dref.value.add(mesh.value);
 
     // Notify dependencies, e.g. BoundingBox, that object3d has changed
     object3dref.modified();
   }
 
   detach(entity: Entity) {
-    const { parent, child } = entity.get(ImageAttached);
-    parent.remove(child);
-    entity.remove(ImageAttached);
+    // Detach shape mesh from container object3d
+    const mesh: ImageMesh = entity.get(ImageMesh);
+    mesh?.value.removeFromParent();
 
-    // Notify dependencies, e.g. BoundingBox, that object3d has changed
-    entity.get(Object3DRef).modified();
+    // Notify dependencies, (e.g. collider), that object3d has changed
+    const object3dref: Object3DRef = entity.get(Object3DRef);
+    object3dref?.modified();
   }
 
-  makeMesh(plane, texture) {
-    const geometry = new PlaneBufferGeometry(plane.width, plane.height);
+  build(entity: Entity, overrideWidth?: number, overrideHeight?: number) {
+    const spec: Image = entity.get(Image);
+
+    const plane = {
+      width: overrideWidth ?? spec.width,
+      height: overrideHeight ?? spec.height,
+    };
+
+    const mesh = this.buildMesh(plane);
+
+    entity.add(ImageMesh, { value: mesh });
+
+    this.attach(entity);
+  }
+
+  buildMesh(size: { width: number; height: number }) {
+    const geometry = new PlaneBufferGeometry(size.width, size.height);
     const material = new MeshStandardMaterial({
       roughness: 0.8,
       metalness: 0,
       transparent: true, // supports png transparency
-      map: texture,
       side: DoubleSide,
     });
     const mesh = new Mesh(geometry, material);
     mesh.receiveShadow = true;
 
     return mesh;
+  }
+
+  buildTexture(entity: Entity) {
+    const spec: Image = entity.get(Image);
+    const texture: Texture = entity.get(AssetLoaded).value;
+    let mesh: ImageMesh = entity.get(ImageMesh);
+
+    const image = { width: texture.image.width, height: texture.image.height };
+    const plane = { width: spec.width, height: spec.height };
+
+    this.remove(entity);
+
+    if (spec.fit === "COVER") {
+      const cover = this.getCover(plane, image);
+      texture.repeat.set(cover.width, cover.height);
+      texture.offset.set(cover.x, cover.y);
+
+      this.build(entity);
+    } else if (spec.fit === "CONTAIN") {
+      const contain = this.getContain(plane, image);
+
+      texture.repeat.set(1, 1);
+      texture.offset.set(0, 0);
+      this.build(entity, contain.width, contain.height);
+    }
+
+    mesh = entity.get(ImageMesh);
+
+    (mesh.value.material as MeshStandardMaterial).map = texture;
+
+    entity.add(ImageTexture);
+  }
+
+  remove(entity: Entity) {
+    this.detach(entity);
+
+    const mesh: ImageMesh = entity.get(ImageMesh);
+
+    if (mesh) {
+      mesh.value.geometry?.dispose();
+      entity.remove(ImageMesh);
+    }
+  }
+
+  removeTexture(entity: Entity) {
+    const mesh: ImageMesh = entity.get(ImageMesh);
+    if (mesh) {
+      (mesh.value.material as MeshStandardMaterial).map = null;
+    }
+
+    entity.maybeRemove(ImageTexture);
   }
 
   /**
@@ -188,18 +223,12 @@ export class ImageSystem extends System {
     const imageAspect = image.width / image.height;
 
     // plane is too wide, shrink to fit
-    if (planeAspect > imageAspect) plane.width = plane.height * imageAspect;
+    if (planeAspect > imageAspect) contain.width = contain.height * imageAspect;
 
     // plane is too high, shrink to fit
     if (planeAspect < imageAspect)
-      plane.height = (image.height / image.width) * plane.width;
+      contain.height = (image.height / image.width) * contain.width;
 
     return contain;
-  }
-
-  error(entity, msg) {
-    entity.maybeRemove(Image);
-    entity.maybeRemove(ImageRef);
-    console.warn(`ImageSystem: ${msg}`, entity);
   }
 }

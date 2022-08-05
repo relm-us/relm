@@ -23,7 +23,8 @@ import {
   KPR,
 } from "~/ecs/shared/KeyState";
 import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
-import { JUMPING, T_POSE } from "~/config/constants";
+import { FALLING } from "~/config/constants";
+import { changeAnimationClip } from "~/identity/Avatar/changeAnimationClip";
 
 const STILL_SPEED = 0;
 const WALK_SPEED = 1;
@@ -168,18 +169,18 @@ export class ControllerSystem extends System {
       const anim: Animation = entity.get(Animation);
       if (anim) {
         if (state.animOverride) {
-          anim.maybeChangeClip(state.animOverride);
+          changeAnimationClip(entity, state.animOverride, true);
         } else {
           const wGrounded = this.willBeGrounded(entity);
           let targetAnim = spec.animations[state.speed];
           if (!state.grounded && !spec.canFly && !wGrounded) {
             // Falling
             state.speed = STILL_SPEED;
-            targetAnim = T_POSE;
+            targetAnim = FALLING;
           } else {
             targetAnim = spec.animations[state.speed];
           }
-          anim.maybeChangeClip(targetAnim);
+          changeAnimationClip(entity, targetAnim, true);
         }
       }
     });

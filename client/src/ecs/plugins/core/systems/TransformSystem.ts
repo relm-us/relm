@@ -46,13 +46,20 @@ export class TransformSystem extends System {
   }
 
   createObject3D(entity: Entity) {
+    const transform: Transform = entity.get(Transform);
+
     const object3d = new THREE.Object3D();
+
     object3d.uuid = entity.id as string;
     object3d.name = entity.name;
     object3d.matrixAutoUpdate = false;
-    object3d.userData.entityId = entity.id;
+
     // We have our own frustum culling, so disable built-in threejs culling
     object3d.frustumCulled = false;
+
+    // Usually, we set the entityId to the ECS entity.id, but sometimes
+    // it's useful to be deceptive, as in the case of an "error" object
+    object3d.userData.entityId = transform.entityId || entity.id;
 
     let parent;
     if (!entity.parent) {

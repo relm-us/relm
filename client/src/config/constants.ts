@@ -54,6 +54,7 @@ export const WALKING = "walking";
 export const WAVING = "waving";
 export const STAND_SIT = "stand-to-sit-ground";
 export const CHAIR_SIT = "stand-to-sit-chair";
+export const FALLING = "falling";
 
 // prettier-ignore
 export const UNIQUE_COLOR_PALETTE = [
@@ -72,4 +73,4 @@ export const AV_ENABLED: boolean = true;
 // How often should identity data be saved after being updated?
 export const IDENTITY_SAVE_INTERVAL = 2000;
 
-export const ERROR_GLTF = "/diamond.glb";
+export const ERROR_GLTF = "/error-cat.glb";
