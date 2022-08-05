@@ -6,6 +6,7 @@
   import EntityComponents from "./EntityComponents.svelte";
   import AdminAddToLibrary from "./AdminAddToLibrary.svelte";
   import { permits } from "~/stores/permits";
+  import TransformButtons from "./TransformButtons.svelte";
 
   let entity;
   $: $selectedEntities, (entity = worldManager.selection.getFirst());
@@ -37,17 +38,10 @@
       <AdminAddToLibrary />
     {/if}
   {:else}
-    <Pane title="Selected">
-      {#each [...$selectedEntities] as entityId}
-        <div>{entityId}</div>
-      {/each}
+    <TransformButtons />
 
-      {#if $selectedGroups.size > 0}
-        <div>Selected groups:</div>
-        {#each [...$selectedGroups] as groupId}
-          <div>{groupId}</div>
-        {/each}
-      {/if}
+    <Pane title="Selected">
+      Objects: {$selectedEntities.size}
     </Pane>
   {/if}
 </LeftPanel>
