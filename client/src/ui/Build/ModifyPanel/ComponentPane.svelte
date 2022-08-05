@@ -19,7 +19,10 @@
     const reqs = propRequires(prop);
 
     // by default, all props are shown (no `requires` constraints)
-    if (!reqs) return true;
+    if (!reqs) {
+      // only show properties that have editor attributes
+      return Boolean(prop.editor);
+    }
 
     // if the `requires` field exists, check if we meet criteria
     return prop.editor.requires.reduce((acc, item) => {
