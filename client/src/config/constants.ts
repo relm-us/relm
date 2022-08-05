@@ -54,7 +54,7 @@ export const WALKING = "walking";
 export const WAVING = "waving";
 export const STAND_SIT = "stand-to-sit-ground";
 export const CHAIR_SIT = "stand-to-sit-chair";
-export const FALLING = "falling";
+export const FALLING = "a-pose";
 
 // prettier-ignore
 export const UNIQUE_COLOR_PALETTE = [
