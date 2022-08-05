@@ -53,12 +53,10 @@ export class NumberDragger {
     }).bind(this);
 
     this.mouseup = ((event) => {
+      if (!this.mouseGrab) return;
+
       const delta = this.getDelta(event);
-      if (
-        this.mouseGrab &&
-        !this.hasEverDragged &&
-        Math.abs(delta) <= this.dragEngageDistance
-      ) {
+      if (!this.hasEverDragged && Math.abs(delta) <= this.dragEngageDistance) {
         this.onClick();
       } else {
         if (this.currentValue !== null) {

@@ -5,6 +5,7 @@
 
   import { NumberDragger } from "./NumberDragger";
   import { formatNumber } from "./formatNumber";
+  import { onMount } from "svelte";
 
   export let label = null;
   export let value: number;
@@ -14,10 +15,12 @@
   const dispatch = createEventDispatcher();
 
   let editing = false;
+  let originalValue;
 
   const setValue = (final: boolean) => (newValue: number) => {
     // Ignore no-ops
-    if (value === newValue) return;
+    if (!final && value === newValue) return;
+    if (final && value === originalValue) return;
 
     // Set local value
     value = newValue;
@@ -44,6 +47,10 @@
     onDrag: setValue(false),
     onChange: setValue(true),
     onClick: () => (editing = true),
+  });
+
+  onMount(() => {
+    originalValue = value;
   });
 </script>
 
