@@ -1,6 +1,7 @@
 import type { TransformData, AnimationData, Participant, IdentityData } from "~/types";
 
 import { Vector3, Euler, AnimationClip } from "three";
+import { Appearance } from "relm-common";
 
 import { Transform } from "~/ecs/plugins/core";
 import { Model2Ref } from "~/ecs/plugins/form";
@@ -12,7 +13,6 @@ import { setAvatarFromParticipant } from "./setAvatarFromParticipant";
 import { DecoratedECSWorld } from "types/DecoratedECSWorld";
 import { Oculus } from "~/ecs/plugins/html2d";
 import { changeAnimationClip } from "./changeAnimationClip";
-import { Appearance } from "~/../../common/dist";
 import { isEqual } from "~/utils/isEqual";
 
 const e1 = new Euler(0, 0, 0, "YXZ");
