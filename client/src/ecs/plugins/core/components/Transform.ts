@@ -40,6 +40,7 @@ export class Transform extends Component {
       },
     },
 
+    // see note above
     entityId: {
       type: StringType,
     },
