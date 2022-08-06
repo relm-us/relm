@@ -54,6 +54,9 @@ import { ControllerState } from "~/ecs/plugins/player-control";
 import { Follow } from "~/ecs/plugins/follow";
 import { intersectionPointWithGround } from "~/ecs/shared/isMakingContactWithGround";
 import { Transition } from "~/ecs/plugins/transition";
+import { CameraSystem } from "~/ecs/plugins/camera/systems";
+import { TransformControls } from "~/ecs/plugins/transform-controls";
+import { Collider2VisibleSystem } from "~/ecs/plugins/collider-visible/systems";
 
 import { Inventory } from "~/identity/Inventory";
 import { SelectionManager } from "./SelectionManager";
@@ -85,14 +88,12 @@ import {
   localIdentityData,
 } from "~/stores/identityData";
 import { AuthenticationResponse, SocialId } from "~/main/RelmOAuthAPI";
-import { CameraSystem } from "~/ecs/plugins/camera/systems";
-import { TransformControls } from "~/ecs/plugins/transform-controls";
-import { Collider2VisibleSystem } from "~/ecs/plugins/collider-visible/systems";
 import { globalEvents } from "~/events";
 import { advancedEdit } from "~/stores/advancedEdit";
 import { connectedAccount } from "~/stores/connectedAccount";
 import { permits } from "~/stores/permits";
 import { errorCat } from "~/stores/errorCat";
+import { viewportScale } from "~/stores/viewportScale";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -394,6 +395,12 @@ export class WorldManager {
       clearInterval(fpsCheckInterval);
     });
 
+    this.unsubs.push(
+      viewportScale.subscribe(($scale) => {
+        this.didChangeZoom();
+      })
+    );
+
     // Pre-compile assets to prevent some jank while exploring the world
     this.world.presentation.compile();
 
@@ -515,6 +522,11 @@ export class WorldManager {
     if (this.loopType.type !== "reqAnimFrame" && !this.fpsLocked) {
       this.setFps(60);
     }
+  }
+
+  didChangeZoom() {
+    this.didControlAvatar();
+    CameraSystem.stageNeedsUpdate = true;
   }
 
   showTransformControls(entity, onChange?: Function) {

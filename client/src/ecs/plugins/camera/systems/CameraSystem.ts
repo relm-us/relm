@@ -20,6 +20,8 @@ export class CameraSystem extends System {
 
   order = Groups.Initialization;
 
+  static stageNeedsUpdate: boolean = false;
+
   static queries: Queries = {
     added: [Object3DRef, Camera, Not(CameraAttached)],
     removed: [Not(Camera), CameraAttached],
@@ -46,11 +48,14 @@ export class CameraSystem extends System {
     this.queries.added.forEach((entity) => this.build(entity));
     this.queries.removed.forEach((entity) => this.remove(entity));
 
-    if (this.world.version % 13 === 0) {
+    if (this.world.version % 13 === 0 || CameraSystem.stageNeedsUpdate) {
+      CameraSystem.stageNeedsUpdate = false;
+
       // There should be just 1 active camera, but we access it via forEach
       this.queries.active.forEach((entity) => {
         const transform: Transform = entity.get(Transform);
 
+        // NOTE: This call takes about 0.6 ms on my system, in a world of 30 entities.
         this.physics.world.intersectionsWithShape(
           transform.position,
           transform.rotation,
