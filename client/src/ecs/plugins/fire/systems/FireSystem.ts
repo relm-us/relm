@@ -31,9 +31,11 @@ export class FireSystem extends System {
     if (!fireTex) return;
 
     this.queries.new.forEach((entity) => {
+      console.log("new", entity.id);
       this.build(entity);
     });
     this.queries.modified.forEach((entity) => {
+      console.log("modified", entity.id);
       this.remove(entity);
       this.build(entity);
     });
@@ -45,6 +47,7 @@ export class FireSystem extends System {
       mesh.time += spec.speed * (delta * 60);
     });
     this.queries.removed.forEach((entity) => {
+      console.log("removed", entity.id);
       this.remove(entity);
     });
   }
@@ -77,7 +80,7 @@ export class FireSystem extends System {
     if (object3dref) {
       entity.get(Object3DRef).value.remove(mesh);
       // Notify dependencies, e.g. BoundingBox, that object3d has changed
-      object3dref.modified();
+      // object3dref.modified();
     }
 
     entity.remove(FireMesh);
