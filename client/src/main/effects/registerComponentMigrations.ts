@@ -145,4 +145,8 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
       });
     }
   });
+
+  ecsWorld.migrations.register("TranslucentOptions", (world, entity, data) => {
+    // ignore
+  });
 }
