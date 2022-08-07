@@ -31,11 +31,9 @@ export class FireSystem extends System {
     if (!fireTex) return;
 
     this.queries.new.forEach((entity) => {
-      console.log("new", entity.id);
       this.build(entity);
     });
     this.queries.modified.forEach((entity) => {
-      console.log("modified", entity.id);
       this.remove(entity);
       this.build(entity);
     });
@@ -47,7 +45,6 @@ export class FireSystem extends System {
       mesh.time += spec.speed * (delta * 60);
     });
     this.queries.removed.forEach((entity) => {
-      console.log("removed", entity.id);
       this.remove(entity);
     });
   }

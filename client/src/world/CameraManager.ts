@@ -15,6 +15,7 @@ import {
   CAMERA_ANGLE,
   CAMERA_FOCUS_DISTANCE,
   CAMERA_LERP_ALPHA,
+  DEFAULT_VIEWPORT_ZOOM,
 } from "~/config/constants";
 
 type CameraFollowingParticipant = {
@@ -82,13 +83,11 @@ export class CameraManager {
   zoom: number;
 
   followOffset: Vector3;
-  // zoomedInOffset: Vector3 = new Vector3(0, 5.5, 5.0);
   zoomedInOffset: Vector3 = new Vector3(
     0,
     5 * Math.sin(CAMERA_ANGLE) + AVATAR_HEIGHT,
     5 * Math.cos(CAMERA_ANGLE)
   );
-  // zoomedOutOffset: Vector3 = new Vector3(0, 25.5, 25.0);
   zoomedOutOffset: Vector3 = new Vector3(
     0,
     25 * Math.sin(CAMERA_ANGLE) + AVATAR_HEIGHT,
@@ -109,9 +108,10 @@ export class CameraManager {
 
   init() {
     this.state = { type: "following" };
-    this.zoom = 0.5;
+    this.zoom = DEFAULT_VIEWPORT_ZOOM / 100;
 
-    this.followOffset = new Vector3().copy(this.zoomedOutOffset);
+    this.followOffset = new Vector3();
+    this.calcFollowOffset();
 
     // Create the ECS camera entity that holds the ThreeJS camera
     this.entity = makeCamera(this.ecsWorld, -CAMERA_ANGLE)
@@ -155,10 +155,7 @@ export class CameraManager {
 
     switch (this.state.type) {
       case "following": {
-        this.followOffset
-          .copy(this.zoomedInOffset)
-          .lerp(this.zoomedOutOffset, this.zoom)
-          .add(this.pan);
+        this.calcFollowOffset();
         const follow = camera.get(Follow);
         follow?.offset.copy(this.followOffset);
 
@@ -213,6 +210,13 @@ export class CameraManager {
 
   getFov() {
     return this.ecsWorld.presentation.camera.fov;
+  }
+
+  calcFollowOffset() {
+    this.followOffset
+      .copy(this.zoomedInOffset)
+      .lerp(this.zoomedOutOffset, this.zoom)
+      .add(this.pan);
   }
 
   above(height: number = 30) {
