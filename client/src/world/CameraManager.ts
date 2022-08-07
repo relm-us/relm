@@ -3,7 +3,6 @@ import { Euler, PerspectiveCamera, Quaternion, Vector3 } from "three";
 import { Entity } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { Follow } from "~/ecs/plugins/follow";
-import { LookAt } from "~/ecs/plugins/look-at";
 
 import { viewportScale } from "~/stores";
 import { centerCameraVisible } from "~/stores/centerCameraVisible";
@@ -13,7 +12,6 @@ import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import {
   AVATAR_HEIGHT,
   CAMERA_ANGLE,
-  CAMERA_FOCUS_DISTANCE,
   CAMERA_LERP_ALPHA,
   DEFAULT_VIEWPORT_ZOOM,
 } from "~/config/constants";
@@ -22,45 +20,12 @@ type CameraFollowingParticipant = {
   type: "following";
 };
 
-type CameraFocusing = {
-  type: "focusing";
-
-  // Entity to focus in on
-  target: Entity;
-};
-
-type CameraDefocusing = {
-  type: "defocusing";
-
-  // Count frames since defocus started
-  frames: number;
-};
-
-type CameraCircling = {
-  type: "circling";
-
-  target: Entity;
-
-  height: number;
-
-  radius: number;
-
-  radians: number;
-
-  radianStep: number;
-};
-
 type CameraAbove = {
   type: "above";
   height: number;
 };
 
-type CameraState =
-  | CameraFollowingParticipant
-  | CameraFocusing
-  | CameraDefocusing
-  | CameraCircling
-  | CameraAbove;
+type CameraState = CameraFollowingParticipant | CameraAbove;
 
 export class CameraManager {
   counter: number = 0;
@@ -166,27 +131,6 @@ export class CameraManager {
 
         break;
       }
-      case "focusing": {
-        break;
-      }
-      case "defocusing": {
-        this.state.frames++;
-        if (this.state.frames++ >= 12) {
-          this.defocusDone();
-        }
-        break;
-      }
-      case "circling": {
-        this.state.radians += this.state.radianStep;
-        updateComponent(camera, Follow, {
-          target: this.state.target.id,
-          offset: new Vector3(
-            Math.cos(this.state.radians) * this.state.radius,
-            this.state.height,
-            Math.sin(this.state.radians) * this.state.radius
-          ),
-        });
-      }
 
       case "above": {
         this.followOffset.set(0, this.state.height, 0).add(this.pan);
@@ -234,112 +178,15 @@ export class CameraManager {
       );
   }
 
-  focus(target: Entity, done: Function) {
-    this.state = {
-      type: "focusing",
-      target,
-    };
-
-    const camera = this.entity;
-    if (!camera) return;
-
-    updateComponent(camera, Follow, {
-      target: target.id,
-      offset: new Vector3(0, 0, CAMERA_FOCUS_DISTANCE),
-    });
-
-    updateComponent(camera, LookAt, {
-      target: target.id,
-      offset: new Vector3(0, 0, 0),
-      limit: "NONE",
-      stepRadians: Math.PI / 32,
-      oneShot: false,
-    });
-
-    // TODO: make this actually wait until focus is done
-    setTimeout(done, 1000);
-  }
-
   followParticipant() {
     const camera = this.entity;
     if (!camera) return;
 
     if (this.state.type === "following") return;
 
-    if (this.state.type === "focusing") {
-      updateComponent(camera, LookAt, {
-        target: this.state.target.id,
-        offset: new Vector3(0, -1, 0),
-        limit: "X_AXIS",
-        stepRadians: Math.PI / 64,
-      });
-    }
-
-    this.state = { type: "defocusing", frames: 0 };
-
     updateComponent(camera, Follow, {
       target: this.avatar.id,
       offset: new Vector3().copy(this.zoomedInOffset),
-    });
-  }
-
-  defocusDone() {
-    const camera = this.entity;
-    if (!camera) return;
-
-    this.state = {
-      type: "following",
-    };
-
-    updateComponent(camera, LookAt, {
-      target: this.avatar.id,
-      offset: new Vector3(0, AVATAR_HEIGHT, 0),
-      stepRadians: 0,
-      // oneShot: true,
-    });
-
-    setTimeout(() => {
-      // TODO: This hack fixes the weird zoom bug, but makes
-      // for a clunky zoom out
-      camera.remove(LookAt);
-    }, 1000);
-  }
-
-  circleAround(
-    target: Entity,
-    { height = null, radius = 5.0, radians = null, radianStep = 0.01 } = {}
-  ) {
-    const camera = this.entity;
-    if (!camera) return;
-
-    if (radians === null) {
-      if (this.state.type === "circling") {
-        radians = this.state.radians;
-      } else {
-        radians = 0;
-      }
-    }
-
-    if (height === null) {
-      const position = this.entity.get(Transform).position;
-      height = position.y;
-    }
-
-    this.state = {
-      type: "circling",
-      target,
-      height,
-      radius,
-      radians,
-      radianStep,
-    };
-
-    updateComponent(camera, LookAt, {
-      target: target.id,
-      offset: new Vector3(0, 0, 0),
-      limit: "NONE",
-      stepRadians: radianStep,
-      oneShot: false,
     });
   }
 }

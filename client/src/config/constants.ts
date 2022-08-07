@@ -35,9 +35,6 @@ export const AVATAR_HEIGHT = 1.5;
 // transform, and we need to take that into account at times
 export const AVATAR_HEIGHT_UNSCALED = 7;
 
-// Distance from camera to object of focus (e.g. web page)
-export const CAMERA_FOCUS_DISTANCE = 5.0;
-
 // How quickly to move the camera as it follows the participant
 export const CAMERA_LERP_ALPHA = 0.125;
 
