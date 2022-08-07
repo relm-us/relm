@@ -41,6 +41,9 @@ export const CAMERA_FOCUS_DISTANCE = 5.0;
 // How quickly to move the camera as it follows the participant
 export const CAMERA_LERP_ALPHA = 0.125;
 
+// Angle (in radians) from which the camera looks down
+export const CAMERA_ANGLE = 37.5 / 180 * Math.PI;
+
 // Animation names from participant model GLB
 export const T_POSE = "a-pose";
 export const FLYING = "flying";

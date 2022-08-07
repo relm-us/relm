@@ -12,6 +12,7 @@ import { makeCamera } from "~/prefab/makeCamera";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import {
   AVATAR_HEIGHT,
+  CAMERA_ANGLE,
   CAMERA_FOCUS_DISTANCE,
   CAMERA_LERP_ALPHA,
 } from "~/config/constants";
@@ -81,8 +82,18 @@ export class CameraManager {
   zoom: number;
 
   followOffset: Vector3;
-  zoomedInOffset: Vector3 = new Vector3(0, 5.5, 5.0);
-  zoomedOutOffset: Vector3 = new Vector3(0, 25.5, 25.0);
+  // zoomedInOffset: Vector3 = new Vector3(0, 5.5, 5.0);
+  zoomedInOffset: Vector3 = new Vector3(
+    0,
+    5 * Math.sin(CAMERA_ANGLE) + AVATAR_HEIGHT,
+    5 * Math.cos(CAMERA_ANGLE)
+  );
+  // zoomedOutOffset: Vector3 = new Vector3(0, 25.5, 25.0);
+  zoomedOutOffset: Vector3 = new Vector3(
+    0,
+    25 * Math.sin(CAMERA_ANGLE) + AVATAR_HEIGHT,
+    25 * Math.cos(CAMERA_ANGLE)
+  );
 
   unsubs: Function[] = [];
 
@@ -103,7 +114,7 @@ export class CameraManager {
     this.followOffset = new Vector3().copy(this.zoomedOutOffset);
 
     // Create the ECS camera entity that holds the ThreeJS camera
-    this.entity = makeCamera(this.ecsWorld)
+    this.entity = makeCamera(this.ecsWorld, -CAMERA_ANGLE)
       .add(Follow, {
         target: this.avatar.id,
         lerpAlpha: CAMERA_LERP_ALPHA,

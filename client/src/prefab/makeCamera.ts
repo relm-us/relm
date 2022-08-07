@@ -6,7 +6,7 @@ import { AlwaysOnStage, Camera } from "~/ecs/plugins/camera";
 import { makeEntity } from "./makeEntity";
 
 // 5.6 radians is approx. looking at center of Avatar from above
-export function makeCamera(world, perspectiveAngle = 5.6) {
+export function makeCamera(world, perspectiveAngle) {
   // Create the singleton camera
   const camera = makeEntity(world, "Camera")
     .add(Transform, {
