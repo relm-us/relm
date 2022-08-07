@@ -80,14 +80,6 @@ export class ParticipantManager {
 
     const animationData = avatarGetAnimationData(avatar);
     this.broker.setField("animation", animationData);
-
-    const { name, color } = this.local.identityData;
-    // Set quill cursor name and color
-    this.broker.setField("user", {
-      name,
-      color,
-    });
-
     this.broker.setField("identity", this.local.identityData);
   }
 
