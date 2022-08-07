@@ -48,5 +48,6 @@
     /* width: var(--oculus-size, 100%); */
     /* height: var(--oculus-size, 100%); */
     pointer-events: auto;
+    height: 100%;
   }
 </style>
