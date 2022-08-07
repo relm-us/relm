@@ -27,8 +27,8 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
       // https://www.twilio.com/console/video/configure
       bandwidthProfile: {
         video: {
-          mode: "collaboration",
-          dominantSpeakerPriority: "high",
+          mode: "grid",
+          dominantSpeakerPriority: "standard",
           clientTrackSwitchOffControl: "auto",
           contentPreferencesMode: "auto",
         },
