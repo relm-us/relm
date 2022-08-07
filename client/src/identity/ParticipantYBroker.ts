@@ -23,10 +23,6 @@ export class ParticipantYBroker {
     this.clients = writable(new Map());
   }
 
-  get yidentities(): Y.Map<IdentityData> {
-    return this.worldDoc.ydoc.getMap("identities");
-  }
-
   get awareness() {
     return this.worldDoc.provider.awareness;
   }
