@@ -31,6 +31,13 @@ export class ParticipantYBroker {
     this.awareness.setLocalStateField(key, value);
   }
 
+  setFields(data) {
+    this.awareness.setLocalState({
+      ...this.awareness.getLocalState(),
+      ...data
+    });
+  }
+
   getField(key) {
     return this.awareness.getLocalState()[key];
   }
@@ -52,7 +59,7 @@ export class ParticipantYBroker {
       for (let id of changes.added) {
         // Add clientId when they connect
         this.clients.update(($clients) => {
-          $clients.set(id, null);
+          $clients.set(id, this.awareness.getStates().get(id)["identity"]);
           return $clients;
         });
       }
