@@ -128,13 +128,13 @@ export function onPointerUp(event: MouseEvent | TouchEvent) {
       (pointerState === "click" || pointerState == "interactive-click") &&
       pointerDownFound.length > 0
     ) {
+      // Even though there may be several entities stacked under the pointer,
+      // we only want to trigger the front-most (visible) thing as clicked.
       const entities = worldManager.world.entities;
-      pointerDownFound.forEach((entityId) => {
-        const entity = entities.getById(entityId);
-        if (entity.has(Clickable)) {
-          entity.add(Clicked);
-        }
-      });
+      const frontMostEntity = entities.getById(pointerDownFound[0]);
+      if (frontMostEntity.has(Clickable)) {
+        frontMostEntity.add(Clicked);
+      }
     } else if (pointerState === "interactive-drag") {
       worldManager.selection.syncEntities();
       interactiveEntity = null;
