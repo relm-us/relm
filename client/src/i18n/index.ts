@@ -1,12 +1,21 @@
 import { derived } from "svelte/store";
-import { init, register, dictionary, locale, _ } from "svelte-i18n";
-import { config } from "~/config";
+import {
+  init,
+  register,
+  locale,
+  dictionary,
+  addMessages,
+  _,
+} from "svelte-i18n";
+import { getLocaleFromNavigator } from "svelte-i18n";
 
-const MESSAGE_FILE_URL_TEMPLATE = "/lang/{locale}.json";
+import en from "./en.json";
 
-let cachedLocale;
+// Synchronously add default 'en' locale, so that a fallback
+// translation is always available
+addMessages("en", en);
 
-register("en", () => import("./en.json"));
+// Asynchronously add other languages, loaded on demand
 register("fr", () => import("./fr.json"));
 
 init({
@@ -14,29 +23,16 @@ init({
   fallbackLocale: "en",
 
   // Default locale/language, if available
-  initialLocale: config.langDefault,
+  initialLocale: getLocaleFromNavigator(),
 });
-
-function setupI18n(
-  { withLocale: _locale } = { withLocale: config.langDefault }
-) {
-  const messsagesFileUrl = MESSAGE_FILE_URL_TEMPLATE.replace(
-    "{locale}",
-    _locale
-  );
-
-  return fetch(messsagesFileUrl)
-    .then((response) => response.json())
-    .then((messages) => {
-      dictionary.set({ [_locale]: messages });
-
-      cachedLocale = _locale;
-
-      locale.set(_locale);
-    });
-}
 
 // Tag languages as left-to-right or right-to-left
 const dir = derived(locale, ($locale) => ($locale === "ar" ? "rtl" : "ltr"));
 
-export { _, locale, dir, setupI18n };
+locale.subscribe(($locale) => {
+  console.log("i18n locale", $locale);
+});
+
+(window as any).dictionary = dictionary;
+
+export { _, locale, dir };

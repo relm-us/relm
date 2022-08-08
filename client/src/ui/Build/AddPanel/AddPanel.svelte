@@ -2,6 +2,7 @@
   import type { LibraryAsset } from "~/types";
 
   import { slide } from "svelte/transition";
+  import { _ } from "svelte-i18n";
 
   import { assetUrl } from "~/config/assetUrl";
   import { createPrefab } from "~/prefab";
@@ -100,7 +101,7 @@
       <Search
         bind:value={$librarySearch}
         on:keydown={() => ($libraryPage = 0)}
-        placeholder="Search Assets..."
+        placeholder={$_("AddPanel.search_assets")}
       />
     </r-search-wrap>
     {#if selectedAsset}
@@ -133,37 +134,32 @@
                 on:click={addAsset(selectedAsset)}
                 style="border: 1px solid #999;"
               >
-                Add {selectedAsset.name}
+                {$_("AddPanel.add_asset", {
+                  values: { name: selectedAsset.name },
+                })}
               </Button>
             </r-add-button>
           </r-details>
         </r-selected>
       </Pane>
-    {:else}
-      <r-tag-sampler>
-        e.g.
-        <Tag value="nature" on:click={searchTag("nature")} />
-        <Tag value="furniture" on:click={searchTag("furniture")} />
-        <Tag value="path" on:click={searchTag("path")} />
-      </r-tag-sampler>
     {/if}
     <r-spacer />
     <r-pagination>
       {#if $libraryPage > 0}
-        <Button on:click={prevPage}>Prev</Button>
+        <Button on:click={prevPage}>{$_("AddPanel.prev")}</Button>
       {:else}
         <div />
       {/if}
       <r-page>p. {$libraryPage + 1}</r-page>
       {#if assets.length > 0}
-        <Button on:click={nextPage}>Next</Button>
+        <Button on:click={nextPage}>{$_("AddPanel.next")}</Button>
       {:else}
         <div />
       {/if}
     </r-pagination>
     {#if spinner && window.performance.now() - spinStart > 1000}
       <r-results>
-        <r-spinner>Loading...</r-spinner>
+        <r-spinner>{$_("AddPanel.loading")}</r-spinner>
       </r-results>
     {:else if assets.length > 0}
       <r-results>
@@ -176,7 +172,7 @@
       </r-results>
     {:else}
       <r-results>
-        <r-spinner>Empty Page</r-spinner>
+        <r-spinner>{$_("AddPanel.empty_results")}</r-spinner>
       </r-results>
     {/if}
     <r-spacer />
