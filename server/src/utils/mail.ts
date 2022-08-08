@@ -1,11 +1,71 @@
 import Mailgun from "mailgun.js";
 import type Client from "mailgun.js/client.js";
+import * as path from "path";
+import * as fs from "fs";
+import * as url from "url";
 import { MAILGUN_DOMAIN, MAILGUN_FROM, MAILGUN_KEY } from "../config.js";
+
+const getDirName = () => {
+  const __filename = url.fileURLToPath(import.meta.url);
+  return path.dirname(__filename);
+};
+
+const EMAIL_TEMPLATE_FOLDER_PATH = path.join(getDirName(), "..", "..", "emails");
+
+// Gather all email templates
+const templates: { [template: string]: EmailDetails } = {};
+const emailTemplateFolders = fs.readdirSync(EMAIL_TEMPLATE_FOLDER_PATH);
+for (const folderName of emailTemplateFolders) {
+  const htmlFilePath = path.join(EMAIL_TEMPLATE_FOLDER_PATH, folderName, "email.html");
+  const jsonFilePath = path.join(EMAIL_TEMPLATE_FOLDER_PATH, folderName, "email.json");
+  
+  let html = null;
+  if (fs.existsSync(htmlFilePath)) {
+    html =  fs.readFileSync(htmlFilePath, "utf-8");
+  }
+  
+  if (!fs.existsSync(jsonFilePath)) {
+    throw Error(`Invalid email configuration for "${folderName}" (Missing email.json!)`);
+  }
+  const { subject, content } = JSON.parse(fs.readFileSync(jsonFilePath, "utf-8"));
+  if (!subject || !content) {
+    throw Error(`Invalid email configuration for "${folderName}" (Missing property "subject" or "content")`);
+  }
+
+  templates[folderName] = {
+    subject,
+    content,
+    html
+  };
+}
 
 export type EmailDetails = {
   subject: string;
   content: string;
   html?: string;
+}
+
+export function createEmailTemplate(templateName: string, params = {}): EmailDetails {
+  const emailDetails = templates[templateName];
+  if (!emailDetails) {
+    throw Error(`Email template ${templateName} doesn't exist!`);
+  }
+
+  return {
+    subject: applyParams(emailDetails.subject, params),
+    content: applyParams(emailDetails.content, params),
+    html: applyParams(emailDetails.html, params)
+  };
+}
+
+function applyParams(content: string, params = {}): string {
+  let str = content;
+
+  for (const key in params) {
+    str = str.replace(new RegExp(`{{${key}}}`, "gi"), params[key]);
+  }
+
+  return str;
 }
 
 let cachedClient: Client;

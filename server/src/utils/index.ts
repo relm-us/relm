@@ -2,7 +2,6 @@ export {
   arrayToBooleanObject,
   booleanObjectToArray,
 } from "./booleanObjects.js";
-export { createEmailFromTemplate } from "./createEmailFromTemplate.js";
 export { decodedValidJwt } from "./decodedValidJwt.js";
 export { encrypt, compareEncryptedPassword } from "./encryption.js";
 export { getDefinedKeys } from "./getDefinedKeys.js";
@@ -13,7 +12,7 @@ export { isValidEmailFormat } from "./isValidEmailFormat.js";
 export { isValidIdentity } from "./isValidIdentity.js";
 export { isValidPasswordFormat } from "./isValidPasswordFormat.js";
 export { joinError } from "./joinError.js";
-export { getMailClient, sendEmail } from "./mail.js";
+export { getMailClient, sendEmail, createEmailTemplate } from "./mail.js";
 export { nullOr } from "./nullOr.js";
 export { randomToken } from "./randomToken.js";
 export { required, req } from "./required.js";

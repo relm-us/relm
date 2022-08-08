@@ -19,7 +19,7 @@ import {
   respondWithErrorPostMessage,
   respondWithSuccessPostMessage,
   respondWithFailurePostMessage,
-  createEmailFromTemplate,
+  createEmailTemplate,
   sendEmail
 } from "../utils/index.js";
 import { SERVER_BASE_URL } from "../config.js";
@@ -171,13 +171,19 @@ auth.post(
       password,
       emailVerificationRequired: true
     });
-    await Participant.assignToUserId({ participantId, userId });
 
-    const verifyEmailDetails = createEmailFromTemplate("verify", {
+    const verifyEmailDetails = createEmailTemplate("verify", {
       link: `${SERVER_BASE_URL}/${emailCode}`
     });
-    await sendEmail(email, verifyEmailDetails);
+    try {
+      await sendEmail(email, verifyEmailDetails);
+    } catch (error) {
+      // delete account as email confirmation email could not be sent.
+      await User.deleteUserByEmail({ email });
+      return respondWithError(res, "Email service failed to process request.", error);
+    }
 
+    await Participant.assignToUserId({ participantId, userId });
     return respondWithSuccess(res, {});
   })
 );
