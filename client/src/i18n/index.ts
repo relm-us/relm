@@ -17,6 +17,7 @@ addMessages("en", en);
 
 // Asynchronously add other languages, loaded on demand
 register("fr", () => import("./fr.json"));
+register("zh-Hans", () => import("./zh-Hans.json"));
 
 init({
   // fallback to english if the current locale is not in the dictionary

@@ -1,0 +1,13 @@
+{
+  "VideoMirror": {
+    "join_mic_off": "仅使用摄像头加入",
+    "join_cam_off": "仅使用麦克风加入",
+    "join_cam_mic_off": "不使用摄像头和麦克风加入",
+    "cam_unavailable": "摄像头无法连接",
+    "cam_mic_blocked": "摄像头和麦克风已屏蔽",
+    "cam_mic_not_active": "摄像头和麦克风未启用",
+    "try_again": "重试",
+    "request_perms": "连接摄像头和麦克风",
+    "continue": "继续"
+  }
+}
