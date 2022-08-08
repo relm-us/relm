@@ -6,13 +6,14 @@ import { wrapAsync, respondWithError, respondWithSuccess } from "../utils/index.
 export const email = express.Router();
 
 email.get(
-  "/verify",
+  "/verify/:code",
   cors(),
   wrapAsync(async (req, res) => {
-    if (!req.query.code) {
+    const code = req.params.code;
+
+    if (!code) {
       return respondWithError(res, "Missing verification code.");
     }
-    const code = req.query.code;
     
     const completedVerification = await User.markAsCompletedEmailVerification({ code });
     if (completedVerification) {

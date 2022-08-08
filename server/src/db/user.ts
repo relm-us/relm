@@ -96,6 +96,6 @@ export async function getIdentityData({ userId }): Promise<SavedIdentityData> {
 
 // Returns whether or not the user's email was marked as complete ONLY IF a pending verification is available.
 export async function markAsCompletedEmailVerification({ code }) {
-  const rows = await db.query(sql`DELETE FROM pending_email_verifications WHERE code=${code}`);
+  const { length: rows } = await db.query(sql`DELETE FROM pending_email_verifications WHERE code=${code} RETURNING *`);
   return rows > 0;
 }

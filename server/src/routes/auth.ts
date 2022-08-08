@@ -173,7 +173,7 @@ auth.post(
     });
 
     const verifyEmailDetails = createEmailTemplate("verify", {
-      link: `${SERVER_BASE_URL}/${emailCode}`
+      link: `${SERVER_BASE_URL}/email/verify/${emailCode}`
     });
     try {
       await sendEmail(email, verifyEmailDetails);
