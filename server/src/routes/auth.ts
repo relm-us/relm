@@ -154,7 +154,7 @@ auth.post(
     }
 
     // Check if someone is using that email
-    const userExistsWithEmailProvided = (await User.getUserIdByEmail({ email })) !== null;
+    const userExistsWithEmailProvided = (await User.getUserIdByLoginId({ email })) !== null;
     if (userExistsWithEmailProvided) {
       return respondWithFailure(res, "invalid_credentials", "This email is already used by another user!");
     }
@@ -179,7 +179,7 @@ auth.post(
       await sendEmail(email, verifyEmailDetails);
     } catch (error) {
       // delete account as email confirmation email could not be sent.
-      await User.deleteUserByEmail({ email });
+      await User.deleteUserByLoginId({ email });
       return respondWithError(res, "Email service failed to process request.", error);
     }
 

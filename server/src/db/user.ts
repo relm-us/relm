@@ -9,6 +9,8 @@ type UserCreationData = {
   email : string,
   password? : string,
   emailVerificationRequired?: boolean
+} | {
+  jwtId : string
 };
 
 type UserCreationResult = {
@@ -16,19 +18,23 @@ type UserCreationResult = {
   emailCode?: string
 };
 
-export async function createUser({ email, password, emailVerificationRequired }: UserCreationData): Promise<UserCreationResult> {
-  const userData: any = { email };
-  if (password) {
-    userData.password_hash = await encrypt(password);
+export async function createUser(data: UserCreationData): Promise<UserCreationResult> {
+  const isJWT = "jwtId" in data;
+
+  const userData: any = {
+    loginId: isJWT ? data.jwtId : data.email
+  };
+  if (!isJWT && data.password) {
+    userData["password_hash"] = await encrypt(data.password);
   }
 
-  const data = await db.one(sql`
+  const insertData = await db.one(sql`
       ${INSERT("users", userData)} RETURNING user_id
     `);
 
-  const { user_id : userId } = data;
+  const { user_id : userId } = insertData;
 
-  if (emailVerificationRequired) {
+  if (!isJWT && data.emailVerificationRequired) {
     const emailCode = nanoid();
 
     await db.none(sql`INSERT INTO pending_email_verifications (user_id, code) VALUES (${userId}, ${emailCode}) ON CONFLICT DO NOTHING`);
@@ -44,16 +50,19 @@ export async function createUser({ email, password, emailVerificationRequired }:
   };
 }
 
-export async function deleteUserByEmail({ email }) {
-  const userId = await this.getUserIdByEmail({ email });
+export async function deleteUserByLoginId(data : { email: string } | { jwtId: string }) {
+  const userId = await this.getUserIdByLoginId(data);
   
   await db.none(sql`DELETE FROM pending_email_verifications WHERE user_id=${userId}`);
   await db.none(sql`DELETE FROM users WHERE user_id=${userId}`);
 }
 
-export async function getUserIdByEmail({ email } : { email : string }) {
+export async function getUserIdByLoginId(data : { email: string } | { jwtId: string }) {
+  const isJWT = "jwtId" in data;
+  const loginId = isJWT ? data.jwtId : data.email;
+
   const row = await db.oneOrNone(sql`
-    SELECT user_id FROM users WHERE LOWER(email)=LOWER(${email})
+    SELECT user_id FROM users WHERE LOWER(login_id)=LOWER(${loginId}) AND is_jwt=${isJWT} 
   `);
 
   if (!row) {
@@ -62,9 +71,9 @@ export async function getUserIdByEmail({ email } : { email : string }) {
   return row.user_id;
 }
 
-export async function verifyCredentials({ email, password }) {
+export async function verifyEmailPassword({ email, password }) {
   const data = await db.oneOrNone(sql`
-      SELECT password_hash FROM users WHERE LOWER(email)=LOWER(${email})
+      SELECT password_hash FROM users WHERE LOWER(login_id)=LOWER(${email}) AND is_jwt=false
     `);
   if (data === null || data.password_hash === null) {
     // user doesn't exist or no password is assigned with user.

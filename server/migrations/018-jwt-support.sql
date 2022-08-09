@@ -1,0 +1,5 @@
+ALTER TABLE users 
+ADD COLUMN is_jwt BOOLEAN DEFAULT false; 
+
+ALTER TABLE users
+RENAME COLUMN email TO login_id;
