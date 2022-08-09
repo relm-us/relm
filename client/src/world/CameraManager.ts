@@ -136,6 +136,8 @@ export class CameraManager {
         this.followOffset.set(0, this.state.height, 0).add(this.pan);
         const follow = camera.get(Follow);
         follow?.offset.copy(this.followOffset);
+
+        break;
       }
     }
   }

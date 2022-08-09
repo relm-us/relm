@@ -216,7 +216,10 @@ export class WorldDoc extends EventEmitter {
   }
 
   delete(entity: Entity) {
-    if (!entity) return;
+    if (!entity) {
+      console.warn(`Can't delete null entity`);
+      return;
+    }
     selectedEntities.delete(entity.id);
     this.ydoc.transact(() => {
       this._deleteRecursive(entity);
@@ -364,7 +367,7 @@ export class WorldDoc extends EventEmitter {
         const entity = this._getEntityFromEventPath(event.path);
 
         // Retrieve the updated component
-        const getComponentFromPath = path => {
+        const getComponentFromPath = (path) => {
           const componentName = (
             this.entities
               .get(path[0] as number)
@@ -372,7 +375,7 @@ export class WorldDoc extends EventEmitter {
           )
             .get(path[2] as number)
             .get("name") as string;
-          
+
           return entity.getByName(componentName);
         };
 
@@ -393,9 +396,12 @@ export class WorldDoc extends EventEmitter {
           return component;
         };
 
-
         const onUpdateOrAdd = (key, content) => {
-          let component = updateComponentIfRequired(entity, getComponentFromPath(event.path), key);
+          let component = updateComponentIfRequired(
+            entity,
+            getComponentFromPath(event.path),
+            key
+          );
 
           // Similar to HECS Component.fromJSON, but for just one prop
           const prop = component.constructor.props[key];
@@ -409,8 +415,12 @@ export class WorldDoc extends EventEmitter {
         withMapEdits(event as Y.YMapEvent<YValues>, {
           onUpdate: onUpdateOrAdd,
           onAdd: onUpdateOrAdd,
-          onDelete: removedProperty => {
-            let component = updateComponentIfRequired(entity, getComponentFromPath(event.path), removedProperty);
+          onDelete: (removedProperty) => {
+            let component = updateComponentIfRequired(
+              entity,
+              getComponentFromPath(event.path),
+              removedProperty
+            );
 
             // Set component property to default value.
             const prop = component.constructor.props[removedProperty];
@@ -419,7 +429,7 @@ export class WorldDoc extends EventEmitter {
 
             // Mark as modified so any updates can occur
             component.modified();
-          }
+          },
         });
 
         // const ycomponent =
