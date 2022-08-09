@@ -8,7 +8,7 @@ import {
   unabbreviatedPermits,
 } from "./utils/index.js";
 import { AuthenticationHeaders, canonicalIdentifier } from "relm-common";
-import { Participant, Permission, Relm, useToken } from "./db/index.js";
+import { Participant, Permission, Relm, User, useToken } from "./db/index.js";
 import { JWTSECRET } from "./config.js";
 
 export function relmName(key = "relmName") {
@@ -101,7 +101,7 @@ export function acceptToken() {
 export function acceptJwt() {
   return async (req, _res, next) => {
     if (JWTSECRET && req.headers["x-relm-jwt"]) {
-      const result: { relms: Record<string, string> } = decodedValidJwt(
+      const result: { username: string, relms: Record<string, string> } = decodedValidJwt(
         req.headers["x-relm-jwt"],
         JWTSECRET
       );
@@ -116,6 +116,21 @@ export function acceptJwt() {
             // This ensures that a JWT token can also delete permits when needed:
             union: false,
           });
+        }
+
+        if (result.username) {
+          const doesUserIdExist = !!(await User.getUserIdByLoginId({ jwtId: result.username }));
+          // If the jwt user has no relm user, create one
+          if (!doesUserIdExist) {
+            const { userId } = await User.createUser({
+              jwtId: result.username
+            });
+  
+            await Participant.assignToUserId({
+              userId, 
+              participantId: req.authenticatedParticipantId
+            });
+          }
         }
 
         // Success

@@ -22,7 +22,8 @@ export async function createUser(data: UserCreationData): Promise<UserCreationRe
   const isJWT = "jwtId" in data;
 
   const userData: any = {
-    loginId: isJWT ? data.jwtId : data.email
+    login_id: isJWT ? data.jwtId : data.email,
+    is_jwt: isJWT
   };
   if (!isJWT && data.password) {
     userData["password_hash"] = await encrypt(data.password);
