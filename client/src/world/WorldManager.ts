@@ -43,6 +43,7 @@ import { config } from "~/config";
 
 import { DragPlane } from "~/events/input/PointerListener/DragPlane";
 import { SelectionBox } from "~/events/input/PointerListener/SelectionBox";
+import { setControl } from "~/events/input/PointerListener/pointerActions";
 
 import { makeLight } from "~/prefab/makeLight";
 
@@ -53,6 +54,9 @@ import { ControllerState } from "~/ecs/plugins/player-control";
 import { Follow } from "~/ecs/plugins/follow";
 import { intersectionPointWithGround } from "~/ecs/shared/isMakingContactWithGround";
 import { Transition } from "~/ecs/plugins/transition";
+import { CameraSystem } from "~/ecs/plugins/camera/systems";
+import { TransformControls } from "~/ecs/plugins/transform-controls";
+import { Collider2VisibleSystem } from "~/ecs/plugins/collider-visible/systems";
 
 import { Inventory } from "~/identity/Inventory";
 import { SelectionManager } from "./SelectionManager";
@@ -79,15 +83,17 @@ import { audioMode, AudioMode } from "~/stores/audioMode";
 import { Outline } from "~/ecs/plugins/outline";
 import { InteractorSystem } from "~/ecs/plugins/interactor";
 import { Object3DRef } from "~/ecs/plugins/core";
-import { getRandomInitializedIdentityData, localIdentityData } from "~/stores/identityData";
+import {
+  getRandomInitializedIdentityData,
+  localIdentityData,
+} from "~/stores/identityData";
 import { AuthenticationResponse, SocialId } from "~/main/RelmOAuthAPI";
-import { CameraSystem } from "~/ecs/plugins/camera/systems";
-import { TransformControls } from "~/ecs/plugins/transform-controls";
-import { Collider2VisibleSystem } from "~/ecs/plugins/collider-visible/systems";
 import { globalEvents } from "~/events";
 import { advancedEdit } from "~/stores/advancedEdit";
 import { connectedAccount } from "~/stores/connectedAccount";
 import { permits } from "~/stores/permits";
+import { errorCat } from "~/stores/errorCat";
+import { viewportScale } from "~/stores/viewportScale";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -255,6 +261,19 @@ export class WorldManager {
     this.world.perspective.setAvatar(this.avatar.entities.body);
 
     this.unsubs.push(
+      errorCat.subscribe(($enabled) => {
+        this.world.entities
+          .getAllBy((e) => e.name === "Error")
+          .forEach((entity) => {
+            const html2d = entity.getByName("Html2d");
+            if (!html2d) return;
+            html2d.visible = $enabled;
+            html2d.modified();
+          });
+      })
+    );
+
+    this.unsubs.push(
       shadowsEnabled.subscribe(($enabled) => {
         this.world.presentation.renderer.shadowMap.enabled = $enabled;
         const spec = this.light.getByName("DirectionalLight");
@@ -375,6 +394,12 @@ export class WorldManager {
     this.unsubs.push(() => {
       clearInterval(fpsCheckInterval);
     });
+
+    this.unsubs.push(
+      viewportScale.subscribe(($scale) => {
+        this.didChangeZoom();
+      })
+    );
 
     // Pre-compile assets to prevent some jank while exploring the world
     this.world.presentation.compile();
@@ -499,13 +524,29 @@ export class WorldManager {
     }
   }
 
+  didChangeZoom() {
+    this.didControlAvatar();
+    CameraSystem.stageNeedsUpdate = true;
+  }
+
   showTransformControls(entity, onChange?: Function) {
     this.transformEntity = entity;
 
     entity.add(TransformControls, {
       onChange,
-      onMouseUp: (entity) => {
-        this.worldDoc.syncFrom(entity);
+      onBegin: (entity) => {
+        setControl(true);
+        this.selection.savePositions();
+      },
+      onComplete: (entity) => {
+        setControl(false);
+        this.selection.syncEntities();
+      },
+      onMove: (entity, delta) => {
+        this.selection.moveRelativeToSavedPositions(delta);
+      },
+      onRotate: (entity, center, theta, axis) => {
+        this.selection.rotate(center, theta, axis);
       },
     });
   }
@@ -747,7 +788,9 @@ export class WorldManager {
     }
   }
 
-  async register(credentials: LoginCredentials): Promise<AuthenticationResponse> {
+  async register(
+    credentials: LoginCredentials
+  ): Promise<AuthenticationResponse> {
     const data = await this.api.registerParticipant(credentials);
 
     // If we login, ensure we are connected.
@@ -761,13 +804,14 @@ export class WorldManager {
         return null;
       }
       connectedAccount.set(true);
-      
     }
 
     return data;
   }
 
-  async login(socialIdOrCred: SocialId|LoginCredentials): Promise<AuthenticationResponse|null> {
+  async login(
+    socialIdOrCred: SocialId | LoginCredentials
+  ): Promise<AuthenticationResponse | null> {
     let data: AuthenticationResponse;
 
     if (typeof socialIdOrCred === "object") {
@@ -818,7 +862,7 @@ export class WorldManager {
     this.dispatch({
       id: "enterPortal",
       relmName: this.relmName,
-      entryway: this.entryway
+      entryway: this.entryway,
     });
   }
 

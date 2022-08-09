@@ -1,14 +1,14 @@
 import type { WorldManager } from "./WorldManager";
 
 import { get } from "svelte/store";
-import { Object3D, Vector3 } from "three";
+import { Vector3 } from "three";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import { first, difference } from "~/utils/setOps";
 
 import { Entity, EntityId } from "~/ecs/base";
 import { Outline } from "~/ecs/plugins/outline";
-import { Object3DRef, Transform } from "~/ecs/plugins/core";
+import { Transform } from "~/ecs/plugins/core";
 
 import { selectedEntities, selectedGroups } from "~/stores/selection";
 import { openPanel } from "~/stores";
@@ -116,6 +116,30 @@ export class SelectionManager {
         adjust?.(transform.position);
         transform.modified(); // update physics engine
       }
+    }
+  }
+
+  rotate(
+    center: Vector3,
+    radians: number,
+    axis: Vector3 = new Vector3(0, 1, 0)
+  ) {
+    for (const entity of this.entities) {
+      // Only rotate root entities:
+      if (entity.getParent()) continue;
+
+      const transform = entity.get(Transform);
+      const savedPos = (entity as any).savedPosition;
+      const pos = transform.position
+
+      pos.copy(savedPos);
+      pos.sub(center);
+      pos.applyAxisAngle(axis, radians);
+      pos.add(center);
+
+      transform.rotation.setFromAxisAngle(axis, radians);
+
+      transform.modified();
     }
   }
 

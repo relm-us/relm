@@ -63,6 +63,8 @@ export class Collider2 extends Component {
   // Collider density. Mass is calculated based on collider volume * density.
   density: number;
 
+  friction: number;
+
   static props = {
     kind: {
       type: StringType,
@@ -129,6 +131,14 @@ export class Collider2 extends Component {
       default: 1,
       editor: {
         label: "Density",
+      },
+    },
+
+    friction: {
+      type: NumberType,
+      default: 0.01,
+      editor: {
+        label: "Friction",
       },
     },
   };

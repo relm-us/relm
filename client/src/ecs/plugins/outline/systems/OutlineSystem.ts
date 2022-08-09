@@ -25,6 +25,7 @@ export class OutlineSystem extends System {
     this.queries.added.forEach((entity) => {
       this.addOutline(entity);
     });
+
     this.queries.removed.forEach((entity) => {
       this.removeOutline(entity);
     });

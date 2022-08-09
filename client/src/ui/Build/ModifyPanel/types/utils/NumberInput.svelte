@@ -17,7 +17,7 @@
 
   const setValue = (final: boolean) => (newValue: number) => {
     // Ignore no-ops
-    if (value === newValue) return;
+    if (!final && value === newValue) return;
 
     // Set local value
     value = newValue;

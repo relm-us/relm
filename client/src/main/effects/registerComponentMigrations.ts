@@ -134,4 +134,19 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
 
     collider.size.copy(size);
   });
+
+  ecsWorld.migrations.register("Image", (world, entity, data) => {
+    entity.addByName("Image", undefined, true).fromJSON(data);
+
+    const assetUrl = data.asset?.url;
+    if (assetUrl) {
+      entity.add(world.components.getByName("Asset"), {
+        value: new Asset(assetUrl),
+      });
+    }
+  });
+
+  ecsWorld.migrations.register("TranslucentOptions", (world, entity, data) => {
+    // ignore
+  });
 }

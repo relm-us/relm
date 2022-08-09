@@ -16,11 +16,13 @@ import { Vector4 } from "three";
 
 export const FireShader = {
   defines: {
-    ITERATIONS: "20",
-    OCTAVES: "3",
+    // ITERATIONS: "20",
+    // OCTAVES: "3",
   },
 
   uniforms: {
+    iterations: { type: "i", value: 20 },
+    octaves: { type: "i", value: 3 },
     fireTex: { type: "t", value: null },
     color: { type: "c", value: null },
     colorMix: { type: "f", value: 0.7 },
@@ -45,6 +47,9 @@ export const FireShader = {
   ].join("\n"),
 
   fragmentShader: [
+    "uniform int iterations;",
+    "uniform int octaves;",
+
     "uniform vec3 color;",
     "uniform float time;",
     "uniform float seed;",
@@ -160,7 +165,7 @@ export const FireShader = {
     "  float freq = 1.0;",
     "  float amp = 1.0;",
 
-    "  for(int i = 0; i < OCTAVES; i++) {",
+    "  for(int i = 0; i < octaves; i++) {",
     "    sum += abs(snoise(p * freq)) * amp;",
     "    freq *= lacunarity;",
     "    amp *= gain;",
@@ -195,7 +200,7 @@ export const FireShader = {
 
     "  vec4 col = vec4(0.0);",
 
-    "  for(int i = 0; i < ITERATIONS; i++) {",
+    "  for(int i = 0; i < iterations; i++) {",
     "    rayPos += rayDir * rayLen;",
     "    vec3 lp = localize(rayPos);",
     "    lp.y += 0.2;",

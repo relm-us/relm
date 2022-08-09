@@ -1,12 +1,13 @@
-import { Object3D } from "three";
-import { TransformControls as ThreeTransformControls } from "three/examples/jsm/controls/TransformControls";
+import { Object3D, Vector3 } from "three";
+import { TransformControls as ThreeTransformControls } from "./TransformControls";
 
 import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Presentation, Object3DRef, Transform } from "~/ecs/plugins/core";
 
 import { TransformControls, TransformControlsRef } from "../components";
-import { setControl } from "~/events/input/PointerListener/pointerActions";
 
+const start = new Vector3();
+const delta = new Vector3();
 export class TransformControlsSystem extends System {
   static selected: Entity = null;
 
@@ -49,11 +50,17 @@ export class TransformControlsSystem extends System {
     controls.addEventListener("change", () => {
       // Update physics engine
       if (!transform.position.equals(object3d.position)) {
-        transform.position.copy(object3d.position);
+        delta.copy(object3d.position).sub(start);
+        spec.onMove?.(entity, delta);
         changed = true;
       }
       if (!transform.rotation.equals(object3d.quaternion)) {
-        transform.rotation.copy(object3d.quaternion);
+        spec.onRotate?.(
+          entity,
+          start,
+          controls.rotationAngle,
+          controls.rotationAxis
+        );
         changed = true;
       }
       if (!transform.scale.equals(object3d.scale)) {
@@ -62,16 +69,16 @@ export class TransformControlsSystem extends System {
       }
       if (changed) {
         transform.modified();
-        spec.onChange?.();
+        spec.onChange?.(entity);
       }
     });
 
     controls.addEventListener("mouseDown", () => {
-      setControl(true);
+      start.copy(transform.position);
+      spec.onBegin?.(entity);
     });
     controls.addEventListener("mouseUp", () => {
-      setControl(false);
-      spec.onMouseUp?.(entity);
+      spec.onComplete?.(entity);
     });
 
     controls.attach(object3d);

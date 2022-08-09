@@ -20,7 +20,8 @@ const vOut = new Vector3(0, 0, 1);
 const vProjectOutward = new Vector3();
 const vProbeCenter = new Vector3();
 const PROBE_DISTANCE = 0.75;
-const PROBE_RADIUS = 1.0;
+const PROBE_RADIUS = 1.2;
+const PROBE_HEIGHT = 1.0;
 const NO_ROTATION = new Quaternion();
 
 export class InteractorSystem extends System {
@@ -101,6 +102,7 @@ export class InteractorSystem extends System {
       .multiplyScalar(PROBE_DISTANCE);
 
     vProbeCenter.copy(transform.position).add(vProjectOutward);
+    vProbeCenter.y += PROBE_HEIGHT;
 
     return vProbeCenter;
   }

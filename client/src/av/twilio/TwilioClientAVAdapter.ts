@@ -25,14 +25,14 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
       // Available only in Small Group or Group Rooms only. Please set "Room Type"
       // to "Group" or "Small Group" in your Twilio Console:
       // https://www.twilio.com/console/video/configure
-      // bandwidthProfile: {
-      //   video: {
-      //     mode: "collaboration",
-      //     dominantSpeakerPriority: "high",
-      //     clientTrackSwitchOffControl: "auto",
-      //     contentPreferencesMode: "auto",
-      //   },
-      // },
+      bandwidthProfile: {
+        video: {
+          mode: "grid",
+          dominantSpeakerPriority: "standard",
+          clientTrackSwitchOffControl: "auto",
+          contentPreferencesMode: "auto",
+        },
+      },
 
       // Available only in Small Group or Group Rooms only. Please set "Room Type"
       // to "Group" or "Small Group" in your Twilio Console:

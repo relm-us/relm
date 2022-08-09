@@ -6,11 +6,6 @@ export class FireMesh extends StateComponent {
       type: RefType,
     },
 
-    loaded: {
-      type: BooleanType,
-      default: false,
-    },
-
     time: {
       type: NumberType,
       default: 0,

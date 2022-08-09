@@ -8,11 +8,7 @@
   import { sortAlphabetically } from "~/utils/sortAlphabetically";
   import { Transform } from "~/ecs/plugins/core";
 
-  import CircleButton from "~/ui/lib/CircleButton";
-  import MdRotateLeft from "svelte-icons/md/MdRotateLeft.svelte";
-  import MdTransform from "svelte-icons/md/MdTransform.svelte";
-  import MdAspectRatio from "svelte-icons/md/MdAspectRatio.svelte";
-  import { TransformControlsRef } from "~/ecs/plugins/transform-controls";
+  import TransformButtons from "./TransformButtons.svelte";
 
   export let entity;
 
@@ -81,22 +77,12 @@
       worldManager.world.off("entity-active", detectActive);
     };
   });
-
-  const choose = (mode) => () => {
-    worldManager.transformEntity
-      ?.get(TransformControlsRef)
-      ?.value.setMode(mode);
-  };
 </script>
 
 <EntityDetails {entity} on:modified={onModified} />
 
 {#if active}
-  <div class="transform-buttons">
-    <CircleButton Icon={MdTransform} on:click={choose("translate")} />
-    <CircleButton Icon={MdRotateLeft} on:click={choose("rotate")} />
-    <CircleButton Icon={MdAspectRatio} on:click={choose("scale")} />
-  </div>
+  <TransformButtons />
 
   <!-- Components meant to be edited -->
   {#each primaryComponents as Component (Component)}
@@ -138,10 +124,5 @@
   info {
     display: block;
     margin: 32px auto;
-  }
-  .transform-buttons {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 6px;
   }
 </style>

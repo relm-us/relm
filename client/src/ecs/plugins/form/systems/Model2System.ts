@@ -1,19 +1,16 @@
 import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
-import { Mesh, Group } from "three";
-
-import { ERROR_GLTF } from "~/config/constants";
+import { Mesh, Group, Object3D } from "three";
 
 import { Entity, System, Not, Modified, Groups, EntityId } from "~/ecs/base";
-import { Object3DRef, Presentation } from "~/ecs/plugins/core";
+import { Object3DRef } from "~/ecs/plugins/core";
 import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 import { clone } from "~/ecs/shared/SkeletonUtils";
 
-import { rotateSkinnedMeshBB } from "../utils/rotateSkinnedMeshBB";
-import { normalize } from "../utils/normalize";
-import { applyMaterialSettings } from "../utils/applyMaterialSettings";
-
 import { Model2, Model2Ref } from "../components";
+import { makeError } from "~/ecs/shared/makeError";
+
+import { firstTimePrepareScene } from "../utils/firstTimePrepareScene";
 
 const cache: Map<string, Group> = new Map();
 
@@ -29,12 +26,6 @@ export class Model2System extends System {
     removed: [Model2Ref, Not(Model2)],
     removedAsset: [Model2Ref, Not(Asset)],
   };
-
-  init({ presentation }: { presentation: Presentation }) {
-    presentation.loadGltf(ERROR_GLTF).then((gltf) => {
-      this.errorScene = this.firstTimePrepareScene(gltf.scene, false, false);
-    });
-  }
 
   update() {
     this.queries.added.forEach((entity) => {
@@ -72,7 +63,7 @@ export class Model2System extends System {
     let scene;
     if (entity.hasByName("Animation")) {
       // Must clone scene when it includes animations
-      scene = this.firstTimePrepareScene(
+      scene = firstTimePrepareScene(
         clone(gltf.scene),
         spec.compat,
         entity.name === "Avatar"
@@ -92,12 +83,17 @@ export class Model2System extends System {
   }
 
   remove(entity: Entity) {
-    const ref: Mesh = entity.get(Model2Ref)?.value;
+    const ref: Model2Ref = entity.get(Model2Ref);
 
     if (ref) {
-      this.detach(entity);
+      if (ref.value) {
+        this.detach(entity);
 
-      ref.geometry?.dispose();
+        // ref.value.geometry?.dispose();
+      }
+      if (ref.errorEntity) {
+        ref.errorEntity.destroy();
+      }
     }
 
     entity.maybeRemove(Model2Ref);
@@ -131,46 +127,19 @@ export class Model2System extends System {
     }
   }
 
-  error(entity: Entity, msg = null) {
-    if (msg) {
-      console.warn(msg, entity.id);
-    }
+  error(entity: Entity, msg: string) {
+    const errorEntity = makeError(entity, msg);
 
-    if (!this.errorScene) return;
-
+    // Empty object
     entity.add(Model2Ref, {
       value: {
-        scene: clone(this.errorScene),
+        scene: new Object3D(),
         animations: [],
       },
+      errorEntity,
     });
 
-    entity.addByName("Html2d", {
-      kind: "INFO",
-      title: "Error",
-      content: msg,
-      zoomInvariant: false,
-    });
-
-    return this.attach(entity);
-  }
-
-  firstTimePrepareScene(
-    scene: Group,
-    backwardsCompatMode: boolean = false,
-    isAvatar: boolean = false
-  ) {
-    // TODO: Find a better way to fix bounding box for skinned mesh general case
-    if (isAvatar) scene.traverse(rotateSkinnedMeshBB);
-
-    scene.traverse((e) => (e.castShadow = true));
-
-    // TODO: Optimization: move `normalize` to Loader?
-    normalize(scene, { backwardsCompatMode });
-
-    applyMaterialSettings(scene as any);
-
-    return scene;
+    this.attach(entity);
   }
 
   // Use cached GLTF scene if available; otherwise cache fresh scene and return
@@ -183,7 +152,7 @@ export class Model2System extends System {
     const key = `${entityId}/${cacheKey}/${compatMode ? 1 : 0}`;
 
     if (!cache.has(key)) {
-      cache.set(key, this.firstTimePrepareScene(scene, compatMode, false));
+      cache.set(key, firstTimePrepareScene(scene, compatMode, false));
     }
 
     return cache.get(key);

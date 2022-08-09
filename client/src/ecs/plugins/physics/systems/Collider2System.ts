@@ -1,4 +1,5 @@
 import type {
+  Collider,
   ColliderDesc,
   RigidBody,
   RigidBodyDesc,
@@ -6,7 +7,7 @@ import type {
 
 import type { DecoratedECSWorld } from "~/types";
 
-import { Object3D, MathUtils, Box3, Quaternion } from "three";
+import { Object3D, MathUtils, Box3, Quaternion, Vector3 } from "three";
 
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
@@ -29,7 +30,19 @@ const _b3 = new Box3();
 export class Collider2System extends System {
   physics: Physics;
 
-  order = Groups.Presentation + 301; // After WorldTransform
+  /**
+   * If the Collider2 is modified in rapid succession (such as when
+   * a designer is actively resizing a collider), then it's possible
+   * the physics world will not yet include the newly re-built collider
+   * in its calculation of what is "on stage" (i.e. within view of the
+   * camera frustum). If the entity does not appear to be on stage, the
+   * entity will be de-activated, and all ECS Components will be removed
+   * (including the Collider2 being modified).
+   *
+   * Therefore, it's important that Collider2System occur after CameraSystem
+   * and before PhysicsSystem.
+   */
+  order = Groups.Presentation + 299;
 
   static queries = {
     implicitToExplicit: [Collider2, Collider2Implicit],
@@ -44,7 +57,8 @@ export class Collider2System extends System {
       Not(Collider2),
       Not(Collider2Implicit),
     ],
-    modifiedImplicit: [Transform, Modified(Object3DRef), Collider2Implicit],
+    modifiedObject: [Transform, Modified(Object3DRef)],
+    modifiedTransform: [Modified(Transform), Collider2Ref, Collider2Implicit],
   };
 
   init({ physics }) {
@@ -74,10 +88,23 @@ export class Collider2System extends System {
       entity.add(Collider2Implicit);
       this.build(entity);
     });
-    this.queries.modifiedImplicit.forEach((entity) => {
+    this.queries.modifiedObject.forEach((entity) => {
+      const isImplicit = entity.has(Collider2Implicit);
       this.remove(entity);
-      entity.add(Collider2Implicit);
+      if (isImplicit) entity.add(Collider2Implicit);
       this.build(entity);
+    });
+
+    // When scaling an object that has an implicit collider, we need to
+    // re-calculate the size of the implicit collider
+    this.queries.modifiedTransform.forEach((entity) => {
+      const transform: Transform = entity.get(Transform);
+      const ref: Collider2Ref = entity.get(Collider2Ref);
+      if (!ref.size.equals(transform.scale)) {
+        this.remove(entity);
+        entity.add(Collider2Implicit);
+        this.build(entity);
+      }
     });
   }
 
@@ -86,13 +113,15 @@ export class Collider2System extends System {
     let spec: Collider2 = entity.get(Collider2);
 
     // Implicit collider needs to have bounding box calculated
-    let rotation: Quaternion = new Quaternion();
+    let rotation = new Quaternion();
+    let offset = new Vector3();
     if (!spec) {
       spec = new Collider2(this.world);
       const object3d: Object3D = entity.get(Object3DRef).value;
 
       _b3.setFromObject(object3d);
       _b3.getSize(spec.size);
+      _b3.getCenter(offset).sub(transform.position);
 
       // The AABB needs to be inverted so that the usual rotation re-aligns it to the world axes
       rotation.copy(transform.rotation).invert();
@@ -101,15 +130,25 @@ export class Collider2System extends System {
     const body = this.createRigidBody(entity, spec.behavior);
     this.physics.bodies.set(body.handle, entity);
 
-    const collider = this.createCollider(spec, body, rotation, spec.behavior);
+    const collider = this.createCollider(
+      spec,
+      body,
+      rotation,
+      offset,
+      spec.behavior
+    );
     this.physics.colliders.set(collider.handle, entity);
 
-    entity.add(Collider2Ref, { body, collider });
+    entity.add(Collider2Ref, { body, collider, size: spec.size });
   }
 
-  createRigidBody(entity: Entity, behavior: Behavior) {
+  createRigidBody(entity: Entity, behavior: Behavior): RigidBody {
     const { world, rapier } = (this.world as any).physics;
     const transform = entity.get(Transform);
+
+    const options: PhysicsOptions =
+      entity.get(PhysicsOptions) || new PhysicsOptions(world);
+    const rr = options.rotRestrict.toUpperCase();
 
     let bodyDesc: RigidBodyDesc = new rapier.RigidBodyDesc(behavior.bodyType)
       .setTranslation(
@@ -117,22 +156,11 @@ export class Collider2System extends System {
         transform.position.y,
         transform.position.z
       )
-      .setRotation(transform.rotation);
-
-    let options: PhysicsOptions =
-      entity.get(PhysicsOptions) || new PhysicsOptions(world);
-
-    bodyDesc.setLinearDamping(options.linDamp);
-    bodyDesc.setAngularDamping(options.angDamp);
-
-    const rr = options.rotRestrict.toUpperCase();
-    bodyDesc.restrictRotations(
-      rr.includes("X"),
-      rr.includes("Y"),
-      rr.includes("Z")
-    );
-
-    // if (spec.mass) rigidBodyDesc.setAdditionalMass(spec.mass);
+      .setRotation(transform.rotation)
+      .setAdditionalMass(options.additionalMass)
+      .setLinearDamping(options.linDamp)
+      .setAngularDamping(options.angDamp)
+      .restrictRotations(rr.includes("X"), rr.includes("Y"), rr.includes("Z"));
 
     return world.createRigidBody(bodyDesc);
   }
@@ -141,8 +169,9 @@ export class Collider2System extends System {
     collider: Collider2,
     body: RigidBody,
     rotation: Quaternion,
+    offset: Vector3,
     behavior: Behavior
-  ) {
+  ): Collider {
     const { world, rapier } = (this.world as any).physics;
 
     const colliderDesc: ColliderDesc = shapeParamsToColliderDesc(
@@ -151,15 +180,15 @@ export class Collider2System extends System {
     )
       .setActiveCollisionTypes(rapier.ActiveCollisionTypes.ALL)
       .setActiveEvents(rapier.ActiveEvents.COLLISION_EVENTS)
-      .setTranslation(collider.offset.x, collider.offset.y, collider.offset.z)
-      .setRotation(rotation.multiply(collider.rotation));
-
-    // colliderDesc.setSensor(spec.isSensor);
-
-    colliderDesc.setDensity(MathUtils.clamp(collider.density, 0, 1000));
-
-    // Create the collider, and (optionally) attach to rigid body
-    colliderDesc.setCollisionGroups(behavior.interaction);
+      .setTranslation(
+        offset.x + collider.offset.x,
+        offset.y + collider.offset.y,
+        offset.z + collider.offset.z
+      )
+      .setRotation(rotation.multiply(collider.rotation))
+      .setDensity(MathUtils.clamp(collider.density, 0, 1000))
+      .setFriction(collider.friction)
+      .setCollisionGroups(behavior.interaction);
 
     return world.createCollider(colliderDesc, body);
   }

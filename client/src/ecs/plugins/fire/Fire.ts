@@ -6,12 +6,12 @@ import {
   BoxGeometry,
   Object3D,
   Mesh,
-  UniformsUtils,
   ShaderMaterial,
   LinearFilter,
   ClampToEdgeWrapping,
   MathUtils,
 } from "three";
+
 import { FireShader } from "./FireShader";
 
 /**
@@ -19,6 +19,15 @@ import { FireShader } from "./FireShader";
  *
  * Ray tracing based real-time procedural volumetric fire object for three.js
  */
+const fireMaterial = new ShaderMaterial({
+  defines: FireShader.defines,
+  uniforms: FireShader.uniforms,
+  vertexShader: FireShader.vertexShader,
+  fragmentShader: FireShader.fragmentShader,
+  transparent: true,
+  depthWrite: false,
+  depthTest: true,
+});
 
 export class Fire extends Mesh {
   material: ShaderMaterial;
@@ -29,32 +38,23 @@ export class Fire extends Mesh {
   octaves: number;
 
   constructor(fireTex, color, colorMix, blaze, octaves) {
-    var fireMaterial = new ShaderMaterial({
-      defines: FireShader.defines,
-      uniforms: UniformsUtils.clone(FireShader.uniforms),
-      vertexShader: FireShader.vertexShader,
-      fragmentShader: FireShader.fragmentShader,
-      transparent: true,
-      depthWrite: false,
-      depthTest: true,
-    });
-
-    // initialize uniforms
-
     fireTex.magFilter = fireTex.minFilter = LinearFilter;
     fireTex.wrapS = fireTex.wrapT = ClampToEdgeWrapping;
 
-    fireMaterial.uniforms.fireTex.value = fireTex;
-    fireMaterial.uniforms.color.value = color;
-    fireMaterial.uniforms.invModelMatrix.value = new Matrix4();
-    fireMaterial.uniforms.scale.value = new Vector3(1, 1, 1);
-    fireMaterial.uniforms.seed.value = Math.random() * 19.19;
-    fireMaterial.uniforms.colorMix.value = MathUtils.clamp(colorMix, 0, 1);
-    fireMaterial.defines.ITERATIONS = blaze;
-    fireMaterial.defines.OCTAVES = Math.floor(octaves);
+    const material = fireMaterial.clone();
+
+    material.uniforms.iterations.value = Math.floor(blaze);
+    material.uniforms.octaves.value = Math.floor(octaves);
+
+    material.uniforms.fireTex.value = fireTex;
+    material.uniforms.color.value = color;
+    material.uniforms.invModelMatrix.value = new Matrix4();
+    material.uniforms.scale.value = new Vector3(1, 1, 1);
+    material.uniforms.seed.value = Math.random() * 19.19;
+    material.uniforms.colorMix.value = MathUtils.clamp(colorMix, 0, 1);
 
     const box = new BoxGeometry(1, 1, 1);
-    super(box, fireMaterial);
+    super(box, material);
 
     // Keep initializer args around so we can `copy` later
     this.fireTex = fireTex;
@@ -67,7 +67,7 @@ export class Fire extends Mesh {
   update(time) {
     var invModelMatrix = this.material.uniforms.invModelMatrix.value;
 
-    (this as Object3D).updateMatrixWorld();
+    this.updateMatrixWorld();
 
     invModelMatrix.copy((this as Object3D).matrixWorld).invert();
 

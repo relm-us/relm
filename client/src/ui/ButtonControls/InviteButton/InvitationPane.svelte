@@ -8,7 +8,7 @@
 
   let withEditPermission = false;
   let withInvitePermission = false;
-  let maxUses = 1;
+  let maxUses = 20;
 
   let inviteUrl = "";
 

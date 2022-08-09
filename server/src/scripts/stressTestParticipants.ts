@@ -28,7 +28,7 @@ const {
 } = args;
 
 if (!RELM_NAME || !BOT_COUNT || !API_URL || !RADIUS) {
-  throw Error("Missing --relm or --count or --api");
+  throw Error("Missing --relm or --count or --api or --radius");
 }
 
 const BOTS_PER_CONN = parseInt(args["socket-max"] || 500);

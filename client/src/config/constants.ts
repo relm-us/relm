@@ -35,11 +35,11 @@ export const AVATAR_HEIGHT = 1.5;
 // transform, and we need to take that into account at times
 export const AVATAR_HEIGHT_UNSCALED = 7;
 
-// Distance from camera to object of focus (e.g. web page)
-export const CAMERA_FOCUS_DISTANCE = 5.0;
-
 // How quickly to move the camera as it follows the participant
 export const CAMERA_LERP_ALPHA = 0.125;
+
+// Angle (in radians) from which the camera looks down
+export const CAMERA_ANGLE = 37.5 / 180 * Math.PI;
 
 // Animation names from participant model GLB
 export const T_POSE = "a-pose";
@@ -54,6 +54,7 @@ export const WALKING = "walking";
 export const WAVING = "waving";
 export const STAND_SIT = "stand-to-sit-ground";
 export const CHAIR_SIT = "stand-to-sit-chair";
+export const FALLING = "a-pose";
 
 // prettier-ignore
 export const UNIQUE_COLOR_PALETTE = [
@@ -72,4 +73,4 @@ export const AV_ENABLED: boolean = true;
 // How often should identity data be saved after being updated?
 export const IDENTITY_SAVE_INTERVAL = 2000;
 
-export const ERROR_GLTF = "/diamond.glb";
+export const ERROR_GLTF = "/error-cat.glb";

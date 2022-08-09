@@ -1,11 +1,14 @@
 import { Vector3, Quaternion } from "three";
-import { Component } from "~/ecs/base";
+import { Component, StringType } from "~/ecs/base";
 import { Vector3Type, QuaternionType } from "../types";
 
 export class Transform extends Component {
   position: Vector3;
   rotation: Quaternion;
   scale: Vector3;
+
+  // Can be used to override the threejs object.userData.entityId
+  entityId: string;
 
   readonly positionWorld: Vector3 = new Vector3();
   readonly rotationWorld: Quaternion = new Quaternion();
@@ -35,6 +38,11 @@ export class Transform extends Component {
       editor: {
         label: "Scale",
       },
+    },
+
+    // see note above
+    entityId: {
+      type: StringType,
     },
   };
 

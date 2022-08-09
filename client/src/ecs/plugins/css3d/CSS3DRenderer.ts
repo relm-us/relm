@@ -193,8 +193,7 @@ class CSS3DRenderer {
     };
 
     function epsilon(value) {
-      // return Math.abs(value) < 1e-10 ? 0 : value;
-      return value.toFixed(2);
+      return Math.abs(value) < 1e-10 ? 0 : value;
     }
 
     function getCameraCSSMatrix(matrix) {
