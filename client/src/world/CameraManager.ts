@@ -16,8 +16,8 @@ import {
   DEFAULT_VIEWPORT_ZOOM,
 } from "~/config/constants";
 
-type CameraFollowingParticipant = {
-  type: "following";
+type CameraFollow = {
+  type: "follow";
 };
 
 type CameraAbove = {
@@ -25,7 +25,7 @@ type CameraAbove = {
   height: number;
 };
 
-type CameraState = CameraFollowingParticipant | CameraAbove;
+type CameraState = CameraFollow | CameraAbove;
 
 export class CameraManager {
   counter: number = 0;
@@ -69,7 +69,8 @@ export class CameraManager {
   }
 
   init() {
-    this.state = { type: "following" };
+    this.setModeFollow();
+
     this.zoom = DEFAULT_VIEWPORT_ZOOM / 100;
     this.angle = DEFAULT_CAMERA_ANGLE;
 
@@ -88,7 +89,7 @@ export class CameraManager {
     // Listen to the mousewheel for zoom events
     this.unsubs.push(
       viewportScale.subscribe(($scale) => {
-        if (this.state.type === "following") {
+        if (this.state.type === "follow") {
           this.zoom = $scale / 100;
         }
       })
@@ -118,7 +119,7 @@ export class CameraManager {
     this.counter++;
 
     switch (this.state.type) {
-      case "following": {
+      case "follow": {
         this.calcFollowOffset();
 
         camera.add(Follow, {
@@ -136,8 +137,11 @@ export class CameraManager {
 
       case "above": {
         this.followOffset.set(0, this.state.height, 0).add(this.pan);
-        const follow = camera.get(Follow);
-        follow?.offset.copy(this.followOffset);
+
+        camera.add(Follow, {
+          target: this.avatar.id,
+          offset: this.followOffset,
+        });
 
         break;
       }
@@ -185,7 +189,12 @@ export class CameraManager {
       .add(this.pan);
   }
 
-  above(height: number = 30) {
+  /**
+   * Camera Modes
+   */
+
+  // "above" mode looks directly down from high above
+  setModeAbove(height: number = 30) {
     this.state = {
       type: "above",
       height,
@@ -198,7 +207,8 @@ export class CameraManager {
       );
   }
 
-  followParticipant() {
-    this.state = { type: "following" };
+  // "follow" mode follows the avatar
+  setModeFollow() {
+    this.state = { type: "follow" };
   }
 }

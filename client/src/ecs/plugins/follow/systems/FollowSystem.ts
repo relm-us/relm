@@ -23,22 +23,24 @@ export class FollowSystem extends System {
     const spec: Follow = entity.get(Follow);
     const transform: Transform = entity.get(Transform);
 
-    const targetEntity = world.entities.getById(spec.target);
-    if (!targetEntity) return;
-
-    const targetTransform: Transform = targetEntity.get(Transform);
+    const targetTransform: Transform = world.entities
+      .getById(spec.target)
+      ?.get(Transform);
     if (!targetTransform) return;
 
     targetPosition.copy(targetTransform.positionWorld);
     targetPosition.add(spec.offset);
 
+    const isTinyDistance =
+      transform.position.distanceToSquared(targetPosition) < 0.0001;
+
     if (transform.position.equals(targetPosition)) {
       // Do nothing
-    } else if (transform.position.distanceToSquared(targetPosition) < 0.0001) {
-      transform.position.copy(targetPosition);
-      transform.modified();
     } else {
-      transform.position.lerp(targetPosition, spec.lerpAlpha);
+      transform.position.lerp(
+        targetPosition,
+        isTinyDistance ? 1.0 : spec.lerpAlpha
+      );
       transform.modified();
     }
   }
