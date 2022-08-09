@@ -10,7 +10,7 @@ const getDirName = () => {
   return path.dirname(__filename);
 };
 
-const EMAIL_TEMPLATE_FOLDER_PATH = path.join(getDirName(), "..", "..", "emails");
+const EMAIL_TEMPLATE_FOLDER_PATH = path.join(getDirName(), "..", "..", "templates", "emails");
 
 // Gather all email templates
 const templates: { [template: string]: EmailDetails } = {};

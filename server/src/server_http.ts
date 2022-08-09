@@ -1,9 +1,17 @@
 import express from "express";
+import hbs from "express-hbs";
 import cors from "cors";
+import path from "path";
+import url from "url";
 import * as middleware from "./middleware.js";
 import * as routes from "./routes/index.js";
 import passportMiddleware from "./passportAuth.js";
 import { respondWithError, uuidv4 } from "./utils/index.js";
+
+const getDirName = () => {
+  const __filename = url.fileURLToPath(import.meta.url);
+  return path.dirname(__filename);
+};
 
 export const app = express();
 
@@ -14,6 +22,11 @@ app.use(express.json());
 // See https://expressjs.com/en/resources/middleware/cors.html#enabling-cors-pre-flight
 app.options("*", cors());
 
+// Set the view engine to the module hbs
+app.set("view engine", "hbs");
+app.set("views", path.join(getDirName(), "..", "templates", "views"));
+
+// Passport for OAuth authentication
 app.use(passportMiddleware);
 
 // Courtesy page just to say we're a Relm web server
