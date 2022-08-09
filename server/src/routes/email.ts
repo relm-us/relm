@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { User } from "../db/index.js";
-import { wrapAsync, respondWithError, respondWithSuccess } from "../utils/index.js";
+import { wrapAsync } from "../utils/index.js";
 
 export const email = express.Router();
 
@@ -10,16 +10,16 @@ email.get(
   cors(),
   wrapAsync(async (req, res) => {
     const code = req.params.code;
-
-    if (!code) {
-      return respondWithError(res, "Missing verification code.");
-    }
     
     const completedVerification = await User.markAsCompletedEmailVerification({ code });
     if (completedVerification) {
-      return respondWithSuccess(res, {});
+      res.render("verifyAccount", {
+        status: "Successfully linked account."
+      });
     } else {
-      return respondWithError(res, "No pending verification found with that code.");
+      res.render("verifyAccount", {
+        status: "No account verification could be found with the provided code."
+      });
     }
 
   })

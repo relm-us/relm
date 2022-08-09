@@ -26,7 +26,7 @@ app.options("*", cors());
 app.set("view engine", "hbs");
 app.set("views", path.join(getDirName(), "..", "templates", "views"));
 
-// Passport for OAuth authentication
+// Passport for OAuthauthentication
 app.use(passportMiddleware);
 
 // Courtesy page just to say we're a Relm web server
