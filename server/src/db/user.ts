@@ -45,9 +45,10 @@ export async function createUser({ email, password, emailVerificationRequired }:
 }
 
 export async function deleteUserByEmail({ email }) {
-  await db.none(sql`
-      DELETE FROM users WHERE LOWER(email)=LOWER(${email})
-    `);
+  const userId = await this.getUserIdByEmail({ email });
+  
+  await db.none(sql`DELETE FROM pending_email_verifications WHERE user_id=${userId}`);
+  await db.none(sql`DELETE FROM users WHERE user_id=${userId}`);
 }
 
 export async function getUserIdByEmail({ email } : { email : string }) {
