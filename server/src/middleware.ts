@@ -119,18 +119,22 @@ export function acceptJwt() {
         }
 
         if (result.username) {
-          const doesUserIdExist = !!(await User.getUserIdByLoginId({ jwtId: result.username }));
-          // If the jwt user has no relm user, create one
-          if (!doesUserIdExist) {
-            const { userId } = await User.createUser({
+          let userId = await User.getUserIdByLoginId({ jwtId: result.username });
+          if (userId !== null) {
+            req.authenticatedUserId = userId;
+          } else {
+            // If the jwt user has no relm user, create one
+
+            userId = (await User.createUser({
               jwtId: result.username
-            });
-  
-            await Participant.assignToUserId({
-              userId, 
-              participantId: req.authenticatedParticipantId
-            });
+            })).userId;
           }
+
+          req.authenticatedUserId = userId;
+          await Participant.assignToUserId({
+            userId, 
+            participantId: req.authenticatedParticipantId
+          });
         }
 
         // Success

@@ -64,6 +64,7 @@ auth.get(
   "/identity",
   cors(),
   middleware.authenticated(),
+  middleware.acceptJwt(),
   wrapAsync(async (req, res) => {
       const userId = await Participant.getUserId({
         participantId: req.authenticatedParticipantId
@@ -89,6 +90,7 @@ auth.post(
   "/identity",
   cors(),
   middleware.authenticated(),
+  middleware.acceptJwt(),
   middleware.authenticatedWithUser(),
   wrapAsync(async (req, res) => {
     const userId = req.authenticatedUserId;
