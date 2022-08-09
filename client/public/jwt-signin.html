@@ -58,7 +58,7 @@
 
       function login(username, relm, secret = defaultSecret) {
         const jwt = makeToken(username, { [relm]: "ae" });
-        window.location = "/?relm=" + relm + "&jwt=" + jwt;
+        window.location = "/" + relm + "?jwt=" + jwt;
       }
 
       // Example Payload:
