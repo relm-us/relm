@@ -1,9 +1,36 @@
 {
+  "ActionsPanel": {
+    "title": "行动",
+    "invalid_json": "不存在 JSON",
+    "apply": "应用"
+  },
+  "AddPanel": {
+    "search_assets": "搜索资源...",
+    "add_asset": "增加 {name}",
+    "prev": "前一个",
+    "next": "下一个",
+    "loading": "加载中...",
+    "empty_results": "空白页"
+  },
+  "AvatarBuilder": {
+    "gender": "性别",
+    "body": "身材",
+    "skintone": "肤色",
+    "hair": "头发",
+    "shirt": "上衣",
+    "pants": "裤子",
+    "shoes": "鞋子",
+    "belt": "皮带",
+    "narrow": "修长",
+    "wide": "丰腴",
+    "choose_yours": "选择你的形象",
+    "customize_later": "(你可以在之后进行修改)"
+  },
   "VideoMirror": {
-    "join_mic_off": "仅使用摄像头加入",
-    "join_cam_off": "仅使用麦克风加入",
     "join_cam_mic_off": "不使用摄像头和麦克风加入",
+    "join_mic_off": "仅使用摄像头加入",
     "cam_unavailable": "摄像头无法连接",
+    "join_cam_off": "仅使用麦克风加入",
     "cam_mic_blocked": "摄像头和麦克风已屏蔽",
     "cam_mic_not_active": "摄像头和麦克风未启用",
     "try_again": "重试",
