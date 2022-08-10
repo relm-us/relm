@@ -497,7 +497,7 @@ export class WorldManager {
   topView(height: number = 40, hideAvatar: boolean = true) {
     const avatar = this.participants.local.avatar;
 
-    this.camera.above(height);
+    this.camera.setModeAbove(height);
     if (avatar && hideAvatar) {
       avatar.entities.body.traverse((e) => {
         e.getByName("Object3D").value.visible = false;

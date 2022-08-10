@@ -28,8 +28,10 @@ type CameraAbove = {
 type CameraState = CameraFollow | CameraAbove;
 
 export class CameraManager {
-  counter: number = 0;
+  // Track what we're doing with the camera right now
+  state: CameraState;
 
+  // The HECS world
   ecsWorld: DecoratedECSWorld;
 
   // The ECS entity with a Camera component holding the ThreeJS PerspectiveCamera object
@@ -38,24 +40,21 @@ export class CameraManager {
   // The participant's avatar
   avatar: Entity;
 
-  // Track what we're doing with the camera right now
-  state: CameraState;
-
   // How much the camera is "off-center" from the participant
   pan: Vector3 = new Vector3();
 
   // 0: zoomed all the way in; 1: zoomed all the way out
   zoom: number;
-
-  // The angle from which to look down
-  angle: number;
-
-  followOffset: Vector3;
   zoomedInDistance: number = 5;
-  zoomedInOffset: Vector3 = new Vector3();
   zoomedOutDistance: number = 25;
-  zoomedOutOffset: Vector3 = new Vector3();
 
+  // The angle of rotation around the avatar
+  direction: Euler = new Euler();
+
+  // The position of the camera, relative to its target (i.e. the avatar)
+  followOffset: Vector3;
+
+  // Track things that need cleaning up before deinit
   unsubs: Function[] = [];
 
   get threeCamera(): PerspectiveCamera {
@@ -70,21 +69,16 @@ export class CameraManager {
 
   init() {
     this.setModeFollow();
+    this.setPan(0, 0);
 
     this.zoom = DEFAULT_VIEWPORT_ZOOM / 100;
-    this.angle = DEFAULT_CAMERA_ANGLE;
+
+    this.direction.x = DEFAULT_CAMERA_ANGLE;
 
     this.followOffset = new Vector3();
 
     // Create the ECS camera entity that holds the ThreeJS camera
-    this.entity = makeCamera(this.ecsWorld)
-      .add(Follow, {
-        target: this.avatar.id,
-        lerpAlpha: CAMERA_LERP_ALPHA,
-      })
-      .activate();
-
-    this.setRotation(this.angle);
+    this.entity = makeCamera(this.ecsWorld).activate();
 
     // Listen to the mousewheel for zoom events
     this.unsubs.push(
@@ -114,9 +108,7 @@ export class CameraManager {
 
   update(delta: number) {
     const camera = this.entity;
-    if (!camera) return;
-
-    this.counter++;
+    if (!camera || !this.avatar.has(Transform)) return;
 
     switch (this.state.type) {
       case "follow": {
@@ -125,10 +117,11 @@ export class CameraManager {
         camera.add(Follow, {
           target: this.avatar.id,
           offset: this.followOffset,
+          lerpAlpha: CAMERA_LERP_ALPHA,
         });
 
         // Make it easy to get back to avatar if camera not centered
-        if (this.counter % 60 === 0 && this.isOffCenter()) {
+        if (this.ecsWorld.version % 60 === 0 && this.isOffCenter()) {
           centerCameraVisible.set(true);
         }
 
@@ -141,6 +134,7 @@ export class CameraManager {
         camera.add(Follow, {
           target: this.avatar.id,
           offset: this.followOffset,
+          lerpAlpha: CAMERA_LERP_ALPHA,
         });
 
         break;
@@ -150,13 +144,8 @@ export class CameraManager {
 
   setPan(x: number, z: number) {
     this.pan.x = x;
+    this.pan.y = AVATAR_HEIGHT;
     this.pan.z = z;
-  }
-
-  setRotation(angle: number) {
-    this.entity
-      .get(Transform)
-      .rotation.setFromEuler(new Euler(-angle, 0, 0, "XYZ"));
   }
 
   setFov(fov: number) {
@@ -166,27 +155,35 @@ export class CameraManager {
     this.ecsWorld.cssPresentation.camera.updateProjectionMatrix();
   }
 
+  setZoomRange(min: number, max: number) {
+    if (min < 0) min = 0;
+    if (max < min) max = min;
+    this.zoomedInDistance = min;
+    this.zoomedOutDistance = max;
+  }
+
   getFov() {
     return this.ecsWorld.presentation.camera.fov;
   }
 
   calcFollowOffset() {
-    this.zoomedInOffset.set(
-      0,
-      this.zoomedInDistance * Math.sin(this.angle) + AVATAR_HEIGHT,
-      this.zoomedInDistance * Math.cos(this.angle)
+    const negDir = new Euler(
+      -this.direction.x,
+      this.direction.y,
+      this.direction.z,
+      "YXZ"
     );
 
-    this.zoomedOutOffset.set(
-      0,
-      this.zoomedOutDistance * Math.sin(this.angle) + AVATAR_HEIGHT,
-      this.zoomedOutDistance * Math.cos(this.angle)
-    );
-
+    const range = this.zoomedOutDistance - this.zoomedInDistance;
     this.followOffset
-      .copy(this.zoomedInOffset)
-      .lerp(this.zoomedOutOffset, this.zoom)
+      .set(0, 0, 1)
+      .applyEuler(negDir)
+      .multiplyScalar(this.zoomedInDistance + range * this.zoom)
       .add(this.pan);
+
+    const rotation: Quaternion = this.entity.get(Transform).rotation;
+    const targetRotation = new Quaternion().setFromEuler(negDir);
+    rotation.rotateTowards(targetRotation, 1);
   }
 
   /**

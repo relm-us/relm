@@ -10,11 +10,11 @@ export class FollowSystem extends System {
   order = Groups.Initialization;
 
   static queries = {
-    targeted: [Follow],
+    active: [Follow],
   };
 
   update() {
-    this.queries.targeted.forEach((entity) => {
+    this.queries.active.forEach((entity) => {
       this.follow(this.world, entity);
     });
   }
