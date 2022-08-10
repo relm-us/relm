@@ -14,7 +14,8 @@ const EMAIL_TEMPLATE_FOLDER_PATH = path.join(getDirName(), "..", "..", "template
 
 // Gather all email templates
 const templates: { [template: string]: EmailDetails } = {};
-const emailTemplateFolders = fs.readdirSync(EMAIL_TEMPLATE_FOLDER_PATH);
+const emailTemplateFolders = fs.readdirSync(EMAIL_TEMPLATE_FOLDER_PATH)
+  .filter(file => file !== "INFORMATION.md");
 for (const folderName of emailTemplateFolders) {
   const htmlFilePath = path.join(EMAIL_TEMPLATE_FOLDER_PATH, folderName, "email.html");
   const jsonFilePath = path.join(EMAIL_TEMPLATE_FOLDER_PATH, folderName, "email.json");
@@ -58,6 +59,13 @@ export function createEmailTemplate(templateName: string, params = {}): EmailDet
   };
 }
 
+/**
+ * Given a string e.g. "{{variable}} text," this function can be used to 
+ * replace instances of {{variable}} with something else given params being { variable: "replace it with this!" }
+ * @param content the content to replace text in
+ * @param params the parameters to replace and their values
+ * @returns content with params applied
+ */
 function applyParams(content: string, params = {}): string {
   let str = content;
 
