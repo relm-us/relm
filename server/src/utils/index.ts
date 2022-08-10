@@ -5,6 +5,8 @@ export {
 export { decodedValidJwt } from "./decodedValidJwt.js";
 export { encrypt, compareEncryptedPassword } from "./encryption.js";
 export { getDefinedKeys } from "./getDefinedKeys.js";
+export { getPersistence } from "./getPersistence.js";
+export { getYDoc } from "./getYDoc.js";
 export { hasPermission } from "./hasPermission.js";
 export { isAllowed } from "./isAllowed.js";
 export { isArray } from "./isArray.js";

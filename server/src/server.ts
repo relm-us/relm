@@ -1,13 +1,13 @@
 import fs from "fs";
 
 import { ASSETS_DIR, DATABASE_NAME, PORT } from "./config.js";
-import { server } from "./server_ws.js";
+import { geckoServer } from "./server_ws.js";
+import { app as expressApp } from "./server_http.js";
 import { init } from "./db/db.js";
 
 if (!fs.existsSync(ASSETS_DIR)) {
   throw Error(`Asset upload directory doesn't exist: ${ASSETS_DIR}`);
 }
-
 
 async function start() {
   try {
@@ -18,9 +18,9 @@ async function start() {
   }
   console.log(`Connected to database '${DATABASE_NAME}'`);
 
-  server.listen(PORT, () => {
-    console.log(`http/ws server listening on ${PORT}`);
-  });
+  // Start gecko server and run http server using same port
+  geckoServer.listen(PORT);
+  geckoServer.server.on("request", expressApp);
 }
 
 start().catch((err) => {

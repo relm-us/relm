@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@jest/types": "27.5.1",
+    "@types/node": "^17.0.45",
     "@types/three": "0.141.0",
     "core-js-bundle": "^3.21.1",
     "jest": "27.5.1",
@@ -29,8 +30,7 @@
   },
   "dependencies": {
     "base64-arraybuffer-es6": "^0.6.0",
-    "lib0": "0.2.51",
-    "lodash.debounce": "4.0.8",
+    "lib0": "0.2.52",
     "three": "0.141.0",
     "y-leveldb": "^0.1.0",
     "y-protocols": "1.0.5"

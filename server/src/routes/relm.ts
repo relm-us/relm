@@ -29,13 +29,13 @@ import * as config from "../config.js";
 import * as middleware from "../middleware.js";
 import * as twilio from "../lib/twilio.js";
 import { Permission, Relm, Doc, Variable } from "../db/index.js";
-import { getYDoc } from "../getYDoc.js";
 
 import {
   wrapAsync,
   respondWithSuccess,
   respondWithError,
   randomToken,
+  getYDoc
 } from "../utils/index.js";
 
 const conscript = mkConscript();

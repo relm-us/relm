@@ -13,9 +13,8 @@ import {
   respondWithSuccess,
   respondWithError,
   wrapAsync,
+  getYDoc
 } from "../utils/index.js";
-
-import { getYDoc } from "../getYDoc.js";
 
 import { Asset } from "../db/index.js";
 

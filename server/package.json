@@ -24,6 +24,7 @@
     "pretest": "dropdb relm-test; createdb relm-test"
   },
   "dependencies": {
+    "@geckos.io/server": "^2.2.1",
     "@peculiar/webcrypto": "^1.0.27",
     "aws-sdk": "2.1157.0",
     "base64-arraybuffer": "^0.2.0",
@@ -38,7 +39,7 @@
     "http-errors": "^1.8.0",
     "is": "^3.3.0",
     "level": "^6.0.1",
-    "lib0": "0.2.51",
+    "lib0": "0.2.52",
     "lodash.debounce": "^4.0.8",
     "md5-file": "^5.0.0",
     "minimist": "^1.2.6",
@@ -71,7 +72,7 @@
     "@jest/globals": "27.5.1",
     "@jest/types": "^28.0",
     "@types/express": "^4.17.11",
-    "@types/node": "^17.0.5",
+    "@types/node": "^17.0.23",
     "@types/passport": "^1.0.9",
     "@types/passport-facebook": "^2.1.11",
     "@types/passport-google-oauth2": "^0.1.5",

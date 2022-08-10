@@ -19,7 +19,7 @@ const ASSETS_DIR = process.env.ASSETS_DIR;
 const SCREENSHOTS_DIR = process.env.SCREENSHOTS_DIR || ASSETS_DIR;
 const TMP_DIR = process.env.TMP_DIR || ASSETS_DIR;
 const PASSWORD_LENGTH_MINIMUM = 6;
-const PORT = process.env.PORT || 3000;
+const PORT = parseInt(process.env.PORT) || 3000;
 const YGARBAGE_COLLECTION = process.env.GC !== "0";
 const YPERSISTENCE = process.env.YPERSISTENCE;
 

@@ -18,6 +18,9 @@
 		"paths": { "~/*": ["./*"] },
     "typeRoots": [
       "types"
+    ],
+    "types": [
+      "node"
     ]
   }
 }
