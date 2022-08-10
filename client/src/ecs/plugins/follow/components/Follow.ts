@@ -5,6 +5,9 @@ import { Vector3 } from "three";
 export class Follow extends Component {
   target: string;
   offset: Vector3;
+  dampening: number;
+
+  // deprecated
   lerpAlpha: number;
 
   static props = {
@@ -15,6 +18,7 @@ export class Follow extends Component {
         input: "Entity",
       },
     },
+
     offset: {
       type: Vector3Type,
       default: new Vector3(0, 0, 0),
@@ -22,15 +26,22 @@ export class Follow extends Component {
         label: "Follow Offset",
       },
     },
+
+    dampening: {
+      type: NumberType,
+      default: 1,
+      editor: {
+        label: "Speed Dampening",
+      },
+    },
+
+    // deprecated
     lerpAlpha: {
       type: NumberType,
       default: 0.075,
-      editor: {
-        label: "LERP Alpha",
-      },
     },
   };
-  
+
   static editor = {
     label: "Follow",
   };

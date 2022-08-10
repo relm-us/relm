@@ -181,9 +181,8 @@ export class CameraManager {
       .multiplyScalar(this.zoomedInDistance + range * this.zoom)
       .add(this.pan);
 
-    const rotation: Quaternion = this.entity.get(Transform).rotation;
-    const targetRotation = new Quaternion().setFromEuler(negDir);
-    rotation.rotateTowards(targetRotation, 1);
+    // TODO: Make a smoother transition here
+    this.entity.get(Transform).rotation.setFromEuler(negDir);
   }
 
   /**

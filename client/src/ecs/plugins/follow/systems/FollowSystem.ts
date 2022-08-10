@@ -1,11 +1,16 @@
-import { Vector3 } from "three";
+import { Vector3, MathUtils } from "three";
 
 import { Groups, System } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
 
 import { Follow } from "../components";
 
+const DECEL_RADIUS = 2;
+const DAMPENING_CONSTANT = 5;
+
 const targetPosition = new Vector3();
+const vector = new Vector3();
+
 export class FollowSystem extends System {
   order = Groups.Initialization;
 
@@ -31,16 +36,27 @@ export class FollowSystem extends System {
     targetPosition.copy(targetTransform.positionWorld);
     targetPosition.add(spec.offset);
 
-    const isTinyDistance =
-      transform.position.distanceToSquared(targetPosition) < 0.0001;
+    const distance = transform.position.distanceTo(targetPosition);
 
-    if (transform.position.equals(targetPosition)) {
-      // Do nothing
+    let speed = 0;
+
+    if (distance === 0) {
+      // arrived; do nothing
     } else {
-      transform.position.lerp(
-        targetPosition,
-        isTinyDistance ? 1.0 : spec.lerpAlpha
-      );
+      speed =
+        MathUtils.clamp(distance, 0, DECEL_RADIUS) /
+        DECEL_RADIUS /
+        (spec.dampening * DAMPENING_CONSTANT);
+
+      // arrow pointing to where we need to go
+      vector.copy(targetPosition).sub(transform.position);
+      if (vector.length() > speed) {
+        vector.normalize().multiplyScalar(speed);
+      } else {
+        // small vector; will soon arrive
+      }
+
+      transform.position.add(vector);
       transform.modified();
     }
   }
