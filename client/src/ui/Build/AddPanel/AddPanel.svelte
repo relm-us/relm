@@ -209,10 +209,6 @@
     display: block;
     margin: 8px;
   }
-  r-tag-sampler {
-    display: block;
-    margin: 0px 12px;
-  }
   r-thumb {
     display: block;
     width: 150px;
