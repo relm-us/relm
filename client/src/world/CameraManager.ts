@@ -27,6 +27,8 @@ type CameraAbove = {
 
 type CameraState = CameraFollow | CameraAbove;
 
+const directionNeg = new Euler();
+
 export class CameraManager {
   // Track what we're doing with the camera right now
   state: CameraState;
@@ -76,6 +78,7 @@ export class CameraManager {
     this.direction.x = DEFAULT_CAMERA_ANGLE;
 
     this.followOffset = new Vector3();
+    this.calcFollowOffset();
 
     // Create the ECS camera entity that holds the ThreeJS camera
     this.entity = makeCamera(this.ecsWorld).activate();
@@ -113,6 +116,10 @@ export class CameraManager {
     switch (this.state.type) {
       case "follow": {
         this.calcFollowOffset();
+
+        // TODO: Make a smoother transition here; don't hide the fact that
+        // we depend on calcFollowOffset to calculate directionNeg first
+        this.entity.get(Transform).rotation.setFromEuler(directionNeg);
 
         camera.add(Follow, {
           target: this.avatar.id,
@@ -167,7 +174,7 @@ export class CameraManager {
   }
 
   calcFollowOffset() {
-    const negDir = new Euler(
+    directionNeg.set(
       -this.direction.x,
       this.direction.y,
       this.direction.z,
@@ -177,12 +184,9 @@ export class CameraManager {
     const range = this.zoomedOutDistance - this.zoomedInDistance;
     this.followOffset
       .set(0, 0, 1)
-      .applyEuler(negDir)
+      .applyEuler(directionNeg)
       .multiplyScalar(this.zoomedInDistance + range * this.zoom)
       .add(this.pan);
-
-    // TODO: Make a smoother transition here
-    this.entity.get(Transform).rotation.setFromEuler(negDir);
   }
 
   /**
