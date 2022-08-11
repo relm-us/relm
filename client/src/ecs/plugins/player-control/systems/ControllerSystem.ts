@@ -169,7 +169,11 @@ export class ControllerSystem extends System {
       const anim: Animation = entity.get(Animation);
       if (anim) {
         if (state.animOverride) {
-          changeAnimationClip(entity, state.animOverride, true);
+          changeAnimationClip(
+            entity,
+            state.animOverride.clipName,
+            state.animOverride.loop
+          );
         } else {
           const wGrounded = this.willBeGrounded(entity);
           let targetAnim = spec.animations[state.speed];
