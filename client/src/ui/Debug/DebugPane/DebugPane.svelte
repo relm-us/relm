@@ -47,7 +47,7 @@
 
   let idActive = 0;
   let idTotal = 0;
-  let identities = [];
+  let participants = [];
 
   let x = 0;
   let y = 0;
@@ -70,8 +70,8 @@
       if (worldManager.participants.participants.size !== idTotal)
         idTotal = worldManager.participants.participants.size;
 
-      identities = [...worldManager.participants.participants.values()];
-      identities.sort((a: Participant, b: Participant) => {
+      participants = [...worldManager.participants.participants.values()];
+      participants.sort((a: Participant, b: Participant) => {
         return a.lastSeen - b.lastSeen;
       });
     }, 150);
@@ -147,22 +147,10 @@
             <th>identities:</th>
             <td />
           </tr>
-          {#each identities as identity}
+          {#each participants as participant}
             <tr class="identity-row">
-              <th>{identity.get("name")}</th>
-              <td>
-                {#if identity.participantId === participantId}
-                  (local)
-                {:else if identity.lastSeen === undefined}
-                  (not seen)
-                {:else}
-                  {Math.floor(identity.seenAgo / 1000) + "s"}
-                {/if}
-                {identity.avatar.distance
-                  ? identity.avatar.distance.toFixed(1)
-                  : "?"}' [{identity.get("clientId")}]
-                {identity.participantId}
-              </td>
+              <th>{participant.identityData.name}</th>
+              <td>[{participant.identityData.clientId}] {participant.participantId}</td>
             </tr>
           {/each}
         {/if}
