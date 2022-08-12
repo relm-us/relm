@@ -34,7 +34,7 @@ export class ParticipantYBroker {
   setFields(data) {
     this.awareness.setLocalState({
       ...this.awareness.getLocalState(),
-      ...data
+      ...data,
     });
   }
 
@@ -43,29 +43,13 @@ export class ParticipantYBroker {
   }
 
   subscribe(dispatch: Dispatch) {
-    this.unsubs.push(this.subscribeConnect(dispatch));
+    this.unsubs.push(this.subscribeData(dispatch));
     this.unsubs.push(this.subscribeDisconnect(dispatch));
-    this.unsubs.push(this.subscribeIdentityData(dispatch));
   }
 
   unsubscribe() {
     this.unsubs.forEach((unsub) => unsub());
     this.unsubs.length = 0;
-  }
-
-  subscribeConnect(dispatch: Dispatch) {
-    console.log("subscribeConnect");
-    const observer = (changes) => {
-      for (let id of changes.added) {
-        // Add clientId when they connect
-        this.clients.update(($clients) => {
-          $clients.set(id, this.awareness.getStates().get(id)["identity"]);
-          return $clients;
-        });
-      }
-    };
-    this.awareness.on("change", observer);
-    return () => this.awareness.off("change", observer);
   }
 
   subscribeDisconnect(dispatch: Dispatch) {
@@ -79,49 +63,39 @@ export class ParticipantYBroker {
         dispatch({ id: "removeParticipant", clientId: id });
       }
     };
+
     this.awareness.on("change", observer);
+
     return () => this.awareness.off("change", observer);
   }
 
-  subscribeIdentityData(dispatch: Dispatch) {
-    for (const state of this.awareness.getStates().values()) {
-      if (("id" in state) && ("identity" in state)) {
+  subscribeData(dispatch: Dispatch) {
+    const observer = (changes) => {
+      const idsToCheck = changes.added.concat(changes.updated);
+      for (const id of idsToCheck) {
+        // Don't subscribe to self data
+        if (id === this.awareness.clientID) continue;
+
+        const state = this.awareness.getStates().get(id);
+
         const participantId = state["id"];
         const identityData = state["identity"];
 
-        dispatch({
-          id: "recvParticipantData",
-          participantId,
-          identityData
-        });
-      }
-    }
+        if (!participantId || !identityData) continue;
 
-    const observer = changes => {
-      const idsToCheck = changes.added.concat(changes.updated);
-      for (const id of idsToCheck) {
-        const state = this.awareness.getStates().get(id);
+        // Update identity data as necessary
+        if (!isEqual(get(this.clients).get(id), identityData)) {
+          this.clients.update(($clients) => {
+            $clients.set(id, identityData);
+            return $clients;
+          });
 
-        if (("id" in state) && ("identity" in state)) {
-          const participantId = state["id"];
-          const identityData = state["identity"];
-          
-          // Update identity data as necessary
-          if (!isEqual(get(this.clients).get(id), identityData)) {
-            this.clients.update($clients => {
-              $clients.set(id, identityData);
-              return $clients;
-            });
-
-            dispatch({
-              id: "recvParticipantData",
-              participantId,
-              identityData
-            });
-          }
+          dispatch({
+            id: "recvParticipantData",
+            participantId,
+            identityData,
+          });
         }
-
-
       }
     };
 
