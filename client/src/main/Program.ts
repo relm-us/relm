@@ -292,7 +292,7 @@ export function makeProgram(): Program {
           state.localIdentityData.set(newIdentityData);
 
           // broadcast identityData to other participants
-          state.broker.setField("identity", newIdentityData);
+          state.broker.setField("i", newIdentityData);
 
           // sync identityData to HTML and ECS entities
           setAvatarFromParticipant(localParticipant);

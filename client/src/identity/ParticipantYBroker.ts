@@ -79,7 +79,7 @@ export class ParticipantYBroker {
         const state = this.awareness.getStates().get(id);
 
         const participantId = state["id"];
-        const identityData = state["identity"];
+        const identityData = state["i"];
 
         if (!participantId || !identityData) continue;
 
