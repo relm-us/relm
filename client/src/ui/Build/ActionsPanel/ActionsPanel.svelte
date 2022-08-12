@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { _ } from "svelte-i18n";
 
   import { worldManager } from "~/world";
   import { parse } from "~/utils/parse";
@@ -34,16 +35,16 @@
 </script>
 
 <LeftPanel on:minimize>
-  <Header>Actions</Header>
+  <Header>{$_("ActionsPanel.title")}</Header>
   <container>
     {#if errorState}
       <panel>
-        <icon><IoIosClose /></icon><lbl>Invalid JSON</lbl>
+        <icon><IoIosClose /></icon><lbl>{$_("ActionsPanel.invalid_json")}</lbl>
       </panel>
     {/if}
     <textarea bind:value={text} />
     <panel>
-      <Button on:click={applyText}>Apply</Button>
+      <Button on:click={applyText}>{$_("ActionsPanel.apply")}</Button>
     </panel>
   </container>
 </LeftPanel>

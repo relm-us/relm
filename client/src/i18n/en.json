@@ -1,3 +1,40 @@
 {
-  "_note": "See `default.json` for key/value pairs that need translation. This file is intentionally left blank because the `default:` values are already English."
+  "ActionsPanel": {
+    "title": "Actions",
+    "invalid_json": "Invalid JSON",
+    "apply": "Apply"
+  },
+  "AddPanel": {
+    "search_assets": "Search Assets...",
+    "add_asset": "Add {name}",
+    "prev": "Prev",
+    "next": "Next",
+    "loading": "Loading...",
+    "empty_results": "Empty page"
+  },
+  "AvatarBuilder": {
+    "gender": "Gender",
+    "body": "Body",
+    "skintone": "Skintone",
+    "hair": "Hair",
+    "shirt": "Shirt",
+    "pants": "Pants",
+    "shoes": "Shoes",
+    "belt": "Belt",
+    "narrow": "Narrow",
+    "wide": "Wide",
+    "choose_yours": "Choose Your Avatar",
+    "customize_later": "(you can customize this later)"
+  },
+  "VideoMirror": {
+    "join_cam_off": "Join with cam off",
+    "join_mic_off": "Join with mic off",
+    "join_cam_mic_off": "Join with cam and mic off",
+    "cam_unavailable": "(Camera unavailable)",
+    "cam_mic_blocked": "Cam and mic are blocked",
+    "cam_mic_not_active": "Cam and mic are not active",
+    "try_again": "Try Again",
+    "request_perms": "Use Cam & Mic",
+    "continue": "Continue"
+  }
 }

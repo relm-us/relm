@@ -4,16 +4,13 @@
   import Notifications from "svelte-notifications";
 
   import { runtime } from "~/utils/runtime";
-  import { setupI18n, dir } from "~/i18n";
-  import { getLocaleFromNavigator } from "svelte-i18n";
+  import { dir } from "~/i18n";
 
   export let createApp;
 
   let programView;
   let programComponent;
   let programProps;
-
-  setupI18n({ withLocale: getLocaleFromNavigator() });
 
   // Set up locale/language direction (e.g. Arabic is right-to-left)
   $: document.dir = $dir;

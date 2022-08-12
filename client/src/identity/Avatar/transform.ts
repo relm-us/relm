@@ -1,6 +1,7 @@
-import type { TransformData, AnimationData, Participant } from "~/types";
+import type { TransformData, AnimationData, Participant, IdentityData } from "~/types";
 
 import { Vector3, Euler, AnimationClip } from "three";
+import { Appearance } from "relm-common";
 
 import { Transform } from "~/ecs/plugins/core";
 import { Model2Ref } from "~/ecs/plugins/form";
@@ -11,8 +12,8 @@ import { makeRemoteAvatarEntities } from "./makeRemoteAvatarEntities";
 import { setAvatarFromParticipant } from "./setAvatarFromParticipant";
 import { DecoratedECSWorld } from "types/DecoratedECSWorld";
 import { Oculus } from "~/ecs/plugins/html2d";
-import { FALLING } from "~/config/constants";
 import { changeAnimationClip } from "./changeAnimationClip";
+import { isEqual } from "~/utils/isEqual";
 
 const e1 = new Euler(0, 0, 0, "YXZ");
 const v1 = new Vector3();
@@ -124,12 +125,23 @@ export function avatarSetAnimationData(
   }
 }
 
+export function avatarSetAppearanceData(
+  participant: Participant,
+  appearance: Appearance
+) {
+  if (!isEqual(participant.identityData.appearance, appearance)) {
+    participant.identityData.appearance = appearance;
+    participant.modified = true;
+  }
+}
+
 export function setDataOnParticipant(
   this: void,
   ecsWorld: DecoratedECSWorld,
   participant: Participant,
   transformData: TransformData,
   animationData: AnimationData,
+  identityData: IdentityData,
   onAddParticipant: (participant: Participant) => void
 ) {
   // Record that we've seen this participant now, so we can know which
@@ -153,8 +165,8 @@ export function setDataOnParticipant(
   }
 
   avatarSetTransformData(participant.avatar, transformData);
-
-  if (animationData) avatarSetAnimationData(participant.avatar, animationData);
+  avatarSetAnimationData(participant.avatar, animationData);
+  avatarSetAppearanceData(participant, identityData.appearance);
 
   // If the remote participant is active (if we've reached this point,
   // they are), and some IdentityData has been modified, then take the

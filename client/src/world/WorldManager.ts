@@ -342,9 +342,12 @@ export class WorldManager {
     this.unsubs.push(
       derived(
         [worldUIMode, key1, key2, key3],
-        ([$mode, $key1, $key2, $key3], set) => {
+        (
+          [$mode, $key1, $key2, $key3],
+          set: (anim: { clipName: string; loop: boolean }) => void
+        ) => {
           if ($mode === "play" && $key1) {
-            set(WAVING);
+            set({ clipName: WAVING, loop: true });
             sitting = false;
           } else if ($mode === "play" && $key2) {
             if (sitting) {
@@ -369,7 +372,8 @@ export class WorldManager {
             oculus.targetOffset.y = OCULUS_HEIGHT_STAND;
           }
         }
-        const state = this.avatar.entities.body.get(ControllerState);
+        const state: ControllerState =
+          this.avatar.entities.body.get(ControllerState);
         if (!state) return;
         state.animOverride = anim;
       })
@@ -497,7 +501,7 @@ export class WorldManager {
   topView(height: number = 40, hideAvatar: boolean = true) {
     const avatar = this.participants.local.avatar;
 
-    this.camera.above(height);
+    this.camera.setModeAbove(height);
     if (avatar && hideAvatar) {
       avatar.entities.body.traverse((e) => {
         e.getByName("Object3D").value.visible = false;

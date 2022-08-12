@@ -3,6 +3,8 @@
 
   import { createEventDispatcher } from "svelte";
   import { VideoMirror } from "video-mirror";
+  import { _ } from "svelte-i18n";
+
   import { askMediaSetup } from "~/stores/askMediaSetup";
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import PageOverlay from "~/ui/lib/PageOverlay";
@@ -33,6 +35,7 @@
     {audioDesired}
     {videoDesired}
     {preferredDeviceIds}
+    tr={$_("VideoMirror")}
     autoFocus={true}
   />
 

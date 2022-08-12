@@ -23,13 +23,14 @@
 
   import Individual from "./Individual.svelte";
   import FullscreenMeeting from "./FullscreenMeeting.svelte";
+  import { IdentityData } from "~/types";
 
   export let participantName: string;
   export let color: string;
   export let showAudio: boolean;
   export let showVideo: boolean;
   export let participantId: string;
-  export let clients: Readable<Set<number>>;
+  export let clients: Readable<Map<number, IdentityData>>;
   export let entity: Entity;
 
   export let diameter: number = null;

@@ -1,9 +1,4 @@
-import {
-  BooleanType,
-  NumberType,
-  StringType,
-  LocalComponent,
-} from "~/ecs/base";
+import { BooleanType, NumberType, RefType, LocalComponent } from "~/ecs/base";
 import { Vector3 } from "three";
 import { Vector3Type } from "~/ecs/plugins/core";
 
@@ -11,7 +6,7 @@ export class ControllerState extends LocalComponent {
   speed: number;
   grounded: boolean;
   direction: Vector3;
-  animOverride: string;
+  animOverride: { clipName: string; loop: boolean };
 
   static props = {
     speed: {
@@ -27,7 +22,7 @@ export class ControllerState extends LocalComponent {
       default: new Vector3(0, 0, 0),
     },
     animOverride: {
-      type: StringType,
+      type: RefType,
       default: null,
     },
   };

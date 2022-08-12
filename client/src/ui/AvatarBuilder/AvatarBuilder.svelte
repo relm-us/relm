@@ -1,8 +1,16 @@
 <script lang="ts">
-  import { worldManager } from "~/world";
-  import { _ } from "~/i18n";
+  import { _ } from "svelte-i18n";
 
-  import { AVAILABLE_HAIR_COLORS, AVAILABLE_SKIN_COLORS, HairType, TopType, BottomType, ShoeType } from "relm-common";
+  import { worldManager } from "~/world";
+
+  import {
+    AVAILABLE_HAIR_COLORS,
+    AVAILABLE_SKIN_COLORS,
+    HairType,
+    TopType,
+    BottomType,
+    ShoeType,
+  } from "relm-common";
 
   import Slider from "~/ui/lib/Slider";
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
@@ -107,7 +115,7 @@
     <icon class="upper-right" on:click><IoIosClose /></icon>
     Avatar
   </h1>
-  <Section name={$_("avatar.gender", { default: "Gender" })}>
+  <Section name={$_("AvatarBuilder.gender")}>
     <Slider on:change={onSlideGender} value={[0, genderSlider]} single />
     <div class="row between">
       <div class="label">Male</div>
@@ -115,15 +123,15 @@
     </div>
   </Section>
 
-  <Section name={$_("avatar.body", { default: "Body" })}>
+  <Section name={$_("AvatarBuilder.body")}>
     <Slider on:change={onSlideWidth} value={[0, widthSlider]} single />
     <div class="row between">
-      <div class="label">{$_("avatar.narrow", { default: "Narrow" })}</div>
-      <div class="label">{$_("avatar.wide", { default: "Wide" })}</div>
+      <div class="label">{$_("AvatarBuilder.narrow")}</div>
+      <div class="label">{$_("AvatarBuilder.wide")}</div>
     </div>
   </Section>
 
-  <Section name={$_("avatar.skintone", { default: "Skintone" })}>
+  <Section name={$_("AvatarBuilder.skintone")}>
     <div class="row">
       <Color
         value={AVAILABLE_SKIN_COLORS[0]}
@@ -153,7 +161,7 @@
     </div>
   </Section>
 
-  <Section name={$_("avatar.hair", { default: "Hair" })}>
+  <Section name={$_("AvatarBuilder.hair")}>
     <div class="row evenly">
       <Choice
         src={iconNone}
@@ -205,7 +213,7 @@
     </div>
   </Section>
 
-  <Section name={$_("avatar.shirt", { default: "Shirt" })}>
+  <Section name={$_("AvatarBuilder.shirt")}>
     <div class="row evenly">
       <Choice
         src={iconShirt01}
@@ -231,7 +239,7 @@
     </div>
   </Section>
 
-  <Section name={$_("avatar.pants", { default: "Pants" })}>
+  <Section name={$_("AvatarBuilder.pants")}>
     <div class="row evenly">
       <Choice
         src={iconPants01}
@@ -257,7 +265,7 @@
     </div>
   </Section>
 
-  <Section name={$_("avatar.shoes", { default: "Shoes" })}>
+  <Section name={$_("AvatarBuilder.shoes")}>
     <div class="row evenly">
       <Choice
         src={iconShoes01}
@@ -283,7 +291,7 @@
     </div>
   </Section>
 
-  <Section name={$_("avatar.belt", { default: "Belt" })} last={true}>
+  <Section name={$_("AvatarBuilder.belt")} last={true}>
     <div class="row evenly">
       <ToggleSwitch bind:enabled={belt} />
       {#if belt}
