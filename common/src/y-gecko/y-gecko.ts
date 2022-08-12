@@ -52,8 +52,8 @@ const setupWS = (provider, authorization) => {
     });
 
     provider.gecko = geckoClient;
-    provider.wsconnecting = true;
-    provider.wsconnected = false;
+    provider.geckoConnecting = true;
+    provider.geckoConnected = false;
     provider.synced = false;
 
     geckoClient.onRaw(event => {
@@ -68,9 +68,9 @@ const setupWS = (provider, authorization) => {
 
     geckoClient.onDisconnect(() => {
       provider.gecko = null;
-      provider.wsconnecting = false;
-      if (provider.wsconnected) {
-        provider.wsconnected = false;
+      provider.geckoConnecting = false;
+      if (provider.geckoConnected) {
+        provider.geckoConnected = false;
         provider.synced = false;
         // update awareness (all users except local left)
         awarenessProtocol.removeAwarenessStates(
@@ -107,8 +107,8 @@ const setupWS = (provider, authorization) => {
 
     geckoClient.onConnect(() => {
       provider.wsLastMessageReceived = time.getUnixTime();
-      provider.wsconnecting = false;
-      provider.wsconnected = true;
+      provider.geckoConnecting = false;
+      provider.geckoConnected = true;
       provider.wsUnsuccessfulReconnects = 0;
       provider.emit("status", [
         {

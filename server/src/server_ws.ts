@@ -29,7 +29,7 @@ export const geckoServer = GeckoServer({
     const pubkeyX = params["pubkey-x"];
     const pubkeyY = params["pubkey-y"];
 
-    console.log("participant connected:", participantId, docId, params);
+    console.log("participant connected:", participantId);
   
     let verifiedPubKey;
     try {
@@ -135,6 +135,7 @@ async function onMessage(channel: ServerChannel, doc: WSSharedDoc, message: Uint
     const messageType = decoding.readVarUint(decoder);
     switch (messageType) {
       case messageSync:
+        console.log("messageSync");
         // await the doc state being updated from persistence, if available, otherwise
         // we may send sync step 2 too early
         if (doc.whenSynced) {
@@ -147,6 +148,7 @@ async function onMessage(channel: ServerChannel, doc: WSSharedDoc, message: Uint
         }
         break;
       case messageAwareness: {
+        console.log("messageAwareness");
         awarenessProtocol.applyAwarenessUpdate(
           doc.awareness,
           decoding.readVarUint8Array(decoder),

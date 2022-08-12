@@ -93,4 +93,4 @@ messageHandlers[MESSAGE_AUTH_ID] = (
  * @param {string} reason
  */
  const permissionDeniedHandler = (provider, reason) =>
- console.warn(`Permission denied to access ${provider.url}.\n${reason}`);
+  console.warn(`Permission denied to access ${provider.url}.\n${reason}`);
