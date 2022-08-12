@@ -58,7 +58,7 @@ const setupWS = (provider, authorization) => {
 
     geckoClient.onRaw(event => {
       const message = new Uint8Array(event as ArrayBuffer);
-      provider.wsLastMessageReceived = time.getUnixTime();
+      provider.geckoLastMessageReceived = time.getUnixTime();
       
       const encoder = readMessage(provider, message, true);
       if (encoding.length(encoder) > 1) {
@@ -66,7 +66,8 @@ const setupWS = (provider, authorization) => {
       }
     });
 
-    geckoClient.onDisconnect(() => {
+    geckoClient.onDisconnect(error => {
+      console.error("y-gecko was disconnected for:", error);
       provider.gecko = null;
       provider.geckoConnecting = false;
       if (provider.geckoConnected) {
@@ -86,7 +87,7 @@ const setupWS = (provider, authorization) => {
           },
         ]);
       } else {
-        provider.wsUnsuccessfulReconnects++;
+        provider.geckoUnsuccessfulReconnects++;
       }
 
       // Start with no reconnect timeout and increase timeout by
@@ -96,7 +97,7 @@ const setupWS = (provider, authorization) => {
       setTimeout(
         setupWS,
         math.min(
-          math.log10(provider.wsUnsuccessfulReconnects + 1) *
+          math.log10(provider.geckoUnsuccessfulReconnects + 1) *
             reconnectTimeoutBase,
           maxReconnectTimeout
         ),
@@ -106,10 +107,10 @@ const setupWS = (provider, authorization) => {
     });
 
     geckoClient.onConnect(() => {
-      provider.wsLastMessageReceived = time.getUnixTime();
+      provider.geckoLastMessageReceived = time.getUnixTime();
       provider.geckoConnecting = false;
       provider.geckoConnected = true;
-      provider.wsUnsuccessfulReconnects = 0;
+      provider.geckoUnsuccessfulReconnects = 0;
       provider.emit("status", [
         {
           status: "connected",

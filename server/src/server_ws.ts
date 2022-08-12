@@ -91,7 +91,7 @@ geckoServer.onConnection(async channel => {
 
   channel.onRaw(buffer => {
     const message = new Uint8Array(buffer as Buffer);
-    onMessage(channel, doc, new Uint8Array(message))
+    onMessage(channel, doc, new Uint8Array(message));
   });
 
   channel.onDisconnect(() => {
@@ -135,7 +135,6 @@ async function onMessage(channel: ServerChannel, doc: WSSharedDoc, message: Uint
     const messageType = decoding.readVarUint(decoder);
     switch (messageType) {
       case messageSync:
-        console.log("messageSync");
         // await the doc state being updated from persistence, if available, otherwise
         // we may send sync step 2 too early
         if (doc.whenSynced) {
@@ -148,7 +147,6 @@ async function onMessage(channel: ServerChannel, doc: WSSharedDoc, message: Uint
         }
         break;
       case messageAwareness: {
-        console.log("messageAwareness");
         awarenessProtocol.applyAwarenessUpdate(
           doc.awareness,
           decoding.readVarUint8Array(decoder),
