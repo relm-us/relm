@@ -4,7 +4,7 @@ import type {
   UpdateData,
 } from "~/types";
 
-import { WebsocketProvider, Appearance, Equipment } from "relm-common";
+import { GeckoProvider, Appearance, Equipment } from "relm-common";
 
 import { participantId } from "./participantId";
 
@@ -97,7 +97,7 @@ export class ParticipantManager {
     }
   }
 
-  applyOthersState(world: DecoratedECSWorld, provider: WebsocketProvider) {
+  applyOthersState(world: DecoratedECSWorld, provider: GeckoProvider) {
     const states = provider.awareness.getStates();
 
     for (let state of states.values()) {

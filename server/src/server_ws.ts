@@ -22,15 +22,22 @@ const messageAwareness = 1;
 export const geckoServer = GeckoServer({
   cors: { allowAuthorization: true, origin: "*" }, // Required since client is on separate domain
 
-  authorization: async (_, req) => {
-    const docId = getRelmDocFromRequest(req);
-    const params = getUrlParams(req.url);
+  authorization: async authorizationStr => {
+    let params;
+    try {
+      params = JSON.parse(authorizationStr);
+    } catch (error) {
+      console.log("Invalid authorization string recieved.");
+      return 401;
+    }
   
-    const participantId = params.get("participant-id");
-    const participantSig = params.get("participant-sig");
-    let pubkeyX = params.get("pubkey-x");
-    let pubkeyY = params.get("pubkey-y");
-    console.log("participant connected:", participantId);
+    const docId = params["docId"];
+    const participantId = params["participant-id"];
+    const participantSig = params["participant-sig"];
+    let pubkeyX = params["pubkey-x"];
+    let pubkeyY = params["pubkey-y"];
+
+    console.log("participant connected:", participantId, docId, params);
   
     let verifiedPubKey;
     try {
@@ -47,6 +54,7 @@ export const geckoServer = GeckoServer({
   
     // Check that we are authenticated first
     if (!verifiedPubKey) {
+      console.log(`Invalid public key from participant '${participantId}'`);
       return false;
     }
 
@@ -86,11 +94,12 @@ export const geckoServer = GeckoServer({
 });
 
 geckoServer.onConnection(async channel => {
+  console.log("CONNECT");
   const doc = await getYDoc(channel.userData.docId, { callbackHandler: ydocStats });
   doc.conns.set(channel, new Set());
 
   channel.onRaw(event => {
-    console.log(event);
+    console.log(event, "raw event");
     // messageListener(channel, doc, new Uint8Array(message))
   });
 

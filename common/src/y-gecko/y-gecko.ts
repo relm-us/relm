@@ -10,94 +10,11 @@ import * as time from "lib0/time";
 import * as encoding from "lib0/encoding";
 import * as decoding from "lib0/decoding";
 import * as syncProtocol from "y-protocols/sync";
-import * as authProtocol from "y-protocols/auth";
 import * as awarenessProtocol from "y-protocols/awareness";
 import { Observable } from "lib0/observable";
 import * as math from "lib0/math";
-import * as url from "lib0/url";
-
-const messageSync = 0;
-const messageQueryAwareness = 3;
-const messageAwareness = 1;
-const messageAuth = 2;
-
-type MessageHandler = (
-  encoder: encoding.Encoder,
-  decoder: decoding.Decoder,
-  provider: WebsocketProvider,
-  emitSynced: boolean,
-  messageType: number
-) => void;
-
-/**
- *                       encoder,          decoder,          provider,          emitSynced, messageType
- * @type {Array<function(encoding.Encoder, decoding.Decoder, WebsocketProvider, boolean,    number):void>}
- */
-const messageHandlers: MessageHandler[] = [];
-
-messageHandlers[messageSync] = (
-  encoder,
-  decoder,
-  provider,
-  emitSynced,
-  messageType
-) => {
-  encoding.writeVarUint(encoder, messageSync);
-  const syncMessageType = syncProtocol.readSyncMessage(
-    decoder,
-    encoder,
-    provider.doc,
-    provider
-  );
-  if (
-    emitSynced &&
-    syncMessageType === syncProtocol.messageYjsSyncStep2 &&
-    !provider.synced
-  ) {
-    provider.synced = true;
-  }
-};
-
-messageHandlers[messageQueryAwareness] = (
-  encoder,
-  decoder,
-  provider,
-  emitSynced,
-  messageType
-) => {
-  encoding.writeVarUint(encoder, messageAwareness);
-  encoding.writeVarUint8Array(
-    encoder,
-    awarenessProtocol.encodeAwarenessUpdate(
-      provider.awareness,
-      Array.from(provider.awareness.getStates().keys())
-    )
-  );
-};
-
-messageHandlers[messageAwareness] = (
-  encoder,
-  decoder,
-  provider,
-  emitSynced,
-  messageType
-) => {
-  awarenessProtocol.applyAwarenessUpdate(
-    provider.awareness,
-    decoding.readVarUint8Array(decoder),
-    provider
-  );
-};
-
-messageHandlers[messageAuth] = (
-  encoder,
-  decoder,
-  provider,
-  emitSynced,
-  messageType
-) => {
-  authProtocol.readAuthMessage(decoder, provider.doc, permissionDeniedHandler);
-};
+import gecko, { ClientChannel } from "@geckos.io/client";
+import { MessageHandler, MESSAGE_AWARENESS_ID, MESSAGE_QUERY_AWARENESS_ID, MESSAGE_SYNC_ID, messageHandlers } from "./handlers.js";
 
 const reconnectTimeoutBase = 1200;
 const maxReconnectTimeout = 2500;
@@ -105,14 +22,7 @@ const maxReconnectTimeout = 2500;
 const messageReconnectTimeout = 30000;
 
 /**
- * @param {WebsocketProvider} provider
- * @param {string} reason
- */
-const permissionDeniedHandler = (provider, reason) =>
-  console.warn(`Permission denied to access ${provider.url}.\n${reason}`);
-
-/**
- * @param {WebsocketProvider} provider
+ * @param {GeckoProvider} provider
  * @param {Uint8Array} buf
  * @param {boolean} emitSynced
  * @return {encoding.Encoder}
@@ -131,26 +41,32 @@ const readMessage = (provider, buf, emitSynced) => {
 };
 
 /**
- * @param {WebsocketProvider} provider
+ * @param {GeckoProvider} provider
  */
-const setupWS = (provider) => {
-  if (provider.shouldConnect && provider.ws === null) {
-    const websocket = new provider._WS(provider.url);
-    websocket.binaryType = "arraybuffer";
-    provider.ws = websocket;
+const setupWS = (provider, authorization) => {
+  if (provider.shouldConnect && provider.gecko === null) {
+    const geckoClient = gecko({
+      url: provider.url,
+      port: null,
+      authorization
+    });
+
+    provider.gecko = geckoClient;
     provider.wsconnecting = true;
     provider.wsconnected = false;
     provider.synced = false;
 
-    websocket.onmessage = (event) => {
+    geckoClient.onRaw(event => {
+      console.log(event, "raw message");
       provider.wsLastMessageReceived = time.getUnixTime();
-      const encoder = readMessage(provider, new Uint8Array(event.data), true);
+      const encoder = readMessage(provider, event, true);
       if (encoding.length(encoder) > 1) {
-        websocket.send(encoding.toUint8Array(encoder));
+        geckoClient.raw.emit(encoding.toUint8Array(encoder));
       }
-    };
-    websocket.onclose = () => {
-      provider.ws = null;
+    });
+
+    geckoClient.onDisconnect(() => {
+      provider.gecko = null;
       provider.wsconnecting = false;
       if (provider.wsconnected) {
         provider.wsconnected = false;
@@ -171,6 +87,7 @@ const setupWS = (provider) => {
       } else {
         provider.wsUnsuccessfulReconnects++;
       }
+
       // Start with no reconnect timeout and increase timeout by
       // log10(wsUnsuccessfulReconnects).
       // The idea is to increase reconnect timeout slowly and have no reconnect
@@ -184,8 +101,9 @@ const setupWS = (provider) => {
         ),
         provider
       );
-    };
-    websocket.onopen = () => {
+    });
+
+    geckoClient.onConnect(() => {
       provider.wsLastMessageReceived = time.getUnixTime();
       provider.wsconnecting = false;
       provider.wsconnected = true;
@@ -197,22 +115,22 @@ const setupWS = (provider) => {
       ]);
       // always send sync step 1 when connected
       const encoder = encoding.createEncoder();
-      encoding.writeVarUint(encoder, messageSync);
+      encoding.writeVarUint(encoder, MESSAGE_SYNC_ID);
       syncProtocol.writeSyncStep1(encoder, provider.doc);
-      websocket.send(encoding.toUint8Array(encoder));
+      geckoClient.raw.emit(encoding.toUint8Array(encoder));
       // broadcast local awareness state
       if (provider.awareness.getLocalState() !== null) {
         const encoderAwarenessState = encoding.createEncoder();
-        encoding.writeVarUint(encoderAwarenessState, messageAwareness);
+        encoding.writeVarUint(encoderAwarenessState, MESSAGE_AWARENESS_ID);
         encoding.writeVarUint8Array(
           encoderAwarenessState,
           awarenessProtocol.encodeAwarenessUpdate(provider.awareness, [
             provider.doc.clientID,
           ])
         );
-        websocket.send(encoding.toUint8Array(encoderAwarenessState));
+        geckoClient.raw.emit(encoding.toUint8Array(encoderAwarenessState));
       }
-    };
+    });
 
     provider.emit("status", [
       {
@@ -222,13 +140,9 @@ const setupWS = (provider) => {
   }
 };
 
-/**
- * @param {WebsocketProvider} provider
- * @param {ArrayBuffer} buf
- */
-const broadcastMessage = (provider, buf) => {
+const broadcastMessage = (provider: GeckoProvider, buf) => {
   if (provider.wsconnected) {
-    /** @type {WebSocket} */ provider.ws.send(buf);
+    provider.gecko.raw.emit(buf);
   }
   if (provider.bcconnected) {
     bc.publish(provider.bcChannel, buf, provider);
@@ -242,26 +156,24 @@ const broadcastMessage = (provider, buf) => {
  *
  * @example
  *   import * as Y from 'yjs'
- *   import { WebsocketProvider } from 'y-websocket'
+ *   import { GeckoProvider } from 'y-websocket'
  *   const doc = new Y.Doc()
- *   const provider = new WebsocketProvider('http://localhost:1234', 'my-document-name', doc)
+ *   const provider = new GeckoProvider('http://localhost:1234', 'my-document-name', doc)
  *
  * @extends {Observable<string>}
  */
-export class WebsocketProvider extends Observable<string> {
+export class GeckoProvider extends Observable<string> {
   bcChannel: string;
   url: string;
-  roomname: string;
   doc: Y.Doc;
-  _WS: typeof WebSocket;
   awareness: awarenessProtocol.Awareness;
+  gecko: ClientChannel;
   wsconnected: boolean;
   wsconnecting: boolean;
   bcconnected: boolean;
   wsUnsuccessfulReconnects: number;
   messageHandlers: MessageHandler[];
   _synced: boolean;
-  ws: WebSocket;
   wsLastMessageReceived: number;
   shouldConnect: boolean;
   _resyncInterval: any;
@@ -273,7 +185,7 @@ export class WebsocketProvider extends Observable<string> {
 
   /**
    * @param {string} serverUrl
-   * @param {string} roomname
+   * @param {string} docId
    * @param {Y.Doc} doc
    * @param {object} [opts]
    * @param {boolean} [opts.connect]
@@ -284,45 +196,34 @@ export class WebsocketProvider extends Observable<string> {
    */
   constructor(
     serverUrl,
-    roomname,
+    docId,
     doc,
     {
       connect = true,
       awareness = new awarenessProtocol.Awareness(doc),
       params = {},
-      WebSocketPolyfill = WebSocket,
       resyncInterval = -1,
     } = {}
   ) {
     super();
-    // ensure that url is always ends with /
-    while (serverUrl[serverUrl.length - 1] === "/") {
-      serverUrl = serverUrl.slice(0, serverUrl.length - 1);
-    }
-    const encodedParams = url.encodeQueryParams(params);
-    this.bcChannel = serverUrl + "/" + roomname;
-    this.url =
-      serverUrl +
-      "/" +
-      roomname +
-      (encodedParams.length === 0 ? "" : "?" + encodedParams);
-    this.roomname = roomname;
+    const authorization = {
+      docId,
+      ...params
+    };
+    this.bcChannel = docId;
+    this.url = serverUrl;
     this.doc = doc;
-    this._WS = WebSocketPolyfill;
     this.awareness = awareness;
     this.wsconnected = false;
     this.wsconnecting = false;
     this.bcconnected = false;
     this.wsUnsuccessfulReconnects = 0;
     this.messageHandlers = messageHandlers.slice();
+    this.gecko = null;
     /**
      * @type {boolean}
      */
     this._synced = false;
-    /**
-     * @type {WebSocket?}
-     */
-    this.ws = null;
     this.wsLastMessageReceived = 0;
     /**
      * Whether to connect to other peers or not
@@ -336,12 +237,12 @@ export class WebsocketProvider extends Observable<string> {
     this._resyncInterval = 0;
     if (resyncInterval > 0) {
       this._resyncInterval = /** @type {any} */ setInterval(() => {
-        if (this.ws) {
+        if (this.gecko) {
           // resend sync step 1
           const encoder = encoding.createEncoder();
-          encoding.writeVarUint(encoder, messageSync);
+          encoding.writeVarUint(encoder, MESSAGE_SYNC_ID);
           syncProtocol.writeSyncStep1(encoder, doc);
-          this.ws.send(encoding.toUint8Array(encoder));
+          this.gecko.raw.emit(encoding.toUint8Array(encoder));
         }
       }, resyncInterval);
     }
@@ -365,7 +266,7 @@ export class WebsocketProvider extends Observable<string> {
     this._updateHandler = (update, origin) => {
       if (origin !== this) {
         const encoder = encoding.createEncoder();
-        encoding.writeVarUint(encoder, messageSync);
+        encoding.writeVarUint(encoder, MESSAGE_SYNC_ID);
         syncProtocol.writeUpdate(encoder, update);
         broadcastMessage(this, encoding.toUint8Array(encoder));
       }
@@ -378,7 +279,7 @@ export class WebsocketProvider extends Observable<string> {
     this._awarenessUpdateHandler = ({ added, updated, removed }, origin) => {
       const changedClients = added.concat(updated).concat(removed);
       const encoder = encoding.createEncoder();
-      encoding.writeVarUint(encoder, messageAwareness);
+      encoding.writeVarUint(encoder, MESSAGE_AWARENESS_ID);
       encoding.writeVarUint8Array(
         encoder,
         awarenessProtocol.encodeAwarenessUpdate(awareness, changedClients)
@@ -406,11 +307,11 @@ export class WebsocketProvider extends Observable<string> {
       ) {
         // no message received in a long time - not even your own awareness
         // updates (which are updated every 15 seconds)
-        /** @type {WebSocket} */ this.ws.close();
+        this.gecko.close();
       }
     }, messageReconnectTimeout / 10);
     if (connect) {
-      this.connect();
+      this.connect(authorization);
     }
   }
 
@@ -452,17 +353,17 @@ export class WebsocketProvider extends Observable<string> {
     }
     // write sync step 1
     const encoderSync = encoding.createEncoder();
-    encoding.writeVarUint(encoderSync, messageSync);
+    encoding.writeVarUint(encoderSync, MESSAGE_SYNC_ID);
     syncProtocol.writeSyncStep1(encoderSync, this.doc);
     bc.publish(this.bcChannel, encoding.toUint8Array(encoderSync), this);
     // broadcast local state
     const encoderState = encoding.createEncoder();
-    encoding.writeVarUint(encoderState, messageSync);
+    encoding.writeVarUint(encoderState, MESSAGE_SYNC_ID);
     syncProtocol.writeSyncStep2(encoderState, this.doc);
     bc.publish(this.bcChannel, encoding.toUint8Array(encoderState), this);
     // write queryAwareness
     const encoderAwarenessQuery = encoding.createEncoder();
-    encoding.writeVarUint(encoderAwarenessQuery, messageQueryAwareness);
+    encoding.writeVarUint(encoderAwarenessQuery, MESSAGE_QUERY_AWARENESS_ID);
     bc.publish(
       this.bcChannel,
       encoding.toUint8Array(encoderAwarenessQuery),
@@ -470,7 +371,7 @@ export class WebsocketProvider extends Observable<string> {
     );
     // broadcast local awareness state
     const encoderAwarenessState = encoding.createEncoder();
-    encoding.writeVarUint(encoderAwarenessState, messageAwareness);
+    encoding.writeVarUint(encoderAwarenessState, MESSAGE_AWARENESS_ID);
     encoding.writeVarUint8Array(
       encoderAwarenessState,
       awarenessProtocol.encodeAwarenessUpdate(this.awareness, [
@@ -487,7 +388,7 @@ export class WebsocketProvider extends Observable<string> {
   disconnectBc() {
     // broadcast message with local awareness state set to null (indicating disconnect)
     const encoder = encoding.createEncoder();
-    encoding.writeVarUint(encoder, messageAwareness);
+    encoding.writeVarUint(encoder, MESSAGE_AWARENESS_ID);
     encoding.writeVarUint8Array(
       encoder,
       awarenessProtocol.encodeAwarenessUpdate(
@@ -506,15 +407,15 @@ export class WebsocketProvider extends Observable<string> {
   disconnect() {
     this.shouldConnect = false;
     this.disconnectBc();
-    if (this.ws !== null) {
-      this.ws.close();
+    if (this.gecko !== null) {
+      this.gecko.close();
     }
   }
 
-  connect() {
+  connect(authorization) {
     this.shouldConnect = true;
-    if (!this.wsconnected && this.ws === null) {
-      setupWS(this);
+    if (!this.wsconnected && this.gecko === null) {
+      setupWS(this, JSON.stringify(authorization));
       this.connectBc();
     }
   }

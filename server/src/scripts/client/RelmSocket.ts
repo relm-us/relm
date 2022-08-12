@@ -1,4 +1,4 @@
-import { AuthenticationHeaders, Security, WebsocketProvider } from "relm-common";
+import { AuthenticationHeaders, Security, GeckoProvider } from "relm-common";
 import { uuidv4 } from "../../utils/index.js";
 import * as Y from "yjs";
 import WebSocket from "ws";
@@ -25,7 +25,7 @@ export class RelmSocket {
   
   private options: SocketOptions;
   private authHeaders?: AuthenticationHeaders;
-  private socket?: WebsocketProvider;
+  private socket?: GeckoProvider;
 
   private bots: Map<number, RelmParticipant>;
 
@@ -38,7 +38,7 @@ export class RelmSocket {
     const relmDocId = await this.getSubRelmDocId();
     const authHeaders = await this.getAuthHeaders();
 
-    this.socket = new WebsocketProvider(this.options.auth.api, relmDocId, new Y.Doc(), {
+    this.socket = new GeckoProvider(this.options.auth.api, relmDocId, new Y.Doc(), {
       params: {
         "participant-id": authHeaders["x-relm-participant-id"],
         "participant-sig": authHeaders["x-relm-participant-sig"],
@@ -47,7 +47,6 @@ export class RelmSocket {
         "invite-token": authHeaders["x-relm-token"],
         "jwt": authHeaders["x-relm-jwt"]
       },
-      WebSocketPolyfill: (WebSocket as any),
       resyncInterval: 10000
     });
     

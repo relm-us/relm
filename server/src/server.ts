@@ -1,4 +1,5 @@
 import fs from "fs";
+import http from "http";
 
 import { ASSETS_DIR, DATABASE_NAME, PORT } from "./config.js";
 import { geckoServer } from "./server_ws.js";
@@ -19,8 +20,12 @@ async function start() {
   console.log(`Connected to database '${DATABASE_NAME}'`);
 
   // Start gecko server and run http server using same port
-  geckoServer.listen(PORT);
-  geckoServer.server.on("request", expressApp);
+  const server = http.createServer({}, expressApp);
+  geckoServer.addServer(server);
+
+  server.listen(PORT, () => {
+    console.log(`http/gecko server listening on ${PORT}`);
+  });
 }
 
 start().catch((err) => {

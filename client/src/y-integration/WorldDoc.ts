@@ -1,14 +1,14 @@
-import type { AuthenticationHeaders } from "relm-common";
 import type { DecoratedECSWorld, WorldDocStatus } from "~/types";
 
 import * as Y from "yjs";
 import { readableMap, YReadableMap } from "svelt-yjs";
 import { DeepDiff } from "deep-diff";
-import { WebsocketProvider } from "relm-common";
 
 import { Entity, EntityId } from "~/ecs/base";
 
 import {
+  AuthenticationHeaders,
+  GeckoProvider,
   findInYArray,
   isEntityAttribute,
   yIdToString,
@@ -44,7 +44,7 @@ export class WorldDoc extends EventEmitter {
   ydoc: Y.Doc = new Y.Doc();
 
   // Yjs synchronization provider
-  provider: WebsocketProvider;
+  provider: GeckoProvider;
 
   // The array of entities stored in the Y.Doc. We store entities as a Y.Array
   // rather than a Y.Map because, per Yjs docs, this allows nodes to be garbage
@@ -105,7 +105,7 @@ export class WorldDoc extends EventEmitter {
     subrelmDocId: string,
     authHeaders: AuthenticationHeaders
   ) {
-    this.provider = new WebsocketProvider(url, subrelmDocId, this.ydoc, {
+    this.provider = new GeckoProvider(url, subrelmDocId, this.ydoc, {
       params: {
         "participant-id": authHeaders["x-relm-participant-id"],
         "participant-sig": authHeaders["x-relm-participant-sig"],

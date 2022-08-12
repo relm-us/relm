@@ -15,7 +15,7 @@ export const createWorldDoc =
   (dispatch: Dispatch) => {
     const worldDoc = new WorldDoc(ecsWorld);
 
-    worldDoc.connect(config.serverYjsUrl, relmDocId, authHeaders);
+    worldDoc.connect(config.serverUrl, relmDocId, authHeaders);
 
     let connected = false;
 
