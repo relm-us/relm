@@ -32,15 +32,12 @@ export class RelmParticipant {
     // Find entry way to spawn at.
     const [spawnX, spawnY, spawnZ] = this.getSpawnPos();
 
-    // Register our identity to other clients
-    const yIdentities = this.options.awareness.doc.getMap("identities");
-    yIdentities.set(this.options.participantId, this.getBotIdentityData());
-
     // Broadcast our spawning to other players
     this.options.awareness.states.set(this.options.clientId, {});
     this.setLocalField("id", this.options.participantId);
     this.setLocalField("a", { clipIndex: 2, animLoop: true });
     this.setLocalField("user", { color: randomColor(), name: this.options.name });
+    this.setLocalField("i", this.getBotIdentityData());
     this.setTransform([spawnX, spawnY, spawnZ, 0, 0, 0]);
   }
 
