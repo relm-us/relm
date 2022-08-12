@@ -59,7 +59,6 @@ export class ParticipantYBroker {
           $clients.delete(id);
           return $clients;
         });
-        console.log(changes.removed);
         // Remove participant avatars when they disconnect
         dispatch({ id: "removeParticipant", clientId: id });
       }
