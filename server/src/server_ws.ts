@@ -1,20 +1,12 @@
-import GeckoServer from "@geckos.io/server";
-import { encoding } from "lib0";
+import GeckoServer, { ServerChannel } from "@geckos.io/server";
+import { decoding, encoding } from "lib0";
 import * as syncProtocol from "y-protocols/sync";
 import * as awarenessProtocol from "y-protocols/awareness";
 
 import { Participant, Permission, Doc } from "./db/index.js";
 import { ydocStats } from "./getYDoc.js";
 import { hasPermission, getYDoc } from "./utils/index.js";
-
-function getRelmDocFromRequest(req) {
-  return req.url.slice(1).split("?")[0];
-}
-
-function getUrlParams(requestUrl) {
-  const queryString = requestUrl.slice(requestUrl.indexOf("?"));
-  return new URLSearchParams(queryString);
-}
+import { WSSharedDoc } from "ws/WSSharedDoc.js";
 
 const messageSync = 0;
 const messageAwareness = 1;
@@ -27,15 +19,15 @@ export const geckoServer = GeckoServer({
     try {
       params = JSON.parse(authorizationStr);
     } catch (error) {
-      console.log("Invalid authorization string recieved.");
+      console.log(`Invalid authorization string recieved: "${authorizationStr}"`);
       return 401;
     }
   
     const docId = params["docId"];
     const participantId = params["participant-id"];
     const participantSig = params["participant-sig"];
-    let pubkeyX = params["pubkey-x"];
-    let pubkeyY = params["pubkey-y"];
+    const pubkeyX = params["pubkey-x"];
+    const pubkeyY = params["pubkey-y"];
 
     console.log("participant connected:", participantId, docId, params);
   
@@ -48,7 +40,7 @@ export const geckoServer = GeckoServer({
         y: pubkeyY,
       });
     } catch (err) {
-      console.warn("can't upgrade", err);
+      console.warn("can't verify public key", err);
       return;
     }
   
@@ -94,17 +86,23 @@ export const geckoServer = GeckoServer({
 });
 
 geckoServer.onConnection(async channel => {
-  console.log("CONNECT");
   const doc = await getYDoc(channel.userData.docId, { callbackHandler: ydocStats });
   doc.conns.set(channel, new Set());
 
-  channel.onRaw(event => {
-    console.log(event, "raw event");
-    // messageListener(channel, doc, new Uint8Array(message))
+  channel.onRaw(buffer => {
+    const message = new Uint8Array(buffer as Buffer);
+    onMessage(channel, doc, new Uint8Array(message))
   });
 
   channel.onDisconnect(() => {
-    console.log("DISCONNECT DETECTED ON CHANNEL. SHOULD CLOSE CONNECTION");
+    const controlledIds = doc.conns.get(channel);
+    doc.conns.delete(channel);
+
+    awarenessProtocol.removeAwarenessStates(
+      doc.awareness,
+      Array.from(controlledIds),
+      null
+    );
   });
 
   if (doc.whenSynced) {
@@ -129,3 +127,36 @@ geckoServer.onConnection(async channel => {
     channel.raw.emit(encoding.toUint8Array(encoder));
   }
 });
+
+async function onMessage(channel: ServerChannel, doc: WSSharedDoc, message: Uint8Array) {
+  try {
+    const encoder = encoding.createEncoder();
+    const decoder = decoding.createDecoder(message);
+    const messageType = decoding.readVarUint(decoder);
+    switch (messageType) {
+      case messageSync:
+        // await the doc state being updated from persistence, if available, otherwise
+        // we may send sync step 2 too early
+        if (doc.whenSynced) {
+          await doc.whenSynced;
+        }
+        encoding.writeVarUint(encoder, messageSync);
+        syncProtocol.readSyncMessage(decoder, encoder, doc, null);
+        if (encoding.length(encoder) > 1) {
+          channel.raw.emit(encoding.toUint8Array(encoder));
+        }
+        break;
+      case messageAwareness: {
+        awarenessProtocol.applyAwarenessUpdate(
+          doc.awareness,
+          decoding.readVarUint8Array(decoder),
+          channel
+        );
+        break;
+      }
+    }
+  } catch (err) {
+    console.error(err);
+    doc.emit("error", [err]);
+  }
+}

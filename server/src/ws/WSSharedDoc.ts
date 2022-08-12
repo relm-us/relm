@@ -112,7 +112,6 @@ export class WSSharedDoc extends Y.Doc {
     }
 
     if (persistence !== null) {
-      console.log(persistence);
       this.whenSynced = persistence.bindState(name, this).then(() => {
         this.isSynced = true;
       });

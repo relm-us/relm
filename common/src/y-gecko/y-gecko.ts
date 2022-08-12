@@ -57,9 +57,10 @@ const setupWS = (provider, authorization) => {
     provider.synced = false;
 
     geckoClient.onRaw(event => {
-      console.log(event, "raw message");
+      const message = new Uint8Array(event as ArrayBuffer);
       provider.wsLastMessageReceived = time.getUnixTime();
-      const encoder = readMessage(provider, event, true);
+      
+      const encoder = readMessage(provider, message, true);
       if (encoding.length(encoder) > 1) {
         geckoClient.raw.emit(encoding.toUint8Array(encoder));
       }
@@ -99,7 +100,8 @@ const setupWS = (provider, authorization) => {
             reconnectTimeoutBase,
           maxReconnectTimeout
         ),
-        provider
+        provider,
+        authorization
       );
     });
 
@@ -141,10 +143,10 @@ const setupWS = (provider, authorization) => {
 };
 
 const broadcastMessage = (provider: GeckoProvider, buf) => {
-  if (provider.wsconnected) {
+  if (provider.geckoConnected) {
     provider.gecko.raw.emit(buf);
   }
-  if (provider.bcconnected) {
+  if (provider.bcConnected) {
     bc.publish(provider.bcChannel, buf, provider);
   }
 };
@@ -168,13 +170,13 @@ export class GeckoProvider extends Observable<string> {
   doc: Y.Doc;
   awareness: awarenessProtocol.Awareness;
   gecko: ClientChannel;
-  wsconnected: boolean;
-  wsconnecting: boolean;
-  bcconnected: boolean;
-  wsUnsuccessfulReconnects: number;
+  geckoConnected: boolean;
+  geckoConnecting: boolean;
+  bcConnected: boolean;
+  geckoUnsuccessfulReconnects: number;
   messageHandlers: MessageHandler[];
   _synced: boolean;
-  wsLastMessageReceived: number;
+  geckoLastMessageReceived: number;
   shouldConnect: boolean;
   _resyncInterval: any;
   _checkInterval: any;
@@ -191,7 +193,6 @@ export class GeckoProvider extends Observable<string> {
    * @param {boolean} [opts.connect]
    * @param {awarenessProtocol.Awareness} [opts.awareness]
    * @param {Object<string,string>} [opts.params]
-   * @param {typeof WebSocket} [opts.WebSocketPolyfill] Optionall provide a WebSocket polyfill
    * @param {number} [opts.resyncInterval] Request server state every `resyncInterval` milliseconds
    */
   constructor(
@@ -214,17 +215,17 @@ export class GeckoProvider extends Observable<string> {
     this.url = serverUrl;
     this.doc = doc;
     this.awareness = awareness;
-    this.wsconnected = false;
-    this.wsconnecting = false;
-    this.bcconnected = false;
-    this.wsUnsuccessfulReconnects = 0;
+    this.geckoConnected = false;
+    this.geckoConnecting = false;
+    this.bcConnected = false;
+    this.geckoUnsuccessfulReconnects = 0;
     this.messageHandlers = messageHandlers.slice();
     this.gecko = null;
     /**
      * @type {boolean}
      */
     this._synced = false;
-    this.wsLastMessageReceived = 0;
+    this.geckoLastMessageReceived = 0;
     /**
      * Whether to connect to other peers or not
      * @type {boolean}
@@ -301,9 +302,9 @@ export class GeckoProvider extends Observable<string> {
     awareness.on("update", this._awarenessUpdateHandler);
     this._checkInterval = /** @type {any} */ setInterval(() => {
       if (
-        this.wsconnected &&
+        this.geckoConnected &&
         messageReconnectTimeout <
-          time.getUnixTime() - this.wsLastMessageReceived
+          time.getUnixTime() - this.geckoLastMessageReceived
       ) {
         // no message received in a long time - not even your own awareness
         // updates (which are updated every 15 seconds)
@@ -347,9 +348,9 @@ export class GeckoProvider extends Observable<string> {
   }
 
   connectBc() {
-    if (!this.bcconnected) {
+    if (!this.bcConnected) {
       bc.subscribe(this.bcChannel, this._bcSubscriber);
-      this.bcconnected = true;
+      this.bcConnected = true;
     }
     // write sync step 1
     const encoderSync = encoding.createEncoder();
@@ -398,9 +399,9 @@ export class GeckoProvider extends Observable<string> {
       )
     );
     broadcastMessage(this, encoding.toUint8Array(encoder));
-    if (this.bcconnected) {
+    if (this.bcConnected) {
       bc.unsubscribe(this.bcChannel, this._bcSubscriber);
-      this.bcconnected = false;
+      this.bcConnected = false;
     }
   }
 
@@ -414,7 +415,7 @@ export class GeckoProvider extends Observable<string> {
 
   connect(authorization) {
     this.shouldConnect = true;
-    if (!this.wsconnected && this.gecko === null) {
+    if (!this.geckoConnected && this.gecko === null) {
       setupWS(this, JSON.stringify(authorization));
       this.connectBc();
     }
