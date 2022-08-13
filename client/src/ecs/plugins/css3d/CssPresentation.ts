@@ -56,6 +56,10 @@ export class CssPresentation {
     this.camera.updateProjectionMatrix();
 
     this.renderer.setSize(this.size.width, this.size.height);
+
+    if (this.viewport) {
+      this.render();
+    }
   }
 
   updateCamera() {
