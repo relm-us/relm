@@ -56,6 +56,10 @@
     }
   }
 
+  function getDomain(url: string) {
+    return new URL(url).hostname;
+  }
+
   function screenshot(url: string, size: Vector2) {
     return (
       config.serverScreenshotUrl +
@@ -91,7 +95,12 @@
     scrolling="yes"
   />
   {#if !active}
-    <img src={screenshot(url, size)} alt="screenshot" />
+    <r-screenshot>
+      <img
+        src={screenshot(url, size)}
+        alt="Screenshot of Web Page ({getDomain(url)})"
+      />
+    </r-screenshot>
   {/if}
 
   <overlay
@@ -114,7 +123,8 @@
   iframe.active {
     display: block;
   }
-  overlay {
+  overlay,
+  r-screenshot {
     position: absolute;
     z-index: 2;
 
@@ -144,5 +154,10 @@
 
   img {
     width: 100%;
+    text-align: center;
+    font-size: 28px;
+  }
+  r-screenshot {
+    background: white;
   }
 </style>
