@@ -46,6 +46,10 @@ export class RenderableBaseSystem extends System {
 
     copyTransform(css3d, transform, cssPlane.getFracScale(), cssPlane.offset);
 
+    // We need to update the matrixWorld of the new object, or there will be a brief
+    // flash of the HTML at 0,0,0
+    css3d.updateMatrixWorld();
+
     this.cssPresentation.scene.add(css3d);
 
     entity.add(this.EcsComponentRef, { value: css3d });
@@ -60,12 +64,12 @@ export class RenderableBaseSystem extends System {
   }
 
   transform(entity) {
-    const tf: Transform = entity.get(Transform);
+    const transform: Transform = entity.get(Transform);
 
     const css3d = entity.get(this.EcsComponentRef)?.value;
     const cssPlane: CssPlane = entity.get(CssPlane);
 
-    copyTransform(css3d, tf, cssPlane.getFracScale(), cssPlane.offset);
+    copyTransform(css3d, transform, cssPlane.getFracScale(), cssPlane.offset);
   }
 
   rebuild(entity) {

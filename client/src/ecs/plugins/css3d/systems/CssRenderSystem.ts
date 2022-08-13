@@ -9,7 +9,7 @@ export class CssRenderSystem extends System {
   frame: number;
 
   active = isBrowser();
-  // This needs to be immediately after RenderableSystem
+  // This needs to be immediately after RenderableBaseSystem
   order = Groups.Initialization + 101;
 
   init({ presentation, cssPresentation }) {
