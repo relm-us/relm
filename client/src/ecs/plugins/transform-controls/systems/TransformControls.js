@@ -263,7 +263,7 @@ class TransformControls extends Object3D {
     }
   }
 
-  pointerMove(pointer) {
+  pointerMove(pointer, event) {
     const axis = this.axis;
     const mode = this.mode;
     const object = this.object;
@@ -503,6 +503,7 @@ class TransformControls extends Object3D {
 
     this.dispatchEvent(_changeEvent);
     this.dispatchEvent(_objectChangeEvent);
+    event.preventDefault();
   }
 
   pointerUp(pointer) {
@@ -649,7 +650,7 @@ function onPointerDown(event) {
 function onPointerMove(event) {
   if (!this.enabled) return;
 
-  this.pointerMove(this._getPointer(event));
+  this.pointerMove(this._getPointer(event), event);
 }
 
 function onPointerUp(event) {
