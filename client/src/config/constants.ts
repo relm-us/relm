@@ -26,9 +26,6 @@ export const FPS_SLOWDOWN_MIN_FPS = 20;
 export const SPATIAL_INDEX_THRESHOLD = 6;
 export const SPATIAL_INDEX_WORLD_EXTENT = 250;
 
-// 0 - 100, where 100 is completely zoomed out
-export const DEFAULT_VIEWPORT_ZOOM = 25.0;
-
 // Height of the avatar (GLB); TODO: make this a variable?
 export const AVATAR_HEIGHT = 1.5;
 // Due to the way GLB is exported, it is much larger in local
@@ -36,10 +33,13 @@ export const AVATAR_HEIGHT = 1.5;
 export const AVATAR_HEIGHT_UNSCALED = 7;
 
 // How quickly to move the camera as it follows the participant
-export const CAMERA_LERP_ALPHA = 0.125;
+export const CAMERA_DAMPENING = 0.40;
 
 // Angle (in radians) from which the camera looks down
-export const DEFAULT_CAMERA_ANGLE = 37.5 / 180 * Math.PI;
+export const DEFAULT_CAMERA_ANGLE = (37.5 / 180) * Math.PI;
+
+// 0 - 100, where 100 is completely zoomed out
+export const DEFAULT_VIEWPORT_ZOOM = 35.0;
 
 // Animation names from participant model GLB
 export const T_POSE = "a-pose";

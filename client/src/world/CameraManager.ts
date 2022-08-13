@@ -11,7 +11,7 @@ import { makeCamera } from "~/prefab/makeCamera";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import {
   AVATAR_HEIGHT,
-  CAMERA_LERP_ALPHA,
+  CAMERA_DAMPENING,
   DEFAULT_CAMERA_ANGLE,
   DEFAULT_VIEWPORT_ZOOM,
 } from "~/config/constants";
@@ -125,7 +125,7 @@ export class CameraManager {
         camera.add(Follow, {
           target: this.avatar.id,
           offset: this.followOffset,
-          lerpAlpha: CAMERA_LERP_ALPHA,
+          dampening: CAMERA_DAMPENING,
         });
 
         // Make it easy to get back to avatar if camera not centered
@@ -142,7 +142,7 @@ export class CameraManager {
         camera.add(Follow, {
           target: this.avatar.id,
           offset: this.followOffset,
-          lerpAlpha: CAMERA_LERP_ALPHA,
+          dampening: CAMERA_DAMPENING,
         });
 
         break;
