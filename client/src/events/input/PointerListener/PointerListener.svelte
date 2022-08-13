@@ -10,6 +10,7 @@
     onPointerUp,
     onPointerDown,
     onPointerMove,
+    onPointerAltDown,
   } from "./pointerActions";
 
   function eventTargetsWorld(event, $mode) {
@@ -29,6 +30,8 @@
 
     // Disable context menu when targeted at 3D world
     event.preventDefault();
+
+    onPointerAltDown(event.clientX, event.clientY);
   }
 
   function onMouseMove(event: MouseEvent) {

@@ -1,4 +1,4 @@
-import { Object3D, Vector2, Vector3 } from "three";
+import { Euler, Object3D, Vector2, Vector3 } from "three";
 import { get } from "svelte/store";
 
 import { globalEvents } from "~/events";
@@ -17,7 +17,10 @@ import { worldManager } from "~/world";
 import { worldUIMode } from "~/stores/worldUIMode";
 import { mouse } from "~/stores/mouse";
 
-import { DRAG_DISTANCE_THRESHOLD } from "~/config/constants";
+import {
+  CAMERA_ROTATE_RATE,
+  DRAG_DISTANCE_THRESHOLD,
+} from "~/config/constants";
 import { Draggable } from "~/ecs/plugins/clickable/components/Draggable";
 import { Entity } from "~/ecs/base";
 import { isInteractive } from "~/utils/isInteractive";
@@ -39,7 +42,8 @@ type PointerState =
   | "drag"
   | "interactive-click"
   | "interactive-drag"
-  | "drag-select";
+  | "drag-select"
+  | "drag-camera";
 
 export let pointerStateDelayed: PointerState = "initial";
 let pointerState: PointerState = "initial";
@@ -48,6 +52,19 @@ let dragOffset: Vector3 = new Vector3();
 let pointerPoint: Vector3;
 let interactiveEntity: Entity;
 let shiftKeyOnClick = false;
+const cameraStartDirection = new Euler();
+
+export function onPointerAltDown(x: number, y: number) {
+  const $mode = get(worldUIMode);
+
+  pointerPosition.set(x, y);
+  pointerStartPosition.set(x, y);
+
+  if ($mode === "build") {
+    cameraStartDirection.copy(worldManager.camera.direction);
+    setNextPointerState("drag-camera");
+  }
+}
 
 export function onPointerDown(x: number, y: number, shiftKey: boolean) {
   const $mode = get(worldUIMode);
@@ -122,6 +139,8 @@ export function onPointerUp(event: MouseEvent | TouchEvent) {
       selectionLogic.mouseup(worldManager.selection);
     } else if (pointerState === "drag") {
       worldManager.selection.syncEntities();
+    } else if (pointerState === "drag-camera") {
+      worldManager.camera.setModeFollow();
     }
   } else if ($mode === "play") {
     if (
@@ -197,6 +216,11 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
 
       worldManager.selection.clear(true);
       worldManager.selection.addEntityIds(contained);
+    } else if (pointerState === "drag-camera") {
+      worldManager.camera.setModeRotate();
+      const dist = pointerStartPosition.x - pointerPosition.x;
+      worldManager.camera.direction.y =
+        cameraStartDirection.y + dist / CAMERA_ROTATE_RATE;
     }
   } else if ($mode === "play" && !isControllingAvatar) {
     if (pointerState === "interactive-click" && atLeastMinDragDistance()) {

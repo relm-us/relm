@@ -1,4 +1,11 @@
-import { Euler, PerspectiveCamera, Quaternion, Vector3 } from "three";
+import {
+  Euler,
+  Matrix4,
+  Object3D,
+  PerspectiveCamera,
+  Quaternion,
+  Vector3,
+} from "three";
 
 import { Entity } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
@@ -15,9 +22,14 @@ import {
   DEFAULT_CAMERA_ANGLE,
   DEFAULT_VIEWPORT_ZOOM,
 } from "~/config/constants";
+import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
 
 type CameraFollow = {
   type: "follow";
+};
+
+type CameraRotate = {
+  type: "rotate";
 };
 
 type CameraAbove = {
@@ -25,9 +37,12 @@ type CameraAbove = {
   height: number;
 };
 
-type CameraState = CameraFollow | CameraAbove;
+type CameraState = CameraFollow | CameraRotate | CameraAbove;
 
 const directionNeg = new Euler();
+const vOut = new Vector3(0, 0, -1);
+const vUp = new Vector3(0, 1, 0);
+const e1 = new Euler();
 
 export class CameraManager {
   // Track what we're doing with the camera right now
@@ -87,7 +102,7 @@ export class CameraManager {
     // Listen to the mousewheel for zoom events
     this.unsubs.push(
       viewportScale.subscribe(($scale) => {
-        if (this.state.type === "follow") {
+        if (this.state.type === "follow" || this.state.type === "rotate") {
           this.zoom = $scale / 100;
         }
       })
@@ -118,8 +133,7 @@ export class CameraManager {
       case "follow": {
         this.calcFollowOffset();
 
-        // TODO: Make a smoother transition here; don't hide the fact that
-        // we depend on calcFollowOffset to calculate directionNeg first
+        // Roughly "lookAt" the avatar
         this.entity.get(Transform).rotation.setFromEuler(directionNeg);
 
         camera.add(Follow, {
@@ -132,6 +146,20 @@ export class CameraManager {
         if (this.ecsWorld.version % 60 === 0 && this.isOffCenter()) {
           centerCameraVisible.set(true);
         }
+
+        break;
+      }
+
+      case "rotate": {
+        const avatarPos: Vector3 = this.avatar.get(Transform).position;
+        this.lookAt(avatarPos);
+
+        this.calcFollowOffset();
+        camera.add(Follow, {
+          target: this.avatar.id,
+          offset: this.followOffset,
+          dampening: 0.001,
+        });
 
         break;
       }
@@ -161,6 +189,16 @@ export class CameraManager {
     this.ecsWorld.presentation.camera.updateProjectionMatrix();
     this.ecsWorld.cssPresentation.camera.fov = fov;
     this.ecsWorld.cssPresentation.camera.updateProjectionMatrix();
+  }
+
+  lookAt(target: Vector3) {
+    const transform: Transform = this.entity.get(Transform);
+
+    const vec = new Vector3().copy(target).sub(transform.position);
+    const theta = signedAngleBetweenVectors(vOut, vec, vUp);
+
+    e1.set(-this.direction.x, theta, this.direction.z, "YXZ");
+    transform.rotation.setFromEuler(e1);
   }
 
   setZoomRange(min: number, max: number) {
@@ -194,6 +232,16 @@ export class CameraManager {
    * Camera Modes
    */
 
+  // "follow" mode follows the avatar
+  setModeFollow() {
+    this.state = { type: "follow" };
+  }
+
+  // "follow" mode follows the avatar
+  setModeRotate() {
+    this.state = { type: "rotate" };
+  }
+
   // "above" mode looks directly down from high above
   setModeAbove(height: number = 30) {
     this.state = {
@@ -206,10 +254,5 @@ export class CameraManager {
       .rotation.copy(
         new Quaternion().setFromEuler(new Euler((Math.PI * 3) / 2, 0, 0, "XYZ"))
       );
-  }
-
-  // "follow" mode follows the avatar
-  setModeFollow() {
-    this.state = { type: "follow" };
   }
 }

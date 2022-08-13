@@ -33,7 +33,10 @@ export const AVATAR_HEIGHT = 1.5;
 export const AVATAR_HEIGHT_UNSCALED = 7;
 
 // How quickly to move the camera as it follows the participant
-export const CAMERA_DAMPENING = 0.40;
+export const CAMERA_DAMPENING = 0.4;
+
+// How quickly to rotate the camera in build mode (higher is slower / more accurate)
+export const CAMERA_ROTATE_RATE = 100;
 
 // Angle (in radians) from which the camera looks down
 export const DEFAULT_CAMERA_ANGLE = (37.5 / 180) * Math.PI;
