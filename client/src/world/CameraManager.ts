@@ -82,6 +82,7 @@ export class CameraManager {
 
     // Create the ECS camera entity that holds the ThreeJS camera
     this.entity = makeCamera(this.ecsWorld).activate();
+    this.entity.get(Transform).rotation.setFromEuler(directionNeg);
 
     // Listen to the mousewheel for zoom events
     this.unsubs.push(
