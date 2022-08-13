@@ -27,7 +27,7 @@
   {#if $selectedEntities.size === 0}
     <info>Nothing selected</info>
     <info>Click on an object to select</info>
-  {:else if $selectedEntities.size === 1}
+  {:else if $selectedEntities.size === 1 && entity}
     <EntityComponents {entity} />
     <toolbar>
       <Button on:click={destroyEntity}>Delete this Object</Button>

@@ -424,6 +424,15 @@ export class WorldDoc extends EventEmitter {
 
             // Set component property to default value.
             const prop = component.constructor.props[removedProperty];
+            if (!prop) {
+              console.warn(
+                "removed property is null on constructor",
+                entity.id,
+                removedProperty
+              );
+              return;
+            }
+
             const type = prop.type || prop;
             component[removedProperty] = type.initial();
 
