@@ -235,6 +235,16 @@ export class CameraManager {
   // "follow" mode follows the avatar
   setModeFollow() {
     this.state = { type: "follow" };
+
+    // If transitioning out of `rotate` mode, finalize the offset
+    if (this.entity) {
+      this.calcFollowOffset();
+      this.entity.add(Follow, {
+        target: this.avatar.id,
+        offset: this.followOffset,
+        dampening: 0.001,
+      });
+    }
   }
 
   // "follow" mode follows the avatar

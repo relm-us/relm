@@ -144,7 +144,7 @@ export function onPointerUp(event: MouseEvent | TouchEvent) {
     }
   } else if ($mode === "play") {
     if (
-      (pointerState === "click" || pointerState == "interactive-click") &&
+      (pointerState === "click" || pointerState === "interactive-click") &&
       pointerDownFound.length > 0
     ) {
       // Even though there may be several entities stacked under the pointer,
