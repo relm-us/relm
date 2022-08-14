@@ -515,7 +515,13 @@ export class WorldDoc extends EventEmitter {
 
     // Initialize from raw JSON
     const data = yComponentToJSON(ycomponent);
-    const component = new Component(this.world).fromJSON(data);
+    let component;
+    try {
+      component = new Component(this.world).fromJSON(data);
+    } catch (err) {
+      console.warn("unable to add component", key, Component);
+      return;
+    }
 
     entity.add(component);
 
