@@ -81,6 +81,13 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
     setNextPointerState("click");
     shiftKeyOnClick = shiftKey;
 
+    const planes: WorldPlanes =
+      worldManager.world.perspective.getAvatarPlanes();
+    const position = new Vector3();
+    planes.getWorldFromScreen(pointerPosition, position);
+    worldManager.dragPlane.setOrigin(position);
+
+    // Begin tracking what was clicked on, in case this is a click
     selectionLogic.mousedown(pointerDownFound, shiftKey);
     pointerPoint = pointerPointInSelection(
       worldManager.selection,
@@ -163,7 +170,6 @@ export function onPointerUp(event: MouseEvent | TouchEvent) {
     }
   }
 
-  // dragPlane.hide();
   worldManager.selectionBox.hide();
 
   // reset mouse mode
@@ -196,15 +202,26 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
         worldManager.selection.savePositions();
         worldManager.dragPlane.setOrientation(shiftKeyOnClick ? "XY" : "XZ");
       } else {
-        setNextPointerState("drag-select");
-        worldManager.selectionBox.show();
-        worldManager.selectionBox.setStart(pointerStartPosition);
-        worldManager.selectionBox.setEnd(pointerStartPosition);
+        // TODO: Make selection box possible as a mode/tool?
+        //
+        // setNextPointerState("drag-select");
+        // worldManager.selectionBox.show();
+        // worldManager.selectionBox.setStart(pointerStartPosition);
+        // worldManager.selectionBox.setEnd(pointerStartPosition);
+
+        setNextPointerState("drag");
+        cameraPanOffset.copy(worldManager.camera.pan);
       }
     } else if (pointerState === "drag") {
-      // drag mode
+      // TODO: Make selection box possible as a mode/tool?
+      //
+      // const delta = worldManager.dragPlane.getDelta(pointerPosition);
+      // worldManager.selection.moveRelativeToSavedPositions(delta);
+
+      // Pan camera in build mode:
       const delta = worldManager.dragPlane.getDelta(pointerPosition);
-      worldManager.selection.moveRelativeToSavedPositions(delta);
+      dragOffset.copy(delta).sub(cameraPanOffset);
+      worldManager.camera.setPan(-dragOffset.x, -dragOffset.z);
     } else if (pointerState === "drag-select") {
       if (shiftKeyOnMove) {
         worldManager.selectionBox.setTop(pointerPosition);
