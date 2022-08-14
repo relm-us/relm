@@ -302,6 +302,11 @@ export class WorldManager {
           case "play":
             this.world.systems.get(InteractorSystem).active = true;
             this.hideTransformControls();
+
+            // Reset camera direction to "north"
+            this.camera.direction.y = 0;
+            this.camera.setModeFollow();
+
             break;
         }
       })
