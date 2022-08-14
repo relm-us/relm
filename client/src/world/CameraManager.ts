@@ -151,7 +151,9 @@ export class CameraManager {
       }
 
       case "rotate": {
-        const avatarPos: Vector3 = this.avatar.get(Transform).position;
+        const avatarPos: Vector3 = new Vector3()
+          .copy(this.avatar.get(Transform).position)
+          .add(this.pan);
         this.lookAt(avatarPos);
 
         this.calcFollowOffset();
@@ -189,6 +191,11 @@ export class CameraManager {
     this.ecsWorld.presentation.camera.updateProjectionMatrix();
     this.ecsWorld.cssPresentation.camera.fov = fov;
     this.ecsWorld.cssPresentation.camera.updateProjectionMatrix();
+  }
+
+  center() {
+    this.setPan(0, 0);
+    centerCameraVisible.set(false);
   }
 
   lookAt(target: Vector3) {

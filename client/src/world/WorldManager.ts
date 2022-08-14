@@ -94,6 +94,7 @@ import { connectedAccount } from "~/stores/connectedAccount";
 import { permits } from "~/stores/permits";
 import { errorCat } from "~/stores/errorCat";
 import { viewportScale } from "~/stores/viewportScale";
+import { centerCameraVisible } from "~/stores/centerCameraVisible";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -306,6 +307,9 @@ export class WorldManager {
             // Reset camera direction to "north"
             this.camera.direction.y = 0;
             this.camera.setModeFollow();
+
+            // Center the avatar on camera
+            this.camera.center();
 
             break;
         }
