@@ -38,6 +38,11 @@ export const CAMERA_DAMPENING = 0.4;
 // How quickly to rotate the camera in build mode (higher is slower / more accurate)
 export const CAMERA_ROTATE_RATE = 100;
 
+export const CAMERA_PLAY_ZOOM_MIN = 5;
+export const CAMERA_PLAY_ZOOM_MAX = 25;
+export const CAMERA_BUILD_ZOOM_MIN = 5;
+export const CAMERA_BUILD_ZOOM_MAX = 50;
+
 // Angle (in radians) from which the camera looks down
 export const DEFAULT_CAMERA_ANGLE = (37.5 / 180) * Math.PI;
 

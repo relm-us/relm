@@ -1,10 +1,9 @@
 import {
   Euler,
-  Matrix4,
-  Object3D,
   PerspectiveCamera,
   Quaternion,
   Vector3,
+  MathUtils,
 } from "three";
 
 import { Entity } from "~/ecs/base";
@@ -19,6 +18,8 @@ import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import {
   AVATAR_HEIGHT,
   CAMERA_DAMPENING,
+  CAMERA_PLAY_ZOOM_MAX,
+  CAMERA_PLAY_ZOOM_MIN,
   DEFAULT_CAMERA_ANGLE,
   DEFAULT_VIEWPORT_ZOOM,
 } from "~/config/constants";
@@ -62,8 +63,8 @@ export class CameraManager {
 
   // 0: zoomed all the way in; 1: zoomed all the way out
   zoom: number;
-  zoomedInDistance: number = 5;
-  zoomedOutDistance: number = 25;
+  zoomedInDistance: number = CAMERA_PLAY_ZOOM_MIN;
+  zoomedOutDistance: number = CAMERA_PLAY_ZOOM_MAX;
 
   // The angle of rotation around the avatar
   direction: Euler = new Euler();
@@ -211,6 +212,13 @@ export class CameraManager {
   setZoomRange(min: number, max: number) {
     if (min < 0) min = 0;
     if (max < min) max = min;
+
+    // Try to preserve camera distance
+    const currDistance =
+      (this.zoomedOutDistance - this.zoomedInDistance) * this.zoom;
+    this.zoom = MathUtils.clamp(currDistance / (max - min), 0, 1);
+    viewportScale.set(this.zoom * 100);
+
     this.zoomedInDistance = min;
     this.zoomedOutDistance = max;
   }

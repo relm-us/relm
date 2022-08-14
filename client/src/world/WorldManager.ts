@@ -30,6 +30,10 @@ import { highDefEnabled } from "~/stores/highDefEnabled";
 import { keyShift, key1, key2, key3 } from "~/stores/keys";
 import { keyLeft, keyRight, keyUp, keyDown, keySpace } from "~/stores/keys";
 import {
+  CAMERA_BUILD_ZOOM_MAX,
+  CAMERA_BUILD_ZOOM_MIN,
+  CAMERA_PLAY_ZOOM_MAX,
+  CAMERA_PLAY_ZOOM_MIN,
   FPS_SLOWDOWN_MIN_FPS,
   FPS_SLOWDOWN_TIMEOUT,
   OCULUS_HEIGHT_SIT,
@@ -299,10 +303,20 @@ export class WorldManager {
             // Always turn advanced edit off when entering build mode
             advancedEdit.set(false);
 
+            this.camera.setZoomRange(
+              CAMERA_BUILD_ZOOM_MIN,
+              CAMERA_BUILD_ZOOM_MAX
+            );
+
             break;
           case "play":
             this.world.systems.get(InteractorSystem).active = true;
             this.hideTransformControls();
+
+            this.camera.setZoomRange(
+              CAMERA_PLAY_ZOOM_MIN,
+              CAMERA_PLAY_ZOOM_MAX
+            );
 
             // Reset camera direction to "north"
             this.camera.direction.y = 0;
