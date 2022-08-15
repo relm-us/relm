@@ -10,7 +10,6 @@ export class YouTube extends Component {
       default: "U_u91SjrEOE",
       editor: {
         label: "YouTube Embed ID",
-        requires: [{ prop: "kind", value: "YOUTUBE" }],
       },
     },
 
