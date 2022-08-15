@@ -133,7 +133,7 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
   }
 }
 
-export function onPointerUp(event: MouseEvent | TouchEvent) {
+export function onPointerUp() {
   if (isControllingTransform) {
     if (pointerState !== "initial") setNextPointerState("initial");
     return;
