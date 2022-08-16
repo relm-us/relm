@@ -405,6 +405,15 @@ export class WorldDoc extends EventEmitter {
 
           // Similar to HECS Component.fromJSON, but for just one prop
           const prop = component.constructor.props[key];
+          if (!prop) {
+            console.warn(
+              "updated or added property is null on constructor",
+              entity.id,
+              key
+            );
+            return;
+          }
+
           const type = prop.type || prop;
           component[key] = type.fromJSON(content, component[key]);
 
