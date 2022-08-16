@@ -246,7 +246,7 @@
   }
   overlay-center {
     position: fixed;
-    z-index: 1;
+    z-index: 3;
     bottom: 8px;
     width: 100%;
     display: flex;
