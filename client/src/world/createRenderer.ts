@@ -52,5 +52,13 @@ export function createRenderer(
     style.zIndex = "1";
   }
 
+  renderer.domElement.addEventListener("webglcontextlost", function () {
+    console.log("relm says webgl context is lost");
+  });
+
+  renderer.domElement.addEventListener("webglcontextrestored", function () {
+    console.log("relm says webgl context is restored");
+  });
+
   return renderer;
 }
