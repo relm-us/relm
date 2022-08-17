@@ -1,42 +1,18 @@
 <script lang="ts">
-  import { onMount } from "svelte/internal";
-  import { worldManager } from "~/world";
-
-  import type { IdentityData } from "~/types";
   import { cleanHtml } from "~/utils/cleanHtml";
 
-  export let participantId: string;
+  export let name: string;
   export let content: string;
-
-  let identity: IdentityData;
-
-  // Poll for participant data
-  // TODO: Make a more elegant way to send the fact that participant 
-  //       data is ready. Perhaps use worldManager.afterInit(fn)?
-  onMount(() => {
-    let interval = setInterval(() => {
-      const participants = worldManager.participants.participants;
-      if (identity) clearInterval(interval);
-      else if (participants) {
-        const participant = participants.get(participantId);
-        if (participant) identity = participant.identityData;
-      }
-    }, 100);
-    return () => clearInterval(interval);
-  });
+  export let color: string;
 </script>
 
-{#if identity}
-  <message>
-    <id-circle style="background-color:{identity.color}" />
-    <container>
-      <who>{identity.name}</who>
-      <content>{@html cleanHtml(content)}</content>
-    </container>
-  </message>
-{:else}
-  <message>Loading...</message>
-{/if}
+<message>
+  <id-circle style="background-color:{color}" />
+  <container>
+    <who>{@html cleanHtml(name)}</who>
+    <content>{@html cleanHtml(content)}</content>
+  </container>
+</message>
 
 <style>
   message {

@@ -22,7 +22,12 @@
     if (text.match(/^\s*$/)) {
       dispatch("close");
     } else {
-      worldManager.chat.addMessage({ u: participantId, c: text });
+      worldManager.chat.addMessage({ 
+        u: participantId,
+        c: text,
+        n: worldManager.participants.local.identityData.name,
+        o: worldManager.participants.local.identityData.color
+      });
     }
   }
 
