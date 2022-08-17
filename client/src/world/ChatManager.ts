@@ -6,10 +6,10 @@ import { chatOpen, unreadCount } from "~/stores/chat";
 export type ChatMessage = {
   // Message ("C"ontent)
   c: string;
-  // Author ("U"sername)
+  // Author ("U"ser)
   u: string;
-  // Participant ("P"articipantId)
-  p: string;
+  // Name ("N"ame)
+  n: string;
   // Color (C"o"lor)
   o: string;
 };

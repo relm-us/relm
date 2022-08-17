@@ -23,9 +23,9 @@
       dispatch("close");
     } else {
       worldManager.chat.addMessage({ 
-        u: worldManager.participants.local.identityData.name,
+        u: participantId,
         c: text,
-        p: participantId,
+        n: worldManager.participants.local.identityData.name,
         o: worldManager.participants.local.identityData.color
       });
     }

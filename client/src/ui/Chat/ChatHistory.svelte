@@ -28,10 +28,10 @@
   {:else}
     <r-scrollable>
       {#each $messages as message}
-        {#if message.p === myID}
+        {#if message.u === myID}
           <message class:mine={true}>{@html cleanHtml(message.c)}</message>
         {:else}
-          <Message name={message.u} content={message.c} color={message.o} />
+          <Message name={message.n} content={message.c} color={message.o} />
         {/if}
       {/each}
     </r-scrollable>
