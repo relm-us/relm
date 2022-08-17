@@ -6,8 +6,12 @@ import { chatOpen, unreadCount } from "~/stores/chat";
 export type ChatMessage = {
   // Message ("C"ontent)
   c: string;
-  // Author ("U"ser)
+  // Author ("U"sername)
   u: string;
+  // Participant ("P"articipantId)
+  p: string;
+  // Color (C"o"lor)
+  o: string;
 };
 
 export function getEmojiFromMessage(msg) {
