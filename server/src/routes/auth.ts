@@ -222,7 +222,6 @@ function socialOAuthRedirect(socialId, scope?) {
 
 function socialOAuthCallback(socialId) {
   return (req, res, next) => wrapAsyncPassport(socialId, async (req, res, _, status, data) => {
-    console.log(status, data, req.session);
     if (status === PassportResponse.ERROR) {
       return respondWithErrorPostMessage(res, data.reason, data.details);
     } else if (status === PassportResponse.FAILURE) {
