@@ -4,7 +4,7 @@ import { Strategy as PassportLocalStrategy } from "passport-local";
 import { Strategy as PassportGoogleStrategy } from "passport-google-oauth2";
 import { Strategy as PassportLinkedinStrategy } from "passport-linkedin-oauth2";
 import { Strategy as PassportFacebookStrategy } from "passport-facebook";
-import { Strategy as PassportTwitterStrategy } from "passport-twitter-oauth2";
+import { Strategy as PassportTwitterStrategy } from "passport-twitter";
 
 import { Participant, SocialConnection, User } from "./db/index.js";
 import { FACEBOOK_CLIENT_ID, 
@@ -13,11 +13,12 @@ import { FACEBOOK_CLIENT_ID,
   GOOGLE_CLIENT_SECRET, 
   LINKEDIN_CLIENT_ID, 
   LINKEDIN_CLIENT_SECRET, 
-  TWITTER_CLIENT_ID, 
-  TWITTER_CLIENT_SECRET } from "./config.js";
+  TWITTER_API_KEY, 
+  TWITTER_API_SECRET } from "./config.js";
 
 const passportMiddleware = express.Router();
 passportMiddleware.use(passport.initialize());
+passportMiddleware.use(passport.session());
 
 // Wraps async passport functions to allow proper async error handling
 const wrapPassportSync = fn => ((...args) => {
@@ -57,7 +58,7 @@ passport.use(new PassportLocalStrategy({
 
 // OAuth handler to handle OAuth callback
 async function handleOAuthPassport(socialId, req, email, profileId, done) {
-  const participantId = req.authenticatedParticipantId;
+  const participantId = req.authenticatedUserId;
 
   // First check if the participant has an existing user id.
   const existingParticipantUserId = await Participant.getUserId({ participantId });
@@ -163,10 +164,10 @@ if (FACEBOOK_CLIENT_ID && FACEBOOK_CLIENT_SECRET) {
   }));
 }
 
-if (TWITTER_CLIENT_ID && TWITTER_CLIENT_SECRET) {
+if (TWITTER_API_KEY && TWITTER_API_SECRET) {
   passport.use(new PassportTwitterStrategy({
-    clientID: TWITTER_CLIENT_ID,
-    clientSecret: TWITTER_CLIENT_SECRET,
+    consumerKey: TWITTER_API_KEY,
+    consumerSecret: TWITTER_API_SECRET,
     callbackURL: "/auth/connect/twitter/callback",
     includeEmail: true,
     passReqToCallback: true

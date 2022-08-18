@@ -64,13 +64,15 @@ export class RelmOAuthManager {
   }
 
   getAuthenticationPayload() {
-    return btoa(JSON.stringify(this.authHeaders));
+    return Object.keys(this.authHeaders)
+      .map(header => `${header}=${encodeURIComponent(this.authHeaders[header])}`)
+      .join("&");
   }
 
   showGoogleOAuth(): Promise<AuthenticationResponse|null> {
     return new Promise(resolve => {
       this.open(
-        `${this.url}/auth/connect/google?state=${this.getAuthenticationPayload()}`,
+        `${this.url}/auth/connect/google?${this.getAuthenticationPayload()}`,
          resolve);
     });
   }
@@ -78,7 +80,7 @@ export class RelmOAuthManager {
   showLinkedinOAuth(): Promise<AuthenticationResponse|null> {
     return new Promise(resolve => {
       this.open(
-        `${this.url}/auth/connect/linkedin?state=${this.getAuthenticationPayload()}`,
+        `${this.url}/auth/connect/linkedin?${this.getAuthenticationPayload()}`,
          resolve);
     });
   }
@@ -86,7 +88,7 @@ export class RelmOAuthManager {
   showFacebookOAuth(): Promise<AuthenticationResponse|null> {
     return new Promise(resolve => {
       this.open(
-        `${this.url}/auth/connect/facebook?state=${this.getAuthenticationPayload()}`,
+        `${this.url}/auth/connect/facebook?${this.getAuthenticationPayload()}`,
          resolve);
     });
   }
@@ -94,7 +96,7 @@ export class RelmOAuthManager {
   showTwitterOAuth(): Promise<AuthenticationResponse|null> {
     return new Promise(resolve => {
       this.open(
-        `${this.url}/auth/connect/twitter?state=${this.getAuthenticationPayload()}`,
+        `${this.url}/auth/connect/twitter?${this.getAuthenticationPayload()}`,
          resolve);
     });
   }

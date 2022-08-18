@@ -206,33 +206,37 @@ auth.post(
 function socialOAuthRedirect(socialId, scope?) {
   return (req, res, next) => {
     const options: any = {
-      state: (req.query.state as string)
+      state: (req.query.state as string),
+      session: true
     };
     if (scope) {
       options.scope = scope;
     }
 
+    req.session.participantId = req.authenticatedParticipantId;
+
+    // Store the participantId under this cookie's session for validation after the oAuth callback.
     passport.authenticate(socialId, options)(req, res, next);
   };
 }
 
 function socialOAuthCallback(socialId) {
   return (req, res, next) => wrapAsyncPassport(socialId, async (req, res, _, status, data) => {
-      if (status === PassportResponse.ERROR) {
-        return respondWithErrorPostMessage(res, data.reason, data.details);
-      } else if (status === PassportResponse.FAILURE) {
-        return respondWithFailurePostMessage(res, data.reason, data.details);
-      }
+    console.log(status, data, req.session);
+    if (status === PassportResponse.ERROR) {
+      return respondWithErrorPostMessage(res, data.reason, data.details);
+    } else if (status === PassportResponse.FAILURE) {
+      return respondWithFailurePostMessage(res, data.reason, data.details);
+    }
 
-      // Assign participant to user!
-      const participantId = req.authenticatedParticipantId;
-      await Participant.assignToUserId({ userId: data, participantId });
+    // Assign participant to user!
+    const participantId = req.session.participantId;
+    await Participant.assignToUserId({ userId: data, participantId });
 
-      // Tell the browser to close the window to let the client know authentication was successful.
-      respondWithSuccessPostMessage(res, {});
-    })(req, res, next);
+    // Tell the browser to close the window to let the client know authentication was successful.
+    respondWithSuccessPostMessage(res, {});
+  })(req, res, next);
 }
-
 
 auth.get(
   "/connect/google",
@@ -243,7 +247,7 @@ auth.get(
 auth.get(
   "/connect/google/callback",
   cors(),
-  middleware.authenticated(),
+  middleware.authenticatedForOAuth(),
   socialOAuthCallback("google")
 );
 
@@ -256,7 +260,7 @@ auth.get(
 auth.get(
   "/connect/linkedin/callback",
   cors(),
-  middleware.authenticated(),
+  middleware.authenticatedForOAuth(),
   socialOAuthCallback("linkedin")
 );
 
@@ -269,7 +273,7 @@ auth.get(
 auth.get(
   "/connect/facebook/callback",
   cors(),
-  middleware.authenticated(),
+  middleware.authenticatedForOAuth(),
   socialOAuthCallback("facebook")
 );
 
@@ -282,6 +286,6 @@ auth.get(
 auth.get(
   "/connect/twitter/callback",
   cors(),
-  middleware.authenticated(),
+  middleware.authenticatedForOAuth(),
   socialOAuthCallback("twitter")
 );
