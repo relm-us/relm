@@ -58,7 +58,7 @@ passport.use(new PassportLocalStrategy({
 
 // OAuth handler to handle OAuth callback
 async function handleOAuthPassport(socialId, req, email, profileId, done) {
-  const participantId = req.authenticatedUserId;
+  const participantId = req.session.participantId;
 
   // First check if the participant has an existing user id.
   const existingParticipantUserId = await Participant.getUserId({ participantId });
