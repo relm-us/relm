@@ -64,7 +64,7 @@
     "twilio-video": "2.20.1",
     "video-mirror": "4.6.0",
     "y-indexeddb": "9.0.7",
-    "y-quill": "0.1.4",
+    "y-quill": "0.1.5",
     "yjs": "13.5.27"
   },
   "devDependencies": {

@@ -7,8 +7,7 @@ const DuplicatePackageCheckerPlugin = require("@cerner/duplicate-package-checker
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
-const { ProvidePlugin } = require("webpack");
-const zlib = require("node:zlib");
+const { ProvidePlugin, SourceMapDevToolPlugin } = require("webpack");
 
 const Preprocess = require("svelte-preprocess");
 
@@ -280,9 +279,8 @@ module.exports = {
      * For HECS to work, we need to prevent module concatenation from mangling
      * class names. See https://github.com/gohyperr/hecs/issues/31
      */
-    concatenateModules: false,
-  },
-  devtool: prod && !sourceMapsInProduction ? false : "source-map",
+    concatenateModules: false
+  }
 };
 
 // Add stylesheets to the build
@@ -371,4 +369,11 @@ if (useBabel && (prod || useBabelInDevelopment)) {
       },
     },
   });
+}
+
+// Add sourcemaps if enabled
+if ((!prod || sourceMapsInProduction)) {
+  module.exports.plugins.push(new SourceMapDevToolPlugin({
+    exclude: ["@geckos.io"]
+  }));
 }

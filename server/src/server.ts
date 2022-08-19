@@ -1,9 +1,8 @@
 import fs from "fs";
-import http from "http";
 
 import { ASSETS_DIR, DATABASE_NAME, PORT } from "./config.js";
-import { geckoServer } from "./server_ws.js";
-import { app as expressApp } from "./server_http.js";
+import { server } from "./server_ws.js";
+import { geckoServer } from "./server_gecko.js";
 import { init } from "./db/db.js";
 
 if (!fs.existsSync(ASSETS_DIR)) {
@@ -19,12 +18,10 @@ async function start() {
   }
   console.log(`Connected to database '${DATABASE_NAME}'`);
 
-  // Start gecko server and run http server using same port
-  const server = http.createServer({}, expressApp);
   geckoServer.addServer(server);
 
   server.listen(PORT, () => {
-    console.log(`http/gecko server listening on ${PORT}`);
+    console.log(`http/ws/gecko server listening on ${PORT}`);
   });
 }
 

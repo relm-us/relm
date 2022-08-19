@@ -100,7 +100,7 @@ importers:
       webpack-cli: ^4.10.0
       webpack-dev-server: ^4.9.3
       y-indexeddb: 9.0.7
-      y-quill: 0.1.4
+      y-quill: 0.1.5
       yjs: 13.5.27
     dependencies:
       '@dimforge/rapier3d': 0.8.1
@@ -120,7 +120,7 @@ importers:
       deep-diff: 1.0.2
       eventemitter3: 4.0.7
       lodash: 4.17.21
-      mediasoup-client: github.com/versatica/mediasoup-client/08006a8a3994a262bf4c697d0a9be34d7ae095ea
+      mediasoup-client: github.com/versatica/mediasoup-client/613b991601f8c58a87123f7c9b21cd978c0b24d6
       nanoid: 3.3.4
       postprocessing: 6.28.3_three@0.141.0
       protoo-client: 4.0.6
@@ -147,7 +147,7 @@ importers:
       twilio-video: 2.20.1
       video-mirror: 4.6.0
       y-indexeddb: 9.0.7_yjs@13.5.27
-      y-quill: 0.1.4_quill@1.3.7+yjs@13.5.27
+      y-quill: 0.1.5_quill@1.3.7+yjs@13.5.27
       yjs: 13.5.27
     devDependencies:
       '@babel/core': 7.17.9
@@ -6950,6 +6950,19 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
+    dev: false
+
+  /follow-redirects/1.14.9_debug@4.3.4:
+    resolution: {integrity: sha512-MQDfihBQYMcyy5dhRDJUHcw7lb2Pv/TuE6xP1vyraLukNDHKbDxDNaOE3NbCAdKQApno+GPRyo1YAp89yCjK4w==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dependencies:
+      debug: 4.3.4
+    dev: true
 
   /for-each/0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
@@ -7485,7 +7498,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.14.9
+      follow-redirects: 1.14.9_debug@4.3.4
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -14548,13 +14561,13 @@ packages:
       lib0: 0.2.52
     dev: false
 
-  /y-quill/0.1.4_quill@1.3.7+yjs@13.5.27:
-    resolution: {integrity: sha512-z4wCVgF5SUDkr+I8NRtcjU0AE4Ne0JCHzs9LpWrFdx+fvTk0Jtia/weEJjLlJHPZ0Ub7HMe5Bvia7UONsb4ZaQ==}
+  /y-quill/0.1.5_quill@1.3.7+yjs@13.5.27:
+    resolution: {integrity: sha512-bNFkc69yZxe6xrkhiPoHx2RvwR5KdKxpO9UYZVsn9NCv6eXHIYQVTrkSu6rtZ9gNw8ZEBnCVJAl4jpj0+L+IcA==}
     peerDependencies:
       quill: ^1.3.7
       yjs: ^13.0.0
     dependencies:
-      lib0: 0.2.51
+      lib0: 0.2.52
       quill: 1.3.7
       y-protocols: 1.0.5
       yjs: 13.5.27
@@ -14645,10 +14658,10 @@ packages:
     resolution: {integrity: sha512-JZxotl7SxAJH0j7dN4pxsTV6ZLXoLdGME+PsjkL/DaBrVryK9kTGq06GfKrwcSOqypP+fdXGoCHE36b99fWVoA==}
     dev: true
 
-  github.com/versatica/mediasoup-client/08006a8a3994a262bf4c697d0a9be34d7ae095ea:
-    resolution: {tarball: https://codeload.github.com/versatica/mediasoup-client/tar.gz/08006a8a3994a262bf4c697d0a9be34d7ae095ea}
+  github.com/versatica/mediasoup-client/613b991601f8c58a87123f7c9b21cd978c0b24d6:
+    resolution: {tarball: https://codeload.github.com/versatica/mediasoup-client/tar.gz/613b991601f8c58a87123f7c9b21cd978c0b24d6}
     name: mediasoup-client
-    version: 3.6.55
+    version: 3.6.56
     engines: {node: '>=10'}
     dependencies:
       '@types/debug': 4.1.7

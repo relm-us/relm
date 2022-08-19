@@ -32,7 +32,7 @@ const messageAwareness = 1;
   // doc.conns.forEach((_, conn) => send(doc, conn, message));
 };
 
-export class WSSharedDoc extends Y.Doc {
+export class GeckoSharedDoc extends Y.Doc {
   name: string;
   mux: any;
   conns: Map<ServerChannel, Set<number>>;
@@ -45,7 +45,7 @@ export class WSSharedDoc extends Y.Doc {
    */
   constructor(
     name,
-    { callbackHandler = isDefaultCallbackSet ? defaultCallbackHandler : null, persistence } : { callbackHandler: any, persistence? }
+    { callbackHandler = isDefaultCallbackSet ? defaultCallbackHandler : null } : { callbackHandler: any }
   ) {
     super({ gc: YGARBAGE_COLLECTION });
     this.name = name;
@@ -96,7 +96,6 @@ export class WSSharedDoc extends Y.Doc {
       const buff = encoding.toUint8Array(encoder);
       this.conns.forEach((_, c) => {
         c.raw.emit(buff);
-        // send(this, c, buff);
       });
     };
     this.awareness.on("update", awarenessChangeHandler);
@@ -109,12 +108,6 @@ export class WSSharedDoc extends Y.Doc {
           maxWait: CALLBACK_DEBOUNCE_MAXWAIT,
         })
       );
-    }
-
-    if (persistence !== null) {
-      this.whenSynced = persistence.bindState(name, this).then(() => {
-        this.isSynced = true;
-      });
     }
   }
 }

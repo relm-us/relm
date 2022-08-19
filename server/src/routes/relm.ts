@@ -35,7 +35,7 @@ import {
   respondWithSuccess,
   respondWithError,
   randomToken,
-  getYDoc
+  getWSYDoc
 } from "../utils/index.js";
 
 const conscript = mkConscript();
@@ -173,7 +173,7 @@ relm.post(
         }
       } else {
         // Populate the new relm with basic ground
-        const newRelmDoc: Y.Doc = await getYDoc(relm.permanentDocId);
+        const newRelmDoc: Y.Doc = await getWSYDoc(relm.permanentDocId);
         importWorldDoc(config.DEFAULT_RELM_CONTENT, newRelmDoc);
 
         console.log(
@@ -191,10 +191,10 @@ relm.post(
 );
 
 async function cloneRelmDoc(seedRelmDocId: string, newRelmDocId: string) {
-  const seedRelmDoc: Y.Doc = await getYDoc(seedRelmDocId);
+  const seedRelmDoc: Y.Doc = await getWSYDoc(seedRelmDocId, { storeInCache: false });
   const relmContent = exportWorldDoc(seedRelmDoc);
 
-  const newRelmDoc: Y.Doc = await getYDoc(newRelmDocId);
+  const newRelmDoc: Y.Doc = await getWSYDoc(newRelmDocId, { storeInCache: false });
   importWorldDoc(relmContent, newRelmDoc);
 
   return newRelmDoc;
@@ -223,7 +223,7 @@ relm.post(
   middleware.authenticated(),
   middleware.authorized("access"),
   wrapAsync(async (req, res) => {
-    const relmDoc = await getYDoc(req.relm.permanentDocId);
+    const relmDoc = await getWSYDoc(req.relm.permanentDocId, { storeInCache: false });
     const content = exportWorldDoc(relmDoc);
 
     return respondWithSuccess(res, {
@@ -241,7 +241,7 @@ relm.post(
   middleware.authenticated(),
   middleware.authorized("access"),
   wrapAsync(async (req, res) => {
-    const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
+    const doc: Y.Doc = await getWSYDoc(req.relm.permanentDocId, { storeInCache: false });
     req.relm.permanentDocSize = Y.encodeStateAsUpdate(doc).byteLength;
     const twilioToken = twilio.getToken(req.authenticatedParticipantId);
 
@@ -326,7 +326,7 @@ relm.post(
   middleware.acceptJwt(),
   middleware.authorized("read"),
   wrapAsync(async (req, res) => {
-    const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
+    const doc: Y.Doc = await getWSYDoc(req.relm.permanentDocId, { storeInCache: false });
     req.relm.permanentDocSize = Y.encodeStateAsUpdate(doc).byteLength;
 
     // TODO: don't reveal twilio token for `read`-level permission
@@ -407,7 +407,7 @@ relm.post(
       return respondWithError(res, "changes required");
     }
 
-    const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
+    const doc: Y.Doc = await getWSYDoc(req.relm.permanentDocId, { storeInCache: false });
     // console.log("doc.actions", doc.getMap("actions").toJSON());
 
     const variables = await Variable.getVariables({ relmId });
@@ -492,7 +492,7 @@ relm.post(
   middleware.acceptJwt(),
   middleware.authorized("edit"),
   wrapAsync(async (req, res) => {
-    const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
+    const doc: Y.Doc = await getWSYDoc(req.relm.permanentDocId, { storeInCache: false });
 
     const actions = req.body.actions;
 

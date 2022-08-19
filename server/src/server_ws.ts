@@ -1,55 +1,54 @@
-import GeckoServer, { ServerChannel } from "@geckos.io/server";
-import { decoding, encoding } from "lib0";
-import * as syncProtocol from "y-protocols/sync";
-import * as awarenessProtocol from "y-protocols/awareness";
+import WebSocket from "ws";
+import { createServer } from "http";
 
 import { Participant, Permission, Doc } from "./db/index.js";
-import { ydocStats } from "./getYDoc.js";
-import { hasPermission, getYDoc } from "./utils/index.js";
-import { WSSharedDoc } from "ws/WSSharedDoc.js";
+import { hasPermission } from "./utils/index.js";
+import { app } from "./server_http.js";
+import { handler } from "./socket/ws.js";
+import { ydocStats } from "./ydocStats.js";
 
-const messageSync = 0;
-const messageAwareness = 1;
+export const server = createServer();
 
-export const geckoServer = GeckoServer({
-  cors: { allowAuthorization: true, origin: "*" }, // Required since client is on separate domain
+const wss = new WebSocket.Server({ noServer: true });
 
-  authorization: async authorizationStr => {
-    let params;
-    try {
-      params = JSON.parse(authorizationStr);
-    } catch (error) {
-      console.log(`Invalid authorization string recieved: "${authorizationStr}"`);
-      return 401;
-    }
-  
-    const docId = params["docId"];
-    const participantId = params["participant-id"];
-    const participantSig = params["participant-sig"];
-    const pubkeyX = params["pubkey-x"];
-    const pubkeyY = params["pubkey-y"];
+server.on("request", app);
 
-    console.log("participant connected:", participantId);
-  
-    let verifiedPubKey;
-    try {
-      verifiedPubKey = await Participant.findOrCreateVerifiedPubKey({
-        participantId,
-        sig: participantSig,
-        x: pubkeyX,
-        y: pubkeyY,
-      });
-    } catch (err) {
-      console.warn("can't verify public key", err);
-      return;
-    }
-  
-    // Check that we are authenticated first
-    if (!verifiedPubKey) {
-      console.log(`Invalid public key from participant '${participantId}'`);
-      return false;
-    }
+wss.on("connection", (conn, req) => handler(conn, { docName: getRelmDocFromRequest(req), callbackHandler: ydocStats }));
 
+function getRelmDocFromRequest(req) {
+  return req.url.slice(1).split("?")[0];
+}
+
+function getUrlParams(requestUrl) {
+  const queryString = requestUrl.slice(requestUrl.indexOf("?"));
+  return new URLSearchParams(queryString);
+}
+
+server.on("upgrade", async (req, socket, head) => {
+  const docId = getRelmDocFromRequest(req);
+  const params = getUrlParams(req.url);
+
+  const participantId = params.get("participant-id");
+  const participantSig = params.get("participant-sig");
+  let pubkeyX = params.get("pubkey-x");
+  let pubkeyY = params.get("pubkey-y");
+  console.log("ws participant connected:", participantId);
+
+  let verifiedPubKey;
+  try {
+    verifiedPubKey = await Participant.findOrCreateVerifiedPubKey({
+      participantId,
+      sig: participantSig,
+      x: pubkeyX,
+      y: pubkeyY,
+    });
+  } catch (err) {
+    console.warn("can't upgrade", err);
+    return;
+  }
+
+  // Check that we are authenticated first
+  if (verifiedPubKey) {
     // Get relm from docId
     const doc = await Doc.getDoc({ docId });
 
@@ -58,105 +57,28 @@ export const geckoServer = GeckoServer({
       relmIds: [doc.relmId],
     });
 
-    // Do we have permission to access this relm?
     const permitted = hasPermission("access", permissions, doc.relmId);
 
-    if (!permitted) {
+    if (permitted) {
+      if (doc === null) {
+        console.log(
+          `Participant '${participantId}' sought to sync doc '${docId}' but was rejected because it doesn't exist`
+        );
+        socket.write("HTTP/1.1 404 Not Found\r\n\r\n");
+        socket.destroy();
+      } else {
+        wss.handleUpgrade(req, socket as any, head, (conn) => {
+          wss.emit("connection", conn, req);
+        });
+      }
+    } else {
       console.log(
         `Participant '${participantId}' sought to enter '${docId}' but was rejected because unauthorized`,
         params,
         permissions
       );
-      return 401;
+      socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+      socket.destroy();
     }
-
-    // Does the relm doc exist?
-    if (doc === null) {
-      console.log(
-        `Participant '${participantId}' sought to sync doc '${docId}' but was rejected because it doesn't exist`
-      );
-      return 404;
-    }
-
-    // Good to go!
-    return {
-      docId
-    };
   }
 });
-
-geckoServer.onConnection(async channel => {
-  const doc = await getYDoc(channel.userData.docId, { callbackHandler: ydocStats });
-  doc.conns.set(channel, new Set());
-
-  channel.onRaw(buffer => {
-    const message = new Uint8Array(buffer as Buffer);
-    onMessage(channel, doc, new Uint8Array(message));
-  });
-
-  channel.onDisconnect(() => {
-    const controlledIds = doc.conns.get(channel);
-    doc.conns.delete(channel);
-
-    awarenessProtocol.removeAwarenessStates(
-      doc.awareness,
-      Array.from(controlledIds),
-      null
-    );
-  });
-
-  if (doc.whenSynced) {
-    await doc.whenSynced;
-  }
-
-  const encoder = encoding.createEncoder();
-  encoding.writeVarUint(encoder, messageSync);
-  syncProtocol.writeSyncStep1(encoder, doc);
-  channel.raw.emit(encoding.toUint8Array(encoder));
-  const awarenessStates = doc.awareness.getStates();
-  if (awarenessStates.size > 0) {
-    const encoder = encoding.createEncoder();
-    encoding.writeVarUint(encoder, messageAwareness);
-    encoding.writeVarUint8Array(
-      encoder,
-      awarenessProtocol.encodeAwarenessUpdate(
-        doc.awareness,
-        Array.from(awarenessStates.keys())
-      )
-    );
-    channel.raw.emit(encoding.toUint8Array(encoder));
-  }
-});
-
-async function onMessage(channel: ServerChannel, doc: WSSharedDoc, message: Uint8Array) {
-  try {
-    const encoder = encoding.createEncoder();
-    const decoder = decoding.createDecoder(message);
-    const messageType = decoding.readVarUint(decoder);
-    switch (messageType) {
-      case messageSync:
-        // await the doc state being updated from persistence, if available, otherwise
-        // we may send sync step 2 too early
-        if (doc.whenSynced) {
-          await doc.whenSynced;
-        }
-        encoding.writeVarUint(encoder, messageSync);
-        syncProtocol.readSyncMessage(decoder, encoder, doc, null);
-        if (encoding.length(encoder) > 1) {
-          channel.raw.emit(encoding.toUint8Array(encoder));
-        }
-        break;
-      case messageAwareness: {
-        awarenessProtocol.applyAwarenessUpdate(
-          doc.awareness,
-          decoding.readVarUint8Array(decoder),
-          channel
-        );
-        break;
-      }
-    }
-  } catch (err) {
-    console.error(err);
-    doc.emit("error", [err]);
-  }
-}
