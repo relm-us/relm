@@ -43,7 +43,7 @@ const readMessage = (provider, buf, emitSynced) => {
 /**
  * @param {GeckoProvider} provider
  */
-const setupWS = (provider, authorization) => {
+const setupGecko = (provider, authorization) => {
   if (provider.shouldConnect && provider.gecko === null) {
     const geckoClient = gecko({
       url: provider.url,
@@ -95,7 +95,7 @@ const setupWS = (provider, authorization) => {
       // The idea is to increase reconnect timeout slowly and have no reconnect
       // timeout at the beginning (log(1) = 0)
       setTimeout(
-        setupWS,
+        setupGecko,
         math.min(
           math.log10(provider.geckoUnsuccessfulReconnects + 1) *
             reconnectTimeoutBase,
@@ -168,6 +168,7 @@ const broadcastMessage = (provider: GeckoProvider, buf) => {
 export class GeckoProvider extends Observable<string> {
   bcChannel: string;
   url: string;
+  authorization: string;
   doc: Y.Doc;
   awareness: awarenessProtocol.Awareness;
   gecko: ClientChannel;
@@ -208,10 +209,10 @@ export class GeckoProvider extends Observable<string> {
     } = {}
   ) {
     super();
-    const authorization = {
+    this.authorization = JSON.stringify({
       docId,
       ...params
-    };
+    });
     this.bcChannel = docId;
     this.url = serverUrl;
     this.doc = doc;
@@ -313,7 +314,7 @@ export class GeckoProvider extends Observable<string> {
       }
     }, messageReconnectTimeout / 10);
     if (connect) {
-      this.connect(authorization);
+      this.connect();
     }
   }
 
@@ -414,10 +415,10 @@ export class GeckoProvider extends Observable<string> {
     }
   }
 
-  connect(authorization) {
+  connect() {
     this.shouldConnect = true;
     if (!this.geckoConnected && this.gecko === null) {
-      setupWS(this, JSON.stringify(authorization));
+      setupGecko(this, this.authorization);
       this.connectBc();
     }
   }

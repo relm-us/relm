@@ -24,7 +24,7 @@ export class ParticipantYBroker {
   }
 
   get awareness() {
-    return this.worldDoc.provider.awareness;
+    return this.worldDoc.provider.ws.awareness;
   }
 
   setField(key, value) {

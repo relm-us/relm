@@ -1,5 +1,5 @@
 import { map } from "lib0";
-import { GeckoSharedDoc } from "../socket/GeckoSharedDoc.js";
+import { GeckoSharedDoc } from "../socket/gecko.js";
 import { WSSharedDoc } from "../socket/ws.js";
 import { getPersistence } from "./getPersistence.js";
 

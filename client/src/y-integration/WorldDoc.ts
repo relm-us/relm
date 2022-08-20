@@ -8,9 +8,9 @@ import { Entity, EntityId } from "~/ecs/base";
 
 import {
   AuthenticationHeaders,
-  GeckoProvider,
   findInYArray,
   isEntityAttribute,
+  RelmProvider,
   yIdToString,
   withArrayEdits,
   withMapEdits,
@@ -25,7 +25,6 @@ import {
   YValues,
   YIDSTR,
   PROTECTED_WORLD_DOC_KEYS,
-  WebsocketProvider,
 } from "relm-common";
 
 import EventEmitter from "eventemitter3";
@@ -44,8 +43,11 @@ export class WorldDoc extends EventEmitter {
   // The "root node" (document) containing all specification data for the world
   ydoc: Y.Doc = new Y.Doc();
 
+  // The "node" (document) containing any temporary data that is to be sent quickly but unreliably to other clients
+  udpYDoc: Y.Doc = new Y.Doc();
+
   // Yjs synchronization provider
-  provider: WebsocketProvider;
+  provider: RelmProvider;
 
   // The array of entities stored in the Y.Doc. We store entities as a Y.Array
   // rather than a Y.Map because, per Yjs docs, this allows nodes to be garbage
@@ -106,7 +108,9 @@ export class WorldDoc extends EventEmitter {
     subrelmDocId: string,
     authHeaders: AuthenticationHeaders
   ) {
-    this.provider = new WebsocketProvider(url, subrelmDocId, this.ydoc, {
+    this.provider = new RelmProvider(url, subrelmDocId, {
+      doc: this.ydoc,
+      udpDoc: this.udpYDoc,
       params: {
         "participant-id": authHeaders["x-relm-participant-id"],
         "participant-sig": authHeaders["x-relm-participant-sig"],
@@ -135,8 +139,8 @@ export class WorldDoc extends EventEmitter {
   subscribeStatus(sub: (status: WorldDocStatus) => void) {
     const provider = this.provider;
     if (provider) {
-      provider.on("status", ({ status }) => sub(status));
-      this.unsubs.push(() => provider.off("status", sub));
+      provider.ws.on("status", ({ status }) => sub(status));
+      this.unsubs.push(() => provider.ws.off("status", sub));
     }
   }
 

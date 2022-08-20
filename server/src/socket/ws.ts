@@ -3,11 +3,11 @@ import * as syncProtocol from "y-protocols/sync";
 import * as awarenessProtocol from "y-protocols/awareness";
 import { mutex, encoding, decoding } from "lib0";
 import debounce from "lodash.debounce";
+import WebSocket from "ws";
 
 import { YGARBAGE_COLLECTION } from "../config.js";
 import { defaultCallbackHandler, isDefaultCallbackSet } from "./callback.js";
 import { getPersistence, getWSYDoc, removeWSYDocFromCache } from "../utils/index.js";
-import WebSocket from "ws";
 
 const CALLBACK_DEBOUNCE_WAIT =
   parseInt(process.env.CALLBACK_DEBOUNCE_WAIT) || 2000;

@@ -4,7 +4,7 @@ import type {
   UpdateData,
 } from "~/types";
 
-import { WebsocketProvider, Appearance, Equipment } from "relm-common";
+import { Appearance, Equipment, RelmProvider } from "relm-common";
 
 import { participantId } from "./participantId";
 
@@ -98,8 +98,8 @@ export class ParticipantManager {
     }
   }
 
-  applyOthersState(world: DecoratedECSWorld, provider: WebsocketProvider) {
-    const states = provider.awareness.getStates();
+  applyOthersState(world: DecoratedECSWorld, provider: RelmProvider) {
+    const states = provider.ws.awareness.getStates();
 
     for (let state of states.values()) {
       if (!("id" in state)) continue;

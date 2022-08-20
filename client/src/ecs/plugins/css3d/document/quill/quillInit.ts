@@ -51,7 +51,7 @@ export function quillBind(docId, editor) {
     binding = new QuillBinding(
       wdoc.getDocument(docId),
       editor,
-      wdoc.provider.awareness
+      wdoc.provider.ws.awareness
     );
   });
 
