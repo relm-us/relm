@@ -72,7 +72,7 @@ const closeConn = (doc: WSSharedDoc, conn: WebSocket) => {
   conn.close();
 };
 
-const messageListener = async (conn, doc, message) => {
+const messageListener = async (conn: WebSocket, doc: WSSharedDoc, message: Uint8Array) => {
   try {
     const encoder = encoding.createEncoder();
     const decoder = decoding.createDecoder(message);
@@ -172,7 +172,7 @@ export class WSSharedDoc extends Y.Doc {
   name: string;
   mux: any;
   conns: Map<WebSocket, Set<number>>;
-  awareness: any;
+  awareness: awarenessProtocol.Awareness;
   whenSynced: Promise<void>;
   isSynced: boolean;
 

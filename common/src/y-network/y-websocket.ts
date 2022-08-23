@@ -24,7 +24,7 @@ const messageReconnectTimeout = 30000;
  * @param {boolean} emitSynced
  * @return {encoding.Encoder}
  */
-const readMessage = (provider, buf, emitSynced) => {
+const readMessage = (provider: WebsocketProvider, buf: Uint8Array, emitSynced: boolean) => {
   const decoder = decoding.createDecoder(buf);
   const encoder = encoding.createEncoder();
   const messageType = decoding.readVarUint(decoder);

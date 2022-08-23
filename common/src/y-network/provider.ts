@@ -2,7 +2,7 @@ import * as Y from "yjs";
 import * as awarenessProtocol from "y-protocols/awareness";
 import { GeckoProvider, WebsocketProvider } from "./index.js";
 
-type Options = {
+export type Options = {
   doc: Y.Doc,
   udpDoc: Y.Doc,
   connect?: boolean,
@@ -11,11 +11,16 @@ type Options = {
   resyncInterval?: number
 };
 
+export type RelmURLOptions = {
+  wsUrl: string,
+  geckoUrl: string
+};
+
 export class RelmProvider {
   ws: WebsocketProvider;
   gecko: GeckoProvider;
 
-  constructor(url: string,
+  constructor(urlOptions: RelmURLOptions,
     subrelmDocId: string,
     { 
       doc,
@@ -25,14 +30,14 @@ export class RelmProvider {
       WebSocketPolyfill = WebSocket,
       resyncInterval = -1
     } : Options) {
-      this.ws = new WebsocketProvider(url, subrelmDocId, doc, {
+      this.ws = new WebsocketProvider(urlOptions.wsUrl, subrelmDocId, doc, {
         connect,
         params,
         WebSocketPolyfill,
         resyncInterval,
         awareness: new awarenessProtocol.Awareness(doc) });
-        
-      this.gecko = new GeckoProvider(url, subrelmDocId, udpDoc, {
+
+      this.gecko = new GeckoProvider(urlOptions.geckoUrl, subrelmDocId, udpDoc, {
         connect,
         params,
         resyncInterval,

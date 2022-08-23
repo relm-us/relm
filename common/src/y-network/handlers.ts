@@ -4,11 +4,12 @@ import * as authProtocol from "y-protocols/auth";
 import * as awarenessProtocol from "y-protocols/awareness";
 import { decoding, encoding } from "lib0";
 import { GeckoProvider } from "./y-gecko.js";
+import { WebsocketProvider } from "./y-websocket.js";
 
 export type MessageHandler = (
   encoder: encoding.Encoder,
   decoder: decoding.Decoder,
-  provider: GeckoProvider,
+  provider: GeckoProvider|WebsocketProvider,
   emitSynced: boolean,
   messageType: number
 ) => void;
@@ -20,7 +21,7 @@ export const MESSAGE_QUERY_AWARENESS_ID = 3;
 
 /**
  *                       encoder,          decoder,          provider,          emitSynced, messageType
- * @type {Array<function(encoding.Encoder, decoding.Decoder, GeckoProvider, boolean,    number):void>}
+ * @type {Array<function(encoding.Encoder, decoding.Decoder, GeckoProvider|WebsocketProvider, boolean,    number):void>}
  */
 export const messageHandlers: MessageHandler[] = [];
 

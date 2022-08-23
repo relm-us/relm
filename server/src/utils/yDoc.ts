@@ -31,7 +31,7 @@ export const getGeckoYDoc = async (docname, { gc = true, callbackHandler = null,
   let doc;
   
   if (storeInCache) {
-    doc = map.setIfUndefined(wsDocs, docname, () => _getGeckoYDoc(`${docname}/gecko`, { gc, callbackHandler }));
+    doc = map.setIfUndefined(geckoDocs, docname, () => _getGeckoYDoc(`${docname}/gecko`, { gc, callbackHandler }));
   } else {
     doc = _getGeckoYDoc(`${docname}/gecko`, { gc, callbackHandler });
   }

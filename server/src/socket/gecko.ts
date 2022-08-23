@@ -113,7 +113,7 @@ export class GeckoSharedDoc extends Y.Doc {
   name: string;
   mux: any;
   conns: Map<ServerChannel, Set<number>>;
-  awareness: any;
+  awareness: awarenessProtocol.Awareness;
   whenSynced: Promise<void>;
   isSynced: boolean;
 

@@ -1,6 +1,5 @@
 import type { IdentityData } from "~/types";
 
-import * as Y from "yjs";
 import { writable, Writable, get } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
@@ -23,23 +22,42 @@ export class ParticipantYBroker {
     this.clients = writable(new Map());
   }
 
-  get awareness() {
+  get tcpAwareness() {
     return this.worldDoc.provider.ws.awareness;
   }
 
-  setField(key, value) {
-    this.awareness.setLocalStateField(key, value);
+  get udpAwareness() {
+    return this.worldDoc.provider.gecko.awareness;
   }
 
-  setFields(data) {
-    this.awareness.setLocalState({
-      ...this.awareness.getLocalState(),
-      ...data,
+  setTCPField(key, value) {
+    this.tcpAwareness.setLocalStateField(key, value);
+  }
+
+  setTCPFields(data) {
+    this.tcpAwareness.setLocalState({
+      ...this.tcpAwareness.getLocalState(),
+      ...data
     });
   }
 
-  getField(key) {
-    return this.awareness.getLocalState()[key];
+  getTCPField(key) {
+    return this.tcpAwareness.getLocalState()[key];
+  }
+
+  setUDPField(key, value) {
+    this.udpAwareness.setLocalStateField(key, value);
+  }
+
+  setUDPFields(data) {
+    this.udpAwareness.setLocalState({
+      ...this.udpAwareness.getLocalState(),
+      ...data
+    });
+  }
+
+  getUDPField(key) {
+    return this.udpAwareness.getLocalState()[key];
   }
 
   subscribe(dispatch: Dispatch) {
@@ -64,9 +82,9 @@ export class ParticipantYBroker {
       }
     };
 
-    this.awareness.on("change", observer);
+    this.tcpAwareness.on("change", observer);
 
-    return () => this.awareness.off("change", observer);
+    return () => this.tcpAwareness.off("change", observer);
   }
 
   subscribeData(dispatch: Dispatch) {
@@ -74,9 +92,9 @@ export class ParticipantYBroker {
       const idsToCheck = changes.added.concat(changes.updated);
       for (const id of idsToCheck) {
         // Don't subscribe to self data
-        if (id === this.awareness.clientID) continue;
+        if (id === this.tcpAwareness.clientID) continue;
 
-        const state = this.awareness.getStates().get(id);
+        const state = this.tcpAwareness.getStates().get(id);
 
         const participantId = state["id"];
         const identityData = state["i"];
@@ -99,8 +117,8 @@ export class ParticipantYBroker {
       }
     };
 
-    this.awareness.on("change", observer);
+    this.tcpAwareness.on("change", observer);
 
-    return () => this.awareness.off("change", observer);
+    return () => this.tcpAwareness.off("change", observer);
   }
 }

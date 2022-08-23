@@ -69,8 +69,33 @@ export class ParticipantManager {
   }
 
   sendMyState() {
-    const state = this.broker.awareness.getLocalState();
+    this.sendMyTCPState();
+    this.sendMyUDPState();
+  }
+
+  sendMyTCPState() {
+    const state = this.broker.tcpAwareness.getLocalState();
     if (!state) return;
+
+    const tcpChangeDetected = (state["id"] !== participantId)
+      || (!isEqual(state["i"], this.local.identityData));
+  
+    // Only send a new TCP awareness update if a change is detected.
+    if (tcpChangeDetected) {
+      this.broker.setTCPFields({
+        "id": participantId,
+        "i": this.local.identityData,
+        "user": { // For QuillJS
+          name: this.local.identityData.name,
+          color: this.local.identityData.color
+        }
+      });
+    }
+  }
+
+  sendMyUDPState() {
+    const udpState = this.broker.udpAwareness.getLocalState();
+    if (!udpState) return;
 
     const avatar = this.local.avatar;
     if (!this.local.avatar) return;
@@ -78,38 +103,41 @@ export class ParticipantManager {
     const transformData = avatarGetTransformData(avatar);
     const animationData = avatarGetAnimationData(avatar);
 
-    const changeDetected = (state["id"] !== participantId)
-      || (!isEqual(state["i"], this.local.identityData))
-      || (!isEqual(state["a"], animationData))
-      || (!isEqual(state["t"], transformData));
-    
-    // Only send a new awareness update if a change is detected.
-    if (changeDetected) {
-      this.broker.setFields({
+    // Only send a new UDP awareness update if a change is detected.
+    const udpChangeDetected = (udpState["id"] !== participantId)
+      || (!isEqual(udpState["a"], animationData))
+      || (!isEqual(udpState["t"], transformData));
+
+    if (udpChangeDetected) {
+      this.broker.setUDPFields({
         "id": participantId,
-        "i": this.local.identityData,
         "a": animationData,
-        "t": transformData,
-        "user": { // For QuillJS
-          name: this.local.identityData.name,
-          color: this.local.identityData.color
-        }
-      }); 
+        "t": transformData
+      });
     }
   }
 
   applyOthersState(world: DecoratedECSWorld, provider: RelmProvider) {
-    const states = provider.ws.awareness.getStates();
+    const tcpStates = provider.ws.awareness.getStates();
+    const udpStates = provider.gecko.awareness.getStates();
 
-    for (let state of states.values()) {
+    const udpDataByParticipantIds = new Map();
+    for (const state of udpStates.values()) {
+      if (!("id" in state)) continue;
+      udpDataByParticipantIds.set(state["id"], state);
+    }
+
+    for (const state of tcpStates.values()) {
       if (!("id" in state)) continue;
       if (state["id"] === participantId) continue;
 
       const participant: Participant = this.participants.get(state["id"]);
-      if (!participant) continue;
+      if (!participant || !udpDataByParticipantIds.has(participant.participantId)) continue;
+      
+      const udpState = udpDataByParticipantIds.get(participant.participantId);
 
-      const transformData = state["t"];
-      const animationData = state["a"];
+      const transformData = udpState["t"];
+      const animationData = udpState["a"];
       const identityData = state["i"];
 
       setDataOnParticipant(

@@ -15,7 +15,10 @@ export const createWorldDoc =
   (dispatch: Dispatch) => {
     const worldDoc = new WorldDoc(ecsWorld);
 
-    worldDoc.connect(config.serverYjsUrl, relmDocId, authHeaders);
+    worldDoc.connect({
+      wsUrl: config.serverYjsUrl,
+      geckoUrl: config.serverUrl
+    }, relmDocId, authHeaders);
 
     let connected = false;
 

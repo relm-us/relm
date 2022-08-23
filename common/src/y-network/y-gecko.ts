@@ -304,6 +304,7 @@ export class GeckoProvider extends Observable<string> {
     awareness.on("update", this._awarenessUpdateHandler);
     this._checkInterval = /** @type {any} */ setInterval(() => {
       if (
+        this.gecko &&
         this.geckoConnected &&
         messageReconnectTimeout <
           time.getUnixTime() - this.geckoLastMessageReceived

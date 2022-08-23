@@ -25,6 +25,7 @@ import {
   YValues,
   YIDSTR,
   PROTECTED_WORLD_DOC_KEYS,
+  RelmURLOptions,
 } from "relm-common";
 
 import EventEmitter from "eventemitter3";
@@ -104,11 +105,11 @@ export class WorldDoc extends EventEmitter {
   }
 
   connect(
-    url: string,
+    urls: RelmURLOptions,
     subrelmDocId: string,
     authHeaders: AuthenticationHeaders
   ) {
-    this.provider = new RelmProvider(url, subrelmDocId, {
+    this.provider = new RelmProvider(urls, subrelmDocId, {
       doc: this.ydoc,
       udpDoc: this.udpYDoc,
       params: {
@@ -121,6 +122,7 @@ export class WorldDoc extends EventEmitter {
       },
       resyncInterval: 10000,
     });
+
     return this.provider;
   }
 
