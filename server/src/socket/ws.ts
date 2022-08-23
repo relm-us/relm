@@ -119,7 +119,7 @@ export const handler = async (conn: WebSocket, { docName, gc = true, callbackHan
     if (!pongReceived) {
       if (doc.conns.has(conn)) {
         closeConn(doc, conn);
-      }
+      }6
       clearInterval(pingInterval);
     } else if (doc.conns.has(conn)) {
       pongReceived = false;

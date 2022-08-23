@@ -173,7 +173,7 @@ relm.post(
         }
       } else {
         // Populate the new relm with basic ground
-        const newRelmDoc: Y.Doc = await getWSYDoc(relm.permanentDocId);
+        const newRelmDoc: Y.Doc = await getWSYDoc(relm.permanentDocId, { storeInCache: false });
         importWorldDoc(config.DEFAULT_RELM_CONTENT, newRelmDoc);
 
         console.log(
