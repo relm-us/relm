@@ -100,6 +100,11 @@
     object-fit: contain;
   }
 
+  img::before {
+    /* For `alt` text */
+    line-height: 3em;
+  }
+
   r-frame {
     display: flex;
     justify-content: center;
