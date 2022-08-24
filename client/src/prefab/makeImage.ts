@@ -20,7 +20,7 @@ export function makeImage(
     xa = 0,
     ya = -Math.PI / 16,
     za = 0,
-    url = "http://localhost:3000/asset/9809768b0111d0e82a05e5ecd82cdc8e-286840.webp",
+    url = "",
     collide = false,
   }
 ) {
