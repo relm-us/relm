@@ -1,4 +1,5 @@
 import { Component, StringType, BooleanType } from "~/ecs/base";
+import { AssetType } from "../../core";
 
 export class WebPage extends Component {
   url: string;
@@ -13,11 +14,11 @@ export class WebPage extends Component {
       },
     },
 
-    alwaysOn: {
-      type: BooleanType,
-      default: false,
+    asset: {
+      type: AssetType,
       editor: {
-        label: "Force Embed",
+        label: "Cover Image",
+        accept: ".png,.jpg,.jpeg",
       },
     },
   };

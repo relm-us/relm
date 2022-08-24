@@ -36,4 +36,8 @@ export class Asset {
     this.url = data.url;
     return this;
   }
+
+  isEmpty() {
+    return !this.url || this.url === "";
+  }
 }
