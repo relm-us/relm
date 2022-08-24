@@ -24,7 +24,7 @@ export class HdImage extends Component {
     asset: {
       type: AssetType,
       editor: {
-        label: "Asset",
+        label: "Image",
         accept: ".png,.jpg,.jpeg",
       },
     },
