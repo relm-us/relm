@@ -1,4 +1,4 @@
-import { AuthenticationHeaders, Security, GeckoProvider } from "relm-common";
+import { AuthenticationHeaders, Security, GeckoProvider, RelmProvider } from "relm-common";
 import { uuidv4 } from "../../utils/index.js";
 import * as Y from "yjs";
 import WebSocket from "ws";
@@ -25,7 +25,7 @@ export class RelmSocket {
   
   private options: SocketOptions;
   private authHeaders?: AuthenticationHeaders;
-  private socket?: GeckoProvider;
+  private provider?: RelmProvider;
 
   private bots: Map<number, RelmParticipant>;
 
@@ -38,7 +38,9 @@ export class RelmSocket {
     const relmDocId = await this.getSubRelmDocId();
     const authHeaders = await this.getAuthHeaders();
 
-    this.socket = new GeckoProvider(this.options.auth.api, relmDocId, new Y.Doc(), {
+    this.provider = new RelmProvider({ geckoUrl: this.options.auth.api, wsUrl: this.options.auth.api }, relmDocId, {
+      doc: new Y.Doc(),
+      udpDoc: new Y.Doc(),
       params: {
         "participant-id": authHeaders["x-relm-participant-id"],
         "participant-sig": authHeaders["x-relm-participant-sig"],
@@ -47,11 +49,12 @@ export class RelmSocket {
         "invite-token": authHeaders["x-relm-token"],
         "jwt": authHeaders["x-relm-jwt"]
       },
+      WebSocketPolyfill: WebSocket as any,
       resyncInterval: 10000
     });
     
     await new Promise(r => {
-      this.socket.on("status", ({status}) => {
+      this.provider.ws.on("status", ({status}) => {
         if (status === "connected") {
           // Connect all bots to socket.
           for (let botId = 0; botId < this.options.bot.amount; botId++) {
@@ -61,7 +64,7 @@ export class RelmSocket {
               clientId,
               participantId: uuidv4(),
               name: this.options.bot.getName(botId),
-              awareness: this.socket.awareness
+              provider: this.provider
             });
             bot.join();
       

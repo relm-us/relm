@@ -10,7 +10,6 @@ export const getWSYDoc = async (docname, { gc = true, callbackHandler = null, st
   let doc;
   
   if (storeInCache) {
-    console.log("trying cache");
     doc = map.setIfUndefined(wsDocs, docname, () => { 
       const doc = _getWSYDoc(docname, { gc, callbackHandler });
       wsDocs.set(docname, doc);

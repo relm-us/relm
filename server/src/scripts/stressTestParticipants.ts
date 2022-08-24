@@ -1,5 +1,12 @@
+import wrtc from "wrtc";
+import fetch from "node-fetch";
 import parseArgs from "minimist";
 import { RelmSocket } from "./client/RelmSocket.js";
+
+global.RTCPeerConnection = wrtc.RTCPeerConnection;
+global.RTCSessionDescription = wrtc.RTCSessionDescription;
+//@ts-ignore
+global.fetch = fetch;
 
 /*
   This script is responsible for stress testing Relm to easily see how well it performs under stress.
