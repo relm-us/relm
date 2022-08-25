@@ -30,8 +30,10 @@ import { highDefEnabled } from "~/stores/highDefEnabled";
 import { keyShift, key1, key2, key3 } from "~/stores/keys";
 import { keyLeft, keyRight, keyUp, keyDown, keySpace } from "~/stores/keys";
 import {
+  CAMERA_BUILD_DAMPENING,
   CAMERA_BUILD_ZOOM_MAX,
   CAMERA_BUILD_ZOOM_MIN,
+  CAMERA_PLAY_DAMPENING,
   CAMERA_PLAY_ZOOM_MAX,
   CAMERA_PLAY_ZOOM_MIN,
   FPS_SLOWDOWN_MIN_FPS,
@@ -307,6 +309,7 @@ export class WorldManager {
               CAMERA_BUILD_ZOOM_MIN,
               CAMERA_BUILD_ZOOM_MAX
             );
+            this.camera.dampening = CAMERA_BUILD_DAMPENING;
 
             break;
           case "play":
@@ -317,6 +320,7 @@ export class WorldManager {
               CAMERA_PLAY_ZOOM_MIN,
               CAMERA_PLAY_ZOOM_MAX
             );
+            this.camera.dampening = CAMERA_PLAY_DAMPENING;
 
             // Reset camera direction to "north"
             this.camera.direction.y = 0;
