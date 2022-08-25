@@ -44,9 +44,6 @@ export class WorldDoc extends EventEmitter {
   // The "root node" (document) containing all specification data for the world
   ydoc: Y.Doc = new Y.Doc();
 
-  // The "node" (document) containing any temporary data that is to be sent quickly but unreliably to other clients
-  udpYDoc: Y.Doc = new Y.Doc();
-
   // Yjs synchronization provider
   provider: RelmProvider;
 
@@ -111,7 +108,6 @@ export class WorldDoc extends EventEmitter {
   ) {
     this.provider = new RelmProvider(urls, subrelmDocId, {
       doc: this.ydoc,
-      udpDoc: this.udpYDoc,
       params: {
         "participant-id": authHeaders["x-relm-participant-id"],
         "participant-sig": authHeaders["x-relm-participant-sig"],
