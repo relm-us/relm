@@ -56,10 +56,14 @@ export class RenderableBaseSystem extends System {
   }
 
   modify(entity) {
+    this.setSvelteProps(entity, this.getProps(entity));
+  }
+
+  setSvelteProps(entity, props) {
     const css3d = entity.get(this.EcsComponentRef).value;
     if (css3d) {
       const component = css3d.userData.renderable;
-      component?.$set(this.getProps(entity));
+      component?.$set(props);
     }
   }
 
@@ -92,7 +96,7 @@ export class RenderableBaseSystem extends System {
     const spec: any = entity.get(this.EcsComponent);
     const cssPlane: CssPlane = entity.get(CssPlane);
     const size = cssPlane.getScreenSize();
-    return {
+    const props = {
       entity,
       ...spec,
       size,
@@ -100,5 +104,9 @@ export class RenderableBaseSystem extends System {
       radius: cssPlane.circleRadius,
       visible: cssPlane.visible,
     };
+    if (Math.random() < 0.04)
+      console.log("props", this.EcsComponent.name, props);
+
+    return props;
   }
 }

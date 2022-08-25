@@ -40,7 +40,7 @@
     font-size: var(--font-size, 14pt);
     font-weight: bold;
 
-    border: 0;
+    border: var(--button-border, 0);
     border-top-right-radius: var(--top-radius, var(--right-radius, 8px));
     border-bottom-right-radius: var(--bottom-radius, var(--right-radius, 8px));
     border-top-left-radius: var(--top-radius, var(--left-radius, 8px));
