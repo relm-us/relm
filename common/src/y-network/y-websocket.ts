@@ -1,22 +1,115 @@
-import * as Y from "yjs";
-import { encoding, decoding } from "lib0";
-import { Observable } from "lib0/observable";
+/**
+ * @module provider/websocket
+ */
+
+/* eslint-env browser */
+
+import * as Y from "yjs"; // eslint-disable-line
 import * as bc from "lib0/broadcastchannel";
+import * as time from "lib0/time";
+import * as encoding from "lib0/encoding";
+import * as decoding from "lib0/decoding";
+import * as syncProtocol from "y-protocols/sync";
+import * as authProtocol from "y-protocols/auth";
+import * as awarenessProtocol from "y-protocols/awareness";
+import { Observable } from "lib0/observable";
 import * as math from "lib0/math";
 import * as url from "lib0/url";
-import * as time from "lib0/time";
-import * as awarenessProtocol from "y-protocols/awareness";
-import * as syncProtocol from "y-protocols/sync";
-import { WSMessageHandler, messageHandlers } from "./handlers.js";
 
 const messageSync = 0;
 const messageQueryAwareness = 3;
 const messageAwareness = 1;
+const messageAuth = 2;
+
+type MessageHandler = (
+  encoder: encoding.Encoder,
+  decoder: decoding.Decoder,
+  provider: WebsocketProvider,
+  emitSynced: boolean,
+  messageType: number
+) => void;
+
+/**
+ *                       encoder,          decoder,          provider,          emitSynced, messageType
+ * @type {Array<function(encoding.Encoder, decoding.Decoder, WebsocketProvider, boolean,    number):void>}
+ */
+const messageHandlers: MessageHandler[] = [];
+
+messageHandlers[messageSync] = (
+  encoder,
+  decoder,
+  provider,
+  emitSynced,
+  messageType
+) => {
+  encoding.writeVarUint(encoder, messageSync);
+  const syncMessageType = syncProtocol.readSyncMessage(
+    decoder,
+    encoder,
+    provider.doc,
+    provider
+  );
+  if (
+    emitSynced &&
+    syncMessageType === syncProtocol.messageYjsSyncStep2 &&
+    !provider.synced
+  ) {
+    provider.synced = true;
+  }
+};
+
+messageHandlers[messageQueryAwareness] = (
+  encoder,
+  decoder,
+  provider,
+  emitSynced,
+  messageType
+) => {
+  encoding.writeVarUint(encoder, messageAwareness);
+  encoding.writeVarUint8Array(
+    encoder,
+    awarenessProtocol.encodeAwarenessUpdate(
+      provider.awareness,
+      Array.from(provider.awareness.getStates().keys())
+    )
+  );
+};
+
+messageHandlers[messageAwareness] = (
+  encoder,
+  decoder,
+  provider,
+  emitSynced,
+  messageType
+) => {
+  awarenessProtocol.applyAwarenessUpdate(
+    provider.awareness,
+    decoding.readVarUint8Array(decoder),
+    provider
+  );
+};
+
+messageHandlers[messageAuth] = (
+  encoder,
+  decoder,
+  provider,
+  emitSynced,
+  messageType
+) => {
+  authProtocol.readAuthMessage(decoder, provider.doc, permissionDeniedHandler);
+};
 
 const reconnectTimeoutBase = 1200;
 const maxReconnectTimeout = 2500;
-// TODO - this should depend on awareness.outdatedTime
+// @todo - this should depend on awareness.outdatedTime
 const messageReconnectTimeout = 30000;
+
+/**
+ * @param {WebsocketProvider} provider
+ * @param {string} reason
+ */
+const permissionDeniedHandler = (provider, reason) =>
+  console.warn(`Permission denied to access ${provider.url}.\n${reason}`);
 
 /**
  * @param {WebsocketProvider} provider
@@ -24,7 +117,7 @@ const messageReconnectTimeout = 30000;
  * @param {boolean} emitSynced
  * @return {encoding.Encoder}
  */
-const readMessage = (provider: WebsocketProvider, buf: Uint8Array, emitSynced: boolean) => {
+const readMessage = (provider, buf, emitSynced) => {
   const decoder = decoding.createDecoder(buf);
   const encoder = encoding.createEncoder();
   const messageType = decoding.readVarUint(decoder);
@@ -40,7 +133,7 @@ const readMessage = (provider: WebsocketProvider, buf: Uint8Array, emitSynced: b
 /**
  * @param {WebsocketProvider} provider
  */
- const setupWS = (provider) => {
+const setupWS = (provider) => {
   if (provider.shouldConnect && provider.ws === null) {
     const websocket = new provider._WS(provider.url);
     websocket.binaryType = "arraybuffer";
@@ -142,6 +235,19 @@ const broadcastMessage = (provider, buf) => {
   }
 };
 
+/**
+ * Websocket Provider for Yjs. Creates a websocket connection to sync the shared document.
+ * The document name is attached to the provided url. I.e. the following example
+ * creates a websocket connection to http://localhost:1234/my-document-name
+ *
+ * @example
+ *   import * as Y from 'yjs'
+ *   import { WebsocketProvider } from 'y-websocket'
+ *   const doc = new Y.Doc()
+ *   const provider = new WebsocketProvider('http://localhost:1234', 'my-document-name', doc)
+ *
+ * @extends {Observable<string>}
+ */
 export class WebsocketProvider extends Observable<string> {
   bcChannel: string;
   url: string;
@@ -153,7 +259,7 @@ export class WebsocketProvider extends Observable<string> {
   wsconnecting: boolean;
   bcconnected: boolean;
   wsUnsuccessfulReconnects: number;
-  messageHandlers: WSMessageHandler[];
+  messageHandlers: MessageHandler[];
   _synced: boolean;
   ws: WebSocket;
   wsLastMessageReceived: number;

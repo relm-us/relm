@@ -73,7 +73,7 @@ export class ParticipantManager {
   }
 
   sendMyTCPState() {
-    const state = this.broker.tcpAwareness.getLocalState();
+    const state = this.broker.awareness.getLocalState();
     if (!state) return;
 
     const tcpChangeDetected = (state["id"] !== participantId)

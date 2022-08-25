@@ -1,19 +1,23 @@
 import WebSocket from "ws";
 import { createServer } from "http";
+import { setupWSConnection } from "relm-common";
 
-import { Participant, Permission, Doc } from "./db/index.js";
-import { hasPermission } from "./utils/index.js";
 import { app } from "./server_http.js";
-import { handler } from "./socket/ws.js";
-import { ydocStats } from "./ydocStats.js";
+import { Participant, Permission, Doc } from "./db/index.js";
+import { ydocStats } from "./getYDoc.js";
+import { hasPermission } from "./utils/hasPermission.js";
 
 export const server = createServer();
 
-const wss = new WebSocket.Server({ noServer: true });
+let wss = new WebSocket.Server({ noServer: true });
+
+wss.on("connection", (conn, req) => {
+  setupWSConnection(conn, req, {
+    callbackHandler: ydocStats,
+  });
+});
 
 server.on("request", app);
-
-wss.on("connection", (conn, req) => handler(conn, { docName: getRelmDocFromRequest(req), callbackHandler: ydocStats }));
 
 function getRelmDocFromRequest(req) {
   return req.url.slice(1).split("?")[0];
@@ -32,7 +36,7 @@ server.on("upgrade", async (req, socket, head) => {
   const participantSig = params.get("participant-sig");
   let pubkeyX = params.get("pubkey-x");
   let pubkeyY = params.get("pubkey-y");
-  console.log("ws participant connected:", participantId);
+  console.log("participant connected:", participantId);
 
   let verifiedPubKey;
   try {

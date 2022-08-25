@@ -3,10 +3,17 @@ import {
   YComponents,
   YEntities,
   YValues,
+  getYDoc as ywsGetYDoc,
 } from "relm-common";
 import * as Y from "yjs";
 
 import { Doc } from "./db/index.js";
+
+export async function getYDoc(docId: string): Promise<Y.Doc> {
+  const doc = await ywsGetYDoc(docId);
+  await doc.whenSynced;
+  return doc;
+}
 
 export const ydocStats = async (update, origin, doc: Y.Doc) => {
   if (!doc) {

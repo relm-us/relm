@@ -22,23 +22,23 @@ export class ParticipantYBroker {
     this.clients = writable(new Map());
   }
 
-  get tcpAwareness() {
+  get awareness() {
     return this.worldDoc.provider.ws.awareness;
   }
 
   setTCPField(key, value) {
-    this.tcpAwareness.setLocalStateField(key, value);
+    this.awareness.setLocalStateField(key, value);
   }
 
   setTCPFields(data) {
-    this.tcpAwareness.setLocalState({
-      ...this.tcpAwareness.getLocalState(),
+    this.awareness.setLocalState({
+      ...this.awareness.getLocalState(),
       ...data
     });
   }
 
   getTCPField(key) {
-    return this.tcpAwareness.getLocalState()[key];
+    return this.awareness.getLocalState()[key];
   }
 
   setUDPField(key, value) {
@@ -78,9 +78,9 @@ export class ParticipantYBroker {
       }
     };
 
-    this.tcpAwareness.on("change", observer);
+    this.awareness.on("change", observer);
 
-    return () => this.tcpAwareness.off("change", observer);
+    return () => this.awareness.off("change", observer);
   }
 
   subscribeData(dispatch: Dispatch) {
@@ -88,9 +88,9 @@ export class ParticipantYBroker {
       const idsToCheck = changes.added.concat(changes.updated);
       for (const id of idsToCheck) {
         // Don't subscribe to self data
-        if (id === this.tcpAwareness.clientID) continue;
+        if (id === this.awareness.clientID) continue;
 
-        const state = this.tcpAwareness.getStates().get(id);
+        const state = this.awareness.getStates().get(id);
 
         const participantId = state["id"];
         const identityData = state["i"];
@@ -113,8 +113,8 @@ export class ParticipantYBroker {
       }
     };
 
-    this.tcpAwareness.on("change", observer);
+    this.awareness.on("change", observer);
 
-    return () => this.tcpAwareness.off("change", observer);
+    return () => this.awareness.off("change", observer);
   }
 }

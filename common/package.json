@@ -33,7 +33,9 @@
     "@geckos.io/client": "^2.2.1",
     "base64-arraybuffer-es6": "^0.6.0",
     "lib0": "0.2.52",
+    "lodash.debounce": "^4.0.8",
     "three": "0.141.0",
+    "util": "^0.12.4",
     "y-leveldb": "^0.1.0",
     "y-protocols": "1.0.5"
   },
