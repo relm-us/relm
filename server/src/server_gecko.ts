@@ -1,4 +1,4 @@
-import GeckoServer, { geckos } from "@geckos.io/server";
+import GeckoServer from "@geckos.io/server";
 
 import { Participant, Permission, Doc } from "./db/index.js";
 import { hasPermission } from "./utils/index.js";
