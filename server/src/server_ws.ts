@@ -36,7 +36,7 @@ server.on("upgrade", async (req, socket, head) => {
   const participantSig = params.get("participant-sig");
   let pubkeyX = params.get("pubkey-x");
   let pubkeyY = params.get("pubkey-y");
-  console.log("participant connected:", participantId);
+  console.log("ws participant connected:", participantId);
 
   let verifiedPubKey;
   try {

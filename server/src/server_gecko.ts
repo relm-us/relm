@@ -24,7 +24,7 @@ export const geckoServer = GeckoServer({
     const pubkeyX = params["pubkey-x"];
     const pubkeyY = params["pubkey-y"];
 
-    console.log("participant connected:", participantId);
+    console.log("gecko participant connected:", participantId);
   
     let verifiedPubKey;
     try {

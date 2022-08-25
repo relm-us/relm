@@ -85,7 +85,7 @@ encodingHandlers[SERVERBOUND_PARTICIPANT_UPDATE_ID] = (encoder, storage, partici
  *
  * @example
  *   import * as Y from 'yjs'
- *   import { GeckoProvider } from 'y-websocket'
+ *   import { GeckoProvider } from 'y-gecko'
  *   const provider = new GeckoProvider('http://localhost:1234', 'my-document-name')
  *
  * @extends {Observable<string>}
@@ -103,12 +103,9 @@ export class GeckoProvider extends Observable<string> {
   /**
    * @param {string} serverUrl
    * @param {string} docId
-   * @param {Y.Doc} doc
    * @param {object} [opts]
    * @param {boolean} [opts.connect]
-   * @param {awarenessProtocol.Awareness} [opts.awareness]
    * @param {Object<string,string>} [opts.params]
-   * @param {number} [opts.resyncInterval] Request server state every `resyncInterval` milliseconds
    */
   constructor(
     serverUrl,
@@ -228,6 +225,7 @@ export class GeckoProvider extends Observable<string> {
 
         switch (packetId) {
           case CLIENTBOUND_MAP_SYNC_ID:
+            // Server is sending current storage.
             this.storage = data;
 
             for (const participantId in this.storage) {
@@ -235,6 +233,7 @@ export class GeckoProvider extends Observable<string> {
             }
             break;
           case CLIENTBOUND_PARTICIPANT_UPDATE_ID:
+            // Participant updated their data/left
             if (Object.keys(data.state).length === 0) {
               this.storage.delete(data.participantId);
             } else {
