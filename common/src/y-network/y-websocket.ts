@@ -7,7 +7,7 @@ import * as url from "lib0/url";
 import * as time from "lib0/time";
 import * as awarenessProtocol from "y-protocols/awareness";
 import * as syncProtocol from "y-protocols/sync";
-import { MessageHandler, messageHandlers } from "./handlers.js";
+import { WSMessageHandler, messageHandlers } from "./handlers.js";
 
 const messageSync = 0;
 const messageQueryAwareness = 3;
@@ -153,7 +153,7 @@ export class WebsocketProvider extends Observable<string> {
   wsconnecting: boolean;
   bcconnected: boolean;
   wsUnsuccessfulReconnects: number;
-  messageHandlers: MessageHandler[];
+  messageHandlers: WSMessageHandler[];
   _synced: boolean;
   ws: WebSocket;
   wsLastMessageReceived: number;

@@ -4,7 +4,7 @@ import type {
   UpdateData,
 } from "~/types";
 
-import { Appearance, Equipment, RelmProvider } from "relm-common";
+import { Appearance, Equipment, RelmProvider, isEqual } from "relm-common";
 
 import { participantId } from "./participantId";
 
@@ -15,7 +15,6 @@ import {
   setDataOnParticipant,
 } from "./Avatar/transform";
 import { ParticipantYBroker } from "./ParticipantYBroker";
-import { isEqual } from "~/utils/isEqual";
 
 export class ParticipantManager {
   dispatch: Dispatch;
@@ -94,8 +93,7 @@ export class ParticipantManager {
   }
 
   sendMyUDPState() {
-    const udpState = this.broker.udpAwareness.getLocalState();
-    if (!udpState) return;
+    const udpState = this.broker.worldDoc.provider.gecko.getFields();
 
     const avatar = this.local.avatar;
     if (!this.local.avatar) return;
@@ -104,13 +102,11 @@ export class ParticipantManager {
     const animationData = avatarGetAnimationData(avatar);
 
     // Only send a new UDP awareness update if a change is detected.
-    const udpChangeDetected = (udpState["id"] !== participantId)
-      || (!isEqual(udpState["a"], animationData))
+    const udpChangeDetected = (!isEqual(udpState["a"], animationData))
       || (!isEqual(udpState["t"], transformData));
 
     if (udpChangeDetected) {
       this.broker.setUDPFields({
-        "id": participantId,
         "a": animationData,
         "t": transformData
       });
@@ -119,22 +115,17 @@ export class ParticipantManager {
 
   applyOthersState(world: DecoratedECSWorld, provider: RelmProvider) {
     const tcpStates = provider.ws.awareness.getStates();
-    const udpStates = provider.gecko.awareness.getStates();
+    const udpStates = provider.gecko.storage;
 
-    const udpDataByParticipantIds = new Map();
-    for (const state of udpStates.values()) {
-      if (!("id" in state)) continue;
-      udpDataByParticipantIds.set(state["id"], state);
-    }
 
     for (const state of tcpStates.values()) {
       if (!("id" in state)) continue;
       if (state["id"] === participantId) continue;
 
       const participant: Participant = this.participants.get(state["id"]);
-      if (!participant || !udpDataByParticipantIds.has(participant.participantId)) continue;
+      if (!participant || !udpStates.has(participant.participantId)) continue;
       
-      const udpState = udpDataByParticipantIds.get(participant.participantId);
+      const udpState = udpStates.get(participant.participantId);
 
       const transformData = udpState["t"];
       const animationData = udpState["a"];

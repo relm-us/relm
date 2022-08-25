@@ -1,3 +1,4 @@
+import { isEqual } from "relm-common";
 import type { IdentityData } from "~/types";
 
 import { writable, Writable, get } from "svelte/store";
@@ -5,7 +6,6 @@ import { writable, Writable, get } from "svelte/store";
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
 import { Dispatch } from "~/main/ProgramTypes";
-import { isEqual } from "~/utils/isEqual";
 
 /**
  * An adapter between the WorldDoc's "identities" map (Yjs) and
@@ -26,10 +26,6 @@ export class ParticipantYBroker {
     return this.worldDoc.provider.ws.awareness;
   }
 
-  get udpAwareness() {
-    return this.worldDoc.provider.gecko.awareness;
-  }
-
   setTCPField(key, value) {
     this.tcpAwareness.setLocalStateField(key, value);
   }
@@ -46,18 +42,18 @@ export class ParticipantYBroker {
   }
 
   setUDPField(key, value) {
-    this.udpAwareness.setLocalStateField(key, value);
+    this.worldDoc.provider.gecko.setField(key, value);
   }
 
   setUDPFields(data) {
-    this.udpAwareness.setLocalState({
-      ...this.udpAwareness.getLocalState(),
+    this.worldDoc.provider.gecko.setFields({
+      ...this.worldDoc.provider.gecko.getFields(),
       ...data
     });
   }
 
   getUDPField(key) {
-    return this.udpAwareness.getLocalState()[key];
+    return this.worldDoc.provider.gecko.getField(key);
   }
 
   subscribe(dispatch: Dispatch) {

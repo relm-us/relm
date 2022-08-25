@@ -1,4 +1,4 @@
-import { AuthenticationHeaders, Security, GeckoProvider, RelmProvider } from "relm-common";
+import { AuthenticationHeaders, Security, RelmProvider } from "relm-common";
 import { uuidv4 } from "../../utils/index.js";
 import * as Y from "yjs";
 import WebSocket from "ws";

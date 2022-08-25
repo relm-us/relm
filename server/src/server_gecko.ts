@@ -1,8 +1,10 @@
-import GeckoServer from "@geckos.io/server";
+import GeckoServer, { geckos } from "@geckos.io/server";
 
 import { Participant, Permission, Doc } from "./db/index.js";
 import { hasPermission } from "./utils/index.js";
-import { handler } from "./socket/gecko.js";
+import { setupGeckoConnection } from "./socket/gecko.js";
+
+const storage = new Map();
 
 export const geckoServer = GeckoServer({
   cors: { allowAuthorization: true, origin: "*" }, // Required since client is on separate domain
@@ -73,9 +75,10 @@ export const geckoServer = GeckoServer({
 
     // Good to go!
     return {
-      docId
+      docId,
+      participantId
     };
   }
 });
 
-geckoServer.onConnection(handler);
+geckoServer.onConnection(channel => setupGeckoConnection(storage, channel));

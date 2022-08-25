@@ -1,5 +1,6 @@
 import { get, Writable } from "svelte/store";
 import { Vector3 } from "three";
+import { isEqual, Security } from "relm-common";
 
 import { DeviceIds } from "video-mirror";
 
@@ -7,7 +8,6 @@ import { worldManager } from "~/world";
 
 import { Cmd } from "~/utils/runtime";
 import { exists } from "~/utils/exists";
-import { isEqual } from "~/utils/isEqual";
 
 import AvatarChooser from "~/ui/AvatarBuilder/AvatarChooser.svelte";
 
@@ -55,7 +55,6 @@ import { getIdentityData } from "./effects/getIdentityData";
 import { saveIdentityData } from "./effects/saveIdentityData";
 import { connectedAccount } from "~/stores/connectedAccount";
 import { permits } from "~/stores/permits";
-import { Security } from "~/../../common/dist";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")

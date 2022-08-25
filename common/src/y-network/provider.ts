@@ -24,7 +24,6 @@ export class RelmProvider {
     subrelmDocId: string,
     { 
       doc,
-      udpDoc,
       connect = true,
       params = {},
       WebSocketPolyfill = WebSocket,
@@ -37,11 +36,10 @@ export class RelmProvider {
         resyncInterval,
         awareness: new awarenessProtocol.Awareness(doc) });
 
-      this.gecko = new GeckoProvider(urlOptions.geckoUrl, subrelmDocId, udpDoc, {
+      this.gecko = new GeckoProvider(urlOptions.geckoUrl, subrelmDocId, {
         connect,
-        params,
-        resyncInterval,
-        awareness: new awarenessProtocol.Awareness(udpDoc) });
+        params
+      });
   }
 
   connect() {

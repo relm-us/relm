@@ -28,7 +28,7 @@ export class RelmParticipant {
   constructor(options: ParticipantOptions) {
     this.options = options;
     this.tcpState = new LocalState(options.clientId, options.provider.ws.awareness);
-    this.udpState = new LocalState(options.clientId, options.provider.gecko.awareness);
+    // this.udpState = new LocalState(options.clientId, options.provider.gecko.awareness);
   }
 
   join() {
@@ -37,7 +37,7 @@ export class RelmParticipant {
 
     // Broadcast our spawning to other players
     this.options.provider.ws.awareness.states.set(this.options.clientId, {});
-    this.options.provider.gecko.awareness.states.set(this.options.clientId, {});
+    // this.options.provider.gecko.awareness.states.set(this.options.clientId, {});
 
     this.tcpState.setLocalField("id", this.options.participantId);
     this.tcpState.setLocalField("user", { color: randomColor(), name: this.options.name });

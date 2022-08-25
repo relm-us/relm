@@ -4,7 +4,7 @@ import { encoding } from "lib0";
 import WebSocket from "ws";
 
 import { defaultCallbackHandler, isDefaultCallbackSet, ProviderSharedDoc, messageAwareness, messageSync } from "./common.js";
-import { getPersistence, getWSYDoc, removeWSYDocFromCache } from "../utils/index.js";
+import { getPersistence, getYDoc, removeWSYDocFromCache } from "../utils/index.js";
 
 const OPEN_WEBSOCKET_STATE = 1;
 
@@ -13,7 +13,7 @@ const pingTimeout = 30000;
 export const handler = async (conn: WebSocket, { docName, gc = true, callbackHandler = null } : { docName: string, gc?: boolean, callbackHandler?: any }) => {
   conn.binaryType = "arraybuffer";
   // get doc, initialize if it does not exist yet
-  const doc = await getWSYDoc(docName, { gc, callbackHandler });
+  const doc = await getYDoc(docName, { gc, callbackHandler });
   doc.conns.set(conn, new Set());
   // listen and reply to events
   conn.on("message", message => doc.handlePacket(conn, new Uint8Array(message as ArrayBufferLike)));

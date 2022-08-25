@@ -13,7 +13,7 @@ import {
   respondWithSuccess,
   respondWithError,
   wrapAsync,
-  getWSYDoc
+  getYDoc
 } from "../utils/index.js";
 
 import { Asset } from "../db/index.js";
@@ -137,7 +137,7 @@ asset.post(
     const entityId: string = req.body.entityId;
     const yCenter: number = req.body.yCenter || 0.0;
 
-    const relmDoc: Y.Doc = await getWSYDoc(req.relm.permanentDocId, { storeInCache: false });
+    const relmDoc: Y.Doc = await getYDoc(req.relm.permanentDocId, { storeInCache: false });
     const yentities: Y.Array<YEntity> = relmDoc.getArray("entities");
 
     // Find the entity
@@ -208,7 +208,7 @@ asset.post(
     const assetId: string = req.body.assetId;
     const position: number[] = req.body.position;
 
-    const relmDoc: Y.Doc = await getWSYDoc(req.relm.permanentDocId, { storeInCache: false });
+    const relmDoc: Y.Doc = await getYDoc(req.relm.permanentDocId, { storeInCache: false });
     const yentities: Y.Array<YEntity> = relmDoc.getArray("entities");
 
     const asset = await Asset.getAsset({ assetId });

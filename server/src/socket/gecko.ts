@@ -1,72 +1,69 @@
-import * as syncProtocol from "y-protocols/sync";
-import * as awarenessProtocol from "y-protocols/awareness";
-import { encoding } from "lib0";
+import { decoding, encoding } from "lib0";
 import { ServerChannel } from "@geckos.io/server";
+import { CLIENTBOUND_MAP_SYNC_ID, CLIENTBOUND_PARTICIPANT_UPDATE_ID, decodingHandlers, encodingHandlers, SERVERBOUND_PARTICIPANT_UPDATE_ID } from "relm-common";
 
-import { ydocStats } from "../ydocStats.js";
-import { defaultCallbackHandler, isDefaultCallbackSet, messageAwareness, messageSync, ProviderSharedDoc } from "./common.js";
-import { getGeckoYDoc } from "../utils/yDoc.js";
+const clients: Set<ServerChannel> = new Set();
 
-export const handler = async channel => {
-  const doc = await getGeckoYDoc(channel.userData.docId, { callbackHandler: ydocStats });
-  doc.conns.set(channel, new Set());
-
-  channel.onRaw(buffer => {
-    const message = new Uint8Array(buffer as Buffer);
-    doc.handlePacket(channel, new Uint8Array(message));
-  });
-
-  channel.onDisconnect(() => {
-    const controlledIds = doc.conns.get(channel);
-    doc.conns.delete(channel);
-
-    awarenessProtocol.removeAwarenessStates(
-      doc.awareness,
-      Array.from(controlledIds),
-      null
-    );
-  });
-
-  if (doc.whenSynced) {
-    await doc.whenSynced;
-  }
-
-  const encoder = encoding.createEncoder();
-  encoding.writeVarUint(encoder, messageSync);
-  syncProtocol.writeSyncStep1(encoder, doc);
-  channel.raw.emit(encoding.toUint8Array(encoder));
-  const awarenessStates = doc.awareness.getStates();
-  if (awarenessStates.size > 0) {
-    const encoder = encoding.createEncoder();
-    encoding.writeVarUint(encoder, messageAwareness);
-    encoding.writeVarUint8Array(
-      encoder,
-      awarenessProtocol.encodeAwarenessUpdate(
-        doc.awareness,
-        Array.from(awarenessStates.keys())
-      )
-    );
-    channel.raw.emit(encoding.toUint8Array(encoder));
+const send = (channel: ServerChannel, message: Uint8Array) => {
+  try {
+    channel.raw.emit(message);
+  } catch (error) {
+    console.error(`Failed to send a message to gecko participant id ${channel.userData.participantId}`, error);
+    channel.close();
   }
 };
 
-export class GeckoSharedDoc extends ProviderSharedDoc<ServerChannel> {
-  /**
-   * @param {string} name
-   */
-  constructor(
-    name,
-    { callbackHandler = isDefaultCallbackSet ? defaultCallbackHandler : null } : { callbackHandler: any }
-  ) {
-    super(name, { callbackHandler });
-  }
+export const setupGeckoConnection = async (storage: Map<string, any>, channel: ServerChannel) => {
+  const { participantId } = channel.userData;
+  clients.add(channel);
 
-  send(conn: ServerChannel, buffer: Uint8Array) {
-    try {
-      conn.raw.emit(buffer);
-    } catch (error) {
-      conn.close();
+  channel.onRaw(buffer => {
+    const message = new Uint8Array(buffer as Buffer);
+
+    const decoder = decoding.createDecoder(message);
+    const packetId = decoding.readVarUint(decoder);
+
+    const handler = decodingHandlers[packetId];
+    if (!handler) {
+      console.error(`Client (${participantId}) sent invalid packet id: ${packetId}`);
+      channel.close();
+      return;
     }
-  }
-  
-}
+    const data = handler(decoder);
+
+    switch (packetId) {
+      case SERVERBOUND_PARTICIPANT_UPDATE_ID:
+        // Broadcast change to other clients
+        storage.set(participantId, data);
+        
+        const encoder = encoding.createEncoder();
+        encoding.writeUint8(encoder, CLIENTBOUND_PARTICIPANT_UPDATE_ID);
+        encodingHandlers[CLIENTBOUND_PARTICIPANT_UPDATE_ID](encoder, storage, participantId);
+        for (const client of clients) {
+          if (client === channel) continue;
+
+          send(client, encoding.toUint8Array(encoder));
+        }
+        break;
+    }
+  });
+
+  channel.onDisconnect(() => {
+    storage.delete(participantId);
+    clients.delete(channel);
+
+    // Broadcast that the participant's data should be deleted to all other channels.
+    const encoder = encoding.createEncoder();
+    encoding.writeUint8(encoder, CLIENTBOUND_PARTICIPANT_UPDATE_ID);
+    encodingHandlers[CLIENTBOUND_PARTICIPANT_UPDATE_ID](encoder, storage, participantId);
+    for (const client of clients) {
+      send(client, encoding.toUint8Array(encoder));
+    }
+  });
+
+  // Send the current map to the client 
+  const encoder = encoding.createEncoder();
+  encoding.writeUint8(encoder, CLIENTBOUND_MAP_SYNC_ID);
+  encodingHandlers[CLIENTBOUND_MAP_SYNC_ID](encoder, storage);
+  send(channel, encoding.toUint8Array(encoder));
+};
