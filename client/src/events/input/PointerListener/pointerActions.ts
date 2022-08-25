@@ -81,11 +81,7 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
     setNextPointerState("click");
     shiftKeyOnClick = shiftKey;
 
-    const planes: WorldPlanes =
-      worldManager.world.perspective.getAvatarPlanes();
-    const position = new Vector3();
-    planes.getWorldFromScreen(pointerPosition, position);
-    worldManager.dragPlane.setOrigin(position);
+    setDragPlaneOrigin(pointerPosition);
 
     // Begin tracking what was clicked on, in case this is a click
     selectionLogic.mousedown(pointerDownFound, shiftKey);
@@ -119,16 +115,7 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
       setNextPointerState("click");
       worldManager.dragPlane.setOrientation("XZ");
 
-      if (pointerDownFound.length > 0) {
-        const position = clickedPosition(pointerDownFound[0], world);
-        worldManager.dragPlane.setOrigin(position);
-      } else {
-        const planes: WorldPlanes =
-          worldManager.world.perspective.getAvatarPlanes();
-        const position = new Vector3();
-        planes.getWorldFromScreen(pointerPosition, position);
-        worldManager.dragPlane.setOrigin(position);
-      }
+      setDragPlaneOrigin(pointerPosition);
     }
   }
 }
@@ -312,4 +299,11 @@ function clickedPosition(entityId, world) {
   const entity = world.entities.getById(entityId);
   const object3d: Object3D = entity?.get(Object3DRef)?.value;
   return object3d?.userData.lastIntersectionPoint;
+}
+
+function setDragPlaneOrigin(screenPosition: Vector2) {
+  const planes: WorldPlanes = worldManager.world.perspective.getAvatarPlanes();
+  const position = new Vector3();
+  planes.getWorldFromScreen(screenPosition, position);
+  worldManager.dragPlane.setOrigin(position);
 }
