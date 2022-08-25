@@ -7,5 +7,6 @@ export type CutCircle = {
   y: number;
   diameter: number;
   cuts: Cut[];
+  visible: boolean;
   component: SvelteComponent;
 };

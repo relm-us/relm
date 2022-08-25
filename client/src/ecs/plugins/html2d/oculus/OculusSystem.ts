@@ -167,6 +167,7 @@ export class OculusSystem extends System {
       diameter: spec.diameter,
       x: spec.x,
       y: spec.y,
+      visible: spec.showVideo,
       cuts: null,
     };
   }
@@ -176,9 +177,12 @@ export class OculusSystem extends System {
       // Reset cuts
       c1.cuts = null;
 
+      if (!c1.visible) continue;
+
       for (const c2 of this.circles) {
         // Don't try overlapping with self
         if (c1 === c2) continue;
+        if (!c2.visible) continue;
 
         const isect = circleOverlapIntersectionPoints(c1, c2);
 
