@@ -36,7 +36,6 @@
     "deep-diff": "^1.0.2",
     "eventemitter3": "^4.0.7",
     "lodash": "^4.17.21",
-    "mediasoup-client": "github:versatica/mediasoup-client#v3",
     "nanoid": "^3.3.4",
     "postprocessing": "6.28.3",
     "protoo-client": "^4.0.6",
