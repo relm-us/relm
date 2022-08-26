@@ -56,7 +56,7 @@
     background-color: var(--bg-color, rgba(0, 0, 0, 0.25));
     border-radius: 5px;
 
-    margin: 0px 16px;
+    margin: var(--pane-margin, 0px 16px);
   }
 
   header {

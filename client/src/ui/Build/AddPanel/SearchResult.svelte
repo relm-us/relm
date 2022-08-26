@@ -17,8 +17,7 @@
 <style>
   r-result {
     display: block;
-    width: 80px;
-    height: 80px;
+    aspect-ratio: 1;
 
     margin: 4px;
 

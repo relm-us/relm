@@ -234,10 +234,17 @@
   }
 
   r-results {
-    display: flex;
-    margin: 8px 4px 0 10px;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 0 12px;
   }
+  
+  r-results :global(.tooltip-slot) {
+    /* Fixes slight padding issue when tooltip is inside grid CSS */
+    display: flex;
+    aspect-ratio: 1;
+  }
+
   r-pagination {
     display: flex;
     justify-content: space-between;
