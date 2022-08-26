@@ -3,9 +3,9 @@ import { createServer } from "http";
 import { setupWSConnection } from "relm-common";
 
 import { app } from "./server_http.js";
-import { Participant, Permission, Doc } from "./db/index.js";
 import { ydocStats } from "./getYDoc.js";
-import { hasPermission } from "./utils/hasPermission.js";
+
+import { AuthResult, isAuthorized } from "./isAuthorized.js";
 
 export const server = createServer();
 
@@ -28,6 +28,11 @@ function getUrlParams(requestUrl) {
   return new URLSearchParams(queryString);
 }
 
+function closeSocket(socket, errno: string, msg: string) {
+  socket.write(`HTTP/1.1 ${errno} ${msg}\r\n\r\n`);
+  socket.destroy();
+}
+
 server.on("upgrade", async (req, socket, head) => {
   const docId = getRelmDocFromRequest(req);
   const params = getUrlParams(req.url);
@@ -36,53 +41,37 @@ server.on("upgrade", async (req, socket, head) => {
   const participantSig = params.get("participant-sig");
   let pubkeyX = params.get("pubkey-x");
   let pubkeyY = params.get("pubkey-y");
-  console.log("participant connected:", participantId);
 
-  let verifiedPubKey;
-  try {
-    verifiedPubKey = await Participant.findOrCreateVerifiedPubKey({
-      participantId,
-      sig: participantSig,
-      x: pubkeyX,
-      y: pubkeyY,
-    });
-  } catch (err) {
-    console.warn("can't upgrade", err);
-    return;
-  }
+  console.log("websocket participant connected:", participantId);
 
-  // Check that we are authenticated first
-  if (verifiedPubKey) {
-    // Get relm from docId
-    const doc = await Doc.getDoc({ docId });
+  const result: AuthResult = await isAuthorized(docId, {
+    participantId,
+    sig: participantSig,
+    x: pubkeyX,
+    y: pubkeyY,
+  });
 
-    const permissions = await Permission.getPermissions({
-      participantId,
-      relmIds: [doc.relmId],
-    });
+  switch (result.kind) {
+    case "authorized":
+      wss.handleUpgrade(req, socket as any, head, (conn) => {
+        wss.emit("connection", conn, req);
+      });
+      break;
 
-    const permitted = hasPermission("access", permissions, doc.relmId);
-
-    if (permitted) {
-      if (doc === null) {
-        console.log(
-          `Participant '${participantId}' sought to sync doc '${docId}' but was rejected because it doesn't exist`
-        );
-        socket.write("HTTP/1.1 404 Not Found\r\n\r\n");
-        socket.destroy();
-      } else {
-        wss.handleUpgrade(req, socket as any, head, (conn) => {
-          wss.emit("connection", conn, req);
-        });
-      }
-    } else {
+    case "unauthorized":
       console.log(
-        `Participant '${participantId}' sought to enter '${docId}' but was rejected because unauthorized`,
-        params,
-        permissions
+        `participant ${participantId} denied entry to ${docId}`,
+        result.log
       );
-      socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
-      socket.destroy();
-    }
+      closeSocket(socket, "401", result.msg);
+      break;
+
+    case "error":
+      console.log(
+        `participant ${participantId} error trying to enter ${docId}`,
+        result.log
+      );
+      closeSocket(socket, "404", result.msg);
+      break;
   }
 });
