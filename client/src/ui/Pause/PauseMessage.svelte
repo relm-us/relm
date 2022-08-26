@@ -64,6 +64,7 @@
 
   .button {
     --bg-color: var(--selected-red, red);
+    --bg-hover-color: var(--selected-red-hover, red);
     --fg-color: white;
   }
   .button :global(button) {

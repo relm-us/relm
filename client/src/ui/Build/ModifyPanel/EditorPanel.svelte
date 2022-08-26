@@ -1,5 +1,5 @@
 <script lang="ts">
-  import LeftPanel, { Header, Pane } from "~/ui/lib/LeftPanel";
+  import BuildPanel, { Header, Pane } from "~/ui/lib/BuildPanel";
   import Button from "~/ui/lib/Button";
   import { selectedEntities, selectedGroups } from "~/stores/selection";
   import { worldManager } from "~/world";
@@ -21,8 +21,8 @@
   };
 </script>
 
-<LeftPanel on:minimize>
-  <Header>Modify</Header>
+<BuildPanel on:minimize>
+  <Header>Modify Object</Header>
 
   {#if $selectedEntities.size === 0}
     <info>Nothing selected</info>
@@ -44,7 +44,7 @@
       Objects: {$selectedEntities.size}
     </Pane>
   {/if}
-</LeftPanel>
+</BuildPanel>
 
 <style>
   info {

@@ -2,8 +2,7 @@
   import { worldManager } from "~/world";
   import { audioMode } from "~/stores/audioMode";
 
-  import { Pane } from "~/ui/lib/LeftPanel";
-  import { onMount } from "svelte";
+  import { Pane } from "~/ui/lib/BuildPanel";
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
 
   let audioModeIsProximity = $audioMode === "proximity";

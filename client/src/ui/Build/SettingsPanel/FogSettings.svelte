@@ -3,7 +3,7 @@
 
   import { worldManager } from "~/world";
 
-  import { Pane } from "~/ui/lib/LeftPanel";
+  import { Pane } from "~/ui/lib/BuildPanel";
   import ColorPicker from "~/ui/lib/ColorPicker";
   import Slider from "~/ui/lib/Slider";
   import { onMount } from "svelte";

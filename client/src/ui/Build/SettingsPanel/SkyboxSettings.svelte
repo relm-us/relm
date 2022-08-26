@@ -8,9 +8,8 @@
   import { Asset } from "~/ecs/plugins/core";
   import { Skybox } from "~/ecs/plugins/skybox";
 
-  import { Pane } from "~/ui/lib/LeftPanel";
+  import { Pane } from "~/ui/lib/BuildPanel";
   import SkyboxOption from "./SkyboxOption.svelte";
-  // import SkyboxUploadButton from "./SkyboxUploadButton.svelte";
   import SkyboxUploadButton from "~/ui/Build/shared/UploadButton";
 
   function onUploadedSkybox({ detail }) {

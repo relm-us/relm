@@ -7,7 +7,7 @@
 
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import Button from "~/ui/lib/Button";
-  import LeftPanel, { Header, Pane } from "~/ui/lib/LeftPanel";
+  import BuildPanel, { Header, Pane } from "~/ui/lib/BuildPanel";
 
   import StatsPane from "./StatsPane.svelte";
   import SystemToggle from "./SystemToggle.svelte";
@@ -50,7 +50,7 @@
   });
 </script>
 
-<LeftPanel on:minimize>
+<BuildPanel on:minimize>
   <Header>Performance</Header>
 
   <!-- Frames per second -->
@@ -139,7 +139,7 @@
       </table>
     </Pane>
   {/if}
-</LeftPanel>
+</BuildPanel>
 
 <style>
   table {

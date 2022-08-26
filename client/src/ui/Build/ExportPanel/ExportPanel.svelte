@@ -10,7 +10,7 @@
   import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
 
   import Button from "~/ui/lib/Button";
-  import LeftPanel, { Header } from "~/ui/lib/LeftPanel";
+  import BuildPanel, { Header } from "~/ui/lib/BuildPanel";
 
   let text;
   let errorState = false;
@@ -40,7 +40,7 @@
   });
 </script>
 
-<LeftPanel on:minimize>
+<BuildPanel on:minimize>
   <Header>Import / Export</Header>
   <container>
     {#if errorState}
@@ -53,7 +53,7 @@
       <Button on:click={applyText}>Apply</Button>
     </panel>
   </container>
-</LeftPanel>
+</BuildPanel>
 
 <style>
   container {

@@ -17,13 +17,12 @@
 <style>
   r-result {
     display: block;
-    width: 80px;
-    height: 80px;
+    overflow: hidden;
+    aspect-ratio: 1;
 
     margin: 4px;
-
-    border: 1px solid var(--foreground-dark-gray);
     border-radius: 5px;
+    background-color: var(--foreground-white);
   }
 
   r-result img {

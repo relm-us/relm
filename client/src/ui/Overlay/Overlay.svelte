@@ -28,10 +28,11 @@
   import { PauseAutomatically, PauseMessage } from "~/ui/Pause";
   import CenterCamera from "~/ui/CenterCamera";
   import Tooltip from "~/ui/lib/Tooltip";
+  import Toolbar from "~/ui/Build/Toolbar";
 
   import { globalEvents } from "~/events";
 
-  import { worldUIMode, openPanel, audioMode } from "~/stores";
+  import { worldUIMode, openPanel } from "~/stores";
   import { playState } from "~/stores/playState";
   import { chatOpen, unreadCount } from "~/stores/chat";
   import { localIdentityData } from "~/stores/identityData";
@@ -80,6 +81,29 @@
 <overlay class:open={buildMode}>
   <overlay-panel class="interactive">
     {#if buildMode}
+      <panel-tabs>
+        <Button
+          active={$openPanel === "add"}
+          depress={false}
+          on:click={() => ($openPanel = "add")}>Add</Button
+        >
+        <Button
+          active={$openPanel === "modify"}
+          depress={false}
+          on:click={() => ($openPanel = "modify")}>Modify</Button
+        >
+        <Button
+          active={$openPanel === "actions"}
+          depress={false}
+          on:click={() => ($openPanel = "actions")}>Actions</Button
+        >
+        <Button
+          active={$openPanel === "settings"}
+          depress={false}
+          on:click={() => ($openPanel = "settings")}>Settings</Button
+        >
+      </panel-tabs>
+
       {#if $openPanel === "add"}
         <AddPanel on:minimize={toPlayMode} />
       {/if}
@@ -105,37 +129,16 @@
       {#if $openPanel === "settings"}
         <SettingsPanel on:minimize={toPlayMode} />
       {/if}
-
-      <panel-tabs>
-        <Button
-          active={$openPanel === "add"}
-          on:click={() => ($openPanel = "add")}>Add</Button
-        >
-        <Button
-          active={$openPanel === "modify"}
-          on:click={() => ($openPanel = "modify")}>Modify</Button
-        >
-        <Button
-          active={$openPanel === "actions"}
-          on:click={() => ($openPanel = "actions")}>Actions</Button
-        >
-        <Button
-          active={$openPanel === "settings"}
-          on:click={() => ($openPanel = "settings")}>Settings</Button
-        >
-      </panel-tabs>
     {/if}
   </overlay-panel>
 
   <overlay-content>
-    <overlay-left class="interactive">
-      {#if $playState === "paused" || $debugMode}
-        <DebugPane {state} />
-      {/if}
-      {#if buildMode && $selectedEntities.size > 0}
-        <GroupUngroupButton />
-      {/if}
-    </overlay-left>
+    {#if buildMode}
+      <Toolbar />
+    {/if}
+    {#if $debugMode}
+      <DebugPane {state} />
+    {/if}
   </overlay-content>
 </overlay>
 
@@ -218,9 +221,8 @@
     pointer-events: none;
 
     display: flex;
-    flex-direction: row;
+    flex-direction: row-reverse;
     flex-wrap: wrap;
-    justify-content: space-between;
   }
   @media screen and (max-width: 480px) {
     overlay {
@@ -231,18 +233,12 @@
     pointer-events: all;
   }
   overlay-panel {
-    /* display: flex; */
+    display: flex;
     height: 100%;
     width: 0px;
   }
   overlay.open overlay-panel {
     width: 300px !important;
-  }
-  overlay-left {
-    display: flex;
-    flex-direction: column;
-    margin-top: 8px;
-    margin-left: 50px;
   }
   overlay-center {
     position: fixed;
@@ -258,18 +254,18 @@
   }
   overlay-content {
     display: flex;
-    justify-content: space-between;
-    flex-grow: 1;
   }
   panel-tabs {
     display: flex;
-    --margin: 0px;
-    --bottom-radius: 0px;
 
-    position: absolute;
-    min-width: 500px;
-    top: -20px;
-    left: 300px;
-    transform: translate(-50%) rotate(90deg) translate(50%, -50%);
+    height: 40px;
+    width: 40px;
+    transform: translate(-50%) rotate(90deg) translate(0%, -50%);
+
+    --margin: 0px;
+    --top-radius: 0px;
+
+    --bg-hover-color: var(--background-transparent-gray, gray);
+    --bg-color: var(--background-transparent-black, black);
   }
 </style>
