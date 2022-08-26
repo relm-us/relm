@@ -60,7 +60,7 @@ server.on("upgrade", async (req, socket, head) => {
 
     case "unauthorized":
       console.log(
-        `participant ${participantId} denied entry to ${docId}`,
+        `websocket participant ${participantId} denied entry to ${docId}`,
         result.log
       );
       closeSocket(socket, "401", result.msg);
@@ -68,7 +68,7 @@ server.on("upgrade", async (req, socket, head) => {
 
     case "error":
       console.log(
-        `participant ${participantId} error trying to enter ${docId}`,
+        `websocket participant ${participantId} error trying to enter ${docId}`,
         result.log
       );
       closeSocket(socket, "404", result.msg);
