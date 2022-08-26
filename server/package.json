@@ -24,6 +24,8 @@
     "pretest": "dropdb relm-test; createdb relm-test"
   },
   "dependencies": {
+    "@geckos.io/server": "^2.2.3",
+    "@geckos.io/snapshot-interpolation": "^1.1.0",
     "@peculiar/webcrypto": "^1.0.27",
     "aws-sdk": "2.1157.0",
     "base64-arraybuffer": "^0.2.0",

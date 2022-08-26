@@ -22,6 +22,7 @@ import type { State, Message, Program, Effect } from "./ProgramTypes";
 import { initParticipants } from "./init/initParticipants";
 
 import { createECSWorld } from "./effects/createECSWorld";
+import { connectGecko } from "./effects/connectGecko";
 import { getPositionFromEntryway } from "./effects/getPositionFromEntryway";
 import { initWorldManager } from "./effects/initWorldManager";
 import { getRelmPermitsAndMetadata } from "./effects/getRelmPermitsAndMetadata";
@@ -402,13 +403,25 @@ export function makeProgram(): Program {
             ecsWorld: msg.ecsWorld,
             ecsWorldLoaderUnsub: msg.ecsWorldLoaderUnsub,
           },
-          createWorldDoc(msg.ecsWorld, state.relmDocId, state.authHeaders),
+          connectGecko(state.relmDocId, state.authHeaders),
+        ];
+      }
+
+      case "connectedGecko": {
+        exists(msg.geckoProvider, "worldDoc");
+
+        return [
+          {
+            ...state,
+            geckoProvider: msg.geckoProvider,
+          },
+          createWorldDoc(state.ecsWorld, state.relmDocId, state.authHeaders),
         ];
       }
 
       case "createdWorldDoc": {
-        exists(state.ecsWorld, "ecsWorld");
         exists(msg.worldDoc, "worldDoc");
+        exists(state.geckoProvider, "geckoProvider");
 
         return [
           {
@@ -421,7 +434,10 @@ export function makeProgram(): Program {
             send({ id: "loadStart" }),
 
             // Initialize the Participant Program
-            subscribeBroker(msg.worldDoc, state.ecsWorld, state.participants),
+            subscribeBroker(
+              msg.worldDoc.provider.awareness,
+              state.geckoProvider
+            ),
           ]),
         ];
       }

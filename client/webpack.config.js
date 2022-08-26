@@ -190,7 +190,17 @@ module.exports = {
       {
         test: /\.js$/,
         enforce: "pre",
-        use: ["source-map-loader"],
+        use: [
+          {
+            loader: "source-map-loader",
+            options: {
+              filterSourceMappingUrl: (_filename, resourcePath) =>
+                ![/@geckos.io/, /@yandeu/].some((regex) =>
+                  regex.test(resourcePath)
+                ),
+            },
+          },
+        ],
       },
       {
         test: /\.(png|jpe?g|gif|svg)$/i,

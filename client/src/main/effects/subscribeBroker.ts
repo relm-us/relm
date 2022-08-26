@@ -1,18 +1,12 @@
-import type { Participant, DecoratedECSWorld } from "~/types";
 import type { Dispatch } from "../ProgramTypes";
+import { Awareness } from "y-protocols/awareness";
 
-import { WorldDoc } from "~/y-integration/WorldDoc";
-import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
-import { worldManager } from "~/world";
+import { ParticipantBroker } from "~/identity/ParticipantBroker";
+import { GeckoProvider } from "~/identity/GeckoProvider";
 
 export const subscribeBroker =
-  (
-    worldDoc: WorldDoc,
-    ecsWorld: DecoratedECSWorld,
-    participants: Map<string, Participant>
-  ) =>
-  (dispatch: Dispatch) => {
-    const broker = new ParticipantYBroker(worldDoc);
+  (awareness: Awareness, gecko: GeckoProvider) => (dispatch: Dispatch) => {
+    const broker = new ParticipantBroker(awareness, gecko);
     broker.subscribe(dispatch);
     dispatch({ id: "didSubscribeBroker", broker });
   };

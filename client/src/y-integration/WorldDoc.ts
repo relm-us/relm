@@ -102,10 +102,10 @@ export class WorldDoc extends EventEmitter {
 
   connect(
     url: string,
-    subrelmDocId: string,
+    docId: string,
     authHeaders: AuthenticationHeaders
   ) {
-    this.provider = new WebsocketProvider(url, subrelmDocId, this.ydoc, {
+    this.provider = new WebsocketProvider(url, docId, this.ydoc, {
       params: {
         "participant-id": authHeaders["x-relm-participant-id"],
         "participant-sig": authHeaders["x-relm-participant-sig"],

@@ -5,14 +5,14 @@ import { WorldDoc } from "~/y-integration/WorldDoc";
 import { worldManager } from "~/world";
 
 import { Dispatch, State } from "../ProgramTypes";
-import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
+import { ParticipantBroker } from "~/identity/ParticipantBroker";
 import { AVConnection } from "~/av";
 import { PageParams } from "~/types";
 
 export const initWorldManager =
   (
     state: State,
-    broker: ParticipantYBroker,
+    broker: ParticipantBroker,
     ecsWorld: DecoratedECSWorld,
     worldDoc: WorldDoc,
     pageParams: PageParams,

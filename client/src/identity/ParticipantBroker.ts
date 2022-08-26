@@ -1,30 +1,29 @@
 import type { IdentityData } from "~/types";
 
-import * as Y from "yjs";
 import { writable, Writable, get } from "svelte/store";
-
-import { WorldDoc } from "~/y-integration/WorldDoc";
+import { Awareness } from "y-protocols/awareness";
 
 import { Dispatch } from "~/main/ProgramTypes";
 import { isEqual } from "~/utils/isEqual";
+import { GeckoProvider } from "./GeckoProvider";
 
 /**
- * An adapter between the WorldDoc's "identities" map (Yjs) and
- * our participant-focused functional reactive runtime.
+ * A broker between the participant and the underlying means of transporting data
+ * to the server:
+ * - slow data goes over yjs websocket (via Awareness)
+ * - fast data goes over gecko webrtc (UDP)
  */
-export class ParticipantYBroker {
-  worldDoc: WorldDoc;
+export class ParticipantBroker {
+  awareness: Awareness;
+  gecko: GeckoProvider;
   unsubs: Function[];
   clients: Writable<Map<number, IdentityData>>;
 
-  constructor(worldDoc: WorldDoc) {
-    this.worldDoc = worldDoc;
+  constructor(awareness: Awareness, gecko: GeckoProvider) {
+    this.awareness = awareness;
+    this.gecko = gecko;
     this.unsubs = [];
     this.clients = writable(new Map());
-  }
-
-  get awareness() {
-    return this.worldDoc.provider.awareness;
   }
 
   setField(key, value) {
@@ -52,22 +51,7 @@ export class ParticipantYBroker {
     this.unsubs.length = 0;
   }
 
-  subscribeDisconnect(dispatch: Dispatch) {
-    const observer = (changes) => {
-      for (let id of changes.removed) {
-        this.clients.update(($clients) => {
-          $clients.delete(id);
-          return $clients;
-        });
-        // Remove participant avatars when they disconnect
-        dispatch({ id: "removeParticipant", clientId: id });
-      }
-    };
-
-    this.awareness.on("change", observer);
-
-    return () => this.awareness.off("change", observer);
-  }
+  subscribeGecko() {}
 
   subscribeData(dispatch: Dispatch) {
     const observer = (changes) => {
@@ -96,6 +80,23 @@ export class ParticipantYBroker {
             identityData,
           });
         }
+      }
+    };
+
+    this.awareness.on("change", observer);
+
+    return () => this.awareness.off("change", observer);
+  }
+
+  subscribeDisconnect(dispatch: Dispatch) {
+    const observer = (changes) => {
+      for (let id of changes.removed) {
+        this.clients.update(($clients) => {
+          $clients.delete(id);
+          return $clients;
+        });
+        // Remove participant avatars when they disconnect
+        dispatch({ id: "removeParticipant", clientId: id });
       }
     };
 

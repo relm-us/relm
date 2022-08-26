@@ -16,6 +16,8 @@ importers:
       '@babel/runtime': ^7.12.1
       '@cerner/duplicate-package-checker-webpack-plugin': ^2.3.0
       '@dimforge/rapier3d': 0.8.1
+      '@geckos.io/client': ^2.2.3
+      '@geckos.io/snapshot-interpolation': ^1.1.0
       '@tweenjs/tween.js': ^18.6.4
       '@types/jest': ^27.0.0
       '@types/node': ^17.0.5
@@ -99,10 +101,13 @@ importers:
       webpack-cli: ^4.10.0
       webpack-dev-server: ^4.9.3
       y-indexeddb: 9.0.7
+      y-protocols: 1.0.5
       y-quill: 0.1.4
       yjs: 13.5.27
     dependencies:
       '@dimforge/rapier3d': 0.8.1
+      '@geckos.io/client': 2.2.3
+      '@geckos.io/snapshot-interpolation': 1.1.0
       '@tweenjs/tween.js': 18.6.4
       '@types/resize-observer-browser': 0.1.7
       '@uppy/core': 2.3.1
@@ -145,6 +150,7 @@ importers:
       twilio-video: 2.20.1
       video-mirror: 4.6.0
       y-indexeddb: 9.0.7_yjs@13.5.27
+      y-protocols: 1.0.5
       y-quill: 0.1.4_quill@1.3.7+yjs@13.5.27
       yjs: 13.5.27
     devDependencies:
@@ -197,6 +203,7 @@ importers:
 
   common:
     specifiers:
+      '@geckos.io/typed-array-buffer-schema': ^1.2.1
       '@jest/types': 27.5.1
       '@types/three': 0.141.0
       base64-arraybuffer-es6: ^0.6.0
@@ -212,6 +219,7 @@ importers:
       y-protocols: 1.0.5
       yjs: 13.5.27
     dependencies:
+      '@geckos.io/typed-array-buffer-schema': 1.2.1
       base64-arraybuffer-es6: 0.6.0_core-js-bundle@3.23.1
       lib0: 0.2.51
       lodash.debounce: 4.0.8
@@ -249,6 +257,8 @@ importers:
 
   server:
     specifiers:
+      '@geckos.io/server': ^2.2.3
+      '@geckos.io/snapshot-interpolation': ^1.1.0
       '@jest-mock/express': ^1.4.0
       '@jest/globals': 27.5.1
       '@jest/types': ^28.0
@@ -312,6 +322,8 @@ importers:
       y-protocols: 1.0.5
       yjs: 13.5.27
     dependencies:
+      '@geckos.io/server': 2.2.3
+      '@geckos.io/snapshot-interpolation': 1.1.0
       '@peculiar/webcrypto': 1.3.3
       aws-sdk: 2.1157.0
       base64-arraybuffer: 0.2.0
@@ -1770,6 +1782,39 @@ packages:
     resolution: {integrity: sha512-YmLcX70BxoSopLFdLr1Ds99NdlTI2oWoLbaUW2M406lxOIPzE1KQhRz2fPUkq34xVZQaihCoU29h0KK7An3bhA==}
     dependencies:
       tslib: 2.4.0
+    dev: false
+
+  /@geckos.io/client/2.2.3:
+    resolution: {integrity: sha512-CjFt5/VvLibb/i907XSbjf1L+2k7MeX6iW2gpwbhj7chpMhemKQmcwVGgjpMEHoEVX9wjMnFH0XpsDawEk3Fmw==}
+    engines: {node: ^14.15 || >=16}
+    dependencies:
+      '@geckos.io/common': 2.2.3
+    dev: false
+
+  /@geckos.io/common/2.2.3:
+    resolution: {integrity: sha512-MMcAhO5wO18YC9scvErClCZnKF3C2N7++4hjPSIwMXxbZL62o+M+Lh6OroMSyNHO+08/qpOSZbCgEyCOle517Q==}
+    dependencies:
+      '@yandeu/events': 0.0.5
+    dev: false
+
+  /@geckos.io/server/2.2.3:
+    resolution: {integrity: sha512-gtIOKlMpfOxTs2yFR7qkCZNimv/qZpbC3Id89z0u5GLUgvFvDejBxZ2fUuS6vO62wK6Y+3aj6JWeCqoEfdZlzA==}
+    engines: {node: ^14.15 || >=16}
+    dependencies:
+      '@geckos.io/common': 2.2.3
+      '@yandeu/events': 0.0.5
+      node-datachannel: 0.3.6
+    dev: false
+
+  /@geckos.io/snapshot-interpolation/1.1.0:
+    resolution: {integrity: sha512-Hu+tZuMpBZTyPMgqHkgv78fIzCrTpz5DeyaAktwaGL8tyYaNTGrtR9TrtKzBKgpt0YNlpHYJrT0TAfGzrl1XVw==}
+    dev: false
+
+  /@geckos.io/typed-array-buffer-schema/1.2.1:
+    resolution: {integrity: sha512-f4+q3Um5ybEJxHM0AiCEw5r7SlGQJs7kAVAjzfQjoYNfxM9sX54j31bJMm6uawYxGrxw6FJfB1ohiPUClRjITg==}
+    dependencies:
+      is-plain-object: 5.0.0
+      lodash: 4.17.21
     dev: false
 
   /@istanbuljs/load-nyc-config/1.1.0:
@@ -4368,6 +4413,10 @@ packages:
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
     dev: true
 
+  /@yandeu/events/0.0.5:
+    resolution: {integrity: sha512-TUkghSGu0ThcEyAP50WHU/vdQkpt9EZyotjZzG8KirR+VI5o7Rp5wabcGru62JNy+awMR8Voy+kFzhNkC/1E6A==}
+    dev: false
+
   /@zeit/schemas/2.6.0:
     resolution: {integrity: sha512-uUrgZ8AxS+Lio0fZKAipJjAh415JyrOZowliZAzmnJSsf7piVL5w+G0+gFJ0KSu3QRhvui/7zuvpLz03YjXAhg==}
     dev: false
@@ -6906,6 +6955,19 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
+    dev: false
+
+  /follow-redirects/1.14.9_debug@4.3.4:
+    resolution: {integrity: sha512-MQDfihBQYMcyy5dhRDJUHcw7lb2Pv/TuE6xP1vyraLukNDHKbDxDNaOE3NbCAdKQApno+GPRyo1YAp89yCjK4w==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dependencies:
+      debug: 4.3.4
+    dev: true
 
   /for-each/0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
@@ -7229,7 +7291,7 @@ packages:
       source-map: 0.6.1
       wordwrap: 1.0.0
     optionalDependencies:
-      uglify-js: 3.16.1
+      uglify-js: 3.17.0
     dev: true
 
   /hard-rejection/2.1.0:
@@ -7432,7 +7494,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.14.9
+      follow-redirects: 1.14.9_debug@4.3.4
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -10036,9 +10098,25 @@ packages:
       semver: 5.7.1
     dev: false
 
+  /node-abi/3.24.0:
+    resolution: {integrity: sha512-YPG3Co0luSu6GwOBsmIdGW6Wx0NyNDLg/hriIyDllVsNwnI6UeqaWShxC3lbH4LtEQUgoLP3XR1ndXiDAWvmRw==}
+    engines: {node: '>=10'}
+    dependencies:
+      semver: 7.3.7
+    dev: false
+
   /node-addon-api/3.2.1:
     resolution: {integrity: sha512-mmcei9JghVNDYydghQmeDX8KoAm0FAiYyIcUt/N4nhyAipB17pllZQDOJD2fotxABnt4Mdz+dKTO7eftLg4d0A==}
     dev: false
+
+  /node-datachannel/0.3.6:
+    resolution: {integrity: sha512-weZD9Do1sFvAxznUETWDP/XOvge85NzKeEid0kzHyYF09p8IOYcnwg+rxkgymF3WviZXRYWxHCxjyPHIZnKkLw==}
+    requiresBuild: true
+    dependencies:
+      prebuild-install: 7.1.1
+    dev: false
+    bundledDependencies:
+      - prebuild-install
 
   /node-domexception/1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
@@ -11189,6 +11267,25 @@ packages:
       tar-fs: 2.1.1
       tunnel-agent: 0.6.0
       which-pm-runs: 1.1.0
+    dev: false
+
+  /prebuild-install/7.1.1:
+    resolution: {integrity: sha512-jAXscXWMcCK8GgCoHOfIr0ODh5ai8mj63L2nWrjuAgXE6tDyYGnx4/8o/rCgU+B4JSyZBKbeZqzhtwtC3ovxjw==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dependencies:
+      detect-libc: 2.0.1
+      expand-template: 2.0.3
+      github-from-package: 0.0.0
+      minimist: 1.2.6
+      mkdirp-classic: 0.5.3
+      napi-build-utils: 1.0.2
+      node-abi: 3.24.0
+      pump: 3.0.0
+      rc: 1.2.8
+      simple-get: 4.0.1
+      tar-fs: 2.1.1
+      tunnel-agent: 0.6.0
     dev: false
 
   /precond/0.2.3:
@@ -13651,8 +13748,8 @@ packages:
     hasBin: true
     dev: true
 
-  /uglify-js/3.16.1:
-    resolution: {integrity: sha512-X5BGTIDH8U6IQ1TIRP62YC36k+ULAa1d59BxlWvPUJ1NkW5L3FwcGfEzuVvGmhJFBu0YJ5Ge25tmRISqCmLiRQ==}
+  /uglify-js/3.17.0:
+    resolution: {integrity: sha512-aTeNPVmgIMPpm1cxXr2Q/nEbvkmV8yq66F3om7X3P/cvOXQ0TMQ64Wk63iyT1gPlmdmGzjGpyLh1f3y8MZWXGg==}
     engines: {node: '>=0.8.0'}
     hasBin: true
     requiresBuild: true

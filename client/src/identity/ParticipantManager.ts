@@ -1,6 +1,6 @@
 import type { DecoratedECSWorld, Participant, UpdateData } from "~/types";
 
-import { WebsocketProvider, Appearance, Equipment } from "relm-common";
+import { Appearance, Equipment } from "relm-common";
 
 import { participantId } from "./participantId";
 
@@ -10,12 +10,12 @@ import {
   avatarGetTransformData,
   setDataOnParticipant,
 } from "./Avatar/transform";
-import { ParticipantYBroker } from "./ParticipantYBroker";
+import { ParticipantBroker } from "./ParticipantBroker";
 import { isEqual } from "~/utils/isEqual";
 
 export class ParticipantManager {
   dispatch: Dispatch;
-  broker: ParticipantYBroker;
+  broker: ParticipantBroker;
   participants: Map<string, Participant>;
 
   get local(): Participant {
@@ -29,7 +29,7 @@ export class ParticipantManager {
 
   constructor(
     dispatch: Dispatch,
-    broker: ParticipantYBroker,
+    broker: ParticipantBroker,
     participants: Map<string, Participant>
   ) {
     this.dispatch = dispatch;
@@ -96,8 +96,8 @@ export class ParticipantManager {
     }
   }
 
-  applyOthersState(world: DecoratedECSWorld, provider: WebsocketProvider) {
-    const states = provider.awareness.getStates();
+  applyOthersState(world: DecoratedECSWorld) {
+    const states = this.broker.awareness.getStates();
 
     for (let state of states.values()) {
       if (!("id" in state)) continue;

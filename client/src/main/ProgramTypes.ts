@@ -1,20 +1,20 @@
 import type { Vector3 } from "three";
 import type { DeviceIds } from "video-mirror";
 import type { Writable } from "svelte/store";
-import type { Appearance, SavedIdentityData } from "relm-common";
-
-import type { AuthenticationHeaders, Security } from "relm-common";
+import type {
+  Appearance,
+  SavedIdentityData,
+  AuthenticationHeaders,
+  Security,
+} from "relm-common";
 
 import type { WorldDoc } from "~/y-integration/WorldDoc";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import type { AVConnection } from "~/av/AVConnection";
+import type { GeckoProvider } from "~/identity/GeckoProvider";
 
-import type {
-  UpdateData,
-  PageParams,
-  WorldDocStatus,
-} from "~/types";
-import type { ParticipantYBroker } from "~/identity/ParticipantYBroker";
+import type { UpdateData, PageParams, WorldDocStatus } from "~/types";
+import type { ParticipantBroker } from "~/identity/ParticipantBroker";
 import type { Avatar } from "~/identity/Avatar";
 import type { IdentityData, Participant } from "~/types/identity";
 
@@ -42,7 +42,7 @@ export type State = {
   participantQuickAppearance?: Appearance;
   localAvatarInitialized: boolean;
   localIdentityData: Writable<IdentityData>;
-  broker?: ParticipantYBroker;
+  broker?: ParticipantBroker;
   observeFieldsFn?: any;
   observeChatFn?: any;
 
@@ -64,6 +64,7 @@ export type State = {
   worldDoc?: WorldDoc;
   worldDocStatus: WorldDocStatus;
   initializedWorldManager?: boolean;
+  geckoProvider?: GeckoProvider;
 
   // other
   notifyContext?: any;
@@ -86,7 +87,7 @@ export type Message =
   | { id: "enterPortal"; relmName: string; entryway: string }
   | { id: "didEnterPortal" }
   | { id: "didResetWorld" }
-  | { id: "gotIdentityData", identity: SavedIdentityData, isConnected: boolean }
+  | { id: "gotIdentityData"; identity: SavedIdentityData; isConnected: boolean }
   | {
       id: "gotRelmPermitsAndMetadata";
       permits: string[];
@@ -98,7 +99,7 @@ export type Message =
     }
 
   // Participants
-  | { id: "didSubscribeBroker"; broker: ParticipantYBroker }
+  | { id: "didSubscribeBroker"; broker: ParticipantBroker }
   | { id: "didMakeLocalAvatar"; avatar: Avatar }
   | {
       id: "recvParticipantData";
@@ -118,6 +119,7 @@ export type Message =
 
   // cont'd...
   | { id: "importedPhysicsEngine"; physicsEngine: any }
+  | { id: "connectedGecko"; geckoProvider: GeckoProvider }
   | { id: "createdWorldDoc"; worldDoc: WorldDoc }
   | {
       id: "createdECSWorld";
@@ -140,7 +142,7 @@ export type Message =
   | { id: "didJoinAudioVideo"; avDisconnect: Function }
   | { id: "setUpAvatar" }
   | { id: "didSetUpAvatar"; appearance?: Appearance }
-  | { id: "gotIdentityData", identity: SavedIdentityData, isConnected: boolean }
+  | { id: "gotIdentityData"; identity: SavedIdentityData; isConnected: boolean }
   | { id: "prepareLocalParticipantForWorld" }
   | { id: "initWorldManager" }
   | { id: "didInitWorldManager" }
