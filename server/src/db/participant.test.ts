@@ -2,7 +2,7 @@ import { describe, expect, beforeAll, afterAll, it } from '@jest/globals';
 import { CryptoKey } from "@peculiar/webcrypto";
 
 import * as Participant from "./participant.js";
-import * as auth from "../auth.js";
+import * as crypto from "../crypto.js";
 
 import { uuidv4 } from "../utils/index.js";
 import { init, deinit } from "./db.js";
@@ -55,6 +55,6 @@ describe("Participant model tests", () => {
       sig,
     });
 
-    expect(await auth.verify(participantId, sig, foundPubKey)).toBe(true);
+    expect(await crypto.verify(participantId, sig, foundPubKey)).toBe(true);
   });
 });

@@ -12,7 +12,7 @@ import { db, sql } from "./db.js";
  *
  */
 
-import * as auth from "../auth.js";
+import * as crypto from "../crypto.js";
 
 export async function hasPubKeyDoc({ participantId }) {
   const pubKeyDoc = await getPubKeyDoc({ participantId });
@@ -48,7 +48,7 @@ export async function findOrCreateVerifiedPubKey({ participantId, x, y, sig }) {
   if (pubKeyDoc === null) {
     // If not, then accept the xydoc from params (if available) and generate a public key document
     if (x && y) {
-      pubKeyDoc = await auth.xyDocToPubKeyDoc({ x, y });
+      pubKeyDoc = await crypto.xyDocToPubKeyDoc({ x, y });
       pubKeyDocFromParams = true;
     } else {
       console.error(`public key err`, x, y);
@@ -59,9 +59,9 @@ export async function findOrCreateVerifiedPubKey({ participantId, x, y, sig }) {
   }
 
   // Verify the signature (using the pubKeyDoc)
-  const pubKey = await auth.pubKeyDocToPubKey(pubKeyDoc);
+  const pubKey = await crypto.pubKeyDocToPubKey(pubKeyDoc);
 
-  let signatureValid = await auth.verify(participantId, sig, pubKey);
+  let signatureValid = await crypto.verify(participantId, sig, pubKey);
   if (signatureValid) {
     if (pubKeyDocFromParams) {
       // Now that we've confirmed it is valid, store the new pubKeyDoc
