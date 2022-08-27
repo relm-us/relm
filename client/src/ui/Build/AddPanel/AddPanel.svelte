@@ -1,11 +1,8 @@
 <script lang="ts">
   import type { LibraryAsset } from "~/types";
 
-  import { slide } from "svelte/transition";
   import { _ } from "svelte-i18n";
   import IoIosArrowBack from "svelte-icons/io/IoIosArrowBack.svelte";
-  import IoMdArrowRoundBack from "svelte-icons/io/IoMdArrowRoundBack.svelte";
-  import IoMdArrowRoundForward from "svelte-icons/io/IoMdArrowRoundForward.svelte";
 
   import { assetUrl } from "~/config/assetUrl";
   import { createPrefab } from "~/prefab";
@@ -14,7 +11,6 @@
   import Search from "~/ui/lib/Search";
   import Button from "~/ui/lib/Button";
   import UploadButton from "~/ui/Build/shared/UploadButton";
-  import Pane from "~/ui/lib/BuildPanel/Pane.svelte";
 
   import { copyBuffer } from "~/stores/copyBuffer";
   import {
@@ -27,9 +23,9 @@
   import { deserializeCopyBuffer } from "~/events/input/CopyPasteListener/common";
 
   import SearchResult from "./SearchResult.svelte";
-  import SelectCreatePrefab from "./SelectCreatePrefab.svelte";
   import Tag from "./Tag.svelte";
   import HLine from "~/ui/lib/HLine";
+  import Paginate from "./Paginate.svelte";
 
   let spinner = false;
   let spinStart = 0;
@@ -84,27 +80,29 @@
       }
     }
   };
-
-  function prevPage() {
-    if ($libraryPage > 0) $libraryPage = $libraryPage - 1;
-  }
-
-  function nextPage() {
-    $libraryPage = $libraryPage + 1;
-  }
 </script>
 
 <BuildPanel on:minimize>
   <Header>Add Object</Header>
   <r-column>
     <r-search-pane>
-      <r-search-wrap>
-        <Search
-          bind:value={$librarySearch}
-          on:keydown={() => ($libraryPage = 0)}
-          placeholder={$_("AddPanel.search_assets")}
-        />
-      </r-search-wrap>
+      <r-search-back>
+        {#if selectedAsset}
+          <r-selected-back>
+            <Button on:click={() => (selectedAsset = null)}>
+              <r-icon><IoIosArrowBack /></r-icon>
+            </Button>
+          </r-selected-back>
+        {/if}
+
+        <r-search-wrap>
+          <Search
+            bind:value={$librarySearch}
+            on:keydown={() => ($libraryPage = 0)}
+            placeholder={$_("AddPanel.search_assets")}
+          />
+        </r-search-wrap>
+      </r-search-back>
 
       <r-spacer />
 
@@ -118,12 +116,6 @@
           </r-selected-thumb>
 
           <r-selected-details>
-            <r-selected-back>
-              <Button on:click={() => (selectedAsset = null)}>
-                <r-icon><IoIosArrowBack /></r-icon>
-              </Button>
-            </r-selected-back>
-
             <r-add-button>
               <Button
                 on:click={addAsset(selectedAsset)}
@@ -170,25 +162,7 @@
 
         <r-spacer />
 
-        <r-pagination>
-          <r-pagination-1>
-            {#if $libraryPage > 0}
-              <Button on:click={prevPage}>
-                <r-icon><IoMdArrowRoundBack /></r-icon>
-              </Button>
-            {/if}
-          </r-pagination-1>
-          <r-pagination-2>
-            <r-page>p. {$libraryPage + 1}</r-page>
-          </r-pagination-2>
-          <r-pagination-3>
-            {#if assets.length > 0}
-              <Button on:click={nextPage}>
-                <r-icon><IoMdArrowRoundForward /></r-icon>
-              </Button>
-            {/if}
-          </r-pagination-3>
-        </r-pagination>
+        <Paginate assetCount={assets.length} />
       {/if}
     </r-search-pane>
 
@@ -231,13 +205,6 @@
     margin: 8px;
   }
 
-  r-selected-back {
-    position: absolute;
-    left: -80px;
-    top: 12px;
-    --bg-color: transparent;
-    --bg-hover-color: rgba(0, 0, 0, 0.1);
-  }
   r-selected-thumb {
     display: block;
     overflow: hidden;
@@ -275,12 +242,6 @@
     background: rgba(120, 120, 120, 0.5);
     border-radius: 6px;
     padding: 8px;
-
-    /* For prev/next buttons */
-    --padv: 1px;
-    --bg-color: var(--selected-red);
-    --bg-hover-color: var(--selected-red-hover);
-    --fg-color: white;
   }
 
   r-results {
@@ -293,37 +254,6 @@
     /* Fixes slight padding issue when tooltip is inside grid CSS */
     display: flex;
     aspect-ratio: 1;
-  }
-
-  r-pagination {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    min-height: 38.5px;
-
-    /* Next/Prev Buttons */
-    --margin: 0;
-  }
-
-  r-pagination-1,
-  r-pagination-2,
-  r-pagination-3 {
-    display: flex;
-    width: 33.33%;
-  }
-  r-pagination-1 {
-    justify-content: flex-start;
-  }
-  r-pagination-2 {
-    justify-content: center;
-  }
-  r-pagination-3 {
-    justify-content: flex-end;
-  }
-
-  r-page {
-    display: block;
-    color: var(--foreground-white);
   }
 
   r-icon {
@@ -339,5 +269,16 @@
 
   r-line-wrap {
     margin: 20px 0 20px 0;
+  }
+
+  r-selected-back {
+    --margin: 0;
+    --padv: 3px;
+    --padh: 3px;
+    --bg-color: transparent;
+    --bg-hover-color: rgba(0, 0, 0, 0.1);
+  }
+  r-search-back {
+    display: flex;
   }
 </style>
