@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { State } from "~/main/ProgramTypes";
 
+  import { fly } from "svelte/transition";
+
   import MicButton from "~/ui/ButtonControls/MicButton";
   import VideoButton from "~/ui/ButtonControls/VideoButton";
   import AvatarSetupButton from "~/ui/ButtonControls/AvatarSetupButton";
@@ -81,7 +83,7 @@
 <overlay class:open={buildMode}>
   <overlay-panel class="interactive">
     {#if buildMode}
-      <panel-tabs>
+      <panel-tabs in:fly={{ y: -260 }}>
         <Button
           active={$openPanel === "add"}
           depress={false}
@@ -104,31 +106,33 @@
         >
       </panel-tabs>
 
-      {#if $openPanel === "add"}
-        <AddPanel on:minimize={toPlayMode} />
-      {/if}
+      <div in:fly={{ x: 260 }} style="display:flex;width:260px">
+        {#if $openPanel === "add"}
+          <AddPanel on:minimize={toPlayMode} />
+        {/if}
 
-      {#if $openPanel === "modify"}
-        <ModifyPanel on:minimize={toPlayMode} />
-      {/if}
+        {#if $openPanel === "modify"}
+          <ModifyPanel on:minimize={toPlayMode} />
+        {/if}
 
-      {#if $openPanel === "actions"}
-        <ActionsPanel on:minimize={toPlayMode} />
-      {/if}
+        {#if $openPanel === "actions"}
+          <ActionsPanel on:minimize={toPlayMode} />
+        {/if}
 
-      <!-- Export panel opens from button in SettingsPanel -->
-      {#if $openPanel === "export"}
-        <ExportPanel on:minimize={toPlayMode} />
-      {/if}
+        <!-- Export panel opens from button in SettingsPanel -->
+        {#if $openPanel === "export"}
+          <ExportPanel on:minimize={toPlayMode} />
+        {/if}
 
-      <!-- Performance panel opens from button in SettingsPanel -->
-      {#if $openPanel === "performance"}
-        <PerformancePanel on:minimize={toPlayMode} />
-      {/if}
+        <!-- Performance panel opens from button in SettingsPanel -->
+        {#if $openPanel === "performance"}
+          <PerformancePanel on:minimize={toPlayMode} />
+        {/if}
 
-      {#if $openPanel === "settings"}
-        <SettingsPanel on:minimize={toPlayMode} />
-      {/if}
+        {#if $openPanel === "settings"}
+          <SettingsPanel on:minimize={toPlayMode} />
+        {/if}
+      </div>
     {/if}
   </overlay-panel>
 
