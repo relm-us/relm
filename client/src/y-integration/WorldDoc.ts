@@ -1,4 +1,4 @@
-import { AuthenticationHeaders, yTextToDelta } from "relm-common";
+import type { AuthenticationHeaders } from "relm-common";
 import type { DecoratedECSWorld, WorldDocStatus } from "~/types";
 
 import * as Y from "yjs";
