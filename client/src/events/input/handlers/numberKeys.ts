@@ -28,6 +28,13 @@ export function register(): Function {
       },
     ],
     [
+      ["build"],
+      ["2"],
+      (pressed) => {
+        pressed && globalEvents.emit("toggle-drag-action");
+      },
+    ],
+    [
       ["play"],
       ["3"],
       (pressed) => {

@@ -2,8 +2,12 @@
   import FaMousePointer from "svelte-icons/fa/FaMousePointer.svelte";
   import FaMountain from "svelte-icons/fa/FaMountain.svelte";
 
+  import FaArrowsAlt from "svelte-icons/fa/FaArrowsAlt.svelte";
+  import FaCircleNotch from "svelte-icons/fa/FaCircleNotch.svelte";
+
   import ToolButton from "./ToolButton.svelte";
   import { advancedEdit } from "~/stores/advancedEdit";
+  import { dragAction } from "~/stores/dragAction";
   import { globalEvents } from "~/events";
 </script>
 
@@ -18,9 +22,16 @@
       <FaMousePointer />
     {/if}
   </ToolButton>
-  <!-- <ToolButton shortcut={"2"}>
-
-  </ToolButton> -->
+  <ToolButton
+    shortcut={"2"}
+    on:click={() => globalEvents.emit("toggle-drag-action")}
+  >
+    {#if $dragAction === "pan"}
+      <FaArrowsAlt />
+    {:else}
+      <FaCircleNotch />
+    {/if}
+  </ToolButton>
 </r-toolbar>
 
 <style>

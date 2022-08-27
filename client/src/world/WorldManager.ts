@@ -101,6 +101,7 @@ import { permits } from "~/stores/permits";
 import { errorCat } from "~/stores/errorCat";
 import { viewportScale } from "~/stores/viewportScale";
 import { centerCameraVisible } from "~/stores/centerCameraVisible";
+import { dragAction } from "~/stores/dragAction";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -338,6 +339,13 @@ export class WorldManager {
     globalEvents.on("advanced-edit", toggleAdvancedEdit);
     this.unsubs.push(() =>
       globalEvents.off("advanced-edit", toggleAdvancedEdit)
+    );
+
+    const toggleDragAction = () =>
+      dragAction.update((value) => (value === "pan" ? "rotate" : "pan"));
+    globalEvents.on("toggle-drag-action", toggleDragAction);
+    this.unsubs.push(() =>
+      globalEvents.off("toggle-drag-action", toggleDragAction)
     );
 
     // Make colliders visible in build mode

@@ -24,6 +24,7 @@ import {
 import { Draggable } from "~/ecs/plugins/clickable/components/Draggable";
 import { Entity } from "~/ecs/base";
 import { isInteractive } from "~/utils/isInteractive";
+import { dragAction } from "~/stores/dragAction";
 
 export let isControllingAvatar: boolean = false;
 export let isControllingTransform: boolean = false;
@@ -53,18 +54,6 @@ let pointerPoint: Vector3;
 let interactiveEntity: Entity;
 let shiftKeyOnClick = false;
 const cameraStartDirection = new Euler();
-
-export function onPointerAltDown(x: number, y: number) {
-  const $mode = get(worldUIMode);
-
-  pointerPosition.set(x, y);
-  pointerStartPosition.set(x, y);
-
-  if ($mode === "build") {
-    cameraStartDirection.copy(worldManager.camera.direction);
-    setNextPointerState("drag-camera");
-  }
-}
 
 export function onPointerDown(x: number, y: number, shiftKey: boolean) {
   const $mode = get(worldUIMode);
@@ -184,7 +173,10 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
   if ($mode === "build") {
     if (pointerState === "click" && atLeastMinDragDistance()) {
       // drag  mode start
-      if (worldManager.selection.length > 0 && pointerPoint) {
+      if (get(dragAction) === "rotate") {
+        cameraStartDirection.copy(worldManager.camera.direction);
+        setNextPointerState("drag-camera");
+      } else if (worldManager.selection.length > 0 && pointerPoint) {
         setNextPointerState("drag");
         worldManager.selection.savePositions();
         worldManager.dragPlane.setOrientation(shiftKeyOnClick ? "XY" : "XZ");
