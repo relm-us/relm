@@ -133,12 +133,14 @@
   </overlay-panel>
 
   <overlay-content>
-    {#if buildMode}
-      <Toolbar />
-    {/if}
-    {#if $debugMode}
-      <DebugPane {state} />
-    {/if}
+    <r-toolbar-wrapper>
+      {#if $debugMode}
+        <DebugPane {state} />
+      {/if}
+      {#if buildMode}
+        <Toolbar />
+      {/if}
+    </r-toolbar-wrapper>
   </overlay-content>
 </overlay>
 
@@ -222,7 +224,7 @@
 
     display: flex;
     flex-direction: row-reverse;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
   @media screen and (max-width: 480px) {
     overlay {
@@ -267,5 +269,17 @@
 
     --bg-hover-color: var(--background-transparent-gray, gray);
     --bg-color: var(--background-transparent-black, black);
+  }
+
+  r-toolbar-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    height: min-content;
+  }
+
+  r-toolbar-wrapper > :global(*) {
+    margin-top: 2px;
+    margin-right: 2px;
   }
 </style>

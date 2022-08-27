@@ -1,24 +1,33 @@
 <script lang="ts">
-  import IoIosArrowDown from "svelte-icons/io/IoIosArrowDown.svelte";
-  import IoIosArrowUp from "svelte-icons/io/IoIosArrowUp.svelte";
+  import FaMousePointer from "svelte-icons/fa/FaMousePointer.svelte";
+  import FaMountain from "svelte-icons/fa/FaMountain.svelte";
 
-  import Button from "~/ui/lib/Button";
+  import ToolButton from "./ToolButton.svelte";
+  import { advancedEdit } from "~/stores/advancedEdit";
+  import { globalEvents } from "~/events";
 </script>
 
 <r-toolbar>
-  <Button>
-    <r-icon><IoIosArrowDown /></r-icon>
-  </Button>
-  <Button>
-    <r-icon><IoIosArrowUp /></r-icon>
-  </Button>
+  <ToolButton
+    shortcut={"1"}
+    on:click={() => globalEvents.emit("advanced-edit")}
+  >
+    {#if $advancedEdit}
+      <FaMountain />
+    {:else}
+      <FaMousePointer />
+    {/if}
+  </ToolButton>
+  <!-- <ToolButton shortcut={"2"}>
+
+  </ToolButton> -->
 </r-toolbar>
 
 <style>
   r-toolbar {
     display: flex;
-    padding: 8px;
-    background: var(--background-gray);
+    padding: 7px 6px;
+    background: var(--background-transparent-gray);
     border-radius: 4px;
     height: min-content;
 
@@ -34,11 +43,5 @@
     --bg-hover-color: var(--foreground-gray, gray);
     --bg-color: var(--foreground-white, white);
     --fg-color: var(--background-gray, black);
-  }
-
-  r-icon {
-    display: block;
-    width: 24px;
-    height: 24px;
   }
 </style>
