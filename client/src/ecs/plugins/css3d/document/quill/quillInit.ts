@@ -2,6 +2,7 @@ import Quill from "quill";
 import QuillCursors from "quill-cursors";
 import ImageUploader from "quill-image-uploader";
 import { QuillBinding } from "y-quill";
+import { config } from "~/config";
 
 import { worldManager } from "~/world";
 
@@ -38,9 +39,21 @@ export function quillInit(
   if (toolbar) {
     // The imageUploader REQUIRES the toolbar module to be active.
     modules.imageUploader = {
-      upload: async (file) => {
-        return "https://cdn.discordapp.com/avatars/746171440159522877/096985bcbfd7c002e61b6dbb1d33e477.webp";
-      }
+      upload: file => new Promise((resolve, reject) => {
+          const formData = new FormData();
+          formData.append("file", file);
+
+          fetch(config.serverUploadUrl, {
+            method: "POST",
+            body: formData,
+          })
+          .then(r => r.json())
+          .then(result => resolve(`${config.serverUrl}/asset/${result.files.png}`))
+          .catch(error => {
+            reject("Upload failed");
+            console.error("Upload failure:", error);
+          });
+      })
     };
   }
   const editor = new Quill(container, {
