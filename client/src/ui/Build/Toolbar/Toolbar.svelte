@@ -14,6 +14,7 @@
 <r-toolbar>
   <ToolButton
     shortcut={"1"}
+    bgState={$advancedEdit ? 1 : 0}
     on:click={() => globalEvents.emit("advanced-edit")}
   >
     {#if $advancedEdit}
@@ -24,6 +25,7 @@
   </ToolButton>
   <ToolButton
     shortcut={"2"}
+    bgState={$dragAction === "rotate" ? 1 : 0}
     on:click={() => globalEvents.emit("toggle-drag-action")}
   >
     {#if $dragAction === "pan"}

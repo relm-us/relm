@@ -2,9 +2,21 @@
   import Button from "~/ui/lib/Button";
 
   export let shortcut: string;
+  export let bgState: number = 0;
+
+  let style;
+
+  $: switch (bgState) {
+    case 1:
+      style = "--bg-color: #89cf82";
+      break;
+    default:
+      style = null;
+      break;
+  }
 </script>
 
-<r-tool-button>
+<r-tool-button {style}>
   <Button on:click>
     <r-icon><slot /></r-icon>
     <r-shortcut-key>{shortcut}</r-shortcut-key>
