@@ -7,7 +7,8 @@
 
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import Button from "~/ui/lib/Button";
-  import BuildPanel, { Header, Pane } from "~/ui/lib/BuildPanel";
+  import BuildPanel, { Header } from "~/ui/lib/BuildPanel";
+  import Pane from "~/ui/lib/Pane";
 
   import StatsPane from "./StatsPane.svelte";
   import SystemToggle from "./SystemToggle.svelte";

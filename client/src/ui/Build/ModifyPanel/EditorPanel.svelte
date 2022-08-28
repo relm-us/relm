@@ -1,5 +1,6 @@
 <script lang="ts">
-  import BuildPanel, { Header, Pane } from "~/ui/lib/BuildPanel";
+  import BuildPanel, { Header } from "~/ui/lib/BuildPanel";
+  import Pane from "~/ui/lib/Pane";
   import Button from "~/ui/lib/Button";
   import { selectedEntities, selectedGroups } from "~/stores/selection";
   import { worldManager } from "~/world";

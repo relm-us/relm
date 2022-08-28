@@ -2,7 +2,7 @@
   import { worldManager } from "~/world";
   import { audioMode } from "~/stores/audioMode";
 
-  import { Pane } from "~/ui/lib/BuildPanel";
+  import Pane from "~/ui/lib/Pane";
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
 
   let audioModeIsProximity = $audioMode === "proximity";

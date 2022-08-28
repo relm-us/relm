@@ -1,7 +1,7 @@
 <script lang="ts">
   import { worldManager } from "~/world";
 
-  import { Pane } from "~/ui/lib/BuildPanel";
+  import Pane from "~/ui/lib/Pane";
   import Slider from "~/ui/lib/Slider";
   import { onMount } from "svelte";
   import debounce from "lodash/debounce";
