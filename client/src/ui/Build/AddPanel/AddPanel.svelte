@@ -21,11 +21,13 @@
   import HLine from "~/ui/lib/HLine";
   import Paginate from "./Paginate.svelte";
   import SelectedAsset from "./SelectedAsset.svelte";
+  import SelectCreatePrefab from "./SelectCreatePrefab.svelte";
 
   let spinner = false;
   let spinStart = 0;
   let assets: LibraryAsset[] = [];
   let selectedAsset: LibraryAsset;
+  let prefabsVisible: boolean = false;
 
   $: switch ($libraryAssets.type) {
     case "init":
@@ -70,61 +72,86 @@
 <SidePanel on:minimize>
   <Header>Add Object</Header>
   <r-column>
-    <r-search-pane>
-      <r-search-back>
-        {#if selectedAsset}
-          <r-selected-back>
-            <Button on:click={() => (selectedAsset = null)}>
-              <r-icon><IoIosArrowBack /></r-icon>
-            </Button>
-          </r-selected-back>
-        {/if}
+    {#if !prefabsVisible}
+      <r-search-pane>
+        <r-search-back>
+          {#if selectedAsset}
+            <r-selected-back>
+              <Button on:click={() => (selectedAsset = null)}>
+                <r-icon><IoIosArrowBack /></r-icon>
+              </Button>
+            </r-selected-back>
+          {/if}
 
-        <r-search-wrap>
-          <Search
-            bind:value={$librarySearch}
-            on:keydown={() => ($libraryPage = 0)}
-            placeholder={$_("AddPanel.search_assets")}
-          />
-        </r-search-wrap>
-      </r-search-back>
-
-      <r-spacer />
-
-      {#if selectedAsset}
-        <SelectedAsset asset={selectedAsset} />
-      {:else}
-        {#if spinner && window.performance.now() - spinStart > 1000}
-          <r-results>
-            <r-spinner>{$_("AddPanel.loading")}</r-spinner>
-          </r-results>
-        {:else if assets.length > 0}
-          <r-results>
-            {#each assets as asset}
-              <SearchResult
-                result={asset}
-                on:click={() => (selectedAsset = asset)}
-              />
-            {/each}
-          </r-results>
-        {:else}
-          <r-results>
-            <r-spinner>{$_("AddPanel.empty_results")}</r-spinner>
-          </r-results>
-        {/if}
+          <r-search-wrap>
+            <Search
+              bind:value={$librarySearch}
+              on:keydown={() => ($libraryPage = 0)}
+              placeholder={$_("AddPanel.search_assets")}
+            />
+          </r-search-wrap>
+        </r-search-back>
 
         <r-spacer />
 
-        <Paginate assetCount={assets.length} />
-      {/if}
-    </r-search-pane>
+        {#if selectedAsset}
+          <SelectedAsset asset={selectedAsset} />
+        {:else}
+          {#if spinner && window.performance.now() - spinStart > 1000}
+            <r-results>
+              <r-spinner>{$_("AddPanel.loading")}</r-spinner>
+            </r-results>
+          {:else if assets.length > 0}
+            <r-results>
+              {#each assets as asset}
+                <SearchResult
+                  result={asset}
+                  on:click={() => (selectedAsset = asset)}
+                />
+              {/each}
+            </r-results>
+          {:else}
+            <r-results>
+              <r-spinner>{$_("AddPanel.empty_results")}</r-spinner>
+            </r-results>
+          {/if}
 
-    <r-line-wrap>
-      <HLine>or</HLine>
-    </r-line-wrap>
-    <UploadButton on:uploaded={onUpload} />
-    <r-line-wrap> Upload an image, or .glb model </r-line-wrap>
-    <!-- <SelectCreatePrefab /> -->
+          <r-spacer />
+
+          <Paginate assetCount={assets.length} />
+        {/if}
+      </r-search-pane>
+
+      <r-line-wrap>
+        <HLine>or</HLine>
+      </r-line-wrap>
+
+      <UploadButton on:uploaded={onUpload} />
+      <r-upload-instructions>
+        Upload an image, or .glb model
+      </r-upload-instructions>
+
+      <r-line-wrap class="dark">
+        <HLine>or</HLine>
+      </r-line-wrap>
+
+      <r-prefabs-switch class="dark">
+        <a href="#" on:click={() => (prefabsVisible = true)}>show prefabs</a>
+      </r-prefabs-switch>
+    {:else}
+      <r-prefabs-switch>
+        <a href="#" on:click={() => (prefabsVisible = false)}>
+          <r-prefab-back style="padding-right:20px">
+            <r-icon><IoIosArrowBack /></r-icon>
+            back
+          </r-prefab-back>
+        </a>
+      </r-prefabs-switch>
+
+      <SelectCreatePrefab />
+
+      <r-spacer />
+    {/if}
   </r-column>
 </SidePanel>
 
@@ -181,7 +208,8 @@
     margin-top: 12px;
   }
 
-  r-line-wrap {
+  r-line-wrap,
+  r-upload-instructions {
     margin: 20px 0 20px 0;
   }
 
@@ -195,5 +223,25 @@
 
   r-search-back {
     display: flex;
+  }
+
+  r-prefabs-switch {
+    text-align: center;
+    padding: 12px 0;
+  }
+  r-prefabs-switch a {
+    display: flex;
+    justify-content: center;
+    color: var(--foreground-white, white);
+  }
+
+  .dark,
+  .dark a {
+    color: var(--foreground-gray, white);
+  }
+
+  r-prefab-back {
+    display: flex;
+    align-items: center;
   }
 </style>
