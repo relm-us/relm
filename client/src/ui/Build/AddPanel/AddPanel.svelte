@@ -4,7 +4,6 @@
   import { _ } from "svelte-i18n";
   import IoIosArrowBack from "svelte-icons/io/IoIosArrowBack.svelte";
 
-  import { assetUrl } from "~/config/assetUrl";
   import { createPrefab } from "~/prefab";
 
   import BuildPanel, { Header } from "~/ui/lib/BuildPanel";
@@ -12,20 +11,16 @@
   import Button from "~/ui/lib/Button";
   import UploadButton from "~/ui/Build/shared/UploadButton";
 
-  import { copyBuffer } from "~/stores/copyBuffer";
   import {
     libraryAssets,
     librarySearch,
     libraryPage,
   } from "~/stores/libraryAssets";
 
-  import { paste } from "~/events/input/CopyPasteListener/paste";
-  import { deserializeCopyBuffer } from "~/events/input/CopyPasteListener/common";
-
   import SearchResult from "./SearchResult.svelte";
-  import Tag from "./Tag.svelte";
   import HLine from "~/ui/lib/HLine";
   import Paginate from "./Paginate.svelte";
+  import SelectedAsset from "./SelectedAsset.svelte";
 
   let spinner = false;
   let spinStart = 0;
@@ -50,16 +45,6 @@
     default:
       console.warn("Unknown libraryAsset type:", $libraryAssets);
   }
-
-  const addAsset = (asset: LibraryAsset) => () => {
-    copyBuffer.set(deserializeCopyBuffer(JSON.stringify(asset.ecsProperties)));
-    paste();
-  };
-
-  const searchTag = (tag: string) => () => {
-    $librarySearch = `#${tag}`;
-    $libraryPage = 0;
-  };
 
   const onUpload = ({ detail }) => {
     for (const result of detail.results) {
@@ -107,39 +92,7 @@
       <r-spacer />
 
       {#if selectedAsset}
-        <r-selected>
-          <r-selected-thumb>
-            <img
-              src={assetUrl(selectedAsset.thumbnail)}
-              alt={selectedAsset.name}
-            />
-          </r-selected-thumb>
-
-          <r-selected-details>
-            <r-add-button>
-              <Button
-                on:click={addAsset(selectedAsset)}
-                style="border: 1px solid #999;"
-              >
-                {$_("AddPanel.add_asset", {
-                  values: { name: selectedAsset.name },
-                })}
-              </Button>
-            </r-add-button>
-
-            <r-desc>
-              {selectedAsset.description}
-            </r-desc>
-
-            {#if selectedAsset.tags && selectedAsset.tags.length > 0}
-              <r-tags>
-                {#each selectedAsset.tags as value}
-                  <Tag {value} on:click={searchTag(value)} />
-                {/each}
-              </r-tags>
-            {/if}
-          </r-selected-details>
-        </r-selected>
+        <SelectedAsset asset={selectedAsset} />
       {:else}
         {#if spinner && window.performance.now() - spinStart > 1000}
           <r-results>
@@ -184,45 +137,6 @@
 
   r-search-wrap {
     padding-bottom: 8px;
-  }
-
-  r-selected {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 12px;
-  }
-  r-desc {
-    padding: 8px 4px;
-    margin: 0 16px;
-  }
-  r-add-button {
-    display: block;
-    margin: 12px 0;
-  }
-  r-tags {
-    display: block;
-    margin: 8px;
-  }
-
-  r-selected-thumb {
-    display: block;
-    overflow: hidden;
-    width: 150px;
-    height: 150px;
-    border-radius: 5px;
-    background: var(--foreground-white);
-  }
-  r-selected-thumb img {
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
-  }
-  r-selected-details {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
   }
 
   r-spinner {
@@ -278,6 +192,7 @@
     --bg-color: transparent;
     --bg-hover-color: rgba(0, 0, 0, 0.1);
   }
+
   r-search-back {
     display: flex;
   }
