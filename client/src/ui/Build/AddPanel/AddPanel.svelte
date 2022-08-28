@@ -6,7 +6,7 @@
 
   import { createPrefab } from "~/prefab";
 
-  import BuildPanel, { Header } from "~/ui/lib/BuildPanel";
+  import SidePanel, { Header } from "~/ui/lib/SidePanel";
   import Search from "~/ui/lib/Search";
   import Button from "~/ui/lib/Button";
   import UploadButton from "~/ui/Build/shared/UploadButton";
@@ -67,7 +67,7 @@
   };
 </script>
 
-<BuildPanel on:minimize>
+<SidePanel on:minimize>
   <Header>Add Object</Header>
   <r-column>
     <r-search-pane>
@@ -126,7 +126,7 @@
     <r-line-wrap> Upload an image, or .glb model </r-line-wrap>
     <!-- <SelectCreatePrefab /> -->
   </r-column>
-</BuildPanel>
+</SidePanel>
 
 <style>
   r-column {

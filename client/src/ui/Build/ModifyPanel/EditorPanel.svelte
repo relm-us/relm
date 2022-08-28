@@ -1,5 +1,5 @@
 <script lang="ts">
-  import BuildPanel, { Header } from "~/ui/lib/BuildPanel";
+  import SidePanel, { Header } from "~/ui/lib/SidePanel";
   import Pane from "~/ui/lib/Pane";
   import Button from "~/ui/lib/Button";
   import { selectedEntities, selectedGroups } from "~/stores/selection";
@@ -22,7 +22,7 @@
   };
 </script>
 
-<BuildPanel on:minimize>
+<SidePanel on:minimize>
   <Header>Modify Object</Header>
 
   {#if $selectedEntities.size === 0}
@@ -45,7 +45,7 @@
       Objects: {$selectedEntities.size}
     </Pane>
   {/if}
-</BuildPanel>
+</SidePanel>
 
 <style>
   info {
