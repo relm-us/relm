@@ -44,6 +44,10 @@
     <Pane title="Selected">
       Objects: {$selectedEntities.size}
     </Pane>
+
+    {#if $permits.includes("admin")}
+      <AdminAddToLibrary />
+    {/if}
   {/if}
 </SidePanel>
 
