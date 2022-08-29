@@ -5,9 +5,13 @@
   import FaArrowsAlt from "svelte-icons/fa/FaArrowsAlt.svelte";
   import FaCircleNotch from "svelte-icons/fa/FaCircleNotch.svelte";
 
+  import FaObjectGroup from "svelte-icons/fa/FaObjectGroup.svelte";
+  import FaObjectUngroup from "svelte-icons/fa/FaObjectUngroup.svelte";
+
   import ToolButton from "./ToolButton.svelte";
   import { advancedEdit } from "~/stores/advancedEdit";
   import { dragAction } from "~/stores/dragAction";
+  import { selectedGroups } from "~/stores/selection";
   import { globalEvents } from "~/events";
 </script>
 
@@ -32,6 +36,17 @@
       <FaArrowsAlt />
     {:else}
       <FaCircleNotch />
+    {/if}
+  </ToolButton>
+  <ToolButton
+    shortcut={"3"}
+    bgState={$selectedGroups.size === 0 ? 0 : 1}
+    on:click={() => globalEvents.emit("toggle-selection-as-group")}
+  >
+    {#if $selectedGroups.size === 0}
+      <FaObjectGroup />
+    {:else}
+      <FaObjectUngroup />
     {/if}
   </ToolButton>
 </r-toolbar>

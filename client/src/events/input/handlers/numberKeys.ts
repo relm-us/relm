@@ -41,6 +41,13 @@ export function register(): Function {
         key3.set(pressed);
       },
     ],
+    [
+      ["build"],
+      ["3"],
+      (pressed) => {
+        pressed && globalEvents.emit("toggle-selection-as-group");
+      },
+    ],
   ].flatMap(([contexts, keys, action]: [string[], string[], Action]) =>
     registerAction(contexts, keys, action)
   );

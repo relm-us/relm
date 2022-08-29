@@ -102,6 +102,7 @@ import { errorCat } from "~/stores/errorCat";
 import { viewportScale } from "~/stores/viewportScale";
 import { centerCameraVisible } from "~/stores/centerCameraVisible";
 import { dragAction } from "~/stores/dragAction";
+import { selectedGroups } from "~/stores/selection";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -346,6 +347,12 @@ export class WorldManager {
     globalEvents.on("toggle-drag-action", toggleDragAction);
     this.unsubs.push(() =>
       globalEvents.off("toggle-drag-action", toggleDragAction)
+    );
+
+    const toggleSelectionAsGroup = () => this.selection.toggleGroup();
+    globalEvents.on("toggle-selection-as-group", toggleSelectionAsGroup);
+    this.unsubs.push(() =>
+      globalEvents.off("toggle-drag-action", toggleSelectionAsGroup)
     );
 
     // Make colliders visible in build mode
