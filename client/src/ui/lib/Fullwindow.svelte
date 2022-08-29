@@ -2,13 +2,12 @@
   import { onMount, createEventDispatcher } from "svelte";
 
   export let active = true;
-  export let zIndex = 100;
+  export let zIndex = null;
 
   const dispatch = createEventDispatcher();
 
   let el: HTMLElement;
   let parentEl;
-  let style;
 
   function onClick(event) {
     if (event.target === el) dispatch("close", event.target);
@@ -21,11 +20,9 @@
       // "fullwindow" mode can escape absolute/relative positioned
       // elements and take up the whole window.
       document.body.appendChild(el);
-      style = `z-index: ${zIndex}`;
     } else if (!active && el.parentElement !== parentEl) {
       // Move back to the original parent element
       parentEl.appendChild(el);
-      style = null;
     }
   }
 
@@ -34,7 +31,7 @@
   });
 </script>
 
-<fullwindow bind:this={el} {style} on:click={onClick}>
+<fullwindow bind:this={el} style="z-index: {zIndex}" on:click={onClick}>
   <slot />
 </fullwindow>
 
