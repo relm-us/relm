@@ -1,54 +1,15 @@
 <script lang="ts">
-  import FaMousePointer from "svelte-icons/fa/FaMousePointer.svelte";
-  import FaMountain from "svelte-icons/fa/FaMountain.svelte";
-
-  import FaArrowsAlt from "svelte-icons/fa/FaArrowsAlt.svelte";
-  import FaCircleNotch from "svelte-icons/fa/FaCircleNotch.svelte";
-
-  import FaObjectGroup from "svelte-icons/fa/FaObjectGroup.svelte";
-  import FaObjectUngroup from "svelte-icons/fa/FaObjectUngroup.svelte";
-
-  import ToolButton from "./ToolButton.svelte";
-  import { advancedEdit } from "~/stores/advancedEdit";
-  import { dragAction } from "~/stores/dragAction";
-  import { selectedGroups } from "~/stores/selection";
-  import { globalEvents } from "~/events";
+  import ObjectSelectButton from "./1.svelte";
+  import PanRotateCameraButton from "./2.svelte";
+  import GroupUngroupButton from "./3.svelte";
 </script>
 
 <r-toolbar>
-  <ToolButton
-    shortcut={"1"}
-    bgState={$advancedEdit ? 1 : 0}
-    on:click={() => globalEvents.emit("advanced-edit")}
-  >
-    {#if $advancedEdit}
-      <FaMountain />
-    {:else}
-      <FaMousePointer />
-    {/if}
-  </ToolButton>
-  <ToolButton
-    shortcut={"2"}
-    bgState={$dragAction === "rotate" ? 1 : 0}
-    on:click={() => globalEvents.emit("toggle-drag-action")}
-  >
-    {#if $dragAction === "pan"}
-      <FaArrowsAlt />
-    {:else}
-      <FaCircleNotch />
-    {/if}
-  </ToolButton>
-  <ToolButton
-    shortcut={"3"}
-    bgState={$selectedGroups.size === 0 ? 0 : 1}
-    on:click={() => globalEvents.emit("toggle-selection-as-group")}
-  >
-    {#if $selectedGroups.size === 0}
-      <FaObjectGroup />
-    {:else}
-      <FaObjectUngroup />
-    {/if}
-  </ToolButton>
+  <ObjectSelectButton />
+
+  <PanRotateCameraButton />
+
+  <GroupUngroupButton />
 </r-toolbar>
 
 <style>

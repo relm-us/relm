@@ -1,14 +1,16 @@
 <script lang="ts">
   import Button from "~/ui/lib/Button";
+  import Tooltip from "~/ui/lib/Tooltip";
 
   export let shortcut: string;
   export let bgState: number = 0;
+  export let tip: string = null;
 
   let style;
 
   $: switch (bgState) {
     case 1:
-      style = "--bg-color: #89cf82";
+      style = "--bg-color: #89cf82; --bg-hover-color: #89cf82";
       break;
     default:
       style = null;
@@ -17,10 +19,12 @@
 </script>
 
 <r-tool-button {style}>
-  <Button on:click>
-    <r-icon><slot /></r-icon>
-    <r-shortcut-key>{shortcut}</r-shortcut-key>
-  </Button>
+  <Tooltip {tip} bottom={true}>
+    <Button on:click>
+      <r-icon><slot /></r-icon>
+      <r-shortcut-key>{shortcut}</r-shortcut-key>
+    </Button>
+  </Tooltip>
 </r-tool-button>
 
 <style>
