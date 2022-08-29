@@ -5,22 +5,26 @@
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import { autoPause } from "~/stores/autoPause";
   import { worldManager } from "~/world";
+
+  function unpause() {
+    worldManager.start();
+  }
 </script>
 
-<r-tint transition:fade>
-  <r-message>
+<r-tint transition:fade on:click={unpause}>
+  <r-message on:click|stopPropagation>
     <div class="paused">Paused</div>
     <div class="button">
-      <Button on:click={() => worldManager.start()}>Continue</Button>
+      <Button on:click={unpause}>Continue</Button>
     </div>
-    <div class="toggle-auto-pause">
+    <r-footer class="toggle-auto-pause" stlye="position:absolute">
       <ToggleSwitch
         enabled={$autoPause}
         labelOn="Autopause On"
         labelOff="Autopause Off"
         on:change={({ detail }) => ($autoPause = detail)}
       />
-    </div>
+    </r-footer>
   </r-message>
 </r-tint>
 
@@ -41,9 +45,12 @@
     background: rgba(0, 0, 0, 0.8);
   }
   r-message {
+    position: relative;
+
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow: hidden;
 
     color: var(--background-gray, black);
 
@@ -52,8 +59,29 @@
     border-radius: 5px;
   }
 
-  r-message > * {
-    margin: 16px 0;
+  r-message > div {
+    margin: 12px 0;
+  }
+  r-message > div.button {
+    margin-bottom: 60px;
+  }
+
+  r-footer {
+    display: flex;
+    justify-content: flex-end;
+
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+
+    background: #bbb;
+  }
+
+  r-footer > :global(*) {
+    /* Reduce size of the autopause toggle */
+    transform: scale(0.65);
+    transform-origin: right;
+    margin: 4px 8px;
   }
 
   .paused {
