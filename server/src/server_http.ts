@@ -1,17 +1,10 @@
 import express from "express";
-import hbs from "express-hbs";
 import cors from "cors";
 import path from "path";
-import url from "url";
 import * as middleware from "./middleware.js";
 import * as routes from "./routes/index.js";
 import passportMiddleware from "./passportAuth.js";
-import { respondWithError, uuidv4 } from "./utils/index.js";
-
-const getDirName = () => {
-  const __filename = url.fileURLToPath(import.meta.url);
-  return path.dirname(__filename);
-};
+import { getRootPath, respondWithError, uuidv4 } from "./utils/index.js";
 
 export const app = express();
 
@@ -24,7 +17,10 @@ app.options("*", cors());
 
 // Set the view engine to the module hbs
 app.set("view engine", "hbs");
-app.set("views", path.join(getDirName(), "..", "templates", "views"));
+app.set("views", path.join(getRootPath(), "data", "templates", "views"));
+
+// Static assets
+app.use("/public", express.static(path.join(getRootPath(), "data", "public")));
 
 // Passport for OAuthauthentication
 app.use(passportMiddleware);

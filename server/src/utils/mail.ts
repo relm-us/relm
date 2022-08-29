@@ -2,15 +2,10 @@ import Mailgun from "mailgun.js";
 import type Client from "mailgun.js/client.js";
 import * as path from "path";
 import * as fs from "fs";
-import * as url from "url";
 import { MAILGUN_DOMAIN, MAILGUN_FROM, MAILGUN_KEY } from "../config.js";
+import { getRootPath } from "./index.js";
 
-const getDirName = () => {
-  const __filename = url.fileURLToPath(import.meta.url);
-  return path.dirname(__filename);
-};
-
-const EMAIL_TEMPLATE_FOLDER_PATH = path.join(getDirName(), "..", "..", "templates", "emails");
+const EMAIL_TEMPLATE_FOLDER_PATH = path.join(getRootPath(), "data", "templates", "emails");
 
 // Gather all email templates
 const templates: { [template: string]: EmailDetails } = {};
