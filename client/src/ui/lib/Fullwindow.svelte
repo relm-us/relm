@@ -2,13 +2,12 @@
   import { onMount, createEventDispatcher } from "svelte";
 
   export let active = true;
-  export let zIndex = 100;
+  export let zIndex = null;
 
   const dispatch = createEventDispatcher();
 
   let el: HTMLElement;
   let parentEl;
-  let style;
 
   function onClick(event) {
     if (event.target === el) dispatch("close", event.target);
@@ -25,7 +24,6 @@
       // Move back to the original parent element
       parentEl.appendChild(el);
     }
-    style = `z-index: ${zIndex}`;
   }
 
   onMount(() => {
@@ -33,7 +31,7 @@
   });
 </script>
 
-<fullwindow bind:this={el} {style} on:click={onClick}>
+<fullwindow bind:this={el} style="z-index: {zIndex}" on:click={onClick}>
   <slot />
 </fullwindow>
 
