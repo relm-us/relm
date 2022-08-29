@@ -21,12 +21,11 @@
       // "fullwindow" mode can escape absolute/relative positioned
       // elements and take up the whole window.
       document.body.appendChild(el);
-      style = `z-index: ${zIndex}`;
     } else if (!active && el.parentElement !== parentEl) {
       // Move back to the original parent element
       parentEl.appendChild(el);
-      style = null;
     }
+    style = `z-index: ${zIndex}`;
   }
 
   onMount(() => {
