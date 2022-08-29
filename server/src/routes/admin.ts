@@ -32,6 +32,7 @@ admin.post(
       "edit",
     ];
     await Permission.setPermits({
+      relmId: "*",
       participantId: req.body.participantId,
       permits,
     });

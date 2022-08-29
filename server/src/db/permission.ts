@@ -12,6 +12,8 @@ export type Permits = {
   edit?: boolean;
 };
 
+export type UUID = string;
+
 export function validPermission(permission) {
   return PERMISSIONS.includes(permission);
 }
@@ -34,25 +36,26 @@ export async function setPermits({
 }: {
   participantId: string;
   permits: Array<Permission>;
-  relmId?: string;
+  relmId?: "*" | UUID;
   relmName?: string;
   union?: boolean;
 }): Promise<boolean> {
   let relm_id;
 
-  if (relmId) {
-    relm_id = relmId;
-  } else if (relmName) {
-    const relm = await getRelm({ relmName });
-    if (relm) {
-      relm_id = relm.relmId;
-    } else {
-      // Relm does not exist, we won't set permissions on it
-      return false;
-    }
-  } else {
+  if (relmId === "*") {
     // special case: set permission on all relms
     relm_id = null;
+  } else if (relmId) {
+    const relm = await getRelm({ relmId });
+    if (relm) relm_id = relmId;
+  } else if (relmName) {
+    const relm = await getRelm({ relmName });
+    if (relm) relm_id = relm.relmId;
+  }
+
+  // Unable to find relm via relmId and relmName
+  if (!relm_id) {
+    return false;
   }
 
   const attrs = {
@@ -89,9 +92,9 @@ export async function getPermissions({
   relmNames,
   relmIds,
 }: {
-  participantId: string;
+  participantId: UUID;
   relmNames?: string[];
-  relmIds?: string[];
+  relmIds?: UUID[];
 }): Promise<Record<string, Permission[]>> {
   if (empty(relmNames) && empty(relmIds)) return {};
 
