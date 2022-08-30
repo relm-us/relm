@@ -2,7 +2,7 @@
   import { onMount, createEventDispatcher } from "svelte";
 
   export let active = true;
-  export let zIndex = null;
+  export let zIndex = 100;
 
   const dispatch = createEventDispatcher();
 
