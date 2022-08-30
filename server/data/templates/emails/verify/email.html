@@ -1,13 +1,120 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Welcome to Relm!</title>
+    <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Relm | Confirm Email Address</title>
+
+    <style>
+      html, body {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      
+      #banner {
+        background-color: #1f1c19;
+        width: 100%;
+        height: 83px; /* height of relm logo image */
+      }
+      
+      /* Centered column with content */
+      #content {
+        width: 100%;
+        max-width: 640px;
+        height: 100%;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      #envelope img {
+        padding-top: 10%;
+      }
+
+      #confirmButton {
+        width: 50%;
+        padding-left: 25%;
+      }
+
+      .title {
+        font-size: 2em;
+      }
+
+      .subtitle {
+        font-size: 1.5em;
+      }
+
+      .text {
+        font-size: 1.1em;
+      }
+
+      /* Center content helpers */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      table td {
+        width: 33%;
+      }
+
+      table td {
+        padding: 0;
+      }
+    </style>
   </head>
   <body>
-    <p>
-      Welcome to Relm.US! To verify your email account, please click here: <a href="{{LINK}}">{{LINK}}</a>
-    </p>
+    <div id="banner">
+      <table>
+        <tr>
+          <td></td>
+          <td><img style="display: block" title="Banner" alt="Banner" height="83" width="640" src="{{SERVER_URL}}/public/email/email_confirmation-header.png" /></td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <table>
+      <tr>
+        <td></td>
+        <td>
+          <div id="content">
+            <br />
+
+            <table>
+              <tr>
+                <td></td>
+                <td>
+                  <img style="display: block" title="Envelope" alt="Envelope" height="170" width="160" src="{{SERVER_URL}}/public/email/email_confirmation-envelope.png" />
+                </td>
+                <td></td>
+              </tr>
+            </table>
+    
+            <br />
+            
+            <span class="title">{{GREETING}}</span>
+            <br /><br />
+            <span class="subtitle">So glad you're here :)</span>
+            <br /><br />
+            <span class="text">You're one click away from confirming your account with us.<strong> This account will allow you to sign in across devices</strong> to access the places and items you've collected during your visits.</span>
+            <br /><br />
+            <div id="confirmButton">
+              <a href="{{SERVER_URL}}/email/verify/{{CODE}}">
+                <img style="display: block" title="Confirm Account" alt="Confirm Account" height="54" width="320" src="{{SERVER_URL}}/public/email/email_confirmation-button.png" />
+              </a>
+            </div>
+            <br /><br /><br />
+            <span class="text">Looking forward to seeing you at future events!</span>
+            <br /><br />
+            <span class="text"><strong><span style="color:#008080;">Relm</span> Team</strong></span>
+    
+          </div>
+        </td>
+        <td></td>
+      </tr>
+    </table>
   </body>
 </html>

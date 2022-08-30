@@ -12,13 +12,15 @@ email.get(
     const code = req.params.code;
     
     const completedVerification = await User.markAsCompletedEmailVerification({ code });
+
     if (completedVerification) {
       res.render("verifyAccount", {
-        status: "Successfully linked account."
+        status: "success"
       });
     } else {
       res.render("verifyAccount", {
-        status: "No account verification could be found with the provided code."
+        status: "error",
+        reason: "No account verification could be found with the provided code."
       });
     }
 

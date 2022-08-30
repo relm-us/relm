@@ -6,7 +6,7 @@
   import { showCenterButtons } from "~/stores/showCenterButtons";
   import { getNotificationsContext } from "svelte-notifications";
   import { _ } from "~/i18n";
-import ConnectionSubmitInput from "./components/ConnectionSubmitInput.svelte";
+  import ConnectionSubmitInput from "./components/ConnectionSubmitInput.svelte";
 
   export let enabled;
   export let dispatch: Dispatch;
@@ -43,10 +43,11 @@ import ConnectionSubmitInput from "./components/ConnectionSubmitInput.svelte";
   async function onEmailPasswordAction() {
     const email = (document.querySelector('input[name="email"]') as HTMLInputElement).value;
     const password = (document.querySelector('input[name="password"]') as HTMLInputElement).value;
+    const identity = worldManager.participants.local.identityData;
 
     const response = showingSignin
       ? await worldManager.login({ email, password }) 
-      : await worldManager.register({ email, password });
+      : await worldManager.register({ email, password, identity });
     
     if (response.status === "success") {
       // Username/password was successfully registered.

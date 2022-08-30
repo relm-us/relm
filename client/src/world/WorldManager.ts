@@ -77,7 +77,7 @@ import { Participant } from "~/types/identity";
 import { ParticipantManager } from "~/identity/ParticipantManager";
 import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 import { delay } from "~/utils/delay";
-import { LoginCredentials, RelmRestAPI } from "~/main/RelmRestAPI";
+import { LoginCredentials, RegisterCredentials, RelmRestAPI } from "~/main/RelmRestAPI";
 import { PhotoBooth } from "./PhotoBooth";
 import { audioMode, AudioMode } from "~/stores/audioMode";
 import { Outline } from "~/ecs/plugins/outline";
@@ -789,7 +789,7 @@ export class WorldManager {
   }
 
   async register(
-    credentials: LoginCredentials
+    credentials: RegisterCredentials
   ): Promise<AuthenticationResponse> {
     const data = await this.api.registerParticipant(credentials);
 

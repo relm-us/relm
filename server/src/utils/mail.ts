@@ -30,7 +30,7 @@ for (const folderName of emailTemplateFolders) {
 
   templates[folderName] = {
     subject,
-    content,
+    content: typeof content === "string" ? content : content.join("\n"),
     html
   };
 }

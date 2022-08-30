@@ -145,7 +145,7 @@ auth.post(
   cors(),
   middleware.authenticated(),
   wrapAsync(async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, identity } = req.body;
 
     // Check that the email is valid
     if (!isValidEmailFormat(email)) {
@@ -153,6 +153,9 @@ auth.post(
     }
     if (!isValidPasswordFormat(password)) {
       return respondWithFailure(res, "invalid_password", "Your password needs to be at least 8 characters long!");
+    }
+    if (!isValidIdentity(identity)) {
+      return respondWithError(res, "Missing identity in payload.");
     }
 
     // Check if someone is using that email
@@ -174,8 +177,11 @@ auth.post(
       emailVerificationRequired: true
     });
 
+    const name = (identity as SavedIdentityData).name;
     const verifyEmailDetails = createEmailTemplate("verify", {
-      link: `${SERVER_BASE_URL}/email/verify/${emailCode}`
+      code: emailCode,
+      greeting: name ? `Hi ${name}!` : `Hi there!`,
+      server_url: SERVER_BASE_URL
     });
     try {
       await sendEmail(email, verifyEmailDetails);
@@ -186,6 +192,7 @@ auth.post(
     }
 
     await Participant.assignToUserId({ participantId, userId });
+    await User.setIdentityData({ userId, identity });
     return respondWithSuccess(res, {});
   })
 );

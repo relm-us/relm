@@ -2,6 +2,8 @@
 
 Each email template can be referenced through the utility `createEmailTemplate` and the email can be sent via `sendEmail`. However, setup is required for Relm to read each template.
 
+All emails will try and use their HTML template first, but if the email provider does not support it, the text version of the email will be used instead.
+
 ## File Structure
 For each unique email template, the file tree should look like this
 ```
@@ -28,6 +30,7 @@ For each unique email template, the file tree should look like this
 {
   "subject": "Subject of the email to send",
   "content": "Content to send in the email if the email service does NOT support HTML"
+  // Alternatively, content can be a JSON array for convenience for multilines.
 }
 ```
 
