@@ -10,19 +10,11 @@ email.get(
   cors(),
   wrapAsync(async (req, res) => {
     const code = req.params.code;
+
+    const confirmed = await User.markAsCompletedEmailVerification({ code });
     
-    const completedVerification = await User.markAsCompletedEmailVerification({ code });
-
-    if (completedVerification) {
-      res.render("verifyAccount", {
-        status: "success"
-      });
-    } else {
-      res.render("verifyAccount", {
-        status: "error",
-        reason: "No account verification could be found with the provided code."
-      });
-    }
-
+    res.render("verifyAccount", {
+      confirmed
+    });
   })
 );

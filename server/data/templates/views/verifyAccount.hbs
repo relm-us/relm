@@ -25,12 +25,7 @@
 
       #content {
         text-align: center;
-        margin-top:17%;
-      }
-
-      .center {
-        display: flex;
-        justify-content: center;
+        padding-top:17%;
       }
 
       span {
@@ -43,9 +38,8 @@
   </head>
   <body>
     <div id="background">
-      <div class="center">
-
-        <div id="content">
+      <div id="content">
+        {{#if confirmed}}
           <span>Your email</span>
           <br />
           <span>has been confirmed</span>
@@ -53,8 +47,11 @@
           <div>
             <img alt="Email Confirmed" height="200px" src="/public/email_confirmation/email_confirmation-envelope_white.png">
           </div>
-        </div>
-
+        {{else}}
+          <span>Invalid or</span>
+          <br />
+          <span>expired code</span>
+        {{/if}}
       </div>
     </div>
   </body>
