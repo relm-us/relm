@@ -4,7 +4,7 @@
 
   import { worldManager } from "~/world";
 
-  import { Pane } from "~/ui/lib/LeftPanel";
+  import Pane from "~/ui/lib/Pane";
   import UploadButton from "~/ui/Build/shared/UploadButton";
   import Button from "~/ui/lib/Button";
   import TextInput from "~/ui/lib/TextInput";

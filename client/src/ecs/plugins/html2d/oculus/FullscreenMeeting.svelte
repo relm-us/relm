@@ -7,14 +7,15 @@
 
   import Fullscreen from "./Fullscreen.svelte";
   import Individual from "./Individual.svelte";
+  import { IdentityData } from "~/types";
 
   export let fullscreenParticipantId: string;
   export let videoTrack = null;
   export let audioTrack = null;
-  export let clients: Readable<Set<number>>;
+  export let clients: Readable<Map<number, IdentityData>>;
 
-  function getMeAndOtherParticipants(clientIds) {
-    const participants = worldManager.participants.getByClientIds(clientIds);
+  function getMeAndOtherParticipants(clientIds: Map<number, IdentityData>) {
+    const participants = worldManager.participants.getByClientIds(clientIds.keys());
 
     // Add me so I can see myself
     const me = worldManager.participants.participants.get(localParticipantId);

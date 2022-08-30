@@ -30,6 +30,12 @@ import { highDefEnabled } from "~/stores/highDefEnabled";
 import { keyShift, key1, key2, key3 } from "~/stores/keys";
 import { keyLeft, keyRight, keyUp, keyDown, keySpace } from "~/stores/keys";
 import {
+  CAMERA_BUILD_DAMPENING,
+  CAMERA_BUILD_ZOOM_MAX,
+  CAMERA_BUILD_ZOOM_MIN,
+  CAMERA_PLAY_DAMPENING,
+  CAMERA_PLAY_ZOOM_MAX,
+  CAMERA_PLAY_ZOOM_MIN,
   FPS_SLOWDOWN_MIN_FPS,
   FPS_SLOWDOWN_TIMEOUT,
   OCULUS_HEIGHT_SIT,
@@ -94,6 +100,9 @@ import { connectedAccount } from "~/stores/connectedAccount";
 import { permits } from "~/stores/permits";
 import { errorCat } from "~/stores/errorCat";
 import { viewportScale } from "~/stores/viewportScale";
+import { centerCameraVisible } from "~/stores/centerCameraVisible";
+import { dragAction } from "~/stores/dragAction";
+import { selectedGroups } from "~/stores/selection";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -298,10 +307,30 @@ export class WorldManager {
             // Always turn advanced edit off when entering build mode
             advancedEdit.set(false);
 
+            this.camera.setZoomRange(
+              CAMERA_BUILD_ZOOM_MIN,
+              CAMERA_BUILD_ZOOM_MAX
+            );
+            this.camera.dampening = CAMERA_BUILD_DAMPENING;
+
             break;
           case "play":
             this.world.systems.get(InteractorSystem).active = true;
             this.hideTransformControls();
+
+            this.camera.setZoomRange(
+              CAMERA_PLAY_ZOOM_MIN,
+              CAMERA_PLAY_ZOOM_MAX
+            );
+            this.camera.dampening = CAMERA_PLAY_DAMPENING;
+
+            // Reset camera direction to "north"
+            this.camera.direction.y = 0;
+            this.camera.setModeFollow();
+
+            // Center the avatar on camera
+            this.camera.center();
+
             break;
         }
       })
@@ -311,6 +340,19 @@ export class WorldManager {
     globalEvents.on("advanced-edit", toggleAdvancedEdit);
     this.unsubs.push(() =>
       globalEvents.off("advanced-edit", toggleAdvancedEdit)
+    );
+
+    const toggleDragAction = () =>
+      dragAction.update((value) => (value === "pan" ? "rotate" : "pan"));
+    globalEvents.on("toggle-drag-action", toggleDragAction);
+    this.unsubs.push(() =>
+      globalEvents.off("toggle-drag-action", toggleDragAction)
+    );
+
+    const toggleSelectionAsGroup = () => this.selection.toggleGroup();
+    globalEvents.on("toggle-selection-as-group", toggleSelectionAsGroup);
+    this.unsubs.push(() =>
+      globalEvents.off("toggle-drag-action", toggleSelectionAsGroup)
     );
 
     // Make colliders visible in build mode
@@ -342,9 +384,12 @@ export class WorldManager {
     this.unsubs.push(
       derived(
         [worldUIMode, key1, key2, key3],
-        ([$mode, $key1, $key2, $key3], set) => {
+        (
+          [$mode, $key1, $key2, $key3],
+          set: (anim: { clipName: string; loop: boolean }) => void
+        ) => {
           if ($mode === "play" && $key1) {
-            set(WAVING);
+            set({ clipName: WAVING, loop: true });
             sitting = false;
           } else if ($mode === "play" && $key2) {
             if (sitting) {
@@ -369,7 +414,8 @@ export class WorldManager {
             oculus.targetOffset.y = OCULUS_HEIGHT_STAND;
           }
         }
-        const state = this.avatar.entities.body.get(ControllerState);
+        const state: ControllerState =
+          this.avatar.entities.body.get(ControllerState);
         if (!state) return;
         state.animOverride = anim;
       })
@@ -497,7 +543,7 @@ export class WorldManager {
   topView(height: number = 40, hideAvatar: boolean = true) {
     const avatar = this.participants.local.avatar;
 
-    this.camera.above(height);
+    this.camera.setModeAbove(height);
     if (avatar && hideAvatar) {
       avatar.entities.body.traverse((e) => {
         e.getByName("Object3D").value.visible = false;

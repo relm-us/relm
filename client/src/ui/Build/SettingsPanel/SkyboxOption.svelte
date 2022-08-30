@@ -28,7 +28,7 @@
   img {
     border-radius: 3px;
     object-fit: cover;
-    width: 100px;
-    height: 100px;
+    width: 75px;
+    height: 75px;
   }
 </style>

@@ -61,7 +61,7 @@
 </script>
 
 {#if enabled}
-  <r-mini-map on:click={onClick} class:extra-margin={$worldUIMode === "build"}>
+  <r-mini-map on:click={onClick}>
     <r-centered>
       {#each otherPositions as pos}
         <MapParticipant
@@ -104,9 +104,7 @@
     background-color: var(--bg-color, rgba(0, 0, 0, 0.4));
     overflow: hidden;
   }
-  r-mini-map.extra-margin {
-    margin-left: 300px;
-  }
+
   r-centered {
     position: relative;
     left: 50%;

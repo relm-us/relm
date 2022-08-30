@@ -28,10 +28,24 @@ export function register(): Function {
       },
     ],
     [
+      ["build"],
+      ["2"],
+      (pressed) => {
+        pressed && globalEvents.emit("toggle-drag-action");
+      },
+    ],
+    [
       ["play"],
       ["3"],
       (pressed) => {
         key3.set(pressed);
+      },
+    ],
+    [
+      ["build"],
+      ["3"],
+      (pressed) => {
+        pressed && globalEvents.emit("toggle-selection-as-group");
       },
     ],
   ].flatMap(([contexts, keys, action]: [string[], string[], Action]) =>

@@ -6,7 +6,6 @@ import { Transform } from "~/ecs/plugins/core";
 import { CssPresentation } from "./CssPresentation";
 
 const _pos = new Vector3();
-const _rot = new Quaternion();
 const _sca = new Vector3();
 
 export function copyTransform(

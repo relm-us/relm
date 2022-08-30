@@ -1,13 +1,12 @@
 import type { IdentityData } from "~/types";
 
 import * as Y from "yjs";
-import { writable, Writable } from "svelte/store";
-
-import { withMapEdits } from "relm-common";
+import { writable, Writable, get } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
 import { Dispatch } from "~/main/ProgramTypes";
+import { isEqual } from "~/utils/isEqual";
 
 /**
  * An adapter between the WorldDoc's "identities" map (Yjs) and
@@ -16,28 +15,27 @@ import { Dispatch } from "~/main/ProgramTypes";
 export class ParticipantYBroker {
   worldDoc: WorldDoc;
   unsubs: Function[];
-  clients: Writable<Set<number>>;
+  clients: Writable<Map<number, IdentityData>>;
 
   constructor(worldDoc: WorldDoc) {
     this.worldDoc = worldDoc;
     this.unsubs = [];
-    this.clients = writable(new Set());
-  }
-
-  get yidentities(): Y.Map<IdentityData> {
-    return this.worldDoc.ydoc.getMap("identities");
+    this.clients = writable(new Map());
   }
 
   get awareness() {
     return this.worldDoc.provider.awareness;
   }
 
-  setIdentityData(participantId: string, identityData: IdentityData) {
-    this.yidentities.set(participantId, identityData);
-  }
-
   setField(key, value) {
     this.awareness.setLocalStateField(key, value);
+  }
+
+  setFields(data) {
+    this.awareness.setLocalState({
+      ...this.awareness.getLocalState(),
+      ...data,
+    });
   }
 
   getField(key) {
@@ -45,29 +43,13 @@ export class ParticipantYBroker {
   }
 
   subscribe(dispatch: Dispatch) {
-    this.unsubs.push(this.subscribeConnect(dispatch));
+    this.unsubs.push(this.subscribeData(dispatch));
     this.unsubs.push(this.subscribeDisconnect(dispatch));
-    this.unsubs.push(this.subscribeIdentityData(dispatch));
   }
 
   unsubscribe() {
     this.unsubs.forEach((unsub) => unsub());
     this.unsubs.length = 0;
-  }
-
-  subscribeConnect(dispatch: Dispatch) {
-    console.log("subscribeConnect");
-    const observer = (changes) => {
-      for (let id of changes.added) {
-        // Add clientId when they connect
-        this.clients.update(($clients) => {
-          $clients.add(id);
-          return $clients;
-        });
-      }
-    };
-    this.awareness.on("change", observer);
-    return () => this.awareness.off("change", observer);
   }
 
   subscribeDisconnect(dispatch: Dispatch) {
@@ -81,49 +63,44 @@ export class ParticipantYBroker {
         dispatch({ id: "removeParticipant", clientId: id });
       }
     };
+
     this.awareness.on("change", observer);
+
     return () => this.awareness.off("change", observer);
   }
 
-  subscribeIdentityData(dispatch: Dispatch) {
-    for (let [participantId, identityData] of this.yidentities.entries()) {
-      dispatch({
-        id: "recvParticipantData",
-        participantId,
-        identityData,
-      });
-    }
-    const observer = (
-      event: Y.YMapEvent<IdentityData>,
-      transaction: Y.Transaction
-    ) => {
-      withMapEdits(event, {
-        onAdd: (participantId, identityData) => {
+  subscribeData(dispatch: Dispatch) {
+    const observer = (changes) => {
+      const idsToCheck = changes.added.concat(changes.updated);
+      for (const id of idsToCheck) {
+        // Don't subscribe to self data
+        if (id === this.awareness.clientID) continue;
+
+        const state = this.awareness.getStates().get(id);
+
+        const participantId = state["id"];
+        const identityData = state["i"];
+
+        if (!participantId || !identityData) continue;
+
+        // Update identity data as necessary
+        if (!isEqual(get(this.clients).get(id), identityData)) {
+          this.clients.update(($clients) => {
+            $clients.set(id, identityData);
+            return $clients;
+          });
+
           dispatch({
             id: "recvParticipantData",
             participantId,
             identityData,
           });
-        },
-        onUpdate: (participantId, identityData, _oldIdentityData) => {
-          dispatch({
-            id: "recvParticipantData",
-            participantId,
-            identityData,
-          });
-        },
-        onDelete: (participantId, _identityData) => {
-          throw Error(
-            `remove by participantId unimplemented (${participantId})`
-          );
-        },
-      });
+        }
+      }
     };
 
-    this.yidentities.observe(observer);
+    this.awareness.on("change", observer);
 
-    return () => {
-      this.yidentities.unobserve(observer);
-    };
+    return () => this.awareness.off("change", observer);
   }
 }

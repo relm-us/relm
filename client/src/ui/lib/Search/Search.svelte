@@ -35,10 +35,10 @@
   r-search > [data-clear-input] {
     position: absolute;
     top: 3px;
-    right: 2px;
+    right: 5px;
     font-weight: bold;
-    font-size: 1.4em;
-    padding: 0 0.2em;
+    font-size: 22px;
+    padding: 0 6px;
     line-height: 1em;
     cursor: pointer;
     color: var(--foreground-dark-gray);
@@ -47,11 +47,11 @@
     display: none;
   }
   input {
-    border-radius: 4px;
     padding: 4px 16px;
     font-size: 16px;
     border-radius: 16px;
     width: calc(calc(100% - 1.4em) - 18px);
+    border: 2px solid var(--selected-red);
   }
   .hidden {
     display: none;

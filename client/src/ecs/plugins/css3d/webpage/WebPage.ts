@@ -1,8 +1,10 @@
 import { Component, StringType, BooleanType } from "~/ecs/base";
+import { Asset, AssetType } from "../../core";
 
 export class WebPage extends Component {
   url: string;
-  alwaysOn: boolean;
+  fit: "COVER" | "CONTAIN";
+  asset: Asset;
 
   static props = {
     url: {
@@ -13,11 +15,24 @@ export class WebPage extends Component {
       },
     },
 
-    alwaysOn: {
-      type: BooleanType,
-      default: false,
+    fit: {
+      type: StringType,
+      default: "COVER",
       editor: {
-        label: "Force Embed",
+        label: "Fit",
+        input: "Select",
+        options: [
+          { label: "Contain", value: "CONTAIN" },
+          { label: "Cover", value: "COVER" },
+        ],
+      },
+    },
+
+    asset: {
+      type: AssetType,
+      editor: {
+        label: "Image",
+        accept: ".png,.jpg,.jpeg",
       },
     },
   };

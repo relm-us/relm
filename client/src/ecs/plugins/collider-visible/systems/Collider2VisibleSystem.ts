@@ -74,7 +74,7 @@ export class Collider2VisibleSystem extends System {
       0.04
     );
 
-    const mesh = new Mesh(geometry, colliderMaterial);
+    const mesh = new Mesh(geometry, colliderMaterial.clone());
     mesh.quaternion.copy(collider.rotation);
 
     object3d.add(mesh);

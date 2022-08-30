@@ -1,4 +1,10 @@
-import { Euler, PerspectiveCamera, Quaternion, Vector3 } from "three";
+import {
+  Euler,
+  PerspectiveCamera,
+  Quaternion,
+  Vector3,
+  MathUtils,
+} from "three";
 
 import { Entity } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
@@ -11,13 +17,20 @@ import { makeCamera } from "~/prefab/makeCamera";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import {
   AVATAR_HEIGHT,
-  CAMERA_ANGLE,
-  CAMERA_LERP_ALPHA,
+  CAMERA_PLAY_DAMPENING,
+  CAMERA_PLAY_ZOOM_MAX,
+  CAMERA_PLAY_ZOOM_MIN,
+  DEFAULT_CAMERA_ANGLE,
   DEFAULT_VIEWPORT_ZOOM,
 } from "~/config/constants";
+import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
 
-type CameraFollowingParticipant = {
-  type: "following";
+type CameraFollow = {
+  type: "follow";
+};
+
+type CameraRotate = {
+  type: "rotate";
 };
 
 type CameraAbove = {
@@ -25,11 +38,18 @@ type CameraAbove = {
   height: number;
 };
 
-type CameraState = CameraFollowingParticipant | CameraAbove;
+type CameraState = CameraFollow | CameraRotate | CameraAbove;
+
+const directionNeg = new Euler();
+const vOut = new Vector3(0, 0, -1);
+const vUp = new Vector3(0, 1, 0);
+const e1 = new Euler();
 
 export class CameraManager {
-  counter: number = 0;
+  // Track what we're doing with the camera right now
+  state: CameraState;
 
+  // The HECS world
   ecsWorld: DecoratedECSWorld;
 
   // The ECS entity with a Camera component holding the ThreeJS PerspectiveCamera object
@@ -38,28 +58,25 @@ export class CameraManager {
   // The participant's avatar
   avatar: Entity;
 
-  // Track what we're doing with the camera right now
-  state: CameraState;
-
   // How much the camera is "off-center" from the participant
   pan: Vector3 = new Vector3();
 
   // 0: zoomed all the way in; 1: zoomed all the way out
   zoom: number;
+  zoomedInDistance: number = CAMERA_PLAY_ZOOM_MIN;
+  zoomedOutDistance: number = CAMERA_PLAY_ZOOM_MAX;
 
+  // The angle of rotation around the avatar
+  direction: Euler = new Euler();
+
+  // The position of the camera, relative to its target (i.e. the avatar)
   followOffset: Vector3;
-  zoomedInOffset: Vector3 = new Vector3(
-    0,
-    5 * Math.sin(CAMERA_ANGLE) + AVATAR_HEIGHT,
-    5 * Math.cos(CAMERA_ANGLE)
-  );
-  zoomedOutOffset: Vector3 = new Vector3(
-    0,
-    25 * Math.sin(CAMERA_ANGLE) + AVATAR_HEIGHT,
-    25 * Math.cos(CAMERA_ANGLE)
-  );
 
+  // Track things that need cleaning up before deinit
   unsubs: Function[] = [];
+
+  // How much "dampening" to add to camera panning
+  dampening: number = CAMERA_PLAY_DAMPENING;
 
   get threeCamera(): PerspectiveCamera {
     const camera: Object3DRef = this.entity.get(Object3DRef);
@@ -72,24 +89,24 @@ export class CameraManager {
   }
 
   init() {
-    this.state = { type: "following" };
+    this.setModeFollow();
+    this.setPan(0, 0);
+
     this.zoom = DEFAULT_VIEWPORT_ZOOM / 100;
+
+    this.direction.x = DEFAULT_CAMERA_ANGLE;
 
     this.followOffset = new Vector3();
     this.calcFollowOffset();
 
     // Create the ECS camera entity that holds the ThreeJS camera
-    this.entity = makeCamera(this.ecsWorld, -CAMERA_ANGLE)
-      .add(Follow, {
-        target: this.avatar.id,
-        lerpAlpha: CAMERA_LERP_ALPHA,
-      })
-      .activate();
+    this.entity = makeCamera(this.ecsWorld).activate();
+    this.entity.get(Transform).rotation.setFromEuler(directionNeg);
 
     // Listen to the mousewheel for zoom events
     this.unsubs.push(
       viewportScale.subscribe(($scale) => {
-        if (this.state.type === "following") {
+        if (this.state.type === "follow" || this.state.type === "rotate") {
           this.zoom = $scale / 100;
         }
       })
@@ -114,42 +131,99 @@ export class CameraManager {
 
   update(delta: number) {
     const camera = this.entity;
-    if (!camera) return;
-
-    this.counter++;
+    if (!camera || !this.avatar.has(Transform)) return;
 
     switch (this.state.type) {
-      case "following": {
+      case "follow": {
         this.calcFollowOffset();
-        const follow = camera.get(Follow);
-        follow?.offset.copy(this.followOffset);
+
+        // Roughly "lookAt" the avatar
+        this.entity.get(Transform).rotation.setFromEuler(directionNeg);
+
+        camera.add(Follow, {
+          target: this.avatar.id,
+          offset: this.followOffset,
+          dampening: this.dampening,
+        });
 
         // Make it easy to get back to avatar if camera not centered
-        if (this.counter % 60 === 0 && this.isOffCenter()) {
+        if (this.ecsWorld.version % 60 === 0 && this.isOffCenter()) {
           centerCameraVisible.set(true);
         }
 
         break;
       }
 
+      case "rotate": {
+        const avatarPos: Vector3 = new Vector3()
+          .copy(this.avatar.get(Transform).position)
+          .add(this.pan);
+        this.lookAt(avatarPos);
+
+        this.calcFollowOffset();
+        camera.add(Follow, {
+          target: this.avatar.id,
+          offset: this.followOffset,
+          dampening: 0.001,
+        });
+
+        break;
+      }
+
       case "above": {
         this.followOffset.set(0, this.state.height, 0).add(this.pan);
-        const follow = camera.get(Follow);
-        follow?.offset.copy(this.followOffset);
+
+        camera.add(Follow, {
+          target: this.avatar.id,
+          offset: this.followOffset,
+          dampening: this.dampening,
+        });
+
+        break;
       }
     }
   }
 
-  setPan(x, z) {
+  setPan(x: number, z: number) {
     this.pan.x = x;
+    this.pan.y = AVATAR_HEIGHT;
     this.pan.z = z;
   }
 
-  setFov(fov) {
+  setFov(fov: number) {
     this.ecsWorld.presentation.camera.fov = fov;
     this.ecsWorld.presentation.camera.updateProjectionMatrix();
     this.ecsWorld.cssPresentation.camera.fov = fov;
     this.ecsWorld.cssPresentation.camera.updateProjectionMatrix();
+  }
+
+  center() {
+    this.setPan(0, 0);
+    centerCameraVisible.set(false);
+  }
+
+  lookAt(target: Vector3) {
+    const transform: Transform = this.entity.get(Transform);
+
+    const vec = new Vector3().copy(target).sub(transform.position);
+    const theta = signedAngleBetweenVectors(vOut, vec, vUp);
+
+    e1.set(-this.direction.x, theta, this.direction.z, "YXZ");
+    transform.rotation.setFromEuler(e1);
+  }
+
+  setZoomRange(min: number, max: number) {
+    if (min < 0) min = 0;
+    if (max < min) max = min;
+
+    // Try to preserve camera distance
+    const currDistance =
+      (this.zoomedOutDistance - this.zoomedInDistance) * this.zoom;
+    this.zoom = MathUtils.clamp(currDistance / (max - min), 0, 1);
+    viewportScale.set(this.zoom * 100);
+
+    this.zoomedInDistance = min;
+    this.zoomedOutDistance = max;
   }
 
   getFov() {
@@ -157,46 +231,56 @@ export class CameraManager {
   }
 
   calcFollowOffset() {
+    directionNeg.set(
+      -this.direction.x,
+      this.direction.y,
+      this.direction.z,
+      "YXZ"
+    );
+
+    const range = this.zoomedOutDistance - this.zoomedInDistance;
     this.followOffset
-      .copy(this.zoomedInOffset)
-      .lerp(this.zoomedOutOffset, this.zoom)
+      .set(0, 0, 1)
+      .applyEuler(directionNeg)
+      .multiplyScalar(this.zoomedInDistance + range * this.zoom)
       .add(this.pan);
   }
 
-  above(height: number = 30) {
+  /**
+   * Camera Modes
+   */
+
+  // "follow" mode follows the avatar
+  setModeFollow() {
+    this.state = { type: "follow" };
+
+    // If transitioning out of `rotate` mode, finalize the offset
+    if (this.entity) {
+      this.calcFollowOffset();
+      this.entity.add(Follow, {
+        target: this.avatar.id,
+        offset: this.followOffset,
+        dampening: 0.001,
+      });
+    }
+  }
+
+  // "follow" mode follows the avatar
+  setModeRotate() {
+    this.state = { type: "rotate" };
+  }
+
+  // "above" mode looks directly down from high above
+  setModeAbove(height: number = 30) {
     this.state = {
       type: "above",
       height,
     };
 
-    const camera = this.entity;
-
-    camera
+    this.entity
       .get(Transform)
       .rotation.copy(
         new Quaternion().setFromEuler(new Euler((Math.PI * 3) / 2, 0, 0, "XYZ"))
       );
-  }
-
-  followParticipant() {
-    const camera = this.entity;
-    if (!camera) return;
-
-    if (this.state.type === "following") return;
-
-    updateComponent(camera, Follow, {
-      target: this.avatar.id,
-      offset: new Vector3().copy(this.zoomedInOffset),
-    });
-  }
-}
-
-function updateComponent(entity: Entity, Component, attrs: object) {
-  if (!entity) return;
-  let component = entity.get(Component);
-  if (component) {
-    Object.assign(component, attrs);
-  } else {
-    entity.add(Component, attrs);
   }
 }

@@ -1,25 +1,40 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
 
+  export let active = true;
   export let zIndex = 100;
 
   const dispatch = createEventDispatcher();
 
-  let el;
+  let el: HTMLElement;
+  let parentEl;
+  let style;
 
   function onClick(event) {
     if (event.target === el) dispatch("close", event.target);
     else dispatch("click", event.target);
   }
 
-  onMount(async () => {
-    // Move the containing element to document.body so that "fullwindow" mode can
-    // escape absolute/relative positioned elements and take up the whole window.
-    document.body.appendChild(el);
+  $: if (parentEl) {
+    if (active && el.parentElement !== document.body) {
+      // Move the containing element to document.body so that
+      // "fullwindow" mode can escape absolute/relative positioned
+      // elements and take up the whole window.
+      document.body.appendChild(el);
+      style = `z-index: ${zIndex}`;
+    } else if (!active && el.parentElement !== parentEl) {
+      // Move back to the original parent element
+      parentEl.appendChild(el);
+      style = null;
+    }
+  }
+
+  onMount(() => {
+    parentEl = el.parentElement;
   });
 </script>
 
-<fullwindow bind:this={el} style={`z-index: ${zIndex}`} on:click={onClick}>
+<fullwindow bind:this={el} {style} on:click={onClick}>
   <slot />
 </fullwindow>
 

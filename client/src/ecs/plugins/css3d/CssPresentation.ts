@@ -1,4 +1,6 @@
-import { PerspectiveCamera } from "three";
+import type { DecoratedECSWorld } from "~/types";
+
+import { PerspectiveCamera, Scene } from "three";
 import { CSS3DRenderer } from "./CSS3DRenderer";
 
 const ResizeObserver = (window as any).ResizeObserver;
@@ -7,10 +9,10 @@ export class CssPresentation {
   // Work around a bug in some browsers
   static FACTOR = 100;
 
-  world: any;
-  renderer: any;
-  scene: any;
-  camera: any;
+  world: DecoratedECSWorld;
+  renderer: CSS3DRenderer;
+  scene: Scene;
+  camera: PerspectiveCamera;
   size: { width: number; height: number };
   resizeObserver: any;
   viewport: HTMLElement;
@@ -54,6 +56,10 @@ export class CssPresentation {
     this.camera.updateProjectionMatrix();
 
     this.renderer.setSize(this.size.width, this.size.height);
+
+    if (this.viewport) {
+      this.render();
+    }
   }
 
   updateCamera() {
@@ -69,7 +75,7 @@ export class CssPresentation {
   }
 
   render() {
-    this.renderer.render(this.scene, this.camera);
+    this.renderer.render(this.scene, this.camera as any);
   }
 
   createRenderer() {

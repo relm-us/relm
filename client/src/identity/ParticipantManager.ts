@@ -15,6 +15,7 @@ import {
   setDataOnParticipant,
 } from "./Avatar/transform";
 import { ParticipantYBroker } from "./ParticipantYBroker";
+import { isEqual } from "~/utils/isEqual";
 
 export class ParticipantManager {
   dispatch: Dispatch;
@@ -47,7 +48,7 @@ export class ParticipantManager {
     this.participants.clear();
   }
 
-  getByClientIds(clientIds: Set<number>): Participant[] {
+  getByClientIds(clientIds: Iterable<number>): Participant[] {
     let participants = [];
     for (let clientId of clientIds) {
       const participant = this.getByClientId(clientId);
@@ -68,32 +69,32 @@ export class ParticipantManager {
   }
 
   sendMyState() {
-    if (!this.broker.awareness.getLocalState()) return;
-
-    if (!this.broker.getField("id")) {
-      this.broker.setField("id", participantId);
-    }
+    const state = this.broker.awareness.getLocalState();
+    if (!state) return;
 
     const avatar = this.local.avatar;
     if (!this.local.avatar) return;
 
     const transformData = avatarGetTransformData(avatar);
-    this.broker.setField("t", transformData);
-
     const animationData = avatarGetAnimationData(avatar);
-    const currClipIndex = this.broker.getField("a")?.clipIndex;
-    if (animationData.clipIndex !== currClipIndex) {
-      this.broker.setField("a", animationData);
-    }
 
-    const currName = this.broker.getField("user")?.name;
-    const { name, color } = this.local.identityData;
-    if (name !== currName) {
-      // Set quill cursor name and color
-      this.broker.setField("user", {
-        name,
-        color,
-      });
+    const changeDetected = (state["id"] !== participantId)
+      || (!isEqual(state["i"], this.local.identityData))
+      || (!isEqual(state["a"], animationData))
+      || (!isEqual(state["t"], transformData));
+    
+    // Only send a new awareness update if a change is detected.
+    if (changeDetected) {
+      this.broker.setFields({
+        "id": participantId,
+        "i": this.local.identityData,
+        "a": animationData,
+        "t": transformData,
+        "user": { // For QuillJS
+          name: this.local.identityData.name,
+          color: this.local.identityData.color
+        }
+      }); 
     }
   }
 
@@ -102,26 +103,25 @@ export class ParticipantManager {
 
     for (let state of states.values()) {
       if (!("id" in state)) continue;
-
       if (state["id"] === participantId) continue;
 
       const participant: Participant = this.participants.get(state["id"]);
       if (!participant) continue;
 
-      if ("t" in state && "a" in state) {
-        const transformData = state["t"];
-        const animationData = state["a"];
+      const transformData = state["t"];
+      const animationData = state["a"];
+      const identityData = state["i"];
 
-        setDataOnParticipant(
-          world,
-          participant,
-          transformData,
-          animationData,
-          (participant) => {
-            this.dispatch({ id: "participantJoined", participant });
-          }
-        );
-      }
+      setDataOnParticipant(
+        world,
+        participant,
+        transformData,
+        animationData,
+        identityData,
+        (participant) => {
+          this.dispatch({ id: "participantJoined", participant });
+        }
+      );
     }
   }
 

@@ -5,8 +5,7 @@
   import Button from "~/ui/lib/Button";
 
   function onClick() {
-    worldManager.camera.pan.set(0, 0, 0);
-    centerCameraVisible.set(false);
+    worldManager.camera.center();
   }
 </script>
 

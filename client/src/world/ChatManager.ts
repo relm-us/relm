@@ -8,6 +8,10 @@ export type ChatMessage = {
   c: string;
   // Author ("U"ser)
   u: string;
+  // Name ("N"ame)
+  n: string;
+  // Color (C"o"lor)
+  o: string;
 };
 
 export function getEmojiFromMessage(msg) {

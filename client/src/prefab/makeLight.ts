@@ -15,7 +15,8 @@ export function makeLight(world, avatar, color = 0xffffff) {
     .add(Follow, {
       target: avatar.id,
       offset: new Vector3().fromArray(DEFAULT_DIRECTIONAL_LIGHT_POSITION),
-      lerpAlpha: 1,
+      // Move light instantaneously to new position:
+      dampening: 0.001,
     })
     .add(AlwaysOnStage)
     .add(DirectionalLight, {

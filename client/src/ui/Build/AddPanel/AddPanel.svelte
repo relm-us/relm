@@ -1,35 +1,33 @@
 <script lang="ts">
   import type { LibraryAsset } from "~/types";
 
-  import { slide } from "svelte/transition";
+  import { _ } from "svelte-i18n";
+  import IoIosArrowBack from "svelte-icons/io/IoIosArrowBack.svelte";
 
-  import { assetUrl } from "~/config/assetUrl";
   import { createPrefab } from "~/prefab";
 
-  import LeftPanel, { Header } from "~/ui/lib/LeftPanel";
+  import SidePanel, { Header } from "~/ui/lib/SidePanel";
   import Search from "~/ui/lib/Search";
   import Button from "~/ui/lib/Button";
   import UploadButton from "~/ui/Build/shared/UploadButton";
-  import Pane from "~/ui/lib/LeftPanel/Pane.svelte";
 
-  import { copyBuffer } from "~/stores/copyBuffer";
   import {
     libraryAssets,
     librarySearch,
     libraryPage,
   } from "~/stores/libraryAssets";
 
-  import { paste } from "~/events/input/CopyPasteListener/paste";
-  import { deserializeCopyBuffer } from "~/events/input/CopyPasteListener/common";
-
   import SearchResult from "./SearchResult.svelte";
+  import HLine from "~/ui/lib/HLine";
+  import Paginate from "./Paginate.svelte";
+  import SelectedAsset from "./SelectedAsset.svelte";
   import SelectCreatePrefab from "./SelectCreatePrefab.svelte";
-  import Tag from "./Tag.svelte";
 
   let spinner = false;
   let spinStart = 0;
   let assets: LibraryAsset[] = [];
   let selectedAsset: LibraryAsset;
+  let prefabsVisible: boolean = false;
 
   $: switch ($libraryAssets.type) {
     case "init":
@@ -50,20 +48,6 @@
       console.warn("Unknown libraryAsset type:", $libraryAssets);
   }
 
-  const addAsset = (asset: LibraryAsset) => () => {
-    copyBuffer.set(deserializeCopyBuffer(JSON.stringify(asset.ecsProperties)));
-    paste();
-  };
-
-  function onCloseSelectedAsset() {
-    selectedAsset = null;
-  }
-
-  const searchTag = (tag: string) => () => {
-    $librarySearch = `#${tag}`;
-    $libraryPage = 0;
-  };
-
   const onUpload = ({ detail }) => {
     for (const result of detail.results) {
       if (result.types.webp) {
@@ -83,186 +67,181 @@
       }
     }
   };
-
-  function prevPage() {
-    if ($libraryPage > 0) $libraryPage = $libraryPage - 1;
-  }
-
-  function nextPage() {
-    $libraryPage = $libraryPage + 1;
-  }
 </script>
 
-<LeftPanel on:minimize>
-  <Header>Add</Header>
+<SidePanel on:minimize>
+  <Header>Add Object</Header>
   <r-column>
-    <r-search-wrap>
-      <Search
-        bind:value={$librarySearch}
-        on:keydown={() => ($libraryPage = 0)}
-        placeholder="Search Assets..."
-      />
-    </r-search-wrap>
-    {#if selectedAsset}
-      <Pane
-        title={selectedAsset.name}
-        showClose={true}
-        on:close={onCloseSelectedAsset}
-      >
-        <r-selected transition:slide>
-          <r-thumb>
-            <img
-              src={assetUrl(selectedAsset.thumbnail)}
-              alt={selectedAsset.name}
-            />
-          </r-thumb>
-
-          <r-details>
-            <r-desc>
-              {selectedAsset.description}
-            </r-desc>
-            {#if selectedAsset.tags && selectedAsset.tags.length > 0}
-              <r-tags>
-                {#each selectedAsset.tags as value}
-                  <Tag {value} on:click={searchTag(value)} />
-                {/each}
-              </r-tags>
-            {/if}
-            <r-add-button>
-              <Button
-                on:click={addAsset(selectedAsset)}
-                style="border: 1px solid #999;"
-              >
-                Add {selectedAsset.name}
+    {#if !prefabsVisible}
+      <r-search-pane>
+        <r-search-back>
+          {#if selectedAsset}
+            <r-selected-back>
+              <Button on:click={() => (selectedAsset = null)}>
+                <r-icon><IoIosArrowBack /></r-icon>
               </Button>
-            </r-add-button>
-          </r-details>
-        </r-selected>
-      </Pane>
+            </r-selected-back>
+          {/if}
+
+          <r-search-wrap>
+            <Search
+              bind:value={$librarySearch}
+              on:keydown={() => ($libraryPage = 0)}
+              placeholder={$_("AddPanel.search_assets")}
+            />
+          </r-search-wrap>
+        </r-search-back>
+
+        <r-spacer />
+
+        {#if selectedAsset}
+          <SelectedAsset asset={selectedAsset} />
+        {:else}
+          {#if spinner && window.performance.now() - spinStart > 1000}
+            <r-results>
+              <r-spinner>{$_("AddPanel.loading")}</r-spinner>
+            </r-results>
+          {:else if assets.length > 0}
+            <r-results>
+              {#each assets as asset}
+                <SearchResult
+                  result={asset}
+                  on:click={() => (selectedAsset = asset)}
+                />
+              {/each}
+            </r-results>
+          {:else}
+            <r-results>
+              <r-spinner>{$_("AddPanel.empty_results")}</r-spinner>
+            </r-results>
+          {/if}
+
+          <r-spacer />
+
+          <Paginate assetCount={assets.length} />
+        {/if}
+      </r-search-pane>
+
+      <r-line-wrap>
+        <HLine>or</HLine>
+      </r-line-wrap>
+
+      <UploadButton on:uploaded={onUpload} />
+      <r-upload-instructions>
+        Upload an image, or .glb model
+      </r-upload-instructions>
+
+      <r-line-wrap class="dark">
+        <HLine>or</HLine>
+      </r-line-wrap>
+
+      <r-prefabs-switch class="dark">
+        <a href="#" on:click={() => (prefabsVisible = true)}>show prefabs</a>
+      </r-prefabs-switch>
     {:else}
-      <r-tag-sampler>
-        e.g.
-        <Tag value="nature" on:click={searchTag("nature")} />
-        <Tag value="furniture" on:click={searchTag("furniture")} />
-        <Tag value="path" on:click={searchTag("path")} />
-      </r-tag-sampler>
+      <r-prefabs-switch>
+        <a href="#" on:click={() => (prefabsVisible = false)}>
+          <r-prefab-back style="padding-right:20px">
+            <r-icon><IoIosArrowBack /></r-icon>
+            back
+          </r-prefab-back>
+        </a>
+      </r-prefabs-switch>
+
+      <SelectCreatePrefab />
+
+      <r-spacer />
     {/if}
-    <r-spacer />
-    <r-pagination>
-      {#if $libraryPage > 0}
-        <Button on:click={prevPage}>Prev</Button>
-      {:else}
-        <div />
-      {/if}
-      <r-page>p. {$libraryPage + 1}</r-page>
-      {#if assets.length > 0}
-        <Button on:click={nextPage}>Next</Button>
-      {:else}
-        <div />
-      {/if}
-    </r-pagination>
-    {#if spinner && window.performance.now() - spinStart > 1000}
-      <r-results>
-        <r-spinner>Loading...</r-spinner>
-      </r-results>
-    {:else if assets.length > 0}
-      <r-results>
-        {#each assets as asset}
-          <SearchResult
-            result={asset}
-            on:click={() => (selectedAsset = asset)}
-          />
-        {/each}
-      </r-results>
-    {:else}
-      <r-results>
-        <r-spinner>Empty Page</r-spinner>
-      </r-results>
-    {/if}
-    <r-spacer />
-    <UploadButton on:uploaded={onUpload} />
-    <SelectCreatePrefab />
   </r-column>
-</LeftPanel>
+</SidePanel>
 
 <style>
   r-column {
     display: flex;
     flex-direction: column;
+    padding: 0 16px;
   }
 
   r-search-wrap {
-    padding: 16px 16px 8px 16px;
-  }
-
-  r-selected {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 12px;
-  }
-  r-desc {
-    padding: 8px 4px;
-    margin: 0 16px;
-  }
-  r-add-button {
-    display: block;
-    margin: 12px 0;
-  }
-  r-tags {
-    display: block;
-    margin: 8px;
-  }
-  r-tag-sampler {
-    display: block;
-    margin: 0px 12px;
-  }
-  r-thumb {
-    display: block;
-    width: 150px;
-    height: 150px;
-    border: 2px solid var(--foreground-dark-gray);
-    border-radius: 5px;
-  }
-  r-thumb img {
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
-  }
-  r-details {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    padding-bottom: 8px;
   }
 
   r-spinner {
     display: block;
-    width: 100%;
+
+    grid-column-start: 1;
+    grid-column-end: 4;
+    grid-row-start: 1;
+    grid-row-end: 4;
+    height: 212px;
+
     text-align: center;
+    color: var(--foreground-white);
+  }
+
+  r-search-pane {
+    background: rgba(120, 120, 120, 0.5);
+    border-radius: 6px;
+    padding: 8px;
   }
 
   r-results {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+  }
+
+  r-results :global(.tooltip-slot) {
+    /* Fixes slight padding issue when tooltip is inside grid CSS */
     display: flex;
-    margin: 8px 4px 0 10px;
-    flex-wrap: wrap;
+    aspect-ratio: 1;
   }
-  r-pagination {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    min-height: 38.5px;
-  }
-  r-pagination > div {
-    min-width: 62px;
-    margin: 0 16px;
-  }
-  r-page {
+
+  r-icon {
     display: block;
-    color: #aaa;
+    width: 24px;
+    height: 24px;
   }
 
   r-spacer {
     display: block;
     margin-top: 12px;
+  }
+
+  r-line-wrap,
+  r-upload-instructions {
+    margin: 20px 0 20px 0;
+  }
+
+  r-selected-back {
+    --margin: 0;
+    --padv: 3px;
+    --padh: 3px;
+    --bg-color: transparent;
+    --bg-hover-color: rgba(0, 0, 0, 0.1);
+  }
+
+  r-search-back {
+    display: flex;
+  }
+
+  r-prefabs-switch {
+    text-align: center;
+    padding: 12px 0;
+  }
+  r-prefabs-switch a {
+    display: flex;
+    justify-content: center;
+    color: var(--foreground-white, white);
+  }
+
+  .dark,
+  .dark a {
+    color: var(--foreground-gray, white);
+  }
+
+  r-prefab-back {
+    display: flex;
+    align-items: center;
   }
 </style>

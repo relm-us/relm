@@ -17,7 +17,7 @@
       hasAncestor(el, world.presentation.viewport) &&
       !hasPointerInteractAncestor(el)
     ) {
-      const wheelStep = MathUtils.clamp(event.deltaY, -15, 15);
+      const wheelStep = MathUtils.clamp(event.deltaY, -5, 5);
       scale = MathUtils.clamp(
         scale + wheelStep,
         scaleRange.min,

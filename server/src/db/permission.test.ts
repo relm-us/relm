@@ -61,7 +61,7 @@ describe("Permission model tests", () => {
     // Wildcard permits for this participant
     await Permission.setPermits({
       participantId,
-      relmId: null,
+      relmId: "*",
       permits: ["admin"],
     });
 
@@ -161,30 +161,30 @@ describe("Permission model tests", () => {
     await Participant.addPubKeyDoc({
       participantId,
       pubKeyDoc: {
-        example: 0
-      }
+        example: 0,
+      },
     });
     await Participant.addPubKeyDoc({
       participantId: participantId2,
       pubKeyDoc: {
-        example: 1
-      }
+        example: 1,
+      },
     });
 
     await Permission.setPermits({
       participantId,
-      relmId: null,
-      permits: ["access"]
+      relmId: "*",
+      permits: ["access"],
     });
     await Permission.setPermits({
       participantId: participantId2,
       relmId: relmId,
-      permits: ["admin"]
+      permits: ["admin"],
     });
 
     const { userId } = await User.createUser({
       email: "example-permissions@example.com",
-      password: "example"
+      password: "example",
     });
 
     await Participant.assignToUserId({ participantId, userId });
@@ -193,17 +193,16 @@ describe("Permission model tests", () => {
     // Check that participant2 has the global "access" permission
     const globalPermissionsOfP2 = await Permission.getPermissions({
       participantId: participantId2,
-      relmIds: [ relmId ]
+      relmIds: [relmId],
     });
     expect(globalPermissionsOfP2["*"]).toEqual(["access"]);
 
     // Check that participant1 has the relm "admin" permission
     const relmPermissionsOfP = await Permission.getPermissions({
       participantId,
-      relmIds: [ relmId ]
+      relmIds: [relmId],
     });
     expect(relmPermissionsOfP[relmId]).toEqual(["admin"]);
-
 
     // Try it again with participants who are NOT associated with a user.
     // Ensure that users who do not have a user associated do not look up the permissions of other users
@@ -211,26 +210,24 @@ describe("Permission model tests", () => {
     await Permission.setPermits({
       participantId: participantId3,
       relmId: null,
-      permits: ["access"]
+      permits: ["access"],
     });
     await Permission.setPermits({
       participantId: participantId4,
       relmId,
-      permits: ["admin"]
+      permits: ["admin"],
     });
 
     // P4 should NOT have any global permissions
     const globalPermissionsOfP4 = await Permission.getPermissions({
-      participantId: participantId4
+      participantId: participantId4,
     });
     expect(globalPermissionsOfP4["*"]).toEqual(undefined);
-    
+
     // P3 should NOT have any relm permissions
     const relmPermissionsOfP3 = await Permission.getPermissions({
-      participantId: participantId3
+      participantId: participantId3,
     });
     expect(relmPermissionsOfP3[relmId]).toEqual(undefined);
-
-
   });
 });

@@ -3,6 +3,7 @@ import { Vector3 } from "three";
 import type { RigidBody as RapierRigidBody } from "@dimforge/rapier3d";
 
 import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
+import { worldManager } from "~/world";
 
 import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
@@ -72,6 +73,7 @@ const torque = new Vector3();
 const vUp = new Vector3(0, 1, 0);
 const vOut = new Vector3(0, 0, 1);
 const vDir = new Vector3();
+const cameraAlignedDir = new Vector3();
 const p1 = new Vector3();
 const p2 = new Vector3();
 
@@ -139,13 +141,19 @@ export class ControllerSystem extends System {
         rigidBody.setLinearDamping(spec.linDamps[state.speed]);
       }
 
+      // Modify direction to align with camera axis, rather than world axis
+      cameraAlignedDir
+        .copy(state.direction)
+        .applyAxisAngle(vUp, worldManager.camera.direction.y);
+
       const angle = this.torqueTowards(
         entity,
-        state.direction,
+        cameraAlignedDir,
         spec.torques[state.speed]
       );
+
       if (!state.animOverride)
-        this.thrustTowards(entity, state.direction, spec.thrusts[state.speed]);
+        this.thrustTowards(entity, cameraAlignedDir, spec.thrusts[state.speed]);
 
       const appliedForce = this.repelFromOthers(entity);
 
@@ -169,7 +177,11 @@ export class ControllerSystem extends System {
       const anim: Animation = entity.get(Animation);
       if (anim) {
         if (state.animOverride) {
-          changeAnimationClip(entity, state.animOverride, true);
+          changeAnimationClip(
+            entity,
+            state.animOverride.clipName,
+            state.animOverride.loop
+          );
         } else {
           const wGrounded = this.willBeGrounded(entity);
           let targetAnim = spec.animations[state.speed];
