@@ -1,4 +1,4 @@
-import { Vector3 } from "three";
+import { Euler, Quaternion, Vector3 } from "three";
 
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
@@ -32,6 +32,7 @@ export function makeAvatarEntities(
     .add(Impactable)
     .add(Transform, {
       position: new Vector3().copy(position),
+      rotation: new Quaternion().setFromEuler(new Euler(0, Math.PI, 0)),
       scale: new Vector3(0.25, 0.25, 0.25),
     })
     .add(AssetComp, {
