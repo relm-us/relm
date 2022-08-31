@@ -108,7 +108,7 @@
 
 </script>
 
-<Fullwindow>
+<Fullwindow zIndex={100}>
   <r-background></r-background>
   <r-exit on:click={exitScreen} id="top-right-exit">
     <img src="/ESC_button.png" style="width: 48px;" alt="Signout" />

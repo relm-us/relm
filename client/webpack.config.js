@@ -88,9 +88,7 @@ module.exports = {
   devServer: {
     hot: false,
     port: 8080,
-    static: {
-      directory: path.join(__dirname, "public"),
-    },
+    static: [{ directory: path.join(__dirname, "public") }],
     compress: true,
     historyApiFallback: true,
   },
