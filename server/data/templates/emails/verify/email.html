@@ -21,7 +21,11 @@
         height: 83px; /* height of relm logo image */
       }
       
-      /* Centered column with content */
+      #banner img {
+        height: 83px;
+      }
+
+      /* The content within the centered column */
       #content {
         width: 100%;
         max-width: 640px;
@@ -34,11 +38,7 @@
         padding-top: 10%;
       }
 
-      #confirmButton {
-        width: 50%;
-        padding-left: 25%;
-      }
-
+      /* Text helpers */
       .title {
         font-size: 2em;
       }
@@ -68,7 +68,7 @@
       <table>
         <tr>
           <td></td>
-          <td><img style="display: block" title="Banner" alt="Banner" height="83" width="640" src="{{SERVER_URL}}/public/email/email_confirmation-header.png" /></td>
+          <td><img style="display: block" title="Banner" alt="Banner" width="640" src="https://cdn.discordapp.com/attachments/994331120927768606/1012885465914937404/email_confirmation-header.png" /></td>
           <td></td>
         </tr>
       </table>
@@ -84,25 +84,33 @@
               <tr>
                 <td></td>
                 <td>
-                  <img style="display: block" title="Envelope" alt="Envelope" height="100" width="160" src="{{SERVER_URL}}/public/email/email_confirmation-envelope.png" />
+                  <img style="display: block" title="Envelope" alt="Envelope" width="160" src="https://cdn.discordapp.com/attachments/994331120927768606/1012885462735671416/email_confirmation-envelope.png" />
                 </td>
                 <td></td>
               </tr>
             </table>
     
             <br />
-            
+
             <span class="title">{{GREETING}}</span>
             <br /><br />
             <span class="subtitle">So glad you're here :)</span>
             <br /><br />
             <span class="text">You're one click away from confirming your account with us.<strong> This account will allow you to sign in across devices</strong> to access the places and items you've collected during your visits.</span>
             <br /><br />
-            <div id="confirmButton">
-              <a href="{{SERVER_URL}}/email/verify/{{CODE}}">
-                <img style="display: block" title="Confirm Account" alt="Confirm Account" height="54" width="320" src="{{SERVER_URL}}/public/email/email_confirmation-button.png" />
-              </a>
-            </div>
+            <table>
+              <tr>
+                <td></td>
+                <td>
+                  <div id="confirmButton">
+                    <a href="{{SERVER_URL}}/email/verify/{{CODE}}">
+                      <img style="display: block" title="Confirm Account" alt="Confirm Account" width="320" src="https://cdn.discordapp.com/attachments/994331120927768606/1012885462295265290/email_confirmation-button.png" />
+                    </a>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+            </table>
             <br /><br /><br />
             <span class="text">Looking forward to seeing you at future events!</span>
             <br /><br />
