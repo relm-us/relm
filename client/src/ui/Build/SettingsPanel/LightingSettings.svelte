@@ -4,7 +4,7 @@
 
   import { worldManager } from "~/world";
 
-  import { Pane } from "~/ui/lib/LeftPanel";
+  import Pane from "~/ui/lib/Pane";
   import ColorPicker from "~/ui/lib/ColorPicker";
   import Button from "~/ui/lib/Button";
   import { DEFAULT_DIRECTIONAL_LIGHT_POSITION } from "~/config/constants";

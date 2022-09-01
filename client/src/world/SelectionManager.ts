@@ -10,9 +10,13 @@ import { Entity, EntityId } from "~/ecs/base";
 import { Outline } from "~/ecs/plugins/outline";
 import { Transform } from "~/ecs/plugins/core";
 
-import { selectedEntities, selectedGroups } from "~/stores/selection";
 import { openPanel } from "~/stores";
 import { worldUIMode } from "~/stores/worldUIMode";
+import {
+  selectedEntities,
+  selectedGroups,
+  groupTree,
+} from "~/stores/selection";
 
 export class SelectionManager {
   worldManager: WorldManager;
@@ -130,7 +134,7 @@ export class SelectionManager {
 
       const transform = entity.get(Transform);
       const savedPos = (entity as any).savedPosition;
-      const pos = transform.position
+      const pos = transform.position;
 
       pos.copy(savedPos);
       pos.sub(center);
@@ -140,6 +144,20 @@ export class SelectionManager {
       transform.rotation.setFromAxisAngle(axis, radians);
 
       transform.modified();
+    }
+  }
+
+  toggleGroup() {
+    if (selectedGroups.getSize() === 0) {
+      // is not a group => need to create a group
+      const groupId = groupTree.makeGroup(get(selectedEntities));
+      selectedGroups.add(groupId);
+    } else {
+      // is a group => need to ungroup
+      for (const groupId of get(selectedGroups)) {
+        groupTree.unmakeGroup(groupId);
+        selectedGroups.delete(groupId);
+      }
     }
   }
 

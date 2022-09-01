@@ -47,7 +47,7 @@ app.use("/relms", routes.relms);
 
 // Error handling: catch-all for 404s
 app.use((req, res) => {
-  respondWithError(res, `Not found`);
+  respondWithError(res, `Not found: ${req.originalUrl}`);
 });
 
 // Error handling: general catch-all for errors must be last middleware

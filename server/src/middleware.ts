@@ -20,7 +20,11 @@ export function relmName(key = "relmName") {
       req.relmName = normalizeRelmName(req.body[key]);
       next();
     } else {
-      respondWithError(res, "relm name required", req.body);
+      const participantId = getParam(req, "x-relm-participant-id");
+      respondWithError(res, "relm name required", {
+        participantId,
+        ...req.body,
+      });
     }
   };
 }
@@ -29,7 +33,11 @@ export function relmExists() {
   return async (req, res, next) => {
     req.relm = await Relm.getRelm({ relmName: req.relmName });
     if (!req.relm) {
-      respondWithError(res, "relm does not exist");
+      const participantId = getParam(req, "x-relm-participant-id");
+      respondWithError(res, `relm does not exist`, {
+        participantId,
+        relmName: req.relmName,
+      });
     } else {
       next();
     }
@@ -193,8 +201,10 @@ function getParam(req, key: keyof AuthenticationHeaders) {
 }
 
 function normalizeRelmName(name) {
-  return name
-    .split("/")
-    .map((part) => canonicalIdentifier(part))
-    .join("/");
+  if (!name || name.length > 512) return "";
+  else
+    return name
+      .split("/")
+      .map((part) => canonicalIdentifier(part))
+      .join("/");
 }

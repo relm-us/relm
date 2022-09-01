@@ -24,6 +24,7 @@ export class FollowSystem extends System {
     });
   }
 
+  // TODO: account for render speed when following?
   follow(world, entity) {
     const spec: Follow = entity.get(Follow);
     const transform: Transform = entity.get(Transform);

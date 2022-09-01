@@ -1,13 +1,13 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import IoIosArrowBack from "svelte-icons/io/IoIosArrowBack.svelte";
+  import IoIosArrowForward from "svelte-icons/io/IoIosArrowForward.svelte";
 
   const dispatch = createEventDispatcher();
 </script>
 
 <panel>
   <button on:click={() => dispatch("minimize")}>
-    <IoIosArrowBack />
+    <IoIosArrowForward />
   </button>
   <slot />
 </panel>

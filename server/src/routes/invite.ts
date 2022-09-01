@@ -4,7 +4,7 @@ import cors from "cors";
 import * as util from "../utils/index.js";
 import * as middleware from "../middleware.js";
 import { Invitation, Permission } from "../db/index.js";
-import { respondWithSuccess } from "../utils/index.js";
+import { respondWithSuccess, respondWithError } from "../utils/index.js";
 
 const { wrapAsync } = util;
 
@@ -23,6 +23,11 @@ invite.post(
       createdBy: req.authenticatedParticipantId,
       permits: ["access"],
     };
+
+    // Inviting to "all relms" not permitted
+    if (attrs.relmId === "*") {
+      return respondWithError(res, "not permitted");
+    }
 
     if (req.body) {
       if ("token" in req.body) {

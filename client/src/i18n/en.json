@@ -6,7 +6,7 @@
   },
   "AddPanel": {
     "search_assets": "Search Assets...",
-    "add_asset": "Add {name}",
+    "add_asset": "Add",
     "prev": "Prev",
     "next": "Next",
     "loading": "Loading...",

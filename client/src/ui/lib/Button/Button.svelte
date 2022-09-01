@@ -5,6 +5,7 @@
   export let active: boolean = undefined;
   export let style: string = undefined;
   export let tabindex: number = undefined;
+  export let depress: boolean = true;
 
   let dispatch = createEventDispatcher();
 </script>
@@ -13,6 +14,7 @@
   {style}
   class:disabled={!enabled}
   class:active={active === true}
+  class:depress
   on:mousedown|stopPropagation={() => {
     dispatch("click");
   }}
@@ -40,7 +42,7 @@
     font-size: var(--font-size, 14pt);
     font-weight: bold;
 
-    border: 0;
+    border: var(--button-border, 0);
     border-top-right-radius: var(--top-radius, var(--right-radius, 8px));
     border-bottom-right-radius: var(--bottom-radius, var(--right-radius, 8px));
     border-top-left-radius: var(--top-radius, var(--left-radius, 8px));
@@ -58,7 +60,7 @@
   button.active {
     background-color: var(--bg-hover-color, rgba(0, 0, 0, 0.8));
   }
-  button:active {
+  button.depress:active {
     transform: translateY(1px);
   }
 </style>

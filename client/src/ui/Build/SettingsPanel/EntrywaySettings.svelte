@@ -4,7 +4,7 @@
   import { worldManager } from "~/world";
 
   import EntrywayMap from "./EntrywayMap.svelte";
-  import { Pane } from "~/ui/lib/LeftPanel";
+  import Pane from "~/ui/lib/Pane";
   import Capsule from "~/ui/lib/Capsule";
   import Button from "~/ui/lib/Button";
 

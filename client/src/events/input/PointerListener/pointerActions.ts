@@ -24,6 +24,7 @@ import {
 import { Draggable } from "~/ecs/plugins/clickable/components/Draggable";
 import { Entity } from "~/ecs/base";
 import { isInteractive } from "~/utils/isInteractive";
+import { dragAction } from "~/stores/dragAction";
 
 export let isControllingAvatar: boolean = false;
 export let isControllingTransform: boolean = false;
@@ -54,18 +55,6 @@ let interactiveEntity: Entity;
 let shiftKeyOnClick = false;
 const cameraStartDirection = new Euler();
 
-export function onPointerAltDown(x: number, y: number) {
-  const $mode = get(worldUIMode);
-
-  pointerPosition.set(x, y);
-  pointerStartPosition.set(x, y);
-
-  if ($mode === "build") {
-    cameraStartDirection.copy(worldManager.camera.direction);
-    setNextPointerState("drag-camera");
-  }
-}
-
 export function onPointerDown(x: number, y: number, shiftKey: boolean) {
   const $mode = get(worldUIMode);
   const world = worldManager.world;
@@ -81,11 +70,7 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
     setNextPointerState("click");
     shiftKeyOnClick = shiftKey;
 
-    const planes: WorldPlanes =
-      worldManager.world.perspective.getAvatarPlanes();
-    const position = new Vector3();
-    planes.getWorldFromScreen(pointerPosition, position);
-    worldManager.dragPlane.setOrigin(position);
+    setDragPlaneOrigin(pointerPosition);
 
     // Begin tracking what was clicked on, in case this is a click
     selectionLogic.mousedown(pointerDownFound, shiftKey);
@@ -119,16 +104,7 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
       setNextPointerState("click");
       worldManager.dragPlane.setOrientation("XZ");
 
-      if (pointerDownFound.length > 0) {
-        const position = clickedPosition(pointerDownFound[0], world);
-        worldManager.dragPlane.setOrigin(position);
-      } else {
-        const planes: WorldPlanes =
-          worldManager.world.perspective.getAvatarPlanes();
-        const position = new Vector3();
-        planes.getWorldFromScreen(pointerPosition, position);
-        worldManager.dragPlane.setOrigin(position);
-      }
+      setDragPlaneOrigin(pointerPosition);
     }
   }
 }
@@ -197,7 +173,10 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
   if ($mode === "build") {
     if (pointerState === "click" && atLeastMinDragDistance()) {
       // drag  mode start
-      if (worldManager.selection.length > 0 && pointerPoint) {
+      if (get(dragAction) === "rotate") {
+        cameraStartDirection.copy(worldManager.camera.direction);
+        setNextPointerState("drag-camera");
+      } else if (worldManager.selection.length > 0 && pointerPoint) {
         setNextPointerState("drag");
         worldManager.selection.savePositions();
         worldManager.dragPlane.setOrientation(shiftKeyOnClick ? "XY" : "XZ");
@@ -213,15 +192,16 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
         cameraPanOffset.copy(worldManager.camera.pan);
       }
     } else if (pointerState === "drag") {
-      // TODO: Make selection box possible as a mode/tool?
-      //
-      // const delta = worldManager.dragPlane.getDelta(pointerPosition);
-      // worldManager.selection.moveRelativeToSavedPositions(delta);
-
-      // Pan camera in build mode:
-      const delta = worldManager.dragPlane.getDelta(pointerPosition);
-      dragOffset.copy(delta).sub(cameraPanOffset);
-      worldManager.camera.setPan(-dragOffset.x, -dragOffset.z);
+      if (worldManager.selection.length > 0 && pointerPoint) {
+        // Translate selected objects
+        const delta = worldManager.dragPlane.getDelta(pointerPosition);
+        worldManager.selection.moveRelativeToSavedPositions(delta);
+      } else {
+        // Pan camera in build mode:
+        const delta = worldManager.dragPlane.getDelta(pointerPosition);
+        dragOffset.copy(delta).sub(cameraPanOffset);
+        worldManager.camera.setPan(-dragOffset.x, -dragOffset.z);
+      }
     } else if (pointerState === "drag-select") {
       if (shiftKeyOnMove) {
         worldManager.selectionBox.setTop(pointerPosition);
@@ -312,4 +292,11 @@ function clickedPosition(entityId, world) {
   const entity = world.entities.getById(entityId);
   const object3d: Object3D = entity?.get(Object3DRef)?.value;
   return object3d?.userData.lastIntersectionPoint;
+}
+
+function setDragPlaneOrigin(screenPosition: Vector2) {
+  const planes: WorldPlanes = worldManager.world.perspective.getAvatarPlanes();
+  const position = new Vector3();
+  planes.getWorldFromScreen(screenPosition, position);
+  worldManager.dragPlane.setOrigin(position);
 }

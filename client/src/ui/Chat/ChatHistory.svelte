@@ -31,7 +31,7 @@
         {#if message.u === myID}
           <message class:mine={true}>{@html cleanHtml(message.c)}</message>
         {:else}
-          <Message participantId={message.u} content={message.c} />
+          <Message name={message.n} content={message.c} color={message.o} />
         {/if}
       {/each}
     </r-scrollable>

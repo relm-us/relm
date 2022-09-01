@@ -1,5 +1,5 @@
 <script lang="ts">
-  import LeftPanel, { Header } from "~/ui/lib/LeftPanel";
+  import SidePanel, { Header } from "~/ui/lib/SidePanel";
   import Button from "~/ui/lib/Button";
   import { openPanel } from "~/stores/openPanel";
 
@@ -11,7 +11,7 @@
   import LightingSettings from "./LightingSettings.svelte";
 </script>
 
-<LeftPanel on:minimize>
+<SidePanel on:minimize>
   <Header>Relm Settings</Header>
   <r-settings>
     <EntrywaySettings />
@@ -31,7 +31,7 @@
       <Button on:click={() => ($openPanel = "performance")}>Performance</Button>
     </r-buttons>
   </r-settings>
-</LeftPanel>
+</SidePanel>
 
 <style>
   r-settings {

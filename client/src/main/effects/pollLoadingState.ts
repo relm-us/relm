@@ -5,6 +5,11 @@ import { AssetLoaded } from "~/ecs/plugins/asset";
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
 const ENTITIES_COUNT_IDLE_INC = 5;
+// Number of assets we will pretend have been loaded; we use
+// this because of a bug where--on occasion--worlds don't load
+// when one or two assets fail to load, preventing the whole
+// world from completing the load process.
+const ASSET_FUDGE = 5;
 
 let lastEntitiesCount = 0;
 
@@ -34,7 +39,7 @@ export const pollLoadingState =
     setTimeout(() => {
       if (
         state.entitiesCount < state.entitiesMax ||
-        state.assetsCount < state.assetsMax
+        state.assetsCount + ASSET_FUDGE < state.assetsMax
       ) {
         dispatch({ id: "loadPoll" });
       } else {

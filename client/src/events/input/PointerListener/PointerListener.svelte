@@ -10,7 +10,6 @@
     onPointerUp,
     onPointerDown,
     onPointerMove,
-    onPointerAltDown,
   } from "./pointerActions";
 
   function eventTargetsWorld(event, uiMode) {
@@ -53,15 +52,6 @@
     onPointerUp();
   }
 
-  function onMouseRightDown(event: MouseEvent) {
-    if (!eventTargetsWorld(event, $worldUIMode)) return;
-
-    // Disable context menu when targeted at 3D world
-    event.preventDefault();
-
-    onPointerAltDown(event.clientX, event.clientY);
-  }
-
   /**
    * Touch Events
    */
@@ -97,7 +87,6 @@
   on:mousemove={onMouseMove}
   on:mousedown={onMouseDown}
   on:mouseup={onMouseUp}
-  on:contextmenu={onMouseRightDown}
   on:touchstart={onTouchStart}
   on:touchmove={onTouchMove}
   on:touchend={onTouchEnd}

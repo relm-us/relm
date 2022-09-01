@@ -69,7 +69,7 @@
     left: 50%;
     bottom: 0;
     transform: translate(-50%, 100%);
-    margin-bottom: -8px;
+    /* margin-bottom: -8px; */
   }
 
   .tooltip.left {

@@ -150,7 +150,9 @@
           {#each participants as participant}
             <tr class="identity-row">
               <th>{participant.identityData.name}</th>
-              <td>[{participant.identityData.clientId}] {participant.participantId}</td>
+              <td
+                >[{participant.identityData.clientId}] {participant.participantId}</td
+              >
             </tr>
           {/each}
         {/if}
@@ -163,7 +165,9 @@
   container {
     display: flex;
     width: 260px;
+    height: min-content;
     --pane-width: 260px;
+    --pane-margin: 0;
   }
   container.connected {
     --subtitle-color: rgba(0, 210, 24, 1);

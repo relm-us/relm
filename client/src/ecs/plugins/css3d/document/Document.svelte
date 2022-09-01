@@ -65,6 +65,7 @@
 {#if bigscreen}
   <Fullwindow on:close={deactivate}>
     <r-centered>
+      <div style="height:{editable ? 64 : 0}px" />
       <r-page-margin
         transition:slide
         style="--x:{size.x}px;--y:{size.y}px;--radius:{radius * 150}px"
@@ -113,11 +114,11 @@
 <style>
   r-centered {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     pointer-events: none;
     height: 100%;
-    padding: 12px;
   }
 
   r-page-margin {

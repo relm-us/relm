@@ -1,5 +1,6 @@
 <script lang="ts">
-  import LeftPanel, { Header, Pane } from "~/ui/lib/LeftPanel";
+  import SidePanel, { Header } from "~/ui/lib/SidePanel";
+  import Pane from "~/ui/lib/Pane";
   import Button from "~/ui/lib/Button";
   import { selectedEntities, selectedGroups } from "~/stores/selection";
   import { worldManager } from "~/world";
@@ -21,8 +22,8 @@
   };
 </script>
 
-<LeftPanel on:minimize>
-  <Header>Modify</Header>
+<SidePanel on:minimize>
+  <Header>Modify Object</Header>
 
   {#if $selectedEntities.size === 0}
     <info>Nothing selected</info>
@@ -43,8 +44,12 @@
     <Pane title="Selected">
       Objects: {$selectedEntities.size}
     </Pane>
+
+    {#if $permits.includes("admin")}
+      <AdminAddToLibrary />
+    {/if}
   {/if}
-</LeftPanel>
+</SidePanel>
 
 <style>
   info {

@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { State } from "~/main/ProgramTypes";
 
+  import { AV_ENABLED } from "~/config/constants";
+  
   import MicButton from "~/ui/ButtonControls/MicButton";
   import VideoButton from "~/ui/ButtonControls/VideoButton";
   import AvatarSetupButton from "~/ui/ButtonControls/AvatarSetupButton";
@@ -8,42 +10,31 @@
   import { SignInButton } from "~/ui/ButtonControls/ConnectionButton";
   import InviteButton from "~/ui/ButtonControls/InviteButton";
   import ChatButton from "~/ui/Chat/ChatButton.svelte";
-  import Button from "~/ui/lib/Button";
 
   import Chat from "~/ui/Chat";
   import MiniMap from "~/ui/MiniMap";
 
-  // Build Mode UI
-  import AddPanel from "~/ui/Build/AddPanel";
-  import ModifyPanel from "~/ui/Build/ModifyPanel";
-  import ActionsPanel from "~/ui/Build/ActionsPanel";
-  import SettingsPanel from "~/ui/Build/SettingsPanel";
-  import ExportPanel from "~/ui/Build/ExportPanel";
-  import GroupUngroupButton from "~/ui/Build/GroupUngroupButton";
-
   // Debug UI
   import DebugPane from "~/ui/Debug/DebugPane";
-  import PerformancePanel from "~/ui/Debug/PerformancePanel";
 
   import { PauseAutomatically, PauseMessage } from "~/ui/Pause";
   import CenterCamera from "~/ui/CenterCamera";
   import Tooltip from "~/ui/lib/Tooltip";
+  import Toolbar from "~/ui/Build/Toolbar";
+  import BuildPanel from "~/ui/Build/BuildPanel";
 
-  import { globalEvents } from "~/events";
-
-  import { worldUIMode, openPanel, audioMode } from "~/stores";
+  import { worldUIMode } from "~/stores";
   import { playState } from "~/stores/playState";
   import { chatOpen, unreadCount } from "~/stores/chat";
   import { localIdentityData } from "~/stores/identityData";
   import { debugMode } from "~/stores/debugMode";
   import { centerCameraVisible } from "~/stores/centerCameraVisible";
-  import { selectedEntities } from "~/stores/selection";
   import { showCenterButtons } from "~/stores/showCenterButtons";
-  import { AV_ENABLED } from "~/config/constants";
-  import SignInWindow from "../ButtonControls/ConnectionButton/SignInWindow.svelte";
-  import LogoutButton from "../ButtonControls/ConnectionButton/LogoutButton.svelte";
   import { connectedAccount } from "~/stores/connectedAccount";
   import { permits } from "~/stores/permits";
+
+  import SignInWindow from "../ButtonControls/ConnectionButton/SignInWindow.svelte";
+  import LogoutButton from "../ButtonControls/ConnectionButton/LogoutButton.svelte";
 
   export let dispatch;
   export let state: State;
@@ -56,10 +47,6 @@
 
   let buildMode = false;
   $: buildMode = $permits.includes("edit") && $worldUIMode === "build";
-
-  const toPlayMode = () => {
-    globalEvents.emit("switch-mode", "play");
-  };
 </script>
 
 <!-- Pause game if participant is not focused on window, to save CPU/GPU resources -->
@@ -80,62 +67,19 @@
 <overlay class:open={buildMode}>
   <overlay-panel class="interactive">
     {#if buildMode}
-      {#if $openPanel === "add"}
-        <AddPanel on:minimize={toPlayMode} />
-      {/if}
-
-      {#if $openPanel === "modify"}
-        <ModifyPanel on:minimize={toPlayMode} />
-      {/if}
-
-      {#if $openPanel === "actions"}
-        <ActionsPanel on:minimize={toPlayMode} />
-      {/if}
-
-      <!-- Export panel opens from button in SettingsPanel -->
-      {#if $openPanel === "export"}
-        <ExportPanel on:minimize={toPlayMode} />
-      {/if}
-
-      <!-- Performance panel opens from button in SettingsPanel -->
-      {#if $openPanel === "performance"}
-        <PerformancePanel on:minimize={toPlayMode} />
-      {/if}
-
-      {#if $openPanel === "settings"}
-        <SettingsPanel on:minimize={toPlayMode} />
-      {/if}
-
-      <panel-tabs>
-        <Button
-          active={$openPanel === "add"}
-          on:click={() => ($openPanel = "add")}>Add</Button
-        >
-        <Button
-          active={$openPanel === "modify"}
-          on:click={() => ($openPanel = "modify")}>Modify</Button
-        >
-        <Button
-          active={$openPanel === "actions"}
-          on:click={() => ($openPanel = "actions")}>Actions</Button
-        >
-        <Button
-          active={$openPanel === "settings"}
-          on:click={() => ($openPanel = "settings")}>Settings</Button
-        >
-      </panel-tabs>
+      <BuildPanel />
     {/if}
   </overlay-panel>
 
   <overlay-content>
-    <overlay-left class="interactive">
-      {#if $playState === "paused" || $debugMode}
+    <r-toolbar-wrapper>
+      {#if $debugMode}
         <DebugPane {state} />
       {/if}
-      {#if buildMode && $selectedEntities.size > 0}
-        <GroupUngroupButton />
+      {#if buildMode}
+        <Toolbar />
       {/if}
-    </overlay-left>
+    </r-toolbar-wrapper>
   </overlay-content>
 </overlay>
 
@@ -218,9 +162,8 @@
     pointer-events: none;
 
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    flex-direction: row-reverse;
+    flex-wrap: nowrap;
   }
   @media screen and (max-width: 480px) {
     overlay {
@@ -231,18 +174,12 @@
     pointer-events: all;
   }
   overlay-panel {
-    /* display: flex; */
+    display: flex;
     height: 100%;
     width: 0px;
   }
   overlay.open overlay-panel {
     width: 300px !important;
-  }
-  overlay-left {
-    display: flex;
-    flex-direction: column;
-    margin-top: 8px;
-    margin-left: 50px;
   }
   overlay-center {
     position: fixed;
@@ -258,18 +195,17 @@
   }
   overlay-content {
     display: flex;
-    justify-content: space-between;
-    flex-grow: 1;
   }
-  panel-tabs {
-    display: flex;
-    --margin: 0px;
-    --bottom-radius: 0px;
 
-    position: absolute;
-    min-width: 500px;
-    top: -20px;
-    left: 300px;
-    transform: translate(-50%) rotate(90deg) translate(50%, -50%);
+  r-toolbar-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    height: min-content;
+  }
+
+  r-toolbar-wrapper > :global(*) {
+    margin-top: 2px;
+    margin-right: 2px;
   }
 </style>

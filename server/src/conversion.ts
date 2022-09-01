@@ -22,6 +22,7 @@ export async function uploadContentAddressable(filepath, extension) {
     extension
   );
 
+  console.log(`uploading ${filepath} to cloud as ${contentAddressableName}...`);
   await uploadToSpaces(filepath, contentAddressableName);
 
   // clean up
@@ -39,6 +40,7 @@ export async function moveAndRenameContentAddressable(
     extension
   );
 
+  console.log(`saving ${filepath} locally as ${contentAddressableName}...`);
   const destination = path.join(ASSETS_DIR, contentAddressableName);
 
   try {
@@ -48,7 +50,6 @@ export async function moveAndRenameContentAddressable(
 
     // clean up
     await fs.promises.unlink(filepath);
-
   } catch (accessError) {
     if (accessError.code === "ENOENT") {
       await fs.promises.rename(filepath, destination);

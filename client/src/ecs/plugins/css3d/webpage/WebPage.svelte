@@ -1,132 +1,125 @@
 <script lang="ts">
+  import type { Asset } from "~/ecs/plugins/core";
+
   import { Vector2 } from "three";
+  import { fade } from "svelte/transition";
 
+  import { assetUrl } from "~/config/assetUrl";
+  import { pointerStateDelayed } from "~/events/input/PointerListener/pointerActions";
   import { worldUIMode } from "~/stores/worldUIMode";
-  import { config } from "~/config";
+  import Fullwindow from "~/ui/lib/Fullwindow.svelte";
 
+  export let asset: Asset;
   export let size: Vector2;
   export let url: string;
-  export let alwaysOn: boolean;
   export let visible: boolean;
+  export let fit: "COVER" | "CONTAIN";
 
-  let iframe;
-  let active = false;
-  let highlighted = false;
+  let bigscreen = false;
 
-  // We need to do this in Firefox, because we can't just detect a blur event
-  // and set focus on the document immediately afterward.
-  function forceRestoreFocus(msec = 10) {
-    iframe?.blur();
-    setTimeout(() => {
-      if (document.activeElement === iframe) {
-        forceRestoreFocus(msec);
-      }
-    }, msec);
-  }
-
-  function onWindowBlur(event: FocusEvent) {
-    if (active) {
-      setTimeout(() => {
-        if (document.activeElement === iframe) {
-          highlighted = true;
-        }
-      }, 10);
-    } else {
-      forceRestoreFocus();
+  const activate = () => {
+    if (pointerStateDelayed !== "interactive-drag") {
+      bigscreen = true;
     }
-  }
-
-  function onWindowFocus(event: FocusEvent) {
-    highlighted = false;
-  }
-
-  function onFrameMouseout() {
-    if ($worldUIMode === "play" && !alwaysOn) {
-      active = false;
-      highlighted = false;
-      forceRestoreFocus();
-    }
-  }
-
-  function onOverlayMousedown() {
-    if ($worldUIMode === "play") {
-      active = true;
-      highlighted = true;
-      iframe?.focus();
-    }
-  }
+  };
+  const deactivate = () => {
+    bigscreen = false;
+    console.log("deactivate");
+  };
 
   function getDomain(url: string) {
     return new URL(url).hostname;
   }
 
-  function screenshot(url: string, size: Vector2) {
-    return (
-      config.serverScreenshotUrl +
-      `/screenshot/${size.x}x${size.y}/${encodeURIComponent(url)}`
-    );
-  }
-
   $: if ($worldUIMode === "build") {
-    active = false;
-    highlighted = false;
+    bigscreen = false;
   }
-  $: if (alwaysOn) active = true;
 
-  // ignore warning about missing props
+  // ignore other props
   $$props;
 </script>
 
-<svelte:window on:blur={onWindowBlur} on:focus={onWindowFocus} />
-
 {#if visible}
-  <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-  <iframe
-    bind:this={iframe}
-    on:mouseout={onFrameMouseout}
-    class:active
-    title="Web Page"
-    width={size.x}
-    height={size.y}
-    src={url}
-    frameborder="0"
-    allowfullscreen
-    allow="camera;microphone"
-    scrolling="yes"
-  />
-  {#if !active}
-    <r-screenshot>
+  {#if bigscreen}
+    <Fullwindow active={bigscreen} on:click={deactivate} on:close={deactivate}>
+      <r-frame transition:fade>
+        <iframe
+          title="Web Page"
+          width={size.x}
+          height={size.y}
+          src={url}
+          frameborder="0"
+          allowfullscreen
+          allow="camera;microphone"
+          scrolling="yes"
+        />
+      </r-frame>
+    </Fullwindow>
+  {/if}
+
+  {#if asset.isEmpty()}
+    <iframe
+      title="Web Page"
+      width={size.x}
+      height={size.y}
+      src={url}
+      frameborder="0"
+      allowfullscreen
+      allow="camera;microphone"
+      scrolling="yes"
+    />
+  {:else}
+    <r-cover-image>
       <img
-        src={screenshot(url, size)}
+        class:cover={fit === "COVER"}
+        class:contain={fit === "CONTAIN"}
+        src={assetUrl(asset.url)}
         alt="Screenshot of Web Page ({getDomain(url)})"
       />
-    </r-screenshot>
+    </r-cover-image>
   {/if}
 
   <overlay
-    class:build-mode={$worldUIMode === "build"}
-    class:active
-    class:highlighted
-    on:mousedown={onOverlayMousedown}
+    class:cloudy={$worldUIMode === "build"}
+    on:click={$worldUIMode === "build" ? undefined : activate}
+    on:mousedown|preventDefault
   />
 {/if}
 
 <style>
-  iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 0;
+  img {
+    width: 100%;
+    height: 100%;
+  }
 
-    display: none;
+  img.cover {
+    object-fit: cover;
   }
-  iframe.active {
-    display: block;
+
+  img.contain {
+    object-fit: contain;
   }
+
+  img::before {
+    /* For `alt` text */
+    line-height: 3em;
+  }
+
+  r-frame {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  /* r-frame img {
+    width: 90vw;
+    height: 90vh;
+  } */
+
   overlay,
-  r-screenshot {
+  r-cover-image {
     position: absolute;
-    z-index: 2;
 
     left: 0;
     top: 0;
@@ -137,27 +130,27 @@
     justify-content: center;
     align-items: center;
 
-    color: black;
-
     pointer-events: auto;
   }
-  overlay.highlighted {
-    box-shadow: inset 0px 0px 0px 6px #ff4400;
-    background-color: rgb(0, 0, 0, 0);
+
+  r-cover-image {
+    z-index: 2;
+
+    color: black;
+    background: white;
   }
-  overlay.active {
-    pointer-events: none;
+
+  overlay {
+    z-index: 3;
   }
-  overlay.build-mode {
-    background-color: rgb(240, 240, 240, 0.7);
+
+  .cloudy {
+    background-color: rgba(255, 255, 255, 0.5);
   }
 
   img {
     width: 100%;
     text-align: center;
     font-size: 28px;
-  }
-  r-screenshot {
-    background: white;
   }
 </style>

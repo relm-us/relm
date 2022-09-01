@@ -17,7 +17,7 @@ import { makeCamera } from "~/prefab/makeCamera";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import {
   AVATAR_HEIGHT,
-  CAMERA_DAMPENING,
+  CAMERA_PLAY_DAMPENING,
   CAMERA_PLAY_ZOOM_MAX,
   CAMERA_PLAY_ZOOM_MIN,
   DEFAULT_CAMERA_ANGLE,
@@ -74,6 +74,9 @@ export class CameraManager {
 
   // Track things that need cleaning up before deinit
   unsubs: Function[] = [];
+
+  // How much "dampening" to add to camera panning
+  dampening: number = CAMERA_PLAY_DAMPENING;
 
   get threeCamera(): PerspectiveCamera {
     const camera: Object3DRef = this.entity.get(Object3DRef);
@@ -140,7 +143,7 @@ export class CameraManager {
         camera.add(Follow, {
           target: this.avatar.id,
           offset: this.followOffset,
-          dampening: CAMERA_DAMPENING,
+          dampening: this.dampening,
         });
 
         // Make it easy to get back to avatar if camera not centered
@@ -173,7 +176,7 @@ export class CameraManager {
         camera.add(Follow, {
           target: this.avatar.id,
           offset: this.followOffset,
-          dampening: CAMERA_DAMPENING,
+          dampening: this.dampening,
         });
 
         break;
