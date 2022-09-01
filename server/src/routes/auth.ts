@@ -197,6 +197,8 @@ auth.post(
   })
 );
 
+sendEmail("dapersonmgn@gmail.com", createEmailTemplate("verify", { code: "asd", greeting: "Hi William", server_url: "asd" })).then(console.log);
+
 auth.post(
   "/connect/local/signin",
   cors(),
