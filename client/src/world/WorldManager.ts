@@ -21,7 +21,6 @@ import { exportRelm, importRelm } from "./Export";
 import { worldUIMode } from "~/stores/worldUIMode";
 import { fpsTime } from "~/stores/stats";
 import { targetFps } from "~/stores/targetFps";
-import { playState } from "~/stores/playState";
 import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 import { shadowsEnabled } from "~/stores/shadowsEnabled";
 import { highDefEnabled } from "~/stores/highDefEnabled";
@@ -93,7 +92,7 @@ import {
   getRandomInitializedIdentityData,
   localIdentityData,
 } from "~/stores/identityData";
-import { AuthenticationResponse, SocialId } from "~/main/RelmOAuthAPI";
+import { AuthenticationResponse, SocialType } from "~/main/RelmOAuthAPI";
 import { globalEvents } from "~/events";
 import { advancedEdit } from "~/stores/advancedEdit";
 import { connectedAccount } from "~/stores/connectedAccount";
@@ -103,6 +102,8 @@ import { viewportScale } from "~/stores/viewportScale";
 import { centerCameraVisible } from "~/stores/centerCameraVisible";
 import { dragAction } from "~/stores/dragAction";
 import { selectedGroups } from "~/stores/selection";
+import { openDialog } from "~/stores/openDialog";
+import { LoginManager } from "~/identity/LoginManager";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -138,6 +139,7 @@ export class WorldManager {
 
   light: Entity;
 
+  logins: LoginManager;
   participants: ParticipantManager;
   inventory: Inventory;
   selection: SelectionManager;
@@ -203,6 +205,13 @@ export class WorldManager {
     this.selection = new SelectionManager(this);
 
     this.participants = new ParticipantManager(dispatch, broker, participants);
+
+    this.logins = new LoginManager(
+      this.api,
+      dispatch,
+      security,
+      this.participants
+    );
 
     this.inventory = new Inventory(
       this.api,
@@ -608,9 +617,13 @@ export class WorldManager {
     if (!this.started) {
       this._startLoop();
       this.started = true;
+    }
+  }
 
-      // Show via UI that we're playing
-      playState.set("playing");
+  stop() {
+    if (this.started) {
+      this._stopLoop();
+      this.started = false;
     }
   }
 
@@ -644,16 +657,6 @@ export class WorldManager {
     }
   }
 
-  stop() {
-    if (this.started) {
-      this._stopLoop();
-      this.started = false;
-
-      // Show via UI that we've paused
-      playState.set("paused");
-    }
-  }
-
   _stopLoop() {
     switch (this.loopType.type) {
       case "reqAnimFrame":
@@ -676,8 +679,10 @@ export class WorldManager {
   togglePaused() {
     if (this.started) {
       this.stop();
+      openDialog.set("pause");
     } else {
       this.start();
+      openDialog.set(null);
     }
   }
 
@@ -853,63 +858,6 @@ export class WorldManager {
     }
 
     return data;
-  }
-
-  async login(
-    socialIdOrCred: SocialId | LoginCredentials
-  ): Promise<AuthenticationResponse | null> {
-    let data: AuthenticationResponse;
-
-    if (typeof socialIdOrCred === "object") {
-      // login with username/password
-      data = await this.api.login(socialIdOrCred as LoginCredentials);
-    } else {
-      // social login
-      switch (socialIdOrCred) {
-        case "google":
-          data = await this.api.oAuth.showGoogleOAuth();
-          break;
-        case "facebook":
-          data = await this.api.oAuth.showFacebookOAuth();
-          break;
-        case "linkedin":
-          data = await this.api.oAuth.showLinkedinOAuth();
-          break;
-        case "twitter":
-          data = await this.api.oAuth.showTwitterOAuth();
-          break;
-        default:
-          throw Error(`Unhandled social id when logging in: ${socialIdOrCred}`);
-      }
-    }
-
-    // If we login, ensure we are connected.
-    if (data && data.status === "success") {
-      // Update permits
-      try {
-        const { permits: relmPermits } = await this.api.getPermitsAndMeta();
-        permits.set(relmPermits);
-      } catch (error) {
-        this.dispatch({ id: "error", message: error.message });
-        return null;
-      }
-      connectedAccount.set(true);
-    }
-
-    return data;
-  }
-
-  async logout() {
-    destroyParticipantId();
-    this.security.secret = null;
-    localIdentityData.set(getRandomInitializedIdentityData());
-    connectedAccount.set(false);
-
-    this.dispatch({
-      id: "enterPortal",
-      relmName: this.relmName,
-      entryway: this.entryway,
-    });
   }
 
   /**

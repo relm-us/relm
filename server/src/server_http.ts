@@ -1,4 +1,6 @@
 import express from "express";
+import session from "express-session";
+import MemoryStoreConstructor from "memorystore";
 import cors from "cors";
 import * as middleware from "./middleware.js";
 import * as routes from "./routes/index.js";
@@ -7,8 +9,30 @@ import { respondWithError, uuidv4 } from "./utils/index.js";
 
 export const app = express();
 
+const MemoryStore = MemoryStoreConstructor(session);
+
 // Automatically parse JSON body when received in REST requests
 app.use(express.json());
+
+app.use(
+  session({
+    // At the moment, specifying a specific secret is not necessary as we only use
+    // this to temp store oauth data for services that don't use OAuth2
+    secret: uuidv4(),
+    saveUninitialized: false,
+    resave: false,
+    store: new MemoryStore({
+      // every hour check for expired sessions and get rid of them from memory
+      checkPeriod: 60000 * 60,
+    }),
+    cookie: {
+      // 30 minutes as we only use this to store oauth data between clicking the
+      // sign in button, to after the oauth process
+      maxAge: 60000 * 30,
+    },
+    name: "session",
+  })
+);
 
 // Enable CORS pre-flight requests across the board
 // See https://expressjs.com/en/resources/middleware/cors.html#enabling-cors-pre-flight

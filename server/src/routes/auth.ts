@@ -1,7 +1,11 @@
 import express from "express";
 import cors from "cors";
 import passport from "passport";
-import { Appearance, getDefaultAppearance, SavedIdentityData } from "relm-common";
+import {
+  Appearance,
+  getDefaultAppearance,
+  SavedIdentityData,
+} from "relm-common";
 
 import * as middleware from "../middleware.js";
 import { Participant, Permission, User } from "../db/index.js";
@@ -18,7 +22,7 @@ import {
   PassportResponse,
   respondWithErrorPostMessage,
   respondWithSuccessPostMessage,
-  respondWithFailurePostMessage
+  respondWithFailurePostMessage,
 } from "../utils/index.js";
 
 export const auth = express.Router();
@@ -62,22 +66,22 @@ auth.get(
   cors(),
   middleware.authenticated(),
   wrapAsync(async (req, res) => {
-      const userId = await Participant.getUserId({
-        participantId: req.authenticatedParticipantId
-      }); 
+    const userId = await Participant.getUserId({
+      participantId: req.authenticatedParticipantId,
+    });
 
-      if (userId === null) {
-        return respondWithSuccess(res, {
-          isConnected: false,
-          identity: null
-        });
-      }
-      
-      const identity = await User.getIdentityData({ userId });
-      respondWithSuccess(res, {
-        isConnected: true,
-        identity
+    if (userId === null) {
+      return respondWithSuccess(res, {
+        isConnected: false,
+        identity: null,
       });
+    }
+
+    const identity = await User.getIdentityData({ userId });
+    respondWithSuccess(res, {
+      isConnected: true,
+      identity,
+    });
   })
 );
 
@@ -89,7 +93,7 @@ auth.post(
   middleware.authenticatedWithUser(),
   wrapAsync(async (req, res) => {
     const userId = req.authenticatedUserId;
-    const { identity : identityPayload } = req.body;
+    const { identity: identityPayload } = req.body;
     if (identityPayload === null) {
       return respondWithError(res, "missing identity in payload");
     }
@@ -98,7 +102,8 @@ auth.post(
       return respondWithError(res, "invalid identity");
     }
 
-    const appearancePayload = identityPayload.appearance || getDefaultAppearance("male");
+    const appearancePayload =
+      identityPayload.appearance || getDefaultAppearance("male");
     const appearance: Appearance = {
       genderSlider: appearancePayload.genderSlider,
       widthSlider: appearancePayload.widthSlider,
@@ -113,7 +118,7 @@ auth.post(
       topColor: appearancePayload.topColor,
       bottomColor: appearancePayload.bottomColor,
       beltColor: appearancePayload.beltColor,
-      shoeColor: appearancePayload.shoeColor
+      shoeColor: appearancePayload.shoeColor,
     };
 
     const identity: SavedIdentityData = {
@@ -121,19 +126,17 @@ auth.post(
       color: identityPayload.color,
       status: identityPayload.status,
       equipment: identityPayload.equipment,
-      appearance
+      appearance,
     };
 
     await User.setIdentityData({
       userId,
-      identity
+      identity,
     });
 
     respondWithSuccess(res, {});
   })
 );
-
-
 
 auth.post(
   "/connect/local/signup",
@@ -144,28 +147,45 @@ auth.post(
 
     // Check that the email is valid
     if (!isValidEmailFormat(email)) {
-      return respondWithFailure(res, "invalid_email", "You did not specify a valid email!");
+      return respondWithFailure(
+        res,
+        "invalid_email",
+        "You did not specify a valid email!"
+      );
     }
     if (!isValidPasswordFormat(password)) {
-      return respondWithFailure(res, "invalid_password", "Your password needs to be at least 8 characters long!");
+      return respondWithFailure(
+        res,
+        "invalid_password",
+        "Your password needs to be at least 8 characters long!"
+      );
     }
 
     // Check if someone is using that email
-    const userExistsWithEmailProvided = (await User.getUserIdByEmail({ email })) !== null;
+    const userExistsWithEmailProvided =
+      (await User.getUserIdByEmail({ email })) !== null;
     if (userExistsWithEmailProvided) {
-      return respondWithFailure(res, "invalid_credentials", "This email is already used by another user!");
+      return respondWithFailure(
+        res,
+        "invalid_credentials",
+        "This email is already used by another user!"
+      );
     }
 
     // Ensure the participant being registered isn't already linked.
     const participantId = req.authenticatedParticipantId;
     const existingUserId = await Participant.getUserId({ participantId });
     if (existingUserId !== null) {
-      return respondWithFailure(res, "participant_already_linked", "This participant is already linked to another email!");
+      return respondWithFailure(
+        res,
+        "participant_already_linked",
+        "This participant is already linked to another email!"
+      );
     }
 
     const userId = await User.createUser({
       email,
-      password
+      password,
     });
     await Participant.assignToUserId({ participantId, userId });
 
@@ -184,14 +204,22 @@ auth.post(
     } else if (status === PassportResponse.FAILURE) {
       return respondWithFailure(res, data.reason, data.details);
     } else if (status === PassportResponse.NO_USER_FOUND) {
-      return respondWithFailure(res, "invalid_credentials", "Hmm... Those don't seem like the correct credentials!");
+      return respondWithFailure(
+        res,
+        "invalid_credentials",
+        "Hmm... Those don't seem like the correct credentials!"
+      );
     }
 
     // Authentication was successful! Ensure the participant is not linked to another user already.
     const participantId = req.authenticatedParticipantId;
     const existingUserId = await Participant.getUserId({ participantId });
-    if (existingUserId !== null && (data !== existingUserId)) {
-      return respondWithError(res, "participant_already_linked", "This participant is already linked to another email!");
+    if (existingUserId !== null && data !== existingUserId) {
+      return respondWithError(
+        res,
+        "participant_already_linked",
+        "This participant is already linked to another email!"
+      );
     }
 
     // Assign participant to user!
@@ -206,18 +234,23 @@ auth.post(
 function socialOAuthRedirect(socialId, scope?) {
   return (req, res, next) => {
     const options: any = {
-      state: (req.query.state as string)
+      state: req.query.state as string,
+      session: true,
     };
     if (scope) {
       options.scope = scope;
     }
 
+    req.session.participantId = req.authenticatedParticipantId;
+
+    // Store the participantId under this cookie's session for validation after the oAuth callback.
     passport.authenticate(socialId, options)(req, res, next);
   };
 }
 
 function socialOAuthCallback(socialId) {
-  return (req, res, next) => wrapAsyncPassport(socialId, async (req, res, _, status, data) => {
+  return (req, res, next) =>
+    wrapAsyncPassport(socialId, async (req, res, _, status, data) => {
       if (status === PassportResponse.ERROR) {
         return respondWithErrorPostMessage(res, data.reason, data.details);
       } else if (status === PassportResponse.FAILURE) {
@@ -225,7 +258,7 @@ function socialOAuthCallback(socialId) {
       }
 
       // Assign participant to user!
-      const participantId = req.authenticatedParticipantId;
+      const participantId = req.session.participantId;
       await Participant.assignToUserId({ userId: data, participantId });
 
       // Tell the browser to close the window to let the client know authentication was successful.
@@ -233,30 +266,29 @@ function socialOAuthCallback(socialId) {
     })(req, res, next);
 }
 
-
 auth.get(
   "/connect/google",
   cors(),
-  middleware.authenticated(),
+  middleware.authenticatedForOAuth(),
   socialOAuthRedirect("google")
 );
 auth.get(
   "/connect/google/callback",
   cors(),
-  middleware.authenticated(),
+  middleware.authenticatedForOAuth(),
   socialOAuthCallback("google")
 );
 
 auth.get(
   "/connect/linkedin",
   cors(),
-  middleware.authenticated(),
+  middleware.authenticatedForOAuth(),
   socialOAuthRedirect("linkedin")
 );
 auth.get(
   "/connect/linkedin/callback",
   cors(),
-  middleware.authenticated(),
+  middleware.authenticatedForOAuth(),
   socialOAuthCallback("linkedin")
 );
 

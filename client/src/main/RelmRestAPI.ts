@@ -6,8 +6,8 @@ import { simpleFetch } from "~/utils/simpleFetch";
 import { AuthenticationResponse, RelmOAuthManager } from "./RelmOAuthAPI";
 
 export type LoginCredentials = {
-  email: string,
-  password: string
+  email: string;
+  password: string;
 };
 
 export class RelmRestAPI {
@@ -22,6 +22,10 @@ export class RelmRestAPI {
     this.authHeaders = authHeaders;
     this.oAuth = new RelmOAuthManager(url, authHeaders);
   }
+
+  /*
+   * General HTTP methods
+   */
 
   get<T>(path): CancellablePromise<T> {
     return simpleFetch(`${this.url}${path}`, {
@@ -47,19 +51,23 @@ export class RelmRestAPI {
     });
   }
 
+  /*
+   * Specific API endpoints
+   */
+
   async getPermitsAndMeta(): Promise<{ permits: string[]; jwt: any }> {
-    type Content =
+    type Result =
       | { status: "success"; permits: string[]; jwt: any }
       | { status: "error"; code?: number; reason: string };
-    let content: Content = await this.post("/relm/permitsAndMeta", {
+    let result: Result = await this.post("/relm/permitsAndMeta", {
       relmName: this.relmName,
     });
-    if (content.status === "success") {
-      return content;
-    } else if (content.code === 404) {
+    if (result.status === "success") {
+      return result;
+    } else if (result.code === 404) {
       throw Error(`relm named "${this.relmName}" not found`);
     } else {
-      throw Error(`permission denied: ${content.reason}`);
+      throw Error(`permission denied: ${result.reason}`);
     }
   }
 
@@ -74,7 +82,7 @@ export class RelmRestAPI {
     page?: number;
     perPage?: number;
   }): CancellablePromise<LibraryAsset[]> {
-    type Content =
+    type Result =
       | { status: "success"; assets: any[] }
       | { status: "error"; code?: number; reason: string };
     return this.post("/asset/library/query", {
@@ -82,11 +90,11 @@ export class RelmRestAPI {
       tags,
       page,
       perPage,
-    }).then((content: Content) => {
-      if (content.status === "success") {
-        return content.assets;
+    }).then((result: Result) => {
+      if (result.status === "success") {
+        return result.assets;
       } else {
-        throw Error(`can't get assets: ${content.reason}`);
+        throw Error(`can't get assets: ${result.reason}`);
       }
     });
   }
@@ -104,20 +112,20 @@ export class RelmRestAPI {
     thumbnail: string;
     ecsProperties: any;
   }): Promise<boolean> {
-    type Content =
+    type Result =
       | { status: "success" }
       | { status: "error"; code?: number; reason: string };
-    const content: Content = await this.post("/asset/library/create", {
+    const result: Result = await this.post("/asset/library/create", {
       name,
       description,
       tags,
       thumbnail,
       ecsProperties,
     });
-    if (content.status === "success") {
+    if (result.status === "success") {
       return true;
     } else {
-      throw Error(`can't get assets: ${content.reason}`);
+      throw Error(`can't get assets: ${result.reason}`);
     }
   }
 
@@ -153,18 +161,18 @@ export class RelmRestAPI {
     entityId: string;
     yCenter?: number;
   }): Promise<string> {
-    type Content =
+    type Result =
       | { status: "success"; asset: any }
       | { status: "error"; code?: number; reason: string };
-    const content: Content = await this.post(`/asset/inventory/take`, {
+    const result: Result = await this.post(`/asset/inventory/take`, {
       relmName: this.relmName,
       entityId,
       yCenter,
     });
-    if (content.status === "success") {
-      return content.asset;
+    if (result.status === "success") {
+      return result.asset;
     } else {
-      throw Error(`can't take item: ${content.reason}`);
+      throw Error(`can't take item: ${result.reason}`);
     }
   }
 
@@ -175,33 +183,33 @@ export class RelmRestAPI {
     assetId: string;
     position: number[];
   }): Promise<boolean> {
-    type Content =
+    type Result =
       | { status: "success"; asset: any }
       | { status: "error"; code?: number; reason: string };
-    const content: Content = await this.post(`/asset/inventory/drop`, {
+    const result: Result = await this.post(`/asset/inventory/drop`, {
       relmName: this.relmName,
       assetId,
       position,
     });
-    if (content.status === "success") {
+    if (result.status === "success") {
       return true;
     } else {
-      throw Error(`can't drop item: ${content.reason}`);
+      throw Error(`can't drop item: ${result.reason}`);
     }
   }
 
   async itemQuery(): Promise<any[]> {
-    type Content =
+    type Result =
       | { status: "success"; assets: any[] }
       | { status: "error"; code?: number; reason: string };
-    const content: Content = await this.post(`/asset/inventory/query`, {
+    const result: Result = await this.post(`/asset/inventory/query`, {
       relmName: this.relmName,
       perPage: 1,
     });
-    if (content.status === "success") {
-      return content.assets;
+    if (result.status === "success") {
+      return result.assets;
     } else {
-      throw Error(`can't list inventory: ${content.reason}`);
+      throw Error(`can't list inventory: ${result.reason}`);
     }
   }
 
@@ -214,7 +222,7 @@ export class RelmRestAPI {
     withInvitePermission: boolean;
     maxUses: number;
   }): Promise<{ token: string; permits: string[]; url: string }> {
-    type Content =
+    type Result =
       | { status: "success"; invitation: any }
       | { status: "error"; code?: number; reason: string };
 
@@ -222,24 +230,24 @@ export class RelmRestAPI {
     if (withEditPermission) permits.push("edit");
     if (withInvitePermission) permits.push("invite");
 
-    const content: Content = await this.post(`/invite/make`, {
+    const result: Result = await this.post(`/invite/make`, {
       relmName: this.relmName,
       permits,
       maxUses,
     });
-    if (content.status === "success") {
+    if (result.status === "success") {
       const url =
         location.origin +
         location.pathname +
-        `?t=${content.invitation.token}` +
+        `?t=${result.invitation.token}` +
         location.hash;
       return {
-        token: content.invitation.token,
-        permits: content.invitation.permits,
+        token: result.invitation.token,
+        permits: result.invitation.permits,
         url,
       };
     } else {
-      throw Error(`can't drop item: ${content.reason}`);
+      throw Error(`can't drop item: ${result.reason}`);
     }
   }
 
@@ -272,51 +280,60 @@ export class RelmRestAPI {
   }
 
   async getIdentityData() {
-    type Result = 
-      | { status: "success", isConnected: boolean, identity: SavedIdentityData }
-      | { status: "error", code?: number, reason: string };
+    type Result =
+      | { status: "success"; isConnected: boolean; identity: SavedIdentityData }
+      | { status: "error"; code?: number; reason: string };
 
     const result: Result = await this.get("/auth/identity");
-    
+
     if (result.status === "success") {
       const { isConnected, identity } = result;
       return {
         isConnected,
-        identity
+        identity,
       };
     } else {
       throw Error(`Failed to retrieve identity data: ${result.reason}`);
     }
   }
 
-  async setIdentityData({ identity } : { identity: SavedIdentityData }) {
-    type Result = 
+  async setIdentityData({ identity }: { identity: SavedIdentityData }) {
+    type Result =
       | { status: "success" }
-      | { status: "error", code?: number, reason: string };
-  
+      | { status: "error"; code?: number; reason: string };
+
     const result: Result = await this.post("/auth/identity", {
-      identity
+      identity,
     });
 
-    if (result.status === "error") {
-      throw Error(`Failed to update identity data: ${result.reason}`);
+    if (result.status === "success") {
+      return true;
+    } else {
+      throw Error(`Failed to retrieve identity data: ${result.reason}`);
     }
   }
 
-  async registerParticipant(credentials: LoginCredentials): Promise<AuthenticationResponse> {
-    const result: AuthenticationResponse = await this.post("/auth/connect/local/signup", {
-      ...credentials
-    });
+  async registerParticipant(
+    credentials: LoginCredentials
+  ): Promise<AuthenticationResponse> {
+    const result: AuthenticationResponse = await this.post(
+      "/auth/connect/local/signup",
+      {
+        ...credentials,
+      }
+    );
 
     return result;
   }
 
   async login(credentials: LoginCredentials): Promise<AuthenticationResponse> {
-    const result: AuthenticationResponse = await this.post("/auth/connect/local/signin", {
-      ...credentials
-    });
+    const result: AuthenticationResponse = await this.post(
+      "/auth/connect/local/signin",
+      {
+        ...credentials,
+      }
+    );
 
     return result;
   }
-
 }

@@ -1,20 +1,22 @@
 import type { AuthenticationHeaders } from "relm-common";
 import { config } from "~/config";
 
-export type AuthenticationResponse = {
-  status: "success"
-} | {
-  status: "error",
-  reason: string,
-  details?: string
-};
+export type AuthenticationResponse =
+  | {
+      status: "success";
+    }
+  | {
+      status: "error";
+      reason: string;
+      details?: string;
+    };
 
-export type SocialId = "google"|"twitter"|"facebook"|"linkedin";
+export type SocialType = "google" | "twitter" | "facebook" | "linkedin";
 
 export class RelmOAuthManager {
   url: string;
   authHeaders: AuthenticationHeaders;
-  
+
   constructor(url, authHeaders: AuthenticationHeaders) {
     this.url = url;
     this.authHeaders = authHeaders;
@@ -23,7 +25,6 @@ export class RelmOAuthManager {
   open(url, callback?) {
     const openedWindow = window.open(url, "_blank");
     if (openedWindow) {
-
       // make sure that the popup was not closed.
       let closeInterval = setInterval(() => {
         if (openedWindow.closed) {
@@ -42,14 +43,14 @@ export class RelmOAuthManager {
           openedWindow.close();
         }
       };
-      
+
       // Listener for when the popup sends data back
-      const messageListener = message => {
+      const messageListener = (message) => {
         const isFromAPI = message.origin.startsWith(config.serverUrl);
         if (isFromAPI && closeInterval !== null) {
           cleanUp();
           const data = JSON.parse(atob(message.data));
-          
+
           if (callback) {
             callback(data);
           }
@@ -64,40 +65,19 @@ export class RelmOAuthManager {
   }
 
   getAuthenticationPayload() {
-    return btoa(JSON.stringify(this.authHeaders));
+    return Object.keys(this.authHeaders)
+      .map(
+        (header) => `${header}=${encodeURIComponent(this.authHeaders[header])}`
+      )
+      .join("&");
   }
 
-  showGoogleOAuth(): Promise<AuthenticationResponse|null> {
-    return new Promise(resolve => {
-      this.open(
-        `${this.url}/auth/connect/google?state=${this.getAuthenticationPayload()}`,
-         resolve);
+  async openThirdPartyWindow(
+    type: SocialType
+  ): Promise<AuthenticationResponse> {
+    const path = `/auth/connect/${type}/?${this.getAuthenticationPayload()}`;
+    return new Promise((resolve) => {
+      this.open(`${this.url}${path}`, resolve);
     });
   }
-
-  showLinkedinOAuth(): Promise<AuthenticationResponse|null> {
-    return new Promise(resolve => {
-      this.open(
-        `${this.url}/auth/connect/linkedin?state=${this.getAuthenticationPayload()}`,
-         resolve);
-    });
-  }
-
-  showFacebookOAuth(): Promise<AuthenticationResponse|null> {
-    return new Promise(resolve => {
-      this.open(
-        `${this.url}/auth/connect/facebook?state=${this.getAuthenticationPayload()}`,
-         resolve);
-    });
-  }
-
-  showTwitterOAuth(): Promise<AuthenticationResponse|null> {
-    return new Promise(resolve => {
-      this.open(
-        `${this.url}/auth/connect/twitter?state=${this.getAuthenticationPayload()}`,
-         resolve);
-    });
-  }
-
-
 }
