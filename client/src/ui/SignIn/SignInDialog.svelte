@@ -12,15 +12,19 @@
   let password: string;
 
   async function onSignIn() {
-    const response = await worldManager.logins.loginWithCredentials({
+    const isSuccess = await worldManager.logins.loginWithCredentials({
       email,
       password,
     });
-    console.log("response", response);
+
+    if (isSuccess) {
+      // close the sign-in dialog
+      $openDialog = null;
+    }
   }
 
   function onSignUp() {
-    openDialog.set("signup");
+    $openDialog = "signup";
   }
 </script>
 

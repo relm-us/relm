@@ -10,8 +10,20 @@
   let email: string;
   let password: string;
 
+  async function onSignUp() {
+    const isSuccess = await worldManager.logins.register({
+      email,
+      password,
+    });
+
+    if (isSuccess) {
+      // close the sign-up dialog
+      $openDialog = null;
+    }
+  }
+
   function onSignIn() {
-    openDialog.set("signin");
+    $openDialog = "signin";
   }
 </script>
 
@@ -21,7 +33,7 @@
     <SignInTextInput label="pass code" type="password" bind:value={password} />
   </r-form>
 
-  <Button>Sign Up</Button>
+  <Button on:click={onSignUp}>Sign Up</Button>
 
   <r-sign-in>
     Already have an account? <button on:click={onSignIn}>Sign In</button>

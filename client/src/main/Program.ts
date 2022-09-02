@@ -667,7 +667,11 @@ export function makeProgram(): Program {
       }
 
       case "notify": {
-        state.notifyContext.addNotification(msg.notification);
+        state.notifyContext.addNotification({
+          text: msg.notification,
+          position: "bottom-center",
+          removeAfter: 5000,
+        });
         return [state];
       }
 

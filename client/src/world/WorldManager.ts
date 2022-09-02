@@ -839,27 +839,6 @@ export class WorldManager {
     }
   }
 
-  async register(
-    credentials: LoginCredentials
-  ): Promise<AuthenticationResponse> {
-    const data = await this.api.registerParticipant(credentials);
-
-    // If we login, ensure we are connected.
-    if (data && data.status === "success") {
-      // Update permits
-      try {
-        const { permits: relmPermits } = await this.api.getPermitsAndMeta();
-        permits.set(relmPermits);
-      } catch (error) {
-        this.dispatch({ id: "error", message: error.message });
-        return null;
-      }
-      connectedAccount.set(true);
-    }
-
-    return data;
-  }
-
   /**
    * Convenience Accessors
    */

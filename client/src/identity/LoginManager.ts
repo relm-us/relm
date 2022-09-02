@@ -32,6 +32,11 @@ export class LoginManager {
     this.participants = participants;
   }
 
+  async register(credentials: LoginCredentials) {
+    const result = await this.api.registerParticipant(credentials);
+    return await this.continueLogin(result);
+  }
+
   async loginWithCredentials(creds: LoginCredentials) {
     const result = await this.api.login(creds);
     return await this.continueLogin(result);
@@ -39,9 +44,13 @@ export class LoginManager {
 
   async loginWithThirdParty(type: SocialType) {
     const result = await this.api.oAuth.openThirdPartyWindow(type);
+    return await this.continueLogin(result);
   }
 
   async continueLogin(result: AuthenticationResponse) {
+    let notification = "unable to authenticate";
+    let isSuccess = false;
+
     if (result?.status === "success") {
       try {
         await this.refreshPermits();
@@ -50,35 +59,29 @@ export class LoginManager {
 
         connectedAccount.set(true);
 
-        this.dispatch({
-          id: "notify",
-          notification: "Successfully signed in!",
-        });
-
-        return true;
+        notification = "successfully signed in!";
+        isSuccess = true;
       } catch (error) {
-        this.dispatch({ id: "error", message: error.message });
-        return false;
+        notification = error.message;
       }
     } else if (result?.status === "failure") {
-      this.dispatch({ id: "notify", notification: result.reason });
-    } else {
-      this.dispatch({ id: "error", message: "Unable to authenticate" });
-      return false;
+      notification = result.reason;
     }
+
+    this.dispatch({ id: "notify", notification });
+
+    return isSuccess;
   }
 
   async logout() {
     destroyParticipantId();
     this.security.secret = null;
     localIdentityData.set(getRandomInitializedIdentityData());
-    connectedAccount.set(false);
 
-    // this.dispatch({
-    //   id: "enterPortal",
-    //   relmName: this.relmName,
-    //   entryway: this.entryway,
-    // });
+    // Don't need this if we reload the page
+    // connectedAccount.set(false);
+
+    window.location.reload();
   }
 
   async saveLocalIdentityData() {
