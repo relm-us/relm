@@ -1,8 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher, onMount, onDestroy } from "svelte";
 
-  import { showCenterButtons } from "~/stores/showCenterButtons";
-
   import Tint from "./Tint.svelte";
   import closeIcon from "./close-x.png";
 
@@ -13,14 +11,6 @@
   const cancel = (source) => () => {
     dispatch("cancel", source);
   };
-
-  onMount(() => {
-    $showCenterButtons = false;
-  });
-
-  onDestroy(() => {
-    $showCenterButtons = true;
-  });
 </script>
 
 <Tint on:click={cancel("away")}>

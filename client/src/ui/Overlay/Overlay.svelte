@@ -3,7 +3,7 @@
 
   import { fade } from "svelte/transition";
 
-  import { AV_ENABLED } from "~/config/constants";
+  import { AV_ENABLED, CROSS_FADE_DURATION } from "~/config/constants";
 
   import MicButton from "~/ui/ButtonControls/MicButton";
   import VideoButton from "~/ui/ButtonControls/VideoButton";
@@ -57,7 +57,7 @@
 
 {#if $openDialog !== null}
   <div
-    transition:fade={{ duration: 200 }}
+    transition:fade={{ duration: CROSS_FADE_DURATION }}
     style="position:absolute;z-index:100"
   >
     {#if $openDialog === "pause"}
@@ -75,7 +75,7 @@
 {/if}
 
 {#if $showCenterButtons}
-  <MiniMap />
+  <!-- <MiniMap /> -->
 {/if}
 
 <overlay class:open={buildMode}>
@@ -98,7 +98,7 @@
 </overlay>
 
 {#if $showCenterButtons}
-  <overlay-center>
+  <overlay-center transition:fade={{ duration: CROSS_FADE_DURATION }}>
     <play-buttons class="interactive">
       {#if AV_ENABLED}
         <Tooltip tip={_("Set up video", "set_up_video")} top>

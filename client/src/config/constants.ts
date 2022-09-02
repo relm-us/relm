@@ -50,6 +50,9 @@ export const DEFAULT_CAMERA_ANGLE = (37.5 / 180) * Math.PI;
 // 0 - 100, where 100 is completely zoomed out
 export const DEFAULT_VIEWPORT_ZOOM = 35.0;
 
+// Milliseconds for UI cross-fade transitions
+export const CROSS_FADE_DURATION = 200;
+
 // Animation names from participant model GLB
 export const T_POSE = "a-pose";
 export const FLYING = "flying";
