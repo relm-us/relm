@@ -46,7 +46,20 @@ export function relmExists() {
 
 export function authenticated() {
   return async (req, _res, next) => {
+    if (req.session.participantId) {
+      req.verifiedPubKey = await Participant.getPubKeyDoc({
+        participantId: req.session.participantId,
+      });
+      req.authenticatedParticipantId = req.session.participantId;
+      next();
+      return;
+    }
+
     const participantId = getParam(req, "x-relm-participant-id");
+    if (!participantId) {
+      const reason = "can't authenticate without participantId";
+      next(Error(reason));
+    }
 
     // the `id` (participantId), signed
     const sig = getParam(req, "x-relm-participant-sig");
@@ -69,6 +82,17 @@ export function authenticated() {
       console.warn(`Can't findOrCreateVerifiedPubKey`, params);
       next(joinError(err, Error(`can't authenticate`)));
     }
+  };
+}
+
+export function authenticatedForOAuth() {
+  return async (req, _res, next) => {
+    const participantId = req.session.participantId;
+
+    if (!participantId) {
+      return next(createError(401, "Not authenticated"));
+    }
+    next();
   };
 }
 
@@ -183,17 +207,18 @@ export function authorized(
 
 function getParam(req, key: keyof AuthenticationHeaders) {
   if (key in req.query) {
-    return req.query[key.replace("x-relm-", "")];
-  } else if ("state" in req.query) {
-    // Case scenario of OAuth as we cannot pass headers into it
-    try {
-      const payload = JSON.parse(
-        Buffer.from(req.query.state, "base64").toString()
-      );
-      return payload[key];
-    } catch (error) {
-      return null;
-    }
+    //   return req.query[key.replace("x-relm-", "")];
+    // } else if ("state" in req.query) {
+    //   // Case scenario of OAuth as we cannot pass headers into it
+    //   try {
+    //     const payload = JSON.parse(
+    //       Buffer.from(req.query.state, "base64").toString()
+    //     );
+    //     return payload[key];
+    //   } catch (error) {
+    //     return null;
+    //   }
+    return req.query[key];
   } else {
     return req.headers[key];
   }

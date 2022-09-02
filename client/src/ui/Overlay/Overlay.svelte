@@ -1,13 +1,18 @@
 <script lang="ts">
   import type { State } from "~/main/ProgramTypes";
 
+  import { fade } from "svelte/transition";
+
   import { AV_ENABLED } from "~/config/constants";
-  
+
   import MicButton from "~/ui/ButtonControls/MicButton";
   import VideoButton from "~/ui/ButtonControls/VideoButton";
   import AvatarSetupButton from "~/ui/ButtonControls/AvatarSetupButton";
   import ShareScreenButton from "~/ui/ButtonControls/ShareScreenButton";
-  import { SignInButton } from "~/ui/ButtonControls/ConnectionButton";
+  import {
+    SignInButton,
+    SignOutButton,
+  } from "~/ui/ButtonControls/SignInButton";
   import InviteButton from "~/ui/ButtonControls/InviteButton";
   import ChatButton from "~/ui/Chat/ChatButton.svelte";
 
@@ -22,9 +27,9 @@
   import Tooltip from "~/ui/lib/Tooltip";
   import Toolbar from "~/ui/Build/Toolbar";
   import BuildPanel from "~/ui/Build/BuildPanel";
+  import { SignInDialog, SignUpDialog } from "~/ui/SignIn";
 
   import { worldUIMode } from "~/stores";
-  import { playState } from "~/stores/playState";
   import { chatOpen, unreadCount } from "~/stores/chat";
   import { localIdentityData } from "~/stores/identityData";
   import { debugMode } from "~/stores/debugMode";
@@ -33,14 +38,12 @@
   import { connectedAccount } from "~/stores/connectedAccount";
   import { permits } from "~/stores/permits";
 
-  import SignInWindow from "../ButtonControls/ConnectionButton/SignInWindow.svelte";
-  import LogoutButton from "../ButtonControls/ConnectionButton/LogoutButton.svelte";
+  import { worldManager } from "~/world";
+  import { openDialog } from "~/stores/openDialog";
 
   export let dispatch;
   export let state: State;
   export let tr = {};
-
-  let signinEnabled = false;
 
   // i18n translations available, if passed in
   const _ = (phrase, key) => tr[key] || tr[phrase] || phrase;
@@ -52,8 +55,19 @@
 <!-- Pause game if participant is not focused on window, to save CPU/GPU resources -->
 <PauseAutomatically />
 
-{#if $playState === "paused"}
-  <PauseMessage />
+{#if $openDialog !== null}
+  <div
+    transition:fade={{ duration: 200 }}
+    style="position:absolute;z-index:100"
+  >
+    {#if $openDialog === "pause"}
+      <PauseMessage on:cancel={() => worldManager.togglePaused()} />
+    {:else if $openDialog === "signin"}
+      <SignInDialog on:cancel={() => ($openDialog = null)} />
+    {:else if $openDialog === "signup"}
+      <SignUpDialog on:cancel={() => ($openDialog = null)} />
+    {/if}
+  </div>
 {/if}
 
 {#if $centerCameraVisible}
@@ -127,20 +141,17 @@
 
       {#if $connectedAccount}
         <Tooltip tip={_("Logout", "logout")} top>
-          <LogoutButton />
+          <SignOutButton />
         </Tooltip>
       {:else}
         <Tooltip tip={_("Connect your account!", "signin_button")} top>
-          <SignInButton bind:enabled={signinEnabled} />
+          <SignInButton />
         </Tooltip>
       {/if}
     </play-buttons>
   </overlay-center>
 {/if}
 
-{#if signinEnabled}
-  <SignInWindow bind:enabled={signinEnabled} {dispatch} />
-{/if}
 <Chat />
 
 <!-- The virtual world! -->
