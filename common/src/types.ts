@@ -7,3 +7,6 @@ export type AuthenticationHeaders = {
   "x-relm-jwt"?: string;
 };
 
+export type Result<S, E, C> =
+  | { status: "success"; code: C; data?: S }
+  | { status: "error"; code: C; data?: E };
