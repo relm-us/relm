@@ -1,9 +1,10 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
 import * as middleware from "./middleware.js";
 import * as routes from "./routes/index.js";
 import passportMiddleware from "./passportAuth.js";
-import { respondWithError, uuidv4 } from "./utils/index.js";
+import { getRootPath, respondWithError, uuidv4 } from "./utils/index.js";
 
 export const app = express();
 
@@ -14,6 +15,14 @@ app.use(express.json());
 // See https://expressjs.com/en/resources/middleware/cors.html#enabling-cors-pre-flight
 app.options("*", cors());
 
+// Set the view engine to the module hbs
+app.set("view engine", "hbs");
+app.set("views", path.join(getRootPath(), "data", "templates", "views"));
+
+// Static assets
+app.use("/public", express.static(path.join(getRootPath(), "data", "public")));
+
+// Passport for OAuthauthentication
 app.use(passportMiddleware);
 
 // Courtesy page just to say we're a Relm web server
@@ -24,6 +33,7 @@ app.get("/", function (_req, res) {
 app.use("/admin", routes.admin);
 app.use("/asset", routes.asset);
 app.use("/auth", routes.auth);
+app.use("/email", routes.email);
 app.use("/invite", middleware.relmName(), routes.invite);
 app.use("/relm", middleware.relmName(), routes.relm);
 app.use("/relms", routes.relms);

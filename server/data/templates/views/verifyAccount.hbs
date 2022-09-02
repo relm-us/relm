@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1,user-scalable=no" />
+    
+    <title>Relm | Account Verified</title>
+    <link rel="icon" type="image/png" href="/public/favicon.png" />
+
+    <style>
+      html, body {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+      }
+
+      #background {
+        background-image: url("/public/email_confirmation/email_confirmation-background.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-color: #000;
+        width: 100%;
+        height: 100%;
+      }
+
+      #content {
+        text-align: center;
+        padding-top:17%;
+      }
+
+      span {
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 2em;
+        cursor: default;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="background">
+      <div id="content">
+        {{#if confirmed}}
+          <span>Your email</span>
+          <br />
+          <span>has been confirmed</span>
+          <br />
+          <div>
+            <img alt="Email Confirmed" height="200px" src="/public/email_confirmation/email_confirmation-envelope_white.png">
+          </div>
+        {{else}}
+          <span>Invalid or</span>
+          <br />
+          <span>expired code</span>
+        {{/if}}
+      </div>
+    </div>
+  </body>
+</html>

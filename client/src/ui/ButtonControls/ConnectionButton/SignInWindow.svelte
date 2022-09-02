@@ -6,6 +6,7 @@
   import { showCenterButtons } from "~/stores/showCenterButtons";
   import { getNotificationsContext } from "svelte-notifications";
   import { _ } from "~/i18n";
+  import ConnectionSubmitInput from "./components/ConnectionSubmitInput.svelte";
 
   export let enabled;
   export let dispatch: Dispatch;
@@ -14,6 +15,7 @@
 
   let showingSignin = true;
 
+  // Handles login via social oAuths
   async function onSocialClick({ target }) {
     const socialId = target.getAttribute("data-login");
 
@@ -31,20 +33,21 @@
         text: $_(response.reason, {
           default: response.details
         }),
-        position: "top-left",
+        position: "bottom-center",
         removeAfter: 3000
       });
     }
 
   }
 
-  async function onUsernamePasswordAction(action: "signin"|"register") {
+  async function onEmailPasswordAction() {
     const email = (document.querySelector('input[name="email"]') as HTMLInputElement).value;
     const password = (document.querySelector('input[name="password"]') as HTMLInputElement).value;
+    const identity = worldManager.participants.local.identityData;
 
-    const response = action === "register"
-      ? await worldManager.register({ email, password }) 
-      : await worldManager.login({ email, password });
+    const response = showingSignin
+      ? await worldManager.login({ email, password }) 
+      : await worldManager.register({ email, password, identity });
     
     if (response.status === "success") {
       // Username/password was successfully registered.
@@ -55,7 +58,7 @@
         text: $_(response.reason, {
           default: response.details
         }),
-        position: "top-left",
+        position: "bottom-center",
         removeAfter: 3000
       });
     }
@@ -107,84 +110,91 @@
 
 <Fullwindow zIndex={100}>
   <r-background></r-background>
-  <r-exit on:click={exitScreen}>
+  <r-exit on:click={exitScreen} id="top-right-exit">
     <img src="/ESC_button.png" style="width: 48px;" alt="Signout" />
   </r-exit>
   <r-window>
     <!-- SIGNIN WINDOW -->
-    {#if showingSignin}
-      <r-content>
-        <!-- Email/password/toggles -->
-        <r-group>
-          <r-section class="add-padding-if-tall-enough medium">
+    <form on:submit|preventDefault={onEmailPasswordAction}>
+      {#if showingSignin}
+        <r-content>
+          <!-- Email/password/toggles -->
+          <r-group>
+            <r-section class="add-padding-if-tall-enough medium">
+              <SignInTextInput name="email" type="email" label="EMAIL" />
+            </r-section>
+
+            <r-section>
+              <SignInTextInput name="password" type="password" label="PASS CODE" />
+            </r-section>
+
+            <!-- <r-section id="forget-section">
+              <div style="float: left;">
+                <r-forget-passcode-link class="fake-link">Forgot Pass Code</r-forget-passcode-link>
+              </div>
+            </r-section> -->
+
+          </r-group>
+
+          <!-- SIGN IN/Socials -->
+          <r-group>
+            <div class="submit">
+              <ConnectionSubmitInput label="SIGN IN" />
+            </div>
+            <div class="socials add-padding-if-tall-enough small">
+              <span>or enter via:</span><br />
+              <r-connections>
+                <img src="/social/facebook.png" data-login="facebook" alt="Facebook" on:click={onSocialClick} />
+                <img src="/social/twitter.png" data-login="twitter" alt="Twitter" on:click={onSocialClick} />
+                <img src="/social/google.png" data-login="google" alt="Google" on:click={onSocialClick} />
+                <img src="/social/linkedin.png" data-login="linkedin" alt="Linkedin" on:click={onSocialClick} />
+              </r-connections>
+            </div>
+          </r-group>
+
+          <!-- Sign up text -->
+          <r-group class="switch-screen-text" style="padding-top: 10%;" on:click={switchScreen}>
+            <div class="fake-link">
+              <span>New here? Create Identity</span>
+              <br />
+              <span>START FOR FREE</span>
+            </div>
+            <div id="bottom-center-exit">
+              <r-exit on:click={exitScreen}>
+                <img src="/ESC_button.png" style="width: 48px;" alt="Signout" />
+              </r-exit>
+            </div>
+          </r-group>
+        </r-content>
+      {:else}
+        <!-- REGISTER WINDOW -->
+        <r-content style="position: relative;" id="register">
+          <r-section class="add-padding-if-tall-enough large">
             <SignInTextInput name="email" type="email" label="EMAIL" />
           </r-section>
-
           <r-section>
             <SignInTextInput name="password" type="password" label="PASS CODE" />
           </r-section>
-
-          <!-- <r-section id="forget-section">
-            <div style="float: left;">
-              <r-forget-passcode-link class="fake-link">Forgot Pass Code</r-forget-passcode-link>
-            </div>
-          </r-section> -->
-
-        </r-group>
-
-        <!-- SIGN IN/Socials -->
-        <r-group>
-          <div class="submit">
-            <span class="fake-link" on:click={() => onUsernamePasswordAction("signin")} >SIGN IN</span>
-          </div>
-          <div class="socials add-padding-if-tall-enough small">
-            <span>or enter via:</span><br />
+          <r-section class="socials">
             <r-connections>
               <img src="/social/facebook.png" data-login="facebook" alt="Facebook" on:click={onSocialClick} />
               <img src="/social/twitter.png" data-login="twitter" alt="Twitter" on:click={onSocialClick} />
               <img src="/social/google.png" data-login="google" alt="Google" on:click={onSocialClick} />
               <img src="/social/linkedin.png" data-login="linkedin" alt="Linkedin" on:click={onSocialClick} />
             </r-connections>
-          </div>
-        </r-group>
+          </r-section>
+          <r-section style="position: absolute; transform: translateX(-15%); width: 150%;">
+            <div class="submit">
+              <ConnectionSubmitInput label="CREATE ACCOUNT" />
+            </div>
 
-        <!-- Sign up text -->
-        <r-group class="switch-screen-text" style="padding-top: 10%;" on:click={switchScreen}>
-          <div class="fake-link">
-            <span>New here? Create Identity</span>
-            <br />
-            <span>START FOR FREE</span>
-          </div>
-        </r-group>
-      </r-content>
-    {:else}
-      <!-- REGISTER WINDOW -->
-      <r-content style="position: relative;" id="register">
-        <r-section class="add-padding-if-tall-enough large">
-          <SignInTextInput name="email" type="email" label="EMAIL" />
-        </r-section>
-        <r-section>
-          <SignInTextInput name="password" type="password" label="PASS CODE" />
-        </r-section>
-        <r-section class="socials">
-          <r-connections>
-            <img src="/social/facebook.png" data-login="facebook" alt="Facebook" on:click={onSocialClick} />
-            <img src="/social/twitter.png" data-login="twitter" alt="Twitter" on:click={onSocialClick} />
-            <img src="/social/google.png" data-login="google" alt="Google" on:click={onSocialClick} />
-            <img src="/social/linkedin.png" data-login="linkedin" alt="Linkedin" on:click={onSocialClick} />
-          </r-connections>
-        </r-section>
-        <r-section style="position: absolute; transform: translateX(-15%); width: 150%;">
-          <div class="submit">
-            <span class="fake-link" on:click={() => onUsernamePasswordAction("register")} >CREATE ACCOUNT</span>
-          </div>
-
-          <r-group class="switch-screen-text" on:click={switchScreen}>
-            <span class="fake-link">Already have an account? Sign in</span>
-          </r-group>
-        </r-section>
-      </r-content>
-    {/if}
+            <r-group class="switch-screen-text" on:click={switchScreen}>
+              <span class="fake-link">Already have an account? Sign in</span>
+            </r-group>
+          </r-section>
+        </r-content>
+      {/if}
+    </form>
   </r-window>
 </Fullwindow>
 
@@ -202,9 +212,15 @@
   //   font-size: 1.1em;
   // }
 
-  .submit span {
-    color: #7f7f7f;
-    font-size: 4em;
+  #bottom-center-exit {
+    margin-top: 1em;
+    display: none;
+  }
+
+  #top-right-exit {
+    position: absolute;
+    top: 5px;
+    right: 5px;
   }
 
   .switch-screen-text {
@@ -253,15 +269,7 @@
     opacity: 0.7;
   }
 
-  r-exit {
-    display: block;
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    cursor: pointer;
-  }
-
-  r-window {
+  r-window form {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -279,11 +287,16 @@
   r-group {
     display: block;
     height: 33%;
+    min-height: 5em;
   }
 
   r-section {
     display: block;
     margin-top: 0.5em;
+  }
+
+  r-exit {
+    cursor: pointer;
   }
 
   // r-forget-passcode-link {
@@ -316,13 +329,19 @@
   }
 
   // If on Mobile, make the submit text smaller
-  @media only screen and (max-width: 450px) {
-    .submit span {
-      font-size: 2.5em;
-    }
-
+  @media only screen and (min-width: 520px) {
     r-group {
       height: 25%;
+    }
+  }
+
+  @media only screen and (max-width: 520px) {
+    #bottom-center-exit {
+      display: block;
+    }
+
+    #top-right-exit {
+      display: none;
     }
   }
 </style>

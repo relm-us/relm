@@ -18,8 +18,11 @@ import {
   PassportResponse,
   respondWithErrorPostMessage,
   respondWithSuccessPostMessage,
-  respondWithFailurePostMessage
+  respondWithFailurePostMessage,
+  createEmailTemplate,
+  sendEmail
 } from "../utils/index.js";
+import { SERVER_BASE_URL } from "../config.js";
 
 export const auth = express.Router();
 
@@ -61,6 +64,7 @@ auth.get(
   "/identity",
   cors(),
   middleware.authenticated(),
+  middleware.acceptJwt(),
   wrapAsync(async (req, res) => {
       const userId = await Participant.getUserId({
         participantId: req.authenticatedParticipantId
@@ -86,6 +90,7 @@ auth.post(
   "/identity",
   cors(),
   middleware.authenticated(),
+  middleware.acceptJwt(),
   middleware.authenticatedWithUser(),
   wrapAsync(async (req, res) => {
     const userId = req.authenticatedUserId;
@@ -140,7 +145,7 @@ auth.post(
   cors(),
   middleware.authenticated(),
   wrapAsync(async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, identity } = req.body;
 
     // Check that the email is valid
     if (!isValidEmailFormat(email)) {
@@ -149,9 +154,12 @@ auth.post(
     if (!isValidPasswordFormat(password)) {
       return respondWithFailure(res, "invalid_password", "Your password needs to be at least 8 characters long!");
     }
+    if (!isValidIdentity(identity)) {
+      return respondWithError(res, "Missing identity in payload.");
+    }
 
     // Check if someone is using that email
-    const userExistsWithEmailProvided = (await User.getUserIdByEmail({ email })) !== null;
+    const userExistsWithEmailProvided = (await User.getUserIdByLoginId({ email })) !== null;
     if (userExistsWithEmailProvided) {
       return respondWithFailure(res, "invalid_credentials", "This email is already used by another user!");
     }
@@ -163,15 +171,33 @@ auth.post(
       return respondWithFailure(res, "participant_already_linked", "This participant is already linked to another email!");
     }
 
-    const userId = await User.createUser({
+    const { userId, emailCode } = await User.createUser({
       email,
-      password
+      password,
+      emailVerificationRequired: true
     });
-    await Participant.assignToUserId({ participantId, userId });
 
+    const name = (identity as SavedIdentityData).name;
+    const verifyEmailDetails = createEmailTemplate("verify", {
+      code: emailCode,
+      greeting: name ? `Hi ${name}!` : `Hi there!`,
+      server_url: SERVER_BASE_URL
+    });
+    try {
+      await sendEmail(email, verifyEmailDetails);
+    } catch (error) {
+      // delete account as email confirmation email could not be sent.
+      await User.deleteUserByLoginId({ email });
+      return respondWithError(res, "Email service failed to process request.", error);
+    }
+
+    await Participant.assignToUserId({ participantId, userId });
+    await User.setIdentityData({ userId, identity });
     return respondWithSuccess(res, {});
   })
 );
+
+sendEmail("dapersonmgn@gmail.com", createEmailTemplate("verify", { code: "asd", greeting: "Hi William", server_url: "asd" })).then(console.log);
 
 auth.post(
   "/connect/local/signin",

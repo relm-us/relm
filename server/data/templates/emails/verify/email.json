@@ -1,0 +1,14 @@
+{
+  "subject": "Welcome to Relm!",
+  "content": [
+    "Hi Ashley!",
+    "So glad you're here :)", 
+    "",
+    "You're one click away from confirming your account with us. This account will allow you to sign in across devices to access the places and items you've collected during your visits.",
+    "Verify your account here: {{SERVER_URL}}/email/verify/{{CODE}}",
+    "",
+    "Looking forward to seeing you at future events!",
+    "",
+    "Relm Team"
+  ]
+}

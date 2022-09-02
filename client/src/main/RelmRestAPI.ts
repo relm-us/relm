@@ -10,6 +10,10 @@ export type LoginCredentials = {
   password: string
 };
 
+export type RegisterCredentials = LoginCredentials & {
+  identity: SavedIdentityData
+};
+
 export class RelmRestAPI {
   url: string;
   relmName: string;
@@ -303,7 +307,7 @@ export class RelmRestAPI {
     }
   }
 
-  async registerParticipant(credentials: LoginCredentials): Promise<AuthenticationResponse> {
+  async registerParticipant(credentials: RegisterCredentials): Promise<AuthenticationResponse> {
     const result: AuthenticationResponse = await this.post("/auth/connect/local/signup", {
       ...credentials
     });

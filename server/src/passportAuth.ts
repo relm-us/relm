@@ -36,13 +36,13 @@ passport.use(new PassportLocalStrategy({
   passwordField: "password",
 }, wrapPassportSync(async function(email, password, done) {
   // Check if user credentials are valid.
-  const validCredentials = await User.verifyCredentials({ email, password });
+  const validCredentials = await User.verifyEmailPassword({ email, password });
   if (!validCredentials) {
     return done(null, false);
   }
 
   // Get user id and pass it along.
-  const userId = await User.getUserIdByEmail({ email });
+  const userId = await User.getUserIdByLoginId({ email });
   if (userId === null) {
     return done({
       isError: true,
@@ -90,11 +90,11 @@ async function handleOAuthPassport(socialId, req, email, profileId, done) {
       // The participant is not linked to any user.
       // The social we are trying to use is not linked to any account either.
       // Try searching for an user id using the email, otherwise create an account.
-      const existingEmailUserId = await User.getUserIdByEmail({ email });
+      const existingEmailUserId = await User.getUserIdByLoginId({ email });
       if (existingEmailUserId !== null) {
         connectedSocialUserId = existingEmailUserId;
       } else {
-        connectedSocialUserId = await User.createUser({ email });
+        connectedSocialUserId = (await User.createUser({ email, emailVerificationRequired: false })).userId;
       }
     }
 

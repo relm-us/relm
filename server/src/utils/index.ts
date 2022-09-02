@@ -5,6 +5,7 @@ export {
 export { decodedValidJwt } from "./decodedValidJwt.js";
 export { encrypt, compareEncryptedPassword } from "./encryption.js";
 export { getDefinedKeys } from "./getDefinedKeys.js";
+export { getRootPath } from "./getRootPath.js";
 export { hasPermission } from "./hasPermission.js";
 export { isAllowed } from "./isAllowed.js";
 export { isArray } from "./isArray.js";
@@ -12,6 +13,7 @@ export { isValidEmailFormat } from "./isValidEmailFormat.js";
 export { isValidIdentity } from "./isValidIdentity.js";
 export { isValidPasswordFormat } from "./isValidPasswordFormat.js";
 export { joinError } from "./joinError.js";
+export { getMailClient, sendEmail, createEmailTemplate } from "./mail.js";
 export { nullOr } from "./nullOr.js";
 export { randomToken } from "./randomToken.js";
 export { required, req } from "./required.js";

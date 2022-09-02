@@ -182,7 +182,7 @@ describe("Permission model tests", () => {
       permits: ["admin"],
     });
 
-    const userId = await User.createUser({
+    const { userId } = await User.createUser({
       email: "example-permissions@example.com",
       password: "example",
     });

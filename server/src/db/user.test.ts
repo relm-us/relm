@@ -16,7 +16,7 @@ describe("User model tests", () => {
   it("creates a user", async () => {
     await User.createUser(defaultUserData);
 
-    const userId = await User.getUserIdByEmail({
+    const userId = await User.getUserIdByLoginId({
       email: defaultUserData.email
     });
 
@@ -44,8 +44,8 @@ describe("User model tests", () => {
   });
 
   it("signs in successfully with the correct credentials", async () => {
-    const successfullyLoggedIn = await User.verifyCredentials(defaultUserData);
-    const shouldBeFailedLogin = await User.verifyCredentials({
+    const successfullyLoggedIn = await User.verifyEmailPassword(defaultUserData);
+    const shouldBeFailedLogin = await User.verifyEmailPassword({
       email: "example@example.com",
       password: ""
     });

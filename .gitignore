@@ -3,7 +3,9 @@
 **/yarn-error.log
 **/.DS_Store
 **/dist/
-server/data/
+server/data/assets/*
+server/data/tmp/*
+server/data/yjs/*
 screenshot-server/data/
 deploy/
 **/.env
