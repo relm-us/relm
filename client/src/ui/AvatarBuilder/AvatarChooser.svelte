@@ -15,7 +15,7 @@
 
 <PageOverlay zIndex={4} justify="center">
   <container>
-    <h1>{$_("avatar.choose_yours", { default: "Choose Your Avatar" })}</h1>
+    <h1>{$_("AvatarBuilder.choose_yours")}</h1>
     <avatars>
       <avatar on:click={pick("male")}>
         <img src="/humanoid-preset-male.png" alt="male" />
@@ -26,9 +26,7 @@
     </avatars>
     <div class="spacer" />
     <note>
-      {$_("avatar.customize_later", {
-        default: "(you can customize this later)",
-      })}
+      {$_("AvatarBuilder.customize_later")}
     </note>
   </container>
 </PageOverlay>

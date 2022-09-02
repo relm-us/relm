@@ -4,8 +4,9 @@
     selectedGroups,
     groupTree,
   } from "~/stores/selection";
-  
+
   import Button from "~/ui/lib/Button";
+  import { _ } from "~/i18n";
 
   let action = "group";
 
@@ -26,5 +27,7 @@
 </script>
 
 <Button on:click={onClick}>
-  {#if action === 'group'}Group{:else}Ungroup{/if}
+  {#if action === "group"}{$_("GroupUngroupButton.group")}{:else}{$_(
+      "GroupUngroupButton.ungroup"
+    )}{/if}
 </Button>

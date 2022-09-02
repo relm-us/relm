@@ -5,6 +5,7 @@
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import { autoPause } from "~/stores/autoPause";
   import { worldManager } from "~/world";
+  import { _ } from "svelte-i18n";
 
   function unpause() {
     worldManager.start();
@@ -13,9 +14,9 @@
 
 <r-tint transition:fade on:click={unpause}>
   <r-message on:click|stopPropagation>
-    <div class="paused">Paused</div>
+    <div class="paused">{$_("Pause.title")}</div>
     <div class="button">
-      <Button on:click={unpause}>Continue</Button>
+      <Button on:click={unpause}>{$_("Pause.continue")}</Button>
     </div>
     <r-footer class="toggle-auto-pause" stlye="position:absolute">
       <ToggleSwitch

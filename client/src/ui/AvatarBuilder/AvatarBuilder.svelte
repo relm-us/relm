@@ -113,13 +113,13 @@
 <container>
   <h1>
     <icon class="upper-right" on:click><IoIosClose /></icon>
-    Avatar
+    {$_("AvatarBuilder.title")}
   </h1>
   <Section name={$_("AvatarBuilder.gender")}>
     <Slider on:change={onSlideGender} value={[0, genderSlider]} single />
     <div class="row between">
-      <div class="label">Male</div>
-      <div class="label">Female</div>
+      <div class="label">{$_("AvatarBuilder.male")}</div>
+      <div class="label">{$_("AvatarBuilder.female")}</div>
     </div>
   </Section>
 

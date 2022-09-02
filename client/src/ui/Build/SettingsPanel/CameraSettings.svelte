@@ -5,6 +5,7 @@
   import Slider from "~/ui/lib/Slider";
   import { onMount } from "svelte";
   import debounce from "lodash/debounce";
+  import { _ } from "~/i18n";
 
   let cameraFov;
 
@@ -24,7 +25,7 @@
 </script>
 
 <Pane title="Camera">
-  <r-label>Field of View:</r-label>
+  <r-label>{$_("CameraSettings.field_of_view")}</r-label>
   <r-setting>
     <r-slider>
       <Slider on:change={onSlideFov} value={[0, cameraFov / 180]} single />

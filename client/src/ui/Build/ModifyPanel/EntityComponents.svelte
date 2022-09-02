@@ -9,6 +9,7 @@
   import { Transform } from "~/ecs/plugins/core";
 
   import TransformButtons from "./TransformButtons.svelte";
+  import { _ } from "~/i18n";
 
   export let entity;
 
@@ -103,7 +104,9 @@
       }}
     >
       {secondaryComponentsVisible ? "Hide" : "Show"}
-      ({secondaryComponents.length}) Internal Components
+      ({secondaryComponents.length}) {$_(
+        "EntityComponents.internal_components"
+      )}
     </Button>
     {#if secondaryComponentsVisible}
       {#each secondaryComponents as Component (Component)}
@@ -117,7 +120,7 @@
     {/if}
   {/if}
 {:else}
-  <info>Entity Deactivated</info>
+  <info>{$_("EntityComponents.entity_deactivated")}</info>
 {/if}
 
 <style>

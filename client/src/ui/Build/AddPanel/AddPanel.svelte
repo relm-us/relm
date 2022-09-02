@@ -70,7 +70,7 @@
 </script>
 
 <SidePanel on:minimize>
-  <Header>Add Object</Header>
+  <Header>{$_("AddPanel.add")}</Header>
   <r-column>
     {#if !prefabsVisible}
       <r-search-pane>

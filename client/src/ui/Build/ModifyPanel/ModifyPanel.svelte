@@ -8,6 +8,7 @@
   import AdminAddToLibrary from "./AdminAddToLibrary.svelte";
   import { permits } from "~/stores/permits";
   import TransformButtons from "./TransformButtons.svelte";
+  import { _ } from "~/i18n";
 
   let entity;
   $: $selectedEntities, (entity = worldManager.selection.getFirst());
@@ -23,17 +24,20 @@
 </script>
 
 <SidePanel on:minimize>
-  <Header>Modify Object</Header>
+  <Header>{$_("EditorPanel.modify")}</Header>
 
   {#if $selectedEntities.size === 0}
-    <info>Nothing selected</info>
-    <info>Click on an object to select</info>
+    <info>{$_("EditorPanel.nothing_selected")}</info>
+    <info>{$_("EditorPanel.click_on_object")}</info>
   {:else if $selectedEntities.size === 1 && entity}
     <EntityComponents {entity} />
     <toolbar>
-      <Button on:click={destroyEntity}>Delete this Object</Button>
+      <Button on:click={destroyEntity}>{$_("EditorPanel.delete_object")}</Button
+      >
       <div style="margin-bottom:8px" />
-      <Button on:click={debugEntity}>Debug in Console</Button>
+      <Button on:click={debugEntity}
+        >{$_("EditorPanel.debug_in_console")}</Button
+      >
     </toolbar>
     {#if $permits.includes("admin")}
       <AdminAddToLibrary />
@@ -42,7 +46,9 @@
     <TransformButtons />
 
     <Pane title="Selected">
-      Objects: {$selectedEntities.size}
+      {$_("EditorPanel.objects", {
+        values: { count: $selectedEntities.size },
+      })}
     </Pane>
 
     {#if $permits.includes("admin")}

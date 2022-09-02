@@ -4,6 +4,7 @@
 
   import Pane from "~/ui/lib/Pane";
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
+  import { _ } from "~/i18n";
 
   let audioModeIsProximity = $audioMode === "proximity";
   $: if (audioModeIsProximity) {
@@ -16,7 +17,7 @@
 </script>
 
 <Pane title="Audio">
-  <r-label>Proximity Audio:</r-label>
+  <r-label>{$_("AudioSettings.proximity_audio")}</r-label>
   <r-setting>
     <r-switch>
       <ToggleSwitch bind:enabled={audioModeIsProximity} />

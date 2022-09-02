@@ -13,6 +13,7 @@
   import { copy } from "~/events/input/CopyPasteListener/copy";
 
   import { copyBuffer } from "~/stores/copyBuffer";
+  import { _ } from "~/i18n";
 
   const notifyContext = getNotificationsContext();
 
@@ -67,9 +68,9 @@
 <Pane title="Add to Library">
   <r-form>
     <div>
-      <r-label>Thumbnail:</r-label>
+      <r-label>{$_("AdminAddToLibrary.thumbnail")}:</r-label>
       {#if thumbnail}
-        Uploaded!
+        {$_("AdminAddToLibrary.uploaded")}
       {:else}
         <r-upload>
           <UploadButton on:uploaded={onUpload} />
@@ -79,7 +80,7 @@
     <TextInput label="Name" bind:value={name} />
     <TextInput label="Description" bind:value={description} />
     <TextInput label="Tags (,)" bind:value={tags} />
-    <Button on:click={addAsset}>Add</Button>
+    <Button on:click={addAsset}>{$_("AdminAddToLibrary.add")}</Button>
   </r-form>
 </Pane>
 

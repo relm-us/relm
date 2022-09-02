@@ -10,7 +10,16 @@
     "prev": "Prev",
     "next": "Next",
     "loading": "Loading...",
-    "empty_results": "Empty page"
+    "empty_results": "Empty page",
+    "add": "Add"
+  },
+  "AdminAddToLibrary": {
+    "thumbnail":"Thumbnail",
+    "uploaded": "Uploaded!",
+    "add": "Add"
+  },
+  "AudioSettings": {
+    "proximity_audio": "Proximity Audio:"
   },
   "AvatarBuilder": {
     "gender": "Gender",
@@ -24,7 +33,38 @@
     "narrow": "Narrow",
     "wide": "Wide",
     "choose_yours": "Choose Your Avatar",
-    "customize_later": "(you can customize this later)"
+    "customize_later": "(you can customize this later)",
+    "male": "Male",
+    "female": "Female",
+    "title": "Avatar"
+  },
+  "CameraSettings": {
+    "field_of_view": "Field of View"
+  },
+  "EditorPanel": {
+    "modify": "Modify",
+    "nothing_selected": "Nothing selected",
+    "click_on_object": "Click on an object to select",
+    "delete_object": "Delete this Object",
+    "debug_in_console": "Debug in Console",
+    "objects": "Objects: {count}"
+  },
+  "EntityComponents": {
+    "internal_components": "Internal Components",
+    "entity_deactivated": "Entity Deactivated"
+  },
+  "ExportPanel": {
+    "title": "Import / Export",
+    "invalid_json": "Invalid JSON",
+    "apply": "Apply"
+  },
+  "GroupUngroupButton": {
+    "group": "Group",
+    "ungroup": "Ungroup"
+  },
+  "Pause": {
+    "title": "Paused",
+    "continue": "Continue"
   },
   "VideoMirror": {
     "join_cam_off": "Join with cam off",

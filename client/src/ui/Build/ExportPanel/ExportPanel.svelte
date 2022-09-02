@@ -11,6 +11,7 @@
 
   import Button from "~/ui/lib/Button";
   import SidePanel, { Header } from "~/ui/lib/SidePanel";
+  import { _ } from "~/i18n";
 
   let text;
   let errorState = false;
@@ -41,16 +42,16 @@
 </script>
 
 <SidePanel on:minimize>
-  <Header>Import / Export</Header>
+  <Header>{$_("ExportPanel.title")}</Header>
   <container>
     {#if errorState}
       <panel>
-        <icon><IoIosClose /></icon><lbl>Invalid JSON</lbl>
+        <icon><IoIosClose /></icon><lbl>{$_("ExportPanel.invalid_json")}</lbl>
       </panel>
     {/if}
     <textarea bind:value={text} />
     <panel>
-      <Button on:click={applyText}>Apply</Button>
+      <Button on:click={applyText}>{$_("ExportPanel.apply")}</Button>
     </panel>
   </container>
 </SidePanel>
