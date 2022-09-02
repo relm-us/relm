@@ -32,21 +32,20 @@
 
     margin-left: var(--margin, 16px);
     margin-right: var(--margin, 16px);
-    padding: var(--padv, 8px) var(--padh, 12px);
+    padding: var(--padv, 4px) var(--padh, 20px);
 
     cursor: pointer;
 
-    background-color: var(--bg-color, rgba(0, 0, 0, 0.4));
-    color: var(--fg-color, #dddddd);
+    background-color: var(--bg-color, var(--selected-orange));
+    color: var(--fg-color, var(--background-gray));
 
-    font-size: var(--font-size, 14pt);
-    font-weight: bold;
+    font-size: var(--font-size, 16px);
 
     border: var(--button-border, 0);
-    border-top-right-radius: var(--top-radius, var(--right-radius, 8px));
-    border-bottom-right-radius: var(--bottom-radius, var(--right-radius, 8px));
-    border-top-left-radius: var(--top-radius, var(--left-radius, 8px));
-    border-bottom-left-radius: var(--bottom-radius, var(--left-radius, 8px));
+    border-top-right-radius: var(--top-radius, var(--right-radius, 14px));
+    border-bottom-right-radius: var(--bottom-radius, var(--right-radius, 14px));
+    border-top-left-radius: var(--top-radius, var(--left-radius, 14px));
+    border-bottom-left-radius: var(--bottom-radius, var(--left-radius, 14px));
   }
   button:focus {
     outline: none;
@@ -58,7 +57,7 @@
   }
   button:hover,
   button.active {
-    background-color: var(--bg-hover-color, rgba(0, 0, 0, 0.8));
+    background-color: var(--bg-hover-color, var(--selected-orange-hover));
   }
   button.depress:active {
     transform: translateY(1px);
