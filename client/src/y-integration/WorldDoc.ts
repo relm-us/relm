@@ -368,13 +368,19 @@ export class WorldDoc extends EventEmitter {
 
         // Retrieve the updated component
         const getComponentFromPath = (path) => {
-          const componentName = (
-            this.entities
-              .get(path[0] as number)
-              .get("components") as YComponents
-          )
-            .get(path[2] as number)
-            .get("name") as string;
+          let componentName;
+          try {
+            componentName = (
+              this.entities
+                .get(path[0] as number)
+                .get("components") as YComponents
+            )
+              .get(path[2] as number)
+              .get("name") as string;
+          } catch (err) {
+            console.error("no componentName", path, this.entities);
+            return;
+          }
 
           return entity.getByName(componentName);
         };
@@ -397,11 +403,10 @@ export class WorldDoc extends EventEmitter {
         };
 
         const onUpdateOrAdd = (key, content) => {
-          let component = updateComponentIfRequired(
-            entity,
-            getComponentFromPath(event.path),
-            key
-          );
+          const origComponent = getComponentFromPath(event.path);
+          if (!origComponent) return;
+
+          let component = updateComponentIfRequired(entity, origComponent, key);
 
           // Similar to HECS Component.fromJSON, but for just one prop
           const prop = component.constructor.props[key];
@@ -425,9 +430,12 @@ export class WorldDoc extends EventEmitter {
           onUpdate: onUpdateOrAdd,
           onAdd: onUpdateOrAdd,
           onDelete: (removedProperty) => {
+            const origComponent = getComponentFromPath(event.path);
+            if (!origComponent) return;
+
             let component = updateComponentIfRequired(
               entity,
-              getComponentFromPath(event.path),
+              origComponent,
               removedProperty
             );
 
