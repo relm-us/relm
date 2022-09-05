@@ -36,8 +36,8 @@
 
 <Pane title="Entryways">
   <r-setting>
-    <Button on:click={setDefaultEntryway} style="border: 1px solid #999;">
-      Set Default to Here
+    <Button on:click={setDefaultEntryway}>
+      Set Default<br />to Here
     </Button>
     <r-entryways-list>
       <EntrywayMap
@@ -58,6 +58,7 @@
 <style>
   r-entryways-list {
     margin: 16px 0;
+    width: 100%;
   }
 
   r-setting {
@@ -65,6 +66,7 @@
     flex-direction: column;
     align-items: center;
     margin: auto;
+    margin-top: 8px;
     --value-width: 200px;
   }
 </style>

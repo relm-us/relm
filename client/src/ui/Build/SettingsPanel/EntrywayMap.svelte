@@ -18,16 +18,28 @@
     <div class="delete" on:click={() => dispatch("delete", name)}>
       <IoIosClose />
     </div>
-    <div class="name">{name}</div>
-    <div class="coords">({format(coords)})</div>
+    <r-content>
+      <div class="name">{name}</div>
+      <div class="coords">({format(coords)})</div>
+    </r-content>
   </entryway>
 {/each}
 
 <style>
   entryway {
     display: flex;
-    width: 200px;
-    text-overflow: ellipsis;
+    flex-direction: row-reverse;
+    background: #666;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    padding: 5px;
+    border-radius: 5px;
+  }
+
+  r-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
   }
 
   div {
@@ -36,14 +48,11 @@
   div.name {
     font-weight: bold;
   }
-  div.coords {
-    padding-left: 8px;
-  }
 
   div.delete {
     width: 24px;
     height: 24px;
     cursor: pointer;
-    margin-right: 16px;
+    margin-left: 8px;
   }
 </style>

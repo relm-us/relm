@@ -85,4 +85,8 @@
     --bg-hover-color: var(--background-transparent-gray, gray);
     --bg-color: var(--background-transparent-black, black);
   }
+
+  panel-tabs :global(button) {
+    color: var(--foreground-white, white);
+  }
 </style>

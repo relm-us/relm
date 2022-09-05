@@ -11,7 +11,7 @@
   };
 </script>
 
-<Button on:click={onClick} style="border: 1px solid #999;">
+<Button on:click={onClick}  >
   <r-compound>
     <icon><IoIosCloudUpload /></icon>
     <div>Upload</div>
