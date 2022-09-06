@@ -5,12 +5,21 @@
     "apply": "应用"
   },
   "AddPanel": {
-    "search_assets": "搜索资源...",
-    "add_asset": "增加 {name}",
-    "prev": "前一个",
+    "search_assets": "寻找资源...",
+    "add_asset": "添加",
+    "prev": "上一个",
     "next": "下一个",
     "loading": "加载中...",
-    "empty_results": "空白页"
+    "empty_results": "空页面",
+    "add": "添加"
+  },
+  "AdminAddToLibrary": {
+    "thumbnail":"缩略图",
+    "uploaded": "已上传!",
+    "add": "添加"
+  },
+  "AudioSettings": {
+    "proximity_audio": "附近的语音:"
   },
   "AvatarBuilder": {
     "gender": "性别",
@@ -24,7 +33,38 @@
     "narrow": "修长",
     "wide": "丰腴",
     "choose_yours": "选择你的形象",
-    "customize_later": "(你可以在之后进行修改)"
+    "customize_later": "(你可以在之后进行修改)",
+    "male": "男",
+    "female": "女",
+    "title": "装扮"
+  },
+  "CameraSettings": {
+    "field_of_view": "视野范围"
+  },
+  "EditorPanel": {
+    "modify": "修改",
+    "nothing_selected": "没有选中",
+    "click_on_object": "点击物体选中",
+    "delete_object": "删除物体",
+    "debug_in_console": "Debug in Console",
+    "objects": "Objects: {count}"
+  },
+  "EntityComponents": {
+    "internal_components": "内部组件",
+    "entity_deactivated": "主体未激活"
+  },
+  "ExportPanel": {
+    "title": "导入 / 导出",
+    "invalid_json": "不存在 JSON",
+    "apply": "应用"
+  },
+  "GroupUngroupButton": {
+    "group": "组合",
+    "ungroup": "拆分"
+  },
+  "Pause": {
+    "title": "暂停",
+    "continue": "继续"
   },
   "VideoMirror": {
     "join_cam_mic_off": "不使用摄像头和麦克风加入",
@@ -38,3 +78,4 @@
     "continue": "继续"
   }
 }
+
