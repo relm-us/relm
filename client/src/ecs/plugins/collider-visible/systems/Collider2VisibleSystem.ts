@@ -63,6 +63,12 @@ export class Collider2VisibleSystem extends System {
     // "undo" the scaled offset as well
     _v3.copy(collider.offset).divide(transform.scale);
     ref.value.position.copy(_v3);
+
+    // Slight adjustment to z fixes an issue with Fire:
+    // - When both transparent objects are at precisely the same distance from the camera,
+    //   the render order is indeterminate
+    // - We force the Collider2Visible to by slightly "in front" so that both can be seen.
+    ref.value.position.z += 0.001;
   }
 
   build(entity) {
