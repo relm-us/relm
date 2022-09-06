@@ -364,6 +364,18 @@ export class WorldManager {
       globalEvents.off("toggle-drag-action", toggleSelectionAsGroup)
     );
 
+    const cameraRotateLeft = () => this.camera.rotateLeft90();
+    globalEvents.on("camera-rotate-left", cameraRotateLeft);
+    this.unsubs.push(() =>
+      globalEvents.off("camera-rotate-left", cameraRotateLeft)
+    );
+
+    const cameraRotateRight = () => this.camera.rotateRight90();
+    globalEvents.on("camera-rotate-right", cameraRotateRight);
+    this.unsubs.push(() =>
+      globalEvents.off("camera-rotate-right", cameraRotateRight)
+    );
+
     // Make colliders visible in build mode
     this.unsubs.push(
       derived(

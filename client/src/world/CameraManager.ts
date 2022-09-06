@@ -31,6 +31,7 @@ type CameraFollow = {
 
 type CameraRotate = {
   type: "rotate";
+  target: number;
 };
 
 type CameraAbove = {
@@ -167,6 +168,16 @@ export class CameraManager {
           dampening: 0.001,
         });
 
+        const deltaDir = this.direction.y - this.state.target;
+        if (deltaDir < Math.PI / 30 && deltaDir > -Math.PI / 30) {
+          this.direction.y = this.state.target;
+          this.setModeFollow();
+        } else if (deltaDir < 0) {
+          this.direction.y += Math.PI / 30;
+        } else {
+          this.direction.y -= Math.PI / 30;
+        }
+
         break;
       }
 
@@ -246,6 +257,14 @@ export class CameraManager {
       .add(this.pan);
   }
 
+  rotateLeft90() {
+    this.setModeRotate(this.direction.y === 0 ? Math.PI / 2 : 0);
+  }
+
+  rotateRight90() {
+    this.setModeRotate(this.direction.y === 0 ? -Math.PI / 2 : 0);
+  }
+
   /**
    * Camera Modes
    */
@@ -266,8 +285,8 @@ export class CameraManager {
   }
 
   // "follow" mode follows the avatar
-  setModeRotate() {
-    this.state = { type: "rotate" };
+  setModeRotate(target: number = 0) {
+    this.state = { type: "rotate", target };
   }
 
   // "above" mode looks directly down from high above

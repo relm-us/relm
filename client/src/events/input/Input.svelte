@@ -19,6 +19,7 @@
   import * as escapeKey from "./handlers/escapeKey";
   import * as numberKeys from "./handlers/numberKeys";
   import * as pauseKey from "./handlers/pauseKey";
+  import * as qeKeys from "./handlers/qeKeys";
   import * as shiftKey from "./handlers/shiftKey";
   import * as spaceKey from "./handlers/spaceKey";
   import * as tabKey from "./handlers/tabKey";
@@ -87,6 +88,7 @@
       escapeKey.register(),
       numberKeys.register(),
       pauseKey.register(),
+      qeKeys.register(),
       shiftKey.register(),
       spaceKey.register(),
       tabKey.register(),
