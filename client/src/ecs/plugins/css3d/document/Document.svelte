@@ -25,6 +25,11 @@
   let toolbar = null;
   let bigscreen = false;
 
+  // We need to keep track of the docId at the moment the participant clicks to make
+  // it "full window" because the full window view should not be affected by others
+  // changing the docId with the next/back buttons.
+  let docIdAtFullwindow = docId;
+
   $: if (editor) editor.enable(editable && bigscreen);
 
   let page = -1;
@@ -37,6 +42,7 @@
   $: showNext = page >= 0 && page < pageList.length - 1;
 
   const activate = () => (bigscreen = true);
+
   const deactivate = () => (bigscreen = false);
 
   function setDocId(newDocId) {
@@ -46,6 +52,11 @@
     spec.modified();
 
     worldManager.worldDoc.syncFrom(entity);
+
+    docId = newDocId;
+    if (!bigscreen) {
+      docIdAtFullwindow = docId;
+    }
   }
 
   function prevPage() {
@@ -66,6 +77,7 @@
   <Fullwindow on:close={deactivate}>
     <r-centered>
       <div style="height:{editable ? 64 : 0}px" />
+
       <r-page-margin
         transition:slide
         style="--x:{size.x}px;--y:{size.y}px;--radius:{radius * 150}px"
@@ -73,7 +85,7 @@
         class:circle={kind === "CIRCLE"}
       >
         <QuillPage
-          {docId}
+          docId={docIdAtFullwindow}
           {bgColor}
           bind:editor
           bind:toolbar
@@ -128,6 +140,15 @@
     height: var(--y);
     box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.5);
   }
+
+  /* r-sync-button {
+    position: absolute;
+    width: var(--x);
+    display: flex;
+    justify-content: center;
+    transform: translateY(5px);
+    z-index: 1;
+  } */
 
   .rounded {
     border-radius: var(--radius);
