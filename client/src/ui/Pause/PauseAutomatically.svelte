@@ -11,7 +11,7 @@
       !$uploadingDialogOpen &&
       !hasFocus
     ) {
-      worldManager.stop();
+      worldManager.togglePaused();
     }
   }
 </script>
