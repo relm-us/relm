@@ -1,11 +1,15 @@
 <script lang="ts">
   import { locale, locales, _ } from "svelte-i18n";
+  import { createEventDispatcher } from "svelte";
 
   import Dialog from "~/ui/lib/Dialog";
   import Button from "../lib/Button";
 
+  const dispatch = createEventDispatcher();
+
   const chooseLanguage = (loc) => () => {
     $locale = loc;
+    dispatch("cancel");
   };
 </script>
 
