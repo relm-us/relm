@@ -5,21 +5,22 @@
   export let value;
 
   let enabled = false;
-  let container;
+  let colorPicker;
 
   function cancelPicker(event) {
-    if (!hasAncestor(event.target, container)) {
+    if (!hasAncestor(event.target, colorPicker)) {
       enabled = false;
     }
   }
 </script>
 
-<container bind:this={container}>
+<container>
   <ColorPicker
     bind:value
+    bind:colorPicker
+    bind:open={enabled}
     enableSwatches={true}
     enableAlpha={false}
-    bind:open={enabled}
     width="24px"
     height="24px"
     on:change

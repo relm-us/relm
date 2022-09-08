@@ -29,10 +29,10 @@
   export let style = "";
   export let pickerHeight = 0;
   export let pickerWidth = 0;
+  export let colorPicker = null;
 
   const maxSwatches = 18;
 
-  let colorPicker = null;
   let adder = null;
   let swatchesSetFromLocalStore = false;
   let showFormat = false;
