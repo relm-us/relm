@@ -36,7 +36,8 @@
     "customize_later": "(you can customize this later)",
     "male": "Male",
     "female": "Female",
-    "title": "Avatar"
+    "title": "Avatar",
+    "unique_color": "Your Unique Color"
   },
   "CameraSettings": {
     "field_of_view": "Field of View"

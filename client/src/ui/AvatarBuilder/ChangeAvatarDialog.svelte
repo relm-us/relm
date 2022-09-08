@@ -5,11 +5,12 @@
   import AvatarBuilder from "./AvatarBuilder.svelte";
 
   export let appearance;
+  export let color;
 </script>
 
 <Dialog title={$_("AvatarBuilder.title")} align="right" tint={false} on:cancel>
   <r-container>
-    <AvatarBuilder {...appearance} />
+    <AvatarBuilder {...appearance} uniqueColor={color} />
   </r-container>
 </Dialog>
 

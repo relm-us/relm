@@ -71,6 +71,7 @@
       <ChangeAvatarDialog
         on:cancel={() => ($openDialog = null)}
         appearance={$localIdentityData.appearance}
+        color={$localIdentityData.color}
       />
     {/if}
   </div>

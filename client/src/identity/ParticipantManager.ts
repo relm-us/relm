@@ -1,8 +1,4 @@
-import type {
-  DecoratedECSWorld,
-  Participant,
-  UpdateData,
-} from "~/types";
+import type { DecoratedECSWorld, Participant, UpdateData } from "~/types";
 
 import { WebsocketProvider, Appearance, Equipment } from "relm-common";
 
@@ -78,23 +74,25 @@ export class ParticipantManager {
     const transformData = avatarGetTransformData(avatar);
     const animationData = avatarGetAnimationData(avatar);
 
-    const changeDetected = (state["id"] !== participantId)
-      || (!isEqual(state["i"], this.local.identityData))
-      || (!isEqual(state["a"], animationData))
-      || (!isEqual(state["t"], transformData));
-    
+    const changeDetected =
+      state["id"] !== participantId ||
+      !isEqual(state["i"], this.local.identityData) ||
+      !isEqual(state["a"], animationData) ||
+      !isEqual(state["t"], transformData);
+
     // Only send a new awareness update if a change is detected.
     if (changeDetected) {
       this.broker.setFields({
-        "id": participantId,
-        "i": this.local.identityData,
-        "a": animationData,
-        "t": transformData,
-        "user": { // For QuillJS
+        id: participantId,
+        i: this.local.identityData,
+        a: animationData,
+        t: transformData,
+        user: {
+          // For QuillJS
           name: this.local.identityData.name,
-          color: this.local.identityData.color
-        }
-      }); 
+          color: this.local.identityData.color,
+        },
+      });
     }
   }
 
@@ -147,6 +145,14 @@ export class ParticipantManager {
 
   setName(name: string) {
     this.updateMe({ name });
+  }
+
+  getColor(): string {
+    return this.local.identityData.color;
+  }
+
+  setColor(color: string) {
+    this.updateMe({ color });
   }
 
   setShowVideo(showVideo: boolean) {

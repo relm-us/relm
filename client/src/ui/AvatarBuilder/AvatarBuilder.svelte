@@ -18,7 +18,6 @@
   import Color from "./Color.svelte";
   import ColorPick from "./ColorPick.svelte";
   import Choice from "./Choice.svelte";
-  import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
   import Section from "./Section.svelte";
 
   import iconNone from "./icons/none.png";
@@ -52,6 +51,7 @@
   export let bottomColor: string;
   export let beltColor: string;
   export let shoeColor: string;
+  export let uniqueColor: string;
 
   $: {
     const appearance = {
@@ -75,6 +75,10 @@
     };
 
     worldManager.participants.setAppearance(appearance);
+  }
+
+  $: {
+    worldManager.participants.setColor(uniqueColor);
   }
 
   function onSlideGender({ detail }) {
@@ -294,6 +298,12 @@
     {:else}
       <div style="width:26px;height:26px" />
     {/if}
+  </div>
+</Section>
+
+<Section name={$_("AvatarBuilder.unique_color")} last={true}>
+  <div class="row evenly">
+    <ColorPick bind:value={uniqueColor} />
   </div>
 </Section>
 
