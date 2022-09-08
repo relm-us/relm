@@ -11,6 +11,13 @@ import { getLocaleFromNavigator } from "svelte-i18n";
 
 import en from "./en.json";
 
+export const languageMap = {
+  "en": "English",
+  "en-US": "English",
+  "fr": "Français",
+  "zh-Hans": "中文",
+};
+
 // Synchronously add default 'en' locale, so that a fallback
 // translation is always available
 addMessages("en", en);
@@ -24,14 +31,17 @@ init({
   fallbackLocale: "en",
 
   // Default locale/language, if available
-  initialLocale: getLocaleFromNavigator(),
+  initialLocale: localStorage.getItem("locale") || getLocaleFromNavigator(),
 });
 
 // Tag languages as left-to-right or right-to-left
 const dir = derived(locale, ($locale) => ($locale === "ar" ? "rtl" : "ltr"));
 
 locale.subscribe(($locale) => {
-  console.log("i18n locale", $locale);
+  const storedLocale = localStorage.getItem("locale");
+  if ($locale !== storedLocale) {
+    localStorage.setItem("locale", $locale);
+  }
 });
 
 (window as any).dictionary = dictionary;

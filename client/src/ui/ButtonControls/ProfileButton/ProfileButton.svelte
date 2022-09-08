@@ -10,6 +10,7 @@
   import Tooltip from "~/ui/lib/Tooltip";
   import CircleButton from "~/ui/lib/CircleButton";
   import { hasAncestor } from "~/utils/hasAncestor";
+  import { languageMap } from "~/i18n";
 
   let pop = false;
   let button;
@@ -29,20 +30,22 @@
       <PopContext width={200}>
         {#if $connectedAccount}
           <r-option on:click={() => worldManager.logins.logout()}>
-            Sign Out
+            {$_("ProfileButton.sign_out")}
           </r-option>
         {:else}
           <r-option on:click={() => ($openDialog = "signin")}>
-            Sign In
+            {$_("ProfileButton.sign_in")}
           </r-option>
         {/if}
 
         <r-option on:click={() => ($openDialog = "language")}>
-          Language ({$locale})
+          {$_("ProfileButton.language", {
+            values: { locale: languageMap[$locale] || $locale },
+          })}
         </r-option>
 
         <r-option on:click={() => ($openDialog = "avatar-appearance")}>
-          Change Your Avatar
+          {$_("ProfileButton.change_avatar")}
         </r-option>
       </PopContext>
     </r-pop>

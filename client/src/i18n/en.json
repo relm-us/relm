@@ -14,7 +14,7 @@
     "add": "Add"
   },
   "AdminAddToLibrary": {
-    "thumbnail":"Thumbnail",
+    "thumbnail": "Thumbnail",
     "uploaded": "Uploaded!",
     "add": "Add"
   },
@@ -65,6 +65,12 @@
   "Pause": {
     "title": "Paused",
     "continue": "Continue"
+  },
+  "ProfileButton": {
+    "sign_in": "Sign In",
+    "sign_out": "Sign Out",
+    "language": "Language ({locale})",
+    "change_avatar": "Change Your Avatar"
   },
   "VideoMirror": {
     "join_cam_off": "Join with cam off",

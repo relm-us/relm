@@ -14,7 +14,7 @@
     "add": "Ajouter"
   },
   "AdminAddToLibrary": {
-    "thumbnail":"Miniature",
+    "thumbnail": "Miniature",
     "uploaded": "Transféré !",
     "add": "Ajouter"
   },
@@ -65,6 +65,12 @@
   "Pause": {
     "title": "en pause",
     "continue": "continuer"
+  },
+  "ProfileButton": {
+    "sign_in": "Connectez-vous",
+    "sign_out": "Déconnexion",
+    "language": "Langue ({locale})",
+    "change_avatar": "Personnalisez votre avatar"
   },
   "VideoMirror": {
     "join_cam_off": "Entrer sans caméra",
