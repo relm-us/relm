@@ -1,3 +1,80 @@
 {
-
+  "ActionsPanel": {
+    "title": "Actions",
+    "invalid_json": "JSON non valide",
+    "apply": "Appliquer"
+  },
+  "AddPanel": {
+    "search_assets": "Recherche des objets...",
+    "add_asset": "Ajouter",
+    "prev": "Précédent",
+    "next": "Suivant",
+    "loading": "Chargement...",
+    "empty_results": "Aucun résultat",
+    "add": "Ajouter"
+  },
+  "AdminAddToLibrary": {
+    "thumbnail":"Miniature",
+    "uploaded": "Transféré !",
+    "add": "Ajouter"
+  },
+  "AudioSettings": {
+    "proximity_audio": "Proximité audio:"
+  },
+  "AvatarBuilder": {
+    "gender": "Genre",
+    "body": "Corpulence",
+    "skintone": "Couleur de peau",
+    "hair": "Cheveux",
+    "shirt": "Haut",
+    "pants": "Bas",
+    "shoes": "Chaussures",
+    "belt": "Ceinture",
+    "narrow": "mince",
+    "wide": "large",
+    "choose_yours": "Choisissez votre avatar",
+    "customize_later": "(vous pourrez le personnaliser plus tard)",
+    "male": "homme",
+    "female": "femme",
+    "title": "Avatar"
+  },
+  "CameraSettings": {
+    "field_of_view": "Angle de vue"
+  },
+  "EditorPanel": {
+    "modify": "Modifier",
+    "nothing_selected": "Aucune sélection",
+    "click_on_object": "Cliquer sur un objet pour le sélectionner",
+    "delete_object": "Supprimer cet objet",
+    "debug_in_console": "Déboguer avec la console",
+    "objects": "Objets: {count}"
+  },
+  "EntityComponents": {
+    "internal_components": "Documents internes",
+    "entity_deactivated": "Entité désactivée"
+  },
+  "ExportPanel": {
+    "title": "Import / Export",
+    "invalid_json": "JSON non valide",
+    "apply": "Appliquer"
+  },
+  "GroupUngroupButton": {
+    "group": "Grouper",
+    "ungroup": "Dégrouper"
+  },
+  "Pause": {
+    "title": "en pause",
+    "continue": "continuer"
+  },
+  "VideoMirror": {
+    "join_cam_off": "Entrer sans caméra",
+    "join_mic_off": "Entrer sans micro",
+    "join_cam_mic_off": "Entrer sans caméra ni micro",
+    "cam_unavailable": "(Caméra non disponible)",
+    "cam_mic_blocked": "Camméra et micro non autorisés",
+    "cam_mic_not_active": "Caméra et micro inactifs",
+    "try_again": "Réessayer",
+    "request_perms": "Activer caméra et micro",
+    "continue": "Continuer"
+  }
 }
