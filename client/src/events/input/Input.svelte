@@ -34,7 +34,9 @@
     if (event.altKey) mods.push("A");
     if (event.ctrlKey) mods.push("C");
     if (event.metaKey) mods.push("M");
-    if (event.shiftKey) mods.push("S");
+
+    // Disable "Shift" key combinations for now, as they interfere with running & shift + click
+    // if (event.shiftKey) mods.push("S");
 
     let combo = mods.join("-");
 

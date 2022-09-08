@@ -12,7 +12,14 @@ import { Animation } from "~/ecs/plugins/animation";
 import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
 import { isMakingContactWithGround } from "~/ecs/shared/isMakingContactWithGround";
 
-import { keyUp, keyDown, keyLeft, keyRight, keySpace } from "~/stores/keys";
+import {
+  keyUp,
+  keyDown,
+  keyLeft,
+  keyRight,
+  keySpace,
+  keyShift,
+} from "~/stores/keys";
 
 import { Controller, ControllerState, Repulsive } from "../components";
 
@@ -44,14 +51,17 @@ const keysState = {
 const spaceState = newKeyState();
 
 function getSpeedFromKeysState() {
-  let speed = 0;
-  // If any key is in LongPressed or DoublePressed state, shift speed
-  for (const keyState of Object.values(keysState)) {
-    const ks: KeyState = keyState as KeyState;
-    if (ks.state === KPR.LongPressed && speed < 1) speed = 1;
-    if (ks.state === KPR.DoublePressed && speed < 2) speed = 2;
+  // If any arrow key is pressed, avatar will have speed at least 1
+  const directionPressed = Object.values(keysState).some(
+    (ks) => ks.state === KPR.DoublePressed || ks.state === KPR.LongPressed
+  );
+
+  if (directionPressed) {
+    if (!get(keyShift)) return 1;
+    else return 2;
+  } else {
+    return 0;
   }
-  return speed;
 }
 
 function getVectorFromKeys() {
@@ -103,13 +113,13 @@ export class ControllerSystem extends System {
     transition(spaceState, get(keySpace));
 
     // Make "DoublePressed" key state "sticky" so avatars stay running
-    const states = Object.values(keysState);
-    const doublePressed = states.some((ks) => ks.state === KPR.DoublePressed);
-    if (doublePressed) {
-      for (const keyState of Object.values(keysState)) {
-        if (keyState.state === KPR.Pressed) keyState.state = KPR.DoublePressed;
-      }
-    }
+    // const states = Object.values(keysState);
+    // const doublePressed = states.some((ks) => ks.state === KPR.DoublePressed);
+    // if (doublePressed) {
+    //   for (const keyState of Object.values(keysState)) {
+    //     if (keyState.state === KPR.Pressed) keyState.state = KPR.DoublePressed;
+    //   }
+    // }
 
     this.queries.added.forEach((entity) => {
       this.initState(entity);

@@ -4,10 +4,10 @@ import { Action, registerAction } from "../comboTable";
 
 export function register(): Function {
   const unregisters = [
-    [["arrowup", "w", "k"], (pressed: boolean) => keyUp.set(pressed)],
-    [["arrowdown", "s", "j"], (pressed: boolean) => keyDown.set(pressed)],
-    [["arrowleft", "a", "h"], (pressed: boolean) => keyLeft.set(pressed)],
-    [["arrowright", "d", "l"], (pressed: boolean) => keyRight.set(pressed)],
+    [["arrowup", "w"], (pressed: boolean) => keyUp.set(pressed)],
+    [["arrowdown", "s"], (pressed: boolean) => keyDown.set(pressed)],
+    [["arrowleft", "a"], (pressed: boolean) => keyLeft.set(pressed)],
+    [["arrowright", "d"], (pressed: boolean) => keyRight.set(pressed)],
   ].flatMap(([keys, action]: [string[], Action]) =>
     registerAction(["play", "build"], keys, action)
   );
