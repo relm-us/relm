@@ -16,9 +16,13 @@
   --background-transparent-black: rgba(0, 0, 0, 0.85);
   --background-transparent-gray: rgba(40, 40, 40, 0.85);
   --background-gray: #1a1e23;
+  /* Used by tray icons and pop-up */
+  --background-tray: rgba(40, 40, 40, 0.4);
+
   --foreground-white: #ddd;
   --foreground-gray: #999;
   --foreground-dark-gray: #555;
+  
   --enabled-green: rgba(140, 215, 100, 1);
 
   --sliderPrimary: rgba(200, 200, 200, 1);
@@ -38,6 +42,7 @@
   --itemHoverColor: #ddd;
   --itemIsActiveBG: #eb4;
   --itemIsActiveColor: #1a1e23;
+
 }
 
 r-html2d {
@@ -80,6 +85,19 @@ body {
   height: 100%;
 
   overflow: hidden;
+  scrollbar-width: none;
+  
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 8px;  /* for vertical scrollbars */
+  height: 8px; /* for horizontal scrollbars */
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.5);
 }
 
 body {

@@ -40,7 +40,7 @@
 
     cursor: pointer;
 
-    background-color: var(--bg-color, rgba(0, 0, 0, 0.4));
+    background-color: var(--bg-color, var(--background-tray));
     color: var(--fg-color, #dddddd);
 
     font-size: var(--font-size, 14pt);

@@ -1,10 +1,12 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount, onDestroy } from "svelte";
+  import { createEventDispatcher } from "svelte";
 
   import Tint from "./Tint.svelte";
   import closeIcon from "./close-x.png";
 
   export let title: string;
+  export let align: "left" | "center" | "right" = "center";
+  export let tint: boolean = true;
 
   const dispatch = createEventDispatcher();
 
@@ -13,7 +15,7 @@
   };
 </script>
 
-<Tint on:click={cancel("away")}>
+<Tint on:click={cancel("away")} {align} {tint}>
   <r-dialog on:click|stopPropagation>
     <r-close style="--url: url({closeIcon})" on:click={cancel("close")} />
     <r-title>{title}</r-title>
@@ -29,6 +31,12 @@
     flex-direction: column;
     align-items: center;
     overflow: hidden;
+    
+    margin-left: 8px;
+    margin-right: 8px;
+
+    max-height: calc(100% - 80px);
+    overflow-y: auto;
 
     color: var(--background-gray, black);
 
@@ -40,6 +48,16 @@
     );
     border: 1.5px solid #585858;
     border-radius: 18px;
+  }
+
+  r-dialog::-webkit-scrollbar-track-piece:end {
+    background: transparent;
+    margin-bottom: 10px;
+  }
+
+  r-dialog::-webkit-scrollbar-track-piece:start {
+    background: transparent;
+    margin-top: 10px;
   }
 
   r-close {

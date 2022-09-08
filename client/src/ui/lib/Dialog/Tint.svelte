@@ -1,11 +1,21 @@
-<r-tint on:click>
+<script lang="ts">
+  export let tint = true;
+  export let align;
+</script>
+
+<r-tint
+  on:click
+  style="--alignment: {align}; --tint: {tint
+    ? 'rgba(0, 0, 0, 0.8)'
+    : 'transparent'}"
+>
   <slot />
 </r-tint>
 
 <style>
   r-tint {
     display: flex;
-    justify-content: center;
+    justify-content: var(--alignment, center);
     align-items: center;
 
     position: fixed;
@@ -16,6 +26,6 @@
 
     z-index: 200;
 
-    background: rgba(0, 0, 0, 0.8);
+    background: var(--tint);
   }
 </style>

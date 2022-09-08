@@ -7,14 +7,10 @@
 
   import MicButton from "~/ui/ButtonControls/MicButton";
   import VideoButton from "~/ui/ButtonControls/VideoButton";
-  import AvatarSetupButton from "~/ui/ButtonControls/AvatarSetupButton";
   import ShareScreenButton from "~/ui/ButtonControls/ShareScreenButton";
-  import {
-    SignInButton,
-    SignOutButton,
-  } from "~/ui/ButtonControls/SignInButton";
   import InviteButton from "~/ui/ButtonControls/InviteButton";
   import ChatButton from "~/ui/Chat/ChatButton.svelte";
+  import ProfileButton from "~/ui/ButtonControls/ProfileButton";
 
   import Chat from "~/ui/Chat";
   import MiniMap from "~/ui/MiniMap";
@@ -27,6 +23,7 @@
   import Tooltip from "~/ui/lib/Tooltip";
   import Toolbar from "~/ui/Build/Toolbar";
   import BuildPanel from "~/ui/Build/BuildPanel";
+  import ChangeAvatarDialog from "~/ui/AvatarBuilder/ChangeAvatarDialog.svelte";
   import { SignInDialog, SignUpDialog } from "~/ui/SignIn";
 
   import { worldUIMode } from "~/stores";
@@ -35,11 +32,11 @@
   import { debugMode } from "~/stores/debugMode";
   import { centerCameraVisible } from "~/stores/centerCameraVisible";
   import { showCenterButtons } from "~/stores/showCenterButtons";
-  import { connectedAccount } from "~/stores/connectedAccount";
   import { permits } from "~/stores/permits";
 
   import { worldManager } from "~/world";
   import { openDialog } from "~/stores/openDialog";
+  import LanguageDialog from "../Language/LanguageDialog.svelte";
 
   export let dispatch;
   export let state: State;
@@ -50,6 +47,8 @@
 
   let buildMode = false;
   $: buildMode = $permits.includes("edit") && $worldUIMode === "build";
+
+  $: console.log("openDialog", $openDialog);
 </script>
 
 <!-- Pause game if participant is not focused on window, to save CPU/GPU resources -->
@@ -66,6 +65,13 @@
       <SignInDialog on:cancel={() => ($openDialog = null)} />
     {:else if $openDialog === "signup"}
       <SignUpDialog on:cancel={() => ($openDialog = null)} />
+    {:else if $openDialog === "language"}
+      <LanguageDialog on:cancel={() => ($openDialog = null)} />
+    {:else if $openDialog === "avatar-appearance"}
+      <ChangeAvatarDialog
+        on:cancel={() => ($openDialog = null)}
+        appearance={$localIdentityData.appearance}
+      />
     {/if}
   </div>
 {/if}
@@ -127,9 +133,6 @@
       >
         <ChatButton unread={$unreadCount} />
       </Tooltip>
-      <Tooltip tip={_("Change how you look", "avatar_setup")} top>
-        <AvatarSetupButton />
-      </Tooltip>
       {#if $permits.includes("invite")}
         <Tooltip
           tip={_("Invite someone to be with you here", "invite_someone")}
@@ -139,15 +142,7 @@
         </Tooltip>
       {/if}
 
-      {#if $connectedAccount}
-        <Tooltip tip={_("Logout", "logout")} top>
-          <SignOutButton />
-        </Tooltip>
-      {:else}
-        <Tooltip tip={_("Connect your account!", "signin_button")} top>
-          <SignInButton />
-        </Tooltip>
-      {/if}
+      <ProfileButton />
     </play-buttons>
   </overlay-center>
 {/if}

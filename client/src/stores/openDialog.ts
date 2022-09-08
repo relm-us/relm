@@ -1,7 +1,12 @@
 import { writable, Writable } from "svelte/store";
 import { showCenterButtons } from "./showCenterButtons";
 
-type DialogType = "pause" | "signin" | "signup";
+type DialogType =
+  | "pause"
+  | "signin"
+  | "signup"
+  | "language"
+  | "avatar-appearance";
 
 export const openDialog: Writable<DialogType> = writable(null);
 

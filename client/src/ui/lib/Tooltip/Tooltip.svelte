@@ -1,4 +1,6 @@
 <script>
+  export let enabled = true;
+
   export let tip = "";
   export let active = false;
   export let bg = null;
@@ -18,20 +20,22 @@
   <span class="tooltip-slot">
     <slot />
   </span>
-  <div
-    class="tooltip"
-    class:active
-    class:left
-    class:right
-    class:bottom
-    class:top
-  >
-    {#if tip}
-      <div class="default-tip" {style}>{tip}</div>
-    {:else}
-      <slot name="custom-tip" />
-    {/if}
-  </div>
+  {#if enabled}
+    <div
+      class="tooltip"
+      class:active
+      class:left
+      class:right
+      class:bottom
+      class:top
+    >
+      {#if tip}
+        <div class="default-tip" {style}>{tip}</div>
+      {:else}
+        <slot name="custom-tip" />
+      {/if}
+    </div>
+  {/if}
 </div>
 
 <style>
