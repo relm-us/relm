@@ -8,7 +8,13 @@
   export let color;
 </script>
 
-<Dialog title={$_("AvatarBuilder.title")} align="right" tint={false} on:cancel>
+<Dialog
+  title={$_("AvatarBuilder.title")}
+  align="right"
+  tint={false}
+  paddingH={32}
+  on:cancel
+>
   <r-container>
     <AvatarBuilder {...appearance} uniqueColor={color} />
   </r-container>

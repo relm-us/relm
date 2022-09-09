@@ -7,6 +7,7 @@
   export let title: string;
   export let align: "left" | "center" | "right" = "center";
   export let tint: boolean = true;
+  export let paddingH: number = 48;
 
   const dispatch = createEventDispatcher();
 
@@ -16,7 +17,7 @@
 </script>
 
 <Tint on:click={cancel("away")} {align} {tint}>
-  <r-dialog on:click|stopPropagation>
+  <r-dialog on:click|stopPropagation style="--padding-h: {paddingH}px">
     <r-close style="--url: url({closeIcon})" on:click={cancel("close")} />
     <r-title>{title}</r-title>
     <r-body><slot /></r-body>
@@ -31,7 +32,7 @@
     flex-direction: column;
     align-items: center;
     overflow: hidden;
-    
+
     margin-left: 8px;
     margin-right: 8px;
 
@@ -40,7 +41,7 @@
 
     color: var(--background-gray, black);
 
-    padding: 28px 48px;
+    padding: var(--padding-v, 28px) var(--padding-h, 48px);
     background: radial-gradient(
       circle at 0% -100%,
       #666 -80% -80%,

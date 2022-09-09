@@ -1,7 +1,6 @@
 <script>
   export let value = "#000000";
   export let selected = false;
-
 </script>
 
 <div class:selected on:click>
@@ -14,7 +13,11 @@
     border-radius: 4px;
   }
   div.selected {
-    box-shadow: 0px 0px 0px 4px var(--selected-red);
+    box-shadow: 0px 0px 0px 4px var(--selected-orange);
+    z-index: 1;
+  }
+  div.selected:hover {
+    box-shadow: 0px 0px 0px 4px var(--selected-orange-hover);
   }
   swatch {
     display: block;
@@ -23,6 +26,6 @@
     height: 24px;
     border: 2px solid black;
     border-radius: 4px;
+    cursor: pointer;
   }
-
 </style>

@@ -1,6 +1,6 @@
 // prettier-ignore
 export const AVAILABLE_SKIN_COLORS = [
-  "#e3d0cf", "#d5b9ad", "#d08778", "#a56049", "#342723",
+  "#d5b9ad", "#bbaa96", "#947159", "#a68865", "#855a32", "#57351d", "#2c1e0b"
 ];
 
 // prettier-ignore

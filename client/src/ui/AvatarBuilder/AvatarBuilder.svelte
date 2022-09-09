@@ -132,31 +132,13 @@
 
 <Section name={$_("AvatarBuilder.skintone")}>
   <div class="row">
-    <Color
-      value={AVAILABLE_SKIN_COLORS[0]}
-      selected={skinColor === AVAILABLE_SKIN_COLORS[0]}
-      on:click={setSkinColor(AVAILABLE_SKIN_COLORS[0])}
-    />
-    <Color
-      value={AVAILABLE_SKIN_COLORS[1]}
-      selected={skinColor === AVAILABLE_SKIN_COLORS[1]}
-      on:click={setSkinColor(AVAILABLE_SKIN_COLORS[1])}
-    />
-    <Color
-      value={AVAILABLE_SKIN_COLORS[2]}
-      selected={skinColor === AVAILABLE_SKIN_COLORS[2]}
-      on:click={setSkinColor(AVAILABLE_SKIN_COLORS[2])}
-    />
-    <Color
-      value={AVAILABLE_SKIN_COLORS[3]}
-      selected={skinColor === AVAILABLE_SKIN_COLORS[3]}
-      on:click={setSkinColor(AVAILABLE_SKIN_COLORS[3])}
-    />
-    <Color
-      value={AVAILABLE_SKIN_COLORS[4]}
-      selected={skinColor === AVAILABLE_SKIN_COLORS[4]}
-      on:click={setSkinColor(AVAILABLE_SKIN_COLORS[4])}
-    />
+    {#each AVAILABLE_SKIN_COLORS as color}
+      <Color
+        value={color}
+        selected={skinColor === color}
+        on:click={setSkinColor(color)}
+      />
+    {/each}
   </div>
 </Section>
 
@@ -184,31 +166,13 @@
     />
   </div>
   <div class="row space-above">
-    <Color
-      value={AVAILABLE_HAIR_COLORS[0]}
-      selected={hairColor === AVAILABLE_HAIR_COLORS[0]}
-      on:click={setHairColor(AVAILABLE_HAIR_COLORS[0])}
-    />
-    <Color
-      value={AVAILABLE_HAIR_COLORS[1]}
-      selected={hairColor === AVAILABLE_HAIR_COLORS[1]}
-      on:click={setHairColor(AVAILABLE_HAIR_COLORS[1])}
-    />
-    <Color
-      value={AVAILABLE_HAIR_COLORS[2]}
-      selected={hairColor === AVAILABLE_HAIR_COLORS[2]}
-      on:click={setHairColor(AVAILABLE_HAIR_COLORS[2])}
-    />
-    <Color
-      value={AVAILABLE_HAIR_COLORS[3]}
-      selected={hairColor === AVAILABLE_HAIR_COLORS[3]}
-      on:click={setHairColor(AVAILABLE_HAIR_COLORS[3])}
-    />
-    <Color
-      value={AVAILABLE_HAIR_COLORS[4]}
-      selected={hairColor === AVAILABLE_HAIR_COLORS[4]}
-      on:click={setHairColor(AVAILABLE_HAIR_COLORS[4])}
-    />
+    {#each AVAILABLE_HAIR_COLORS as color}
+      <Color
+        value={color}
+        selected={hairColor === color}
+        on:click={setHairColor(color)}
+      />
+    {/each}
   </div>
 </Section>
 
@@ -292,7 +256,11 @@
 
 <Section name={$_("AvatarBuilder.belt")} last={true}>
   <div class="row evenly">
-    <ToggleSwitch bind:enabled={belt} />
+    <ToggleSwitch
+      bind:enabled={belt}
+      labelOn={$_("AvatarBuilder.belt_yes")}
+      labelOff={$_("AvatarBuilder.belt_no")}
+    />
     {#if belt}
       <ColorPick bind:value={beltColor} />
     {:else}
@@ -308,41 +276,6 @@
 </Section>
 
 <style>
-  /* h1 {
-    position: relative;
-    font-size: 20px;
-    color: var(--foreground-white);
-    text-align: center;
-    margin: 0px 0 28px 0;
-  }
-
-  icon {
-    display: block;
-    width: 32px;
-    height: 32px;
-
-    color: white;
-  }
-  icon.upper-right {
-    position: absolute;
-    top: -2px;
-    right: 8px;
-  }
-  container {
-    display: flex;
-    flex-direction: column;
-    border: 1px solid var(--foreground-dark-gray);
-
-    padding: 12px 0 0 0;
-    border-radius: 8px;
-    background-color: var(--background-gray);
-
-    overflow-y: auto;
-
-    --sliderPrimary: #8de66a;
-    --sliderSecondary: #8de66a;
-  } */
-
   .row {
     width: 100%;
     display: flex;

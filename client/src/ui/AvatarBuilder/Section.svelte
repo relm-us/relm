@@ -2,7 +2,6 @@
   export let name;
   export let first = false;
   export let last = false;
-
 </script>
 
 <div class="section" class:first class:last>
@@ -12,10 +11,8 @@
 
 <style>
   .section {
-    margin-top: -5px;
+    margin-top: 8px;
     padding-bottom: 26px;
-    margin-left: 12px;
-    margin-right: 12px;
   }
   .section.first {
     margin-top: 0px;
@@ -24,16 +21,8 @@
     border-top-color: transparent;
   }
   .title {
-    font-size: 14px;
-    border-top: 1px solid var(--foreground-dark-gray);
-    text-align: center;
+    color: var(--selected-orange);
+    font-size: 16px;
+    margin: 4px 0;
   }
-  .title span {
-    color: var(--foreground-white);
-    position: relative;
-    top: -10px;
-    padding: 2px 8px;
-    background: var(--background-gray);
-  }
-
 </style>
