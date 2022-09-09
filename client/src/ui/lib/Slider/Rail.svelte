@@ -1,6 +1,5 @@
 <script>
   export let value;
-
 </script>
 
 <div class="rail">
@@ -26,5 +25,4 @@
     bottom: 0;
     background: var(--sliderPrimary);
   }
-
 </style>

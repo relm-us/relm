@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from "svelte";
+  import { MathUtils } from "three";
   import Rail from "./Rail.svelte";
   import Thumb from "./Thumb.svelte";
 
@@ -50,15 +51,21 @@
     document.body.style.cursor = "";
   }
 
-  function onSet(event) {
-    console.log(event.detail);
+  function onClick(event) {
+    const bbox = container.getBoundingClientRect();
+    let position = MathUtils.clamp(
+      (event.clientX - bbox.left) / bbox.width,
+      0,
+      1
+    );
+    value[1] = position;
+    dispatch("change", value);
   }
-
 </script>
 
-<div class="slider">
+<div class="slider" on:click={onClick}>
   <div bind:this={container}>
-    <Rail {value} on:set={onSet}>
+    <Rail {value}>
       {#if !single}
         <Thumb
           position={value[0]}
@@ -80,6 +87,7 @@
 <style>
   .slider {
     padding: 8px;
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
   }
-
 </style>

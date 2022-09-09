@@ -34,7 +34,6 @@
   onMount(() => {
     thumb.addEventListener("pointerdown", handleStart);
   });
-
 </script>
 
 <div
@@ -59,6 +58,9 @@
     touch-action: none;
     transform: translate(-50%, -50%);
     transition: 0.2s height, 0.2s width;
+  }
+  .thumb:hover {
+    background: var(--sliderThumbHover, var(--sliderThumb));
   }
 
   .thumb:after {
@@ -85,5 +87,4 @@
     transform: translate(-50%, -50%) scale(0);
     transition: 0.2s all;
   }
-
 </style>
