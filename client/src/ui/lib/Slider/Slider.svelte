@@ -20,12 +20,13 @@
     bbox: { left: number; width: number }
   ) {
     const newRatio = MathUtils.clamp(
-      (x - bbox.left + offset) / bbox.width,
+      (x - bbox.left + (offset ?? 0)) / bbox.width,
       0,
       1
     );
 
-    const s = range[0], r = range[1] - range[0];
+    const s = range[0],
+      r = range[1] - range[0];
     const value = constrain(newRatio * r + s);
 
     positionAsRatio = (value - s) / r;

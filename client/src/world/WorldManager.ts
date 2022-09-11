@@ -22,8 +22,6 @@ import { worldUIMode } from "~/stores/worldUIMode";
 import { fpsTime } from "~/stores/stats";
 import { targetFps } from "~/stores/targetFps";
 import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
-import { shadowsEnabled } from "~/stores/shadowsEnabled";
-import { highDefEnabled } from "~/stores/highDefEnabled";
 
 // Animation keys
 import { keyShift, key1, key2, key3 } from "~/stores/keys";
@@ -104,6 +102,7 @@ import { dragAction } from "~/stores/dragAction";
 import { selectedGroups } from "~/stores/selection";
 import { openDialog } from "~/stores/openDialog";
 import { LoginManager } from "~/identity/LoginManager";
+import { renderQuality } from "~/stores/renderQuality";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -136,6 +135,7 @@ export class WorldManager {
   lastFpsChange: number = 0;
 
   loopType: LoopType = { type: "reqAnimFrame" };
+  fpsLocked: boolean = false;
 
   light: Entity;
 
@@ -158,7 +158,6 @@ export class WorldManager {
   unsubs: Function[] = [];
   afterInitFns: Function[] = [];
   didInit: boolean = false;
-  fpsLocked: boolean = false;
 
   get dragPlane(): DragPlane {
     if (!this._dragPlane) this._dragPlane = new DragPlane(this.world);
@@ -292,17 +291,45 @@ export class WorldManager {
     );
 
     this.unsubs.push(
-      shadowsEnabled.subscribe(($enabled) => {
-        this.world.presentation.renderer.shadowMap.enabled = $enabled;
-        const spec = this.light.getByName("DirectionalLight");
-        spec.shadow = $enabled;
-        spec.modified();
-      })
-    );
+      renderQuality.subscribe(($quality) => {
+        let shadows, pixelRatio, framerate;
 
-    this.unsubs.push(
-      highDefEnabled.subscribe(($enabled) => {
-        this.setPixelRatio($enabled ? window.devicePixelRatio : 1);
+        switch ($quality) {
+          case 0:
+            shadows = false;
+            pixelRatio = 0.25;
+            framerate = 20;
+            break;
+          case 1:
+            shadows = false;
+            pixelRatio = 0.5;
+            framerate = 30;
+            break;
+          case 2:
+            shadows = false;
+            pixelRatio = 1;
+            framerate = 30;
+            break;
+          case 3:
+            shadows = false;
+            pixelRatio = window.devicePixelRatio;
+            framerate = 60;
+            break;
+          case 4:
+            shadows = true;
+            pixelRatio = window.devicePixelRatio;
+            framerate = 60;
+            break;
+
+          default:
+            console.warn("Invalid graphics quality setting", $quality);
+        }
+
+        this.enableShadows(shadows);
+
+        this.setPixelRatio(pixelRatio);
+
+        this.setFps(framerate, true);
       })
     );
 
@@ -546,6 +573,14 @@ export class WorldManager {
 
   enableCollidersVisible(enabled = true) {
     Collider2VisibleSystem.enabled = enabled;
+  }
+
+  enableShadows(enabled) {
+    this.world.presentation.renderer.shadowMap.enabled = enabled;
+
+    const spec = this.light.getByName("DirectionalLight");
+    spec.shadow = enabled;
+    spec.modified();
   }
 
   hoverOutline(found: Entity) {

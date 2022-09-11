@@ -44,6 +44,10 @@
           })}
         </r-option>
 
+        <r-option on:click={() => ($openDialog = "render-quality")}>
+          {$_("ProfileButton.change_quality")}<br />
+        </r-option>
+
         <r-option on:click={() => ($openDialog = "avatar-appearance")}>
           {$_("ProfileButton.change_avatar")}
         </r-option>

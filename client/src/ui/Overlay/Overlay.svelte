@@ -23,8 +23,11 @@
   import Tooltip from "~/ui/lib/Tooltip";
   import Toolbar from "~/ui/Build/Toolbar";
   import BuildPanel from "~/ui/Build/BuildPanel";
+
   import ChangeAvatarDialog from "~/ui/AvatarBuilder/ChangeAvatarDialog.svelte";
   import { SignInDialog, SignUpDialog } from "~/ui/SignIn";
+  import LanguageDialog from "~/ui/Dialogs/LanguageDialog.svelte";
+  import RenderQualityDialog from "~/ui/Dialogs/RenderQualityDialog.svelte";
 
   import { worldUIMode } from "~/stores";
   import { chatOpen, unreadCount } from "~/stores/chat";
@@ -36,7 +39,6 @@
 
   import { worldManager } from "~/world";
   import { openDialog } from "~/stores/openDialog";
-  import LanguageDialog from "../Language/LanguageDialog.svelte";
 
   export let dispatch;
   export let state: State;
@@ -67,6 +69,8 @@
       <SignUpDialog on:cancel={() => ($openDialog = null)} />
     {:else if $openDialog === "language"}
       <LanguageDialog on:cancel={() => ($openDialog = null)} />
+    {:else if $openDialog === "render-quality"}
+      <RenderQualityDialog on:cancel={() => ($openDialog = null)} />
     {:else if $openDialog === "avatar-appearance"}
       <ChangeAvatarDialog
         on:cancel={() => ($openDialog = null)}

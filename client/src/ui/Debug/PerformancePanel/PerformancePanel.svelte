@@ -2,8 +2,6 @@
   import { onMount } from "svelte";
 
   import { worldManager } from "~/world";
-  import { shadowsEnabled } from "~/stores/shadowsEnabled";
-  import { highDefEnabled } from "~/stores/highDefEnabled";
 
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import Button from "~/ui/lib/Button";
@@ -62,16 +60,6 @@
     value={($fpsTime[0] || 0).toFixed(1)}
     maximum={60}
   />
-
-  <setting>
-    <b>Shadows Enabled:</b>
-    <ToggleSwitch bind:enabled={$shadowsEnabled} />
-  </setting>
-
-  <setting>
-    <b>High-def Enabled:</b>
-    <ToggleSwitch bind:enabled={$highDefEnabled} />
-  </setting>
 
   <!-- Show most relevant render stats here -->
   <StatsPane title="Render Calls" dataStore={renderCalls} />
@@ -146,16 +134,6 @@
   table {
     width: 100%;
     padding-left: 8px;
-    padding-right: 8px;
-  }
-
-  setting {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 16px;
-  }
-  setting b {
     padding-right: 8px;
   }
 </style>

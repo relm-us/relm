@@ -73,7 +73,21 @@
     "sign_in": "Sign In",
     "sign_out": "Sign Out",
     "language": "Language ({locale})",
-    "change_avatar": "Change Your Avatar"
+    "change_avatar": "Change Your Avatar",
+    "change_quality": "Graphics Quality"
+  },
+  "RenderQualityDialog": {
+    "title": "GFX Quality",
+    "lowest": "Lowest",
+    "lowest_desc": "Poorest quality, slow framerate (20 fps). Best for very old hardware.",
+    "low": "Low",
+    "low_desc": "Low quality graphics, medium framerate (30 fps).",
+    "medium": "Medium",
+    "medium_desc": "Medium quality graphics, medium framerate (30 fps).",
+    "high": "High",
+    "high_desc": "High quality graphics, high framerate (60 fps).",
+    "highest": "Highest",
+    "highest_desc": "Highest quality graphics, high framerate (60 fps). Enables shadows."
   },
   "VideoMirror": {
     "join_cam_off": "Join with cam off",
