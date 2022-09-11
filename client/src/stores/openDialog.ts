@@ -6,7 +6,7 @@ type DialogType =
   | "signin"
   | "signup"
   | "language"
-  | "render-quality"
+  | "graphics-quality"
   | "avatar-appearance";
 
 export const openDialog: Writable<DialogType> = writable(null);

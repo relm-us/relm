@@ -5,6 +5,7 @@
   import { worldManager } from "~/world";
   import { openDialog } from "~/stores/openDialog";
   import { connectedAccount } from "~/stores/connectedAccount";
+  import { graphicsQuality } from "~/stores/graphicsQuality";
 
   import PopContext from "~/ui/lib/PopContext";
   import Tooltip from "~/ui/lib/Tooltip";
@@ -31,6 +32,7 @@
         {#if $connectedAccount}
           <r-option on:click={() => worldManager.logins.logout()}>
             {$_("ProfileButton.sign_out")}
+            <r-option-current> someone@example.com </r-option-current>
           </r-option>
         {:else}
           <r-option on:click={() => ($openDialog = "signin")}>
@@ -39,13 +41,17 @@
         {/if}
 
         <r-option on:click={() => ($openDialog = "language")}>
-          {$_("ProfileButton.language", {
-            values: { locale: languageMap[$locale] || $locale },
-          })}
+          {$_("ProfileButton.language")}
+          <r-option-current>
+            {languageMap[$locale] || $locale}
+          </r-option-current>
         </r-option>
 
-        <r-option on:click={() => ($openDialog = "render-quality")}>
-          {$_("ProfileButton.change_quality")}<br />
+        <r-option on:click={() => ($openDialog = "graphics-quality")}>
+          {$_("ProfileButton.graphics_quality")}
+          <r-option-current>
+            {$_(`RenderQualityDialog.${$graphicsQuality}`)}
+          </r-option-current>
         </r-option>
 
         <r-option on:click={() => ($openDialog = "avatar-appearance")}>
@@ -89,13 +95,19 @@
   }
 
   r-option {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
     padding: 10px 12px 10px 12px;
+    border-bottom: 1px solid 1px solid rgba(0, 0, 0, 0.15);
 
     cursor: pointer;
+  }
 
-    border-bottom: 1px solid 1px solid rgba(0, 0, 0, 0.15);
+  r-option-current {
+    color: var(--selected-orange);
+    font-size: 10px;
   }
 
   r-option:last-child {

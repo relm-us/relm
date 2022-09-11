@@ -68,7 +68,7 @@
       <SignUpDialog on:cancel={() => ($openDialog = null)} />
     {:else if $openDialog === "language"}
       <LanguageDialog on:cancel={() => ($openDialog = null)} />
-    {:else if $openDialog === "render-quality"}
+    {:else if $openDialog === "graphics-quality"}
       <RenderQualityDialog on:cancel={() => ($openDialog = null)} />
     {:else if $openDialog === "avatar-appearance"}
       <ChangeAvatarDialog
