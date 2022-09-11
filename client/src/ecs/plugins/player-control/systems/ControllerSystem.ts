@@ -112,15 +112,6 @@ export class ControllerSystem extends System {
     transition(keysState.down, get(keyDown));
     transition(spaceState, get(keySpace));
 
-    // Make "DoublePressed" key state "sticky" so avatars stay running
-    // const states = Object.values(keysState);
-    // const doublePressed = states.some((ks) => ks.state === KPR.DoublePressed);
-    // if (doublePressed) {
-    //   for (const keyState of Object.values(keysState)) {
-    //     if (keyState.state === KPR.Pressed) keyState.state = KPR.DoublePressed;
-    //   }
-    // }
-
     this.queries.added.forEach((entity) => {
       this.initState(entity);
     });
@@ -240,8 +231,16 @@ export class ControllerSystem extends System {
   }
 
   useKeys(state: ControllerState) {
-    state.speed = getSpeedFromKeysState();
     state.direction = getVectorFromKeys();
+    if (state.direction.x !== 0 || state.direction.z !== 0) {
+      if (get(keyShift)) {
+        state.speed = 2;
+      } else {
+        state.speed = 1;
+      }
+    } else {
+      state.speed = 0;
+    }
   }
 
   useTouch(entity: Entity, state: ControllerState) {

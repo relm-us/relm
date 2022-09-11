@@ -28,15 +28,13 @@
 
   export let world;
 
-  function getActionFromEvent(event: KeyboardEvent) {
+  function getActionFromEvent(event: KeyboardEvent, pressed: boolean) {
     const mods = [];
 
     if (event.altKey) mods.push("A");
     if (event.ctrlKey) mods.push("C");
     if (event.metaKey) mods.push("M");
-
-    // Disable "Shift" key combinations for now, as they interfere with running & shift + click
-    // if (event.shiftKey) mods.push("S");
+    // Note: "Shift" key combinations disabled now, as they interfere with running & shift + click
 
     let combo = mods.join("-");
 
@@ -54,19 +52,21 @@
 
   const pressed: Set<string> = new Set();
   function onKeydown(event: KeyboardEvent) {
-    if (isInputEvent(event)) return;
+    if (isInputEvent(event)) {
+      return;
+    }
 
     if (
       event.repeat ||
       /* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1594003 */
-      pressed.has(event.key)
+      pressed.has(event.key.toLowerCase())
     ) {
       return;
     }
 
-    pressed.add(event.key);
+    pressed.add(event.key.toLowerCase());
 
-    const action = getActionFromEvent(event);
+    const action = getActionFromEvent(event, true);
     if (action) {
       action(true);
       event.preventDefault();
@@ -74,9 +74,9 @@
   }
 
   function onKeyup(event) {
-    pressed.delete(event.key);
+    pressed.delete(event.key.toLowerCase());
 
-    const action = getActionFromEvent(event);
+    const action = getActionFromEvent(event, false);
     if (action) action(false);
   }
 
