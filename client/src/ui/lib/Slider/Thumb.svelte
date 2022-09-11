@@ -1,10 +1,9 @@
-<script>
+<script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
 
-  export let position;
+  export let positionAsRatio;
 
   let thumb;
-  let bbox;
   const dispatch = createEventDispatcher();
 
   function handleStart(event) {
@@ -36,34 +35,36 @@
   });
 </script>
 
-<div
+<r-thumb
   bind:this={thumb}
-  class="thumb"
-  style="left: {position * 100}%;"
-  on:start={handleStart}
-  on:move={handleMove}
-  on:end={handleEnd}
+  style="left: {positionAsRatio * 100}%;"
+  on:dragstart={handleStart}
+  on:drag={handleMove}
+  on:dragend={handleEnd}
 />
 
 <style>
-  .thumb {
+  r-thumb {
+    display: block;
     width: 16px;
     height: 16px;
+
     position: absolute;
     left: 0;
     top: 50%;
+    transform: translate(-50%, -50%);
+
     border-radius: 50%;
     border: 2px solid black;
     background: var(--sliderThumb, var(--sliderSecondary));
     touch-action: none;
-    transform: translate(-50%, -50%);
     transition: 0.2s height, 0.2s width;
   }
-  .thumb:hover {
+  r-thumb:hover {
     background: var(--sliderThumbHover, var(--sliderThumb));
   }
 
-  .thumb:after {
+  r-thumb:after {
     content: "";
     position: absolute;
     left: 50%;
@@ -74,7 +75,7 @@
     cursor: pointer;
   }
 
-  .thumb:before {
+  r-thumb:before {
     content: "";
     position: absolute;
     left: 50%;

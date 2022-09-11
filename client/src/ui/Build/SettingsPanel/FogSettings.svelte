@@ -12,8 +12,7 @@
   let fogColor;
   let fogDensity;
 
-  function onSlideFog({ detail }) {
-    const value = detail[1];
+  function onSlideFog({ detail: value }) {
     const fog = worldManager.world.presentation.scene.fog;
     (fog as any).density = value * 0.05;
 
@@ -46,7 +45,7 @@
 <Pane title="Fog">
   <r-setting>
     <r-slider>
-      <Slider on:change={onSlideFog} value={[0, fogDensity]} single />
+      <Slider on:change={onSlideFog} value={fogDensity} />
     </r-slider>
     <ColorPicker
       bind:value={fogColor}

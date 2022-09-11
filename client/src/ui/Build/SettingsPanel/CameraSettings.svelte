@@ -9,8 +9,8 @@
 
   let cameraFov;
 
-  function onSlideFov({ detail }) {
-    cameraFov = detail[1] * 180;
+  function onSlideFov({ detail: value }) {
+    cameraFov = value * 180;
     worldManager.camera.setFov(cameraFov);
     saveFov(cameraFov);
   }
@@ -28,7 +28,7 @@
   <r-label>{$_("CameraSettings.field_of_view")}</r-label>
   <r-setting>
     <r-slider>
-      <Slider on:change={onSlideFov} value={[0, cameraFov / 180]} single />
+      <Slider on:change={onSlideFov} value={cameraFov / 180} />
     </r-slider>
     <r-fov>
       {Math.round(cameraFov)}&deg;

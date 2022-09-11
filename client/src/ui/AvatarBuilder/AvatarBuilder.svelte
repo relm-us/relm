@@ -81,12 +81,12 @@
     worldManager.participants.setColor(uniqueColor);
   }
 
-  function onSlideGender({ detail }) {
-    genderSlider = detail[1];
+  function onSlideGender({ detail: value }) {
+    genderSlider = value;
   }
 
-  function onSlideWidth({ detail }) {
-    widthSlider = detail[1];
+  function onSlideWidth({ detail: value }) {
+    widthSlider = value;
   }
 
   const onClickHairStyle = (style: HairType) => () => {
@@ -115,7 +115,7 @@
 </script>
 
 <Section name={$_("AvatarBuilder.gender")}>
-  <Slider on:change={onSlideGender} value={[0, genderSlider]} single />
+  <Slider on:change={onSlideGender} value={genderSlider} />
   <div class="row between">
     <div class="label">{$_("AvatarBuilder.male")}</div>
     <div class="label">{$_("AvatarBuilder.female")}</div>
@@ -123,7 +123,7 @@
 </Section>
 
 <Section name={$_("AvatarBuilder.body")}>
-  <Slider on:change={onSlideWidth} value={[0, widthSlider]} single />
+  <Slider on:change={onSlideWidth} value={widthSlider} />
   <div class="row between">
     <div class="label">{$_("AvatarBuilder.narrow")}</div>
     <div class="label">{$_("AvatarBuilder.wide")}</div>

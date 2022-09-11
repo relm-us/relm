@@ -1,93 +1,97 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from "svelte";
   import { MathUtils } from "three";
   import Rail from "./Rail.svelte";
   import Thumb from "./Thumb.svelte";
 
-  export let value = [0, 1];
-  export let single = false;
+  export let value = 0.5;
+  export let range = [0, 1];
+  export let constrain = (value) => value;
 
   let container;
-  let activeIndex;
   let offset;
+  let positionAsRatio;
   let dispatch = createEventDispatcher();
 
-  function getStartListener(index) {
-    return (event) => {
-      activeIndex = index;
-      const { bbox } = event.detail;
-      offset = bbox.width / 2 - (event.detail.x - bbox.left);
-      document.body.style.cursor = "pointer";
-    };
+  $: positionAsRatio = value / (range[1] - range[0]) + range[0];
+
+  function updatePositionAsRatio(
+    x: number,
+    bbox: { left: number; width: number }
+  ) {
+    const newRatio = MathUtils.clamp(
+      (x - bbox.left + offset) / bbox.width,
+      0,
+      1
+    );
+
+    const s = range[0], r = range[1] - range[0];
+    const value = constrain(newRatio * r + s);
+
+    positionAsRatio = (value - s) / r;
   }
 
-  function moveListener(event) {
+  function getValueFromPosition(
+    x: number,
+    bbox: { left: number; width: number }
+  ) {
+    updatePositionAsRatio(x, bbox);
+    return positionAsRatio * (range[1] - range[0]) + range[0];
+  }
+
+  function setValue(newValue: number) {
+    if (value !== newValue) {
+      value = newValue;
+      dispatch("change", value);
+    }
+  }
+
+  function onDragStart(event) {
+    const { bbox } = event.detail;
+    offset = bbox.width / 2 - (event.detail.x - bbox.left);
+    document.body.style.cursor = "pointer";
+    dispatch("start");
+  }
+
+  function onDragMove(event) {
     const bbox = container.getBoundingClientRect();
-    const { x } = event.detail;
-    let position = (x - bbox.left + offset) / bbox.width;
-
-    if (position < 0) {
-      position = 0;
-    } else if (position > 1) {
-      position = 1;
-    }
-
-    if (activeIndex === 0 && value[0] > value[1]) {
-      activeIndex = 1;
-      value[0] = value[1];
-      return;
-    } else if (activeIndex === 1 && value[1] < value[0]) {
-      activeIndex = 0;
-      value[1] = value[0];
-      return;
-    }
-
-    if (value[activeIndex] === position) return;
-    value[activeIndex] = position;
-    dispatch("change", value);
+    setValue(getValueFromPosition(event.detail.x, bbox));
   }
 
-  function endListener() {
+  function onDragEnd() {
     document.body.style.cursor = "";
+    dispatch("end");
   }
 
   function onClick(event) {
     const bbox = container.getBoundingClientRect();
-    let position = MathUtils.clamp(
-      (event.clientX - bbox.left) / bbox.width,
-      0,
-      1
-    );
-    value[1] = position;
-    dispatch("change", value);
+    setValue(getValueFromPosition(event.clientX, bbox));
   }
 </script>
 
-<div class="slider" on:click={onClick}>
-  <div bind:this={container}>
-    <Rail {value}>
-      {#if !single}
-        <Thumb
-          position={value[0]}
-          on:dragstart={getStartListener(0)}
-          on:dragging={moveListener}
-          on:dragend={endListener}
-        />
-      {/if}
+<r-slider on:click={onClick}>
+  <r-container bind:this={container}>
+    <Rail>
       <Thumb
-        position={value[1]}
-        on:dragstart={getStartListener(1)}
-        on:dragging={moveListener}
-        on:dragend={endListener}
+        {positionAsRatio}
+        on:dragstart={onDragStart}
+        on:dragging={onDragMove}
+        on:dragend={onDragEnd}
       />
     </Rail>
-  </div>
-</div>
+  </r-container>
+</r-slider>
 
 <style>
-  .slider {
+  r-slider {
+    display: block;
+
     padding: 8px;
     border-top: 3px solid transparent;
     border-bottom: 3px solid transparent;
+  }
+
+  r-container {
+    display: block;
   }
 </style>

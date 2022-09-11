@@ -1,23 +1,19 @@
-<script>
-  export let value;
-</script>
-
-<div class="rail">
-  <div
-    class="selected"
-    style="left: {value[0] * 100}%; right: {(1 - value[1]) * 100}%;"
-  />
+<r-rail>
+  <r-selected />
   <slot />
-</div>
+</r-rail>
 
 <style>
-  .rail {
+  r-rail {
+    display: block;
+
     position: relative;
     height: 2px;
+
     background: var(--sliderSecondary);
   }
 
-  .selected {
+  r-selected {
     position: absolute;
     left: 0;
     right: 0;
