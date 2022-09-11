@@ -1,8 +1,8 @@
 <script lang="ts">
   import { _ } from "svelte-i18n";
-  import Dialog from "../lib/Dialog";
 
-  import AvatarBuilder from "./AvatarBuilder.svelte";
+  import Dialog from "~/ui/lib/Dialog";
+  import AvatarBuilder from "~/ui/AvatarBuilder/AvatarBuilder.svelte";
 
   export let appearance;
   export let color;

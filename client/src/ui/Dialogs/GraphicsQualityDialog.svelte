@@ -5,12 +5,12 @@
   import Dialog from "~/ui/lib/Dialog";
   import Slider from "~/ui/lib/Slider";
 
-  import { renderQuality } from "~/stores/renderQuality";
+  import { graphicsQuality } from "~/stores/graphicsQuality";
 
   const dispatch = createEventDispatcher();
 
   function changeQuality({ detail: value }) {
-    $renderQuality = Math.floor(value);
+    $graphicsQuality = Math.floor(value);
   }
 </script>
 
@@ -18,36 +18,20 @@
   <r-interior>
     <r-slider>
       <Slider
-        value={$renderQuality}
+        value={$graphicsQuality}
         range={[0, 4]}
         constrain={(value) => Math.floor(value + 0.5)}
         on:change={changeQuality}
       />
       <r-tick-marks>
-        <r-tick>{$_("RenderQualityDialog.lowest")}</r-tick>
-        <r-tick>{$_("RenderQualityDialog.low")}</r-tick>
-        <r-tick>{$_("RenderQualityDialog.medium")}</r-tick>
-        <r-tick>{$_("RenderQualityDialog.high")}</r-tick>
-        <r-tick>{$_("RenderQualityDialog.highest")}</r-tick>
+        {#each [0, 1, 2, 3, 4] as quality}
+          <r-tick>{$_(`RenderQualityDialog.${quality}`)}</r-tick>
+        {/each}
       </r-tick-marks>
     </r-slider>
     <r-info>
-      {#if $renderQuality === 0}
-        <r-level>{$_("RenderQualityDialog.lowest")}</r-level>
-        <r-desc>{$_("RenderQualityDialog.lowest_desc")}</r-desc>
-      {:else if $renderQuality === 1}
-        <r-level>{$_("RenderQualityDialog.low")}</r-level>
-        <r-desc>{$_("RenderQualityDialog.low_desc")}</r-desc>
-      {:else if $renderQuality === 2}
-        <r-level>{$_("RenderQualityDialog.medium")}</r-level>
-        <r-desc>{$_("RenderQualityDialog.medium_desc")}</r-desc>
-      {:else if $renderQuality === 3}
-        <r-level>{$_("RenderQualityDialog.high")}</r-level>
-        <r-desc>{$_("RenderQualityDialog.high_desc")}</r-desc>
-      {:else if $renderQuality === 4}
-        <r-level>{$_("RenderQualityDialog.highest")}</r-level>
-        <r-desc>{$_("RenderQualityDialog.highest_desc")}</r-desc>
-      {/if}
+      <r-level>{$_(`RenderQualityDialog.${$graphicsQuality}`)}</r-level>
+      <r-desc>{$_(`RenderQualityDialog.${$graphicsQuality}_desc`)}</r-desc>
     </r-info>
   </r-interior>
 </Dialog>

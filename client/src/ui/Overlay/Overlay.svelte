@@ -24,10 +24,11 @@
   import Toolbar from "~/ui/Build/Toolbar";
   import BuildPanel from "~/ui/Build/BuildPanel";
 
-  import ChangeAvatarDialog from "~/ui/AvatarBuilder/ChangeAvatarDialog.svelte";
-  import { SignInDialog, SignUpDialog } from "~/ui/SignIn";
+  import SignInDialog from "~/ui//Dialogs/SignInDialog.svelte";
+  import SignUpDialog from "~/ui//Dialogs/SignUpDialog.svelte";
   import LanguageDialog from "~/ui/Dialogs/LanguageDialog.svelte";
-  import RenderQualityDialog from "~/ui/Dialogs/RenderQualityDialog.svelte";
+  import RenderQualityDialog from "~/ui/Dialogs/GraphicsQualityDialog.svelte";
+  import ChangeAvatarDialog from "~/ui/Dialogs/ChangeAvatarDialog.svelte";
 
   import { worldUIMode } from "~/stores";
   import { chatOpen, unreadCount } from "~/stores/chat";
@@ -49,8 +50,6 @@
 
   let buildMode = false;
   $: buildMode = $permits.includes("edit") && $worldUIMode === "build";
-
-  $: console.log("openDialog", $openDialog);
 </script>
 
 <!-- Pause game if participant is not focused on window, to save CPU/GPU resources -->

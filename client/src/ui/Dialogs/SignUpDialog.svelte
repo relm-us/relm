@@ -4,8 +4,9 @@
   import Button from "~/ui/lib/Button";
   import Dialog from "~/ui/lib/Dialog";
 
-  import SignInTextInput from "./components/SignInTextInput.svelte";
   import { openDialog } from "~/stores/openDialog";
+
+  import SignInTextInput from "./components/SignInTextInput.svelte";
 
   let email: string;
   let password: string;
