@@ -24,7 +24,7 @@ import { targetFps } from "~/stores/targetFps";
 import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 
 // Animation keys
-import { keyShift, key1, key2, key3 } from "~/stores/keys";
+import { key1, key2, key3 } from "~/stores/keys";
 import { keyLeft, keyRight, keyUp, keyDown, keySpace } from "~/stores/keys";
 import {
   CAMERA_BUILD_DAMPENING,
@@ -74,35 +74,26 @@ import { localShareTrackStore } from "~/av/localVisualTrackStore";
 import { localVideoTrack } from "video-mirror";
 import { createScreenTrack } from "~/av/twilio/createScreenTrack";
 
-import { destroyParticipantId, participantId } from "~/identity/participantId";
+import { participantId } from "~/identity/participantId";
 import { Avatar } from "~/identity/Avatar";
 import { Participant } from "~/types/identity";
 import { ParticipantManager } from "~/identity/ParticipantManager";
 import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
 import { delay } from "~/utils/delay";
-import { LoginCredentials, RelmRestAPI } from "~/main/RelmRestAPI";
+import { RelmRestAPI } from "~/main/RelmRestAPI";
 import { PhotoBooth } from "./PhotoBooth";
 import { audioMode, AudioMode } from "~/stores/audioMode";
 import { Outline } from "~/ecs/plugins/outline";
 import { InteractorSystem } from "~/ecs/plugins/interactor";
 import { Object3DRef } from "~/ecs/plugins/core";
-import {
-  getRandomInitializedIdentityData,
-  localIdentityData,
-} from "~/stores/identityData";
-import { AuthenticationResponse, SocialType } from "~/main/RelmOAuthAPI";
 import { globalEvents } from "~/events";
 import { advancedEdit } from "~/stores/advancedEdit";
-import { connectedAccount } from "~/stores/connectedAccount";
-import { permits } from "~/stores/permits";
 import { errorCat } from "~/stores/errorCat";
 import { viewportScale } from "~/stores/viewportScale";
-import { centerCameraVisible } from "~/stores/centerCameraVisible";
 import { dragAction } from "~/stores/dragAction";
-import { selectedGroups } from "~/stores/selection";
 import { openDialog } from "~/stores/openDialog";
 import { LoginManager } from "~/identity/LoginManager";
-import { renderQuality } from "~/stores/renderQuality";
+import { graphicsQuality } from "~/stores/graphicsQuality";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -291,7 +282,7 @@ export class WorldManager {
     );
 
     this.unsubs.push(
-      renderQuality.subscribe(($quality) => {
+      graphicsQuality.subscribe(($quality) => {
         let shadows, pixelRatio, framerate;
 
         switch ($quality) {
