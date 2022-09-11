@@ -157,9 +157,7 @@
   </r-setting>
 
   <r-setting style="border-bottom:0; padding-bottom: 3px">
-    <Button on:click={resetLighting} style="border: 1px solid #999;">
-      Reset Lighting
-    </Button>
+    <Button on:click={resetLighting}>Reset Lighting</Button>
   </r-setting>
 </Pane>
 
