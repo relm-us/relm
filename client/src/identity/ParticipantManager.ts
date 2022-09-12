@@ -10,12 +10,12 @@ import {
   avatarGetTransformData,
   setDataOnParticipant,
 } from "./Avatar/transform";
-import { ParticipantYBroker } from "./ParticipantYBroker";
+import { ParticipantBroker } from "./ParticipantBroker";
 import { isEqual } from "~/utils/isEqual";
 
 export class ParticipantManager {
   dispatch: Dispatch;
-  broker: ParticipantYBroker;
+  broker: ParticipantBroker;
   participants: Map<string, Participant>;
 
   get local(): Participant {
@@ -29,7 +29,7 @@ export class ParticipantManager {
 
   constructor(
     dispatch: Dispatch,
-    broker: ParticipantYBroker,
+    broker: ParticipantBroker,
     participants: Map<string, Participant>
   ) {
     this.dispatch = dispatch;

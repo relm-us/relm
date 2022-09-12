@@ -78,7 +78,7 @@ import { participantId } from "~/identity/participantId";
 import { Avatar } from "~/identity/Avatar";
 import { Participant } from "~/types/identity";
 import { ParticipantManager } from "~/identity/ParticipantManager";
-import { ParticipantYBroker } from "~/identity/ParticipantYBroker";
+import { ParticipantBroker } from "~/identity/ParticipantBroker";
 import { delay } from "~/utils/delay";
 import { RelmRestAPI } from "~/main/RelmRestAPI";
 import { PhotoBooth } from "./PhotoBooth";
@@ -103,7 +103,7 @@ type LoopType =
 export class WorldManager {
   dispatch: Dispatch;
   state: State;
-  broker: ParticipantYBroker;
+  broker: ParticipantBroker;
   api: RelmRestAPI;
   clock: Clock;
   security: Security;
@@ -163,7 +163,7 @@ export class WorldManager {
   async init(
     dispatch: Dispatch,
     state: State,
-    broker: ParticipantYBroker,
+    broker: ParticipantBroker,
     ecsWorld: DecoratedECSWorld,
     worldDoc: WorldDoc,
     pageParams: PageParams,

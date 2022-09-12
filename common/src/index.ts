@@ -11,3 +11,5 @@ export * from "./utils/index.js";
 export * from "./y-websocket/index.js";
 
 export * from "./constants.js";
+
+export type { Awareness } from "y-protocols/awareness";

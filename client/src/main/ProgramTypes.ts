@@ -14,7 +14,7 @@ import type {
   PageParams,
   WorldDocStatus,
 } from "~/types";
-import type { ParticipantYBroker } from "~/identity/ParticipantYBroker";
+import type { ParticipantBroker } from "~/identity/ParticipantBroker";
 import type { Avatar } from "~/identity/Avatar";
 import type { IdentityData, Participant } from "~/types/identity";
 
@@ -42,7 +42,7 @@ export type State = {
   participantQuickAppearance?: Appearance;
   localAvatarInitialized: boolean;
   localIdentityData: Writable<IdentityData>;
-  broker?: ParticipantYBroker;
+  broker?: ParticipantBroker;
   observeFieldsFn?: any;
   observeChatFn?: any;
 
@@ -98,7 +98,7 @@ export type Message =
     }
 
   // Participants
-  | { id: "didSubscribeBroker"; broker: ParticipantYBroker }
+  | { id: "didSubscribeBroker"; broker: ParticipantBroker }
   | { id: "didMakeLocalAvatar"; avatar: Avatar }
   | {
       id: "recvParticipantData";

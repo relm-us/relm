@@ -407,7 +407,6 @@ export function makeProgram(): Program {
       }
 
       case "createdWorldDoc": {
-        exists(state.ecsWorld, "ecsWorld");
         exists(msg.worldDoc, "worldDoc");
 
         return [
@@ -421,7 +420,7 @@ export function makeProgram(): Program {
             send({ id: "loadStart" }),
 
             // Initialize the Participant Program
-            subscribeBroker(msg.worldDoc, state.ecsWorld, state.participants),
+            subscribeBroker(msg.worldDoc.provider.awareness),
           ]),
         ];
       }

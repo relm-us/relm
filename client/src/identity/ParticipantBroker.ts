@@ -1,9 +1,7 @@
 import type { IdentityData } from "~/types";
+import type { Awareness } from "relm-common";
 
-import * as Y from "yjs";
 import { writable, Writable, get } from "svelte/store";
-
-import { WorldDoc } from "~/y-integration/WorldDoc";
 
 import { Dispatch } from "~/main/ProgramTypes";
 import { isEqual } from "~/utils/isEqual";
@@ -12,19 +10,15 @@ import { isEqual } from "~/utils/isEqual";
  * An adapter between the WorldDoc's "identities" map (Yjs) and
  * our participant-focused functional reactive runtime.
  */
-export class ParticipantYBroker {
-  worldDoc: WorldDoc;
+export class ParticipantBroker {
+  awareness: Awareness;
   unsubs: Function[];
   clients: Writable<Map<number, IdentityData>>;
 
-  constructor(worldDoc: WorldDoc) {
-    this.worldDoc = worldDoc;
+  constructor(awareness: Awareness) {
+    this.awareness = awareness;
     this.unsubs = [];
     this.clients = writable(new Map());
-  }
-
-  get awareness() {
-    return this.worldDoc.provider.awareness;
   }
 
   setField(key, value) {
