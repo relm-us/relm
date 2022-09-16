@@ -10,4 +10,4 @@ import { storedWritable } from "~/utils/storedWritable";
  * 3: high quality
  * 4: highest quality
  */
-export const graphicsQuality: Writable<number> = storedWritable("quality", 3);
+export const graphicsQuality: Writable<number> = storedWritable("quality", 2);
