@@ -103,7 +103,8 @@ export class ParticipantManager {
       if (transformData) {
         if (logEnabled && Math.random() < 0.04)
           console.log("applying rapid data to other", state["id"]);
-        maybeMakeAvatar(world, participant, transformData);
+        if (participant.modified)
+          maybeMakeAvatar(world, participant, transformData);
         avatarSetTransformData(participant.avatar, transformData);
       } else if (logEnabled && Math.random() < 0.04) {
         console.log("no transform data from other participant", state["id"]);
