@@ -32,7 +32,6 @@ import { getPageParams } from "./effects/getPageParams";
 import { joinAudioVideo } from "./effects/joinAudioVideo";
 import { getAuthenticationHeaders } from "./effects/getAuthenticationHeaders";
 import { pollLoadingState } from "./effects/pollLoadingState";
-import { subscribeBroker } from "./effects/subscribeBroker";
 import { makeLocalAvatar } from "./effects/makeLocalAvatar";
 import { resetArrowKeys } from "./effects/resetArrowKeys";
 import { requestCloneRelm } from "./effects/requestCloneRelm";
@@ -45,7 +44,6 @@ import LoadingScreen from "./views/LoadingScreen.svelte";
 import LoadingFailed from "./views/LoadingFailed.svelte";
 
 import { participantId } from "~/identity/participantId";
-import { participantRemoveAvatar } from "~/identity/ParticipantManager";
 import { setAvatarFromParticipant } from "~/identity/Avatar/setAvatarFromParticipant";
 import { getDefaultAppearance } from "~/identity/Avatar/appearance";
 import { localIdentityData } from "~/stores/identityData";
@@ -56,6 +54,7 @@ import { saveIdentityData } from "./effects/saveIdentityData";
 import { connectedAccount } from "~/stores/connectedAccount";
 import { permits } from "~/stores/permits";
 import { Security } from "~/../../common/dist";
+import { ParticipantBroker } from "~/identity/ParticipantBroker";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -163,7 +162,8 @@ export function makeProgram(): Program {
 
       case "gotRelmPermitsAndMetadata": {
         exists(msg.permits, "permits");
-        exists(msg.relmDocId, "relmDocId");
+        exists(msg.permanentDocId, "permanentDocId");
+        exists(msg.transientDocId, "transientDocId");
         exists(msg.entitiesMax, "entitiesMax");
         exists(msg.assetsMax, "assetsMax");
         exists(msg.twilioToken, "twilioToken");
@@ -174,7 +174,8 @@ export function makeProgram(): Program {
           {
             ...state,
             overrideParticipantName: msg.overrideParticipantName,
-            relmDocId: msg.relmDocId,
+            permanentDocId: msg.permanentDocId,
+            transientDocId: msg.transientDocId,
             entitiesMax: msg.entitiesMax,
             assetsMax: msg.assetsMax,
             twilioToken: msg.twilioToken,
@@ -196,18 +197,6 @@ export function makeProgram(): Program {
         ];
       }
 
-      case "removeParticipant": {
-        for (let [participantId, participant] of state.participants) {
-          if (participant.identityData.clientId === msg.clientId) {
-            participantRemoveAvatar(participant);
-          }
-        }
-
-        // TODO: leave video conference if participants <= 1
-
-        return [state];
-      }
-
       case "participantJoined": {
         const name = msg.participant.identityData.name;
         if (state.notifyContext) {
@@ -218,17 +207,19 @@ export function makeProgram(): Program {
           });
         }
 
-        console.log(
-          "participantJoined",
-          msg.participant.identityData.name,
-          state.participants.size
-        );
+        if (logEnabled) {
+          console.log(
+            "participantJoined",
+            msg.participant.identityData.name,
+            state.participants.size
+          );
+        }
 
         let nextAction = joinAudioVideo(
           state.participants.get(participantId),
           state.avConnection,
           state.avDisconnect,
-          state.relmDocId,
+          state.permanentDocId,
           state.twilioToken
         );
 
@@ -245,23 +236,7 @@ export function makeProgram(): Program {
         return [state, nextAction];
       }
 
-      case "recvParticipantData": {
-        let participant;
-
-        if (state.participants.has(msg.participantId)) {
-          participant = state.participants.get(msg.participantId);
-          participant.identityData = msg.identityData;
-          participant.modified = true;
-        } else {
-          state.participants.set(msg.participantId, {
-            participantId: msg.participantId,
-            identityData: msg.identityData,
-            editable: false, // can't edit other participants
-            modified: true,
-            /* no avatar yet, because this may be an inactive (stale) participant */
-          });
-        }
-
+      case "participantLeft": {
         return [state];
       }
 
@@ -292,7 +267,7 @@ export function makeProgram(): Program {
           state.localIdentityData.set(newIdentityData);
 
           // broadcast identityData to other participants
-          state.broker.setField("i", newIdentityData);
+          state.broker.setField("identity", newIdentityData);
 
           // sync identityData to HTML and ECS entities
           setAvatarFromParticipant(localParticipant);
@@ -391,7 +366,8 @@ export function makeProgram(): Program {
         if (state.worldDoc) {
           console.warn("Creating new worldDoc, but one already exists");
         }
-        exists(state.relmDocId, "relmDocId");
+        exists(state.permanentDocId, "permanentDocId");
+        exists(state.transientDocId, "transientDocId");
         exists(state.authHeaders, "authHeaders");
         exists(msg.ecsWorld, "ecsWorld");
         exists(msg.ecsWorldLoaderUnsub, "ecsWorldLoaderUnsub");
@@ -402,31 +378,34 @@ export function makeProgram(): Program {
             ecsWorld: msg.ecsWorld,
             ecsWorldLoaderUnsub: msg.ecsWorldLoaderUnsub,
           },
-          createWorldDoc(msg.ecsWorld, state.relmDocId, state.authHeaders),
+          createWorldDoc(
+            msg.ecsWorld,
+            state.permanentDocId,
+            state.transientDocId,
+            state.authHeaders
+          ),
         ];
       }
 
       case "createdWorldDoc": {
         exists(msg.worldDoc, "worldDoc");
+        exists(msg.slowAwareness, "slowAwareness");
+        exists(msg.rapidAwareness, "rapidAwareness");
 
         return [
           {
             ...state,
             worldDoc: msg.worldDoc,
+            broker: new ParticipantBroker(
+              msg.slowAwareness,
+              msg.rapidAwareness
+            ),
             entitiesCount: 0,
             assetsCount: 0,
           },
-          Cmd.batch([
-            send({ id: "loadStart" }),
 
-            // Initialize the Participant Program
-            subscribeBroker(msg.worldDoc.provider.awareness),
-          ]),
+          send({ id: "loadStart" }),
         ];
-      }
-
-      case "didSubscribeBroker": {
-        return [{ ...state, broker: msg.broker }];
       }
 
       case "gotWorldDocStatus": {
@@ -463,6 +442,11 @@ export function makeProgram(): Program {
             .forEach((entity) => {
               entity.get(Oculus).modified();
             });
+
+          // TODO: Why doesn't showVideo show the video here?
+          // Test case: start without video, then add video; only
+          // after the avatar moves (e.g. arrow keys) does the
+          // oculus appear.
 
           effects.push(send({ id: "startPlaying" }));
         } else {
@@ -596,7 +580,7 @@ export function makeProgram(): Program {
               state.ecsWorld,
               state.worldDoc,
               state.pageParams,
-              state.relmDocId,
+              state.permanentDocId,
               state.avConnection,
               state.participants,
               state.security

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { Participant } from "~/types";
+
   import { Audio, Video } from "video-mirror";
   import { Readable, get } from "svelte/store";
 
@@ -7,26 +9,21 @@
 
   import Fullscreen from "./Fullscreen.svelte";
   import Individual from "./Individual.svelte";
-  import { IdentityData } from "~/types";
+  import { derived } from "svelte/store";
 
   export let fullscreenParticipantId: string;
   export let videoTrack = null;
   export let audioTrack = null;
-  export let clients: Readable<Map<number, IdentityData>>;
+  export let participants: Readable<Participant[]>;
 
-  function getMeAndOtherParticipants(clientIds: Map<number, IdentityData>) {
-    const participants = worldManager.participants.getByClientIds(clientIds.keys());
-
-    // Add me so I can see myself
-    const me = worldManager.participants.participants.get(localParticipantId);
-    participants.push(me);
-
-    // Don't show the "big screen" participant as a little screen also
-    const filtered = participants.filter(
-      (p) => p.participantId !== fullscreenParticipantId
-    );
-    return filtered;
-  }
+  const smallParticipants: Readable<Participant[]> = derived(
+    [participants],
+    ([$participants], set) => {
+      set(
+        $participants.filter((p) => p.participantId !== fullscreenParticipantId)
+      );
+    }
+  );
 </script>
 
 <Fullscreen on:close>
@@ -36,7 +33,7 @@
   </r-fullscreen-meeting>
 
   <small-pics>
-    {#each [...getMeAndOtherParticipants($clients)] as participant}
+    {#each $smallParticipants as participant}
       <div>
         <Individual
           diameter={100}

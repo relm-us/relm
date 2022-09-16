@@ -1,4 +1,9 @@
-import type { Appearance, Equipment, PlayerStatus, SavedIdentityData } from "relm-common";
+import type {
+  Appearance,
+  Equipment,
+  PlayerStatus,
+  SavedIdentityData,
+} from "relm-common";
 
 import type { Entity } from "~/ecs/base";
 import type { Avatar } from "~/identity/Avatar";
@@ -47,13 +52,10 @@ export type TransformData = [
   z: number,
   theta: number,
   headTheta: number,
-  oculusOffset: number
+  oculusOffset: number,
+  clipIndex: number,
+  animLoop: boolean
 ];
-
-export type AnimationData = {
-  clipIndex: number;
-  animLoop: boolean;
-};
 
 export type AvatarEntities = {
   head: Entity;

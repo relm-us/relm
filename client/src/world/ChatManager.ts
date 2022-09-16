@@ -73,12 +73,6 @@ export class ChatManager {
       if ($open) {
         this.readCount.set(get(this.messages).length);
       }
-
-      // // Broadcast speech state to all players
-      // TODO: FIXME
-      // if (!$open) {
-      //   this.setCommunicatingState(null, "speaking", false);
-      // }
     });
   }
 

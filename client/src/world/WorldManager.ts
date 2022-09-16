@@ -125,6 +125,8 @@ export class WorldManager {
   lastActivity: number = 0;
   lastFpsChange: number = 0;
 
+  myDataLastSentAt: number = 0;
+
   loopType: LoopType = { type: "reqAnimFrame" };
   fpsLocked: boolean = false;
 
@@ -149,6 +151,7 @@ export class WorldManager {
   unsubs: Function[] = [];
   afterInitFns: Function[] = [];
   didInit: boolean = false;
+  didDeinit: boolean = false;
 
   get dragPlane(): DragPlane {
     if (!this._dragPlane) this._dragPlane = new DragPlane(this.world);
@@ -194,7 +197,15 @@ export class WorldManager {
 
     this.selection = new SelectionManager(this);
 
-    this.participants = new ParticipantManager(dispatch, broker, participants);
+    this.participants = new ParticipantManager(
+      dispatch,
+      broker,
+      participants
+    ).init();
+
+    // It's important that broker.subscribe() happen AFTER the
+    // ParticipantManager exists and starts listening:
+    this.broker.subscribe();
 
     this.logins = new LoginManager(
       this.api,
@@ -494,6 +505,7 @@ export class WorldManager {
     this.afterInitFns.forEach((fn) => fn());
     this.afterInitFns.length = 0;
     this.didInit = true;
+    this.didDeinit = false;
 
     const camsys = this.world.systems.get(CameraSystem) as CameraSystem;
     camsys.beginDeactivatingOffCameraEntities();
@@ -501,7 +513,12 @@ export class WorldManager {
   }
 
   async deinit() {
-    console.trace("worldManager.deinit");
+    if (this.didDeinit) {
+      console.trace("worldManager.deinit already called; skipping");
+      return;
+    } else {
+      console.trace("worldManager.deinit");
+    }
 
     this.broker.unsubscribe();
 
@@ -510,7 +527,6 @@ export class WorldManager {
     this.unsubs.forEach((f) => f());
     this.unsubs.length = 0;
 
-    this.worldDoc.disconnect();
     this.worldDoc.unsubscribe();
 
     this.scene.traverse((node) => (node as any).dispose?.());
@@ -537,6 +553,7 @@ export class WorldManager {
     this.participants = null;
 
     this.didInit = false;
+    this.didDeinit = true;
     this.fpsLocked = false;
   }
 
@@ -788,11 +805,15 @@ export class WorldManager {
 
     fpsTime.addData(delta === 0 ? 60 : 1 / delta);
 
-    this.participants.applyOthersState(this.world, this.worldDoc.provider);
+    this.participants.applyOthersRapidData(this.world);
 
     this.worldStep(delta);
 
-    this.participants.sendMyState();
+    const now = performance.now();
+    if (now - this.myDataLastSentAt >= 50) {
+      this.participants.sendMyRapidData();
+      this.myDataLastSentAt = now;
+    }
 
     this.camera.update(delta);
   }

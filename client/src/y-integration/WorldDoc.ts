@@ -43,8 +43,8 @@ export class WorldDoc extends EventEmitter {
   // The "root node" (document) containing all specification data for the world
   ydoc: Y.Doc = new Y.Doc();
 
-  // Yjs synchronization provider
-  provider: WebsocketProvider;
+  // A "transient" document used only for rapid awareness data transfer
+  transientYdoc: Y.Doc = new Y.Doc();
 
   // The array of entities stored in the Y.Doc. We store entities as a Y.Array
   // rather than a Y.Map because, per Yjs docs, this allows nodes to be garbage
@@ -102,10 +102,11 @@ export class WorldDoc extends EventEmitter {
 
   connect(
     url: string,
-    subrelmDocId: string,
+    docId: string,
+    ydoc: Y.Doc,
     authHeaders: AuthenticationHeaders
   ) {
-    this.provider = new WebsocketProvider(url, subrelmDocId, this.ydoc, {
+    const provider = new WebsocketProvider(url, docId, ydoc, {
       params: {
         "participant-id": authHeaders["x-relm-participant-id"],
         "participant-sig": authHeaders["x-relm-participant-sig"],
@@ -116,27 +117,15 @@ export class WorldDoc extends EventEmitter {
       },
       resyncInterval: 10000,
     });
-    return this.provider;
-  }
 
-  disconnect() {
-    if (this.provider) {
-      this.provider.disconnect();
-      this.provider = null;
-    }
+    this.unsubs.push(() => provider.disconnect());
+
+    return provider;
   }
 
   unsubscribe() {
     this.unsubs.forEach((f) => f());
     this.unsubs.length = 0;
-  }
-
-  subscribeStatus(sub: (status: WorldDocStatus) => void) {
-    const provider = this.provider;
-    if (provider) {
-      provider.on("status", ({ status }) => sub(status));
-      this.unsubs.push(() => provider.off("status", sub));
-    }
   }
 
   getDeprecatedDocument(docId: string) {

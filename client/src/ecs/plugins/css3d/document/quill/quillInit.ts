@@ -1,3 +1,5 @@
+import type { WorldDoc } from "~/y-integration/WorldDoc";
+
 import Quill from "quill";
 import QuillCursors from "quill-cursors";
 import ImageUploader from "quill-image-uploader";
@@ -33,13 +35,14 @@ export function quillInit(
 ) {
   const modules = {
     cursors,
-    toolbar
+    toolbar,
   } as any;
 
   if (toolbar) {
     // The imageUploader REQUIRES the toolbar module to be active.
     modules.imageUploader = {
-      upload: file => new Promise((resolve, reject) => {
+      upload: (file) =>
+        new Promise((resolve, reject) => {
           const formData = new FormData();
           formData.append("file", file);
 
@@ -47,13 +50,15 @@ export function quillInit(
             method: "POST",
             body: formData,
           })
-          .then(r => r.json())
-          .then(result => resolve(`${config.serverUrl}/asset/${result.files.png}`))
-          .catch(error => {
-            reject("Upload failed");
-            console.error("Upload failure:", error);
-          });
-      })
+            .then((r) => r.json())
+            .then((result) =>
+              resolve(`${config.serverUrl}/asset/${result.files.png}`)
+            )
+            .catch((error) => {
+              reject("Upload failed");
+              console.error("Upload failure:", error);
+            });
+        }),
     };
   }
   const editor = new Quill(container, {
@@ -68,15 +73,14 @@ export function quillInit(
 }
 
 // Bind Quill to a yjs document, and return an unbind function
-export function quillBind(docId, editor) {
+export function quillBind(docId: string, editor: Quill) {
   let binding;
 
   worldManager.afterInit(() => {
-    const wdoc = worldManager.worldDoc;
     binding = new QuillBinding(
-      wdoc.getDocument(docId),
+      worldManager.worldDoc.getDocument(docId),
       editor,
-      wdoc.provider.awareness
+      worldManager.broker.slow
     );
   });
 

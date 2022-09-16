@@ -1,100 +1,121 @@
-import type { IdentityData } from "~/types";
 import type { Awareness } from "relm-common";
 
-import { writable, Writable, get } from "svelte/store";
+import { EventEmitter } from "eventemitter3";
 
-import { Dispatch } from "~/main/ProgramTypes";
-import { isEqual } from "~/utils/isEqual";
+import { participantId } from "./participantId";
 
 /**
- * An adapter between the WorldDoc's "identities" map (Yjs) and
- * our participant-focused functional reactive runtime.
+ * A data broker that distinguishes between slow ("occasional") updates, and
+ * fast (small and timely) data. Uses two Awareness objects, one for each mode.
  */
-export class ParticipantBroker {
-  awareness: Awareness;
+export class ParticipantBroker extends EventEmitter {
+  slow: Awareness;
+  rapid: Awareness;
+  subscribed: boolean = false;
   unsubs: Function[];
-  clients: Writable<Map<number, IdentityData>>;
+  participantIds: Map<number, string> = new Map();
 
-  constructor(awareness: Awareness) {
-    this.awareness = awareness;
+  get slowValues() {
+    return this.slow.getStates().values();
+  }
+
+  get rapidValues() {
+    return this.rapid.getStates().values();
+  }
+
+  constructor(slow: Awareness, rapid: Awareness) {
+    super();
+
+    this.slow = slow;
+    this.slow.setLocalStateField("id", participantId);
+
+    this.rapid = rapid;
+    this.rapid.setLocalStateField("id", participantId);
+
     this.unsubs = [];
-    this.clients = writable(new Map());
   }
 
   setField(key, value) {
-    this.awareness.setLocalStateField(key, value);
+    this.slow.setLocalStateField(key, value);
   }
 
   setFields(data) {
-    this.awareness.setLocalState({
-      ...this.awareness.getLocalState(),
+    this.slow.setLocalState({
+      ...this.slow.getLocalState(),
       ...data,
     });
   }
 
   getField(key) {
-    return this.awareness.getLocalState()[key];
+    return this.slow.getLocalState()[key];
   }
 
-  subscribe(dispatch: Dispatch) {
-    this.unsubs.push(this.subscribeData(dispatch));
-    this.unsubs.push(this.subscribeDisconnect(dispatch));
+  setRapidField(key, value) {
+    this.rapid.setLocalStateField(key, value);
+  }
+
+  getRapidField(key) {
+    return this.rapid.getLocalState()[key];
+  }
+
+  subscribe() {
+    if (this.subscribed) {
+      console.warn("already subscribed to ParticipantBroker");
+      return;
+    }
+
+    // At the moment we subscribe, there may be some "state" that has
+    // already been queued up that we need to announce
+    for (let [clientId, state] of this.slow.getStates().entries()) {
+      this.maybeEmitState(clientId, state);
+    }
+
+    const observer = (changes) => {
+      for (let id of changes.removed) {
+        if (this.participantIds.has(id)) {
+          this.emit("remove", this.participantIds.get(id));
+          this.participantIds.delete(id);
+        } else {
+          console.warn("client removed, without knowing its participantId", id);
+        }
+      }
+
+      const idsToCheck = changes.added.concat(changes.updated);
+      for (const clientId of idsToCheck) {
+        const state = this.slow.getStates().get(clientId);
+        this.maybeEmitState(clientId, state);
+      }
+    };
+
+    this.slow.on("change", observer);
+
+    this.unsubs.push(() => this.slow.off("change", observer));
+
+    this.subscribed = true;
+
+    return this;
+  }
+
+  maybeEmitState(clientId: number, state) {
+    const stateParticipantId = state["id"];
+    const stateIdentityData = state["identity"];
+    if (stateParticipantId === participantId) {
+      // Don't broadcast self state
+    } else if (stateParticipantId && stateIdentityData) {
+      if (!this.participantIds.has(clientId)) {
+        this.emit("add", stateParticipantId, stateIdentityData);
+        this.participantIds.set(clientId, stateParticipantId);
+      } else {
+        this.emit("update", stateParticipantId, stateIdentityData);
+      }
+    } else {
+      console.log("state missing data, skipping", state);
+    }
   }
 
   unsubscribe() {
     this.unsubs.forEach((unsub) => unsub());
     this.unsubs.length = 0;
-  }
-
-  subscribeDisconnect(dispatch: Dispatch) {
-    const observer = (changes) => {
-      for (let id of changes.removed) {
-        this.clients.update(($clients) => {
-          $clients.delete(id);
-          return $clients;
-        });
-        // Remove participant avatars when they disconnect
-        dispatch({ id: "removeParticipant", clientId: id });
-      }
-    };
-
-    this.awareness.on("change", observer);
-
-    return () => this.awareness.off("change", observer);
-  }
-
-  subscribeData(dispatch: Dispatch) {
-    const observer = (changes) => {
-      const idsToCheck = changes.added.concat(changes.updated);
-      for (const id of idsToCheck) {
-        // Don't subscribe to self data
-        if (id === this.awareness.clientID) continue;
-
-        const state = this.awareness.getStates().get(id);
-
-        const participantId = state["id"];
-        const identityData = state["i"];
-
-        if (!participantId || !identityData) continue;
-
-        // Update identity data as necessary
-        if (!isEqual(get(this.clients).get(id), identityData)) {
-          this.clients.update(($clients) => {
-            $clients.set(id, identityData);
-            return $clients;
-          });
-
-          dispatch({
-            id: "recvParticipantData",
-            participantId,
-            identityData,
-          });
-        }
-      }
-    };
-
-    this.awareness.on("change", observer);
-
-    return () => this.awareness.off("change", observer);
+    this.subscribed = false;
   }
 }

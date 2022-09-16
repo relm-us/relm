@@ -83,7 +83,7 @@ export class OculusSystem extends System {
       target: container,
       props: {
         ...spec,
-        clients: worldManager.participants.broker.clients,
+        participants: worldManager.participants.store,
         entity,
       },
     });

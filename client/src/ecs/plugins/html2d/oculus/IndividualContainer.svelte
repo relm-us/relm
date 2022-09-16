@@ -3,9 +3,10 @@
    * IndividualContainer: The highest-level svelte component for audio/video. Manages switching to/from fullscreen mode.
    */
 
-  import type { Cut } from "./types";
+  import type { Readable } from "svelte/store";
 
-  import { Readable } from "svelte/store";
+  import type { Participant } from "~/types";
+  import type { Cut } from "./types";
 
   import { worldManager } from "~/world";
   import { participantId as localParticipantId } from "~/identity/participantId";
@@ -23,14 +24,13 @@
 
   import Individual from "./Individual.svelte";
   import FullscreenMeeting from "./FullscreenMeeting.svelte";
-  import { IdentityData } from "~/types";
 
   export let participantName: string;
   export let color: string;
   export let showAudio: boolean;
   export let showVideo: boolean;
   export let participantId: string;
-  export let clients: Readable<Map<number, IdentityData>>;
+  export let participants: Readable<Participant[]>;
   export let entity: Entity;
 
   export let diameter: number = null;
@@ -113,7 +113,7 @@
 
 {#if fullscreen}
   <FullscreenMeeting
-    {clients}
+    {participants}
     fullscreenParticipantId={participantId}
     videoTrack={showVideo && $videoStore}
     audioTrack={showAudio && !isLocal && $audioStore}

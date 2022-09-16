@@ -36,7 +36,8 @@ export const getRelmPermitsAndMetadata =
       return dispatch({
         id: "gotRelmPermitsAndMetadata",
         permits: result.permits,
-        relmDocId: result.relm.permanentDocId,
+        permanentDocId: result.relm.permanentDocId,
+        transientDocId: result.relm.transientDocId,
         entitiesMax: result.relm.entitiesCount, // TODO: Change metadata API to return 'entitiesMax'
         assetsMax: result.relm.assetsCount,
         overrideParticipantName: result.jwt?.username,

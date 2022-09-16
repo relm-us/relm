@@ -1,4 +1,4 @@
-import type { TransformData, AnimationData, Participant, IdentityData } from "~/types";
+import type { TransformData, Participant, IdentityData } from "~/types";
 
 import { Vector3, Euler, AnimationClip } from "three";
 import { Appearance } from "relm-common";
@@ -9,7 +9,6 @@ import { Animation } from "~/ecs/plugins/animation";
 
 import { Avatar } from "../Avatar";
 import { makeRemoteAvatarEntities } from "./makeRemoteAvatarEntities";
-import { setAvatarFromParticipant } from "./setAvatarFromParticipant";
 import { DecoratedECSWorld } from "types/DecoratedECSWorld";
 import { Oculus } from "~/ecs/plugins/html2d";
 import { changeAnimationClip } from "./changeAnimationClip";
@@ -40,42 +39,36 @@ export function avatarGetTransformData(
   // Get angle of head
   transformData[4] = avatar.headAngle;
 
+  // Get oculus height
   const oculus = entities.body.get(Oculus);
   if (oculus) {
     transformData[5] = oculus.targetOffset.y;
   }
 
-  return transformData as TransformData;
-}
-
-export function avatarGetAnimationData(
-  this: void,
-  avatar: Avatar
-): AnimationData {
-  const entities = avatar.entities;
-  if (!entities.body) return;
-
-  const animationData = {
-    clipIndex: null,
-    animLoop: false,
-  };
-
+  // Get animation data
   const ref: Model2Ref = entities.body.get(Model2Ref);
   const clips: AnimationClip[] = ref?.value?.animations;
   const animation: Animation = entities.body.get(Animation);
   if (clips && animation) {
-    animationData.clipIndex = clips.findIndex(
-      (c) => c.name === animation.clipName
-    );
-    animationData.animLoop = animation.loop;
+    transformData[6] = clips.findIndex((c) => c.name === animation.clipName);
+    transformData[7] = animation.loop;
   }
 
-  return animationData;
+  return transformData as TransformData;
 }
 
-function avatarSetTransformData(
+export function avatarSetTransformData(
   avatar: Avatar,
-  [x, y, z, bodyAngle, headAngle, oculusOffset]: TransformData
+  [
+    x,
+    y,
+    z,
+    bodyAngle,
+    headAngle,
+    oculusOffset,
+    clipIndex,
+    animLoop,
+  ]: TransformData
 ) {
   const entities = avatar.entities;
   if (!entities.body) return;
@@ -106,17 +99,11 @@ function avatarSetTransformData(
     avatar.headAngle = headAngle;
   }
 
+  // Set oculus height
   const oculus = entities.body.get(Oculus);
   if (oculus) oculus.targetOffset.y = oculusOffset;
-}
 
-export function avatarSetAnimationData(
-  avatar: Avatar,
-  { clipIndex, animLoop }: AnimationData
-) {
-  const entities = avatar.entities;
-  if (!entities.body) return;
-
+  // Set animation data
   const ref: Model2Ref = entities.body.get(Model2Ref);
   const clips = ref?.value.animations;
   if (clips && clipIndex >= 0 && clipIndex < clips.length) {
@@ -135,19 +122,15 @@ export function avatarSetAppearanceData(
   }
 }
 
-export function setDataOnParticipant(
-  this: void,
+export function maybeMakeAvatar(
   ecsWorld: DecoratedECSWorld,
   participant: Participant,
-  transformData: TransformData,
-  animationData: AnimationData,
-  identityData: IdentityData,
-  onAddParticipant: (participant: Participant) => void
+  transformData: TransformData
 ) {
-  // Record that we've seen this participant now, so we can know which
-  // participants are currently active
-  participant.lastSeen = performance.now();
-
+  if (!transformData) {
+    console.warn("can't make avatar, no transformData");
+    return;
+  }
   if (!participant.avatar) {
     const position = new Vector3().fromArray(transformData as number[], 1);
     const entities = makeRemoteAvatarEntities(
@@ -159,21 +142,17 @@ export function setDataOnParticipant(
       }
     );
     participant.avatar = new Avatar(ecsWorld, entities);
-
-    // Let caller handle anything that should happen when the participant first arrives
-    onAddParticipant(participant);
-  }
-
-  avatarSetTransformData(participant.avatar, transformData);
-  avatarSetAnimationData(participant.avatar, animationData);
-  avatarSetAppearanceData(participant, identityData.appearance);
-
-  // If the remote participant is active (if we've reached this point,
-  // they are), and some IdentityData has been modified, then take the
-  // opportunity to update the remote participant's label, appearance,
-  // etc.
-  if (participant.modified) {
-    setAvatarFromParticipant(participant);
-    participant.modified = false;
   }
 }
+
+// export function setDataOnParticipant(
+
+// If the remote participant is active (if we've reached this point,
+// they are), and some IdentityData has been modified, then take the
+// opportunity to update the remote participant's label, appearance,
+// etc.
+//
+// if (participant.modified) {
+//   setAvatarFromParticipant(participant);
+//   participant.modified = false;
+// }

@@ -75,6 +75,16 @@ async function addLatestDocs(relm) {
     relm.assetsCount = docs.permanent.assetsCount;
   }
 
+  if (docs.transient) {
+    relm.transientDocId = docs.transient.docId;
+  } else {
+    const tdoc = await Doc.setDoc({
+      docType: "transient",
+      relmId: relm.relmId,
+    });
+    relm.transientDocId = tdoc.docId;
+  }
+
   return relm;
 }
 
@@ -191,6 +201,12 @@ export async function createRelm({
       relmId: relm.relmId,
     });
     relm.permanentDocId = doc.docId;
+
+    const tdoc = await Doc.setDoc({
+      docType: "transient",
+      relmId: relm.relmId,
+    });
+    relm.transientDocId = tdoc.docId;
 
     return relm;
   } else {

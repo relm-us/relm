@@ -1,22 +1,40 @@
-import type { DecoratedECSWorld, Participant, UpdateData } from "~/types";
+import type {
+  DecoratedECSWorld,
+  IdentityData,
+  Participant,
+  UpdateData,
+} from "~/types";
 
-import { WebsocketProvider, Appearance, Equipment } from "relm-common";
+import { Appearance, Equipment } from "relm-common";
+import filter from "lodash/filter";
 
 import { participantId } from "./participantId";
 
 import { Dispatch } from "~/main/ProgramTypes";
 import {
-  avatarGetAnimationData,
   avatarGetTransformData,
-  setDataOnParticipant,
+  avatarSetTransformData,
+  maybeMakeAvatar,
 } from "./Avatar/transform";
 import { ParticipantBroker } from "./ParticipantBroker";
-import { isEqual } from "~/utils/isEqual";
+import { setAvatarFromParticipant } from "./Avatar";
+import { Readable, Writable, writable } from "svelte/store";
+
+const logEnabled = (localStorage.getItem("debug") || "")
+  .split(":")
+  .includes("participant");
 
 export class ParticipantManager {
   dispatch: Dispatch;
   broker: ParticipantBroker;
   participants: Map<string, Participant>;
+  unsubs: Function[] = [];
+
+  _store: Writable<Participant[]>;
+
+  get store(): Readable<Participant[]> {
+    return this._store;
+  }
 
   get local(): Participant {
     return this.participants.get(participantId);
@@ -35,6 +53,16 @@ export class ParticipantManager {
     this.dispatch = dispatch;
     this.broker = broker;
     this.participants = participants;
+
+    this._store = writable(Array.from(participants.values()));
+  }
+
+  init() {
+    this.listen("add", this.addParticipant.bind(this));
+    this.listen("update", this.updateParticipant.bind(this));
+    this.listen("remove", this.removeParticipant.bind(this));
+
+    return this;
   }
 
   deinit() {
@@ -44,82 +72,48 @@ export class ParticipantManager {
     this.participants.clear();
   }
 
-  getByClientIds(clientIds: Iterable<number>): Participant[] {
-    let participants = [];
-    for (let clientId of clientIds) {
-      const participant = this.getByClientId(clientId);
-      if (participant) participants.push(participant);
-    }
-    return participants;
+  listen(signal: string, fn) {
+    this.broker.on(signal, fn);
+    this.unsubs.push(() => this.broker.off(signal, fn));
   }
 
-  getByClientId(clientId: number): Participant {
-    let matchingParticipant;
-    for (let participant of this.participants.values()) {
-      if (participant.identityData.clientId === clientId) {
-        matchingParticipant = participant;
-        break;
+  sendMyRapidData() {
+    if (this.local.avatar) {
+      if (logEnabled && Math.random() < 0.04) {
+        console.log("sending my rapid data", participantId);
       }
-    }
-    return matchingParticipant;
-  }
-
-  sendMyState() {
-    const state = this.broker.awareness.getLocalState();
-    if (!state) return;
-
-    const avatar = this.local.avatar;
-    if (!this.local.avatar) return;
-
-    const transformData = avatarGetTransformData(avatar);
-    const animationData = avatarGetAnimationData(avatar);
-
-    const changeDetected =
-      state["id"] !== participantId ||
-      !isEqual(state["i"], this.local.identityData) ||
-      !isEqual(state["a"], animationData) ||
-      !isEqual(state["t"], transformData);
-
-    // Only send a new awareness update if a change is detected.
-    if (changeDetected) {
-      this.broker.setFields({
-        id: participantId,
-        i: this.local.identityData,
-        a: animationData,
-        t: transformData,
-        user: {
-          // For QuillJS
-          name: this.local.identityData.name,
-          color: this.local.identityData.color,
-        },
-      });
+      this.broker.setRapidField("t", avatarGetTransformData(this.local.avatar));
     }
   }
 
-  applyOthersState(world: DecoratedECSWorld, provider: WebsocketProvider) {
-    const states = provider.awareness.getStates();
-
-    for (let state of states.values()) {
+  applyOthersRapidData(world: DecoratedECSWorld) {
+    for (let state of this.broker.rapidValues) {
       if (!("id" in state)) continue;
       if (state["id"] === participantId) continue;
 
       const participant: Participant = this.participants.get(state["id"]);
       if (!participant) continue;
 
-      const transformData = state["t"];
-      const animationData = state["a"];
-      const identityData = state["i"];
+      // Record that we've seen this participant now, so we can know which
+      // participants are currently active
+      participant.lastSeen = performance.now();
 
-      setDataOnParticipant(
-        world,
-        participant,
-        transformData,
-        animationData,
-        identityData,
-        (participant) => {
-          this.dispatch({ id: "participantJoined", participant });
-        }
-      );
+      const transformData = state["t"];
+
+      if (transformData) {
+        if (logEnabled && Math.random() < 0.04)
+          console.log("applying rapid data to other", state["id"]);
+        maybeMakeAvatar(world, participant, transformData);
+        avatarSetTransformData(participant.avatar, transformData);
+      } else if (logEnabled && Math.random() < 0.04) {
+        console.log("no transform data from other participant", state["id"]);
+        return;
+      }
+
+      if (participant.modified && participant.avatar) {
+        setAvatarFromParticipant(participant);
+        participant.modified = false;
+      }
     }
   }
 
@@ -180,6 +174,54 @@ export class ParticipantManager {
   setMic(showAudio: boolean) {
     this.updateMe({ showAudio });
   }
+
+  addParticipant(participantId: string, identityData: IdentityData) {
+    const participant: Participant = {
+      participantId: participantId,
+      identityData: identityData,
+      editable: false, // can't edit other participants
+      modified: true,
+    };
+
+    this.participants.set(participantId, participant);
+
+    // Add participant to svelte store
+    this._store.update(($participants) => [...$participants, participant]);
+
+    this.dispatch({ id: "participantJoined", participant });
+
+    return participant;
+  }
+
+  updateParticipant(participantId: string, identityData: IdentityData) {
+    const participant = this.participants.get(participantId);
+
+    participant.identityData = identityData;
+    participant.modified = true;
+
+    return participant;
+  }
+
+  removeParticipant(participantId) {
+    const participant = this.participants.get(participantId);
+
+    if (participant.avatar) {
+      Object.values(participant.avatar.entities).forEach((entity) =>
+        entity?.destroy()
+      );
+      participant.avatar = null;
+    }
+
+    // Remove participant from svelte store
+    this._store.update(($participants) =>
+      filter(
+        $participants,
+        (p: Participant) => p.participantId === participantId
+      )
+    );
+
+    this.dispatch({ id: "participantLeft", participantId });
+  }
 }
 
 const LONG_TIME_AGO = 600000; // 5 minutes ago
@@ -201,14 +243,4 @@ export function participantIsActive(
   participant: Participant
 ): boolean {
   return participantSeenAgo(participant) < LAST_SEEN_TIMEOUT;
-}
-
-export function participantRemoveAvatar(this: void, participant: Participant) {
-  console.log("participantRemoveAvatar", participant.avatar);
-  if (participant.avatar?.entities) {
-    Object.values(participant.avatar.entities).forEach((entity) =>
-      entity?.destroy()
-    );
-  }
-  participant.avatar = null;
 }

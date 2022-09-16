@@ -1,7 +1,7 @@
 import type { Vector3 } from "three";
 import type { DeviceIds } from "video-mirror";
 import type { Writable } from "svelte/store";
-import type { Appearance, SavedIdentityData } from "relm-common";
+import type { Appearance, Awareness, SavedIdentityData } from "relm-common";
 
 import type { AuthenticationHeaders, Security } from "relm-common";
 
@@ -9,11 +9,7 @@ import type { WorldDoc } from "~/y-integration/WorldDoc";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import type { AVConnection } from "~/av/AVConnection";
 
-import type {
-  UpdateData,
-  PageParams,
-  WorldDocStatus,
-} from "~/types";
+import type { UpdateData, PageParams, WorldDocStatus } from "~/types";
 import type { ParticipantBroker } from "~/identity/ParticipantBroker";
 import type { Avatar } from "~/identity/Avatar";
 import type { IdentityData, Participant } from "~/types/identity";
@@ -29,7 +25,8 @@ export type State = {
   security?: Security;
 
   // relm metadata
-  relmDocId?: string; // server-assigned UUID for the relm
+  permanentDocId?: string; // server-assigned UUID for the relm ydoc
+  transientDocId?: string; // server-assigned UUID for the transient awareness ydoc
   assetsMax?: number;
   assetsCount?: number;
   entitiesMax?: number;
@@ -86,11 +83,12 @@ export type Message =
   | { id: "enterPortal"; relmName: string; entryway: string }
   | { id: "didEnterPortal" }
   | { id: "didResetWorld" }
-  | { id: "gotIdentityData", identity: SavedIdentityData, isConnected: boolean }
+  | { id: "gotIdentityData"; identity: SavedIdentityData; isConnected: boolean }
   | {
       id: "gotRelmPermitsAndMetadata";
       permits: string[];
-      relmDocId: string;
+      permanentDocId: string;
+      transientDocId: string;
       entitiesMax: number;
       assetsMax: number;
       overrideParticipantName: string;
@@ -98,27 +96,23 @@ export type Message =
     }
 
   // Participants
-  | { id: "didSubscribeBroker"; broker: ParticipantBroker }
   | { id: "didMakeLocalAvatar"; avatar: Avatar }
-  | {
-      id: "recvParticipantData";
-      participantId: string;
-      identityData: IdentityData;
-    }
   | {
       id: "updateLocalIdentityData";
       identityData: UpdateData;
     }
-  | {
-      id: "removeParticipant";
-      clientId: number;
-    }
   | { id: "participantJoined"; participant: Participant }
+  | { id: "participantLeft"; participantId: string }
   | { id: "join" }
 
   // cont'd...
   | { id: "importedPhysicsEngine"; physicsEngine: any }
-  | { id: "createdWorldDoc"; worldDoc: WorldDoc }
+  | {
+      id: "createdWorldDoc";
+      worldDoc: WorldDoc;
+      slowAwareness: Awareness;
+      rapidAwareness: Awareness;
+    }
   | {
       id: "createdECSWorld";
       ecsWorld: DecoratedECSWorld;
@@ -140,7 +134,7 @@ export type Message =
   | { id: "didJoinAudioVideo"; avDisconnect: Function }
   | { id: "setUpAvatar" }
   | { id: "didSetUpAvatar"; appearance?: Appearance }
-  | { id: "gotIdentityData", identity: SavedIdentityData, isConnected: boolean }
+  | { id: "gotIdentityData"; identity: SavedIdentityData; isConnected: boolean }
   | { id: "prepareLocalParticipantForWorld" }
   | { id: "initWorldManager" }
   | { id: "didInitWorldManager" }

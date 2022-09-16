@@ -9,22 +9,48 @@ import { Dispatch } from "../ProgramTypes";
 export const createWorldDoc =
   (
     ecsWorld: DecoratedECSWorld,
-    relmDocId: string,
+    permanentDocId: string,
+    transientDocId: string,
     authHeaders: AuthenticationHeaders
   ) =>
   (dispatch: Dispatch) => {
     const worldDoc = new WorldDoc(ecsWorld);
 
-    worldDoc.connect(config.serverYjsUrl, relmDocId, authHeaders);
+    const permanentProvider = worldDoc.connect(
+      config.serverYjsUrl,
+      permanentDocId,
+      worldDoc.ydoc,
+      authHeaders
+    );
+
+    // Connect transient websocket, too
+    const transientProvider = worldDoc.connect(
+      config.serverYjsUrl,
+      transientDocId,
+      worldDoc.transientYdoc,
+      authHeaders
+    );
 
     let connected = false;
 
-    worldDoc.subscribeStatus((status: WorldDocStatus) => {
+    const onStatus = ({ status }) => {
       dispatch({ id: "gotWorldDocStatus", status });
 
       if (status === "connected" && !connected) {
         connected = true;
-        dispatch({ id: "createdWorldDoc", worldDoc });
+        dispatch({
+          id: "createdWorldDoc",
+          worldDoc,
+          slowAwareness: permanentProvider.awareness,
+          rapidAwareness: transientProvider.awareness,
+        });
       }
-    });
+    };
+
+    // TODO: keep this out of the worldDoc internals
+    permanentProvider.on("status", onStatus);
+    worldDoc.unsubs.push(() => permanentProvider.off("status", onStatus));
+
+    // TODO: monitor transient connection status also
+    // ...
   };
