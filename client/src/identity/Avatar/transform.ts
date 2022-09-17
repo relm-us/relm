@@ -1,7 +1,6 @@
 import type { TransformData, Participant, IdentityData } from "~/types";
 
 import { Vector3, Euler, AnimationClip } from "three";
-import { Appearance } from "relm-common";
 
 import { Transform } from "~/ecs/plugins/core";
 import { Model2Ref } from "~/ecs/plugins/form";
@@ -12,7 +11,6 @@ import { makeRemoteAvatarEntities } from "./makeRemoteAvatarEntities";
 import { DecoratedECSWorld } from "types/DecoratedECSWorld";
 import { Oculus } from "~/ecs/plugins/html2d";
 import { changeAnimationClip } from "./changeAnimationClip";
-import { isEqual } from "~/utils/isEqual";
 
 const e1 = new Euler(0, 0, 0, "YXZ");
 const v1 = new Vector3();
@@ -112,16 +110,6 @@ export function avatarSetTransformData(
   }
 }
 
-export function avatarSetAppearanceData(
-  participant: Participant,
-  appearance: Appearance
-) {
-  if (!isEqual(participant.identityData.appearance, appearance)) {
-    participant.identityData.appearance = appearance;
-    participant.modified = true;
-  }
-}
-
 export function maybeMakeAvatar(
   ecsWorld: DecoratedECSWorld,
   participant: Participant,
@@ -144,15 +132,3 @@ export function maybeMakeAvatar(
     participant.avatar = new Avatar(ecsWorld, entities);
   }
 }
-
-// export function setDataOnParticipant(
-
-// If the remote participant is active (if we've reached this point,
-// they are), and some IdentityData has been modified, then take the
-// opportunity to update the remote participant's label, appearance,
-// etc.
-//
-// if (participant.modified) {
-//   setAvatarFromParticipant(participant);
-//   participant.modified = false;
-// }

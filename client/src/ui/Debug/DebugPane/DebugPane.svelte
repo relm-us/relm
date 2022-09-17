@@ -111,7 +111,10 @@
             <div>(Ast: {state.assetsCount}/{state.assetsMax})</div>
           </td>
         </tr>
-        <tr><th>viewport:</th><td>{$viewport !== null} {vw}</td></tr>
+        <tr>
+          <th>Viewport:</th>
+          <td>{$viewport !== null} {vw}</td>
+        </tr>
 
         {#if showAbbreviatedIdentities}
           <tr>
