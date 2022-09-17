@@ -1,6 +1,4 @@
 <script lang="ts">
-  import type { Participant } from "~/types";
-
   import { onMount } from "svelte";
   import Pane from "./Pane.svelte";
 
@@ -21,6 +19,8 @@
   import { PhysicsSystem } from "~/ecs/plugins/physics/systems";
 
   export let state: State;
+
+  const participants = worldManager.participants.store;
 
   let minimized = true;
 
@@ -45,10 +45,6 @@
     showAbbreviatedIdentities = !showAbbreviatedIdentities;
   }
 
-  let idActive = 0;
-  let idTotal = 0;
-  let participants = [];
-
   let x = 0;
   let y = 0;
   let z = 0;
@@ -63,17 +59,6 @@
       z = worldManager.participants.local.avatar.position.z;
 
       if (minimized) return;
-
-      if (worldManager.participants.actives.length !== idActive)
-        idActive = worldManager.participants.actives.length;
-
-      if (worldManager.participants.participants.size !== idTotal)
-        idTotal = worldManager.participants.participants.size;
-
-      participants = [...worldManager.participants.participants.values()];
-      participants.sort((a: Participant, b: Participant) => {
-        return a.lastSeen - b.lastSeen;
-      });
     }, 150);
     return () => clearInterval(interval);
   });
@@ -84,19 +69,19 @@
     <inner-scroll>
       <table>
         <tr>
-          <th>debug physics</th>
+          <th>Debug physics?</th>
           <td>
             <ToggleSwitch bind:enabled={PhysicsSystem.showDebug} />
           </td>
         </tr>
         <tr>
-          <th>show errors</th>
+          <th>Show errors?</th>
           <td>
             <ToggleSwitch bind:enabled={$errorCat} />
           </td>
         </tr>
         <tr>
-          <th>framerate</th>
+          <th>Framerate:</th>
           <td>
             <TextInput
               label="FPS"
@@ -106,53 +91,48 @@
           </td>
         </tr>
         <tr>
-          <th>audio</th>
+          <th>Audio:</th>
           <td>
             {$localIdentityData.showAudio ? "show" : "(hide)"}
             {$localAudioTrack ? "granted" : "(not granted)"}
           </td>
         </tr>
         <tr>
-          <th>video</th>
+          <th>Video:</th>
           <td>
             {$localIdentityData.showVideo ? "show" : "(hide)"}
             {$localVideoTrack ? "granted" : "(not granted)"}
           </td>
         </tr>
-        <!-- <tr>
-          <th>av peers</th>
-          <td>{JSON.stringify(peers)}</td>
-        </tr> -->
         <tr>
-          <th>loading:</th>
+          <th>Loading:</th>
           <td>
             <div>(Ent: {state.entitiesCount}/{state.entitiesMax})</div>
             <div>(Ast: {state.assetsCount}/{state.assetsMax})</div>
           </td>
         </tr>
-        <!-- <tr><th>physics:</th><td>{$ecsWorld !== null}</td></tr> -->
         <tr><th>viewport:</th><td>{$viewport !== null} {vw}</td></tr>
 
         {#if showAbbreviatedIdentities}
           <tr>
-            <th>identities:</th>
+            <th>Participants:</th>
             <td>
               <button on:click={toggleIdentities}>
-                {idActive} / {idTotal}
+                {$participants.length}
               </button>
             </td>
           </tr>
         {:else}
           <tr>
-            <th>identities:</th>
+            <th>Participants:</th>
             <td />
           </tr>
-          {#each participants as participant}
+          {#each $participants as participant}
             <tr class="identity-row">
-              <th>{participant.identityData.name}</th>
-              <td
-                >[{participant.identityData.clientId}] {participant.participantId}</td
-              >
+              <th>{participant.identityData.name || "(no name)"}</th>
+              <td>
+                [{participant.identityData.clientId}] {participant.participantId}
+              </td>
             </tr>
           {/each}
         {/if}

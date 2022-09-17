@@ -40,11 +40,6 @@ export class ParticipantManager {
     return this.participants.get(participantId);
   }
 
-  get actives(): Participant[] {
-    const participants = Array.from(this.participants.values());
-    return participants.filter((p) => p.avatar && participantIsActive(p));
-  }
-
   constructor(
     dispatch: Dispatch,
     broker: ParticipantBroker,
@@ -93,10 +88,6 @@ export class ParticipantManager {
 
       const participant: Participant = this.participants.get(state["id"]);
       if (!participant) continue;
-
-      // Record that we've seen this participant now, so we can know which
-      // participants are currently active
-      participant.lastSeen = performance.now();
 
       const transformData = state["t"];
 
@@ -223,25 +214,4 @@ export class ParticipantManager {
 
     this.dispatch({ id: "participantLeft", participantId });
   }
-}
-
-const LONG_TIME_AGO = 600000; // 5 minutes ago
-const LAST_SEEN_TIMEOUT = 5000; // 5 seconds ago
-
-// Number of milliseconds since last seen
-export function participantSeenAgo(
-  this: void,
-  participant: Participant
-): number {
-  const lastSeen = participant.lastSeen;
-  return lastSeen === undefined
-    ? LONG_TIME_AGO
-    : performance.now() - participant.lastSeen;
-}
-
-export function participantIsActive(
-  this: void,
-  participant: Participant
-): boolean {
-  return participantSeenAgo(participant) < LAST_SEEN_TIMEOUT;
 }

@@ -36,7 +36,9 @@
   onMount(() => {
     const interval1 = setInterval(() => {
       try {
-        otherPositions = worldManager.participants.actives.map((pt) => {
+        otherPositions = Array.from(
+          worldManager.participants.participants.values()
+        ).map((pt) => {
           return pt.avatar.position;
         });
         if (worldManager.participants.local.avatar)

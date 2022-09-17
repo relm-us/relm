@@ -70,8 +70,6 @@ export type Participant = {
   editable: boolean;
   modified: boolean;
 
-  lastSeen?: number;
-
   // Avatar is responsible for all visuals/rendering of this identity
   avatar?: Avatar;
 };
