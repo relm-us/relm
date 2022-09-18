@@ -1,9 +1,16 @@
-import { Appearance, AVAILABLE_HAIR_COLORS, AVAILABLE_SKIN_COLORS, BinaryGender } from "relm-common";
+import {
+  Appearance,
+  AVAILABLE_HAIR_COLORS,
+  AVAILABLE_SKIN_COLORS,
+  BinaryGender,
+} from "relm-common";
 
 import { Morph } from "~/ecs/plugins/morph";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
 
 import { AvatarEntities } from "~/types";
+import { pickOne } from "~/utils/pickOne";
+import { UNIQUE_COLOR_PALETTE } from "~/config/constants";
 
 export function setAppearance(
   this: void,
@@ -79,6 +86,28 @@ export function getDefaultAppearance(gender: BinaryGender): Appearance {
     bottomColor: "#2e2b19",
     beltColor: "#7a6f38",
     shoeColor: "#080705",
+  };
+}
+
+export function rollRandomAppearance(): Appearance {
+  const genderSlider = Math.random();
+  const widthSlider = Math.random();
+
+  return {
+    genderSlider,
+    widthSlider,
+    beard: genderSlider < 0.4 && Math.random() < 0.3,
+    belt: Math.random() < 0.3,
+    hair: pickOne(["bald", "short", "short", "short", "mid", "mid", "long"]),
+    top: pickOne([1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4]),
+    bottom: pickOne([0, 1, 2, 3]),
+    shoes: pickOne([0, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4]),
+    skinColor: pickOne(AVAILABLE_SKIN_COLORS),
+    hairColor: pickOne(AVAILABLE_HAIR_COLORS),
+    topColor: pickOne(UNIQUE_COLOR_PALETTE),
+    bottomColor: pickOne(UNIQUE_COLOR_PALETTE),
+    beltColor: pickOne(["#333333", "#DDDDDD"]),
+    shoeColor: pickOne(["#333333", "#DDDDDD"]),
   };
 }
 

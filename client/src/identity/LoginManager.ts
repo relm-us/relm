@@ -12,8 +12,6 @@ import { permits } from "~/stores/permits";
 import { Dispatch } from "~/main/ProgramTypes";
 import { ParticipantManager } from "./ParticipantManager";
 
-type Result = { type: "success" } | { type: "error"; msg: string };
-
 export class LoginManager {
   api: RelmRestAPI;
   dispatch: Dispatch;

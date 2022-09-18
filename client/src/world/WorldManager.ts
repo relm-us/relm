@@ -95,6 +95,7 @@ import { openDialog } from "~/stores/openDialog";
 import { LoginManager } from "~/identity/LoginManager";
 import { graphicsQuality } from "~/stores/graphicsQuality";
 import { Oculus } from "~/ecs/plugins/html2d";
+import { rollRandomAppearance } from "~/identity/Avatar/appearance";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -799,6 +800,10 @@ export class WorldManager {
         console.error(err);
       }
     }
+  }
+
+  rerollAppearance() {
+    this.participants.setAppearance(rollRandomAppearance());
   }
 
   refreshOculii() {
