@@ -1,7 +1,7 @@
 import { Color, Vector3 } from "three";
 
 import { Transform } from "~/ecs/plugins/core";
-import { Collider2 } from "~/ecs/plugins/physics";
+import { Collider2 } from "~/ecs/plugins/collider";
 import { Shape2 } from "~/ecs/plugins/form";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 

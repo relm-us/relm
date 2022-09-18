@@ -9,7 +9,7 @@ import { AvatarEntities } from "~/types";
 
 import { Transform } from "~/ecs/plugins/core";
 import { Controller } from "~/ecs/plugins/player-control";
-import { Collider2 } from "~/ecs/plugins/physics";
+import { Collider2 } from "~/ecs/plugins/collider";
 import { Translucent } from "~/ecs/plugins/translucent";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { InteractorSystem } from "~/ecs/plugins/interactor";

@@ -4,7 +4,7 @@ import { Vector2, Vector3, Quaternion, Euler } from "three";
 
 import { makeEntity } from "./makeEntity";
 
-import { Collider2 } from "~/ecs/plugins/physics";
+import { Collider2 } from "~/ecs/plugins/collider";
 import { CssPlane, HdImage } from "~/ecs/plugins/css3d";
 import { Draggable } from "~/ecs/plugins/clickable";
 

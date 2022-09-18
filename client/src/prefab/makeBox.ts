@@ -1,8 +1,8 @@
-import { Transform } from "~/ecs/plugins/core";
 import { Color, Vector3, Quaternion, Euler } from "three";
 
+import { Transform } from "~/ecs/plugins/core";
 import { Shape2 } from "~/ecs/plugins/form";
-import { Collider2 } from "~/ecs/plugins/physics";
+import { Collider2 } from "~/ecs/plugins/collider";
 
 import { makeEntity } from "./makeEntity";
 

@@ -1,5 +1,3 @@
-import { Quaternion, Euler } from "three";
-
 import { Transform } from "~/ecs/plugins/core";
 import { AlwaysOnStage, Camera } from "~/ecs/plugins/camera";
 

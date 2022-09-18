@@ -11,12 +11,12 @@ import { Object3D, MathUtils, Box3, Quaternion, Vector3 } from "three";
 
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
+import { Physics } from "~/ecs/plugins/physics";
 import {
   shapeParamsToColliderDesc,
   toShapeParams,
 } from "~/ecs/shared/createShape";
 
-import { Physics } from "../Physics";
 import {
   Collider2,
   Collider2Ref,
@@ -95,15 +95,23 @@ export class Collider2System extends System {
       this.build(entity);
     });
 
-    // When scaling an object that has an implicit collider, we need to
-    // re-calculate the size of the implicit collider
     this.queries.modifiedTransform.forEach((entity) => {
       const transform: Transform = entity.get(Transform);
       const ref: Collider2Ref = entity.get(Collider2Ref);
-      if (!ref.size.equals(transform.scale)) {
-        this.remove(entity);
-        entity.add(Collider2Implicit);
-        this.build(entity);
+
+      // Anticipate the need for PhysicsSystem to have an up-to-date translation
+      // and rotation from a modified Transform
+      ref.body.setTranslation(transform.position, true);
+      ref.body.setRotation(transform.rotation, true);
+
+      if (entity.has(Collider2Implicit)) {
+        // When scaling an object that has an implicit collider, we need to
+        // re-calculate the size of the implicit collider
+        if (!ref.size.equals(transform.scale)) {
+          this.remove(entity);
+          entity.add(Collider2Implicit);
+          this.build(entity);
+        }
       }
     });
   }

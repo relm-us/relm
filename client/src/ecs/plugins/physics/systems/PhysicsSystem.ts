@@ -7,11 +7,11 @@ import {
 
 import { PHYSICS_TIMESTEP } from "~/config/constants";
 
-import { System, Modified, Groups } from "~/ecs/base";
+import { System, Groups } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
 
 import { Physics } from "..";
-import { Collider2Ref, Impact } from "../components";
+import { Impact } from "../components";
 import { createFixedTimestep } from "./createFixedTimestep";
 
 const empty = new BufferAttribute(new Float32Array(), 0);
@@ -27,8 +27,6 @@ export class PhysicsSystem extends System {
   static showDebug: boolean = false;
 
   static queries = {
-    modified: [Modified(Transform), Collider2Ref],
-
     impacts: [Impact],
   };
 
@@ -50,13 +48,8 @@ export class PhysicsSystem extends System {
       entity.remove(Impact);
     });
 
-    this.queries.modified.forEach((entity) => {
-      const transform: Transform = entity.get(Transform);
-      const ref: Collider2Ref = entity.get(Collider2Ref);
-
-      ref.body.setTranslation(transform.position, true);
-      ref.body.setRotation(transform.rotation, true);
-    });
+    // NOTE: Collider2System will have already updated the rigid body's translation
+    //       and rotation by this point.
 
     this.fixedUpdate(delta);
 

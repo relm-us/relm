@@ -1,8 +1,10 @@
-import { Not, Modified, EntityId } from "~/ecs/base";
+import { Collider } from "@dimforge/rapier3d";
+
+import { Not, Modified } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
 import { Physics } from "~/ecs/plugins/physics";
-import { Oculus } from "~/ecs/plugins/html2d";
+import { Collider2Ref } from "~/ecs/plugins/collider";
 
 import { CssPlane } from "../components";
 import { Projector } from "./Projector";
@@ -10,10 +12,7 @@ import { ProjectorRef } from "./ProjectorRef";
 import ProjectorComponent from "./Projector.svelte";
 
 import { RenderableBaseSystem } from "../RenderableBaseSystem";
-import { Collider2Ref } from "../../physics";
-import { Collider } from "@dimforge/rapier3d";
 import { worldManager } from "~/world";
-import { get } from "svelte/store";
 
 // How far away an avatar can be from the Projector before it is no longer
 // considered to be "near"

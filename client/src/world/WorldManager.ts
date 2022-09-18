@@ -51,7 +51,7 @@ import { setControl } from "~/events/input/PointerListener/pointerActions";
 import { makeLight } from "~/prefab/makeLight";
 
 import { Entity } from "~/ecs/base";
-import { Collider2 } from "~/ecs/plugins/physics";
+import { Collider2 } from "~/ecs/plugins/collider";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { ControllerState } from "~/ecs/plugins/player-control";
 import { Follow } from "~/ecs/plugins/follow";

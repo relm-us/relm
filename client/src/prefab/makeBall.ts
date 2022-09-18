@@ -3,7 +3,7 @@ import { Transform } from "~/ecs/plugins/core";
 import { Color, Vector3 } from "three";
 
 import { Shape2 } from "~/ecs/plugins/form";
-import { Collider2 } from "~/ecs/plugins/physics";
+import { Collider2 } from "~/ecs/plugins/collider";
 
 import { makeEntity } from "./makeEntity";
 

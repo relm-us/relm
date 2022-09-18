@@ -2,7 +2,7 @@ import { Transform, Asset } from "~/ecs/plugins/core";
 
 import { Vector3 } from "three";
 
-import { Collider2 } from "~/ecs/plugins/physics";
+import { Collider2 } from "~/ecs/plugins/collider";
 import { Asset as AssetComp } from "~/ecs/plugins/asset";
 import { Model2 } from "~/ecs/plugins/form";
 
