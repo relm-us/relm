@@ -8,6 +8,8 @@ import {
 import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
+const HTML2D_MOTION_THRESHOLD = 0.1;
+
 export class Oculus extends LocalComponent {
   offset: Vector3;
   targetOffset: Vector3;
@@ -20,6 +22,15 @@ export class Oculus extends LocalComponent {
   participantName: string;
   participantId: string;
   onChange: Function;
+
+  // Cached position values from OculusSystem
+  x: number;
+  y: number;
+  diameter: number;
+
+  // Cached tween values from OculusSystem
+  tween: any;
+  tweenedTargetOffset: Vector3;
 
   static props = {
     offset: {
@@ -108,4 +119,25 @@ export class Oculus extends LocalComponent {
       default: null,
     },
   };
+
+  isCachedPositionInvalid(v1: Vector3) {
+    return (
+      this.x === undefined ||
+      this.y === undefined ||
+      Math.abs(this.x - v1.x) >= HTML2D_MOTION_THRESHOLD ||
+      Math.abs(this.y - v1.y) >= HTML2D_MOTION_THRESHOLD
+    );
+  }
+
+  setCachedPosition(x, y, diameter) {
+    this.x = x;
+    this.y = y;
+    this.diameter = diameter;
+  }
+
+  clearCache() {
+    this.x = undefined;
+    this.y = undefined;
+    this.diameter = undefined;
+  }
 }

@@ -434,19 +434,7 @@ export function makeProgram(): Program {
         const newState = { ...state, audioVideoSetupDone: true };
 
         if (state.initializedWorldManager) {
-          // After visiting the video-mirror screen, each Svelte Video component
-          // except the local video loses its feed, so we need to remove/add
-          // each one back:
-          state.ecsWorld.entities
-            .getAllByComponent(Oculus)
-            .forEach((entity) => {
-              entity.get(Oculus).modified();
-            });
-
-          // TODO: Why doesn't showVideo show the video here?
-          // Test case: start without video, then add video; only
-          // after the avatar moves (e.g. arrow keys) does the
-          // oculus appear.
+          worldManager.refreshOculii();
 
           effects.push(send({ id: "startPlaying" }));
         } else {

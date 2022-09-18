@@ -94,6 +94,7 @@ import { dragAction } from "~/stores/dragAction";
 import { openDialog } from "~/stores/openDialog";
 import { LoginManager } from "~/identity/LoginManager";
 import { graphicsQuality } from "~/stores/graphicsQuality";
+import { Oculus } from "~/ecs/plugins/html2d";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -798,6 +799,18 @@ export class WorldManager {
         console.error(err);
       }
     }
+  }
+
+  refreshOculii() {
+    this.world.entities.getAllByComponent(Oculus).forEach((entity) => {
+      const oculus: Oculus = entity.get(Oculus);
+      oculus.clearCache();
+
+      // After visiting the video-mirror screen, each Svelte Video component
+      // except the local video loses its feed, so we need to remove/add
+      // each one back:
+      oculus.modified();
+    });
   }
 
   loop() {

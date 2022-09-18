@@ -14,8 +14,6 @@ import IndividualContainer from "./IndividualContainer.svelte";
 import { CutCircle } from "./types";
 import { circleOverlapIntersectionPoints } from "./circleOverlapIntersectionPoints";
 
-const HTML2D_MOTION_THRESHOLD = 0.1;
-
 const v1 = new Vector3();
 
 /**
@@ -107,7 +105,7 @@ export class OculusSystem extends System {
     if (this.presentation.skipUpdate > 0) return;
 
     const object3d: Object3D = entity.get(Object3DRef)?.value;
-    const spec = entity.get(Oculus);
+    const spec: Oculus = entity.get(Oculus);
 
     if (spec.tween && spec.tweenedTargetOffset) {
       if (spec.tweenedTargetOffset.distanceTo(spec.targetOffset) <= 0.001) {
@@ -144,15 +142,8 @@ export class OculusSystem extends System {
 
     const { container, component } = entity.get(OculusRef) as OculusRef;
 
-    if (
-      spec.x === undefined ||
-      spec.y === undefined ||
-      Math.abs(spec.x - v1.x) >= HTML2D_MOTION_THRESHOLD ||
-      Math.abs(spec.y - v1.y) >= HTML2D_MOTION_THRESHOLD
-    ) {
-      spec.x = v1.x;
-      spec.y = v1.y;
-      spec.diameter = Math.round(1200 / dist);
+    if (spec.isCachedPositionInvalid(v1)) {
+      spec.setCachedPosition(v1.x, v1.y, Math.round(1200 / dist));
 
       container.style.left = spec.x.toFixed(3) + "px";
       container.style.top = spec.y.toFixed(3) + "px";

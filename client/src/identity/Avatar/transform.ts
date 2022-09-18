@@ -1,4 +1,4 @@
-import type { TransformData, Participant, IdentityData } from "~/types";
+import type { TransformData, Participant } from "~/types";
 
 import { Vector3, Euler, AnimationClip } from "three";
 
