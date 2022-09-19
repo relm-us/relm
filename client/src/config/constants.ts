@@ -32,6 +32,9 @@ export const AVATAR_HEIGHT = 1.5;
 // transform, and we need to take that into account at times
 export const AVATAR_HEIGHT_UNSCALED = 7;
 
+// Time to revert to centered head after no mouse/pointer movement (millis)
+export const AVATAR_RECENTER_HEAD_NO_POINTER_MOTION = 3000;
+
 // How quickly to move the camera as it follows the participant
 export const CAMERA_PLAY_DAMPENING = 0.4;
 export const CAMERA_BUILD_DAMPENING = 0.2;

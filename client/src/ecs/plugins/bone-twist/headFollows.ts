@@ -1,5 +1,6 @@
 import { Vector3, Quaternion, MathUtils, Object3D } from "three";
 
+import { AVATAR_RECENTER_HEAD_NO_POINTER_MOTION } from "~/config/constants";
 import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
 
 import { Entity } from "~/ecs/base";
@@ -35,15 +36,18 @@ export const headFollowsPointer =
 
     if (state.speed > 0) {
       // Walking/running means we stop heeding the pointer position
-      ppref.acknowledgedAt = pointer.updatedAt;
+      ppref.avatarMovedAt = pointer.updatedAt;
     }
 
     // Only move head if...
     let enabled =
       // not running or walking, and
       state.speed === 0 &&
+      // avatar did not recently move, and
+      pointer.updatedAt > ppref.avatarMovedAt &&
       // pointer recently moved, and
-      pointer.updatedAt > ppref.acknowledgedAt &&
+      performance.now() - pointer.updatedAt <
+        AVATAR_RECENTER_HEAD_NO_POINTER_MOTION &&
       // mouse pointer is a little distance away from the avatar
       vPointerPos.length() > 0.5;
 

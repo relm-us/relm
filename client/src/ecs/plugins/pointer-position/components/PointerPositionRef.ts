@@ -4,7 +4,7 @@ import { LocalComponent, RefType, NumberType } from "~/ecs/base";
 export class PointerPositionRef extends LocalComponent {
   value: WorldPlanes;
   updateCount: number;
-  acknowledgedAt: number;
+  avatarMovedAt: number;
 
   static props = {
     value: {
@@ -17,7 +17,7 @@ export class PointerPositionRef extends LocalComponent {
       default: 0,
     },
 
-    acknowledgedAt: {
+    avatarMovedAt: {
       type: NumberType,
       default: 0,
     },
