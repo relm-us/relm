@@ -7,14 +7,12 @@ export function register(): Function {
     [
       ["q"],
       (pressed) => {
-        console.log("q", pressed);
         pressed && globalEvents.emit("camera-rotate-left");
       },
     ],
     [
       ["e"],
       (pressed) => {
-        console.log("e", pressed);
         pressed && globalEvents.emit("camera-rotate-right");
       },
     ],

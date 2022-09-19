@@ -54,7 +54,7 @@
     }
   }
 
-  function onMousedown(event) {
+  function onPointerdown(event) {
     if ($worldUIMode === "play" && editable && !editing) {
       editing = true;
       setTimeout(() => {
@@ -84,7 +84,7 @@
       style="--name-bg-color: {color}; --name-color: {fgColor}"
       class:thin={!editable && name === ""}
       bind:this={labelEl}
-      on:mousedown={onMousedown}
+      on:pointerdown={onPointerdown}
       on:keydown={onKeydown}
       on:blur={doneEditing}
       transition:fade>{@html cleanHtml(name)}</r-label
