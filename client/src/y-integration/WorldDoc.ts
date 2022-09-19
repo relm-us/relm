@@ -84,7 +84,13 @@ export class WorldDoc extends EventEmitter {
 
     this.entities = this.ydoc.getArray("entities");
 
-    const observer = this._observer.bind(this);
+    const observer = (events: Array<Y.YEvent>, transaction: Y.Transaction) => {
+      try {
+        this._observer(events, transaction);
+      } catch (err) {
+        console.warn("WorldDoc observer:", err);
+      }
+    };
     this.entities.observeDeep(observer);
     this.unsubs.push(() => this.entities.unobserveDeep(observer));
 
@@ -269,7 +275,12 @@ export class WorldDoc extends EventEmitter {
       const yentity: YEntity = this.entities.get(index);
       const yid = yentity._item.id;
       const hid = this.yids.get(yIdToString(yid));
-      return this.world.entities.getById(hid);
+      const entity = this.world.entities.getById(hid);
+      if (entity) {
+        return entity;
+      } else {
+        throw new Error(`could not get entity by id: '${hid}'`);
+      }
     } else {
       throw new Error(`path length must be at least 1`);
     }
