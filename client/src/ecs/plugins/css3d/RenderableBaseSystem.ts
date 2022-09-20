@@ -104,8 +104,6 @@ export class RenderableBaseSystem extends System {
       radius: cssPlane.circleRadius,
       visible: cssPlane.visible,
     };
-    if (Math.random() < 0.04)
-      console.log("props", this.EcsComponent.name, props);
 
     return props;
   }
