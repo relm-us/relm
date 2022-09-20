@@ -2,6 +2,7 @@
   import { get } from "svelte/store";
   import { onMount } from "svelte";
 
+  import { callEach } from "~/utils/callEach";
   import { worldUIMode } from "~/stores/worldUIMode";
 
   import { getCanonicalAction } from "./comboTable";
@@ -24,11 +25,13 @@
   import * as spaceKey from "./handlers/spaceKey";
   import * as tabKey from "./handlers/tabKey";
   import * as undoRedoKeys from "./handlers/undoRedoKeys";
-  import { callEach } from "~/utils/callEach";
 
   export let world;
 
-  function getActionFromEvent(event: KeyboardEvent, pressed: boolean) {
+  // Current set of pressed keys
+  export const pressed: Set<string> = new Set();
+
+  function getActionFromEvent(event: KeyboardEvent) {
     const mods = [];
 
     if (event.altKey) mods.push("A");
@@ -50,7 +53,6 @@
     return getCanonicalAction(get(worldUIMode), combo);
   }
 
-  const pressed: Set<string> = new Set();
   function onKeydown(event: KeyboardEvent) {
     if (isInputEvent(event)) {
       return;
@@ -66,7 +68,7 @@
 
     pressed.add(event.key.toLowerCase());
 
-    const action = getActionFromEvent(event, true);
+    const action = getActionFromEvent(event);
     if (action) {
       action(true);
       event.preventDefault();
@@ -76,7 +78,7 @@
   function onKeyup(event) {
     pressed.delete(event.key.toLowerCase());
 
-    const action = getActionFromEvent(event, false);
+    const action = getActionFromEvent(event);
     if (action) action(false);
   }
 

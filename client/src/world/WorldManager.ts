@@ -94,6 +94,7 @@ import { LoginManager } from "~/identity/LoginManager";
 import { graphicsQuality } from "~/stores/graphicsQuality";
 import { Oculus } from "~/ecs/plugins/html2d";
 import { rollRandomAppearance } from "~/identity/Avatar/appearance";
+import { releaseAllKeys } from "~/events/input/comboTable";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -652,6 +653,7 @@ export class WorldManager {
     if (this.started) {
       this._stopLoop();
       fpsTime.clear();
+      releaseAllKeys();
       this.started = false;
     }
   }

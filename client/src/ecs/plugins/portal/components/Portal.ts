@@ -2,8 +2,10 @@ import { Component, StringType } from "~/ecs/base";
 import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
+export type PortalType = "LOCAL" | "REMOTE";
+
 export class Portal extends Component {
-  kind: "LOCAL" | "REMOTE";
+  kind: PortalType;
   coords: Vector3;
   entry: string;
   relm: string;

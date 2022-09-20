@@ -67,3 +67,9 @@ export function getCanonicalAction(context: string, keyCombo: string): Action {
 export function getAction(context: string, keyCombo: string): Action {
   return getCanonicalAction(context, canonical(keyCombo));
 }
+
+export function releaseAllKeys() {
+  for (let action of comboTable.values()) {
+    action(false);
+  }
+}

@@ -71,8 +71,6 @@ export class ParticlesSystem extends System {
     let onUpdate;
     switch (spec.prefab) {
       case "TELEPORT":
-        console.log("TELEPORT type");
-        // let tha = 0;
         const emitter = new N.Emitter()
           .setRate(new N.Rate(new N.Span(2.0, 4.0), new N.Span(0.005, 0.01)))
           .setInitializers([
@@ -93,13 +91,6 @@ export class ParticlesSystem extends System {
           .emit();
         system = new NebulaSystem();
         system.addEmitter(emitter);
-        // onUpdate = () => {
-        //   console.log("emit pos", emitter.position);
-        //   emitter.position.x = 3 * Math.cos(tha);
-        //   emitter.position.z = 3 * Math.sin(tha);
-        //   console.log("emit pos", emitter.position);
-        //   tha += 0.1;
-        // };
         break;
       default:
         /* BlueFire */
@@ -127,7 +118,6 @@ export class ParticlesSystem extends System {
         emitter.bindEmitterEvent && emitter.dispatch("PARTICLE_DEAD", particle);
         emitter.parent.pool.expire(particle.reset());
       });
-      // emitter.particles.length = 0;
     }
     system.destroy();
     entity.remove(ParticlesRef);

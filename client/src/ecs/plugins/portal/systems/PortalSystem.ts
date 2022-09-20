@@ -7,7 +7,7 @@ import { Controller } from "~/ecs/plugins/player-control";
 
 import { worldManager } from "~/world";
 
-import { Portal } from "../components";
+import { Portal, PortalActive } from "../components";
 import { makeSparkles } from "../makeSparkles";
 import { inFrontOf } from "~/utils/inFrontOf";
 
@@ -24,14 +24,15 @@ export class PortalSystem extends System {
 
   static queries = {
     setup: [Portal, Not(Impactable)],
-    contact: [Portal, Impact],
+    active: [Portal, PortalActive],
+    contact: [Portal, Not(PortalActive), Impact],
   };
 
   init({ presentation }) {
     this.presentation = presentation;
   }
 
-  update() {
+  update(delta: number) {
     this.queries.setup.forEach((entity) => {
       entity.add(Impactable);
     });
@@ -39,36 +40,57 @@ export class PortalSystem extends System {
     if (portalsDisabled) return;
 
     this.queries.contact.forEach((entity) => {
-      const portal = entity.get(Portal);
       const otherEntity: Entity = entity.get(Impact).other;
-      if (otherEntity.has(Controller)) {
-        if (portal.kind === "LOCAL") {
-          const transform = otherEntity.get(Transform);
 
-          // Make participant show up on the "other side" of the
-          // portal destination, depending on movement direction.
-          const newCoords = inFrontOf(portal.coords, transform.rotation);
+      // Portals only affect participants (i.e. entities with Controller)
+      if (!otherEntity.has(Controller)) return;
 
-          const sparklesEntrance = makeSparkles(this.world, transform.position);
+      const transform = otherEntity.get(Transform);
+      const portal: Portal = entity.get(Portal);
 
-          setTimeout(() => {
-            worldManager.moveTo(newCoords, false);
-            sparklesEntrance.destroy();
+      if (portal.kind === "LOCAL") {
+        entity.add(PortalActive, {
+          sparkles: makeSparkles(this.world, transform.position),
+          destination: {
+            type: "LOCAL",
+            // Make participant show up on the "other side" of the
+            // portal destination, depending on movement direction.
+            coords: inFrontOf(portal.coords, transform.rotation),
+          },
+          countdown: 1000,
+        });
+      } else if (portal.kind === "REMOTE") {
+        entity.add(PortalActive, {
+          sparkles: makeSparkles(this.world, transform.position),
+          destination: {
+            type: "REMOTE",
+            relm: portal.relm,
+            entryway: portal.entry || "default",
+          },
+          countdown: 1000,
+        });
+      }
+    });
 
-            const sparklesExit = makeSparkles(this.world, newCoords);
-            setTimeout(() => sparklesExit.destroy(), 1000);
-          }, 1000);
-        } else if (portal.kind === "REMOTE") {
-          const transform = otherEntity.get(Transform);
-          makeSparkles(this.world, transform.position);
-          setTimeout(() => {
-            worldManager.dispatch({
-              id: "enterPortal",
-              relmName: portal.relm,
-              entryway: portal.entryway,
-            });
-          }, 1000);
+    this.queries.active.forEach((entity) => {
+      const active: PortalActive = entity.get(PortalActive);
+
+      if (active.countdown > 0) {
+        active.countdown -= 1 / delta;
+      } else {
+        if (active.destination.type === "LOCAL") {
+          worldManager.moveTo(active.destination.coords, false);
+        } else if (active.destination.type === "REMOTE") {
+          worldManager.dispatch({
+            id: "enterPortal",
+            relmName: active.destination.relm,
+            entryway: active.destination.entryway,
+          });
         }
+
+        // Animation complete
+        active.sparkles.destroy();
+        entity.remove(PortalActive);
       }
     });
   }
