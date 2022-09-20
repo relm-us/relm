@@ -1,14 +1,15 @@
-import { Readable, writable, Writable } from "svelte/store";
+import { Readable, Writable, writable } from "svelte/store";
 
-export const DATA_WINDOW_SIZE = 100;
+export const DATA_WINDOW_SIZE = 20;
 
 interface StatsStore extends Readable<Array<number>> {
   subscribe: (run: (value: number[]) => any, invalidate?: any) => any;
   addData: (data: number) => void;
+  clear: () => void;
 }
 
 export function createStatsStore(dataWindowSize): StatsStore {
-  const store: Writable<Array<number>> = writable([]);
+  const store: Writable<Array<number>> = writable([0]);
 
   const addDataPoint = (datapoint) => {
     store.update((existing) => {
@@ -23,6 +24,7 @@ export function createStatsStore(dataWindowSize): StatsStore {
   return {
     subscribe: store.subscribe,
     addData: addDataPoint,
+    clear: () => store.set([0]),
   };
 }
 

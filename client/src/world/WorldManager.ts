@@ -33,8 +33,6 @@ import {
   CAMERA_PLAY_DAMPENING,
   CAMERA_PLAY_ZOOM_MAX,
   CAMERA_PLAY_ZOOM_MIN,
-  FPS_SLOWDOWN_MIN_FPS,
-  FPS_SLOWDOWN_TIMEOUT,
   OCULUS_HEIGHT_SIT,
   OCULUS_HEIGHT_STAND,
   RAISING_HAND,
@@ -130,7 +128,6 @@ export class WorldManager {
   myDataLastSentAt: number = 0;
 
   loopType: LoopType = { type: "reqAnimFrame" };
-  fpsLocked: boolean = false;
 
   light: Entity;
 
@@ -333,7 +330,7 @@ export class WorldManager {
 
         this.setPixelRatio(pixelRatio);
 
-        this.setFps(framerate, true);
+        this.setFps(framerate);
       })
     );
 
@@ -473,26 +470,6 @@ export class WorldManager {
       })
     );
 
-    const fpsCheckInterval = setInterval(() => {
-      if (!this.started || this.fpsLocked) return;
-
-      const now = performance.now();
-      if (now - this.lastActivity > FPS_SLOWDOWN_TIMEOUT) {
-        const currFps = this.getTargetFps();
-        if (
-          now - this.lastFpsChange > FPS_SLOWDOWN_TIMEOUT &&
-          currFps > FPS_SLOWDOWN_MIN_FPS
-        ) {
-          let newFps = currFps - 10;
-          if (newFps < FPS_SLOWDOWN_MIN_FPS) newFps = FPS_SLOWDOWN_MIN_FPS;
-          this.setFps(newFps);
-        }
-      }
-    }, 500);
-    this.unsubs.push(() => {
-      clearInterval(fpsCheckInterval);
-    });
-
     this.unsubs.push(
       viewportScale.subscribe(($scale) => {
         this.didChangeZoom();
@@ -556,7 +533,6 @@ export class WorldManager {
 
     this.didInit = false;
     this.didDeinit = true;
-    this.fpsLocked = false;
   }
 
   afterInit(fn: Function) {
@@ -629,11 +605,6 @@ export class WorldManager {
 
   didControlAvatar() {
     this.lastActivity = performance.now();
-
-    // As soon as avatar moves, restore full 60fps framerate
-    if (this.loopType.type !== "reqAnimFrame" && !this.fpsLocked) {
-      this.setFps(60);
-    }
   }
 
   didChangeZoom() {
@@ -680,6 +651,7 @@ export class WorldManager {
   stop() {
     if (this.started) {
       this._stopLoop();
+      fpsTime.clear();
       this.started = false;
     }
   }
@@ -749,6 +721,8 @@ export class WorldManager {
   }
 
   getTargetFps(): number {
+    if (!this.started) return 0;
+
     // prettier-ignore
     switch (this.loopType.type) {
       case "reqAnimFrame": return 60;
@@ -757,37 +731,24 @@ export class WorldManager {
     }
   }
 
-  setFps(fps: number, lock = false) {
+  setFps(fps: number) {
     this.stop();
 
-    if (lock) this.lockFps();
-
     if (fps === 60) {
-      targetFps.set(60);
       this.loopType = { type: "reqAnimFrame" };
     } else if (fps === null) {
-      targetFps.set(null);
       this.loopType = { type: "nolimit", running: true };
-    } else {
-      if (fps < 0 || fps > 60) {
-        console.warn("Can't set FPS to ", fps);
-        return;
-      }
-      targetFps.set(fps);
+    } else if (Number.isInteger(fps) && fps > 0 && fps <= 60) {
       this.loopType = { type: "interval", targetFps: fps };
+    } else {
+      console.warn("Can't set FPS to ", fps);
+      return;
     }
 
     this.lastFpsChange = performance.now();
+    targetFps.set(fps);
 
     this.start();
-  }
-
-  lockFps() {
-    this.fpsLocked = true;
-  }
-
-  unlockFps() {
-    this.fpsLocked = false;
   }
 
   worldStep(delta?: number) {
