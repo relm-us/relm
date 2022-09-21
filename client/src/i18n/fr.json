@@ -30,13 +30,16 @@
     "pants": "Bas",
     "shoes": "Chaussures",
     "belt": "Ceinture",
+    "belt_yes": "avec",
+    "belt_no": "sans",
     "narrow": "mince",
     "wide": "large",
     "choose_yours": "Choisissez votre avatar",
     "customize_later": "(vous pourrez le personnaliser plus tard)",
     "male": "homme",
     "female": "femme",
-    "title": "Avatar"
+    "title": "Avatar",
+    "unique_color": "Couleur personnelle"
   },
   "CameraSettings": {
     "field_of_view": "Angle de vue"
@@ -64,13 +67,28 @@
   },
   "Pause": {
     "title": "en pause",
-    "continue": "continuer"
+    "continue": "reprendre"
   },
   "ProfileButton": {
     "sign_in": "Connectez-vous",
     "sign_out": "Déconnexion",
-    "language": "Langue ({locale})",
-    "change_avatar": "Personnalisez votre avatar"
+    "language": "Langue",
+    "graphics_quality": "Niveau des graphismes",
+    "change_avatar": "Personnalisez votre avatar",
+    "signed_in_as": "Authentifié. Votre nom : {name}"
+  },
+  "RenderQualityDialog": {
+    "title": "Détails",
+    "0": "Ultra bas",
+    "0_desc": "Niveau très bas. Choisissez ce règlage pour un matériel ancien.",
+    "1": "Bas",
+    "1_desc": "Niveau bas.",
+    "2": "Moyen",
+    "2_desc": "Niveau moyen.",
+    "3": "High",
+    "3_desc": "Niveau haut.",
+    "4": "Highest",
+    "4_desc": "Niveau ultra haut. Affichage des ombres."
   },
   "VideoMirror": {
     "join_cam_off": "Entrer sans caméra",
@@ -81,6 +99,6 @@
     "cam_mic_not_active": "Caméra et micro inactifs",
     "try_again": "Réessayer",
     "request_perms": "Activer caméra et micro",
-    "continue": "Continuer"
+    "continue": "Entrer"
   }
 }
