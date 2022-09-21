@@ -41,8 +41,10 @@
     } else {
       component[key] = event.detail;
     }
-    component.modified();
-    dispatch("modified");
+    if (!prop.editor.skipModify) {
+      component.modified();
+      dispatch("modified");
+    }
   };
 
   // ignore warning about missing props

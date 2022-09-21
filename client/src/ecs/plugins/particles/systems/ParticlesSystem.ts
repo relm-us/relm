@@ -1,12 +1,39 @@
-import { System, Groups, Entity, Not, Modified } from "~/ecs/base";
-import { Presentation, Object3DRef, Transform } from "~/ecs/plugins/core";
-import { Particles, ParticlesRef, ParticlesLoading } from "../components";
-import * as THREE from "three";
-import NebulaSystem, * as N from "three-nebula";
-import { blueFire } from "../prefab";
-// https://codesandbox.io/s/three-nebula-quickstart-kz6uv?file=/src/index.js:281-287
+import { Vector3, Color, AdditiveBlending } from "three";
 
-const sparkleBodySprite = new N.BodySprite(THREE, "/teleport-sparkle.png");
+import { System, Groups, Entity, Not, Modified } from "~/ecs/base";
+import { Object3DRef, Presentation, Transform } from "~/ecs/plugins/core";
+
+import { Particles, ParticlesRef } from "../components";
+import { GPUParticleSystem } from "../GPUParticleSystem";
+
+import { textures } from "../textures";
+
+function rand(low, high) {
+  const range = high - low;
+  return Math.random() * range + low;
+}
+
+const motionPattern = {
+  DISPERSE_3D: (spec: Particles, transform: Transform, options) => {
+    options.velocity.set(rand(-1, 1), rand(-1, 1), rand(-1, 1));
+    return options;
+  },
+  DISPERSE_2D: (spec: Particles, transform: Transform, options) => {
+    options.velocity.set(rand(-1, 1), rand(-1, 1), 0);
+    return options;
+  },
+  GATEWAY: (spec: Particles, transform: Transform, options) => {
+    const theta = Math.random() * Math.PI * 2;
+    const radius = Math.max(spec.params.x, 0.1);
+    options.position.x += Math.cos(theta) * radius;
+    options.position.y += Math.sin(theta) * radius;
+
+    const s = 0.02;
+    options.velocity.set(rand(-s, s), rand(-s, s), rand(-s, s));
+
+    return options;
+  },
+};
 
 export class ParticlesSystem extends System {
   presentation: Presentation;
@@ -15,7 +42,7 @@ export class ParticlesSystem extends System {
   order = Groups.Simulation - 1;
 
   static queries = {
-    new: [Particles, Not(ParticlesRef), Not(ParticlesLoading)],
+    new: [Particles, Not(ParticlesRef)],
     active: [Particles, ParticlesRef],
     modified: [Modified(Particles), ParticlesRef],
     removed: [Not(Particles), ParticlesRef],
@@ -25,101 +52,99 @@ export class ParticlesSystem extends System {
     this.presentation = presentation;
   }
 
-  update() {
-    this.queries.new.forEach((entity) => {
-      this.build(entity);
-    });
+  update(delta: number) {
+    this.queries.removed.forEach((entity) => this.remove(entity));
 
-    this.queries.modified.forEach((entity) => {
-      this.remove(entity);
-      this.build(entity);
-    });
+    this.queries.modified.forEach((entity) => this.remove(entity));
+
+    this.queries.new.forEach((entity) => this.build(entity));
 
     this.queries.active.forEach((entity) => {
-      const spec = entity.get(Particles);
-      const system = entity.get(ParticlesRef).value;
+      const system: GPUParticleSystem = entity.get(ParticlesRef).value;
 
-      if (spec.follows) {
-        const transform: Transform = entity.get(Transform);
-        system.emitters.forEach((emitter) => {
-          emitter.position.copy(transform.positionWorld);
-        });
-      }
-
-      system.update();
+      system.update(performance.now());
     });
-
-    this.queries.removed.forEach((entity) => {
-      this.remove(entity);
-    });
-  }
-
-  onStart(entity: Entity) {
-    // console.log("started particles", entity);
-  }
-
-  onEnd(entity: Entity) {
-    // console.log("ended", entity);
   }
 
   async build(entity: Entity) {
+    const ref: Object3DRef = entity.get(Object3DRef);
+    if (!ref) return;
+
     const spec: Particles = entity.get(Particles);
+    const transform: Transform = entity.get(Transform);
 
-    entity.add(ParticlesLoading);
+    const options = {
+      position: new Vector3(),
+      velocity: new Vector3(),
+      acceleration: new Vector3(),
 
-    let system;
-    let onUpdate;
-    switch (spec.prefab) {
-      case "TELEPORT":
-        const emitter = new N.Emitter()
-          .setRate(new N.Rate(new N.Span(2.0, 4.0), new N.Span(0.005, 0.01)))
-          .setInitializers([
-            sparkleBodySprite,
-            new N.Position(new N.BoxZone(0, 0, 0, 1.2, 1.2, 1.2)),
-            new N.Mass(1.0, 2.0, true),
-            new N.Radius(0.25, 0.75),
-            new N.Life(1),
-            new N.VectorVelocity(new N.Vector3D(0, 5, 0), 0),
-          ])
-          .setEmitterBehaviours([])
-          .setBehaviours([
-            new N.Alpha(1, 0.5),
-            new N.Scale(0.9, 1.1),
-            new N.Color(new THREE.Color("#FFFFFF"), new THREE.Color("#8833DF")),
-            new N.Force(0, 0.5, 0),
-          ])
-          .emit();
-        system = new NebulaSystem();
-        system.addEmitter(emitter);
-        break;
-      default:
-        /* BlueFire */
-        system = await NebulaSystem.fromJSONAsync(blueFire, THREE, {
-          shouldAutoEmit: false,
-        });
-        break;
+      color: new Color(spec.startColor),
+      endColor: new Color(spec.endColor),
+
+      lifetime: spec.particleLt,
+      size: (spec.sizeMin + spec.sizeMax) / 2,
+      sizeRandomness: (spec.sizeMax - spec.sizeMin) * 2,
+    };
+
+    let needMore = 0;
+    let lastTime = 0;
+    const system = new GPUParticleSystem({
+      maxParticles: spec.maxParticles,
+      fadeIn: spec.fadeIn,
+      fadeOut: spec.fadeOut,
+      texture: textures[spec.sprite] || textures["circle_05"],
+      blending: AdditiveBlending,
+      onTop: spec.onTop,
+      onTick: (system, time) => {
+        const delta = time - lastTime;
+        lastTime = time;
+
+        // Build up until we need to emit
+        needMore += spec.rate * delta;
+
+        // Fizzle out when disabled
+        if (!spec.enabled) {
+          needMore = 0;
+          system.initialTime = system.time;
+          return;
+        }
+
+        // Fizzle out when past the effect lifetime
+        if (spec.effectLt > 0 && time > spec.effectLt) return;
+
+        // Create as many particles as needed based on rate
+        for (let i = 0; i < needMore; i++) {
+          if (spec.relative) {
+            options.position.copy(spec.offset);
+          } else {
+            options.position.copy(transform.position);
+            options.position.add(spec.offset);
+          }
+
+          const newOptions = motionPattern[spec.pattern](
+            spec,
+            transform,
+            options
+          );
+          system.spawnParticle(newOptions);
+          needMore--;
+        }
+      },
+    });
+
+    if (spec.relative) {
+      ref.value.add(system);
+    } else {
+      this.presentation.scene.add(system);
     }
 
-    system.addRenderer(new N.SpriteRenderer(this.presentation.scene, THREE));
-    system.emit({ onUpdate });
-
-    entity.remove(ParticlesLoading);
     entity.add(ParticlesRef, { value: system });
   }
 
   remove(entity) {
-    const system = entity.get(ParticlesRef).value;
-    for (let emitter of system.emitters) {
-      emitter.stopEmit();
-
-      // Workaround Nebula bug https://github.com/creativelifeform/three-nebula/discussions/147
-      emitter.particles.forEach((particle) => {
-        emitter.parent && emitter.parent.dispatch("PARTICLE_DEAD", particle);
-        emitter.bindEmitterEvent && emitter.dispatch("PARTICLE_DEAD", particle);
-        emitter.parent.pool.expire(particle.reset());
-      });
-    }
-    system.destroy();
+    const system: GPUParticleSystem = entity.get(ParticlesRef).value;
+    system.removeFromParent();
+    system.dispose();
     entity.remove(ParticlesRef);
   }
 }

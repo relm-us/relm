@@ -17,6 +17,7 @@ import { PhysicsOptions, Collider2 } from "~/ecs/plugins/collider";
 import { Animation } from "~/ecs/plugins/animation";
 import { Repulsive } from "~/ecs/plugins/player-control";
 import { AlwaysOnStage } from "~/ecs/plugins/camera";
+import { Particles } from "~/ecs/plugins/particles";
 
 export function makeAvatarEntities(
   world: DecoratedECSWorld,
@@ -52,6 +53,25 @@ export function makeAvatarEntities(
       shape: "CAPSULE",
       size: new Vector3(0.5, 1.8, 0),
       offset: new Vector3(0, 1.1, 0),
+    })
+    .add(Particles, {
+      pattern: "GATEWAY",
+      params: new Vector3(7, 0, 0),
+      offset: new Vector3(0, 3.5, 0),
+      sprite: "circle_05",
+      enabled: false,
+      onTop: true,
+      relative: true,
+      startColor: "#ff00ff",
+      endColor: "#00ffff",
+      sizeMin: 20,
+      sizeMax: 40,
+      rate: 400,
+      maxParticles: 1000,
+      particleLt: 1.5,
+      effectLt: 1.5,
+      fadeIn: 0.5,
+      fadeOut: 0.5,
     });
 
   const head = makeEntity(world, "AvatarHead")

@@ -86,7 +86,7 @@
             <TextInput
               label="FPS"
               value={worldManager.getTargetFps()}
-              on:change={({ detail }) => worldManager.setFps(detail)}
+              on:change={({ detail }) => worldManager.setFps(parseInt(detail))}
             />
           </td>
         </tr>

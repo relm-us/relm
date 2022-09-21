@@ -8,15 +8,13 @@ import { Controller } from "~/ecs/plugins/player-control";
 import { worldManager } from "~/world";
 
 import { Portal, PortalActive } from "../components";
-import { makeSparkles } from "../makeSparkles";
 import { inFrontOf } from "~/utils/inFrontOf";
+import { Particles } from "../../particles";
 
 const portalsDisabled = (localStorage.getItem("debug") || "")
   .split(":")
   .includes("noportal");
 
-const bodyFacing = new Vector3();
-const vOut = new Vector3(0, 0, 1);
 export class PortalSystem extends System {
   presentation: Presentation;
 
@@ -45,29 +43,30 @@ export class PortalSystem extends System {
       // Portals only affect participants (i.e. entities with Controller)
       if (!otherEntity.has(Controller)) return;
 
+      // Make avatar light up
+      otherEntity.get(Particles).enabled = true;
+
       const transform = otherEntity.get(Transform);
       const portal: Portal = entity.get(Portal);
 
       if (portal.kind === "LOCAL") {
         entity.add(PortalActive, {
-          sparkles: makeSparkles(this.world, transform.position),
           destination: {
             type: "LOCAL",
             // Make participant show up on the "other side" of the
             // portal destination, depending on movement direction.
             coords: inFrontOf(portal.coords, transform.rotation),
           },
-          countdown: 1000,
+          countdown: 2000,
         });
       } else if (portal.kind === "REMOTE") {
         entity.add(PortalActive, {
-          sparkles: makeSparkles(this.world, transform.position),
           destination: {
             type: "REMOTE",
             relm: portal.relm,
             entryway: portal.entry || "default",
           },
-          countdown: 1000,
+          countdown: 2000,
         });
       }
     });
