@@ -30,13 +30,16 @@
     "pants": "裤子",
     "shoes": "鞋子",
     "belt": "皮带",
+    "belt_yes": "是",
+    "belt_no": "否",
     "narrow": "修长",
     "wide": "丰腴",
     "choose_yours": "选择你的形象",
     "customize_later": "(你可以在之后进行修改)",
     "male": "男",
     "female": "女",
-    "title": "装扮"
+    "title": "装扮",
+    "unique_color": "专属颜色"
   },
   "CameraSettings": {
     "field_of_view": "视野范围"
@@ -59,18 +62,39 @@
     "apply": "应用"
   },
   "GroupUngroupButton": {
-    "group": "组合",
-    "ungroup": "拆分"
-  },
-  "Pause": {
     "title": "暂停",
     "continue": "继续"
   },
+  "Pause": {
+    "title": "Paused",
+    "continue": "Continue"
+  },
+  "ProfileButton": {
+    "sign_in": "登入",
+    "sign_out": "登出",
+    "language": "语言",
+    "graphics_quality": "图像质量",
+    "change_avatar": "装扮",
+    "signed_in_as": "登入名称 {name}"
+  },
+  "RenderQualityDialog": {
+    "title": "图像质量",
+    "0": "最低",
+    "0_desc": "最低质量,较低帧率(20 fps)",
+    "1": "较低",
+    "1_desc": "较低质量,中等帧率(30 fps)",
+    "2": "中等",
+    "2_desc": "中等质量,中等帧率(30 fps)",
+    "3": "较高",
+    "3_desc": "较高质量,较高帧率(60 fps)",
+    "4": "最高",
+    "4_desc": "最高质量,较高帧率(60 fps), 阴影效果"
+  },
   "VideoMirror": {
-    "join_cam_mic_off": "不使用摄像头和麦克风加入",
-    "join_mic_off": "仅使用摄像头加入",
-    "cam_unavailable": "摄像头无法连接",
     "join_cam_off": "仅使用麦克风加入",
+    "join_mic_off": "仅使用摄像头加入",
+    "join_cam_mic_off": "不使用摄像头和麦克风加入",
+    "cam_unavailable": "摄像头无法连接",
     "cam_mic_blocked": "摄像头和麦克风已屏蔽",
     "cam_mic_not_active": "摄像头和麦克风未启用",
     "try_again": "重试",
@@ -78,4 +102,3 @@
     "continue": "继续"
   }
 }
-
