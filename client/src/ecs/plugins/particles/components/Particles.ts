@@ -14,7 +14,7 @@ import { Vector3Type } from "~/ecs/plugins/core";
 import { textures } from "../textures";
 
 export class Particles extends Component {
-  pattern: "DISPERSE_3D" | "DISPERSE_2D" | "GATEWAY" | "TRAILS";
+  pattern: "STILL" | "EXPLODE" | "RING" | "TRAILS" | "RAINING";
   params: Vector3;
 
   sprite: string;
@@ -43,15 +43,16 @@ export class Particles extends Component {
   static props = {
     pattern: {
       type: StringType,
-      default: "DISPERSE_3D",
+      default: "STILL",
       editor: {
         label: "Pattern Motion",
         input: "Select",
         options: [
-          { label: "Disperse (3D)", value: "DISPERSE_3D" },
-          { label: "Disperse (2D)", value: "DISPERSE_2D" },
-          { label: "Gateway", value: "GATEWAY" },
+          { label: "Still", value: "STILL" },
+          { label: "Explode", value: "EXPLODE" },
+          { label: "Ring", value: "RING" },
           { label: "Trails", value: "TRAILS" },
+          { label: "Raining", value: "RAINING" },
         ],
       },
     },
@@ -61,6 +62,13 @@ export class Particles extends Component {
       type: Vector3Type,
       editor: {
         label: "Pattern Params",
+        requires: [
+          { prop: "pattern", value: "STILL", labels: ["w", "h", "d"] },
+          { prop: "pattern", value: "EXPLODE", labels: ["vx", "vy", "vz"] },
+          { prop: "pattern", value: "RING", labels: ["r", "vr", "vc"] },
+          { prop: "pattern", value: "TRAILS", labels: ["r", "x", "y"] },
+          { prop: "pattern", value: "RAINING", labels: ["w", "h", "d"] },
+        ],
       },
     },
 

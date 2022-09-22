@@ -14,22 +14,38 @@ function rand(low, high) {
 }
 
 const motionPattern = {
-  DISPERSE_3D: (spec: Particles, transform: Transform, options) => {
-    options.velocity.set(rand(-1, 1), rand(-1, 1), rand(-1, 1));
-    return options;
-  },
-  DISPERSE_2D: (spec: Particles, transform: Transform, options) => {
-    options.velocity.set(rand(-1, 1), rand(-1, 1), 0);
-    return options;
-  },
-  GATEWAY: (spec: Particles, transform: Transform, options) => {
-    const theta = Math.random() * Math.PI * 2;
-    const radius = Math.max(spec.params.x, 0.1);
-    options.position.x += Math.cos(theta) * radius;
-    options.position.y += Math.sin(theta) * radius;
+  STILL: (spec: Particles, transform: Transform, options) => {
+    options.position.x += rand(-spec.params.x / 2, spec.params.x / 2);
+    options.position.y += rand(-spec.params.y / 2, spec.params.y / 2);
+    options.position.z += rand(-spec.params.z / 2, spec.params.z / 2);
 
     const s = 0.02;
     options.velocity.set(rand(-s, s), rand(-s, s), rand(-s, s));
+
+    return options;
+  },
+  EXPLODE: (spec: Particles, transform: Transform, options) => {
+    options.velocity.set(
+      rand(-spec.params.x, spec.params.x),
+      rand(-spec.params.y, spec.params.y),
+      rand(-spec.params.z, spec.params.z)
+    );
+    return options;
+  },
+  RING: (spec: Particles, transform: Transform, options) => {
+    const theta = Math.random() * Math.PI * 2;
+    const radius = Math.max(spec.params.x, 0.1);
+    const x = Math.cos(theta) * radius;
+    const y = Math.sin(theta) * radius;
+    options.position.x += x;
+    options.position.y += y;
+
+    const s = spec.params.y;
+    options.velocity.set(rand(-s, s), rand(-s, s), rand(-s, s));
+
+    // Fall towards center
+    options.velocity.x += -x * spec.params.z;
+    options.velocity.y += -y * spec.params.z;
 
     return options;
   },
@@ -44,6 +60,13 @@ const motionPattern = {
     const s = 0.02;
     options.velocity.set(rand(-s, s), rand(-s, s), rand(-s, s));
 
+    return options;
+  },
+  RAINING: (spec: Particles, transform: Transform, options) => {
+    options.velocity.set(0, -rand(0.5, 2), 0);
+    options.position.x += rand(-spec.params.x / 2, spec.params.x / 2);
+    options.position.y += rand(-spec.params.y / 2, spec.params.y / 2);
+    options.position.z += rand(-spec.params.z / 2, spec.params.z / 2);
     return options;
   },
 };

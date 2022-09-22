@@ -1,6 +1,11 @@
 /**
  * From: https://github.com/joshmarinacci/webxr-experiments/blob/master/particles/GPUParticleSystem2.js
  * Exammples: https://blog.mozvr.com/particles-go-wild-with-textures/
+ * 
+ * CAVEATS:
+ * gl_PointSize can't be larger than 64, apparently:
+ * - https://stackoverflow.com/questions/15371940/working-around-gl-pointsize-limitations-in-three-js-webgl
+ * - https://stackoverflow.com/questions/56065524/glsl-vertex-shader-gl-position-for-gl-points-with-large-gl-pointsize
  */
 
 import {
