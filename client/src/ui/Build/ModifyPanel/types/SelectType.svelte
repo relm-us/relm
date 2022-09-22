@@ -40,6 +40,7 @@
 <style>
   r-select-type {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
 
     /* Select box */
@@ -48,6 +49,7 @@
   }
   r-select-type > :global(div) {
     flex-grow: 1;
+    width: 100%;
   }
   lbl {
     margin-right: 8px;
