@@ -21,7 +21,6 @@ import {
 const GPUParticleShader = {
   vertexShader: `
     uniform float uTime;
-    uniform float uScale;
     uniform bool reverseTime;
     uniform float fadeIn;
     uniform float fadeOut;
@@ -55,18 +54,21 @@ const GPUParticleShader = {
         }
         
         lifeLeft = 1.0 - ( timeElapsed / lifeTime );
-        gl_PointSize = ( uScale * size ); // * lifeLeft;
+
         newPosition = positionStart 
             + (velocity * timeElapsed)
             + (acceleration * 0.5 * timeElapsed * timeElapsed)
             ;
+        vec4 mvPosition = modelViewMatrix * vec4( newPosition, 1.0 );
+        gl_PointSize = ( 10.0 * size ) / -mvPosition.z;
+
         if (lifeLeft < 0.0) { 
             lifeLeft = 0.0; 
             gl_PointSize = 0.;
         }
         //while active use the new position
         if( timeElapsed > 0.0 ) {
-            gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+            gl_Position = projectionMatrix * mvPosition;
         } else {
             //if dead use the initial position and set point size to 0
             gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
@@ -180,7 +182,6 @@ export class GPUParticleSystem extends Object3D {
       depthTest: !depth,
       uniforms: {
         uTime: { value: 0.0 },
-        uScale: { value: 1.0 },
         tSprite: { value: this.sprite },
         reverseTime: { value: this.reverseTime },
         fadeIn: { value: this.fadeIn },

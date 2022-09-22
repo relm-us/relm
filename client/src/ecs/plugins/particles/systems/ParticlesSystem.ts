@@ -33,6 +33,19 @@ const motionPattern = {
 
     return options;
   },
+  TRAILS: (spec: Particles, transform: Transform, options) => {
+    const radius = Math.max(spec.params.x, 0.1);
+    options.position.x += Math.cos(spec.theta) * radius;
+    options.position.y += Math.sin(spec.theta) * radius;
+    options.position.z += Math.sin(spec.gamma) * radius;
+    spec.theta += (spec.params.y / 180) * Math.PI;
+    spec.gamma += (spec.params.z / 180) * Math.PI;
+
+    const s = 0.02;
+    options.velocity.set(rand(-s, s), rand(-s, s), rand(-s, s));
+
+    return options;
+  },
 };
 
 export class ParticlesSystem extends System {
@@ -106,6 +119,11 @@ export class ParticlesSystem extends System {
         if (!spec.enabled) {
           needMore = 0;
           system.initialTime = system.time;
+          return;
+        }
+
+        if (!(spec.pattern in motionPattern)) {
+          // invalid state
           return;
         }
 

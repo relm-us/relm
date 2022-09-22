@@ -14,7 +14,7 @@ import { Vector3Type } from "~/ecs/plugins/core";
 import { textures } from "../textures";
 
 export class Particles extends Component {
-  pattern: "DISPERSE_3D" | "DISPERSE_2D" | "GATEWAY";
+  pattern: "DISPERSE_3D" | "DISPERSE_2D" | "GATEWAY" | "TRAILS";
   params: Vector3;
 
   sprite: string;
@@ -36,17 +36,22 @@ export class Particles extends Component {
   fadeIn: number;
   fadeOut: number;
 
+  // cache
+  gamma: number = 0;
+  theta: number = 0;
+
   static props = {
     pattern: {
       type: StringType,
       default: "DISPERSE_3D",
       editor: {
-        label: "Motion Pattern",
+        label: "Pattern Motion",
         input: "Select",
         options: [
           { label: "Disperse (3D)", value: "DISPERSE_3D" },
           { label: "Disperse (2D)", value: "DISPERSE_2D" },
           { label: "Gateway", value: "GATEWAY" },
+          { label: "Trails", value: "TRAILS" },
         ],
       },
     },
@@ -56,6 +61,14 @@ export class Particles extends Component {
       type: Vector3Type,
       editor: {
         label: "Pattern Params",
+      },
+    },
+
+    offset: {
+      type: Vector3Type,
+      default: new Vector3(0, 0, 0),
+      editor: {
+        label: "Offset",
       },
     },
 
@@ -92,7 +105,7 @@ export class Particles extends Component {
 
     relative: {
       type: BooleanType,
-      default: true,
+      default: false,
       editor: {
         label: "Relative?",
       },
@@ -113,14 +126,6 @@ export class Particles extends Component {
       editor: {
         label: "End Color",
         input: "Color",
-      },
-    },
-
-    offset: {
-      type: Vector3Type,
-      default: new Vector3(0, 0, 0),
-      editor: {
-        label: "Offset",
       },
     },
 
