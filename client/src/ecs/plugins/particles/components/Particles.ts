@@ -29,6 +29,7 @@ export class Particles extends Component {
   offset: Vector3;
   sizeMin: number;
   sizeMax: number;
+  initialCount: number;
   rate: number;
   maxParticles: number;
   particleLt: number;
@@ -150,6 +151,14 @@ export class Particles extends Component {
       default: 30,
       editor: {
         label: "Size (Max)",
+      },
+    },
+
+    initialCount: {
+      type: NumberType,
+      default: 0,
+      editor: {
+        label: "Initial P. Count",
       },
     },
 

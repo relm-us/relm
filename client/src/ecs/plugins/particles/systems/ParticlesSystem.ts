@@ -15,9 +15,11 @@ function rand(low, high) {
 
 const motionPattern = {
   STILL: (spec: Particles, transform: Transform, options) => {
-    options.position.x += rand(-spec.params.x / 2, spec.params.x / 2);
-    options.position.y += rand(-spec.params.y / 2, spec.params.y / 2);
-    options.position.z += rand(-spec.params.z / 2, spec.params.z / 2);
+    options.position.set(
+      rand(-spec.params.x / 2, spec.params.x / 2),
+      rand(-spec.params.y / 2, spec.params.y / 2),
+      rand(-spec.params.z / 2, spec.params.z / 2)
+    );
 
     const s = 0.02;
     options.velocity.set(rand(-s, s), rand(-s, s), rand(-s, s));
@@ -25,6 +27,7 @@ const motionPattern = {
     return options;
   },
   EXPLODE: (spec: Particles, transform: Transform, options) => {
+    options.position.set(0, 0, 0);
     options.velocity.set(
       rand(-spec.params.x, spec.params.x),
       rand(-spec.params.y, spec.params.y),
@@ -37,8 +40,7 @@ const motionPattern = {
     const radius = Math.max(spec.params.x, 0.1);
     const x = Math.cos(theta) * radius;
     const y = Math.sin(theta) * radius;
-    options.position.x += x;
-    options.position.y += y;
+    options.position.set(x, y, 0);
 
     const s = spec.params.y;
     options.velocity.set(rand(-s, s), rand(-s, s), rand(-s, s));
@@ -51,9 +53,11 @@ const motionPattern = {
   },
   TRAILS: (spec: Particles, transform: Transform, options) => {
     const radius = Math.max(spec.params.x, 0.1);
-    options.position.x += Math.cos(spec.theta) * radius;
-    options.position.y += Math.sin(spec.theta) * radius;
-    options.position.z += Math.sin(spec.gamma) * radius;
+    options.position.set(
+      Math.cos(spec.theta) * radius,
+      Math.sin(spec.theta) * radius,
+      Math.sin(spec.gamma) * radius
+    );
     spec.theta += (spec.params.y / 180) * Math.PI;
     spec.gamma += (spec.params.z / 180) * Math.PI;
 
@@ -64,9 +68,11 @@ const motionPattern = {
   },
   RAINING: (spec: Particles, transform: Transform, options) => {
     options.velocity.set(0, -rand(0.5, 2), 0);
-    options.position.x += rand(-spec.params.x / 2, spec.params.x / 2);
-    options.position.y += rand(-spec.params.y / 2, spec.params.y / 2);
-    options.position.z += rand(-spec.params.z / 2, spec.params.z / 2);
+    options.position.set(
+      rand(-spec.params.x / 2, spec.params.x / 2),
+      rand(-spec.params.y / 2, spec.params.y / 2),
+      rand(-spec.params.z / 2, spec.params.z / 2)
+    );
     return options;
   },
 };
@@ -81,6 +87,7 @@ export class ParticlesSystem extends System {
     new: [Particles, Not(ParticlesRef)],
     active: [Particles, ParticlesRef],
     modified: [Modified(Particles), ParticlesRef],
+    modifiedTransform: [Modified(Transform), ParticlesRef],
     removed: [Not(Particles), ParticlesRef],
   };
 
@@ -94,6 +101,16 @@ export class ParticlesSystem extends System {
     this.queries.modified.forEach((entity) => this.remove(entity));
 
     this.queries.new.forEach((entity) => this.build(entity));
+
+    this.queries.modifiedTransform.forEach((entity) => {
+      const spec: Particles = entity.get(Particles);
+      if (!spec.relative) {
+        const transform: Transform = entity.get(Transform);
+        const system: GPUParticleSystem = entity.get(ParticlesRef).value;
+        system.position.copy(transform.position);
+        system.position.add(spec.offset);
+      }
+    });
 
     this.queries.active.forEach((entity) => {
       const system: GPUParticleSystem = entity.get(ParticlesRef).value;
@@ -122,7 +139,7 @@ export class ParticlesSystem extends System {
       sizeRandomness: (spec.sizeMax - spec.sizeMin) * 2,
     };
 
-    let needMore = 0;
+    let needMore = spec.initialCount;
     let lastTime = 0;
     const system = new GPUParticleSystem({
       maxParticles: spec.maxParticles,
@@ -155,12 +172,12 @@ export class ParticlesSystem extends System {
 
         // Create as many particles as needed based on rate
         for (let i = 0; i < needMore; i++) {
-          if (spec.relative) {
-            options.position.copy(spec.offset);
-          } else {
-            options.position.copy(transform.position);
-            options.position.add(spec.offset);
-          }
+          // if (spec.relative) {
+          //   options.position.copy(spec.offset);
+          // } else {
+          //   options.position.copy(transform.position);
+          //   options.position.add(spec.offset);
+          // }
 
           const newOptions = motionPattern[spec.pattern](
             spec,
@@ -175,7 +192,10 @@ export class ParticlesSystem extends System {
 
     if (spec.relative) {
       ref.value.add(system);
+      system.position.copy(spec.offset);
     } else {
+      system.position.copy(transform.position);
+      system.position.add(spec.offset);
       this.presentation.scene.add(system);
     }
 
