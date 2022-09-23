@@ -78,6 +78,7 @@
 <r-document-wrapper
   bind:this={wrapper}
   style="--bg-color: {bgColor}; --bg-color-dark: {bgColorDark}"
+  translate="no"
   on:click={filterClick}
 >
   <div bind:this={container} />
