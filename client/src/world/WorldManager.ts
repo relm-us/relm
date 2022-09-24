@@ -294,44 +294,7 @@ export class WorldManager {
 
     this.unsubs.push(
       graphicsQuality.subscribe(($quality) => {
-        let shadows, pixelRatio, framerate;
-
-        switch ($quality) {
-          case 0:
-            shadows = false;
-            pixelRatio = 0.25;
-            framerate = 20;
-            break;
-          case 1:
-            shadows = false;
-            pixelRatio = 0.5;
-            framerate = 30;
-            break;
-          case 2:
-            shadows = false;
-            pixelRatio = 1;
-            framerate = 30;
-            break;
-          case 3:
-            shadows = false;
-            pixelRatio = window.devicePixelRatio;
-            framerate = 60;
-            break;
-          case 4:
-            shadows = true;
-            pixelRatio = window.devicePixelRatio;
-            framerate = 60;
-            break;
-
-          default:
-            console.warn("Invalid graphics quality setting", $quality);
-        }
-
-        this.enableShadows(shadows);
-
-        this.setPixelRatio(pixelRatio);
-
-        this.setFps(framerate);
+        this.applyGraphicsQuality($quality);
       })
     );
 
@@ -543,6 +506,34 @@ export class WorldManager {
 
   getColliderEntities() {
     return this.world.entities.getAllBy((entity) => entity.has(Collider2));
+  }
+
+  applyGraphicsQuality(quality) {
+    const dpr = window.devicePixelRatio;
+    const table = {
+      0: [20, 0.25, false],
+      1: [30, 0.5, false],
+      2: [30, 1, false],
+      3: [60, dpr, false],
+      4: [60, dpr, true],
+    };
+
+    if (!(quality in table)) {
+      console.warn("Invalid graphics quality setting", quality);
+      return;
+    }
+
+    this.applyGraphicsSettings.apply(this, table[quality]);
+  }
+
+  applyGraphicsSettings(fps, pixelRatio, shadows) {
+    this.enableShadows(shadows);
+    this.setPixelRatio(pixelRatio);
+    this.setFps(fps);
+  }
+
+  restoreGraphicsQuality() {
+    this.applyGraphicsQuality(get(graphicsQuality));
   }
 
   enableNonInteractiveGround(enabled = true) {

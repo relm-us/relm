@@ -64,15 +64,14 @@
   function enterFullscreen() {
     if (!isLocal) {
       fullscreen = $fullscreenMeeting = true;
-      // TODO: implement 'lockFps' so framerate does not revert automatically to 20 fps or so
-      worldManager.setFps(1);
+      worldManager.applyGraphicsSettings(1, 1, false);
     }
   }
 
   function exitFullscreen() {
     if (!isLocal) {
       fullscreen = $fullscreenMeeting = false;
-      worldManager.setFps(60);
+      worldManager.restoreGraphicsQuality();
     }
   }
 
