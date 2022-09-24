@@ -7,7 +7,7 @@ import { HdImage } from "./HdImage";
 import { HdImageRef } from "./HdImageRef";
 import HdImageComponent from "./HdImage.svelte";
 
-import { RenderableBaseSystem } from "../RenderableBaseSystem";
+import { RenderableBaseSystem } from "../base/RenderableBaseSystem";
 
 export class HdImageSystem extends RenderableBaseSystem {
   static queries: Queries = {

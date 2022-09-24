@@ -3,7 +3,7 @@ import { CSS3DObject } from "./CSS3DRenderer";
 import { System, Groups } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
 
-import { CssPlane } from "./components";
+import { CssPlane } from "./CssPlane";
 import { CssPresentation } from "./CssPresentation";
 import { copyTransform } from "./copyTransform";
 

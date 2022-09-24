@@ -4,7 +4,6 @@ export type Config = {
   langDefault: string;
   serverUrl: string;
   serverYjsUrl: string;
-  serverScreenshotUrl: string;
   serverUploadUrl: string;
 };
 
@@ -14,7 +13,6 @@ export const env = (window as any).config as {
   fontsUrl: string;
   langDefault: string;
   server: string;
-  screenshotServer: string;
 };
 
 export const config: Config = {
@@ -23,6 +21,5 @@ export const config: Config = {
   langDefault: env.langDefault,
   serverUrl: env.server,
   serverYjsUrl: env.server.replace(/^http/, "ws"),
-  serverScreenshotUrl: env.screenshotServer,
   serverUploadUrl: `${env.server}/asset/upload`,
 };

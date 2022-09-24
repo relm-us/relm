@@ -3,9 +3,9 @@ import { Object3DRef } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
 
 import { YouTube, YouTubeRef, CssPlane } from "../components";
-import YouTubeComponent from "./YouTube.svelte";
+import { RenderableBaseSystem } from "../base/RenderableBaseSystem";
 
-import { RenderableBaseSystem } from "../RenderableBaseSystem";
+import YouTubeComponent from "./YouTube.svelte";
 
 export class YouTubeSystem extends RenderableBaseSystem {
   static queries: Queries = {

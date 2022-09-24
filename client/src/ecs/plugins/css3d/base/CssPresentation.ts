@@ -1,6 +1,7 @@
 import type { DecoratedECSWorld } from "~/types";
 
 import { PerspectiveCamera, Scene } from "three";
+
 import { CSS3DRenderer } from "./CSS3DRenderer";
 
 const ResizeObserver = (window as any).ResizeObserver;

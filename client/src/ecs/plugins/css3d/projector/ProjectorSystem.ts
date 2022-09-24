@@ -1,18 +1,19 @@
 import { Collider } from "@dimforge/rapier3d";
 
+import { worldManager } from "~/world";
+
 import { Not, Modified } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
 import { Physics } from "~/ecs/plugins/physics";
 import { Collider2Ref } from "~/ecs/plugins/collider";
 
+import { RenderableBaseSystem } from "../base/RenderableBaseSystem";
 import { CssPlane } from "../components";
+
 import { Projector } from "./Projector";
 import { ProjectorRef } from "./ProjectorRef";
 import ProjectorComponent from "./Projector.svelte";
-
-import { RenderableBaseSystem } from "../RenderableBaseSystem";
-import { worldManager } from "~/world";
 
 // How far away an avatar can be from the Projector before it is no longer
 // considered to be "near"

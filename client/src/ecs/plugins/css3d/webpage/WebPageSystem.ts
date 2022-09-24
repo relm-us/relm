@@ -2,12 +2,12 @@ import { Not, Modified } from "~/ecs/base";
 import { Object3DRef } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
 
+import { RenderableBaseSystem } from "../base/RenderableBaseSystem";
 import { CssPlane } from "../components";
+
 import { WebPage } from "./WebPage";
 import { WebPageRef } from "./WebPageRef";
 import WebPageComponent from "./WebPage.svelte";
-
-import { RenderableBaseSystem } from "../RenderableBaseSystem";
 
 export class WebPageSystem extends RenderableBaseSystem {
   static queries: Queries = {

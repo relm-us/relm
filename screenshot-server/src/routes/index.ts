@@ -1,1 +1,0 @@
-export { screenshot } from "./screenshot.js";

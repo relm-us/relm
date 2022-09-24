@@ -1,7 +1,8 @@
 import { System, Groups } from "~/ecs/base";
 import { isBrowser } from "~/utils/isBrowser";
 import { Presentation } from "~/ecs/plugins/core/Presentation";
-import { CssPresentation } from "../CssPresentation";
+
+import { CssPresentation } from "./CssPresentation";
 
 export class CssRenderSystem extends System {
   presentation: Presentation;

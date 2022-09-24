@@ -2,7 +2,7 @@ import { createPlugin } from "~/ecs/base";
 import CorePlugin from "~/ecs/plugins/core";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
-import { CssPresentation } from "./CssPresentation";
+import { CssPresentation } from "./base/CssPresentation";
 
 import * as Components from "./components";
 import * as Systems from "./systems";

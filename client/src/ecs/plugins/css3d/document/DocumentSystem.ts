@@ -3,9 +3,9 @@ import { Object3DRef } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
 
 import { Document, DocumentRef, CssPlane } from "../components";
-import DocumentComponent from "./Document.svelte";
+import { RenderableBaseSystem } from "../base/RenderableBaseSystem";
 
-import { RenderableBaseSystem } from "../RenderableBaseSystem";
+import DocumentComponent from "./Document.svelte";
 
 export class DocumentSystem extends RenderableBaseSystem {
   static queries: Queries = {
