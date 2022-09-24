@@ -9,8 +9,6 @@ import debounce from "lodash.debounce";
 
 import { LeveldbPersistence } from "y-leveldb";
 
-import { defaultCallbackHandler, isDefaultCallbackSet } from "./callback.js";
-
 const CALLBACK_DEBOUNCE_WAIT =
   parseInt(process.env.CALLBACK_DEBOUNCE_WAIT) || 2000;
 const CALLBACK_DEBOUNCE_MAXWAIT =
@@ -98,7 +96,7 @@ class WSSharedDoc extends Y.Doc {
    */
   constructor(
     name,
-    { callbackHandler = isDefaultCallbackSet ? defaultCallbackHandler : null }
+    { callbackHandler = null }
   ) {
     super({ gc: gcEnabled });
     this.name = name;
