@@ -1,2 +1,3 @@
-export * from "./utils.js";
-export * from "./y-websocket.js";
+export * from "./getYDoc.js";
+export * from "./setupWSConnection.js";
+export * from "./WebsocketProvider.js";

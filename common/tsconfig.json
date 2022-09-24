@@ -16,6 +16,7 @@
     "sourceMap": true,
     "outDir": "./dist",
 		"paths": { "~/*": ["./*"] },
+    "types": ["node"],
     "typeRoots": [
       "types"
     ]
