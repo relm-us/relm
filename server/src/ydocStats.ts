@@ -1,19 +1,9 @@
-import {
-  YComponent,
-  YComponents,
-  YEntities,
-  YValues,
-  getYDoc as ywsGetYDoc,
-} from "relm-common";
 import * as Y from "yjs";
 
-import { Doc } from "./db/index.js";
+import { YComponent, YComponents, YEntities, YValues } from "relm-common";
 
-export async function getYDoc(docId: string): Promise<Y.Doc> {
-  const doc = await ywsGetYDoc(docId);
-  await doc.whenSynced;
-  return doc;
-}
+import { empty } from "./utils/empty.js";
+import { Doc } from "./db/index.js";
 
 export const ydocStats = async (update, origin, doc: Y.Doc) => {
   if (!doc) {
@@ -58,6 +48,6 @@ export const ydocStats = async (update, origin, doc: Y.Doc) => {
     entitiesCount,
     assetsCount,
   });
-};
 
-const empty = (val) => val === null || val === undefined || val === "";
+  console.log("updated stats");
+};

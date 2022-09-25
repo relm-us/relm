@@ -15,7 +15,7 @@ import {
   wrapAsync,
 } from "../utils/index.js";
 
-import { getYDoc } from "../getYDoc.js";
+import { getSyncedYDoc } from "../getSyncedYDoc.js";
 
 import { Asset } from "../db/index.js";
 
@@ -138,7 +138,7 @@ asset.post(
     const entityId: string = req.body.entityId;
     const yCenter: number = req.body.yCenter || 0.0;
 
-    const relmDoc: Y.Doc = await getYDoc(req.relm.permanentDocId);
+    const relmDoc: Y.Doc = await getSyncedYDoc(req.relm.permanentDocId);
     const yentities: Y.Array<YEntity> = relmDoc.getArray("entities");
 
     // Find the entity
@@ -209,7 +209,7 @@ asset.post(
     const assetId: string = req.body.assetId;
     const position: number[] = req.body.position;
 
-    const relmDoc: Y.Doc = await getYDoc(req.relm.permanentDocId);
+    const relmDoc: Y.Doc = await getSyncedYDoc(req.relm.permanentDocId);
     const yentities: Y.Array<YEntity> = relmDoc.getArray("entities");
 
     const asset = await Asset.getAsset({ assetId });

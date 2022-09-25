@@ -1,20 +1,37 @@
+import type * as Y from "yjs";
+
 import WebSocket from "ws";
 import { createServer } from "http";
 import { setupWSConnection } from "relm-common";
+import debounce from "lodash.debounce";
 
 import { app } from "./server_http.js";
-import { ydocStats } from "./getYDoc.js";
+import { ydocStats } from "./ydocStats.js";
 
 import { AuthResult, isAuthorized } from "./isAuthorized.js";
 
 export const server = createServer();
 
-let wss = new WebSocket.Server({ noServer: true });
+const CALLBACK_DEBOUNCE_WAIT = 2000;
+const CALLBACK_DEBOUNCE_MAXWAIT = 10000;
 
-wss.on("connection", (conn, req) => {
-  setupWSConnection(conn, req, {
-    callbackHandler: ydocStats,
-  });
+const wss = new WebSocket.Server({ noServer: true });
+
+const ydocStatsDb = debounce(ydocStats, CALLBACK_DEBOUNCE_WAIT, {
+  maxWait: CALLBACK_DEBOUNCE_MAXWAIT,
+});
+
+const onUpdateDoc = (update, origin, doc: Y.Doc) => {
+  ydocStatsDb(update, origin, doc);
+};
+
+wss.on("connection", async (conn, req) => {
+  const doc = await setupWSConnection(conn, req);
+
+  // If this is the same open doc as previously been created, then
+  // `.on("update", ...)` will essentially be a no-op, because it
+  // is setting same listener function as before.
+  doc.on("update", onUpdateDoc);
 });
 
 server.on("request", app);

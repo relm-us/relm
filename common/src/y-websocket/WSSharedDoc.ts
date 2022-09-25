@@ -2,17 +2,10 @@ import * as Y from "yjs";
 import * as awarenessProtocol from "y-protocols/awareness";
 import * as syncProtocol from "y-protocols/sync";
 import { encoding, mutex } from "lib0";
-import debounce from "lodash.debounce";
 
 import { getPersistence } from "./persistence.js";
 import { send } from "./send.js";
-import {
-  CALLBACK_DEBOUNCE_MAXWAIT,
-  CALLBACK_DEBOUNCE_WAIT,
-  GC_ENABLED,
-  messageAwareness,
-  messageSync,
-} from "./config.js";
+import { GC_ENABLED, messageAwareness, messageSync } from "./config.js";
 
 export class WSSharedDoc extends Y.Doc {
   name: string;
@@ -25,7 +18,7 @@ export class WSSharedDoc extends Y.Doc {
   /**
    * @param {string} name
    */
-  constructor(name, { callbackHandler = null }) {
+  constructor(name) {
     super({ gc: GC_ENABLED });
     this.name = name;
     this.mux = mutex.createMutex();
@@ -86,15 +79,6 @@ export class WSSharedDoc extends Y.Doc {
       const message = encoding.toUint8Array(encoder);
       doc.conns.forEach((_, conn) => send(doc, conn, message));
     });
-
-    if (callbackHandler) {
-      this.on(
-        "update",
-        debounce(callbackHandler, CALLBACK_DEBOUNCE_WAIT, {
-          maxWait: CALLBACK_DEBOUNCE_MAXWAIT,
-        })
-      );
-    }
 
     const persistence = getPersistence();
 

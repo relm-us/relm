@@ -29,7 +29,7 @@ import * as config from "../config.js";
 import * as middleware from "../middleware.js";
 import * as twilio from "../lib/twilio.js";
 import { Permission, Relm, Doc, Variable } from "../db/index.js";
-import { getYDoc } from "../getYDoc.js";
+import { getSyncedYDoc } from "../getSyncedYDoc.js";
 
 import {
   wrapAsync,
@@ -173,7 +173,7 @@ relm.post(
         }
       } else {
         // Populate the new relm with basic ground
-        const newRelmDoc: Y.Doc = await getYDoc(relm.permanentDocId);
+        const newRelmDoc: Y.Doc = await getSyncedYDoc(relm.permanentDocId);
         importWorldDoc(config.DEFAULT_RELM_CONTENT, newRelmDoc);
 
         console.log(
@@ -191,10 +191,10 @@ relm.post(
 );
 
 async function cloneRelmDoc(seedRelmDocId: string, newRelmDocId: string) {
-  const seedRelmDoc: Y.Doc = await getYDoc(seedRelmDocId);
+  const seedRelmDoc: Y.Doc = await getSyncedYDoc(seedRelmDocId);
   const relmContent = exportWorldDoc(seedRelmDoc);
 
-  const newRelmDoc: Y.Doc = await getYDoc(newRelmDocId);
+  const newRelmDoc: Y.Doc = await getSyncedYDoc(newRelmDocId);
   importWorldDoc(relmContent, newRelmDoc);
 
   return newRelmDoc;
@@ -223,7 +223,7 @@ relm.post(
   middleware.authenticated(),
   middleware.authorized("access"),
   wrapAsync(async (req, res) => {
-    const relmDoc = await getYDoc(req.relm.permanentDocId);
+    const relmDoc = await getSyncedYDoc(req.relm.permanentDocId);
     const content = exportWorldDoc(relmDoc);
 
     return respondWithSuccess(res, {
@@ -241,7 +241,7 @@ relm.post(
   middleware.authenticated(),
   middleware.authorized("access"),
   wrapAsync(async (req, res) => {
-    const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
+    const doc: Y.Doc = await getSyncedYDoc(req.relm.permanentDocId);
     req.relm.permanentDocSize = Y.encodeStateAsUpdate(doc).byteLength;
     const twilioToken = twilio.getToken(req.authenticatedParticipantId);
 
@@ -326,7 +326,7 @@ relm.post(
   middleware.acceptJwt(),
   middleware.authorized("read"),
   wrapAsync(async (req, res) => {
-    const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
+    const doc: Y.Doc = await getSyncedYDoc(req.relm.permanentDocId);
     req.relm.permanentDocSize = Y.encodeStateAsUpdate(doc).byteLength;
 
     // TODO: don't reveal twilio token for `read`-level permission
@@ -349,22 +349,25 @@ relm.post(
 
 type EntityComponentData = {
   [component: string]: {
-    [property: string]: any
-  }
+    [property: string]: any;
+  };
 };
 
-type Action = {
-  type: "updateEntity";
-  entity: string;
-  components: EntityComponentData;
-} | {
-  type: "createEntity",
-  prefabId: string,
-  components: EntityComponentData;
-} | {
-  type: "deleteEntity",
-  entity: string
-};
+type Action =
+  | {
+      type: "updateEntity";
+      entity: string;
+      components: EntityComponentData;
+    }
+  | {
+      type: "createEntity";
+      prefabId: string;
+      components: EntityComponentData;
+    }
+  | {
+      type: "deleteEntity";
+      entity: string;
+    };
 
 type Possibility = {
   compare: string;
@@ -407,7 +410,7 @@ relm.post(
       return respondWithError(res, "changes required");
     }
 
-    const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
+    const doc: Y.Doc = await getSyncedYDoc(req.relm.permanentDocId);
     // console.log("doc.actions", doc.getMap("actions").toJSON());
 
     const variables = await Variable.getVariables({ relmId });
@@ -492,12 +495,12 @@ relm.post(
   middleware.acceptJwt(),
   middleware.authorized("edit"),
   wrapAsync(async (req, res) => {
-    const doc: Y.Doc = await getYDoc(req.relm.permanentDocId);
+    const doc: Y.Doc = await getSyncedYDoc(req.relm.permanentDocId);
 
     const actions = req.body.actions;
 
     return respondWithSuccess(res, {
-      result: applyActions(doc, actions)
+      result: applyActions(doc, actions),
     });
   })
 );
@@ -531,7 +534,10 @@ async function setVariable(doc, variables, relmId, name, value) {
   }
 }
 
-type ActionResult = ActionResultCreateEntity | ActionResultDeleteEntity | ActionResultSetProperties;
+type ActionResult =
+  | ActionResultCreateEntity
+  | ActionResultDeleteEntity
+  | ActionResultSetProperties;
 
 function applyActions(doc: Y.Doc, actions: Action[]) {
   const result: ActionResult[] = [];
@@ -548,20 +554,21 @@ function applyActions(doc: Y.Doc, actions: Action[]) {
         break;
       }
     }
-
   }
   return result;
 }
 
-type ActionResultCreateEntity = {
-  type: "createEntity",
-  status: "success",
-  entity: string
-} | {
-  type: "createEntity",
-  status: "error",
-  reason: string
-};
+type ActionResultCreateEntity =
+  | {
+      type: "createEntity";
+      status: "success";
+      entity: string;
+    }
+  | {
+      type: "createEntity";
+      status: "error";
+      reason: string;
+    };
 
 function createEntity(
   doc: Y.Doc,
@@ -572,46 +579,45 @@ function createEntity(
     return {
       type: "createEntity",
       status: "error",
-      reason: "Invalid components provided."
+      reason: "Invalid components provided.",
     };
   }
 
   const entities = doc.getArray("entities") as YEntities;
-  
+
   const entity = {
     ...components,
     id: nanoid(),
     name: "",
     parent: null,
     children: [],
-    meta: {}
+    meta: {},
   };
   const serializedEntity = jsonToYEntity(entity);
 
-  entities.push([ serializedEntity ]);
+  entities.push([serializedEntity]);
 
   return {
     type: "createEntity",
     status: "success",
-    entity: entity.id
+    entity: entity.id,
   };
 }
 
-type ActionResultDeleteEntity = {
-  type: "deleteEntity",
-  status: "success"
-} | {
-  type: "deleteEntity",
-  status: "error",
-  reason: string
-};
+type ActionResultDeleteEntity =
+  | {
+      type: "deleteEntity";
+      status: "success";
+    }
+  | {
+      type: "deleteEntity";
+      status: "error";
+      reason: string;
+    };
 
-function deleteEntity(
-  doc: Y.Doc,
-  entityId: string
-): ActionResultDeleteEntity {
+function deleteEntity(doc: Y.Doc, entityId: string): ActionResultDeleteEntity {
   const entities = doc.getArray("entities") as YEntities;
-  
+
   for (let i = 0; i < entities.length; i++) {
     const entity = entities.get(i);
     const iteratedEntityId = entity.get("id");
@@ -620,7 +626,7 @@ function deleteEntity(
       entities.delete(i);
       return {
         type: "deleteEntity",
-        status: "success"
+        status: "success",
       };
     }
   }
@@ -628,18 +634,20 @@ function deleteEntity(
   return {
     type: "deleteEntity",
     status: "error",
-    reason: `No entity by the id ${entityId} could be found.`
+    reason: `No entity by the id ${entityId} could be found.`,
   };
 }
 
-type ActionResultSetProperties = {
-  type: "updateEntity",
-  status: "success"
-} | {
-  type: "updateEntity",
-  status: "error",
-  reason: string
-};
+type ActionResultSetProperties =
+  | {
+      type: "updateEntity";
+      status: "success";
+    }
+  | {
+      type: "updateEntity";
+      status: "error";
+      reason: string;
+    };
 
 function setProperties(
   doc: Y.Doc,
@@ -651,7 +659,7 @@ function setProperties(
     return {
       type: "updateEntity",
       status: "error",
-      reason: "Invalid components provided."
+      reason: "Invalid components provided.",
     };
   }
 
@@ -664,8 +672,8 @@ function setProperties(
     return {
       type: "updateEntity",
       status: "error",
-      reason: `entity not found ${entityId}`
-    }
+      reason: `entity not found ${entityId}`,
+    };
   }
 
   if (!entity.has("components")) {
@@ -702,11 +710,11 @@ function setProperties(
         // Store all components to be set in this map.
         componentValues = new Y.Map();
       }
-      
+
       // Apply any property changes requested.
       for (const propertyName in componentsToSet[componentName]) {
         const value = componentsToSet[componentName][propertyName];
-  
+
         if (value !== null) {
           componentValues.set(propertyName, value);
         } else {
@@ -721,14 +729,14 @@ function setProperties(
         const component: YComponent = new Y.Map();
         component.set("name", componentName);
         component.set("values", componentValues);
-        entityComponents.push([ component ]);
+        entityComponents.push([component]);
       }
     }
   });
 
   return {
     type: "updateEntity",
-    status: "success"
+    status: "success",
   };
 }
 

@@ -235,6 +235,7 @@ importers:
       '@jest/types': ^28.0
       '@peculiar/webcrypto': ^1.0.27
       '@types/express': ^4.17.11
+      '@types/lodash.debounce': ^4.0.7
       '@types/node': ^17.0.5
       '@types/passport': ^1.0.9
       '@types/passport-facebook': ^2.1.11
@@ -341,6 +342,7 @@ importers:
       '@jest/globals': 27.5.1
       '@jest/types': 28.1.1
       '@types/express': 4.17.13
+      '@types/lodash.debounce': 4.0.7
       '@types/node': 17.0.23
       '@types/passport': 1.0.9
       '@types/passport-facebook': 2.1.11
@@ -3803,6 +3805,16 @@ packages:
 
   /@types/json-schema/7.0.11:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
+    dev: true
+
+  /@types/lodash.debounce/4.0.7:
+    resolution: {integrity: sha512-X1T4wMZ+gT000M2/91SYj0d/7JfeNZ9PeeOldSNoE/lunLeQXKvkmIumI29IaKMotU/ln/McOIvgzZcQ/3TrSA==}
+    dependencies:
+      '@types/lodash': 4.14.185
+    dev: true
+
+  /@types/lodash/4.14.185:
+    resolution: {integrity: sha512-evMDG1bC4rgQg4ku9tKpuMh5iBNEwNa3tf9zRHdP1qlv+1WUg44xat4IxCE14gIpZRGUUWAx2VhItCZc25NfMA==}
     dev: true
 
   /@types/mdast/3.0.10:

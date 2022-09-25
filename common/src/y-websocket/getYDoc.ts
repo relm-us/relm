@@ -10,12 +10,9 @@ import { docs } from "./docs.js";
  * @param {boolean} gc - whether to allow gc on the doc (applies only when created)
  * @return {WSSharedDoc}
  */
-export function getYDoc(
-  docname: string,
-  { gc = true, callbackHandler = null } = {}
-): WSSharedDoc {
+export function getYDoc(docname: string, gc = true): WSSharedDoc {
   return map.setIfUndefined(docs, docname, () => {
-    const doc = new WSSharedDoc(docname, { callbackHandler });
+    const doc = new WSSharedDoc(docname);
     doc.gc = gc;
     docs.set(docname, doc);
     return doc;

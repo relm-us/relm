@@ -13,10 +13,8 @@ export const wsReadyStateOpen = 1;
 
 // disable gc when using snapshots!
 export const GC_ENABLED = getEnv("GC") !== "false" && getEnv("GC") !== "0";
-export const CALLBACK_DEBOUNCE_WAIT =
-  parseInt(getEnv("CALLBACK_DEBOUNCE_WAIT")) || 2000;
-export const CALLBACK_DEBOUNCE_MAXWAIT =
-  parseInt(getEnv("CALLBACK_DEBOUNCE_MAXWAIT")) || 10000;
+export const CALLBACK_DEBOUNCE_WAIT = 2000;
+export const CALLBACK_DEBOUNCE_MAXWAIT = 10000;
 
 function isNode() {
   return typeof process !== undefined;

@@ -8,24 +8,21 @@ import { closeConn } from "./closeConn.js";
 import { getYDoc } from "./getYDoc.js";
 import { messageListener } from "./messageListener.js";
 import { messageSync, messageAwareness, pingTimeout } from "./config.js";
+import { WSSharedDoc } from "./WSSharedDoc.js";
 
 /**
  * @param {any} conn
  * @param {any} req
  * @param {any} opts
  */
-export const setupWSConnection = async (
+export async function setupWSConnection(
   conn,
   req,
-  {
-    docName = req.url.slice(1).split("?")[0],
-    gc = true,
-    callbackHandler = null,
-  } = {}
-) => {
+  { docName = req.url.slice(1).split("?")[0], gc = true } = {}
+): Promise<WSSharedDoc> {
   conn.binaryType = "arraybuffer";
   // get doc, initialize if it does not exist yet
-  const doc = getYDoc(docName, { gc, callbackHandler });
+  const doc = getYDoc(docName, gc);
   doc.conns.set(conn, new Set());
   // listen and reply to events
   conn.on(
@@ -87,4 +84,6 @@ export const setupWSConnection = async (
       send(doc, conn, encoding.toUint8Array(encoder));
     }
   }
-};
+
+  return doc;
+}
