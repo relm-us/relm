@@ -22,6 +22,9 @@ export const ydocStats = async (update, origin, doc: Y.Doc) => {
         const name = component.get("name");
         const values: YValues = component.get("values") as YValues;
         return (
+          // Model2 & Shape2 use `Asset` component
+          (name === "Asset" && !empty((values.get("value") as any)?.url)) ||
+          (name === "HdImage" && !empty((values.get("asset") as any)?.url)) ||
           (name === "Model" && !empty((values.get("asset") as any)?.url)) ||
           (name === "Image" && !empty((values.get("asset") as any)?.url)) ||
           (name === "Shape" && !empty((values.get("texture") as any)?.url)) ||
