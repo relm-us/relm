@@ -18,17 +18,18 @@ import { WSSharedDoc } from "./WSSharedDoc.js";
 export async function setupWSConnection(
   conn,
   req,
-  { docName = req.url.slice(1).split("?")[0], gc = true } = {}
+  { docName = req.url.slice(1).split("?")[0], gc = true, onClose = null } = {}
 ): Promise<WSSharedDoc> {
   conn.binaryType = "arraybuffer";
+
   // get doc, initialize if it does not exist yet
   const doc = getYDoc(docName, gc);
+
   doc.conns.set(conn, new Set());
+
   // listen and reply to events
-  conn.on(
-    "message",
-    /** @param {ArrayBuffer} message */ (message) =>
-      messageListener(conn, doc, new Uint8Array(message))
+  conn.on("message", (message: ArrayBuffer) =>
+    messageListener(conn, doc, new Uint8Array(message))
   );
 
   // Check if connection is still alive
@@ -36,6 +37,7 @@ export async function setupWSConnection(
   const pingInterval = setInterval(() => {
     if (!pongReceived) {
       if (doc.conns.has(conn)) {
+        onClose?.(doc);
         closeConn(doc, conn);
       }
       clearInterval(pingInterval);
@@ -44,23 +46,25 @@ export async function setupWSConnection(
       try {
         conn.ping();
       } catch (e) {
+        onClose?.(doc);
         closeConn(doc, conn);
         clearInterval(pingInterval);
       }
     }
   }, pingTimeout);
   conn.on("close", () => {
+    onClose?.(doc);
     closeConn(doc, conn);
     clearInterval(pingInterval);
   });
   conn.on("pong", () => {
     pongReceived = true;
   });
-  // put the following in a variables in a block so the interval handlers don't keep in in
-  // scope
+  // put the following in a variables in a block so the interval handlers
+  // don't keep in in scope
   {
-    // await the doc state being updated from persistence, if available, otherwise
-    // we may send sync step 1 too early
+    // await the doc state being updated from persistence, if available,
+    // otherwise we may send sync step 1 too early
     if (doc.whenSynced) {
       await doc.whenSynced;
     }

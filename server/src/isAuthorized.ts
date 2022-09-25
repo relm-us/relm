@@ -53,7 +53,7 @@ export async function isAuthorized(
   }
 
   // Get relm from docId
-  const doc = await Doc.getDoc({ docId });
+  const doc = await Doc.getDocWithRelmName({ docId });
 
   if (!doc) {
     return {

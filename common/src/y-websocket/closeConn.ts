@@ -6,11 +6,7 @@ import { WSSharedDoc } from "./WSSharedDoc.js";
 
 export const closeConn = (doc: WSSharedDoc, conn) => {
   if (doc.conns.has(conn)) {
-    /**
-     * @type {Set<number>}
-     */
-    // @ts-ignore
-    const controlledIds = doc.conns.get(conn);
+    const controlledIds: Set<number> = doc.conns.get(conn);
     doc.conns.delete(conn);
     awarenessProtocol.removeAwarenessStates(
       doc.awareness,
@@ -24,6 +20,7 @@ export const closeConn = (doc: WSSharedDoc, conn) => {
         // if persisted and the state has finished loading from the database,
         // we write the state back to persisted storage
         persistence.writeState(doc.name, doc).then(() => {
+          // Destroy emitters/listeners
           doc.destroy();
         });
       }

@@ -196,7 +196,7 @@ importers:
   common:
     specifiers:
       '@jest/types': 27.5.1
-      '@types/node': ^16.0.0
+      '@types/node': ^17.0.0
       '@types/three': 0.141.0
       base64-arraybuffer-es6: ^0.6.0
       core-js-bundle: ^3.21.1
@@ -219,7 +219,7 @@ importers:
       y-protocols: 1.0.5
     devDependencies:
       '@jest/types': 27.5.1
-      '@types/node': 16.11.60
+      '@types/node': 17.0.23
       '@types/three': 0.141.0
       core-js-bundle: 3.23.1
       jest: 27.5.1
@@ -3837,10 +3837,6 @@ packages:
 
   /@types/ms/0.7.31:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
-    dev: true
-
-  /@types/node/16.11.60:
-    resolution: {integrity: sha512-kYIYa1D1L+HDv5M5RXQeEu1o0FKA6yedZIoyugm/MBPROkLpX4L7HRxMrPVyo8bnvjpW/wDlqFNGzXNMb7AdRw==}
     dev: true
 
   /@types/node/17.0.23:
