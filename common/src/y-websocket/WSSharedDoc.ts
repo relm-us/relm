@@ -22,33 +22,29 @@ export class WSSharedDoc extends Y.Doc {
     super({ gc: GC_ENABLED });
     this.name = name;
     this.mux = mutex.createMutex();
-    /**
-     * Maps from conn to set of controlled user ids. Delete all user ids from awareness when this conn is closed
-     * @type {Map<Object, Set<number>>}
-     */
+
+    // Maps from conn to set of controlled user ids. Delete all user ids from awareness when this conn is closed
     this.conns = new Map();
-    /**
-     * @type {awarenessProtocol.Awareness}
-     */
     this.awareness = new awarenessProtocol.Awareness(this);
     this.awareness.setLocalState(null);
-    /**
-     * @type {Promise<void>|void}
-     */
     this.whenSynced = void 0;
-    /**
-     * @type {boolean}
-     */
     this.isSynced = false;
+
     /**
-     * @param {{ added: Array<number>, updated: Array<number>, removed: Array<number> }} changes
-     * @param {Object | null} conn Origin is the connection that made the change
+     * @param changes Added, updated, or removed clients
+     * @param conn Origin is the connection that made the change
      */
-    const awarenessChangeHandler = ({ added, updated, removed }, conn) => {
+    const awarenessChangeHandler = (
+      {
+        added,
+        updated,
+        removed,
+      }: { added: number[]; updated: number[]; removed: number[] },
+      conn: Object
+    ) => {
       const changedClients = added.concat(updated, removed);
       if (conn !== null) {
-        const connControlledIDs =
-          /** @type {Set<number>} */ this.conns.get(conn);
+        const connControlledIDs: Set<number> = this.conns.get(conn);
         if (connControlledIDs !== undefined) {
           added.forEach((clientID) => {
             connControlledIDs.add(clientID);

@@ -95,6 +95,7 @@ import { graphicsQuality } from "~/stores/graphicsQuality";
 import { Oculus } from "~/ecs/plugins/html2d";
 import { rollRandomAppearance } from "~/identity/Avatar/appearance";
 import { releaseAllKeys } from "~/events/input/comboTable";
+import { portalOccupancy } from "~/stores/portalOccupancy";
 
 type LoopType =
   | { type: "reqAnimFrame" }
@@ -161,6 +162,10 @@ export class WorldManager {
   get selectionBox(): SelectionBox {
     if (!this._selectionBox) this._selectionBox = new SelectionBox(this.world);
     return this._selectionBox;
+  }
+
+  get occupancy() {
+    return get(portalOccupancy);
   }
 
   async init(

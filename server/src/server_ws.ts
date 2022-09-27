@@ -1,66 +1,68 @@
-import type * as Y from "yjs";
-
 import WebSocket from "ws";
 import { createServer } from "http";
-import { setupWSConnection } from "relm-common";
 import debounce from "lodash.debounce";
+import { setupWSConnection, WSSharedDoc } from "relm-common";
 
 import { app } from "./server_http.js";
 import { ydocStats } from "./ydocStats.js";
 
 import { AuthResult, isAuthorized } from "./isAuthorized.js";
+import { getOrCreateLiveRelm, liveRelms } from "./LiveRelm.js";
 
 export const server = createServer();
 
 const CALLBACK_DEBOUNCE_WAIT = 2000;
 const CALLBACK_DEBOUNCE_MAXWAIT = 10000;
+const OCCUPANCY_SEND_INTERVAL = 2500;
 
 const wss = new WebSocket.Server({ noServer: true });
-
-const attendance = new Map<string, number>();
-const attendanceAdd = (key, count) => {
-  const newCount = (attendance.get(key) ?? 0) + count;
-  attendance.set(key, newCount);
-  return newCount;
-};
 
 const ydocStatsDb = debounce(ydocStats, CALLBACK_DEBOUNCE_WAIT, {
   maxWait: CALLBACK_DEBOUNCE_MAXWAIT,
 });
 
-const onUpdateDoc = (update, origin, doc: Y.Doc) => {
-  ydocStatsDb(update, origin, doc);
+const onUpdateDoc = (_update, _origin, doc: WSSharedDoc) => {
+  ydocStatsDb(doc);
 };
 
-wss.on("connection", async (conn, req, relmDoc) => {
-  const relmId = relmDoc.relmId;
-  const relmName = relmDoc.relmName;
-  const participantId = getUrlParams(req.url).get("participant-id");
+setInterval(() => {
+  for (let liveRelm of liveRelms.values()) {
+    liveRelm.send();
+  }
+}, OCCUPANCY_SEND_INTERVAL);
 
-  // Each participant connects twice, once on the "permanent" relmDoc,
-  // and once on the "transient" relmDoc; we only care about tracking
+wss.on("connection", async (conn, req, relmDoc) => {
+  // Each participant connects twice, once to the "permanent" relmDoc,
+  // and once to the "transient" relmDoc; we only care about tracking
   // the "permanent" one.
   if (relmDoc.docType === "permanent") {
-    const doc = await setupWSConnection(conn, req, {
-      onClose: (doc) => {
-        if (relmDoc.docType === "permanent") {
-          const count = attendanceAdd(relmId, -1);
-          console.log(
-            `Relm attendance in ${relmName} is ${count} ('${participantId}' left)`
-          );
+    const relmName = relmDoc.relmName;
+    const participantId = getUrlParams(req.url).get("participant-id");
+
+    await setupWSConnection(conn, req, {
+      onOpen: (doc: WSSharedDoc) => {
+        const liveRelm = getOrCreateLiveRelm(
+          relmName,
+          doc.awareness,
+          relmDoc.portals
+        );
+
+        liveRelm.join(participantId);
+
+        // Finally, we lazily update any cached stats in the DB
+        doc.on("update", onUpdateDoc);
+      },
+      onClose: (doc: WSSharedDoc) => {
+        const liveRelm = getOrCreateLiveRelm(relmName);
+
+        liveRelm.leave(participantId);
+
+        // Clean up listener if it's the last participant to leave the room
+        if (liveRelm.occupancy === 0) {
+          doc.off("update", onUpdateDoc);
         }
       },
     });
-
-    const count = attendanceAdd(relmId, 1);
-    console.log(
-      `Relm attendance in ${relmName} is ${count} ('${participantId}' joined)`
-    );
-
-    // If this is the same open doc as previously been created, then
-    // `.on("update", ...)` will essentially be a no-op, because it
-    // is setting same listener function as before.
-    doc.on("update", onUpdateDoc);
   } else {
     await setupWSConnection(conn, req);
   }

@@ -9,6 +9,7 @@ import { getYDoc } from "./getYDoc.js";
 import { messageListener } from "./messageListener.js";
 import { messageSync, messageAwareness, pingTimeout } from "./config.js";
 import { WSSharedDoc } from "./WSSharedDoc.js";
+import { docs } from "./docs.js";
 
 /**
  * @param {any} conn
@@ -18,9 +19,16 @@ import { WSSharedDoc } from "./WSSharedDoc.js";
 export async function setupWSConnection(
   conn,
   req,
-  { docName = req.url.slice(1).split("?")[0], gc = true, onClose = null } = {}
+  {
+    gc = true,
+    onOpen = null,
+    onClose = null,
+    docName = req.url.slice(1).split("?")[0],
+  } = {}
 ): Promise<WSSharedDoc> {
   conn.binaryType = "arraybuffer";
+
+  const isInitializingDoc = !docs.has(docName);
 
   // get doc, initialize if it does not exist yet
   const doc = getYDoc(docName, gc);
@@ -88,6 +96,8 @@ export async function setupWSConnection(
       send(doc, conn, encoding.toUint8Array(encoder));
     }
   }
+
+  onOpen?.(doc, isInitializingDoc);
 
   return doc;
 }

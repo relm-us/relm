@@ -69,6 +69,9 @@
     "title": "Paused",
     "continue": "Continue"
   },
+  "PortalOccupancy": {
+    "count": "{count, plural, =0 {Empty} =1 {1 Person} other {# People}}"
+  },
   "ProfileButton": {
     "sign_in": "Sign In",
     "sign_out": "Sign Out",
