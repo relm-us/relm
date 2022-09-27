@@ -1,6 +1,7 @@
 import Emoji from "./Emoji.svelte";
 import Info from "./Info.svelte";
 import Label from "./Label.svelte";
+import PortalAttend from "./PortalAttend.svelte";
 import Speech from "./Speech.svelte";
 
 export function getHtmlComponent(kind) {
@@ -10,5 +11,6 @@ export function getHtmlComponent(kind) {
     case "INFO": return Info;
     case "LABEL": return Label;
     case "SPEECH": return Speech;
+    case "PORTAL_ATTEND": return PortalAttend;
   }
 }

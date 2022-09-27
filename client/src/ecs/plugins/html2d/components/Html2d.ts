@@ -9,7 +9,7 @@ import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
 export class Html2d extends Component {
-  kind: "INFO" | "LABEL" | "SPEECH" | "EMOJI";
+  kind: "INFO" | "LABEL" | "SPEECH" | "EMOJI" | "PORTAL_ATTEND";
   offset: Vector3;
   width: number;
   vanchor: 0 | 1 | 2;
@@ -38,7 +38,7 @@ export class Html2d extends Component {
           { label: "Info", value: "INFO" },
           { label: "Label", value: "LABEL" },
           { label: "Speech", value: "SPEECH" },
-          { label: "Emoji", value: "EMOJI" },
+          { label: "Portal Attend.", value: "PORTAL_ATTEND" },
         ],
       },
     },
@@ -114,7 +114,10 @@ export class Html2d extends Component {
       default: null,
       editor: {
         label: "Title",
-        requires: [{ prop: "kind", value: "INFO" }],
+        requires: [
+          { prop: "kind", value: "INFO" },
+          { prop: "kind", value: "PORTAL_ATTEND" },
+        ],
       },
     },
 
@@ -132,6 +135,11 @@ export class Html2d extends Component {
       default: null,
       editor: {
         label: "HTML Content",
+        requires: [
+          { prop: "kind", value: "INFO" },
+          { prop: "kind", value: "LABEL" },
+          { prop: "kind", value: "SPEECH" },
+        ],
       },
     },
 
@@ -154,7 +162,7 @@ export class Html2d extends Component {
 
     zoomInvariant: {
       type: BooleanType,
-      default: true,
+      default: false,
       editor: {
         label: "Zoom Invariant",
       },

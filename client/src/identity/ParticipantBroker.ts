@@ -3,6 +3,7 @@ import type { Awareness } from "relm-common";
 import { EventEmitter } from "eventemitter3";
 
 import { participantId } from "./participantId";
+import { portalAttendance } from "~/stores/portalAttendance";
 
 /**
  * A data broker that distinguishes between slow ("occasional") updates, and
@@ -99,7 +100,10 @@ export class ParticipantBroker extends EventEmitter {
   maybeEmitState(clientId: number, state) {
     const stateParticipantId = state["id"];
     const stateIdentityData = state["identity"];
-    if (stateParticipantId === participantId) {
+    if (state["type"] === "portals") {
+      console.log("portalAttendance", state["attendance"]);
+      portalAttendance.set(state["attendance"]);
+    } else if (stateParticipantId === participantId) {
       // Don't broadcast self state
     } else if (stateParticipantId && stateIdentityData) {
       if (!this.participantIds.has(clientId)) {

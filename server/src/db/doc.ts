@@ -15,6 +15,7 @@ type DocColumns = {
   relm_id: string;
   entities_count: number;
   assets_count: number;
+  portals: string[];
   created_at: string;
   updated_at: Date;
 };
@@ -26,6 +27,7 @@ const mkDoc = nullOr((cols: DocColumns) => {
     relmId: cols.relm_id,
     entitiesCount: cols.entities_count,
     assetsCount: cols.assets_count,
+    portals: cols.portals,
     createdAt: cols.created_at,
     updatedAt: cols.updated_at,
   };
@@ -117,18 +119,19 @@ export async function updateStats({
   docId,
   entitiesCount,
   assetsCount,
+  portals,
 }: {
   docId: string;
   entitiesCount?: number;
   assetsCount?: number;
+  portals?: string[];
 }) {
   const attrs = {
-    entities_count: entitiesCount,
-    assets_count: assetsCount,
+    entities_count: entitiesCount ?? 0,
+    assets_count: assetsCount ?? 0,
+    portals: JSON.stringify(portals ?? []),
     updated_at: raw("CURRENT_TIMESTAMP"),
   };
-  if (entitiesCount !== undefined) attrs.entities_count = entitiesCount;
-  if (assetsCount !== undefined) attrs.assets_count = assetsCount;
 
   if (getDefinedKeys(attrs).length > 0) {
     const row = await db.oneOrNone(sql`
