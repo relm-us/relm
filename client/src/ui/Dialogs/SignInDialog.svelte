@@ -54,12 +54,12 @@
   r-form > :global(*) {
     margin: 10px 0;
   }
-  r-or {
+  /* r-or {
     text-align: center;
     padding: 8px;
     color: var(--foreground-gray);
     font-size: 12px;
-  }
+  } */
 
   r-sign-up {
     text-align: center;
