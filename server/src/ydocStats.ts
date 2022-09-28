@@ -31,7 +31,8 @@ export const ydocStats = async (ydoc: WSSharedDoc) => {
       const values: YValues = component.get("values") as YValues;
 
       if (
-        (name === "HdImage" && !empty((values.get("asset") as any)?.url)) ||
+        // Don't count HdImage assets, because they lazy-load on their own
+        // (name === "HdImage" && !empty((values.get("asset") as any)?.url)) ||
         (name === "Model" && !empty((values.get("asset") as any)?.url)) ||
         (name === "Image" && !empty((values.get("asset") as any)?.url)) ||
         (name === "Shape" && !empty((values.get("texture") as any)?.url)) ||

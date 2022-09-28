@@ -372,6 +372,9 @@ export function makeProgram(): Program {
         exists(msg.ecsWorld, "ecsWorld");
         exists(msg.ecsWorldLoaderUnsub, "ecsWorldLoaderUnsub");
 
+        // Useful for debugging prior to world finished loading
+        (window as any).ecsWorld = msg.ecsWorld;
+
         return [
           {
             ...state,
