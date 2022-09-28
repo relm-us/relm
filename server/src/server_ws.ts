@@ -41,11 +41,12 @@ wss.on("connection", async (conn, req, relmDoc) => {
 
     await setupWSConnection(conn, req, {
       onOpen: (doc: WSSharedDoc) => {
-        const liveRelm = getOrCreateLiveRelm(
-          relmName,
-          doc.awareness,
-          relmDoc.portals
-        );
+        const liveRelm = getOrCreateLiveRelm(relmName, doc.awareness);
+
+        // If portals have changed since initial LiveRelm creation event,
+        // update them each time a participant joins, so that a browser
+        // refresh will work to show portal occupancy
+        liveRelm.setPortals(relmDoc.portals);
 
         liveRelm.join(participantId);
 

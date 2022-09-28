@@ -11,12 +11,15 @@ export class LiveRelm extends Observable<string> {
     return this.participantIds.size;
   }
 
-  constructor(name: string, awareness?: Awareness, portals?: string[]) {
+  constructor(name: string, awareness?: Awareness) {
     super();
 
     this.name = name;
     this.awareness = awareness;
-    this.portals = new Set(portals);
+  }
+
+  setPortals(portals: string[]) {
+    this.portals = new Set(Array.from(portals));
   }
 
   // If awareness is available, send the occupancy map
@@ -55,12 +58,7 @@ export class LiveRelm extends Observable<string> {
 
 export const liveRelms = new Map<string, LiveRelm>();
 
-export function getOrCreateLiveRelm(
-  name: string,
-  awareness?: Awareness,
-  portals?: string[]
-) {
-  if (!liveRelms.has(name))
-    liveRelms.set(name, new LiveRelm(name, awareness, portals));
+export function getOrCreateLiveRelm(name: string, awareness?: Awareness) {
+  if (!liveRelms.has(name)) liveRelms.set(name, new LiveRelm(name, awareness));
   return liveRelms.get(name);
 }
