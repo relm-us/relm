@@ -36,9 +36,9 @@
 
   <Button on:click={onSignIn}>Sign In</Button>
 
-  <r-or> or enter via: </r-or>
+  <!-- <r-or> or enter via: </r-or> -->
 
-  <ThirdPartyLogin />
+  <!-- <ThirdPartyLogin /> -->
 
   <r-sign-up>
     New here? <button on:click={onSignUp}>Sign Up</button>
