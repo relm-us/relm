@@ -1,3 +1,8 @@
+import type { RigidBody } from "@dimforge/rapier3d";
+
+import type { DecoratedECSWorld, PageParams } from "~/types";
+import type { Dispatch, State } from "~/main/ProgramTypes";
+
 import {
   Color,
   Vector3,
@@ -49,7 +54,7 @@ import { setControl } from "~/events/input/PointerListener/pointerActions";
 import { makeLight } from "~/prefab/makeLight";
 
 import { Entity } from "~/ecs/base";
-import { Collider2 } from "~/ecs/plugins/collider";
+import { Collider2, Collider2Ref } from "~/ecs/plugins/collider";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { ControllerState } from "~/ecs/plugins/player-control";
 import { Follow } from "~/ecs/plugins/follow";
@@ -63,9 +68,6 @@ import { Inventory } from "~/identity/Inventory";
 import { SelectionManager } from "./SelectionManager";
 import { ChatManager } from "./ChatManager";
 import { CameraManager } from "./CameraManager";
-
-import type { DecoratedECSWorld, PageParams } from "~/types";
-import type { Dispatch, State } from "~/main/ProgramTypes";
 
 import { AVConnection } from "~/av";
 import { localShareTrackStore } from "~/av/localVisualTrackStore";
@@ -836,9 +838,17 @@ export class WorldManager {
   }
 
   moveTo(position: Vector3, instantaneousCamera = true) {
-    const transform = this.participants.local.avatar.transform;
-    transform.position.copy(position);
-    transform.modified(); // update physics engine
+    // TODO: Why do we have to move the physics body?
+    // Problem: When holding down the arrow key into a portal, `transform.modified()`
+    // is insufficient to move the avatar.
+    const body: RigidBody = this.avatar.entities.body.get(Collider2Ref)?.body;
+    if (body) {
+      body.setTranslation(position, true);
+    } else {
+      const transform = this.participants.local.avatar.transform;
+      transform.position.copy(position);
+      transform.modified(); // update physics engine
+    }
     if (instantaneousCamera) this.camera.moveTo(position);
   }
 

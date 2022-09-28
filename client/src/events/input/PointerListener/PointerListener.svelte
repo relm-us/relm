@@ -13,6 +13,9 @@
   } from "./pointerActions";
 
   function eventTargetsWorld(event, uiMode) {
+    // If we're in between worlds, it can't be a world targetting event
+    if (!worldManager.world) return false;
+
     // Allow dragging Html2d objects, as well as selecting text
     if (isInputEvent(event)) return false;
 

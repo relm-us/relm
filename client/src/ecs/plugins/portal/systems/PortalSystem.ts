@@ -18,7 +18,7 @@ const portalsDisabled = (localStorage.getItem("debug") || "")
 export class PortalSystem extends System {
   presentation: Presentation;
 
-  order = Groups.Simulation + 1;
+  order = Groups.Presentation + 400;
 
   static queries = {
     setup: [Portal, Not(Impactable)],
@@ -37,7 +37,7 @@ export class PortalSystem extends System {
 
     if (portalsDisabled) return;
 
-    this.queries.contact.forEach((entity) => {
+    this.queries.contact.forEach((entity: Entity) => {
       const otherEntity: Entity = entity.get(Impact).other;
 
       // Portals only affect participants (i.e. entities with Controller)
@@ -58,6 +58,7 @@ export class PortalSystem extends System {
             coords: inFrontOf(portal.coords, transform.rotation),
           },
           countdown: 2000,
+          animatedEntity: otherEntity,
         });
       } else if (portal.kind === "REMOTE") {
         entity.add(PortalActive, {
@@ -67,6 +68,7 @@ export class PortalSystem extends System {
             entryway: portal.entry || "default",
           },
           countdown: 2000,
+          animatedEntity: otherEntity,
         });
       }
     });
@@ -74,9 +76,11 @@ export class PortalSystem extends System {
     this.queries.active.forEach((entity) => {
       const active: PortalActive = entity.get(PortalActive);
 
-      if (active.countdown > 0) {
-        active.countdown -= 1 / delta;
-      } else {
+      active.countdown -= 1 / delta;
+
+      if (active.countdown <= 0 && !active.triggered) {
+        active.triggered = true;
+
         if (active.destination.type === "LOCAL") {
           worldManager.moveTo(active.destination.coords, false);
         } else if (active.destination.type === "REMOTE") {
@@ -88,7 +92,8 @@ export class PortalSystem extends System {
         }
 
         // Animation complete
-        active.sparkles.destroy();
+        active.animatedEntity.get(Particles).enabled = false;
+      } else if (active.countdown <= -500 && active.triggered) {
         entity.remove(PortalActive);
       }
     });

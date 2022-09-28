@@ -1,4 +1,10 @@
-import { LocalComponent, NumberType, RefType, StringType } from "~/ecs/base";
+import {
+  BooleanType,
+  Entity,
+  LocalComponent,
+  NumberType,
+  RefType,
+} from "~/ecs/base";
 import { Vector3 } from "three";
 
 export type Destination =
@@ -7,20 +13,27 @@ export type Destination =
 
 export class PortalActive extends LocalComponent {
   destination: Destination;
-  sparkles: any;
   countdown: number;
+  animatedEntity: Entity;
+  triggered: boolean;
 
   static props = {
     destination: {
       type: RefType,
     },
 
-    sparkles: {
+    countdown: {
+      type: NumberType,
+    },
+
+    // Track the animated entity (probably the Avatar)
+    animatedEntity: {
       type: RefType,
     },
 
-    countdown: {
-      type: NumberType,
+    triggered: {
+      type: BooleanType,
+      default: false,
     },
   };
 }
