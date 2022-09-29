@@ -29,28 +29,41 @@
 </script>
 
 <Dialog title="Sign In" on:cancel>
-  <r-form>
-    <SignInTextInput label="email" type="email" bind:value={email} />
-    <SignInTextInput label="pass code" type="password" bind:value={password} />
-  </r-form>
+  <r-container>
+    <r-form>
+      <SignInTextInput label="email" type="email" bind:value={email} />
+      <SignInTextInput
+        label="pass code"
+        type="password"
+        bind:value={password}
+      />
+    </r-form>
 
-  <Button on:click={onSignIn}>Sign In</Button>
+    <Button on:click={onSignIn}>Sign In</Button>
 
-  <!-- <r-or> or enter via: </r-or> -->
+    <!-- <r-or> or enter via: </r-or> -->
 
-  <!-- <ThirdPartyLogin /> -->
+    <!-- <ThirdPartyLogin /> -->
 
-  <r-sign-up>
-    New here? <button on:click={onSignUp}>Sign Up</button>
-  </r-sign-up>
+    <r-sign-up>
+      New here? <button on:click={onSignUp}>Sign Up</button>
+    </r-sign-up>
+  </r-container>
 </Dialog>
 
 <style>
+  r-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   r-form {
     display: block;
     width: 230px;
     margin-bottom: 2em;
   }
+  
   r-form > :global(*) {
     margin: 10px 0;
   }

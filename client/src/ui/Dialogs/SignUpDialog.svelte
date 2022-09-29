@@ -29,24 +29,37 @@
 </script>
 
 <Dialog title="Sign Up" on:cancel>
-  <r-form>
-    <SignInTextInput label="email" type="email" bind:value={email} />
-    <SignInTextInput label="pass code" type="password" bind:value={password} />
-  </r-form>
+  <r-container>
+    <r-form>
+      <SignInTextInput label="email" type="email" bind:value={email} />
+      <SignInTextInput
+        label="pass code"
+        type="password"
+        bind:value={password}
+      />
+    </r-form>
 
-  <Button on:click={onSignUp}>Sign Up</Button>
+    <Button on:click={onSignUp}>Sign Up</Button>
 
-  <r-sign-in>
-    Already have an account? <button on:click={onSignIn}>Sign In</button>
-  </r-sign-in>
+    <r-sign-in>
+      Already have an account? <button on:click={onSignIn}>Sign In</button>
+    </r-sign-in>
+  </r-container>
 </Dialog>
 
 <style>
+  r-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   r-form {
     display: block;
     width: 230px;
     margin-bottom: 2em;
   }
+
   r-form > :global(*) {
     margin: 10px 0;
   }
