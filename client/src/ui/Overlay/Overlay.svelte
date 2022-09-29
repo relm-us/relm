@@ -4,7 +4,6 @@
   // Debug UI
   import DebugPane from "~/ui/Debug/DebugPane";
 
-  import { PauseAutomatically } from "~/ui/Pause";
   import CenterCamera from "~/ui/CenterCamera";
   import Toolbar from "~/ui/Build/Toolbar";
   import BuildPanel from "~/ui/Build/BuildPanel";
@@ -17,6 +16,7 @@
 
   import CenterButtons from "./CenterButtons.svelte";
   import DialogStack from "./DialogStack.svelte";
+  import PauseAutomatically from "./PauseAutomatically.svelte";
 
   export let dispatch; // Program dispatch
   export let state: State;
