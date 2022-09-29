@@ -12,7 +12,7 @@
 <style>
   .section {
     margin-top: 8px;
-    padding-bottom: 26px;
+    padding-bottom: 10px;
   }
   .section.first {
     margin-top: 0px;
