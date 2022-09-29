@@ -1,6 +1,5 @@
 <script>
   import { worldManager } from "~/world";
-  import { centerCameraVisible } from "~/stores/centerCameraVisible";
   import { autoPause } from "~/stores/autoPause";
   import Button from "~/ui/lib/Button";
 
