@@ -14,7 +14,7 @@
   };
 </script>
 
-<Dialog title="Language" on:cancel>
+<Dialog title={$_("LanguageDialog.title")} on:cancel>
   <r-locales>
     {#each $locales as loc}
       <Button on:click={chooseLanguage(loc)}>{languageMap[loc] || loc}</Button>

@@ -26,6 +26,7 @@
 
   import SignInDialog from "~/ui//Dialogs/SignInDialog.svelte";
   import SignUpDialog from "~/ui//Dialogs/SignUpDialog.svelte";
+  import InviteDialog from "~/ui//Dialogs/InviteDialog.svelte";
   import LanguageDialog from "~/ui/Dialogs/LanguageDialog.svelte";
   import RenderQualityDialog from "~/ui/Dialogs/GraphicsQualityDialog.svelte";
   import ChangeAvatarDialog from "~/ui/Dialogs/ChangeAvatarDialog.svelte";
@@ -66,6 +67,8 @@
       <SignInDialog on:cancel={() => ($openDialog = null)} />
     {:else if $openDialog === "signup"}
       <SignUpDialog on:cancel={() => ($openDialog = null)} />
+    {:else if $openDialog === "invite"}
+      <InviteDialog on:cancel={() => ($openDialog = null)} />
     {:else if $openDialog === "language"}
       <LanguageDialog on:cancel={() => ($openDialog = null)} />
     {:else if $openDialog === "graphics-quality"}

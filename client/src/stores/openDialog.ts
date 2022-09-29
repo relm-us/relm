@@ -5,6 +5,7 @@ type DialogType =
   | "pause"
   | "signin"
   | "signup"
+  | "invite"
   | "language"
   | "graphics-quality"
   | "avatar-appearance";

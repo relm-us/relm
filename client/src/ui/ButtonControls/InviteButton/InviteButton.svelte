@@ -1,37 +1,11 @@
 <script lang="ts">
   import CircleButton from "~/ui/lib/CircleButton";
   import IoIosMailOpen from "svelte-icons/io/IoIosMailOpen.svelte";
-  import InvitationPane from "./InvitationPane.svelte";
-  import Fullwindow from "~/ui/lib/Fullwindow.svelte";
-
-  let showInvitationPane = false;
-
-  function onClick() {
-    showInvitationPane = true;
-  }
+  import { openDialog } from "~/stores/openDialog";
 </script>
 
-<CircleButton on:click={onClick} padding={0} Icon={IoIosMailOpen} />
-
-{#if showInvitationPane}
-  <Fullwindow on:close={() => (showInvitationPane = false)}>
-    <r-container>
-      <InvitationPane />
-    </r-container>
-  </Fullwindow>
-{/if}
-
-<style>
-  r-container {
-    display: flex;
-    position: absolute;
-    pointer-events: none;
-    bottom: 74px;
-    justify-content: center;
-    width: 100%;
-  }
-
-  r-container > :global(*) {
-    pointer-events: all;
-  }
-</style>
+<CircleButton
+  on:click={() => ($openDialog = "invite")}
+  padding={0}
+  Icon={IoIosMailOpen}
+/>

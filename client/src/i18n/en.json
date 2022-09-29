@@ -65,6 +65,17 @@
     "group": "Group",
     "ungroup": "Ungroup"
   },
+  "InviteDialog": {
+    "allow_build_mode": "Allow Build Mode?",
+    "allow_inviting": "Allow Inviting Others?",
+    "loading": "Loading ...",
+    "max_uses": "Max Number of Uses",
+    "title": "Invite",
+    "close": "Close"
+  },
+  "LanguageDialog": {
+    "title": "Language"
+  },
   "Pause": {
     "title": "Paused",
     "continue": "Continue"
