@@ -76,15 +76,19 @@ export class AssetSystem extends System {
     if (loadingId === id) {
       entity.remove(AssetLoading);
       entity.add(AssetLoaded, { kind: spec.kind, cacheKey: spec.url, value });
-    } else if (logEnabled) {
-      this.loadingError(entity, `${id} was cancelled (!= ${loadingId})`, false);
+    } else {
+      this.loadingError(
+        entity,
+        logEnabled && `${id} was cancelled (!= ${loadingId})`,
+        false
+      );
     }
   }
 
   loadingError(entity, msg, remove = true) {
     if (remove) this.remove(entity);
     entity.add(AssetLoaded, { error: msg });
-    console.warn(`AssetSystem: ${msg}`, entity?.id);
+    if (msg) console.warn(`AssetSystem: ${msg}`, entity?.id);
   }
 
   remove(entity) {
