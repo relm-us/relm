@@ -8,6 +8,10 @@ import { checkModelValid } from "../utils/checkModelValid";
 
 let loaderIds = 0;
 
+const logEnabled = (localStorage.getItem("debug") || "")
+  .split(":")
+  .includes("asset");
+
 export class AssetSystem extends System {
   presentation: Presentation;
 
@@ -72,7 +76,7 @@ export class AssetSystem extends System {
     if (loadingId === id) {
       entity.remove(AssetLoading);
       entity.add(AssetLoaded, { kind: spec.kind, cacheKey: spec.url, value });
-    } else {
+    } else if (logEnabled) {
       this.loadingError(entity, `${id} was cancelled (!= ${loadingId})`, false);
     }
   }
