@@ -14,9 +14,7 @@ import {
 } from "three";
 import * as THREE from "three";
 import { Security } from "relm-common";
-
-(window as any).THREE = THREE;
-
+import { localVideoTrack } from "video-mirror";
 import { derived, get } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
@@ -71,7 +69,6 @@ import { CameraManager } from "./CameraManager";
 
 import { AVConnection } from "~/av";
 import { localShareTrackStore } from "~/av/localVisualTrackStore";
-import { localVideoTrack } from "video-mirror";
 import { createScreenTrack } from "~/av/twilio/createScreenTrack";
 
 import { participantId } from "~/identity/participantId";
@@ -98,6 +95,9 @@ import { Oculus } from "~/ecs/plugins/html2d";
 import { rollRandomAppearance } from "~/identity/Avatar/appearance";
 import { releaseAllKeys } from "~/events/input/comboTable";
 import { portalOccupancy } from "~/stores/portalOccupancy";
+
+// Make THREE accessible for debugging
+(window as any).THREE = THREE;
 
 type LoopType =
   | { type: "reqAnimFrame" }
