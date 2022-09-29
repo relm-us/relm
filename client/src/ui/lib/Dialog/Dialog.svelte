@@ -4,10 +4,11 @@
   import Tint from "./Tint.svelte";
   import closeIcon from "./close-x.png";
 
-  export let title: string;
+  export let title: string = null;
   export let align: "left" | "center" | "right" = "center";
   export let tint: boolean = true;
   export let paddingH: number = 48;
+  export let fullHeight: boolean = false;
 
   const dispatch = createEventDispatcher();
 
@@ -17,10 +18,18 @@
 </script>
 
 <Tint on:click={cancel("away")} {align} {tint}>
-  <r-dialog on:click|stopPropagation style="--padding-h: {paddingH}px">
+  <r-dialog
+    on:click|stopPropagation
+    style="--padding-h: {paddingH}px"
+    class:fullHeight
+  >
     <r-close style="--url: url({closeIcon})" on:click={cancel("close")} />
-    <r-title>{title}</r-title>
-    <r-body><slot /></r-body>
+    {#if title}
+      <r-title>{title}</r-title>
+    {/if}
+    <r-scroll>
+      <r-body><slot /></r-body>
+    </r-scroll>
   </r-dialog>
 </Tint>
 
@@ -31,24 +40,30 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow: hidden;
 
     margin-left: 8px;
     margin-right: 8px;
 
+    padding: var(--padding-v, 32px) 0;
+
     max-height: calc(100% - 80px);
-    overflow-y: auto;
+
+    /* Hide dialog footer corners, if present */
+    overflow: hidden;
 
     color: var(--background-gray, black);
-
-    padding: var(--padding-v, 28px) var(--padding-h, 48px);
     background: radial-gradient(
       circle at 0% -100%,
       #666 -80% -80%,
       #000 100% 100%
     );
+
     border: 1.5px solid #585858;
     border-radius: 18px;
+  }
+
+  r-dialog.fullHeight {
+    height: 100%;
   }
 
   r-dialog::-webkit-scrollbar-track-piece:end {
@@ -81,11 +96,15 @@
     color: white;
     font-size: 36px;
     letter-spacing: 1px;
-    margin-bottom: 20px;
+    margin: 0 var(--padding-h) 20px var(--padding-h);
   }
 
+  r-scroll {
+    display: block;
+    overflow-y: auto;
+  }
   r-body {
-    display: flex;
-    flex-direction: column;
+    display: block;
+    margin: 0 var(--padding-h, 48px);
   }
 </style>

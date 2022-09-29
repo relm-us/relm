@@ -10,6 +10,7 @@
 
 <style>
   r-spacer {
+    display: block;
     height: var(--height);
   }
 
