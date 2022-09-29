@@ -2,7 +2,6 @@ import { get } from "svelte/store";
 import { worldManager } from "~/world";
 
 import { worldUIMode } from "~/stores/worldUIMode";
-import { chatOpen } from "~/stores/chat";
 import { openDialog } from "~/stores/openDialog";
 import { selectedEntities } from "~/stores/selection";
 
@@ -16,8 +15,6 @@ export function onEscape() {
     worldManager.selection.clear();
   } else if (get(openDialog) !== null) {
     openDialog.set(null);
-  } else if (get(chatOpen)) {
-    chatOpen.set(false);
   } else if (get(worldUIMode) !== "play") {
     onSwitchMode("play");
   }

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { afterUpdate } from "svelte";
   import { cleanHtml } from "~/utils/cleanHtml";
+  import { getAncestor } from "~/utils/hasAncestor";
   import Message from "./Message.svelte";
 
   export let messages;
@@ -9,20 +9,19 @@
   let outerEl;
 
   function scrollToBottom(_messages, outerEl) {
-    if (outerEl)
+    if (outerEl) {
+      const scrollEl = getAncestor(outerEl, "r-scroll");
       setTimeout(() => {
-        outerEl.scrollTop = outerEl.scrollHeight;
-      }, 500);
+        scrollEl.scrollTop = scrollEl.scrollHeight;
+      }, 0);
+    }
   }
 
+  // Automatically scroll to the bottom whenever a message is added
   $: scrollToBottom($messages, outerEl);
-
-  afterUpdate(() => {
-    scrollToBottom($messages, outerEl);
-  });
 </script>
 
-<r-chat-hist bind:this={outerEl}>
+<r-history bind:this={outerEl}>
   {#if $messages.length === 0}
     <note>Empty chat history</note>
   {:else}
@@ -36,20 +35,15 @@
       {/each}
     </r-scrollable>
   {/if}
-</r-chat-hist>
+</r-history>
 
 <style>
-  r-chat-hist {
+  r-history {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
 
-    width: 304px;
-    height: 400px;
-    margin-bottom: 4px;
-
-    border: 2px solid #999;
-    border-radius: 4px;
-    background-color: white;
+    height: calc(100% - 54px);
 
     overflow-y: scroll;
   }

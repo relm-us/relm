@@ -1,7 +1,9 @@
 import * as Y from "yjs";
 import { get, writable, derived, Readable, Writable } from "svelte/store";
 import { readableArray } from "svelt-yjs";
-import { chatOpen, unreadCount } from "~/stores/chat";
+
+import { unreadCount } from "~/stores/unreadCount";
+import { openDialog } from "~/stores/openDialog";
 
 export type ChatMessage = {
   // Message ("C"ontent)
@@ -68,9 +70,8 @@ export class ChatManager {
       doneFirstPass = true;
     });
 
-    chatOpen.subscribe(($open) => {
-      // Whenever chat is opened, consider all messages "read"
-      if ($open) {
+    openDialog.subscribe(($dialog) => {
+      if ($dialog === "chat") {
         this.readCount.set(get(this.messages).length);
       }
     });

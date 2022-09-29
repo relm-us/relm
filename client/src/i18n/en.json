@@ -44,6 +44,20 @@
   "CameraSettings": {
     "field_of_view": "Field of View"
   },
+  "ChatDialog": {
+    "title": "Chat"
+  },
+  "Overlay": {
+    "tooltips": {
+      "set_up_video": "Set up video",
+      "mute": "Mute",
+      "unmute": "Unmute",
+      "share_screen": "Share screen",
+      "chat_open": "Open chat",
+      "invite_someone": "Invite someone to be with you here",
+      "profile": "Your profile"
+    }
+  },
   "EditorPanel": {
     "modify": "Modify",
     "nothing_selected": "Nothing selected",

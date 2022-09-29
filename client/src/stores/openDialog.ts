@@ -2,6 +2,7 @@ import { writable, Writable } from "svelte/store";
 import { showCenterButtons } from "./showCenterButtons";
 
 type DialogType =
+  | "chat"
   | "pause"
   | "signin"
   | "signup"

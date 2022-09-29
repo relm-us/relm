@@ -1,13 +1,14 @@
 <script>
   import IoIosText from "svelte-icons/io/IoIosText.svelte";
+
   import CircleButton from "~/ui/lib/CircleButton";
-  import { chatOpen, chatFocused } from "~/stores/chat";
+
+  import { openDialog } from "~/stores/openDialog";
 
   export let unread = null;
 
   function toggleChat() {
-    $chatOpen = !$chatOpen;
-    $chatFocused = $chatOpen;
+    $openDialog = "chat";
   }
 </script>
 

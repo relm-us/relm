@@ -6,7 +6,6 @@ import { setAppearance } from "./appearance";
 import { setEmoji } from "./emoji";
 import { setOculus } from "./oculus";
 import { setSpeech } from "./speech";
-import { chatOpen } from "~/stores/chat";
 import { setEquipped } from "./equip";
 
 function onDidEditName(name: string) {
@@ -14,7 +13,6 @@ function onDidEditName(name: string) {
 }
 
 function onCloseSpeech() {
-  chatOpen.set(false);
   worldManager.participants.setCommunicatingState(null, "speaking", false);
 }
 

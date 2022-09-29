@@ -1,32 +1,21 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
   import { worldManager } from "~/world";
-  import { chatFocused, chatOpen } from "~/stores/chat";
   import { participantId } from "~/identity/participantId";
 
   const dispatch = createEventDispatcher();
 
   let inputEl;
 
-  chatOpen.subscribe(($chatOpen) => {
-    if (!inputEl) return;
-    if ($chatOpen) inputEl.focus();
-    else inputEl.blur();
-  });
-
-  chatFocused.subscribe(($chatFocused) => {
-    if ($chatFocused && inputEl) inputEl.focus();
-  });
-
   function addMessage(text) {
     if (text.match(/^\s*$/)) {
       dispatch("close");
     } else {
-      worldManager.chat.addMessage({ 
+      worldManager.chat.addMessage({
         u: participantId,
         c: text,
         n: worldManager.participants.local.identityData.name,
-        o: worldManager.participants.local.identityData.color
+        o: worldManager.participants.local.identityData.color,
       });
     }
   }
@@ -40,35 +29,46 @@
     }
   }
 
-  function onBlur(event) {
-    $chatFocused = false;
-  }
+  onMount(() => {
+    setTimeout(() => {
+      inputEl.focus();
+    }, 50);
+  });
 </script>
 
-<entry>
+<r-input>
   <input
     type="text"
-    on:blur={onBlur}
     on:keydown={onKeydown}
     bind:this={inputEl}
   />
-</entry>
+</r-input>
 
 <style>
-  entry {
+  r-input {
+    position: absolute;
+    bottom: 12px;
+
     display: block;
     overflow: hidden;
+
+    width: 250px;
   }
 
   input {
-    border: 2px solid cornflowerblue;
-    border-radius: 4px;
-    width: 300px;
+    /* Note: 8px is (2px padding + 2px border) * 2 */
+    width: calc(100% - 8px);
+
     padding: 1px 2px;
+    border: 2px solid transparent;
+    border-radius: 4px;
+
     font-size: 20px;
     line-height: 32px;
   }
+
   input:focus {
     outline: none;
+    border: 2px solid cornflowerblue;
   }
 </style>
