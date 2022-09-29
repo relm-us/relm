@@ -39,7 +39,7 @@ export async function setPermits({
   relmId?: "*" | UUID;
   relmName?: string;
   union?: boolean;
-}): Promise<boolean> {
+}) {
   let relm_id;
 
   if (relmId === "*") {
@@ -48,14 +48,11 @@ export async function setPermits({
   } else if (relmId) {
     const relm = await getRelm({ relmId });
     if (relm) relm_id = relmId;
+    else throw Error(`relm ID not found: ${relmId}`);
   } else if (relmName) {
     const relm = await getRelm({ relmName });
     if (relm) relm_id = relm.relmId;
-  }
-
-  // Unable to find relm via relmId and relmName
-  if (!relm_id) {
-    return false;
+    else throw Error(`relm not found: ${relmName}`);
   }
 
   const attrs = {
@@ -83,8 +80,6 @@ export async function setPermits({
       RETURNING permits
     `);
   }
-
-  return true;
 }
 
 export async function getPermissions({

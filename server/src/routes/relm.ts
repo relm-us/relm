@@ -76,21 +76,17 @@ relm.post(
       permits = ["access", "edit", "invite"];
     }
 
-    const success = await Permission.setPermits({
+    await Permission.setPermits({
       participantId: req.authenticatedParticipantId,
       relmId: newRelm.relmId,
       permits,
     });
 
-    if (success) {
-      return respondWithSuccess(res, {
-        action: "cloned",
-        relm: newRelm,
-        permits,
-      });
-    } else {
-      return respondWithError(res, { reason: "can't set permits" });
-    }
+    return respondWithSuccess(res, {
+      action: "cloned",
+      relm: newRelm,
+      permits,
+    });
   })
 );
 
