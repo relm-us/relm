@@ -1,29 +1,30 @@
 <script>
-  import { createEventDispatcher } from "svelte"
-  import { fade } from "svelte/transition"
-  import CheckedBackground from "./CheckedBackground.svelte"
-  import { keyevents } from "../actions"
+  import { createEventDispatcher } from "svelte";
+  import { fade } from "svelte/transition";
+  import CheckedBackground from "./CheckedBackground.svelte";
+  import { keyevents } from "../actions";
 
-  export let hovered = false
-  export let color = "#fff"
+  export let hovered = false;
+  export let color = "#fff";
 
-  const dispatch = createEventDispatcher()
+  const dispatch = createEventDispatcher();
 </script>
 
 <div class="space">
   <CheckedBackground borderRadius="6px">
     <div
       tabindex="0"
-      use:keyevents={{ Enter: () => dispatch('click') }}
+      use:keyevents={{ Enter: () => dispatch("click") }}
       in:fade
       title={color}
       class="swatch"
       style={`background: ${color};`}
       on:mouseover={() => (hovered = true)}
       on:mouseleave={() => (hovered = false)}
-      on:click|self>
+      on:click|self
+    >
       {#if hovered}
-        <span in:fade on:click={() => dispatch('removeswatch')} />
+        <span in:fade on:click={() => dispatch("removeswatch")} />
       {/if}
     </div>
   </CheckedBackground>

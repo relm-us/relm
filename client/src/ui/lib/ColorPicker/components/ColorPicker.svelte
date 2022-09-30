@@ -3,6 +3,8 @@
   import { fade } from "svelte/transition";
   import IoIosArrowDown from "svelte-icons/io/IoIosArrowDown.svelte";
 
+  import Portal from "~/ui/lib/Portal.svelte";
+
   import Swatch from "./Swatch.svelte";
   import CheckedBackground from "./CheckedBackground.svelte";
   import { buildStyle } from "../helpers.js";
@@ -15,7 +17,6 @@
   import Palette from "./Palette.svelte";
   import ButtonGroup from "./ButtonGroup.svelte";
   import Input from "./Input.svelte";
-  import Portal from "./Portal.svelte";
   import { keyevents } from "../actions";
 
   export let value = "#3ec1d3ff";

@@ -1,7 +1,7 @@
 <script>
   import ColorPicker from "./ColorPicker.svelte";
   import CheckedBackground from "./CheckedBackground.svelte";
-  import { createEventDispatcher, beforeUpdate, onMount } from "svelte";
+  import { createEventDispatcher, beforeUpdate } from "svelte";
 
   import { buildStyle, debounce } from "../helpers.js";
   import { getColorFormat } from "../utils.js";
