@@ -83,3 +83,6 @@ export const AV_ENABLED: boolean = true;
 
 // How often should identity data be saved after being updated?
 export const IDENTITY_SAVE_INTERVAL = 2000;
+
+// How long should toast notifications be displayed (ms)
+export const DEFAULT_NOTIFICATION_WAIT = 6500;

@@ -12,7 +12,7 @@ import { isEqual } from "~/utils/isEqual";
 import AvatarChooser from "~/ui/AvatarBuilder/AvatarChooser.svelte";
 
 import { AVConnection } from "~/av/AVConnection";
-import { AV_ENABLED } from "~/config/constants";
+import { AV_ENABLED, DEFAULT_NOTIFICATION_WAIT } from "~/config/constants";
 
 import { preferredDeviceIds } from "~/stores/preferredDeviceIds";
 import { askAvatarSetup } from "~/stores/askAvatarSetup";
@@ -644,7 +644,7 @@ export function makeProgram(): Program {
         state.notifyContext.addNotification({
           text: msg.notification,
           position: "bottom-center",
-          removeAfter: 5000,
+          removeAfter: DEFAULT_NOTIFICATION_WAIT,
         });
         return [state];
       }
