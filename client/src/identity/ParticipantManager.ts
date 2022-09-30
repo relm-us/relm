@@ -95,7 +95,7 @@ export class ParticipantManager {
   }
 
   sendMyRapidData() {
-    if (this.local.avatar) {
+    if (this.local?.avatar) {
       if (logEnabled && Math.random() < 0.04) {
         console.log("sending my rapid data", participantId);
       }
