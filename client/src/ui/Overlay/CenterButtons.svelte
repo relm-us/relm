@@ -87,7 +87,7 @@
     display: flex;
     justify-content: center;
     pointer-events: none;
-    overflow-y: auto;
+    overflow-x: auto;
   }
 
   play-buttons {

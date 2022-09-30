@@ -13,7 +13,10 @@
   import { hasAncestor } from "~/utils/hasAncestor";
   import { languageMap } from "~/i18n";
 
-  let pop = false;
+  let pop = false,
+    x = 0,
+    y = 0,
+    triangleBottom = true;
   let button;
 
   function maybeClose(event) {
@@ -23,48 +26,26 @@
       event.stopPropagation();
     }
   }
+
+  function onClick(event) {
+    const rect = button.getBoundingClientRect();
+    x = rect.x + 26 /* half-width of button */;
+    y = rect.y - 14 /* height of triangle */;
+    if (x + 120 > window.innerWidth) {
+      x = window.innerWidth - 120;
+      triangleBottom = false;
+    } else {
+      triangleBottom = true;
+    }
+    pop = !pop;
+  }
 </script>
 
 <r-pop-button>
-  {#if pop}
-    <r-pop>
-      <PopContext width={200}>
-        {#if $connectedAccount}
-          <r-option on:click={() => worldManager.logins.logout()}>
-            {$_("ProfileButton.sign_out")}
-            <r-option-current> someone@example.com </r-option-current>
-          </r-option>
-        {:else}
-          <r-option on:click={() => ($openDialog = "signin")}>
-            {$_("ProfileButton.sign_in")}
-          </r-option>
-        {/if}
-
-        <r-option on:click={() => ($openDialog = "language")}>
-          {$_("ProfileButton.language")}
-          <r-option-current>
-            {languageMap[$locale] || $locale}
-          </r-option-current>
-        </r-option>
-
-        <r-option on:click={() => ($openDialog = "graphics-quality")}>
-          {$_("ProfileButton.graphics_quality")}
-          <r-option-current>
-            {$_(`RenderQualityDialog.${$graphicsQuality}`)}
-          </r-option-current>
-        </r-option>
-
-        <r-option on:click={() => ($openDialog = "avatar-appearance")}>
-          {$_("ProfileButton.change_avatar")}
-        </r-option>
-      </PopContext>
-    </r-pop>
-  {/if}
-
   <Tooltip tip="Your profile" enabled={!pop} top>
     <div bind:this={button}>
       <CircleButton
-        on:click={() => (pop = !pop)}
+        on:click={onClick}
         padding={0}
         Icon={FaUserAlt}
         iconSize={28}
@@ -73,20 +54,42 @@
   </Tooltip>
 </r-pop-button>
 
-<svelte:window on:click={maybeClose} />
+{#if pop}
+  <PopContext width={200} {x} {y} {triangleBottom}>
+    {#if $connectedAccount}
+      <r-option on:click={() => worldManager.logins.logout()}>
+        {$_("ProfileButton.sign_out")}
+        <r-option-current> someone@example.com </r-option-current>
+      </r-option>
+    {:else}
+      <r-option on:click={() => ($openDialog = "signin")}>
+        {$_("ProfileButton.sign_in")}
+      </r-option>
+    {/if}
+
+    <r-option on:click={() => ($openDialog = "language")}>
+      {$_("ProfileButton.language")}
+      <r-option-current>
+        {languageMap[$locale] || $locale}
+      </r-option-current>
+    </r-option>
+
+    <r-option on:click={() => ($openDialog = "graphics-quality")}>
+      {$_("ProfileButton.graphics_quality")}
+      <r-option-current>
+        {$_(`RenderQualityDialog.${$graphicsQuality}`)}
+      </r-option-current>
+    </r-option>
+
+    <r-option on:click={() => ($openDialog = "avatar-appearance")}>
+      {$_("ProfileButton.change_avatar")}
+    </r-option>
+  </PopContext>
+{/if}
+
+<svelte:window on:click={maybeClose} on:resize={() => (pop = false)} />
 
 <style>
-  r-pop {
-    display: block;
-
-    /* Center it horizontally, with vertical anchor at bottom */
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    margin-bottom: 100%;
-    transform: translate(-50%, -13px);
-  }
-
   r-pop-button {
     display: block;
 
