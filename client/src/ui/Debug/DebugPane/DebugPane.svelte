@@ -1,6 +1,8 @@
 <script lang="ts">
+  import type { ParticipantMap } from "~/types";
+
   import { onMount } from "svelte";
-  import Pane from "./Pane.svelte";
+  import { Readable } from "svelte/store";
 
   import { localAudioTrack, localVideoTrack } from "video-mirror";
 
@@ -13,14 +15,17 @@
   import { fpsTime } from "~/stores/stats";
   import { errorCat } from "~/stores/errorCat";
 
+  import { PhysicsSystem } from "~/ecs/plugins/physics/systems";
+
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import TextInput from "~/ui/lib/TextInput";
 
-  import { PhysicsSystem } from "~/ecs/plugins/physics/systems";
+  import Pane from "./Pane.svelte";
 
   export let state: State;
 
-  const participants = worldManager.participants.store;
+  const participants: Readable<ParticipantMap> =
+    worldManager.participants.store;
 
   let minimized = true;
 
@@ -121,7 +126,7 @@
             <th>Participants:</th>
             <td>
               <button on:click={toggleIdentities}>
-                {$participants.length}
+                {$participants.size}
               </button>
             </td>
           </tr>
@@ -130,7 +135,7 @@
             <th>Participants:</th>
             <td />
           </tr>
-          {#each $participants as participant}
+          {#each Array.from($participants.values()) as participant}
             <tr class="identity-row">
               <th>{participant.identityData.name || "(no name)"}</th>
               <td>

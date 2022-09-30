@@ -5,7 +5,7 @@
 
   import type { Readable } from "svelte/store";
 
-  import type { Participant } from "~/types";
+  import type { ParticipantMap } from "~/types";
   import type { Cut } from "./types";
 
   import { worldManager } from "~/world";
@@ -30,7 +30,7 @@
   export let showAudio: boolean;
   export let showVideo: boolean;
   export let participantId: string;
-  export let participants: Readable<Participant[]>;
+  export let participants: Readable<ParticipantMap>;
   export let entity: Entity;
 
   export let diameter: number = null;
@@ -46,7 +46,7 @@
   $: isLocal = participantId === localParticipantId;
 
   let participant;
-  $: participant = worldManager.participants.participants.get(participantId);
+  $: participant = $participants.get(participantId);
 
   let videoStore;
   $: videoStore = worldManager.avConnection.getTrackStore(

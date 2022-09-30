@@ -73,7 +73,7 @@ import { createScreenTrack } from "~/av/twilio/createScreenTrack";
 
 import { participantId } from "~/identity/participantId";
 import { Avatar } from "~/identity/Avatar";
-import { Participant } from "~/types/identity";
+import { Participant, ParticipantMap } from "~/types/identity";
 import { ParticipantManager } from "~/identity/ParticipantManager";
 import { ParticipantBroker } from "~/identity/ParticipantBroker";
 import { delay } from "~/utils/delay";
@@ -179,7 +179,7 @@ export class WorldManager {
     pageParams: PageParams,
     relmDocId: string,
     avConnection: AVConnection,
-    participants: Map<string, Participant>,
+    participants: ParticipantMap,
     security: Security
   ) {
     this.dispatch = dispatch;
@@ -204,6 +204,7 @@ export class WorldManager {
 
     this.selection = new SelectionManager(this);
 
+    console.log("participants wm", participants);
     this.participants = new ParticipantManager(
       dispatch,
       broker,

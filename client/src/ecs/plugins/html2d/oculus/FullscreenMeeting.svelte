@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Participant } from "~/types";
+  import type { Participant, ParticipantMap } from "~/types";
 
   import { Audio, Video } from "video-mirror";
   import { Readable, get } from "svelte/store";
@@ -14,13 +14,15 @@
   export let fullscreenParticipantId: string;
   export let videoTrack = null;
   export let audioTrack = null;
-  export let participants: Readable<Participant[]>;
+  export let participants: Readable<ParticipantMap>;
 
   const smallParticipants: Readable<Participant[]> = derived(
     [participants],
     ([$participants], set) => {
       set(
-        $participants.filter((p) => p.participantId !== fullscreenParticipantId)
+        Array.from($participants.values()).filter(
+          (p) => p.participantId !== fullscreenParticipantId
+        )
       );
     }
   );

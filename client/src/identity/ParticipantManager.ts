@@ -2,9 +2,11 @@ import type {
   DecoratedECSWorld,
   IdentityData,
   Participant,
+  ParticipantMap,
   UpdateData,
 } from "~/types";
 
+import { Readable, Writable, writable, get as getStore } from "svelte/store";
 import { Appearance, Equipment } from "relm-common";
 import filter from "lodash/filter";
 
@@ -18,7 +20,6 @@ import {
 } from "./Avatar/transform";
 import { ParticipantBroker } from "./ParticipantBroker";
 import { setAvatarFromParticipant } from "./Avatar";
-import { Readable, Writable, writable } from "svelte/store";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -27,29 +28,46 @@ const logEnabled = (localStorage.getItem("debug") || "")
 export class ParticipantManager {
   dispatch: Dispatch;
   broker: ParticipantBroker;
-  participants: Map<string, Participant>;
   unsubs: Function[] = [];
 
-  _store: Writable<Participant[]>;
+  _store: Writable<ParticipantMap>;
 
-  get store(): Readable<Participant[]> {
+  get participants(): Participant[] {
+    return Array.from(getStore(this._store).values());
+  }
+
+  get store(): Readable<ParticipantMap> {
     return this._store;
   }
 
   get local(): Participant {
-    return this.participants.get(participantId);
+    return this.get(participantId);
+  }
+
+  get(participantId): Participant {
+    const map = getStore(this._store);
+    if (map?.get) return map.get(participantId);
+    else console.warn("can't get participant", map);
+    // return getStore(this._store).get(participantId);
+  }
+
+  set(participantId, participant: Participant) {
+    this._store.update(($map) => {
+      $map.set(participantId, participant);
+      return $map;
+    });
+    console.log("set map", getStore(this._store));
   }
 
   constructor(
     dispatch: Dispatch,
     broker: ParticipantBroker,
-    participants: Map<string, Participant>
+    participants: ParticipantMap
   ) {
     this.dispatch = dispatch;
     this.broker = broker;
-    this.participants = participants;
 
-    this._store = writable(Array.from(participants.values()));
+    this._store = writable(participants);
   }
 
   init() {
@@ -62,9 +80,13 @@ export class ParticipantManager {
 
   deinit() {
     for (let participant of this.participants.values()) {
-      participant.avatar = null;
+      this.deinitParticipant(participant);
     }
-    this.participants.clear();
+
+    this._store.update(($map) => {
+      $map.clear();
+      return $map;
+    });
   }
 
   listen(signal: string, fn) {
@@ -86,7 +108,7 @@ export class ParticipantManager {
       if (!("id" in state)) continue;
       if (state["id"] === participantId) continue;
 
-      const participant: Participant = this.participants.get(state["id"]);
+      const participant: Participant = this.get(state["id"]);
       if (!participant) continue;
 
       const transformData = state["t"];
@@ -175,10 +197,7 @@ export class ParticipantManager {
       modified: true,
     };
 
-    this.participants.set(participantId, participant);
-
-    // Add participant to svelte store
-    this._store.update(($participants) => [...$participants, participant]);
+    this.set(participantId, participant);
 
     this.dispatch({ id: "participantJoined", participant });
 
@@ -186,7 +205,7 @@ export class ParticipantManager {
   }
 
   updateParticipant(participantId: string, identityData: IdentityData) {
-    const participant = this.participants.get(participantId);
+    const participant = this.get(participantId);
 
     participant.identityData = identityData;
     participant.modified = true;
@@ -194,23 +213,23 @@ export class ParticipantManager {
     return participant;
   }
 
-  removeParticipant(participantId) {
-    const participant = this.participants.get(participantId);
-
+  deinitParticipant(participant: Participant) {
     if (participant.avatar) {
       Object.values(participant.avatar.entities).forEach((entity) =>
         entity?.destroy()
       );
       participant.avatar = null;
     }
+  }
+
+  removeParticipant(participantId) {
+    this.deinitParticipant(this.get(participantId));
 
     // Remove participant from svelte store
-    this._store.update(($participants) =>
-      filter(
-        $participants,
-        (p: Participant) => p.participantId === participantId
-      )
-    );
+    this._store.update(($map) => {
+      $map.delete(participantId);
+      return $map;
+    });
 
     this.dispatch({ id: "participantLeft", participantId });
   }
