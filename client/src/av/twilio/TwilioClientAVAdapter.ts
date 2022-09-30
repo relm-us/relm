@@ -5,10 +5,13 @@ import {
   RemoteParticipant,
   RemoteTrackPublication,
   RemoteTrack,
-  LocalTrack,
 } from "twilio-video";
 
 import { ClientAVAdapter } from "../base/ClientAVAdapter";
+
+const logEnabled = (localStorage.getItem("debug") || "")
+  .split(":")
+  .includes("video-mirror");
 
 // https://www.twilio.com/docs/video
 export class TwilioClientAVAdapter extends ClientAVAdapter {
@@ -69,21 +72,21 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
     );
 
     this.room.on("disconnected", (room, error) => {
-      console.log("AV disconnected", error);
+      if (logEnabled) console.log("AV disconnected", error);
     });
 
     this.room.on("reconnecting", (error) => {
-      console.log("AV reconnecting", error);
+      if (logEnabled) console.log("AV reconnecting", error);
     });
 
     this.room.on("reconnected", () => {
-      console.log("AV reconnected");
+      if (logEnabled) console.log("AV reconnected");
     });
   }
 
   disconnect(): Promise<void> {
     return new Promise((resolve, reject) => {
-      console.log("AV disconnect", this.room.state);
+      if (logEnabled) console.log("AV disconnect", this.room.state);
       try {
         this.room.disconnect();
       } catch (err) {

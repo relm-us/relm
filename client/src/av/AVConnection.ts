@@ -16,6 +16,10 @@ type AVConnectOpts = {
   produceVideo?: boolean;
 };
 
+const logEnabled = (localStorage.getItem("debug") || "")
+  .split(":")
+  .includes("video-mirror");
+
 export class AVConnection {
   participantId: string; // same as playerId
   adapter: ClientAVAdapter;
@@ -36,7 +40,7 @@ export class AVConnection {
   }
 
   async connect({ roomId, token, displayName }: AVConnectOpts) {
-    console.log("Joining video conference room", this);
+    if (logEnabled) console.log("Joining video conference room", this);
 
     await this.adapter.connect(roomId, token, { displayName });
     this.watchLocalTrackChanges();
@@ -65,13 +69,13 @@ export class AVConnection {
   watchLocalTrackChanges() {
     // Whenever local audio source or settings change, update the adapter
     localAudioTrackStore.subscribe((track: MediaStreamTrack) => {
-      console.log("localAudioTrackStore changed", track);
+      if (logEnabled) console.log("localAudioTrackStore changed", track);
       this.adapter.publishLocalTracks([track]);
     });
 
     // Whenever local video/screenshare source or settings change, update the adapter
     localVisualTrackStore.subscribe((track: MediaStreamTrack) => {
-      console.log("localVisualTrackStore changed", track);
+      if (logEnabled) console.log("localVisualTrackStore changed", track);
       this.adapter.publishLocalTracks([track]);
     });
   }
@@ -131,11 +135,14 @@ export class AVConnection {
   // Adds or replaces the tracks associated with a remote participant
   // that this peer knows about.
   acceptTracks(participantId: string, tracks: Array<Track>) {
-    console.log(
-      "AV acceptTracks",
-      participantId,
-      tracks.map((t) => t.kind)
-    );
+    if (logEnabled) {
+      console.log(
+        "AV acceptTracks",
+        participantId,
+        tracks.map((t) => t.kind)
+      );
+    }
+
     for (const track of tracks) {
       const store = this.getTrackStore(participantId, track.kind as TrackKind);
       store.set(track);
