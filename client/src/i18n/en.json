@@ -50,6 +50,7 @@
   "Overlay": {
     "tooltips": {
       "set_up_video": "Set up video",
+      "build_mode": "Toggle build mode",
       "mute": "Mute",
       "unmute": "Unmute",
       "share_screen": "Share screen",

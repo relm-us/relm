@@ -1,8 +1,12 @@
 import { get } from "svelte/store";
+
+import { permits } from "~/stores/permits";
 import { worldManager } from "~/world";
 import { worldUIMode } from "~/stores/worldUIMode";
 
 export function onSwitchMode(switchTo) {
+  const buildModePermitted = get(permits).includes("edit");
+
   if (!switchTo) {
     const $mode = get(worldUIMode);
     if ($mode === "play") switchTo = "build";
@@ -14,7 +18,7 @@ export function onSwitchMode(switchTo) {
     worldManager.selection.clear();
     worldManager.avatar.enablePhysics(true);
     worldManager.avatar.enableTranslucency(false);
-  } else if (switchTo === "build") {
+  } else if (switchTo === "build" && buildModePermitted) {
     worldUIMode.set("build");
     worldManager.avatar.enablePhysics(false);
     worldManager.avatar.enableTranslucency(true);

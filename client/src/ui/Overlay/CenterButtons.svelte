@@ -16,6 +16,7 @@
   import InviteButton from "./ButtonControls/InviteButton.svelte";
   import ChatButton from "./ButtonControls/ChatButton.svelte";
   import ProfileButton from "./ButtonControls/ProfileButton.svelte";
+  import BuildButton from "./ButtonControls/BuildButton.svelte";
 
   export let dispatch;
 </script>
@@ -47,6 +48,11 @@
     {#if $permits.includes("invite")}
       <Tooltip tip={$_("Overlay.tooltips.invite_someone")} top>
         <InviteButton />
+      </Tooltip>
+    {/if}
+    {#if $permits.includes("edit")}
+      <Tooltip tip={$_("Overlay.tooltips.build_mode")} top>
+        <BuildButton />
       </Tooltip>
     {/if}
 
