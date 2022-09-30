@@ -1,6 +1,7 @@
 <script lang="ts">
   import { autoPause } from "~/stores/autoPause";
   import { uploadingDialogOpen } from "~/stores/uploadingDialogOpen";
+  import { openDialog } from "~/stores/openDialog";
   import { worldManager } from "~/world";
 
   function onChangeFocus(_event) {
@@ -8,6 +9,7 @@
     if (
       worldManager.started &&
       $autoPause &&
+      !$openDialog &&
       !$uploadingDialogOpen &&
       !hasFocus
     ) {
