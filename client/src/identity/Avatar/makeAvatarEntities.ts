@@ -19,6 +19,8 @@ import { Repulsive } from "~/ecs/plugins/player-control";
 import { AlwaysOnStage } from "~/ecs/plugins/camera";
 import { Particles } from "~/ecs/plugins/particles";
 
+import avatarsGlb from "./avatars.glb";
+
 export function makeAvatarEntities(
   world: DecoratedECSWorld,
   position: Vector3,
@@ -38,7 +40,7 @@ export function makeAvatarEntities(
       scale: new Vector3(0.25, 0.25, 0.25),
     })
     .add(AssetComp, {
-      value: new Asset("/avatars.glb"),
+      value: new Asset(avatarsGlb),
     })
     .add(Model2)
     .add(Animation, {

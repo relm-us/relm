@@ -21,7 +21,6 @@ export class Particles extends Component {
 
   enabled: boolean;
   onTop: boolean;
-  relative: boolean;
 
   startColor: string;
   endColor: string;
@@ -109,14 +108,6 @@ export class Particles extends Component {
       default: true,
       editor: {
         label: "Top Layer?",
-      },
-    },
-
-    relative: {
-      type: BooleanType,
-      default: false,
-      editor: {
-        label: "Relative?",
       },
     },
 

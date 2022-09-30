@@ -5,6 +5,7 @@ import { Presentation, Object3DRef } from "~/ecs/plugins/core";
 
 import { Fire, FireMesh } from "../components";
 import { Fire as ThreeFire } from "../Fire";
+import firePng from "../fire.png";
 
 let fireTex;
 
@@ -23,7 +24,7 @@ export class FireSystem extends System {
   init({ presentation }) {
     this.presentation = presentation;
     this.presentation
-      .loadTexture("/fire.png")
+      .loadTexture(firePng)
       .then((texture) => (fireTex = texture));
   }
 

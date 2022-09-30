@@ -10,6 +10,7 @@ import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
 import { Presentation, Object3DRef } from "~/ecs/plugins/core";
 import { Diamond, DiamondRef } from "../components";
 import { GlowShader } from "../GlowShader";
+import diamondGlb from "../diamond.glb";
 
 const PI_THIRDS = Math.PI / 3.0;
 
@@ -30,7 +31,7 @@ export class DiamondSystem extends System {
 
   init({ presentation }) {
     this.presentation = presentation;
-    this.presentation.loadGltf("/diamond.glb").then((mesh: any) => {
+    this.presentation.loadGltf(diamondGlb).then((mesh: any) => {
       this.diamondGeometry = mesh.scene.getObjectByName("Diamond").geometry;
       this.loaded = true;
     });

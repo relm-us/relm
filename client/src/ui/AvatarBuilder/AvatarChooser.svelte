@@ -5,6 +5,9 @@
   import { getDefaultAppearance } from "~/identity/Avatar/appearance";
   import { _ } from "~/i18n";
 
+  import malePng from "./presets/male.png";
+  import femalePng from "./presets/female.png";
+
   export let dispatch;
 
   const pick = (gender: BinaryGender) => () => {
@@ -18,10 +21,10 @@
     <h1>{$_("AvatarBuilder.choose_yours")}</h1>
     <avatars>
       <avatar on:click={pick("male")}>
-        <img src="/humanoid-preset-male.png" alt="male" />
+        <img src={malePng} alt="male" />
       </avatar>
       <avatar on:click={pick("female")}>
-        <img src="/humanoid-preset-female.png" alt="female" />
+        <img src={femalePng} alt="female" />
       </avatar>
     </avatars>
     <div class="spacer" />

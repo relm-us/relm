@@ -104,12 +104,10 @@ export class ParticlesSystem extends System {
 
     this.queries.modifiedTransform.forEach((entity) => {
       const spec: Particles = entity.get(Particles);
-      if (!spec.relative) {
-        const transform: Transform = entity.get(Transform);
-        const system: GPUParticleSystem = entity.get(ParticlesRef).value;
-        system.position.copy(transform.position);
-        system.position.add(spec.offset);
-      }
+      const transform: Transform = entity.get(Transform);
+      const system: GPUParticleSystem = entity.get(ParticlesRef).value;
+      system.position.copy(transform.position);
+      system.position.add(spec.offset);
     });
 
     this.queries.active.forEach((entity) => {
@@ -172,13 +170,6 @@ export class ParticlesSystem extends System {
 
         // Create as many particles as needed based on rate
         for (let i = 0; i < needMore; i++) {
-          // if (spec.relative) {
-          //   options.position.copy(spec.offset);
-          // } else {
-          //   options.position.copy(transform.position);
-          //   options.position.add(spec.offset);
-          // }
-
           const newOptions = motionPattern[spec.pattern](
             spec,
             transform,
@@ -190,14 +181,9 @@ export class ParticlesSystem extends System {
       },
     });
 
-    if (spec.relative) {
-      ref.value.add(system);
-      system.position.copy(spec.offset);
-    } else {
-      system.position.copy(transform.position);
-      system.position.add(spec.offset);
-      this.presentation.scene.add(system);
-    }
+    system.position.copy(transform.position);
+    system.position.add(spec.offset);
+    this.presentation.scene.add(system);
 
     entity.add(ParticlesRef, { value: system });
   }

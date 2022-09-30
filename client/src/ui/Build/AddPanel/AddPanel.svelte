@@ -136,11 +136,13 @@
       </r-line-wrap>
 
       <r-prefabs-switch class="dark">
-        <a href="#" on:click={() => (prefabsVisible = true)}>show prefabs</a>
+        <a href="#" on:click|preventDefault={() => (prefabsVisible = true)}>
+          show prefabs
+        </a>
       </r-prefabs-switch>
     {:else}
       <r-prefabs-switch>
-        <a href="#" on:click={() => (prefabsVisible = false)}>
+        <a href="#" on:click|preventDefault={() => (prefabsVisible = false)}>
           <r-prefab-back style="padding-right:20px">
             <r-icon><IoIosArrowBack /></r-icon>
             back

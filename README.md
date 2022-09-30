@@ -6,7 +6,7 @@ Specifically, we're making a browser-based world that enables "virtual locality"
 
 See https://www.relm.us for more info.
 
-<img src="client/public/relm-sample.webp">
+<img src="client/docs/relm-sample.webp">
 
 ## Local Development
 

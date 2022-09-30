@@ -2,14 +2,13 @@ import { Euler, Quaternion, Vector3 } from "three";
 import type { DecoratedECSWorld } from "~/types";
 import { nanoid } from "nanoid";
 
-import { ERROR_GLTF } from "~/config/constants";
-
 import { Entity } from "~/ecs/base";
 import { Asset, Transform } from "~/ecs/plugins/core";
 import { Model2 } from "~/ecs/plugins/form";
 import { Asset as AssetComp } from "~/ecs/plugins/asset";
 import { Html2d } from "~/ecs/plugins/html2d";
-import { Clickable } from "../plugins/clickable";
+
+import errorCatGlb from "./error-cat.glb";
 
 export function makeError(entity: Entity, msg = null) {
   const transform: Transform = entity.get(Transform);
@@ -27,7 +26,7 @@ export function makeError(entity: Entity, msg = null) {
       // Make it so that clicking on the error entity forwards to the original
       entityId: entity.id,
     })
-    .add(AssetComp, { value: new Asset(ERROR_GLTF) })
+    .add(AssetComp, { value: new Asset(errorCatGlb) })
     .add(Model2)
     .add(Html2d, {
       kind: "INFO",
@@ -36,7 +35,7 @@ export function makeError(entity: Entity, msg = null) {
       zoomInvariant: false,
       vanchor: 2,
       hanchor: 1,
-      offset: new Vector3(0.75, 1, 0)
+      offset: new Vector3(0.75, 1, 0),
     })
     .activate();
 }
