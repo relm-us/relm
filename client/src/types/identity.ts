@@ -73,3 +73,5 @@ export type Participant = {
   // Avatar is responsible for all visuals/rendering of this identity
   avatar?: Avatar;
 };
+
+export type ParticipantMap = Map<string, Participant>;
