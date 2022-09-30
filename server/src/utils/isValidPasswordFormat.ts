@@ -1,8 +1,3 @@
 // Checks if a password is valid for registration.
-export function isValidPasswordFormat(password: string) {
-  if (!password) {
-    return false;
-  }
-
-  return password.length >= 8;
-}
+export const isValidPasswordFormat = (password: string) =>
+  password && password.length >= 8;
