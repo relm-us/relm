@@ -67,6 +67,9 @@ r-html2d.flex {
 .notifications > div {
   z-index: 200;
 }
+.notification-content {
+  width: 280px !important;
+}
 .default-notification-style {
   background: var(--background-transparent-gray) !important;
   color: var(--foreground-white) !important;
