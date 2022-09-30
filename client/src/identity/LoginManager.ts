@@ -1,4 +1,6 @@
 import { Security } from "relm-common";
+import { get } from "svelte/store";
+import { _ } from "svelte-i18n";
 
 import { destroyParticipantId } from "~/identity/participantId";
 import { LoginCredentials, RelmRestAPI } from "~/main/RelmRestAPI";
@@ -63,7 +65,7 @@ export class LoginManager {
         notification = error.message;
       }
     } else if (result?.status === "failure") {
-      notification = result.reason;
+      notification = get(_)(`LoginManager.${result.reason}`);
     }
 
     this.dispatch({ id: "notify", notification });

@@ -91,6 +91,11 @@
   "LanguageDialog": {
     "title": "Language"
   },
+  "LoginManager": {
+    "invalid_credentials": "The email or pass code you entered doesn't match our records.",
+    "invalid_email": "The email you entered doesn't look like an email address.",
+    "email_already_used": "It looks like someone is already using that email. Did you mean to sign in?"
+  },
   "Pause": {
     "title": "Paused",
     "continue": "Continue"

@@ -147,40 +147,25 @@ auth.post(
 
     // Check that the email is valid
     if (!isValidEmailFormat(email)) {
-      return respondWithFailure(
-        res,
-        "invalid_email",
-        "You did not specify a valid email!"
-      );
+      return respondWithFailure(res, "invalid_email");
     }
+
     if (!isValidPasswordFormat(password)) {
-      return respondWithFailure(
-        res,
-        "invalid_password",
-        "Your password needs to be at least 8 characters long!"
-      );
+      return respondWithFailure(res, "invalid_password");
     }
 
     // Check if someone is using that email
     const userExistsWithEmailProvided =
       (await User.getUserIdByEmail({ email })) !== null;
     if (userExistsWithEmailProvided) {
-      return respondWithFailure(
-        res,
-        "invalid_credentials",
-        "This email is already used by another user!"
-      );
+      return respondWithFailure(res, "email_already_used");
     }
 
     // Ensure the participant being registered isn't already linked.
     const participantId = req.authenticatedParticipantId;
     const existingUserId = await Participant.getUserId({ participantId });
     if (existingUserId !== null) {
-      return respondWithFailure(
-        res,
-        "participant_already_linked",
-        "This participant is already linked to another email!"
-      );
+      return respondWithFailure(res, "participant_already_linked");
     }
 
     const userId = await User.createUser({
@@ -204,22 +189,18 @@ auth.post(
     } else if (status === PassportResponse.FAILURE) {
       return respondWithFailure(res, data.reason, data.details);
     } else if (status === PassportResponse.NO_USER_FOUND) {
-      return respondWithFailure(
-        res,
-        "invalid_credentials",
-        "Hmm... Those don't seem like the correct credentials!"
-      );
+      return respondWithFailure(res, "invalid_credentials", {
+        email: req.body?.email,
+        passwordLength: req.body?.password?.length,
+        participantId: req.authenticatedParticipantId,
+      });
     }
 
     // Authentication was successful! Ensure the participant is not linked to another user already.
     const participantId = req.authenticatedParticipantId;
     const existingUserId = await Participant.getUserId({ participantId });
     if (existingUserId !== null && data !== existingUserId) {
-      return respondWithError(
-        res,
-        "participant_already_linked",
-        "This participant is already linked to another email!"
-      );
+      return respondWithError(res, "participant_already_linked");
     }
 
     // Assign participant to user!
