@@ -1,13 +1,16 @@
 <script lang="ts">
+  import { onMount, SvelteComponent } from "svelte";
   import { _ } from "~/i18n";
+
+  import { openDialog } from "~/stores/openDialog";
+
   import { worldManager } from "~/world";
   import Button from "~/ui/lib/Button";
   import Dialog from "~/ui/lib/Dialog";
 
-  import { openDialog } from "~/stores/openDialog";
-
   import SignInTextInput from "./components/SignInTextInput.svelte";
 
+  let emailInstance = null;
   let email: string;
   let password: string;
 
@@ -26,16 +29,25 @@
   function onSignIn() {
     $openDialog = "signin";
   }
+
+  onMount(() => emailInstance.focus());
 </script>
 
 <Dialog title="Sign Up" on:cancel>
   <r-container>
     <r-form>
-      <SignInTextInput label="email" type="email" bind:value={email} />
+      <SignInTextInput
+        label="email"
+        type="email"
+        bind:value={email}
+        bind:this={emailInstance}
+        on:submit={onSignUp}
+      />
       <SignInTextInput
         label="pass code"
         type="password"
         bind:value={password}
+        on:submit={onSignUp}
       />
     </r-form>
 

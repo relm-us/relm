@@ -1,13 +1,17 @@
 <script lang="ts">
+  import { onMount, SvelteComponent } from "svelte";
   import { _ } from "~/i18n";
-  import { worldManager } from "~/world";
+
   import { openDialog } from "~/stores/openDialog";
+
+  import { worldManager } from "~/world";
   import Button from "~/ui/lib/Button";
   import Dialog from "~/ui/lib/Dialog";
 
-  import ThirdPartyLogin from "./components/ThirdPartyLogin.svelte";
+  // import ThirdPartyLogin from "./components/ThirdPartyLogin.svelte";
   import SignInTextInput from "./components/SignInTextInput.svelte";
 
+  let emailInstance: SvelteComponent = null;
   let email: string;
   let password: string;
 
@@ -26,16 +30,25 @@
   function onSignUp() {
     $openDialog = "signup";
   }
+
+  onMount(() => emailInstance.focus());
 </script>
 
 <Dialog title="Sign In" on:cancel>
   <r-container>
     <r-form>
-      <SignInTextInput label="email" type="email" bind:value={email} />
+      <SignInTextInput
+        label="email"
+        type="email"
+        bind:value={email}
+        bind:this={emailInstance}
+        on:submit={onSignIn}
+      />
       <SignInTextInput
         label="pass code"
         type="password"
         bind:value={password}
+        on:submit={onSignIn}
       />
     </r-form>
 
@@ -63,7 +76,7 @@
     width: 230px;
     margin-bottom: 2em;
   }
-  
+
   r-form > :global(*) {
     margin: 10px 0;
   }
