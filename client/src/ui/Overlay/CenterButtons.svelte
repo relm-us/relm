@@ -17,12 +17,29 @@
   import ChatButton from "./ButtonControls/ChatButton.svelte";
   import ProfileButton from "./ButtonControls/ProfileButton.svelte";
   import BuildButton from "./ButtonControls/BuildButton.svelte";
+  import { onMount } from "svelte";
 
   export let dispatch;
+
+  let overlayCenterEl, playButtonsEl;
+
+  onMount(() => {
+    const resizeObserver = new ResizeObserver(() => {
+      const parentRect = overlayCenterEl.getBoundingClientRect();
+      const childRect = playButtonsEl.getBoundingClientRect();
+      const x = Math.max(0, (childRect.width - parentRect.width) / 2);
+      playButtonsEl.style.transform = `translateX(${x}px)`;
+    });
+    resizeObserver.observe(overlayCenterEl);
+    return () => resizeObserver.unobserve(overlayCenterEl);
+  });
 </script>
 
-<overlay-center transition:fade={{ duration: CROSS_FADE_DURATION }}>
-  <play-buttons class="interactive">
+<overlay-center
+  transition:fade={{ duration: CROSS_FADE_DURATION }}
+  bind:this={overlayCenterEl}
+>
+  <play-buttons class="interactive" bind:this={playButtonsEl}>
     {#if AV_ENABLED}
       <Tooltip tip={$_("Overlay.tooltips.set_up_video")} top>
         <VideoButton enabled={$localIdentityData.showVideo} {dispatch} />
@@ -70,6 +87,7 @@
     display: flex;
     justify-content: center;
     pointer-events: none;
+    overflow-y: auto;
   }
 
   play-buttons {
