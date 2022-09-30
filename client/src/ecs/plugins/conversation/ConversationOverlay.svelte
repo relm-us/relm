@@ -1,14 +1,13 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import IoIosArrowDown from "svelte-icons/io/IoIosArrowDown.svelte";
-
-  import { cleanHtml } from "~/utils/cleanHtml";
-  import { hasAncestor } from "~/utils/hasAncestor";
+  import { onDestroy } from "svelte";
+  import { fly } from "svelte/transition";
 
   import { assetUrl } from "~/config/assetUrl";
   import { showCenterButtons } from "~/stores/showCenterButtons";
 
-  import Fullwindow from "~/ui/lib/Fullwindow.svelte";
+  import Portal from "~/ui/lib/Portal.svelte";
+  import ConversationContent from "./ConversationContent.svelte";
+  import ConversationMore from "./ConversationMore.svelte";
 
   export let title;
   export let image;
@@ -17,31 +16,18 @@
 
   export let onCancel;
 
-  const SLIDE_START_POS = 200,
-    SLIDE_SPEED = 15;
-
   let width;
   let el;
-  let slideY = SLIDE_START_POS;
   let sectionIndex = 0;
   let sections = [];
 
   $: $showCenterButtons = !visible;
-  $: if (visible) slideY = SLIDE_START_POS;
 
   $: divideSections(content);
 
   function divideSections(text) {
     sections = text.split("---");
     sectionIndex = 0;
-  }
-
-  function onClick(event) {
-    if (hasAncestor(event.target, el)) {
-      readNextSection();
-    } else {
-      onCancel();
-    }
   }
 
   function readNextSection() {
@@ -52,36 +38,19 @@
     }
   }
 
-  onMount(() => {
-    slideY = SLIDE_START_POS;
-    let animate = true;
-
-    const slideAnimate = () => {
-      if (animate) {
-        slideY -= SLIDE_SPEED;
-        if (slideY < 0) slideY = 0;
-        requestAnimationFrame(slideAnimate);
-      }
-    };
-    slideAnimate();
-
-    const resize = () => (width = window.innerWidth);
-    resize();
-    window.addEventListener("resize", resize);
-    return () => {
-      window.removeEventListener("resize", resize);
-      $showCenterButtons = true;
-      animate = false;
-    };
-  });
+  onDestroy(() => ($showCenterButtons = true));
 
   // ignore warning about missing props
   $$props;
 </script>
 
 {#if visible}
-  <Fullwindow zIndex={3} on:click={onClick}>
-    <r-conversation bind:this={el} style="transform:translateY({slideY}px)">
+  <Portal>
+    <r-conversation
+      bind:this={el}
+      transition:fly={{ y: 250, duration: 600 }}
+      on:click|stopPropagation={readNextSection}
+    >
       <r-container class:small={width <= 500}>
         {#if width > 500}
           {#if image.url && image.url !== ""}
@@ -95,12 +64,10 @@
                 <span>{title}</span>
               {/if}
             </r-name>
-            <r-content>{@html cleanHtml(sections[sectionIndex])}</r-content>
-            {#if sections.length > 1 && sectionIndex < sections.length - 1}
-              <r-more-content>
-                <icon><IoIosArrowDown /></icon>
-              </r-more-content>
-            {/if}
+
+            <ConversationContent {sections} {sectionIndex} />
+
+            <ConversationMore {sections} {sectionIndex} />
           </r-dialog>
         {:else}
           <!-- mobile -->
@@ -117,18 +84,17 @@
             </r-name>
           </r-row>
           <r-dialog>
-            <r-content>{@html cleanHtml(sections[sectionIndex])}</r-content>
-            {#if sections.length > 1 && sectionIndex < sections.length - 1}
-              <r-more-content>
-                <icon><IoIosArrowDown /></icon>
-              </r-more-content>
-            {/if}
+            <ConversationContent {sections} {sectionIndex} />
+
+            <ConversationMore {sections} {sectionIndex} />
           </r-dialog>
         {/if}
       </r-container>
     </r-conversation>
-  </Fullwindow>
+  </Portal>
 {/if}
+
+<svelte:window bind:innerWidth={width} on:click={onCancel} />
 
 <style>
   r-conversation {
@@ -145,6 +111,7 @@
   r-container {
     display: flex;
     margin: 20px;
+    height: 30vh;
   }
 
   /* Mobile (small screen) is stacked as a column */
@@ -191,25 +158,11 @@
     display: flex;
     font-size: 20px;
     font-weight: bold;
+    flex-shrink: 0;
   }
   r-name span {
     padding: 4px 12px;
     background-color: black;
     border-radius: 10px;
-  }
-  r-content {
-    margin-top: 4px;
-    margin-left: 12px;
-  }
-  r-more-content {
-    text-align: center;
-    align-self: center;
-    margin-top: -2px; /* half of icon height */
-    margin-bottom: -22px; /* half of icon height */
-  }
-  icon {
-    display: block;
-    width: 24px;
-    height: 24px;
   }
 </style>

@@ -204,7 +204,6 @@ export class WorldManager {
 
     this.selection = new SelectionManager(this);
 
-    console.log("participants wm", participants);
     this.participants = new ParticipantManager(
       dispatch,
       broker,

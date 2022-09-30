@@ -40,7 +40,6 @@ export class ConversationSystem extends System {
 
     let component;
     const onCancel = () => {
-      console.log("cancel", spec.visible, component.$$props);
       spec.visible = false;
       component.$set({ visible: false });
     };
