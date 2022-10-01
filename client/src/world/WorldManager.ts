@@ -23,7 +23,6 @@ import { exportRelm, importRelm } from "./Export";
 
 import { worldUIMode } from "~/stores/worldUIMode";
 import { fpsTime } from "~/stores/stats";
-import { targetFps } from "~/stores/targetFps";
 import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 
 // Animation keys
@@ -100,9 +99,8 @@ import { portalOccupancy } from "~/stores/portalOccupancy";
 (window as any).THREE = THREE;
 
 type LoopType =
-  | { type: "reqAnimFrame" }
-  | { type: "nolimit"; running: boolean }
-  | { type: "interval"; targetFps: number; interval?: NodeJS.Timer };
+  | { type: "framerate"; fps: number }
+  | { type: "nolimit"; running: boolean };
 
 export class WorldManager {
   dispatch: Dispatch;
@@ -131,7 +129,7 @@ export class WorldManager {
 
   myDataLastSentAt: number = 0;
 
-  loopType: LoopType = { type: "reqAnimFrame" };
+  loopType: LoopType = { type: "framerate", fps: 30 };
 
   light: Entity;
 
@@ -657,28 +655,28 @@ export class WorldManager {
   }
 
   _startLoop() {
-    const loop = this.loop.bind(this);
-
     switch (this.loopType.type) {
-      case "reqAnimFrame":
+      case "framerate":
+        const targetFps = this.loopType.fps;
+        let accum = 0;
+        const loop = () => {
+          accum += targetFps;
+          if (accum >= 60) {
+            this.loop();
+            accum -= 60;
+          }
+        };
         this.world.presentation.setLoop(loop);
         break;
 
       case "nolimit":
         this.loopType.running = true;
         const noLimitLoop = () => {
-          loop();
+          this.loop();
           if (this.loopType.type == "nolimit" && this.loopType.running)
             setTimeout(noLimitLoop, 0);
         };
         noLimitLoop();
-        break;
-
-      case "interval":
-        this.loopType.interval = setInterval(
-          loop,
-          (1.0 / this.loopType.targetFps) * 1000
-        );
         break;
 
       default:
@@ -688,16 +686,12 @@ export class WorldManager {
 
   _stopLoop() {
     switch (this.loopType.type) {
-      case "reqAnimFrame":
+      case "framerate":
         this.world.presentation.setLoop(null);
         break;
 
       case "nolimit":
         this.loopType.running = false;
-        break;
-
-      case "interval":
-        clearInterval(this.loopType.interval);
         break;
 
       default:
@@ -725,28 +719,24 @@ export class WorldManager {
 
     // prettier-ignore
     switch (this.loopType.type) {
-      case "reqAnimFrame": return 60;
+      case "framerate": return this.loopType.fps;
       case "nolimit": return 60;
-      case "interval": return this.loopType.targetFps;
     }
   }
 
   setFps(fps: number) {
     this.stop();
 
-    if (fps === 60) {
-      this.loopType = { type: "reqAnimFrame" };
-    } else if (fps === null) {
+    if (fps === null) {
       this.loopType = { type: "nolimit", running: true };
     } else if (Number.isInteger(fps) && fps > 0 && fps <= 60) {
-      this.loopType = { type: "interval", targetFps: fps };
+      this.loopType = { type: "framerate", fps };
     } else {
       console.warn("Can't set FPS to ", fps);
       return;
     }
 
     this.lastFpsChange = performance.now();
-    targetFps.set(fps);
 
     this.start();
   }
