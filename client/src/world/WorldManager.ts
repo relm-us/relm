@@ -124,6 +124,7 @@ export class WorldManager {
   keyDown = keyDown;
   keySpace = keySpace;
 
+  lastActivity: number = 0;
   lastFpsChange: number = 0;
 
   myDataLastSentAt: number = 0;
@@ -599,7 +600,12 @@ export class WorldManager {
     return window.location.origin + "/" + this.state.pageParams.relmName;
   }
 
+  didControlAvatar() {
+    this.lastActivity = performance.now();
+  }
+
   didChangeZoom() {
+    this.didControlAvatar();
     CameraSystem.stageNeedsUpdate = true;
   }
 
