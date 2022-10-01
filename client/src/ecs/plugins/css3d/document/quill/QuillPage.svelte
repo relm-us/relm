@@ -6,6 +6,7 @@
   import { quillBind, quillInit } from "./quillInit";
   import QuillToolbar from "./QuillToolbar.svelte";
   import { config } from "~/config";
+  import { tick } from "svelte";
 
   export let docId: string;
   export let bgColor: string;
@@ -21,41 +22,39 @@
   let container;
   let bounds;
 
-  let boundDocId = null;
+  let bindingKey = 0;
   let quillUnbind;
 
-  function bind() {
-    editor = quillInit(container, showToolbar && toolbar ? toolbar : false, {
+  function bind(docId, toolbar) {
+    editor = quillInit(container, toolbar, {
       readOnly,
       cursors,
       bounds,
     });
 
     quillUnbind = quillBind(docId, editor);
-    boundDocId = docId;
   }
 
   function unbind() {
     quillUnbind?.();
-    boundDocId = null;
+    bindingKey++;
   }
 
-  onMount(() => {
-    // Initial Quill binding to Y.Text at `docId`
-    bind();
-
-    return () => {
-      // Clean Quill binding up after svelte component is unmounted
-      unbind();
-    };
-  });
-
-  afterUpdate(() => {
-    if (docId !== boundDocId) {
-      // `docId` has changed
-      unbind();
-      bind();
+  async function rebind(docId, showToolbar) {
+    unbind();
+    await tick();
+    if (showToolbar && !toolbar) {
+      console.warn("toolbar element missing", docId);
     }
+    bind(docId, showToolbar && toolbar ? toolbar : false);
+  }
+  
+  // We wait until the container exists, and rebind whenever docId or showToolbar changes
+  $: if (container) rebind(docId, showToolbar);
+
+  onMount(() => {
+    // Clean Quill binding up after svelte component is unmounted
+    return unbind;
   });
 
   let bgColorDark;
@@ -69,10 +68,13 @@
   $$props;
 </script>
 
-{#if editor && showToolbar}
-  <r-toolbar-wrapper transition:fly={{ y: -50 }}>
-    <QuillToolbar bind:toolbar />
-  </r-toolbar-wrapper>
+{#if showToolbar}
+  <!-- The toolbar cannot be re-used during a call to `quillBind`, therefore we force re-build -->
+  {#key bindingKey}
+    <r-toolbar-wrapper transition:fly={{ y: -50 }}>
+      <QuillToolbar bind:toolbar />
+    </r-toolbar-wrapper>
+  {/key}
 {/if}
 
 <r-document-wrapper

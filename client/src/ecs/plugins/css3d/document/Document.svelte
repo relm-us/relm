@@ -1,15 +1,14 @@
 <script lang="ts">
   import { Vector2 } from "three";
-  import { slide } from "svelte/transition";
 
   import { Entity } from "~/ecs/base";
   import { worldManager } from "~/world";
   import { worldUIMode } from "~/stores/worldUIMode";
-  import Fullwindow from "~/ui/lib/Fullwindow.svelte";
 
   import QuillOverlay from "../document/quill/QuillOverlay.svelte";
   import QuillPage from "./quill/QuillPage.svelte";
   import { Document } from "./Document";
+  import DocumentFullwindow from "./DocumentFullwindow.svelte";
 
   export let docId: string;
   export let bgColor: string;
@@ -22,15 +21,14 @@
   export let entity: Entity;
 
   let editor = null;
-  let toolbar = null;
-  let bigscreen = false;
 
   // We need to keep track of the docId at the moment the participant clicks to make
   // it "full window" because the full window view should not be affected by others
   // changing the docId with the next/back buttons.
-  let docIdAtFullwindow = docId;
+  let fullwindowDocId;
+  let fullwindowMode = false;
 
-  $: if (editor) editor.enable(editable && bigscreen);
+  $: if (editor) editor.enable(editable && fullwindowMode);
 
   let page = -1;
   $: pageList.length, (page = pageList.findIndex((pageId) => docId === pageId));
@@ -41,9 +39,15 @@
   let showNext = false;
   $: showNext = page >= 0 && page < pageList.length - 1;
 
-  const activate = () => (bigscreen = true);
+  const activate = () => {
+    fullwindowDocId = docId;
+    fullwindowMode = true;
+  };
 
-  const deactivate = () => (bigscreen = false);
+  const deactivate = () => {
+    fullwindowDocId = null;
+    fullwindowMode = false;
+  };
 
   function setDocId(newDocId) {
     const spec: Document = entity.get(Document);
@@ -54,9 +58,6 @@
     worldManager.worldDoc.syncFrom(entity);
 
     docId = newDocId;
-    if (!bigscreen) {
-      docIdAtFullwindow = docId;
-    }
   }
 
   function prevPage() {
@@ -72,32 +73,6 @@
   // ignore warning about missing props
   $$props;
 </script>
-
-{#if bigscreen}
-  <Fullwindow on:close={deactivate}>
-    <r-centered>
-      <div style="height:{editable ? 64 : 0}px" />
-
-      <r-page-margin
-        transition:slide
-        style="--x:{size.x}px;--y:{size.y}px;--radius:{radius * 150}px"
-        class:rounded={kind === "ROUNDED"}
-        class:circle={kind === "CIRCLE"}
-      >
-        <QuillPage
-          docId={docIdAtFullwindow}
-          {bgColor}
-          bind:editor
-          bind:toolbar
-          readOnly={!editable}
-          cursors={true}
-          showToolbar={editable}
-          on:pageclick={() => editor.focus()}
-        />
-      </r-page-margin>
-    </r-centered>
-  </Fullwindow>
-{/if}
 
 {#if visible}
   <QuillPage
@@ -123,40 +98,14 @@
   </QuillPage>
 {/if}
 
-<style>
-  r-centered {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-    height: 100%;
-  }
-
-  r-page-margin {
-    display: block;
-    pointer-events: all;
-    width: var(--x);
-    height: var(--y);
-    box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.5);
-  }
-
-  /* r-sync-button {
-    position: absolute;
-    width: var(--x);
-    display: flex;
-    justify-content: center;
-    transform: translateY(5px);
-    z-index: 1;
-  } */
-
-  .rounded {
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-
-  .circle {
-    border-radius: 100%;
-    overflow: hidden;
-  }
-</style>
+{#if fullwindowMode}
+  <DocumentFullwindow
+    on:close={deactivate}
+    docId={fullwindowDocId}
+    {editable}
+    {bgColor}
+    {kind}
+    {radius}
+    {size}
+  />
+{/if}
