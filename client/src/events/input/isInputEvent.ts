@@ -53,8 +53,6 @@ export function isInputEvent(event, debug = false) {
       value = true;
     }
 
-    if (debug && !value) console.log("isInputEvent false");
-
     return value;
   }
 }

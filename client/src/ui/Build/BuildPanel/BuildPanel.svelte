@@ -13,7 +13,6 @@
   import ActionsPanel from "../ActionsPanel";
   import SettingsPanel from "../SettingsPanel";
   import ExportPanel from "../ExportPanel";
-  import GroupUngroupButton from "../GroupUngroupButton";
 
   function toPlayMode() {
     globalEvents.emit("switch-mode", "play");
