@@ -1,5 +1,6 @@
-import { get } from "svelte/store";
 import { Vector3 } from "three";
+import { get } from "svelte/store";
+import alphanumeric from "alphanumeric-id";
 
 import { worldManager } from "~/world";
 import { worldUIMode } from "~/stores/worldUIMode";
@@ -57,7 +58,7 @@ export function paste(clipboardData?: DataTransfer) {
   for (const json of buffer.entities) {
     const entity = worldManager.world.entities
       .create()
-      .fromJSON(json)
+      .fromJSON(pasteHook(json))
       .activate();
     const transform = entity.get(Transform);
     if (transform && entity.parent === null) {
@@ -72,4 +73,13 @@ export function paste(clipboardData?: DataTransfer) {
     entity.bind();
     worldManager.worldDoc.syncFrom(entity);
   }
+}
+
+function pasteHook(json) {
+  if (json["Document"]) {
+    const newDocId = alphanumeric(8);
+    json["Document"].docId = newDocId;
+    json["Document"].pageList = JSON.stringify([newDocId]);
+  }
+  return json;
 }

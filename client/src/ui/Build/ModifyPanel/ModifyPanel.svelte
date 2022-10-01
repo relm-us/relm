@@ -32,12 +32,13 @@
   {:else if $selectedEntities.size === 1 && entity}
     <EntityComponents {entity} />
     <toolbar>
-      <Button on:click={destroyEntity}>{$_("EditorPanel.delete_object")}</Button
-      >
+      <Button on:click={destroyEntity}>
+        {$_("EditorPanel.delete_object")}
+      </Button>
       <div style="margin-bottom:8px" />
-      <Button on:click={debugEntity}
-        >{$_("EditorPanel.debug_in_console")}</Button
-      >
+      <Button on:click={debugEntity}>
+        {$_("EditorPanel.debug_in_console")}
+      </Button>
     </toolbar>
     {#if $permits.includes("admin")}
       <AdminAddToLibrary />

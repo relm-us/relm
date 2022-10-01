@@ -5,6 +5,7 @@
 
   import Capsule from "~/ui/lib/Capsule";
   import { worldManager } from "~/world";
+  import alphanumeric from "alphanumeric-id";
 
   export let entity;
 
@@ -15,10 +16,18 @@
 
   let selectedValue;
 
+  function optionsHook(componentName) {
+    if (componentName === "Document") {
+      const newDocId = alphanumeric(8);
+      return { docId: newDocId, pageList: [newDocId] };
+    }
+    return {};
+  }
+
   const onSelectNewComponent = ({ detail }) => {
     const componentName = detail.value;
     setTimeout(() => {
-      entity.addByName(componentName);
+      entity.addByName(componentName, optionsHook(componentName));
       worldManager.worldDoc.syncFrom(entity);
       dispatch("modified");
 

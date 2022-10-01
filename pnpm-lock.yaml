@@ -28,6 +28,7 @@ importers:
       '@uppy/file-input': 2.1.1
       '@uppy/utils': 4.1.0
       '@uppy/xhr-upload': 2.1.2
+      alphanumeric-id: ^1.0.1
       anchorme: ^2.1.2
       autoprefixer: ^10.4.7
       babel-loader: ^8.1.0
@@ -110,6 +111,7 @@ importers:
       '@uppy/file-input': 2.1.1_@uppy+core@2.3.1
       '@uppy/utils': 4.1.0
       '@uppy/xhr-upload': 2.1.2_@uppy+core@2.3.1
+      alphanumeric-id: 1.0.1
       anchorme: 2.1.2
       bowser: 2.11.0
       byte-size: 7.0.1
@@ -4415,6 +4417,10 @@ packages:
       require-from-string: 2.0.2
       uri-js: 4.4.1
     dev: true
+
+  /alphanumeric-id/1.0.1:
+    resolution: {integrity: sha512-0rvBth2K6ixo7vZcwHyKClWzKOJWkI0KGCO9DR40VSYYF+U6N5d+JIhKmg1IF4t1cX4ZRW/1axoIUx029fTSuQ==}
+    dev: false
 
   /anchorme/2.1.2:
     resolution: {integrity: sha512-2iPY3kxDDZvtRzauqKDb4v7a5sTF4GZ+esQTY8nGYvmhAtGTeFPMn4cRnvyWS1qmtPTP0Mv8hyLOp9l3ZzWMKg==}
