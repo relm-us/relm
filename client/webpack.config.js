@@ -8,7 +8,6 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 const { ProvidePlugin } = require("webpack");
-const zlib = require("node:zlib");
 
 const Preprocess = require("svelte-preprocess");
 
@@ -41,14 +40,6 @@ const useBabel = true;
  */
 const useBabelInDevelopment = false;
 
-/**
- * One or more stylesheets to compile and add to the beginning of the bundle. By
- * default, SASS, SCSS and CSS files are supported. The order of this array is
- * important, as the order of outputted styles will match. Svelte component
- * styles will always appear last in the bundle.
- */
-const stylesheets = ["./styles/index.scss"];
-
 // Point the client to the server; default is for development mode
 const relmServer = process.env.RELM_SERVER ?? "http://localhost:3000";
 const relmScreenshotServer =
@@ -65,9 +56,18 @@ module.exports = {
    */
   entry: {
     bundle: [
-      // Note: Paths in the `stylesheets` variable will be added here
-      // automatically
+      /**
+       * The main entry; imported dependencies will be bundled
+       */
       "./src/main/index.ts",
+
+      /**
+       * One or more stylesheets to compile and add to the beginning of the bundle. By
+       * default, SASS, SCSS and CSS files are supported. The order of this array is
+       * important, as the order of outputted styles will match. Svelte component
+       * styles will always appear last in the bundle.
+       */
+      "./styles/index.scss",
     ],
   },
 
@@ -75,8 +75,8 @@ module.exports = {
    * When building for production, follow the output pattern to generate bundled js.
    */
   output: {
-    filename: "[name].js",
-    chunkFilename: "[name].[id].[contenthash].js",
+    filename: prod ? "[name].[contenthash].js" : "[name].js",
+    chunkFilename: "[name].[contenthash].js",
     path: __dirname + "/dist",
     publicPath: "/",
   },
@@ -195,6 +195,9 @@ module.exports = {
       {
         test: /\.(png|jpe?g|gif|svg|glb)$/i,
         type: "asset/resource",
+        generator: {
+          filename: "assets/[hash][ext][query]",
+        },
       },
     ],
   },
@@ -202,7 +205,7 @@ module.exports = {
   plugins: [
     new ProvidePlugin({ process: "process/browser.js" }),
     new MiniCssExtractPlugin({
-      filename: "[name].css",
+      filename: prod ? "[name].[contenthash].css" : "[name].css",
     }),
 
     /**
@@ -270,8 +273,15 @@ module.exports = {
           test: /[\\/]node_modules[\\/](@dimforge)[\\/]/,
           name: "dimforge",
         },
+        vendor: {
+          name: "vendor",
+          priority: -10,
+          test: /[\\/]node_modules[\\/]/,
+          chunks: "all",
+        },
       },
       chunks: "async",
+      minSize: 30000,
     },
 
     /**
@@ -282,18 +292,6 @@ module.exports = {
   },
   devtool: prod && !sourceMapsInProduction ? false : "source-map",
 };
-
-// Add stylesheets to the build
-if (Array.isArray(stylesheets) || typeof stylesheets === "string") {
-  if (!Array.isArray(stylesheets)) {
-    stylesheets = [stylesheets];
-  }
-
-  module.exports.entry.bundle.unshift.apply(
-    module.exports.entry.bundle,
-    stylesheets
-  );
-}
 
 // Load path mapping from tsconfig
 const tsconfigPath = path.resolve(__dirname, "tsconfig.json");
