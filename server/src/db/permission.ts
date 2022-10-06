@@ -1,15 +1,16 @@
 import { db, sql, INSERT, IN, raw } from "./db.js";
 import { arrayToBooleanObject, booleanObjectToArray } from "../utils/index.js";
 import { getRelm } from "./relm.js";
+import { filterMap } from "relm-common";
 
 const PERMISSIONS = ["read", "access", "edit", "invite", "admin"];
 export type Permission = "read" | "access" | "edit" | "invite" | "admin";
 export type Permits = {
   read?: boolean;
-  admin?: boolean;
   access?: boolean;
   invite?: boolean;
   edit?: boolean;
+  admin?: boolean;
 };
 
 export type UUID = string;
@@ -20,6 +21,14 @@ export function validPermission(permission) {
 
 export function filteredPermits(permits) {
   return new Set(permits.filter((permission) => validPermission(permission)));
+}
+
+export function permitsToPermissions(permits: Permits): Permission[] {
+  return filterMap(
+    Object.entries(permits),
+    ([permission, allowed]) => allowed && PERMISSIONS.includes(permission),
+    ([permission, _]) => permission as Permission
+  );
 }
 
 /**

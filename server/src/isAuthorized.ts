@@ -1,5 +1,6 @@
 import { hasPermission } from "./utils/hasPermission.js";
 import { Participant, Permission, Doc } from "./db/index.js";
+import { RelmDocWithName, type RelmDoc } from "./db/doc.js";
 
 type Signature = {
   participantId: string;
@@ -22,14 +23,14 @@ type Unauthorized = {
 
 type Authorized = {
   kind: "authorized";
-  doc: any;
+  doc: RelmDoc;
   permissions: any;
 };
 
 export type AuthResult = Authorized | Unauthorized | Error;
 
 export async function isAuthorized(
-  docId,
+  docId: string,
   signature: Signature
 ): Promise<AuthResult> {
   let verifiedPubKey;
@@ -53,7 +54,7 @@ export async function isAuthorized(
   }
 
   // Get relm from docId
-  const doc = await Doc.getDocWithRelmName({ docId });
+  const doc: RelmDocWithName = await Doc.getDocWithRelmName({ docId });
 
   if (!doc) {
     return {

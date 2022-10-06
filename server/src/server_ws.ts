@@ -8,6 +8,7 @@ import { ydocStats } from "./ydocStats.js";
 
 import { AuthResult, isAuthorized } from "./isAuthorized.js";
 import { getOrCreateLiveRelm, liveRelms } from "./LiveRelm.js";
+import { RelmDocWithName } from "db/doc.js";
 
 export const server = createServer();
 
@@ -31,17 +32,16 @@ setInterval(() => {
   }
 }, OCCUPANCY_SEND_INTERVAL);
 
-wss.on("connection", async (conn, req, relmDoc) => {
+wss.on("connection", async (conn, req, relmDoc: RelmDocWithName) => {
   // Each participant connects twice, once to the "permanent" relmDoc,
   // and once to the "transient" relmDoc; we only care about tracking
   // the "permanent" one.
   if (relmDoc.docType === "permanent") {
-    const relmName = relmDoc.relmName;
     const participantId = getUrlParams(req.url).get("participant-id");
 
     await setupWSConnection(conn, req, {
       onOpen: (doc: WSSharedDoc) => {
-        const liveRelm = getOrCreateLiveRelm(relmName, doc.awareness);
+        const liveRelm = getOrCreateLiveRelm(relmDoc, doc.awareness);
 
         // If portals have changed since initial LiveRelm creation event,
         // update them each time a participant joins, so that a browser
@@ -54,7 +54,7 @@ wss.on("connection", async (conn, req, relmDoc) => {
         doc.on("update", onUpdateDoc);
       },
       onClose: (doc: WSSharedDoc) => {
-        const liveRelm = getOrCreateLiveRelm(relmName);
+        const liveRelm = getOrCreateLiveRelm(relmDoc);
 
         liveRelm.leave(participantId);
 

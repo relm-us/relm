@@ -9,21 +9,34 @@ import { getDefinedKeys, nullOr } from "../utils/index.js";
  * e.g. `permanent`, or `transient`.
  */
 
-type DocColumns = {
+type CreateDocData = {
   doc_id: string;
   doc_type: string;
   relm_id: string;
   entities_count: number;
   assets_count: number;
   portals: string[];
-  created_at: string;
+  created_at: Date;
   updated_at: Date;
 };
 
-const mkDoc = nullOr((cols: DocColumns) => {
+export type RelmDoc = {
+  docId: string;
+  docType: "permanent" | "transient";
+  relmId: string;
+  entitiesCount: number;
+  assetsCount: number;
+  portals: string[];
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type RelmDocWithName = RelmDoc & { relmName: string };
+
+const mkDoc = nullOr((cols: CreateDocData): RelmDoc => {
   return {
     docId: cols.doc_id,
-    docType: cols.doc_type,
+    docType: cols.doc_type === "permanent" ? "permanent" : "transient",
     relmId: cols.relm_id,
     entitiesCount: cols.entities_count,
     assetsCount: cols.assets_count,
@@ -43,16 +56,26 @@ export async function getDoc({ docId }: { docId: string }) {
   );
 }
 
-export async function getDocWithRelmName({ docId }: { docId: string }) {
+export async function getDocWithRelmName({
+  docId,
+}: {
+  docId: string;
+}): Promise<RelmDocWithName> {
   const rows = await db.oneOrNone(sql`
     SELECT docs.*, r.relm_name
       FROM docs
       JOIN relms r USING (relm_id)
      WHERE doc_id = ${docId}
   `);
-  const doc = mkDoc(rows);
-  if (rows) doc.relmName = rows.relm_name;
-  return doc;
+
+  if (rows) {
+    return {
+      ...mkDoc(rows),
+      relmName: rows.relm_name,
+    };
+  } else {
+    return null;
+  }
 }
 
 // Given a docId, find the associated relm, and then find that relm's

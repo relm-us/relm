@@ -1,13 +1,13 @@
+type OneArgFn<A, B> = (arg: A) => B;
+
 /**
  * If the first param to fn is null or undefined, skip calling the function and just
  * return null or undefined. Otherwise, call the function.
- *
- * @param {Function} fn
  */
-export function nullOr(fn) {
-  return (arg) => {
+export function nullOr<A, B>(fn: OneArgFn<A, B>): OneArgFn<A, B> {
+  return (arg: A) => {
     if (arg === null || arg === undefined) {
-      return arg;
+      return null;
     } else {
       return fn(arg);
     }

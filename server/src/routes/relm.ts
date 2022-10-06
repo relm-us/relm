@@ -1,4 +1,4 @@
-import type { Permits } from "../db/permission.js";
+import type { Permission as PermissionString } from "../db/permission.js";
 
 import * as express from "express";
 import cors from "cors";
@@ -37,6 +37,7 @@ import {
   respondWithError,
   randomToken,
 } from "../utils/index.js";
+import { RelmData } from "db/relm.js";
 
 const conscript = mkConscript();
 
@@ -101,8 +102,15 @@ relm.post(
 
     let seedRelm;
 
+    if (
+      req.body.publicPermits !== undefined &&
+      !Array.isArray(req.body.publicPermits)
+    ) {
+      throw Error("publicPermits must be an array");
+    }
+
     // Since only `admin` can create a relm, we trust whatever publicPermits they provide
-    const publicPermits: Permits = req.body.publicPermits;
+    const publicPermissions = req.body.publicPermits as PermissionString[];
 
     if (relm !== null) {
       throw Error(`relm '${req.relmName}' already exists`);
@@ -132,7 +140,7 @@ relm.post(
       const attrs: any = {
         relmName: req.relmName,
         seedRelmId,
-        publicPermits,
+        publicPermissions,
         createdBy: req.authenticatedParticipantId,
       };
 
@@ -147,6 +155,7 @@ relm.post(
         attrs.clonePermitAssigned = cpAsn;
       }
 
+      console.log('attrs', attrs)
       const relm = await Relm.createRelm(attrs);
 
       if (seedRelmId) {
@@ -265,8 +274,8 @@ relm.post(
       attrs.relmName = req.body.relmName;
     }
 
-    if (req.body.publicPermits !== undefined) {
-      attrs.publicPermits = req.body.publicPermits;
+    if (Array.isArray(req.body.publicPermits)) {
+      attrs.publicPermissions = req.body.publicPermits;
     }
 
     const cpReq = req.body.clonePermitRequired;

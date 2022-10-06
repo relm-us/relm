@@ -42,22 +42,32 @@ const useBabelInDevelopment = false;
 
 // Point the client to the server; default is for development mode
 const relmServer = process.env.RELM_SERVER ?? "http://localhost:3000";
-const relmScreenshotServer =
-  process.env.RELM_SCREENSHOT_SERVER ?? "http://localhost:3001";
+
+const htmlPages = {
+  "src/index.html.handlebars": { filename: "index.html" },
+  "src/dashboard.html.handlebars": {
+    filename: "dashboard.html",
+    chunks: ["dashboard"],
+  },
+};
 
 module.exports = {
   // Production or Development mode
   mode,
 
+  // Summarize the webpacking process at the end;
+  // Other options include: 'minimal', 'detailed', or 'verbose'
+  stats: "normal",
+
   /**
    * The "entry" is where webpack starts looking for imports and other parts of the
-   * app. It produces a bundle.js file (or in our case, multiple chunked bundles
+   * app. It produces a main.js file (or in our case, multiple chunked bundles
    * due to our needing async wasm support).
    */
   entry: {
-    bundle: [
+    index: [
       /**
-       * The main entry; imported dependencies will be bundled
+       * The main entry for the 3D app; imported dependencies will be bundled
        */
       "./src/main/index.ts",
 
@@ -68,6 +78,13 @@ module.exports = {
        * styles will always appear last in the bundle.
        */
       "./styles/index.scss",
+    ],
+
+    dashboard: [
+      /**
+       * The main entry for our dashboard app
+       */
+      "./src/main2d/index.ts",
     ],
   },
 
@@ -92,8 +109,6 @@ module.exports = {
     compress: true,
     historyApiFallback: true,
   },
-
-  stats: "minimal", // use "normal" to show what chunks are built and what files are copied
 
   /**
    * Direct webpack to understand our app's internal patterns for imports. For example,
@@ -204,6 +219,10 @@ module.exports = {
 
   plugins: [
     new ProvidePlugin({ process: "process/browser.js" }),
+
+    /**
+     * Extract CSS into its own files
+     */
     new MiniCssExtractPlugin({
       filename: prod ? "[name].[contenthash].css" : "[name].css",
     }),
@@ -222,43 +241,13 @@ module.exports = {
     }),
 
     /**
-     * This plugin analyzes all of our imports & chunks, and produces an HTML
-     * file that suitably loads the initial resources (e.g. CSS) and chunks
-     * (i.e. chunked JS bundles)
-     */
-    new HtmlWebpackPlugin({
-      title: process.env.RELM_TITLE ?? "Relm",
-
-      // Use the template at src/index.html to produce dist/index.html
-      template: "src/index.html.handlebars",
-
-      // for aesthetics; makes index.html stay formatted
-      minify: false,
-
-      // We can pass any parameters we want to the ejs parser that processes "src/index.html"
-      templateParameters: {
-        config: {
-          assetsUrl: process.env.RELM_ASSETS_URL ?? `${relmServer}/asset`,
-          fontsUrl:
-            process.env.RELM_FONTS_URL ??
-            "https://fonts.bunny.net/css" /* "https://fonts.googleapis.com/css" */,
-          langDefault: process.env.RELM_LANG_DEFAULT ?? "en",
-          // The URL of the relm-server (backend) we will connect to:
-          server: relmServer,
-          // The URL of the screenshot server (backend) to request screenshots from.
-          screenshotServer: relmScreenshotServer,
-        },
-        analyticsScript: process.env.RELM_ANALYTICS_SCRIPT ?? null,
-      },
-    }),
-
-    /**
      * In production: Copy our static files from public/ to dist/
      */
     new CopyWebpackPlugin({
       patterns: [{ from: "public", to: "." }],
     }),
   ],
+
   optimization: {
     minimizer: [],
 
@@ -273,15 +262,10 @@ module.exports = {
           test: /[\\/]node_modules[\\/](@dimforge)[\\/]/,
           name: "dimforge",
         },
-        vendor: {
-          name: "vendor",
-          priority: -10,
-          test: /[\\/]node_modules[\\/]/,
-          chunks: "all",
-        },
       },
-      chunks: "async",
-      minSize: 30000,
+      chunks: "all",
+      minSize: 50000,
+      maxSize: 500000,
     },
 
     /**
@@ -307,6 +291,43 @@ if ("compilerOptions" in tsconfig && "paths" in tsconfig.compilerOptions) {
       module.exports.resolve.alias[alias] = paths.length > 1 ? paths : paths[0];
     }
   }
+}
+
+// Use HtmlWebpackPlugin to generate each of the static html pages; e.g. index.html
+for (let [template, options] of Object.entries(htmlPages)) {
+  /**
+   * This plugin analyzes all of our imports & chunks, and produces an HTML
+   * file that suitably loads the initial resources (e.g. CSS) and chunks
+   * (i.e. chunked JS bundles)
+   */
+  module.exports.plugins.push(
+    new HtmlWebpackPlugin({
+      title: process.env.RELM_TITLE ?? "Relm",
+
+      // e.g. template at src/index.html.handlebars
+      template,
+
+      // for aesthetics; makes HTML page keep its white-space formatting
+      minify: false,
+
+      // We can pass any parameters we want to the ejs parser that processes "src/index.html"
+      templateParameters: {
+        config: {
+          assetsUrl: process.env.RELM_ASSETS_URL ?? `${relmServer}/asset`,
+          fontsUrl:
+            process.env.RELM_FONTS_URL ??
+            "https://fonts.bunny.net/css" /* "https://fonts.googleapis.com/css" */,
+          langDefault: process.env.RELM_LANG_DEFAULT ?? "en",
+          // The URL of the relm-server (backend) we will connect to:
+          server: relmServer,
+        },
+        analyticsScript: process.env.RELM_ANALYTICS_SCRIPT ?? null,
+      },
+
+      // Override any of the above with options passed in via htmlPages
+      ...options,
+    })
+  );
 }
 
 // These options should only apply to production builds
