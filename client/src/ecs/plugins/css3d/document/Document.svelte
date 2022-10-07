@@ -85,6 +85,7 @@
     bind:editor
     readOnly={!simpleMode}
     cursors={simpleMode}
+    centered={simpleMode}
     showToolbar={false}
   >
     {#if $worldUIMode === "play" && !simpleMode}

@@ -12,6 +12,7 @@
   export let bgColor: string;
   export let readOnly: boolean = false;
   export let cursors: boolean = false;
+  export let centered: boolean = false;
   export let showToolbar: boolean = false;
   export let editor: Quill = null;
   export let toolbar = null;
@@ -84,6 +85,7 @@
   bind:this={wrapper}
   style="--bg-color: {bgColor}; --bg-color-dark: {bgColorDark}"
   translate="no"
+  class:centered
   on:click={filterClick}
 >
   <div bind:this={container} />
@@ -110,6 +112,10 @@
   }
   r-document-wrapper :global(.ql-editor) {
     padding: 12px 15px 4px 15px;
+  }
+
+  r-document-wrapper.centered {
+    justify-content: center;
   }
 
   r-toolbar-wrapper {
