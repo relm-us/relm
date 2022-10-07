@@ -13,6 +13,8 @@
   export let docId: string;
   export let bgColor: string;
   export let editable: boolean;
+  export let simpleMode: boolean;
+
   export let visible: boolean;
   export let kind: string;
   export let radius: number;
@@ -70,6 +72,8 @@
     setDocId(pageList[page]);
   }
 
+  $: if (editor && simpleMode) editor.enable(editable);
+
   // ignore warning about missing props
   $$props;
 </script>
@@ -79,11 +83,11 @@
     {docId}
     {bgColor}
     bind:editor
-    readOnly={true}
-    cursors={false}
+    readOnly={!simpleMode}
+    cursors={simpleMode}
     showToolbar={false}
   >
-    {#if $worldUIMode === "play"}
+    {#if $worldUIMode === "play" && !simpleMode}
       <QuillOverlay
         cloudy={false}
         {showPrev}

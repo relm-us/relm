@@ -1,9 +1,9 @@
 <script lang="ts">
   import { Color } from "three";
-  import { onMount, afterUpdate, createEventDispatcher } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
   import { fly } from "svelte/transition";
 
-  import { quillBind, quillInit } from "./quillInit";
+  import { quillBind, quillInit, type Quill } from "./quillInit";
   import QuillToolbar from "./QuillToolbar.svelte";
   import { config } from "~/config";
   import { tick } from "svelte";
@@ -13,7 +13,7 @@
   export let readOnly: boolean = false;
   export let cursors: boolean = false;
   export let showToolbar: boolean = false;
-  export let editor = null;
+  export let editor: Quill = null;
   export let toolbar = null;
 
   const dispatch = createEventDispatcher();
@@ -48,7 +48,7 @@
     }
     bind(docId, showToolbar && toolbar ? toolbar : false);
   }
-  
+
   // We wait until the container exists, and rebind whenever docId or showToolbar changes
   $: if (container) rebind(docId, showToolbar);
 
@@ -61,7 +61,10 @@
   $: bgColorDark = "#" + new Color(bgColor).multiplyScalar(0.8).getHexString();
 
   function filterClick(event) {
-    if (event.target === wrapper) dispatch("pageclick", event);
+    if (event.target === wrapper) {
+      editor.focus();
+      dispatch("pageclick", event);
+    }
   }
 
   // ignore warning about missing props

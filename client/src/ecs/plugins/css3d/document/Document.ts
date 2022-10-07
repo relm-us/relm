@@ -5,6 +5,7 @@ export class Document extends Component {
   bgColor: string;
   borderColor: string;
   editable: boolean;
+  simpleMode: boolean;
 
   static props = {
     docId: {
@@ -34,9 +35,17 @@ export class Document extends Component {
 
     editable: {
       type: BooleanType,
-      default: false,
+      default: true,
       editor: {
         label: "Editable",
+      },
+    },
+
+    simpleMode: {
+      type: BooleanType,
+      default: false,
+      editor: {
+        label: "Simple Mode",
       },
     },
   };

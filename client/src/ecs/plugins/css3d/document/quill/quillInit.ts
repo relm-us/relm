@@ -8,6 +8,8 @@ import { config } from "~/config";
 
 import { worldManager } from "~/world";
 
+export { Quill };
+
 // prettier-ignore
 export const fontSizes = [
   "12px", "16px", "20px", "24px", "28px",
@@ -32,7 +34,7 @@ export function quillInit(
   container,
   toolbar,
   { cursors = true, readOnly = false, bounds = container }
-) {
+): Quill {
   const modules = {
     cursors,
     toolbar,
