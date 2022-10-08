@@ -12,6 +12,8 @@
   import SkyboxOption from "./SkyboxOption.svelte";
   import SkyboxUploadButton from "~/ui/Build/shared/UploadButton";
 
+  import { _ } from "~/i18n";
+
   function onUploadedSkybox({ detail }) {
     if (detail.results.length === 0) return;
     const result = detail.results[0];
@@ -39,29 +41,29 @@
   }
 </script>
 
-<Pane title="Skybox">
+<Pane title={$_("SkyboxSettings.skybox")}>
   <r-setting>
     <div class="select-skyboxes">
       <SkyboxOption
-        name="Blue Sky"
+        name={$_("SkyboxSettings.blue_sky")}
         value="edc3d0040ef1e1feece33adef09b32c4-7496.webp"
         thumbnail="5edd94b3d28b8a05c2858de0ae503e39-1586.webp"
         on:choose={chooseSkybox}
       />
       <SkyboxOption
-        name="Stars"
+        name={$_("SkyboxSettings.stars")}
         value="42e9b44e8e2cce697d446c85809a378c-79050.webp"
         thumbnail="fdeb9a7dab4c03b2befe637d55c8ea36-6908.webp"
         on:choose={chooseSkybox}
       />
       <SkyboxOption
-        name="Pink Clouds"
+        name={$_("SkyboxSettings.pink_clouds")}
         value="6c798e8ce73d162955743af2dd2c27ff-22658.webp"
         thumbnail="9f15e6be6c086594fbe8e389f4a209b1-4138.webp"
         on:choose={chooseSkybox}
       />
       <SkyboxOption
-        name="Galaxy"
+        name={$_("SkyboxSettings.galaxy")}
         value="b0c5c961730f92fbd97d3b8f4ad73f53-31160.webp"
         thumbnail="543ba08c91613b380a8c304bec4f11b5-4322.webp"
         on:choose={chooseSkybox}

@@ -22,6 +22,8 @@
 
   import Pane from "./Pane.svelte";
 
+  import { _ } from "~/i18n";
+
   export let state: State;
 
   const participants: Readable<ParticipantMap> =
@@ -74,56 +76,56 @@
     <inner-scroll>
       <table>
         <tr>
-          <th>Debug physics?</th>
+          <th>{$_("DebugPane.debug_physics")}</th>
           <td>
             <ToggleSwitch bind:enabled={PhysicsSystem.showDebug} />
           </td>
         </tr>
         <tr>
-          <th>Show errors?</th>
+          <th>{$_("DebugPane.show_errors")}</th>
           <td>
             <ToggleSwitch bind:enabled={$errorCat} />
           </td>
         </tr>
         <tr>
-          <th>Framerate:</th>
+          <th>{$_("DebugPane.framerate")}</th>
           <td>
             <TextInput
-              label="FPS"
+              label={$_("DebugPane.fps")}
               value={worldManager.getTargetFps()}
               on:change={({ detail }) => worldManager.setFps(parseInt(detail))}
             />
           </td>
         </tr>
         <tr>
-          <th>Audio:</th>
+          <th>{$_("DebugPane.audio")}</th>
           <td>
             {$localIdentityData.showAudio ? "show" : "(hide)"}
             {$localAudioTrack ? "granted" : "(not granted)"}
           </td>
         </tr>
         <tr>
-          <th>Video:</th>
+          <th>{$_("DebugPane.video")}</th>
           <td>
             {$localIdentityData.showVideo ? "show" : "(hide)"}
             {$localVideoTrack ? "granted" : "(not granted)"}
           </td>
         </tr>
         <tr>
-          <th>Loading:</th>
+          <th>{$_("DebugPane.loading")}</th>
           <td>
             <div>(Ent: {state.entitiesCount}/{state.entitiesMax})</div>
             <div>(Ast: {state.assetsCount}/{state.assetsMax})</div>
           </td>
         </tr>
         <tr>
-          <th>Viewport:</th>
+          <th>{$_("DebugPane.viewport")}</th>
           <td>{$viewport !== null} {vw}</td>
         </tr>
 
         {#if showAbbreviatedIdentities}
           <tr>
-            <th>Participants:</th>
+            <th>{$_("DebugPane.participants")}</th>
             <td>
               <button on:click={toggleIdentities}>
                 {$participants.size}
@@ -132,7 +134,7 @@
           </tr>
         {:else}
           <tr>
-            <th>Participants:</th>
+            <th>{$_("DebugPane.participants")}</th>
             <td />
           </tr>
           {#each Array.from($participants.values()) as participant}

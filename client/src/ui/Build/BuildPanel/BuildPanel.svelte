@@ -14,6 +14,8 @@
   import SettingsPanel from "../SettingsPanel";
   import ExportPanel from "../ExportPanel";
 
+  import { _ } from "svelte-i18n";
+
   function toPlayMode() {
     globalEvents.emit("switch-mode", "play");
   }
@@ -23,22 +25,22 @@
   <Button
     active={$openPanel === "add"}
     depress={false}
-    on:click={() => ($openPanel = "add")}>Add</Button
+    on:click={() => ($openPanel = "add")}>{$_("BuildPanel.add")}</Button
   >
   <Button
     active={$openPanel === "modify"}
     depress={false}
-    on:click={() => ($openPanel = "modify")}>Modify</Button
+    on:click={() => ($openPanel = "modify")}>{$_("BuildPanel.modify")}</Button
   >
   <Button
     active={$openPanel === "actions"}
     depress={false}
-    on:click={() => ($openPanel = "actions")}>Actions</Button
+    on:click={() => ($openPanel = "actions")}>{$_("BuildPanel.actions")}</Button
   >
   <Button
     active={$openPanel === "settings"}
     depress={false}
-    on:click={() => ($openPanel = "settings")}>Settings</Button
+    on:click={() => ($openPanel = "settings")}>{$_("BuildPanel.settings")}</Button
   >
 </panel-tabs>
 

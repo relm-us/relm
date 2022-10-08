@@ -7,6 +7,8 @@
   import TextInput from "~/ui/lib/TextInput/TextInput.svelte";
   import UploadButton from "~/ui/Build/shared/UploadButton";
 
+  import { _ } from "~/i18n";
+
   export let key: string;
   export let component;
   export let prop;
@@ -81,7 +83,7 @@
     <r-row>
       {#if formatSizeInKb(value)}
         <r-size>
-          Size:
+          {$_("AssetType.size")}
           <div>{formatSizeInKb(value)}</div>
         </r-size>
       {/if}

@@ -8,6 +8,8 @@
   import Capsule from "~/ui/lib/Capsule";
   import Button from "~/ui/lib/Button";
 
+  import { _ } from "~/i18n";
+
   let newEntrywayName = "";
 
   function handleAddEntryway({ detail }) {
@@ -37,7 +39,7 @@
 <Pane title="Entryways">
   <r-setting>
     <Button on:click={setDefaultEntryway}>
-      Set Default<br />to Here
+      {$_("EntrywaySettings.set_default")}
     </Button>
     <r-entryways-list>
       <EntrywayMap
@@ -45,7 +47,7 @@
         on:delete={onDeleteEntryway}
       />
     </r-entryways-list>
-    <div>New Entryway Name:</div>
+    <div>{$_("EntrywaySettings.new_entryway_name")}</div>
     <Capsule
       value={newEntrywayName}
       editable={true}

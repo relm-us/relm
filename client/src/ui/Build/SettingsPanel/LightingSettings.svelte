@@ -9,6 +9,8 @@
   import Button from "~/ui/lib/Button";
   import { DEFAULT_DIRECTIONAL_LIGHT_POSITION } from "~/config/constants";
 
+  import { _ } from "~/i18n";
+
   let ambientColor;
   let hemisphereColor;
   let hemisphereGroundColor;
@@ -83,10 +85,10 @@
   });
 </script>
 
-<Pane title="Lighting">
+<Pane title={$_("LightingSettings.lighting")}>
   <r-setting style="padding-top: 4px">
     <r-title>
-      Ambient:
+      {$_("LightingSettings.ambient")}
       <r-right>
         <ColorPicker
           bind:value={ambientColor}
@@ -103,10 +105,10 @@
 
   <r-setting>
     <r-title>
-      Hemisphere:
+      {$_("LightingSettings.hemisphere")}
       <r-right>
         <r-compound>
-          Sky:
+          {$_("LightingSettings.sky")}
           <ColorPicker
             bind:value={hemisphereColor}
             on:change={changeHemisphereColor}
@@ -121,7 +123,7 @@
     </r-title>
     <r-row>
       <r-compound>
-        Ground:
+        {$_("LightingSettings.ground")}
         <ColorPicker
           bind:value={hemisphereGroundColor}
           on:change={changeHemisphereGroundColor}
@@ -137,7 +139,7 @@
 
   <r-setting>
     <r-title>
-      Directional:
+      {$_("LightingSettings.directional")}
       <r-right>
         <ColorPicker
           bind:value={directionalColor}
@@ -151,13 +153,13 @@
       </r-right>
     </r-title>
     <r-row-start>
-      Position:
+      {$_("LightingSettings.position")}
       <input type="text" bind:value={directionalPosition} />
     </r-row-start>
   </r-setting>
 
   <r-setting style="border-bottom:0; padding-bottom: 3px">
-    <Button on:click={resetLighting}>Reset Lighting</Button>
+    <Button on:click={resetLighting}>{$_("LightingSettings.reset_lighting")}</Button>
   </r-setting>
 </Pane>
 

@@ -1,7 +1,9 @@
 <script>
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import { worldManager } from "~/world";
-import { onMount } from "svelte";
+  import { onMount } from "svelte";
+
+  import { _ } from "~/i18n";
 
   export let name;
 
@@ -23,7 +25,7 @@ import { onMount } from "svelte";
   })
 </script>
 
-<div><lbl>Enabled:</lbl><ToggleSwitch bind:enabled /></div>
+<div><lbl>{$_("SystemToggle.enabled")}</lbl><ToggleSwitch bind:enabled /></div>
 
 <style>
   div {
