@@ -18,6 +18,9 @@
     "uploaded": "Uploaded!",
     "add": "Add"
   },
+  "AssetType": {
+    "size": "Size:"
+  },
   "AudioSettings": {
     "proximity_audio": "Proximity Audio:"
   },
@@ -41,11 +44,31 @@
     "title": "Avatar",
     "unique_color": "Your Unique Color"
   },
+  "BuildPanel": {
+    "add": "Add",
+    "modify": "Modify",
+    "actions": "Actions",
+    "settings": "Settings"
+  },
   "CameraSettings": {
     "field_of_view": "Field of View"
   },
+  "CenterCamera": {
+    "recenter": "re-center camera"
+  },
   "ChatDialog": {
     "title": "Chat"
+  },
+  "DebugPane": {
+    "debug_physics": "Debug physics?",
+    "show_errors": "Show errors?",
+    "framerate": "Framerate:",
+    "fps": "FPS",
+    "audio": "Audio:",
+    "video": "Video:",
+    "loading": "Loading:",
+    "viewport": "Viewport:",
+    "participants": "Participants:"
   },
   "Overlay": {
     "tooltips": {
@@ -71,10 +94,17 @@
     "internal_components": "Internal Components",
     "entity_deactivated": "Entity Deactivated"
   },
+  "EntrywaySettings": {
+    "set_default": "Set Default to Here",
+    "new_entryway_name": "New Entryway Name:"
+  },
   "ExportPanel": {
     "title": "Import / Export",
     "invalid_json": "Invalid JSON",
     "apply": "Apply"
+  },
+  "FogSettings": {
+    "fog": "Fog"
   },
   "GroupUngroupButton": {
     "group": "Group",
@@ -91,6 +121,16 @@
   "LanguageDialog": {
     "title": "Language"
   },
+  "LightingSettings": {
+    "lighting" : "Lighting",
+    "ambient": "Ambient:",
+    "hemisphere": "Hemisphere:",
+    "sky": "Sky:",
+    "ground": "Ground:",
+    "directional": "Directional:",
+    "position": "Position:",
+    "reset_lighting": "Reset Lighting"
+  },
   "LoginManager": {
     "invalid_credentials": "The email or pass code you entered doesn't match our records.",
     "invalid_email": "The email you entered doesn't look like an email address.",
@@ -99,6 +139,18 @@
   "Pause": {
     "title": "Paused",
     "continue": "Continue"
+  },
+  "PerformancePanel": {
+    "performance": "Performance",
+    "fps": "FPS",
+    "render_calls": "Render Calls",
+    "triangles": "Triangles",
+    "extended_stats": "Extended Stats",
+    "systems": "Systems",
+    "shaders": "Shaders",
+    "id": "ID",
+    "name": "Name",
+    "used": "Used"
   },
   "PortalOccupancy": {
     "count": "{count, plural, =0 {Empty} =1 {1 Person} other {# People}}"
@@ -123,6 +175,24 @@
     "3_desc": "High quality graphics, high framerate (60 fps).",
     "4": "Highest",
     "4_desc": "Highest quality graphics, high framerate (60 fps). Enables shadows."
+  },
+  "SettingsPanel": {
+    "relm_settings": "Relm Settings",
+    "import_export": "Import/Export",
+    "performance": "Performance"
+  },
+  "SkyboxSettings": {
+    "skybox": "Skybox",
+    "blue_sky": "Blue Sky",
+    "stars": "Stars",
+    "pink_clouds": "Pink Clouds",
+    "galaxy": "Galaxy"
+  },
+  "SystemToggle": {
+    "enabled": "Enabled:"
+  },
+  "UploadButton": {
+    "upload": "Upload"
   },
   "VideoMirror": {
     "join_cam_off": "Join with cam off",

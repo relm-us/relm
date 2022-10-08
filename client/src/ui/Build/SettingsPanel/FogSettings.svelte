@@ -9,6 +9,8 @@
   import { onMount } from "svelte";
   import debounce from "lodash/debounce";
 
+  import { _ } from "~/i18n";
+
   let fogColor;
   let fogDensity;
 
@@ -42,7 +44,7 @@
   });
 </script>
 
-<Pane title="Fog">
+<Pane title={$_("FogSettings.fog")}>
   <r-setting>
     <r-slider>
       <Slider on:change={onSlideFog} value={fogDensity} />

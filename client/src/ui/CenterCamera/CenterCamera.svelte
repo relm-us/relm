@@ -3,6 +3,8 @@
   import { autoPause } from "~/stores/autoPause";
   import Button from "~/ui/lib/Button";
 
+  import { _ } from "~/i18n";
+
   function onClick() {
     worldManager.camera.center();
   }
@@ -11,7 +13,7 @@
 {#if $autoPause}
   <r-center-cam>
     <div class="button">
-      <Button on:click={onClick}>re-center camera</Button>
+      <Button on:click={onClick}>{$_("CenterCamera.recenter")}</Button>
     </div>
   </r-center-cam>
 {/if}

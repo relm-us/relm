@@ -4,6 +4,8 @@
   import Button from "~/ui/lib/Button";
   import Uploader from "./Uploader";
 
+  import { _ } from "~/i18n";
+
   let uploader;
 
   const onClick = () => {
@@ -14,7 +16,7 @@
 <Button on:click={onClick}  >
   <r-compound>
     <icon><IoIosCloudUpload /></icon>
-    <div>Upload</div>
+    <div>{$_("UploadButton.upload")}</div>
   </r-compound>
 </Button>
 

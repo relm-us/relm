@@ -19,6 +19,8 @@
     systems,
   } from "~/stores/stats";
 
+  import { _ } from "~/i18n";
+
   let extendedStatsVisible = false;
   let systemsVisible = false;
   let shadersVisible = false;
@@ -50,11 +52,11 @@
 </script>
 
 <SidePanel on:minimize>
-  <Header>Performance</Header>
+  <Header>{$_("PerformancePanel.performance")}</Header>
 
   <!-- Frames per second -->
   <StatsPane
-    title="FPS"
+    title={$_("PerformancePanel.fps")}
     minimized={false}
     dataStore={fpsTime}
     value={($fpsTime[0] || 0).toFixed(1)}
@@ -62,8 +64,8 @@
   />
 
   <!-- Show most relevant render stats here -->
-  <StatsPane title="Render Calls" dataStore={renderCalls} />
-  <StatsPane title="Triangles" dataStore={renderTriangles} />
+  <StatsPane title={$_("PerformancePanel.render_calls")} dataStore={renderCalls} />
+  <StatsPane title={$_("PerformancePanel.triangles")} dataStore={renderTriangles} />
 
   <!-- Show most important ECS Systems' performance stats here -->
   {#each primarySystems as [systemName, systemStatsStore]}
@@ -79,7 +81,7 @@
     }}
   >
     {extendedStatsVisible ? "Hide" : "Show"}
-    Extended Stats
+    {$_("PerformancePanel.extended_stats")}
   </Button>
 
   <Button
@@ -89,7 +91,7 @@
     }}
   >
     {systemsVisible ? "Hide" : "Show"}
-    Systems
+    {$_("PerformancePanel.systems")}
   </Button>
 
   {#if systemsVisible}
@@ -105,16 +107,16 @@
     }}
   >
     {shadersVisible ? "Hide" : "Show"}
-    Shaders
+    {$_("PerformancePanel.shaders")}
   </Button>
 
   {#if shadersVisible}
     <Pane title="Shaders">
       <table>
         <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Used</th>
+          <th>{$_("PerformancePanel.id")}</th>
+          <th>{$_("PerformancePanel.name")}</th>
+          <th>{$_("PerformancePanel.used")}</th>
         </tr>
         {#if $programs}
           {#each $programs as program}
