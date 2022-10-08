@@ -50,4 +50,7 @@ apt install ca-certificates fonts-liberation libappindicator3-1 libasound2 libat
 ## Visit Us?
 
 We're building a community around personal growth and spiritual-lite practices in an online space that gives us virtual locality. Interested? Check out https://www.relm.us and maybe join us on Discord.
+
+## Notes
+
 Download GitHub for desktop at https://desktop.github.com
