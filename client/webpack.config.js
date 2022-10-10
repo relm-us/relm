@@ -44,7 +44,10 @@ const useBabelInDevelopment = false;
 const relmServer = process.env.RELM_SERVER ?? "http://localhost:3000";
 
 const htmlPages = {
-  "src/index.html.handlebars": { filename: "index.html" },
+  "src/index.html.handlebars": {
+    filename: "index.html",
+    chunks: ["index"],
+  },
   "src/dashboard.html.handlebars": {
     filename: "dashboard.html",
     chunks: ["dashboard"],
