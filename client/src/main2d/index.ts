@@ -1,6 +1,6 @@
-import App from "./App.svelte";
+import App2d from "./App2d.svelte";
 
-const app = new App({
+const app = new App2d({
   target: document.body,
 });
 
