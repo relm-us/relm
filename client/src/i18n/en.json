@@ -59,6 +59,9 @@
   "ChatDialog": {
     "title": "Chat"
   },
+  "ColorPreview": {
+    "invalid_color": "Invalid Color"
+  },
   "DebugPane": {
     "debug_physics": "Debug physics?",
     "show_errors": "Show errors?",
@@ -136,6 +139,14 @@
     "invalid_email": "The email you entered doesn't look like an email address.",
     "email_already_used": "It looks like someone is already using that email. Did you mean to sign in?"
   },
+  "MediaSetup":{
+    "you're_about_to_join": "You're about to join a social experience with audio & video.",
+    "or": "or",
+    "join_without": "Join without audio / video"
+  },
+  "MessageHistory": {
+    "empty_chat": "Empty chat history"
+  },
   "Pause": {
     "title": "Paused",
     "continue": "Continue"
@@ -161,7 +172,8 @@
     "language": "Language",
     "graphics_quality": "Graphics Quality",
     "change_avatar": "Change Your Avatar",
-    "signed_in_as": "Signed in as {name}"
+    "signed_in_as": "Signed in as {name}",
+    "example": "someone@example.com"
   },
   "RenderQualityDialog": {
     "title": "GFX Quality",
@@ -180,6 +192,11 @@
     "relm_settings": "Relm Settings",
     "import_export": "Import/Export",
     "performance": "Performance"
+  },
+  "SignUpDialog": {
+    "already_have_account": "Already have an account?",
+    "sign_in": "Sign In",
+    "sign_up": "Sign Up"
   },
   "SkyboxSettings": {
     "skybox": "Skybox",

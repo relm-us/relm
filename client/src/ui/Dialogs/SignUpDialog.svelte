@@ -51,10 +51,10 @@
       />
     </r-form>
 
-    <Button on:click={onSignUp}>Sign Up</Button>
+    <Button on:click={onSignUp}>{$_("SignUpDialog.sign_up")}</Button>
 
     <r-sign-in>
-      Already have an account? <button on:click={onSignIn}>Sign In</button>
+      {$_("SignUpDialog.already_have_account")} <button on:click={onSignIn}>{$_("SignUpDialog.sign_in")}</button>
     </r-sign-in>
   </r-container>
 </Dialog>

@@ -2,6 +2,8 @@
   import { cleanHtml } from "~/utils/cleanHtml";
   import { getAncestor } from "~/utils/hasAncestor";
   import Message from "./Message.svelte";
+  
+  import { _ } from "~/i18n";
 
   export let messages;
   export let myID;
@@ -23,7 +25,7 @@
 
 <r-history bind:this={outerEl}>
   {#if $messages.length === 0}
-    <note>Empty chat history</note>
+    <note>{$_("MessageHistory.empty_chat")}</note>
   {:else}
     <r-scrollable>
       {#each $messages as message}
