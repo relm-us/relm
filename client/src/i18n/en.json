@@ -142,7 +142,8 @@
   "MediaSetup":{
     "you're_about_to_join": "You're about to join a social experience with audio & video.",
     "or": "or",
-    "join_without": "Join without audio / video"
+    "join_without": "Join without audio / video",
+    "logo": "logo"
   },
   "MessageHistory": {
     "empty_chat": "Empty chat history"
@@ -196,7 +197,9 @@
   "SignUpDialog": {
     "already_have_account": "Already have an account?",
     "sign_in": "Sign In",
-    "sign_up": "Sign Up"
+    "sign_up": "Sign Up",
+    "pass_code": "pass code",
+    "email": "email"
   },
   "SkyboxSettings": {
     "skybox": "Skybox",

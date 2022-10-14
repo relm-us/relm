@@ -23,7 +23,7 @@
 
 <PageOverlay zIndex={5}>
   <logo>
-    <img src={relmLogo} alt="logo" />
+    <img src={relmLogo} alt={$_("MediaSetup.logo")} />
   </logo>
 
   <message>

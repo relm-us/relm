@@ -37,14 +37,14 @@
   <r-container>
     <r-form>
       <SignInTextInput
-        label="email"
+        label={$_("SignUpDialog.email")}
         type="email"
         bind:value={email}
         bind:this={emailInstance}
         on:submit={onSignUp}
       />
       <SignInTextInput
-        label="pass code"
+        label={$_("SignUpDialog.pass_code")}
         type="password"
         bind:value={password}
         on:submit={onSignUp}
