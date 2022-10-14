@@ -6,6 +6,8 @@
   import { buildStyle, debounce } from "../helpers.js";
   import { getColorFormat } from "../utils.js";
 
+  import { _ } from "~/i18n";
+
   export let value = "#3ec1d3ff";
   export let swatches = [];
   export let enableSwatches = true;
@@ -145,7 +147,7 @@
   {:else}
     <div
       class="color-preview preview-error"
-      title="Invalid Color"
+      title={$_("ColorPreview.invalid_color")}
       style={errorPreviewStyle}
     >
       <span>&times;</span>

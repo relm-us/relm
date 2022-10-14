@@ -59,7 +59,7 @@
     {#if $connectedAccount}
       <r-option on:click={() => worldManager.logins.logout()}>
         {$_("ProfileButton.sign_out")}
-        <r-option-current> someone@example.com </r-option-current>
+        <r-option-current> {$_("ProfileButton.example")} </r-option-current>
       </r-option>
     {:else}
       <r-option on:click={() => ($openDialog = "signin")}>

@@ -37,24 +37,24 @@
   <r-container>
     <r-form>
       <SignInTextInput
-        label="email"
+        label={$_("SignUpDialog.email")}
         type="email"
         bind:value={email}
         bind:this={emailInstance}
         on:submit={onSignUp}
       />
       <SignInTextInput
-        label="pass code"
+        label={$_("SignUpDialog.pass_code")}
         type="password"
         bind:value={password}
         on:submit={onSignUp}
       />
     </r-form>
 
-    <Button on:click={onSignUp}>Sign Up</Button>
+    <Button on:click={onSignUp}>{$_("SignUpDialog.sign_up")}</Button>
 
     <r-sign-in>
-      Already have an account? <button on:click={onSignIn}>Sign In</button>
+      {$_("SignUpDialog.already_have_account")} <button on:click={onSignIn}>{$_("SignUpDialog.sign_in")}</button>
     </r-sign-in>
   </r-container>
 </Dialog>

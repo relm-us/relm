@@ -23,11 +23,11 @@
 
 <PageOverlay zIndex={5}>
   <logo>
-    <img src={relmLogo} alt="logo" />
+    <img src={relmLogo} alt={$_("MediaSetup.logo")} />
   </logo>
 
   <message>
-    You're about to join a social experience with audio & video.
+    {$_("MediaSetup.you're_about_to_join")}
   </message>
 
   <VideoMirror
@@ -39,8 +39,8 @@
     autoFocus={true}
   />
 
-  <or>or</or>
-  <button on:click={joinWithout}> Join without audio / video </button>
+  <or>{$_("MediaSetup.or")}</or>
+  <button on:click={joinWithout}> {$_("MediaSetup.join_without")} </button>
 
   <div class="skip">
     <ToggleSwitch
