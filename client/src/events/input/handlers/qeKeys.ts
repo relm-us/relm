@@ -1,5 +1,7 @@
 import { globalEvents } from "~/events";
 import { callEach } from "~/utils/callEach";
+import { keyQ, keyE } from "~/stores/keys";
+
 import { registerAction, Action } from "../comboTable";
 
 export function register(): Function {
@@ -7,12 +9,14 @@ export function register(): Function {
     [
       ["q"],
       (pressed) => {
+        keyQ.set(pressed);
         pressed && globalEvents.emit("camera-rotate-left");
       },
     ],
     [
       ["e"],
       (pressed) => {
+        keyE.set(pressed);
         pressed && globalEvents.emit("camera-rotate-right");
       },
     ],
