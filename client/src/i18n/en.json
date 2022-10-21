@@ -25,7 +25,7 @@
     "proximity_audio": "Proximity Audio:"
   },
   "AvatarBuilder": {
-    "gender": "Gender",
+    "gender": "Chest",
     "body": "Body",
     "skintone": "Skintone",
     "hair": "Hair",
@@ -39,8 +39,8 @@
     "wide": "Wide",
     "choose_yours": "Choose Your Avatar",
     "customize_later": "(you can customize this later)",
-    "male": "Male",
-    "female": "Female",
+    "male": "Square",
+    "female": "Curvy",
     "title": "Avatar",
     "unique_color": "Your Unique Color"
   },
