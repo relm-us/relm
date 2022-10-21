@@ -1,35 +1,42 @@
+import type { AuthenticationResponse, SocialType } from "~/main/RelmOAuthAPI";
+import type { LoginCredentials, RelmRestAPI } from "~/main/RelmRestAPI";
+
 import { Security } from "relm-common";
 import { get } from "svelte/store";
 import { _ } from "svelte-i18n";
 
 import { destroyParticipantId } from "~/identity/participantId";
-import { LoginCredentials, RelmRestAPI } from "~/main/RelmRestAPI";
+
+import { connectedAccount } from "~/stores/connectedAccount";
+import { permits } from "~/stores/permits";
 import {
   getRandomInitializedIdentityData,
   localIdentityData,
 } from "~/stores/identityData";
-import { AuthenticationResponse, SocialType } from "~/main/RelmOAuthAPI";
-import { connectedAccount } from "~/stores/connectedAccount";
-import { permits } from "~/stores/permits";
-import { Dispatch } from "~/main/ProgramTypes";
-import { ParticipantManager } from "./ParticipantManager";
+
+import { UpdateData } from "~/types";
+
+type NotifyCallback = (msg: string) => void;
+type IdentityUpdater = (identity: UpdateData) => void;
 
 export class LoginManager {
   api: RelmRestAPI;
-  dispatch: Dispatch;
   security: Security;
-  participants: ParticipantManager;
+  notify: NotifyCallback;
+  setLocalIdentity: IdentityUpdater;
 
   constructor(
     api: RelmRestAPI,
-    dispatch: Dispatch,
     security: Security,
-    participants: ParticipantManager
+    {
+      notify,
+      setLocalIdentity,
+    }: { notify?: NotifyCallback; setLocalIdentity?: IdentityUpdater } = {}
   ) {
     this.api = api;
-    this.dispatch = dispatch;
     this.security = security;
-    this.participants = participants;
+    this.notify = notify;
+    this.setLocalIdentity = setLocalIdentity ?? localIdentityData.set;
   }
 
   async register(credentials: LoginCredentials) {
@@ -53,7 +60,7 @@ export class LoginManager {
 
     if (result?.status === "success") {
       try {
-        await this.refreshPermits();
+        if (this.api.hasRelm) await this.refreshPermits();
 
         await this.syncIdentityData();
 
@@ -68,7 +75,7 @@ export class LoginManager {
       notification = get(_)(`LoginManager.${result.reason}`);
     }
 
-    this.dispatch({ id: "notify", notification });
+    this.notify?.(notification);
 
     return isSuccess;
   }
@@ -86,7 +93,7 @@ export class LoginManager {
 
   async saveLocalIdentityData() {
     await this.api.setIdentityData({
-      identity: this.participants.local.identityData,
+      identity: get(localIdentityData),
     });
   }
 
@@ -95,10 +102,7 @@ export class LoginManager {
     if (data.identity === null) {
       await this.saveLocalIdentityData();
     } else {
-      this.dispatch({
-        id: "updateLocalIdentityData",
-        identityData: data.identity,
-      });
+      this.setLocalIdentity(data.identity);
     }
   }
 

@@ -43,6 +43,9 @@ const useBabelInDevelopment = false;
 // Point the client to the server; default is for development mode
 const relmServer = process.env.RELM_SERVER ?? "http://localhost:3000";
 
+// Used when logging out
+const relmHomePage = process.env.RELM_HOME_PAGE ?? "https://www.relm.us";
+
 const htmlPages = {
   "src/index.html.handlebars": {
     filename: "index.html",
@@ -73,13 +76,6 @@ module.exports = {
        * The main entry for the 3D app; imported dependencies will be bundled
        */
       "./src/main/index.ts",
-
-      /**
-       * One or more stylesheets to compile and add to the beginning of the bundle. By
-       * default, SASS, SCSS and CSS files are supported. The order of this array is
-       * important, as the order of outputted styles will match. Svelte component
-       * styles will always appear last in the bundle.
-       */
       "./styles/index.scss",
     ],
 
@@ -88,6 +84,7 @@ module.exports = {
        * The main entry for our dashboard app
        */
       "./src/main2d/index.ts",
+      "./styles/index.scss",
     ],
   },
 
@@ -323,6 +320,7 @@ for (let [template, options] of Object.entries(htmlPages)) {
           langDefault: process.env.RELM_LANG_DEFAULT ?? "en",
           // The URL of the relm-server (backend) we will connect to:
           server: relmServer,
+          home: relmHomePage,
         },
         analyticsScript: process.env.RELM_ANALYTICS_SCRIPT ?? null,
       },

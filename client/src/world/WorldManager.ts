@@ -72,7 +72,7 @@ import { createScreenTrack } from "~/av/twilio/createScreenTrack";
 
 import { participantId } from "~/identity/participantId";
 import { Avatar } from "~/identity/Avatar";
-import { Participant, ParticipantMap } from "~/types/identity";
+import { ParticipantMap, UpdateData } from "~/types/identity";
 import { ParticipantManager } from "~/identity/ParticipantManager";
 import { ParticipantBroker } from "~/identity/ParticipantBroker";
 import { delay } from "~/utils/delay";
@@ -185,8 +185,8 @@ export class WorldManager {
     this.broker = broker;
     this.api = new RelmRestAPI(
       config.serverUrl,
-      state.pageParams.relmName,
-      state.authHeaders
+      state.authHeaders,
+      state.pageParams.relmName
     );
     this.clock = new Clock();
     this.security = security;
@@ -212,12 +212,17 @@ export class WorldManager {
     // ParticipantManager exists and starts listening:
     this.broker.subscribe();
 
-    this.logins = new LoginManager(
-      this.api,
-      dispatch,
-      security,
-      this.participants
-    );
+    this.logins = new LoginManager(this.api, security, {
+      notify: (notification: string) => {
+        dispatch({ id: "notify", notification });
+      },
+      setLocalIdentity: (identityData: UpdateData) => {
+        this.dispatch({
+          id: "updateLocalIdentityData",
+          identityData,
+        });
+      },
+    });
 
     this.inventory = new Inventory(
       this.api,

@@ -10,8 +10,8 @@ export const requestCloneRelm =
   async (dispatch: Dispatch) => {
     const api = new RelmRestAPI(
       config.serverUrl,
-      pageParams.relmName,
-      authHeaders
+      authHeaders,
+      pageParams.relmName
     );
 
     let result;

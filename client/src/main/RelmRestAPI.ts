@@ -12,14 +12,30 @@ export type LoginCredentials = {
 
 export class RelmRestAPI {
   url: string;
-  relmName: string;
+  _relmName: string;
   authHeaders: AuthenticationHeaders;
   oAuth: RelmOAuthManager;
 
-  constructor(url, relmName, authHeaders: AuthenticationHeaders) {
+  get relmName() {
+    if (!this._relmName)
+      throw Error(
+        "relmName required, but not set during RelmRestAPI instantiation"
+      );
+    return this._relmName;
+  }
+
+  get hasRelm() {
+    return Boolean(this._relmName);
+  }
+
+  constructor(
+    url,
+    authHeaders: AuthenticationHeaders,
+    relmName: string = null
+  ) {
     this.url = url;
-    this.relmName = relmName;
     this.authHeaders = authHeaders;
+    this._relmName = relmName;
     this.oAuth = new RelmOAuthManager(url, authHeaders);
   }
 

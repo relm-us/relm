@@ -22,7 +22,7 @@
 <viewport bind:this={$viewport}>
   <!-- The CSS3DRenderer container div goes here -->
   <!-- The WebGLRenderer container canvas goes here -->
-  <!-- The Html2D container div hoes here -->
+  <!-- The Html2D container div goes here -->
 </viewport>
 
 <style>

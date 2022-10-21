@@ -38,7 +38,12 @@
     {:else if $openDialog === "language"}
       <LanguageDialog on:cancel={() => ($openDialog = null)} />
     {:else if $openDialog === "signin"}
-      <SignInDialog on:cancel={() => ($openDialog = null)} />
+      <SignInDialog
+        on:success={() => ($openDialog = null)}
+        on:signup={() => ($openDialog = "signup")}
+        on:cancel={() => ($openDialog = null)}
+        loginManager={worldManager.logins}
+      />
     {:else if $openDialog === "signup"}
       <SignUpDialog on:cancel={() => ($openDialog = null)} />
     {:else if $openDialog === "pause"}

@@ -13,6 +13,7 @@ export const env = (window as any).config as {
   fontsUrl: string;
   langDefault: string;
   server: string;
+  home: string;
 };
 
 export const config: Config = {

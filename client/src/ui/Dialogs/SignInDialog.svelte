@@ -1,37 +1,36 @@
 <script lang="ts">
-  import { onMount, SvelteComponent } from "svelte";
+  import { onMount, SvelteComponent, createEventDispatcher } from "svelte";
   import { _ } from "~/i18n";
 
-  import { openDialog } from "~/stores/openDialog";
-
-  import { worldManager } from "~/world";
   import Button from "~/ui/lib/Button";
   import Dialog from "~/ui/lib/Dialog";
 
   // import ThirdPartyLogin from "./components/ThirdPartyLogin.svelte";
   import SignInTextInput from "./components/SignInTextInput.svelte";
 
+  export let loginManager;
+  export let allowSignUp = true;
+
+  const dispatch = createEventDispatcher();
+
   let emailInstance: SvelteComponent = null;
   let email: string;
   let password: string;
 
   async function onSignIn() {
-    const isSuccess = await worldManager.logins.loginWithCredentials({
+    const isSuccess = await loginManager.loginWithCredentials({
       email,
       password,
     });
 
     if (isSuccess) {
-      // close the sign-in dialog
-      $openDialog = null;
+      dispatch("success");
     }
   }
 
   function onSignUp() {
-    $openDialog = "signup";
+    dispatch("signup");
   }
-
-  onMount(() => emailInstance.focus());
 </script>
 
 <Dialog title="Sign In" on:cancel>
@@ -58,9 +57,11 @@
 
     <!-- <ThirdPartyLogin /> -->
 
-    <r-sign-up>
-      New here? <button on:click={onSignUp}>Sign Up</button>
-    </r-sign-up>
+    {#if allowSignUp}
+      <r-sign-up>
+        New here? <button on:click={onSignUp}>Sign Up</button>
+      </r-sign-up>
+    {/if}
   </r-container>
 </Dialog>
 

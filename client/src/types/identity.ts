@@ -12,18 +12,18 @@ export type UpdateData = {
   name?: string;
   color?: string;
   status?: PlayerStatus;
+  appearance?: Appearance;
+  equipment?: Equipment;
   speaking?: boolean;
   emoting?: boolean;
   showAudio?: boolean;
   showVideo?: boolean;
-  appearance?: Appearance;
-  equipment?: Equipment;
   clientId?: number;
   message?: string;
   emoji?: string;
 };
 
-export interface IdentityData extends SavedIdentityData {
+export type IdentityData = SavedIdentityData & {
   // Show the speech bubble?
   speaking: boolean;
 
@@ -44,7 +44,7 @@ export interface IdentityData extends SavedIdentityData {
 
   // Most recent emoji (used for emote)
   emoji?: string;
-}
+};
 
 export type TransformData = [
   x: number,

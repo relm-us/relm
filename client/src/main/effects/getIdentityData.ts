@@ -5,19 +5,19 @@ import { RelmRestAPI } from "../RelmRestAPI";
 
 import { config } from "~/config";
 
-export const getIdentityData = 
+export const getIdentityData =
   (pageParams: PageParams, authHeaders: AuthenticationHeaders) =>
   async (dispatch: Dispatch) => {
     const api = new RelmRestAPI(
       config.serverUrl,
-      pageParams.relmName,
-      authHeaders
+      authHeaders,
+      pageParams.relmName
     );
 
     const { identity, isConnected } = await api.getIdentityData();
-    dispatch({ 
+    dispatch({
       id: "gotIdentityData",
       identity,
-      isConnected
+      isConnected,
     });
   };
