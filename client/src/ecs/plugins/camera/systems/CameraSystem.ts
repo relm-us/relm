@@ -6,7 +6,16 @@ import { Queries } from "~/ecs/base/Query";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { Physics } from "~/ecs/plugins/physics";
 
-import { Camera, CameraAttached, AlwaysOnStage } from "../components";
+import {
+  Camera,
+  CameraAttached,
+  AlwaysOnStage,
+  KeepOnStage,
+} from "../components";
+
+function isAlwaysOnStage(entity) {
+  return entity.has(AlwaysOnStage) || entity.has(KeepOnStage);
+}
 
 export class CameraSystem extends System {
   physics: Physics;
@@ -27,6 +36,8 @@ export class CameraSystem extends System {
     removed: [Not(Camera), CameraAttached],
 
     active: [Camera, CameraAttached],
+
+    promote: [KeepOnStage, Not(AlwaysOnStage)],
   };
 
   init({ physics, presentation }) {
@@ -64,7 +75,7 @@ export class CameraSystem extends System {
           (collider: Collider) => {
             const entity = this.physics.colliders.get(collider.handle);
 
-            if (!entity.has(AlwaysOnStage)) {
+            if (!isAlwaysOnStage(entity)) {
               (entity as any).lastSeenOnSet = this.world.version;
               this.recentlyOnSet.add(entity);
             }
@@ -118,7 +129,7 @@ export class CameraSystem extends System {
 
   addEverythingToSet() {
     for (const entity of this.world.entities.entities.values()) {
-      if (!entity.has(AlwaysOnStage)) {
+      if (!isAlwaysOnStage(entity)) {
         (entity as any).lastSeenOnSet = this.world.version;
         this.recentlyOnSet.add(entity);
       }

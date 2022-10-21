@@ -70,6 +70,11 @@
   showClose={canDestroy()}
   on:close={() => dispatch("destroy")}
 >
+  {#if Component.editor?.description}
+    <r-desc>
+      {Component.editor.description}
+    </r-desc>
+  {/if}
   {#each Object.entries(Component.props) as [key, prop] (key)}
     {#if propVisible(prop)}
       <Property
@@ -82,3 +87,16 @@
     {/if}
   {/each}
 </Pane>
+
+<style>
+  r-desc {
+    display: block;
+
+    margin: 8px 4px 8px 0;
+    padding-left: 8px;
+
+    color: #999;
+    font-size: 10pt;
+    border-left: 2px solid #999;
+  }
+</style>
