@@ -176,6 +176,17 @@ export async function getAllRelms({
   return (await db.manyOrNone(s)).map((row) => mkRelmSummary(row));
 }
 
+export async function getDashboardRelms(userId: string) {
+  return await db.manyOrNone(sql`
+    SELECT r.relm_name, v.created_at as last_visited_at
+    FROM relms r
+    JOIN visits_most_recent v USING (relm_id)
+    WHERE v.user_id = ${userId}
+    -- order by most recently visited first:
+    ORDER BY v.created_at DESC
+  `);
+}
+
 export async function deleteRelm({ relmId }: { relmId: string }) {
   await db.none(sql`
       DELETE FROM relms

@@ -49,6 +49,7 @@
     "redux-thunk": "^2.3.0",
     "regenerator-runtime": "^0.13.7",
     "relm-common": "workspace:*",
+    "s-ago": "^2.2.0",
     "sanitize-html": "^2.3.2",
     "serve": "^11.3.2",
     "simplex-noise": "^2.4.0",

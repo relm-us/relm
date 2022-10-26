@@ -68,6 +68,7 @@ importers:
       redux-thunk: ^2.3.0
       regenerator-runtime: ^0.13.7
       relm-common: workspace:*
+      s-ago: ^2.2.0
       sanitize-html: ^2.3.2
       sass: ^1.26.10
       sass-loader: ^10.0.1
@@ -133,6 +134,7 @@ importers:
       redux-thunk: 2.4.1_redux@4.2.0
       regenerator-runtime: 0.13.9
       relm-common: link:../common
+      s-ago: 2.2.0
       sanitize-html: 2.7.0
       serve: 11.3.2
       simplex-noise: 2.4.0
@@ -6780,6 +6782,19 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
+    dev: false
+
+  /follow-redirects/1.14.9_debug@4.3.4:
+    resolution: {integrity: sha512-MQDfihBQYMcyy5dhRDJUHcw7lb2Pv/TuE6xP1vyraLukNDHKbDxDNaOE3NbCAdKQApno+GPRyo1YAp89yCjK4w==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dependencies:
+      debug: 4.3.4
+    dev: true
 
   /for-each/0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
@@ -7300,7 +7315,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.14.9
+      follow-redirects: 1.14.9_debug@4.3.4
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -11945,6 +11960,10 @@ packages:
     dependencies:
       queue-microtask: 1.2.3
     dev: true
+
+  /s-ago/2.2.0:
+    resolution: {integrity: sha512-t6Q/aFCCJSBf5UUkR/WH0mDHX8EGm2IBQ7nQLobVLsdxOlkryYMbOlwu2D4Cf7jPUp0v1LhfPgvIZNoi9k8lUA==}
+    dev: false
 
   /sade/1.8.1:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}

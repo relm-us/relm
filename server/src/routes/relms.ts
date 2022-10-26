@@ -34,3 +34,17 @@ relms.get(
     });
   })
 );
+
+relms.get(
+  "/mine",
+  cors(),
+  middleware.authenticated(),
+  middleware.authenticatedWithUser(),
+  wrapAsync(async (req, res) => {
+    const relms = await Relm.getDashboardRelms(req.authenticatedUserId);
+    respondWithSuccess(res, {
+      action: "getMyRelms",
+      relms,
+    });
+  })
+);

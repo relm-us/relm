@@ -346,7 +346,18 @@ export class RelmRestAPI {
       { ...credentials }
     );
 
-    console.log("login result", result);
+    return result;
+  }
+
+  async getMyRelms() {
+    type Result =
+      | {
+          status: "success";
+          relms: { relm_name: string; last_visited_at: string }[];
+        }
+      | { status: "error"; code?: number; reason: string };
+
+    const result: Result = await this.get("/relms/mine");
 
     return result;
   }
