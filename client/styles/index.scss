@@ -46,6 +46,28 @@
 
 }
 
+/* @zerodevx/svelte-toast */
+._toastContainer {
+  --toastWidth: 20rem;
+  --toastBackground: var(--background-transparent-gray);
+  --toastColor: var(--foreground-white);
+  --toastContainerLeft: 50%;
+  --toastBorderRadius: 10px;
+  --toastPadding: 2px 0 2px 8px;
+  --toastBtnHeight: 2rem;
+  --toastBarHeight: 1px;
+  --toastBarBackground: var(--foreground-dark-gray);
+  
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+._toastBtn {
+  align-self: flex-start;
+}
+
 r-html2d {
   display: block;
   // when an Html2d object touches the edge of the page, we don't want it to resize

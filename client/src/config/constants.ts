@@ -86,3 +86,7 @@ export const IDENTITY_SAVE_INTERVAL = 2000;
 
 // How long should toast notifications be displayed (ms)
 export const DEFAULT_NOTIFICATION_WAIT = 6500;
+
+// The image to use as the background of the 2d "Dashboard"
+export const DASHBOARD_BACKGROUND_URL =
+  "https://assets.ourrelm.com/da15c70953c21875c81b584e21b88935-346972.webp";

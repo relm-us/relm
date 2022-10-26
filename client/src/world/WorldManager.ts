@@ -108,7 +108,6 @@ export class WorldManager {
   broker: ParticipantBroker;
   api: RelmRestAPI;
   clock: Clock;
-  security: Security;
 
   world: DecoratedECSWorld;
   worldDoc: WorldDoc;
@@ -177,8 +176,7 @@ export class WorldManager {
     pageParams: PageParams,
     relmDocId: string,
     avConnection: AVConnection,
-    participants: ParticipantMap,
-    security: Security
+    participants: ParticipantMap
   ) {
     this.dispatch = dispatch;
     this.state = state;
@@ -189,7 +187,6 @@ export class WorldManager {
       state.pageParams.relmName
     );
     this.clock = new Clock();
-    this.security = security;
 
     this.world = ecsWorld;
     this.worldDoc = worldDoc;
@@ -212,7 +209,7 @@ export class WorldManager {
     // ParticipantManager exists and starts listening:
     this.broker.subscribe();
 
-    this.logins = new LoginManager(this.api, security, {
+    this.logins = new LoginManager(this.api, {
       notify: (notification: string) => {
         dispatch({ id: "notify", notification });
       },

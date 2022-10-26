@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, SvelteComponent, createEventDispatcher } from "svelte";
+  import { SvelteComponent, createEventDispatcher } from "svelte";
   import { _ } from "~/i18n";
 
   import Button from "~/ui/lib/Button";
@@ -10,6 +10,7 @@
 
   export let loginManager;
   export let allowSignUp = true;
+  export let canCancel = true;
 
   const dispatch = createEventDispatcher();
 
@@ -33,7 +34,7 @@
   }
 </script>
 
-<Dialog title="Sign In" on:cancel>
+<Dialog title="Sign In" {canCancel} on:cancel>
   <r-container>
     <r-form>
       <SignInTextInput

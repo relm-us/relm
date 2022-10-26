@@ -18,8 +18,7 @@ export const initWorldManager =
     pageParams: PageParams,
     relmDocId: string,
     avConnection: AVConnection,
-    participants: Map<string, Participant>,
-    security: Security
+    participants: Map<string, Participant>
   ) =>
   async (dispatch: Dispatch) => {
     await worldManager.init(
@@ -31,8 +30,7 @@ export const initWorldManager =
       pageParams,
       relmDocId,
       avConnection,
-      participants,
-      security
+      participants
     );
     dispatch({ id: "didInitWorldManager" });
   };

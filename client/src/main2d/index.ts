@@ -1,7 +1,9 @@
-import App2d from "./App2d.svelte";
+import View from "./View.svelte";
+import { makeProgram } from "./Program";
 
-const app = new App2d({
+const app = new View({
   target: document.body,
+  props: { createApp: (props) => makeProgram() },
 });
 
 export default app;

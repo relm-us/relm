@@ -3,7 +3,7 @@ import type { DeviceIds } from "video-mirror";
 import type { Writable } from "svelte/store";
 import type { Appearance, Awareness, SavedIdentityData } from "relm-common";
 
-import type { AuthenticationHeaders, Security } from "relm-common";
+import type { AuthenticationHeaders } from "relm-common";
 
 import type { WorldDoc } from "~/y-integration/WorldDoc";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
@@ -22,7 +22,6 @@ export type State = {
   entrywayPosition?: Vector3;
   entrywayUnsub?: Function;
   savedIdentity?: SavedIdentityData;
-  security?: Security;
 
   // relm metadata
   permanentDocId?: string; // server-assigned UUID for the relm ydoc

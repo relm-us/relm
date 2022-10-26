@@ -7,13 +7,14 @@
   export let title: string = null;
   export let align: "left" | "center" | "right" = "center";
   export let tint: boolean = true;
+  export let canCancel: boolean = true;
   export let paddingH: number = 48;
   export let fullHeight: boolean = false;
 
   const dispatch = createEventDispatcher();
 
   const cancel = (source) => () => {
-    dispatch("cancel", source);
+    if (canCancel) dispatch("cancel", source);
   };
 </script>
 
@@ -23,7 +24,9 @@
     style="--padding-h: {paddingH}px"
     class:fullHeight
   >
-    <r-close style="--url: url({closeIcon})" on:click={cancel("close")} />
+    {#if canCancel}
+      <r-close style="--url: url({closeIcon})" on:click={cancel("close")} />
+    {/if}
     {#if title}
       <r-title>{title}</r-title>
     {/if}

@@ -1,13 +1,13 @@
 import type { AuthenticationResponse, SocialType } from "~/main/RelmOAuthAPI";
 import type { LoginCredentials, RelmRestAPI } from "~/main/RelmRestAPI";
 
-import { Security } from "relm-common";
 import { get } from "svelte/store";
 import { _ } from "svelte-i18n";
 
 import { destroyParticipantId } from "~/identity/participantId";
 
 import { connectedAccount } from "~/stores/connectedAccount";
+import { security } from "~/stores/security";
 import { permits } from "~/stores/permits";
 import {
   getRandomInitializedIdentityData,
@@ -21,20 +21,17 @@ type IdentityUpdater = (identity: UpdateData) => void;
 
 export class LoginManager {
   api: RelmRestAPI;
-  security: Security;
   notify: NotifyCallback;
   setLocalIdentity: IdentityUpdater;
 
   constructor(
     api: RelmRestAPI,
-    security: Security,
     {
       notify,
       setLocalIdentity,
     }: { notify?: NotifyCallback; setLocalIdentity?: IdentityUpdater } = {}
   ) {
     this.api = api;
-    this.security = security;
     this.notify = notify;
     this.setLocalIdentity = setLocalIdentity ?? localIdentityData.set;
   }
@@ -82,7 +79,7 @@ export class LoginManager {
 
   async logout() {
     destroyParticipantId();
-    this.security.secret = null;
+    security.secret = null;
     localIdentityData.set(getRandomInitializedIdentityData());
 
     // Don't need this if we reload the page

@@ -12,7 +12,6 @@
 
   import { Html2d } from "../components";
   import { hasAncestor } from "~/utils/hasAncestor";
-  import { selectAll } from "~/utils/selectAll";
 
   export let title;
   export let link;
@@ -138,7 +137,9 @@
             </icon>
           {/if}
           {#if notEmpty(title) && notEmpty(link)}
-            <a class="row-content" href={link} target="_blank">{title}</a>
+            <a class="row-content" href={link} target="_blank" rel="noreferrer">
+              {title}
+            </a>
           {:else if notEmpty(title)}
             <div class="row-content interactive">
               {title}

@@ -48,12 +48,10 @@ import { setAvatarFromParticipant } from "~/identity/Avatar/setAvatarFromPartici
 import { getDefaultAppearance } from "~/identity/Avatar/appearance";
 import { localIdentityData } from "~/stores/identityData";
 import { IdentityData, UpdateData } from "~/types";
-import { Oculus } from "~/ecs/plugins/html2d";
 import { getIdentityData } from "./effects/getIdentityData";
 import { saveIdentityData } from "./effects/saveIdentityData";
 import { connectedAccount } from "~/stores/connectedAccount";
 import { permits } from "~/stores/permits";
-import { Security } from "~/../../common/dist";
 import { ParticipantBroker } from "~/identity/ParticipantBroker";
 
 const logEnabled = (localStorage.getItem("debug") || "")
@@ -109,15 +107,9 @@ export function makeProgram(): Program {
         // Hack to make state available to worldManager as soon as possible (debugging)
         worldManager.state = state;
 
-        const security = new Security({
-          getSecret: () => JSON.parse(localStorage.getItem("secret") ?? "null"),
-          setSecret: (secret) =>
-            localStorage.setItem("secret", JSON.stringify(secret)),
-        });
-
         return [
-          { ...state, pageParams: msg.pageParams, security },
-          getAuthenticationHeaders(msg.pageParams, security),
+          { ...state, pageParams: msg.pageParams },
+          getAuthenticationHeaders(msg.pageParams),
         ];
       }
 
@@ -344,7 +336,7 @@ export function makeProgram(): Program {
         return [
           state,
           Cmd.batch([
-            getAuthenticationHeaders(state.pageParams, state.security),
+            getAuthenticationHeaders(state.pageParams),
             resetArrowKeys,
           ]),
         ];
@@ -573,8 +565,7 @@ export function makeProgram(): Program {
               state.pageParams,
               state.permanentDocId,
               state.avConnection,
-              state.participants,
-              state.security
+              state.participants
             ),
           ];
         } else {
