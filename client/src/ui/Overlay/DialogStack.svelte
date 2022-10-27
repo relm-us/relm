@@ -45,7 +45,12 @@
         loginManager={worldManager.logins}
       />
     {:else if $openDialog === "signup"}
-      <SignUpDialog on:cancel={() => ($openDialog = null)} />
+      <SignUpDialog
+        on:success={() => ($openDialog = null)}
+        on:signin={() => ($openDialog = "signin")}
+        on:cancel={() => ($openDialog = null)}
+        loginManager={worldManager.logins}
+      />
     {:else if $openDialog === "pause"}
       <PauseDialog on:cancel={() => worldManager.togglePaused()} />
     {/if}

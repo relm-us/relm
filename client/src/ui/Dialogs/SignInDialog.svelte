@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { SvelteComponent, createEventDispatcher } from "svelte";
+  import { createEventDispatcher } from "svelte";
   import { _ } from "~/i18n";
 
   import Button from "~/ui/lib/Button";
@@ -14,7 +14,6 @@
 
   const dispatch = createEventDispatcher();
 
-  let emailInstance: SvelteComponent = null;
   let email: string;
   let password: string;
 
@@ -41,7 +40,6 @@
         label="email"
         type="email"
         bind:value={email}
-        bind:this={emailInstance}
         on:submit={onSignIn}
       />
       <SignInTextInput

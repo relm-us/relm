@@ -4,10 +4,15 @@
   import ago from "s-ago";
 
   import { RelmRestAPI } from "~/main/RelmRestAPI";
+  import { LoginManager } from "~/identity/LoginManager";
+
   import Dialog from "~/ui/lib/Dialog";
+  import Button from "~/ui/lib/Button";
+
   import Background from "./components/Background.svelte";
 
   export let api: RelmRestAPI;
+  export let loginManager: LoginManager;
 
   let relms = [];
 
@@ -29,6 +34,9 @@
 <Background />
 
 <Dialog title="Dashboard" canCancel={false} tint={false}>
+  <r-panel>
+    <Button on:click={() => loginManager.logout()}>Sign Out</Button>
+  </r-panel>
   <r-dashboard>
     <r-title>Relms</r-title>
     {#if relms.length > 0}
@@ -50,6 +58,11 @@
 </Dialog>
 
 <style>
+  r-panel {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: flex-end;
+  }
   r-dashboard {
     display: block;
     color: var(--foreground-white);

@@ -1,39 +1,39 @@
 <script lang="ts">
-  import { onMount, SvelteComponent } from "svelte";
+  import { createEventDispatcher } from "svelte";
   import { _ } from "~/i18n";
 
-  import { openDialog } from "~/stores/openDialog";
-
-  import { worldManager } from "~/world";
   import Button from "~/ui/lib/Button";
   import Dialog from "~/ui/lib/Dialog";
 
   import SignInTextInput from "./components/SignInTextInput.svelte";
+
+  export let canCancel = true;
+  export let loginManager;
+
+  const dispatch = createEventDispatcher();
 
   let emailInstance = null;
   let email: string;
   let password: string;
 
   async function onSignUp() {
-    const isSuccess = await worldManager.logins.register({
+    const isSuccess = await loginManager.register({
       email,
       password,
     });
 
     if (isSuccess) {
       // close the sign-up dialog
-      $openDialog = null;
+      dispatch("success");
     }
   }
 
   function onSignIn() {
-    $openDialog = "signin";
+    dispatch("signin");
   }
-
-  onMount(() => emailInstance.focus());
 </script>
 
-<Dialog title="Sign Up" on:cancel>
+<Dialog title="Sign Up" {canCancel} on:cancel>
   <r-container>
     <r-form>
       <SignInTextInput
@@ -54,7 +54,8 @@
     <Button on:click={onSignUp}>{$_("SignUpDialog.sign_up")}</Button>
 
     <r-sign-in>
-      {$_("SignUpDialog.already_have_account")} <button on:click={onSignIn}>{$_("SignUpDialog.sign_in")}</button>
+      {$_("SignUpDialog.already_have_account")}
+      <button on:click={onSignIn}>{$_("SignUpDialog.sign_in")}</button>
     </r-sign-in>
   </r-container>
 </Dialog>

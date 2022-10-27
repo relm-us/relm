@@ -60,7 +60,10 @@ export function makeProgram(): Program {
           return [SignInScreen, { api: state.api, dispatch }];
 
         case "dashboard":
-          return [Dashboard, { api: state.api }];
+          return [
+            Dashboard,
+            { api: state.api, loginManager: state.loginManager },
+          ];
 
         default:
           throw Error(`Unknown screen: ${state.screen}`);
