@@ -53,6 +53,15 @@
   export let shoeColor: string;
   export let uniqueColor: string;
 
+  // Accepts 6-hex or 8-hex colors and returns 6-hex; or 'white' if invalid input
+  function validColor(color) {
+    if (color.indexOf("#") === 0 && color.length >= 7) {
+      return color.slice(0, 7);
+    } else {
+      return "#ffffff";
+    }
+  }
+
   $: {
     const appearance = {
       genderSlider,
@@ -65,20 +74,17 @@
       shoes,
       skinColor,
       hairColor,
-      topColor: topColor.indexOf("#") === 0 ? topColor.slice(0, 7) : topColor,
-      bottomColor:
-        bottomColor.indexOf("#") === 0 ? bottomColor.slice(0, 7) : bottomColor,
-      beltColor:
-        beltColor.indexOf("#") === 0 ? beltColor.slice(0, 7) : beltColor,
-      shoeColor:
-        shoeColor.indexOf("#") === 0 ? shoeColor.slice(0, 7) : shoeColor,
+      topColor: validColor(topColor),
+      bottomColor: validColor(bottomColor),
+      beltColor: validColor(beltColor),
+      shoeColor: validColor(shoeColor),
     };
 
     worldManager.participants.setAppearance(appearance);
   }
 
   $: {
-    worldManager.participants.setColor(uniqueColor);
+    worldManager.participants.setColor(validColor(uniqueColor));
   }
 
   function onSlideGender({ detail: value }) {
