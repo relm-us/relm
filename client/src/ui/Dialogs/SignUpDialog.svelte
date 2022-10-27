@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { LoginManager } from "~/identity/LoginManager";
+
   import { createEventDispatcher } from "svelte";
   import { _ } from "~/i18n";
 
@@ -8,7 +10,7 @@
   import SignInTextInput from "./components/SignInTextInput.svelte";
 
   export let canCancel = true;
-  export let loginManager;
+  export let loginManager: LoginManager;
 
   const dispatch = createEventDispatcher();
 

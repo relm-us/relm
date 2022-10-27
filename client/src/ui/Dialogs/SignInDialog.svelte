@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { LoginManager } from "~/identity/LoginManager";
+
   import { createEventDispatcher } from "svelte";
   import { _ } from "~/i18n";
 
@@ -8,7 +10,7 @@
   // import ThirdPartyLogin from "./components/ThirdPartyLogin.svelte";
   import SignInTextInput from "./components/SignInTextInput.svelte";
 
-  export let loginManager;
+  export let loginManager: LoginManager;
   export let allowSignUp = true;
   export let canCancel = true;
 

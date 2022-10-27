@@ -1,5 +1,9 @@
+import type {
+  LoginCredentials,
+  UpdateData,
+} from "~/types";
 import type { AuthenticationResponse, SocialType } from "~/main/RelmOAuthAPI";
-import type { LoginCredentials, RelmRestAPI } from "~/main/RelmRestAPI";
+import type { RelmRestAPI } from "~/main/RelmRestAPI";
 
 import { get } from "svelte/store";
 import { _ } from "svelte-i18n";
@@ -13,8 +17,6 @@ import {
   getRandomInitializedIdentityData,
   localIdentityData,
 } from "~/stores/identityData";
-
-import { UpdateData } from "~/types";
 
 type NotifyCallback = (msg: string) => void;
 type IdentityUpdater = (identity: UpdateData) => void;

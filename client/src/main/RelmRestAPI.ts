@@ -1,14 +1,12 @@
 import type { AuthenticationHeaders, SavedIdentityData } from "relm-common";
-import type { LibraryAsset } from "~/types";
+import type {
+  LibraryAsset,
+  LoginCredentials,
+} from "~/types";
 
 import { CancellablePromise } from "real-cancellable-promise";
 import { simpleFetch } from "~/utils/simpleFetch";
 import { AuthenticationResponse, RelmOAuthManager } from "./RelmOAuthAPI";
-
-export type LoginCredentials = {
-  email: string;
-  password: string;
-};
 
 export class RelmRestAPI {
   url: string;
