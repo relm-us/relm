@@ -1,19 +1,29 @@
 <script lang="ts">
+  import type AvSettingsButton from "./AVSettingsButton.svelte";
+
   import CircleButton from "~/ui/lib/CircleButton";
-  import { IconVideoEnabled, IconVideoDisabled } from "video-mirror";
-  import type { Dispatch } from "~/main/ProgramTypes";
+  import {
+    IconVideoEnabled,
+    IconVideoDisabled,
+    localVideoTrack,
+  } from "video-mirror";
+  import { worldManager } from "~/world";
 
   export let enabled = false;
-  export let dispatch: Dispatch;
+  export let avSettingsButton: AvSettingsButton = null;
 
-  const onClick = () => {
-    dispatch({ id: "setUpAudioVideo" });
-  };
+  function toggle() {
+    if ($localVideoTrack) {
+      enabled = worldManager.participants.toggleVideo();
+    } else {
+      avSettingsButton?.drawAttention();
+    }
+  }
 </script>
 
 <div class:muted={!enabled}>
   <CircleButton
-    on:click={onClick}
+    on:click={toggle}
     Icon={enabled ? IconVideoEnabled : IconVideoDisabled}
   />
 </div>

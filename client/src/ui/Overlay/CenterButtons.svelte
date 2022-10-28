@@ -10,6 +10,7 @@
 
   import Tooltip from "~/ui/lib/Tooltip";
 
+  import AVSettingsButton from "./ButtonControls/AVSettingsButton.svelte";
   import MicButton from "./ButtonControls/MicButton.svelte";
   import VideoButton from "./ButtonControls/VideoButton.svelte";
   import ShareScreenButton from "./ButtonControls/ShareScreenButton.svelte";
@@ -22,6 +23,7 @@
   export let dispatch;
 
   let overlayCenterEl, playButtonsEl;
+  let avSettingsButton;
 
   onMount(() => {
     const resizeObserver = new ResizeObserver(() => {
@@ -42,15 +44,28 @@
   <play-buttons class="interactive" bind:this={playButtonsEl}>
     {#if AV_ENABLED}
       <Tooltip tip={$_("Overlay.tooltips.set_up_video")} top>
-        <VideoButton enabled={$localIdentityData.showVideo} {dispatch} />
+        <AVSettingsButton {dispatch} bind:this={avSettingsButton} />
       </Tooltip>
+
+      <Tooltip
+        tip={$localIdentityData.showVideo
+          ? $_("Overlay.tooltips.mute_video")
+          : $_("Overlay.tooltips.unmute_video")}
+        top
+      >
+        <VideoButton
+          enabled={$localIdentityData.showVideo}
+          {avSettingsButton}
+        />
+      </Tooltip>
+
       <Tooltip
         tip={$localIdentityData.showAudio
           ? $_("Overlay.tooltips.mute")
           : $_("Overlay.tooltips.unmute")}
         top
       >
-        <MicButton enabled={$localIdentityData.showAudio} />
+        <MicButton enabled={$localIdentityData.showAudio} {avSettingsButton} />
       </Tooltip>
       <Tooltip tip={$_("Overlay.tooltips.share_screen")} top>
         <ShareScreenButton />
@@ -87,7 +102,6 @@
     display: flex;
     justify-content: center;
     pointer-events: none;
-    overflow-x: auto;
   }
 
   play-buttons {
@@ -95,5 +109,15 @@
     justify-content: left;
     margin-bottom: 4px;
     pointer-events: all;
+  }
+
+  @media screen and (max-width: 480px) {
+    overlay-center {
+      /* Unfortunately, there is a trade-off here; if we enable overflow-x,
+       * tooltips will be hidden from view. Best we can do for now is to
+       * only disable tooltips when necessary
+       */
+      overflow-x: auto;
+    }
   }
 </style>

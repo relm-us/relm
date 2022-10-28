@@ -20,6 +20,7 @@ import {
 } from "./Avatar/transform";
 import { ParticipantBroker } from "./ParticipantBroker";
 import { setAvatarFromParticipant } from "./Avatar";
+import { AVConnection } from "~/av";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -28,6 +29,7 @@ const logEnabled = (localStorage.getItem("debug") || "")
 export class ParticipantManager {
   dispatch: Dispatch;
   broker: ParticipantBroker;
+  avConnection: AVConnection;
   unsubs: Function[] = [];
 
   _store: Writable<ParticipantMap>;
@@ -62,10 +64,12 @@ export class ParticipantManager {
   constructor(
     dispatch: Dispatch,
     broker: ParticipantBroker,
+    avConnection: AVConnection,
     participants: ParticipantMap
   ) {
     this.dispatch = dispatch;
     this.broker = broker;
+    this.avConnection = avConnection;
 
     this._store = writable(participants);
   }
@@ -163,10 +167,6 @@ export class ParticipantManager {
     this.updateMe({ color });
   }
 
-  setShowVideo(showVideo: boolean) {
-    this.updateMe({ showVideo });
-  }
-
   getCommunicatingState(state: "speaking" | "emoting") {
     return this.local.identityData[state];
   }
@@ -179,14 +179,34 @@ export class ParticipantManager {
     this.updateMe({ [state]: value, message: value ? message : null });
   }
 
+  setMic(showAudio: boolean) {
+    this.updateMe({ showAudio });
+
+    // In addition to not showing the audio, actually disable it
+    const adapter = this.avConnection.adapter;
+    if (showAudio) adapter.enableMic();
+    else adapter.disableMic();
+  }
+
   toggleMic() {
     const showAudio = !this.local.identityData.showAudio;
-    this.updateMe({ showAudio });
+    this.setMic(showAudio);
     return showAudio;
   }
 
-  setMic(showAudio: boolean) {
-    this.updateMe({ showAudio });
+  setVideo(showVideo: boolean) {
+    this.updateMe({ showVideo });
+
+    // In addition to not showing the video, actually disable it
+    const adapter = this.avConnection.adapter;
+    if (showVideo) adapter.enableCam();
+    else adapter.disableCam();
+  }
+
+  toggleVideo() {
+    const showVideo = !this.local.identityData.showVideo;
+    this.setVideo(showVideo);
+    return showVideo;
   }
 
   addParticipant(participantId: string, identityData: IdentityData) {

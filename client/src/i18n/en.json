@@ -75,10 +75,12 @@
   },
   "Overlay": {
     "tooltips": {
-      "set_up_video": "Set up video",
+      "set_up_video": "Set up Cam & Mic",
       "build_mode": "Toggle build mode",
       "mute": "Mute",
       "unmute": "Unmute",
+      "mute_video": "Disable Camera",
+      "unmute_video": "Enable Camera",
       "share_screen": "Share screen",
       "chat_open": "Open chat",
       "invite_someone": "Invite someone to be with you here",
@@ -125,7 +127,7 @@
     "title": "Language"
   },
   "LightingSettings": {
-    "lighting" : "Lighting",
+    "lighting": "Lighting",
     "ambient": "Ambient:",
     "hemisphere": "Hemisphere:",
     "sky": "Sky:",
@@ -139,7 +141,7 @@
     "invalid_email": "The email you entered doesn't look like an email address.",
     "email_already_used": "It looks like someone is already using that email. Did you mean to sign in?"
   },
-  "MediaSetup":{
+  "MediaSetup": {
     "you're_about_to_join": "You're about to join a social experience with audio & video.",
     "or": "or",
     "join_without": "Join without audio / video",

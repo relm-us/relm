@@ -13,7 +13,6 @@ import {
   Clock,
 } from "three";
 import * as THREE from "three";
-import { Security } from "relm-common";
 import { localVideoTrack } from "video-mirror";
 import { derived, get } from "svelte/store";
 
@@ -202,6 +201,7 @@ export class WorldManager {
     this.participants = new ParticipantManager(
       dispatch,
       broker,
+      avConnection,
       participants
     ).init();
 
@@ -795,7 +795,7 @@ export class WorldManager {
     if (onStop) shareTrack.on("stopped", onStop);
     localShareTrackStore.set(shareTrack);
 
-    this.participants.setShowVideo(true);
+    this.participants.setVideo(true);
   }
 
   async stopScreenShare() {
@@ -803,7 +803,7 @@ export class WorldManager {
     localShareTrackStore.set(null);
 
     if (!get(localVideoTrack)) {
-      this.participants.setShowVideo(false);
+      this.participants.setVideo(false);
     }
   }
 

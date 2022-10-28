@@ -1,12 +1,23 @@
 <script lang="ts">
+  import type AvSettingsButton from "./AVSettingsButton.svelte";
+
   import CircleButton from "~/ui/lib/CircleButton";
-  import { IconAudioEnabled, IconAudioDisabled } from "video-mirror";
+  import {
+    IconAudioEnabled,
+    IconAudioDisabled,
+    localAudioTrack,
+  } from "video-mirror";
   import { worldManager } from "~/world";
 
   export let enabled = false;
+  export let avSettingsButton: AvSettingsButton = null;
 
   function toggle() {
-    enabled = worldManager.participants.toggleMic();
+    if ($localAudioTrack) {
+      enabled = worldManager.participants.toggleMic();
+    } else {
+      avSettingsButton?.drawAttention();
+    }
   }
 </script>
 
