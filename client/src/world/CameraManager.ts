@@ -46,6 +46,9 @@ const vOut = new Vector3(0, 0, -1);
 const vUp = new Vector3(0, 1, 0);
 const e1 = new Euler();
 
+// Awesome two-finger control on touchpad
+// https://github.com/Suncapped/babs/blob/prod/src/sys/CameraSys.ts
+
 export class CameraManager {
   // Track what we're doing with the camera right now
   state: CameraState;
