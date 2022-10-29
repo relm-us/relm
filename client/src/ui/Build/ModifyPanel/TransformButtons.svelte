@@ -1,8 +1,10 @@
 <script lang="ts">
   import CircleButton from "~/ui/lib/CircleButton";
-  import MdRotateLeft from "svelte-icons/md/MdRotateLeft.svelte";
-  import MdTransform from "svelte-icons/md/MdTransform.svelte";
-  import MdAspectRatio from "svelte-icons/md/MdAspectRatio.svelte";
+
+  import MoveIcon from "./icons/MoveIcon.svelte";
+  import RotateIcon from "./icons/RotateIcon.svelte";
+  import ScaleIcon from "./icons/ScaleIcon.svelte";
+
   import { TransformControlsRef } from "~/ecs/plugins/transform-controls";
   import { worldManager } from "~/world";
 
@@ -14,9 +16,9 @@
 </script>
 
 <div class="transform-buttons">
-  <CircleButton Icon={MdTransform} on:click={choose("translate")} />
-  <CircleButton Icon={MdRotateLeft} on:click={choose("rotate")} />
-  <CircleButton Icon={MdAspectRatio} on:click={choose("scale")} />
+  <CircleButton Icon={MoveIcon} on:click={choose("translate")} />
+  <CircleButton Icon={RotateIcon} on:click={choose("rotate")} />
+  <CircleButton Icon={ScaleIcon} on:click={choose("scale")} />
 </div>
 
 <style>
