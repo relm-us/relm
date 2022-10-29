@@ -2,9 +2,11 @@
   import { createEventDispatcher, onDestroy } from "svelte";
   import { get } from "svelte/store";
 
+  import { localStream } from "./stores/localStream";
+  import { mediaDevices } from "./stores";
+
   import type { Program, Dispatch, DeviceIds, State, Effect } from "./program";
   import { getUserMedia } from "./commands/getUserMedia";
-  import { localStream } from "./stores/localStream";
   import { logEnabled } from "./logEnabled";
 
   import ProgramView from "./ProgramView.svelte";
@@ -62,12 +64,22 @@
   }
 
   function setConstraintsFromDeviceIds(state: State) {
-    if (state.preferredDeviceIds.audioinput) {
+    if (
+      state.preferredDeviceIds.audioinput &&
+      get(mediaDevices).find(
+        (device) => device.deviceId === state.preferredDeviceIds.audioinput
+      )
+    ) {
       state.audioConstraints.deviceId = state.preferredDeviceIds.audioinput;
     } else {
       delete state.audioConstraints.deviceId;
     }
-    if (state.preferredDeviceIds.videoinput) {
+    if (
+      state.preferredDeviceIds.videoinput &&
+      get(mediaDevices).find(
+        (device) => device.deviceId === state.preferredDeviceIds.videoinput
+      )
+    ) {
       state.videoConstraints.deviceId = state.preferredDeviceIds.videoinput;
     } else {
       delete state.videoConstraints.deviceId;
