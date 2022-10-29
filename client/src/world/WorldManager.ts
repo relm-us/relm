@@ -15,6 +15,7 @@ import {
 import * as THREE from "three";
 import { localVideoTrack } from "~/ui/VideoMirror";
 import { derived, get } from "svelte/store";
+import { toast } from "@zerodevx/svelte-toast";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
@@ -211,7 +212,7 @@ export class WorldManager {
 
     this.logins = new LoginManager(this.api, {
       notify: (notification: string) => {
-        dispatch({ id: "notify", notification });
+        toast.push(notification);
       },
       setLocalIdentity: (identityData: UpdateData) => {
         this.dispatch({
@@ -855,14 +856,7 @@ export class WorldManager {
     if (hitPoint) {
       this.moveTo(hitPoint, instantaneousCamera);
     } else {
-      this.dispatch({
-        id: "notify",
-        notification: {
-          text: `No ground at that point`,
-          position: "bottom-center",
-          removeAfter: 5000,
-        },
-      });
+      toast.push(`No ground at that point`);
     }
   }
 

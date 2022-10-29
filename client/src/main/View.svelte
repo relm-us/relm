@@ -1,7 +1,7 @@
 <!-- This component converts the functional UI state machine (raj) to Svelte -->
 <script>
   import { onMount } from "svelte";
-  import Notifications from "svelte-notifications";
+  import { SvelteToast } from "@zerodevx/svelte-toast";
 
   import { runtime } from "~/utils/runtime";
   import { dir } from "~/i18n";
@@ -34,6 +34,12 @@
   });
 </script>
 
-<Notifications>
-  <svelte:component this={programComponent} {...programProps} />
-</Notifications>
+<SvelteToast
+  options={{
+    duration: 5000,
+    pausable: true,
+    intro: { y: -64 },
+  }}
+/>
+
+<svelte:component this={programComponent} {...programProps} />

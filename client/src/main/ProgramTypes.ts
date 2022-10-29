@@ -62,7 +62,6 @@ export type State = {
   initializedWorldManager?: boolean;
 
   // other
-  notifyContext?: any;
   doneLoading?: boolean;
   errorMessage?: string;
   overlayScreen?: "portal";
@@ -143,9 +142,7 @@ export type Message =
   | { id: "gotLoadingState"; assetsCount: number; entitiesCount: number }
   | { id: "loadedAndReady" }
   | { id: "startPlaying" }
-  | { id: "notify"; notification: any }
   | { id: "recomputeWorldDocStats" }
-  | { id: "gotNotificationContext"; notifyContext: any }
   | { id: "error"; message: string; stack?: any };
 
 export type Dispatch = (message: Message) => void;

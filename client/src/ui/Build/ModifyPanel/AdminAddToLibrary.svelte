@@ -1,6 +1,6 @@
 <script lang="ts">
   import { get } from "svelte/store";
-  import { getNotificationsContext } from "svelte-notifications";
+  import { toast } from "@zerodevx/svelte-toast";
 
   import { worldManager } from "~/world";
 
@@ -14,8 +14,6 @@
 
   import { copyBuffer } from "~/stores/copyBuffer";
   import { _ } from "~/i18n";
-
-  const notifyContext = getNotificationsContext();
 
   let thumbnail;
   let name = "";
@@ -49,18 +47,10 @@
     }
 
     if (success) {
-      notifyContext.addNotification({
-        text: "Added asset to library",
-        position: "bottom-center",
-        removeAfter: 3000,
-      });
+      toast.push("Added asset to library");
     } else {
       console.warn("asset", asset);
-      notifyContext.addNotification({
-        text: "Something went wrong",
-        position: "bottom-center",
-        removeAfter: 3000,
-      });
+      toast.push("Something went wrong");
     }
   };
 </script>

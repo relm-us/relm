@@ -1,5 +1,6 @@
 import { get, Writable } from "svelte/store";
 import { Vector3 } from "three";
+import { toast } from "@zerodevx/svelte-toast";
 
 import { DeviceIds } from "~/ui/VideoMirror";
 
@@ -191,13 +192,8 @@ export function makeProgram(): Program {
 
       case "participantJoined": {
         const name = msg.participant.identityData.name;
-        if (state.notifyContext) {
-          state.notifyContext.addNotification({
-            text: `${name && name !== "" ? name : "A newcomer"} joined.`,
-            position: "bottom-center",
-            removeAfter: 5000,
-          });
-        }
+
+        toast.push(`${name && name !== "" ? name : "A newcomer"} joined.`);
 
         if (logEnabled) {
           console.log(
@@ -624,20 +620,6 @@ export function makeProgram(): Program {
       // We store entrywayUnsub for later when we may need it for a portal
       case "gotEntrywayUnsub": {
         return [{ ...state, entrywayUnsub: msg.entrywayUnsub }];
-      }
-
-      // Store context so Program can send notifications via svelte-notifications
-      case "gotNotificationContext": {
-        return [{ ...state, notifyContext: msg.notifyContext }];
-      }
-
-      case "notify": {
-        state.notifyContext.addNotification({
-          text: msg.notification,
-          position: "bottom-center",
-          removeAfter: DEFAULT_NOTIFICATION_WAIT,
-        });
-        return [state];
       }
 
       // Send yjs a modification so that it triggers an assets/entities stats re-assessment
