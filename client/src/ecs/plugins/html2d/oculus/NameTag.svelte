@@ -7,6 +7,7 @@
   import { selectAll } from "~/utils/selectAll";
   import { getAncestor } from "~/utils/hasAncestor";
   import { worldUIMode } from "~/stores/worldUIMode";
+  import { _ } from "svelte-i18n";
 
   export let name: string = "";
   export let color: string;
@@ -80,7 +81,7 @@
   {#if visible}
     <r-label
       contenteditable={editing}
-      data-placeholder={editable ? "Add your name" : undefined}
+      data-placeholder={editable ? $_("NameTag.add_your_name") : undefined}
       style="--name-bg-color: {color}; --name-color: {fgColor}"
       class:thin={!editable && name === ""}
       bind:this={labelEl}
@@ -127,7 +128,6 @@
   }
 
   r-label:empty:before {
-    color: #999;
     content: attr(data-placeholder);
   }
 
