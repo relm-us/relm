@@ -1,5 +1,6 @@
 <script lang="ts">
   import { slide, fade } from "svelte/transition";
+  import { _ } from "svelte-i18n";
 
   import AudioLevelIndicator from "./AudioLevelIndicator.svelte";
   import VideoBox from "./VideoBox.svelte";
@@ -28,11 +29,6 @@
   let videoBox = null;
   let advancedSettings = false;
 
-  export let tr = {};
-
-  // i18n translations available, if passed in
-  const _ = (phrase, key) => tr[key] || tr[phrase] || phrase;
-
   // Ignore missing props warning
   $$props;
 </script>
@@ -47,25 +43,25 @@
       {#if stream.getVideoTracks().length === 0}
         {#if !audioDesired}
           <div class="message highlight">
-            {_("Join with mic off", "join_mic_off")}
+            {$_("VideoMirror.join_mic_off")}
           </div>
         {:else}
           <div />
         {/if}
         <div class="message highlight" style="background-color: transparent">
-          {_("(Camera unavailable)", "cam_unavailable")}
+          {$_("VideoMirror.cam_unavailable")}
         </div>
       {:else if !audioDesired && !videoDesired}
         <div class="message highlight">
-          {_("Join with cam and mic off", "join_cam_mic_off")}
+          {$_("VideoMirror.join_cam_mic_off")}
         </div>
       {:else if !videoDesired}
         <div class="message highlight">
-          {_("Join with cam off", "join_cam_off")}
+          {$_("VideoMirror.join_cam_off")}
         </div>
       {:else if !audioDesired}
         <div class="message highlight">
-          {_("Join with mic off", "join_mic_off")}
+          {$_("VideoMirror.join_mic_off")}
         </div>
       {:else}
         <div />
@@ -119,7 +115,7 @@
     </div>
 
     <ContinueButton on:click={handleDone} {autoFocus}>
-      {_("Continue", "continue")}
+      {$_("VideoMirror.continue")}
     </ContinueButton>
   {:else}
     <VideoBox bind:this={videoBox} blocked={permissionBlocked} opaque={true}>
@@ -128,9 +124,9 @@
       </div>
       <div class="message blocked">
         {#if permissionBlocked}
-          {_("Cam and mic are blocked", "cam_mic_blocked")}
+          {$_("VideoMirror.cam_mic_blocked")}
         {:else}
-          {_("Cam and mic are not active", "cam_mic_not_active")}
+          {$_("VideoMirror.cam_mic_not_active")}
         {/if}
       </div>
     </VideoBox>
@@ -144,9 +140,9 @@
         {autoFocus}
       >
         {#if permissionBlocked}
-          {_("Try Again", "try_again")}
+          {$_("VideoMirror.try_again")}
         {:else}
-          {_("Use Cam & Mic", "request_perms")}
+          {$_("VideoMirror.request_perms")}
         {/if}
       </ContinueButton>
     </div>

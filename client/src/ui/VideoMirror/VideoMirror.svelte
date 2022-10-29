@@ -13,7 +13,6 @@
   export let videoDesired = true;
   export let audioDesired = true;
   export let autoFocus = false;
-  export let tr = {};
 
   export let preferredDeviceIds: DeviceIds = {
     audioinput: null,
@@ -178,7 +177,6 @@
         return [
           Setup,
           {
-            tr,
             autoFocus,
             stream: state.stream,
             audioDesired: state.audioDesired,

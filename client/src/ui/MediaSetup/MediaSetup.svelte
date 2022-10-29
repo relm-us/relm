@@ -3,7 +3,7 @@
 
   import { createEventDispatcher } from "svelte";
   import { VideoMirror } from "~/ui/VideoMirror";
-  import { _, json } from "svelte-i18n";
+  import { _ } from "svelte-i18n";
 
   import { askMediaSetup } from "~/stores/askMediaSetup";
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
@@ -35,7 +35,6 @@
     {audioDesired}
     {videoDesired}
     {preferredDeviceIds}
-    tr={$json("VideoMirror")}
     autoFocus={true}
   />
 
