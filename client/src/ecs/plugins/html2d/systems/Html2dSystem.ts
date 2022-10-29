@@ -13,6 +13,7 @@ export class Html2dSystem extends System {
   presentation: Presentation;
   htmlPresentation: HtmlPresentation;
   perspective: Perspective;
+  cumulative: number = 0.0;
 
   order = Groups.Presentation + 250;
 
@@ -33,19 +34,16 @@ export class Html2dSystem extends System {
     this.queries.new.forEach((entity) => {
       this.build(entity);
     });
+
     this.queries.modified.forEach((entity) => {
       this.remove(entity);
       this.build(entity);
     });
-    // Optimization: only update CSS every 30 fps or so:
-    if (
-      delta >= 1 / 30 ||
-      (delta < 1 / 30 && this.presentation.frame % 2 === 0)
-    ) {
-      this.queries.active.forEach((entity) => {
-        this.updatePosition(entity);
-      });
-    }
+
+    this.queries.active.forEach((entity) => {
+      this.updatePosition(entity);
+    });
+
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
     });

@@ -229,8 +229,6 @@ export class Presentation {
       return;
     }
 
-    this.frame++;
-
     this.renderer.info.reset();
 
     this.composer.render(delta);

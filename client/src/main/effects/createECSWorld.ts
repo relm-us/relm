@@ -111,7 +111,7 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
   registerComponentMigrations(ecsWorld);
 
   const interval = setInterval(() => {
-    ecsWorld.update(40);
+    ecsWorld.update(1 / 40);
   }, 40);
   const unsub = () => clearInterval(interval);
 
