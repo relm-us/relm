@@ -117,12 +117,12 @@
       permissionBlocked: false,
       permissionWouldBeGranted,
     };
-    setConstraintsFromDeviceIds(initialState);
 
     return {
       init: [initialState, batch(initialEffects)],
       update(msg, state) {
         if (msg.id === "getUserMedia") {
+          setConstraintsFromDeviceIds(state);
           return [
             { ...state, shake: msg.shake },
             getUserMedia({ audio: audioConstraints, video: videoConstraints }),
