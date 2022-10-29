@@ -6,7 +6,7 @@
     IconVideoEnabled,
     IconVideoDisabled,
     localVideoTrack,
-  } from "video-mirror";
+  } from "~/ui/VideoMirror";
   import { worldManager } from "~/world";
 
   export let enabled = false;

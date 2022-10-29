@@ -4,7 +4,7 @@
   import { fly, slide } from "svelte/transition";
   import IoIosSettings from "svelte-icons/io/IoIosSettings.svelte";
   import IoMdArrowRoundDown from "svelte-icons/io/IoMdArrowRoundDown.svelte";
-  import { IconVideoEnabled, IconAudioEnabled } from "video-mirror";
+  import { IconVideoEnabled, IconAudioEnabled } from "~/ui/VideoMirror";
 
   import CircleButton from "~/ui/lib/CircleButton";
 

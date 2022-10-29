@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Participant, ParticipantMap } from "~/types";
 
-  import { Audio, Video } from "video-mirror";
+  import { Audio, Video } from "~/ui/VideoMirror";
   import { Readable, get } from "svelte/store";
 
   import { participantId as localParticipantId } from "~/identity/participantId";

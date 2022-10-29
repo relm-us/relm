@@ -4,7 +4,7 @@
   import { onMount } from "svelte";
   import { Readable } from "svelte/store";
 
-  import { localAudioTrack, localVideoTrack } from "video-mirror";
+  import { localAudioTrack, localVideoTrack } from "~/ui/VideoMirror";
 
   import { worldManager } from "~/world";
   import { State } from "~/main/ProgramTypes";

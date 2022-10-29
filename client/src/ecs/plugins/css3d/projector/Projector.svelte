@@ -3,7 +3,7 @@
   import type { Asset } from "~/ecs/plugins/core";
 
   import { fade } from "svelte/transition";
-  import { Video } from "video-mirror";
+  import { Video } from "~/ui/VideoMirror";
 
   import { assetUrl } from "~/config/assetUrl";
   import { pointerStateDelayed } from "~/events/input/PointerListener/pointerActions";

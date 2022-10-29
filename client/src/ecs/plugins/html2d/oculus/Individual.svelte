@@ -5,7 +5,7 @@
 
   import type { Cut } from "./types";
 
-  import { Audio, Video } from "video-mirror";
+  import { Audio, Video } from "~/ui/VideoMirror";
 
   import NameTag from "./NameTag.svelte";
   import Oculus from "./Oculus.svelte";

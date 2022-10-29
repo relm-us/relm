@@ -6,7 +6,7 @@
     IconAudioEnabled,
     IconAudioDisabled,
     localAudioTrack,
-  } from "video-mirror";
+  } from "~/ui/VideoMirror";
   import { worldManager } from "~/world";
 
   export let enabled = false;

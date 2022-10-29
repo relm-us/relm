@@ -1,6 +1,6 @@
 import { writable, Writable } from "svelte/store";
 
-import { localAudioTrack as localAudioTrackStore } from "video-mirror";
+import { localAudioTrack as localAudioTrackStore } from "~/ui/VideoMirror";
 import { localVisualTrackStore } from "./localVisualTrackStore";
 
 import { ClientAVAdapter } from "./base/ClientAVAdapter";

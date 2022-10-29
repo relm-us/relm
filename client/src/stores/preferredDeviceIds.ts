@@ -1,5 +1,5 @@
 import { Readable } from "svelte/store";
-import { DeviceIds } from "video-mirror";
+import { DeviceIds } from "~/ui/VideoMirror";
 import { storedWritable } from "~/utils/storedWritable";
 
 // Type is `Readable` to protect from writing through any means but `dispatch`

@@ -1,7 +1,7 @@
 import { get, Writable } from "svelte/store";
 import { Vector3 } from "three";
 
-import { DeviceIds } from "video-mirror";
+import { DeviceIds } from "~/ui/VideoMirror";
 
 import { worldManager } from "~/world";
 

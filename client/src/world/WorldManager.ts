@@ -13,7 +13,7 @@ import {
   Clock,
 } from "three";
 import * as THREE from "three";
-import { localVideoTrack } from "video-mirror";
+import { localVideoTrack } from "~/ui/VideoMirror";
 import { derived, get } from "svelte/store";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
