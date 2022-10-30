@@ -17,6 +17,8 @@ export async function createScreenTrack(
       height: height,
       width: width,
     },
+    // TODO: create a merge stream so we can do karaoke :)
+    audio: false,
   });
 
   return new LocalVideoTrack(stream.getVideoTracks()[0]);
