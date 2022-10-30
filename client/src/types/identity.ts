@@ -1,3 +1,4 @@
+import type { Vector3 } from "three";
 import type {
   Appearance,
   Equipment,
@@ -54,7 +55,8 @@ export type TransformData = [
   headTheta: number,
   oculusOffset: number,
   clipIndex: number,
-  animLoop: boolean
+  animLoop: boolean,
+  offsetZ: number
 ];
 
 export type AvatarEntities = {
@@ -64,14 +66,30 @@ export type AvatarEntities = {
   equipped?: Entity;
 };
 
+export type ActionState =
+  | { state: "free" }
+  | { state: "waving" }
+  | { state: "raise-hand" }
+  | { state: "sit-ground" }
+  | { state: "sit-chair"; position: Vector3 };
+
 export type Participant = {
   participantId: string;
-  identityData: IdentityData;
   editable: boolean;
-  modified: boolean;
+
+  identityData: IdentityData;
+  modifiedIdentityData: boolean;
+
+  actionState: ActionState;
+  modifiedActionState: boolean;
 
   // Avatar is responsible for all visuals/rendering of this identity
   avatar?: Avatar;
 };
 
 export type ParticipantMap = Map<string, Participant>;
+
+export type AnimationOverride = {
+  clipName: string;
+  loop: boolean;
+};

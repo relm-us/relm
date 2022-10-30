@@ -25,6 +25,7 @@ export class Model2System extends System {
     modifiedAsset: [Model2, Modified(Asset)],
     removed: [Model2Ref, Not(Model2)],
     removedAsset: [Model2Ref, Not(Asset)],
+    modified: [Modified(Model2), Model2Ref],
   };
 
   update() {
@@ -42,6 +43,10 @@ export class Model2System extends System {
 
     this.queries.removedAsset.forEach((entity) => {
       this.remove(entity);
+    });
+
+    this.queries.modified.forEach((entity) => {
+      this.updateOffset(entity);
     });
   }
 
@@ -156,5 +161,12 @@ export class Model2System extends System {
     }
 
     return cache.get(key);
+  }
+
+  updateOffset(entity: Entity) {
+    const spec: Model2 = entity.get(Model2);
+    const ref: Model2Ref = entity.get(Model2Ref);
+
+    ref.value.scene?.position.copy(spec.offset);
   }
 }

@@ -51,20 +51,6 @@ const keysState = {
 };
 const spaceState = newKeyState();
 
-function getSpeedFromKeysState() {
-  // If any arrow key is pressed, avatar will have speed at least 1
-  const directionPressed = Object.values(keysState).some(
-    (ks) => ks.state === KPR.DoublePressed || ks.state === KPR.LongPressed
-  );
-
-  if (directionPressed) {
-    if (!get(keyShift)) return 1;
-    else return 2;
-  } else {
-    return 0;
-  }
-}
-
 function getVectorFromKeys() {
   const left = isKeyActive(keysState.left) ? -1 : 0;
   const right = isKeyActive(keysState.right) ? 1 : 0;

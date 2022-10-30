@@ -25,6 +25,7 @@ export function register(): Function {
             globalEvents.emit("action");
           }
         }
+        keySpace.set(pressed);
       },
     ],
     [

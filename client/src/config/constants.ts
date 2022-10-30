@@ -9,7 +9,8 @@ export const DRAG_DISTANCE_THRESHOLD = 4;
 export const LONG_PRESS_THRESHOLD = 350;
 
 export const OCULUS_HEIGHT_STAND = 2.4;
-export const OCULUS_HEIGHT_SIT = 1.5;
+export const OCULUS_HEIGHT_SIT_CHAIR = 1.9;
+export const OCULUS_HEIGHT_SIT_GROUND = 1.5;
 
 export const PROXIMITY_AUDIO_INNER_RADIUS = 3;
 export const PROXIMITY_AUDIO_OUTER_RADIUS = 6;

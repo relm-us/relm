@@ -1,14 +1,15 @@
 import type {
+  ActionState,
   DecoratedECSWorld,
   IdentityData,
   Participant,
   ParticipantMap,
   UpdateData,
 } from "~/types";
+import type { RigidBody } from "@dimforge/rapier3d";
 
 import { Readable, Writable, writable, get as getStore } from "svelte/store";
 import { Appearance, Equipment } from "relm-common";
-import filter from "lodash/filter";
 
 import { participantId } from "./participantId";
 
@@ -21,6 +22,21 @@ import {
 import { ParticipantBroker } from "./ParticipantBroker";
 import { setAvatarFromParticipant } from "./Avatar";
 import { AVConnection } from "~/av";
+import { ControllerState } from "~/ecs/plugins/player-control";
+import {
+  CHAIR_SIT,
+  OCULUS_HEIGHT_SIT_CHAIR,
+  OCULUS_HEIGHT_SIT_GROUND,
+  OCULUS_HEIGHT_STAND,
+  RAISING_HAND,
+  STAND_SIT,
+  WAVING,
+} from "~/config/constants";
+import { Oculus } from "~/ecs/plugins/html2d";
+import { Model2 } from "~/ecs/plugins/form";
+import { Transform } from "~/ecs/plugins/core";
+import { Collider2, Collider2Ref } from "~/ecs/plugins/collider";
+import { AVATAR_ETHEREAL } from "~/config/colliderInteractions";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -120,7 +136,7 @@ export class ParticipantManager {
       if (transformData) {
         if (logEnabled && Math.random() < 0.04)
           console.log("applying rapid data to other", state["id"]);
-        if (participant.modified)
+        if (participant.modifiedIdentityData)
           maybeMakeAvatar(world, participant, transformData);
         avatarSetTransformData(participant.avatar, transformData);
       } else if (logEnabled && Math.random() < 0.04) {
@@ -128,9 +144,9 @@ export class ParticipantManager {
         return;
       }
 
-      if (participant.modified && participant.avatar) {
+      if (participant.modifiedIdentityData && participant.avatar) {
         setAvatarFromParticipant(participant);
-        participant.modified = false;
+        participant.modifiedIdentityData = false;
       }
     }
   }
@@ -209,12 +225,91 @@ export class ParticipantManager {
     return showVideo;
   }
 
+  setAction(action: ActionState) {
+    const body = this.local.avatar?.entities.body;
+    if (!body) {
+      console.log("Unable to set action, avatar not initialized");
+      return;
+    }
+
+    const controller: ControllerState = body.get(ControllerState);
+    const oculus: Oculus = body.get(Oculus);
+
+    switch (action.state) {
+      case "free":
+        controller.animOverride = null;
+        oculus.targetOffset.y = OCULUS_HEIGHT_STAND;
+        this.setModelOffset(0);
+        break;
+
+      case "waving":
+        controller.animOverride = { clipName: WAVING, loop: true };
+        oculus.targetOffset.y = OCULUS_HEIGHT_STAND;
+        this.setModelOffset(0);
+        break;
+
+      case "raise-hand":
+        controller.animOverride = { clipName: RAISING_HAND, loop: false };
+        oculus.targetOffset.y = OCULUS_HEIGHT_STAND;
+        this.setModelOffset(0);
+        break;
+
+      case "sit-ground":
+        controller.animOverride = { clipName: STAND_SIT, loop: false };
+        oculus.targetOffset.y = OCULUS_HEIGHT_SIT_GROUND;
+        this.setModelOffset(0);
+        break;
+
+      case "sit-chair":
+        const colliderRef: Collider2Ref = body.get(Collider2Ref);
+        if (!colliderRef) break;
+
+        if (colliderRef.body && action.position) {
+          colliderRef.body.setTranslation(action.position, true);
+          console.log("setting 0 grav");
+          colliderRef.body.setGravityScale(-1.0, false);
+          // colliderRef.collider.setCollisionGroups(AVATAR_ETHEREAL);
+          // body.get(Transform).position.copy(action.position);
+        }
+
+        // const collider: Collider2 =
+        //   this.local.avatar?.entities.body.get(Collider2);
+        // collider.kind = "AVATAR-OTHER";
+        // collider.modified();
+
+        controller.animOverride = { clipName: CHAIR_SIT, loop: false };
+        oculus.targetOffset.y = OCULUS_HEIGHT_SIT_CHAIR;
+
+        // Center on the seated rear end, rather than the feet
+        this.setModelOffset(1.8);
+        break;
+    }
+
+    this.local.actionState = action;
+  }
+
+  setModelOffset(z: number) {
+    const model: Model2 = this.local.avatar?.entities.body.get(Model2);
+    if (model && model.offset.z !== z) {
+      model.offset.z = z;
+      model.modified();
+    }
+  }
+
+  get currentAction() {
+    return this.local.actionState.state;
+  }
+
   addParticipant(participantId: string, identityData: IdentityData) {
     const participant: Participant = {
       participantId: participantId,
-      identityData: identityData,
       editable: false, // can't edit other participants
-      modified: true,
+
+      identityData: identityData,
+      modifiedIdentityData: true,
+
+      actionState: { state: "free" },
+      modifiedActionState: false,
     };
 
     this.set(participantId, participant);
@@ -228,7 +323,7 @@ export class ParticipantManager {
     const participant = this.get(participantId);
 
     participant.identityData = identityData;
-    participant.modified = true;
+    participant.modifiedIdentityData = true;
 
     return participant;
   }

@@ -3,7 +3,7 @@ import type { TransformData, Participant } from "~/types";
 import { Vector3, Euler, AnimationClip } from "three";
 
 import { Transform } from "~/ecs/plugins/core";
-import { Model2Ref } from "~/ecs/plugins/form";
+import { Model2, Model2Ref } from "~/ecs/plugins/form";
 import { Animation } from "~/ecs/plugins/animation";
 
 import { Avatar } from "../Avatar";
@@ -44,12 +44,14 @@ export function avatarGetTransformData(
   }
 
   // Get animation data
+  const model: Model2 = entities.body.get(Model2);
   const ref: Model2Ref = entities.body.get(Model2Ref);
   const clips: AnimationClip[] = ref?.value?.animations;
   const animation: Animation = entities.body.get(Animation);
   if (clips && animation) {
     transformData[6] = clips.findIndex((c) => c.name === animation.clipName);
     transformData[7] = animation.loop;
+    transformData[8] = model.offset.z;
   }
 
   return transformData as TransformData;
@@ -66,6 +68,7 @@ export function avatarSetTransformData(
     oculusOffset,
     clipIndex,
     animLoop,
+    offsetZ,
   ]: TransformData
 ) {
   const entities = avatar.entities;
@@ -102,11 +105,16 @@ export function avatarSetTransformData(
   if (oculus) oculus.targetOffset.y = oculusOffset;
 
   // Set animation data
+  const model: Model2 = entities.body.get(Model2);
   const ref: Model2Ref = entities.body.get(Model2Ref);
   const clips = ref?.value.animations;
   if (clips && clipIndex >= 0 && clipIndex < clips.length) {
     const newClipName = clips[clipIndex]?.name;
     changeAnimationClip(entities.body, newClipName, animLoop);
+    if (offsetZ !== model.offset.z) {
+      model.offset.z = offsetZ;
+      model.modified();
+    }
   }
 }
 

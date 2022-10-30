@@ -1,6 +1,13 @@
 import type { RigidBody } from "@dimforge/rapier3d";
 
-import type { DecoratedECSWorld, PageParams } from "~/types";
+import type {
+  DecoratedECSWorld,
+  PageParams,
+  AnimationOverride,
+  ParticipantMap,
+  UpdateData,
+} from "~/types";
+
 import type { Dispatch, State } from "~/main/ProgramTypes";
 
 import {
@@ -35,11 +42,6 @@ import {
   CAMERA_PLAY_DAMPENING,
   CAMERA_PLAY_ZOOM_MAX,
   CAMERA_PLAY_ZOOM_MIN,
-  OCULUS_HEIGHT_SIT,
-  OCULUS_HEIGHT_STAND,
-  RAISING_HAND,
-  STAND_SIT,
-  WAVING,
 } from "~/config/constants";
 
 import { config } from "~/config";
@@ -53,7 +55,7 @@ import { makeLight } from "~/prefab/makeLight";
 import { Entity } from "~/ecs/base";
 import { Collider2, Collider2Ref } from "~/ecs/plugins/collider";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
-import { ControllerState } from "~/ecs/plugins/player-control";
+import { ControllerState, Seat } from "~/ecs/plugins/player-control";
 import { Follow } from "~/ecs/plugins/follow";
 import { intersectionPointWithGround } from "~/ecs/shared/isMakingContactWithGround";
 import { Transition } from "~/ecs/plugins/transition";
@@ -72,7 +74,6 @@ import { createScreenTrack } from "~/av/twilio/createScreenTrack";
 
 import { participantId } from "~/identity/participantId";
 import { Avatar } from "~/identity/Avatar";
-import { ParticipantMap, UpdateData } from "~/types/identity";
 import { ParticipantManager } from "~/identity/ParticipantManager";
 import { ParticipantBroker } from "~/identity/ParticipantBroker";
 import { delay } from "~/utils/delay";
@@ -81,7 +82,7 @@ import { PhotoBooth } from "./PhotoBooth";
 import { audioMode, AudioMode } from "~/stores/audioMode";
 import { Outline } from "~/ecs/plugins/outline";
 import { InteractorSystem } from "~/ecs/plugins/interactor";
-import { Object3DRef } from "~/ecs/plugins/core";
+import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { globalEvents } from "~/events";
 import { advancedEdit } from "~/stores/advancedEdit";
 import { errorCat } from "~/stores/errorCat";
@@ -401,45 +402,72 @@ export class WorldManager {
       })
     );
 
-    let sitting = false;
     this.unsubs.push(
       derived(
-        [worldUIMode, key1, key2, key3],
+        [worldUIMode, key1, key2, key3, keySpace],
         (
-          [$mode, $key1, $key2, $key3],
-          set: (anim: { clipName: string; loop: boolean }) => void
+          [$mode, $key1, $key2, $key3, $keySpace],
+          set: (anim: AnimationOverride) => void
         ) => {
-          if ($mode === "play" && $key1) {
-            set({ clipName: WAVING, loop: true });
-            sitting = false;
-          } else if ($mode === "play" && $key2) {
-            if (sitting) {
-              set(null);
-            } else {
-              set({ clipName: STAND_SIT, loop: false });
+          if ($mode !== "play") {
+            this.participants.setAction({ state: "free" });
+            return;
+          }
+
+          switch (this.participants.currentAction) {
+            case "free": {
+              if ($key1) {
+                this.participants.setAction({ state: "waving" });
+              } else if ($key2) {
+                this.participants.setAction({ state: "sit-ground" });
+              } else if ($key3) {
+                this.participants.setAction({ state: "raise-hand" });
+              } else if ($keySpace && InteractorSystem.selected?.has(Seat)) {
+                const position: Vector3 = new Vector3().copy(
+                  InteractorSystem.selected.get(Transform).position
+                );
+
+                const seat: Seat = InteractorSystem.selected.get(Seat);
+                position.add(seat.offset);
+
+                this.participants.setAction({
+                  state: "sit-chair",
+                  position,
+                });
+              }
+              break;
             }
-            sitting = !sitting;
-          } else if ($mode === "play" && $key3) {
-            set({ clipName: RAISING_HAND, loop: false });
-            sitting = false;
-          } else if (!sitting) {
-            set(null);
+
+            case "waving": {
+              if (!$key1) {
+                this.participants.setAction({ state: "free" });
+              }
+              break;
+            }
+
+            case "raise-hand": {
+              if (!$key3) {
+                this.participants.setAction({ state: "free" });
+              }
+              break;
+            }
+
+            case "sit-ground": {
+              if ($key1 || $key2 || $key3 || $keySpace) {
+                this.participants.setAction({ state: "free" });
+              }
+              break;
+            }
+
+            case "sit-chair": {
+              if ($key1 || $key2 || $key3 || $keySpace) {
+                this.participants.setAction({ state: "free" });
+              }
+              break;
+            }
           }
         }
-      ).subscribe((anim: { clipName: string; loop: boolean }) => {
-        const oculus = this.avatar?.entities.body.getByName("Oculus");
-        if (oculus) {
-          if (anim?.clipName === STAND_SIT) {
-            oculus.targetOffset.y = OCULUS_HEIGHT_SIT;
-          } else {
-            oculus.targetOffset.y = OCULUS_HEIGHT_STAND;
-          }
-        }
-        const state: ControllerState =
-          this.avatar.entities.body.get(ControllerState);
-        if (!state) return;
-        state.animOverride = anim;
-      })
+      ).subscribe(() => {})
     );
 
     this.unsubs.push(

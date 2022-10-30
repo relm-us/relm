@@ -9,8 +9,12 @@ export function initParticipants() {
   participants.set(participantId, {
     participantId,
     editable: true,
-    modified: false,
+
     identityData,
+    modifiedIdentityData: false,
+
+    actionState: { state: "free" },
+    modifiedActionState: false,
   });
   return participants;
 }
