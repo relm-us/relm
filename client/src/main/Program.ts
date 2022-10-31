@@ -444,6 +444,9 @@ export function makeProgram(): Program {
       }
 
       case "didSetUpAvatar": {
+        // Don't allow re-entry
+        if (state.avatarSetupDone) return;
+
         const newState: State = {
           ...state,
           avatarSetupDone: true,
