@@ -37,8 +37,7 @@ import {
 import { Oculus } from "~/ecs/plugins/html2d";
 import { Model2 } from "~/ecs/plugins/form";
 import { Transform } from "~/ecs/plugins/core";
-import { Collider2, Collider2Ref } from "~/ecs/plugins/collider";
-import { AVATAR_ETHEREAL } from "~/config/colliderInteractions";
+import { Collider2 } from "~/ecs/plugins/collider";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
