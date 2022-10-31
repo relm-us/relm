@@ -1,7 +1,7 @@
 import type { WorldManager } from "./WorldManager";
 
 import { get } from "svelte/store";
-import { Vector3 } from "three";
+import { Quaternion, Vector3 } from "three";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 import { first, difference } from "~/utils/setOps";
@@ -18,6 +18,9 @@ import {
   groupTree,
 } from "~/stores/selection";
 
+const qInv = new Quaternion();
+const qNewRot = new Quaternion();
+const vAxisInv = new Vector3();
 export class SelectionManager {
   worldManager: WorldManager;
 
@@ -100,8 +103,10 @@ export class SelectionManager {
 
   savePositions() {
     for (const entity of this.entities) {
-      const position = entity.get(Transform).position;
-      (entity as any).savedPosition = new Vector3().copy(position);
+      const transform = entity.get(Transform);
+      (entity as any).savedPosition = new Vector3().copy(transform.position);
+
+      (entity as any).savedRotation = new Quaternion().copy(transform.rotation);
     }
   }
 
@@ -133,16 +138,27 @@ export class SelectionManager {
       if (entity.getParent()) continue;
 
       const transform = entity.get(Transform);
-      const savedPos = (entity as any).savedPosition;
-      const pos = transform.position;
+      const savedPos: Vector3 = (entity as any).savedPosition;
+      const savedRot: Quaternion = (entity as any).savedRotation;
+      const pos: Vector3 = transform.position;
 
+      // Reposition all selected objects based on new rotation angle
+      const posQ = new Quaternion().setFromAxisAngle(axis, radians);
       pos.copy(savedPos);
       pos.sub(center);
-      pos.applyAxisAngle(axis, radians);
+      pos.applyQuaternion(posQ);
       pos.add(center);
 
-      transform.rotation.setFromAxisAngle(axis, radians);
+      // Rotate all selected objects based on new rotation angle
+      qInv.copy(savedRot).invert();
+      vAxisInv.copy(axis).applyQuaternion(qInv);
+      qNewRot
+        .copy(savedRot)
+        .multiply(new Quaternion().setFromAxisAngle(vAxisInv, radians))
+        .normalize();
+      transform.rotation.copy(qNewRot);
 
+      // Inform ECS to show new pos/rot
       transform.modified();
     }
   }
