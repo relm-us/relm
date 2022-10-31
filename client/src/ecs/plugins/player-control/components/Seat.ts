@@ -8,6 +8,9 @@ export class Seat extends Component {
   forward: Quaternion;
   swivel: number;
 
+  // temp tracker, indicates if this seat is occupied
+  seated: boolean;
+
   static props = {
     offset: {
       type: Vector3Type,

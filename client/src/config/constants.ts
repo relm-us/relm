@@ -12,6 +12,9 @@ export const OCULUS_HEIGHT_STAND = 2.4;
 export const OCULUS_HEIGHT_SIT_CHAIR = 1.9;
 export const OCULUS_HEIGHT_SIT_GROUND = 1.5;
 
+export const COLLIDER_HEIGHT_STAND = 1.8;
+export const COLLIDER_HEIGHT_SIT_CHAIR = 1.0;
+
 export const PROXIMITY_AUDIO_INNER_RADIUS = 3;
 export const PROXIMITY_AUDIO_OUTER_RADIUS = 6;
 

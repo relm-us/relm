@@ -2,7 +2,7 @@ import { Euler, Quaternion, Vector3 } from "three";
 
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
-import { AVATAR_HEIGHT_UNSCALED, IDLE } from "~/config/constants";
+import { AVATAR_HEIGHT_UNSCALED, COLLIDER_HEIGHT_STAND, IDLE } from "~/config/constants";
 import { AvatarEntities } from "~/types";
 
 import { makeEntity } from "~/prefab/makeEntity";
@@ -53,7 +53,7 @@ export function makeAvatarEntities(
     .add(Collider2, {
       kind: kinematic ? "AVATAR-OTHER" : "AVATAR-PLAY",
       shape: "CAPSULE",
-      size: new Vector3(0.5, 1.8, 0),
+      size: new Vector3(0.5, COLLIDER_HEIGHT_STAND, 0),
       offset: new Vector3(0, 1.1, 0),
     })
     .add(Particles, {

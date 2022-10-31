@@ -104,15 +104,17 @@ export class Collider2System extends System {
       ref.body.setTranslation(transform.position, true);
       ref.body.setRotation(transform.rotation, true);
 
-      if (entity.has(Collider2Implicit)) {
-        // When scaling an object that has an implicit collider, we need to
-        // re-calculate the size of the implicit collider
-        if (!ref.size.equals(transform.scale)) {
-          this.remove(entity);
-          entity.add(Collider2Implicit);
-          this.build(entity);
-        }
-      }
+      // TODO: Why does this happen EVERY loop? Slows things down.
+
+      // if (entity.has(Collider2Implicit)) {
+      //   // When scaling an object that has an implicit collider, we need to
+      //   // re-calculate the size of the implicit collider
+      //   if (!ref.size.equals(transform.scale)) {
+      //     this.remove(entity);
+      //     entity.add(Collider2Implicit);
+      //     this.build(entity);
+      //   }
+      // }
     });
   }
 

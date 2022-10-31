@@ -430,8 +430,11 @@ export class WorldManager {
                 const seat: Seat = InteractorSystem.selected.get(Seat);
                 position.add(seat.offset);
 
+                seat.seated = true;
+
                 this.participants.setAction({
                   state: "sit-chair",
+                  seat,
                   position,
                 });
               }
@@ -461,6 +464,8 @@ export class WorldManager {
 
             case "sit-chair": {
               if ($key1 || $key2 || $key3 || $keySpace) {
+                (this.participants.local.actionState as any).seat.seated =
+                  false;
                 this.participants.setAction({ state: "free" });
               }
               break;

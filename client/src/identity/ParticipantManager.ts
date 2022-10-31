@@ -25,6 +25,8 @@ import { AVConnection } from "~/av";
 import { ControllerState } from "~/ecs/plugins/player-control";
 import {
   CHAIR_SIT,
+  COLLIDER_HEIGHT_SIT_CHAIR,
+  COLLIDER_HEIGHT_STAND,
   OCULUS_HEIGHT_SIT_CHAIR,
   OCULUS_HEIGHT_SIT_GROUND,
   OCULUS_HEIGHT_STAND,
@@ -240,48 +242,43 @@ export class ParticipantManager {
         controller.animOverride = null;
         oculus.targetOffset.y = OCULUS_HEIGHT_STAND;
         this.setModelOffset(0);
+        this.setColliderHeight(COLLIDER_HEIGHT_STAND);
         break;
 
       case "waving":
         controller.animOverride = { clipName: WAVING, loop: true };
         oculus.targetOffset.y = OCULUS_HEIGHT_STAND;
         this.setModelOffset(0);
+        this.setColliderHeight(COLLIDER_HEIGHT_STAND);
         break;
 
       case "raise-hand":
         controller.animOverride = { clipName: RAISING_HAND, loop: false };
         oculus.targetOffset.y = OCULUS_HEIGHT_STAND;
         this.setModelOffset(0);
+        this.setColliderHeight(COLLIDER_HEIGHT_STAND);
         break;
 
       case "sit-ground":
         controller.animOverride = { clipName: STAND_SIT, loop: false };
         oculus.targetOffset.y = OCULUS_HEIGHT_SIT_GROUND;
         this.setModelOffset(0);
+        this.setColliderHeight(COLLIDER_HEIGHT_STAND);
         break;
 
       case "sit-chair":
-        const colliderRef: Collider2Ref = body.get(Collider2Ref);
-        if (!colliderRef) break;
-
-        if (colliderRef.body && action.position) {
-          colliderRef.body.setTranslation(action.position, true);
-          console.log("setting 0 grav");
-          colliderRef.body.setGravityScale(-1.0, false);
-          // colliderRef.collider.setCollisionGroups(AVATAR_ETHEREAL);
-          // body.get(Transform).position.copy(action.position);
+        if (action.position) {
+          body.get(Transform).position.copy(action.position);
         }
-
-        // const collider: Collider2 =
-        //   this.local.avatar?.entities.body.get(Collider2);
-        // collider.kind = "AVATAR-OTHER";
-        // collider.modified();
 
         controller.animOverride = { clipName: CHAIR_SIT, loop: false };
         oculus.targetOffset.y = OCULUS_HEIGHT_SIT_CHAIR;
 
         // Center on the seated rear end, rather than the feet
-        this.setModelOffset(1.8);
+        this.setModelOffset(2);
+
+        // Adjust avatar's collider so that it rests on rear end
+        this.setColliderHeight(COLLIDER_HEIGHT_SIT_CHAIR);
         break;
     }
 
@@ -293,6 +290,14 @@ export class ParticipantManager {
     if (model && model.offset.z !== z) {
       model.offset.z = z;
       model.modified();
+    }
+  }
+
+  setColliderHeight(height: number) {
+    const collider: Collider2 = this.local.avatar?.entities.body.get(Collider2);
+    if (collider && collider.size.y !== height) {
+      collider.size.y = height;
+      collider.modified();
     }
   }
 

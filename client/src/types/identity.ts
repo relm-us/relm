@@ -8,6 +8,7 @@ import type {
 
 import type { Entity } from "~/ecs/base";
 import type { Avatar } from "~/identity/Avatar";
+import type { Seat } from "~/ecs/plugins/player-control";
 
 export type UpdateData = {
   name?: string;
@@ -71,7 +72,7 @@ export type ActionState =
   | { state: "waving" }
   | { state: "raise-hand" }
   | { state: "sit-ground" }
-  | { state: "sit-chair"; position: Vector3 };
+  | { state: "sit-chair"; seat: Seat; position: Vector3 };
 
 export type Participant = {
   participantId: string;
