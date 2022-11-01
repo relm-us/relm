@@ -9,7 +9,7 @@ export const joinAudioVideo =
     localParticipant: Participant,
     avConnection: AVConnection,
     avDisconnectPrevious: Function,
-    permanentDocId: string,
+    roomId: string,
     twilioToken: string
   ) =>
   async (dispatch: Dispatch) => {
@@ -23,7 +23,7 @@ export const joinAudioVideo =
     // Join the room
     console.log("joinAudioVideo connect...");
     const avDisconnect = await avConnection.connect({
-      roomId: permanentDocId,
+      roomId,
       displayName: localParticipant.identityData.name,
       token: twilioToken,
     });

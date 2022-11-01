@@ -13,7 +13,7 @@ export class Inventory {
   world: DecoratedECSWorld;
   participant: Participant;
 
-  assets: any[];
+  assets: any[] = [];
 
   get heldAsset() {
     return this.assets[0];

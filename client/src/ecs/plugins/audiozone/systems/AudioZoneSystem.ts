@@ -32,16 +32,20 @@ export class AudioZoneSystem extends System {
         this.leaveAudioZone(entity);
       }
     });
-  }
+    }
 
   enterAudioZone(entity: Entity) {
     const spec = entity.get(AudioZone);
     console.log("Entered audio zone:", spec.zone);
     entity.add(AudioZoneEntered, { zone: spec.zone });
+
+    worldManager.dispatch({ id: "rejoinAudioVideo", zone: spec.zone });
   }
 
   leaveAudioZone(entity: Entity) {
     console.log("Left audio zone:", entity.get(AudioZone).zone);
     entity.remove(AudioZoneEntered);
+
+    worldManager.dispatch({ id: "rejoinAudioVideo", zone: null });
   }
 }

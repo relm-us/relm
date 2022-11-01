@@ -44,6 +44,7 @@ export type State = {
 
   // audio/video setup
   audioVideoSetupDone?: boolean;
+  avRoom?: string;
   initialAudioDesired?: boolean;
   initialVideoDesired?: boolean;
   preferredDeviceIds: Writable<DeviceIds>;
@@ -129,6 +130,7 @@ export type Message =
       videoDesired?: boolean;
       preferredDeviceIds?: DeviceIds;
     }
+  | { id: "rejoinAudioVideo"; zone: string | null }
   | { id: "didJoinAudioVideo"; avDisconnect: Function }
   | { id: "setUpAvatar" }
   | { id: "didSetUpAvatar"; appearance?: Appearance }

@@ -203,11 +203,13 @@ export function makeProgram(): Program {
           );
         }
 
+        const avRoom = state.permanentDocId;
+
         let nextAction = joinAudioVideo(
           state.participants.get(participantId),
           state.avConnection,
           state.avDisconnect,
-          state.permanentDocId,
+          avRoom,
           state.twilioToken
         );
 
@@ -221,11 +223,31 @@ export function makeProgram(): Program {
           nextAction = null;
         }
 
-        return [state, nextAction];
+        return [{ ...state, avRoom }, nextAction];
       }
 
       case "participantLeft": {
         return [state];
+      }
+
+      case "rejoinAudioVideo": {
+        const avRoom = msg.zone
+          ? `${state.permanentDocId}-${msg.zone}`
+          : state.permanentDocId;
+
+        let nextAction = joinAudioVideo(
+          state.participants.get(participantId),
+          state.avConnection,
+          state.avDisconnect,
+          avRoom,
+          state.twilioToken
+        );
+
+        if (AV_ENABLED === false) {
+          nextAction = null;
+        }
+
+        return [{ ...state, avRoom }, nextAction];
       }
 
       case "didJoinAudioVideo": {
