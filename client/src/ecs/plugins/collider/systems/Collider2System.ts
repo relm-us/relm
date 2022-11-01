@@ -198,6 +198,9 @@ export class Collider2System extends System {
       .setRotation(rotation.multiply(collider.rotation))
       .setDensity(MathUtils.clamp(collider.density, 0, 1000))
       .setFriction(collider.friction)
+      .setSensor(behavior.isSensor)
+      // .setActiveEvents(behavior.isSensor ? 1 : 3)
+      // .setActiveHooks(behavior.isSensor ? 1 : 3)
       .setCollisionGroups(behavior.interaction);
 
     return world.createCollider(colliderDesc, body);

@@ -25,11 +25,13 @@ enum RigidBodyType {
 export type Behavior = {
   interaction: number;
   bodyType: number;
+  isSensor: boolean;
 };
 
 export class Collider2 extends Component {
   // Kinds of colliders:
   // - ETHEREAL: Immobile; never collides
+  // - SENSOR: Immobile; never collides, but acts as a sensor that can trigger other effects
   // - BARRIER: Immobile; will only collide with player in play mode
   // - GROUND: Immobile; will always collide with player (even in build mode)
   // - DYNAMIC: Can be moved via physics simulation; will only collide with player in play mode
@@ -37,6 +39,7 @@ export class Collider2 extends Component {
   // - AVATAR-BUILD: Dynamic Avatar (Build Mode)
   kind:
     | "ETHEREAL"
+    | "SENSOR"
     | "BARRIER"
     | "GROUND"
     | "DYNAMIC"
@@ -77,6 +80,7 @@ export class Collider2 extends Component {
           { label: "Barrier", value: "BARRIER" },
           { label: "Ground", value: "GROUND" },
           { label: "Interactive", value: "DYNAMIC" },
+          { label: "Sensor", value: "SENSOR" },
         ],
       },
     },
@@ -150,37 +154,53 @@ export class Collider2 extends Component {
   get behavior(): Behavior {
     switch (this.kind) {
       case "ETHEREAL":
-        return { interaction: NO_INTERACTION, bodyType: RigidBodyType.Fixed };
+        return {
+          interaction: NO_INTERACTION,
+          bodyType: RigidBodyType.Fixed,
+          isSensor: false,
+        };
+      case "SENSOR":
+        return {
+          interaction: OBJECT_INTERACTION,
+          bodyType: RigidBodyType.Fixed,
+          isSensor: true,
+        };
       case "BARRIER":
         return {
           interaction: OBJECT_INTERACTION,
           bodyType: RigidBodyType.Fixed,
+          isSensor: false,
         };
       case "GROUND":
         return {
           interaction: GROUND_INTERACTION,
           bodyType: RigidBodyType.Fixed,
+          isSensor: false,
         };
       case "DYNAMIC":
         return {
           interaction: OBJECT_INTERACTION,
           bodyType: RigidBodyType.Dynamic,
+          isSensor: false,
         };
       case "AVATAR-PLAY":
         return {
           interaction: AVATAR_INTERACTION,
           bodyType: RigidBodyType.Dynamic,
+          isSensor: false,
         };
       case "AVATAR-BUILD": {
         return {
           interaction: AVATAR_BUILDER_INTERACTION,
           bodyType: RigidBodyType.Dynamic,
+          isSensor: false,
         };
       }
       case "AVATAR-OTHER": {
         return {
           interaction: AVATAR_INTERACTION,
           bodyType: RigidBodyType.KinematicPositionBased,
+          isSensor: false,
         };
       }
       default:

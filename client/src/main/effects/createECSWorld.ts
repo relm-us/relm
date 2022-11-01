@@ -11,6 +11,7 @@ import PerspectivePlugin from "~/ecs/plugins/perspective";
 
 import AnimationPlugin from "~/ecs/plugins/animation";
 import AssetPlugin from "~/ecs/plugins/asset";
+import AudioZonePlugin from "~/ecs/plugins/audiozone";
 import BloomPlugin from "~/ecs/plugins/bloom";
 import BoneAttachPlugin from "~/ecs/plugins/bone-attach";
 import BoneTwistPlugin from "~/ecs/plugins/bone-twist";
@@ -69,6 +70,7 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       /* others */
       AnimationPlugin,
       AssetPlugin,
+      AudioZonePlugin,
       BloomPlugin,
       BoneAttachPlugin,
       BoneTwistPlugin,

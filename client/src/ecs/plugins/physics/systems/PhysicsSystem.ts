@@ -75,14 +75,14 @@ export class PhysicsSystem extends System {
     // do this here, rather than in a separate system, because the Physics
     // System is happening faster than the regular loop.
     eventQueue.drainCollisionEvents(
-      (handle1: number, handle2: number, contactStarted: boolean) => {
+      (handle1: number, handle2: number, started: boolean) => {
         const entity1 = this.physics.colliders.get(handle1);
         const entity2 = this.physics.colliders.get(handle2);
 
-        if (contactStarted) {
-          entity1.add(Impact, { other: entity2 });
-          entity2.add(Impact, { other: entity1 });
-        }
+        // if (contactStarted) {
+        entity1.add(Impact, { other: entity2, started });
+        entity2.add(Impact, { other: entity1, started });
+        // }
       }
     );
   }

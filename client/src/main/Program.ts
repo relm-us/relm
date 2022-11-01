@@ -228,6 +228,10 @@ export function makeProgram(): Program {
         return [state];
       }
 
+      case "didJoinAudioVideo": {
+        return [{ ...state, avDisconnect: msg.avDisconnect }];
+      }
+
       // Update local participant's IdentityData and send to other participants
       case "updateLocalIdentityData": {
         const localParticipant = state.participants.get(participantId);
@@ -433,10 +437,6 @@ export function makeProgram(): Program {
         }
 
         return [newState, Cmd.batch(effects)];
-      }
-
-      case "didJoinAudioVideo": {
-        return [{ ...state, avDisconnect: msg.avDisconnect }];
       }
 
       case "setUpAvatar": {

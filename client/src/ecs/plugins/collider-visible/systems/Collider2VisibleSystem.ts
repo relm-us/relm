@@ -1,7 +1,10 @@
 import { BufferGeometry, Mesh, Object3D, Vector3 } from "three";
 import { System, Groups, Not, Modified } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
-import { colliderMaterial } from "~/ecs/shared/colliderMaterial";
+import {
+  colliderMaterial,
+  sensorMaterial,
+} from "~/ecs/shared/colliderMaterial";
 import { shapeParamsToGeometry, toShapeParams } from "~/ecs/shared/createShape";
 
 import { Collider2 } from "~/ecs/plugins/collider";
@@ -80,7 +83,11 @@ export class Collider2VisibleSystem extends System {
       0.04
     );
 
-    const mesh = new Mesh(geometry, colliderMaterial.clone());
+    const material = collider.behavior.isSensor
+      ? sensorMaterial
+      : colliderMaterial;
+
+    const mesh = new Mesh(geometry, material.clone());
     mesh.quaternion.copy(collider.rotation);
 
     object3d.add(mesh);
