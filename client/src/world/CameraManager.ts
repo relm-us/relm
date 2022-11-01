@@ -260,6 +260,11 @@ export class CameraManager {
       .add(this.pan);
   }
 
+  rotate(dir: number) {
+    this.direction.y = dir;
+    this.setModeRotate(dir);
+  }
+
   rotateLeft90() {
     this.setModeRotate(this.direction.y === 0 ? Math.PI / 2 : 0);
   }

@@ -214,10 +214,10 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
       worldManager.selection.clear(true);
       worldManager.selection.addEntityIds(contained);
     } else if (pointerState === "drag-camera") {
-      worldManager.camera.setModeRotate();
       const dist = pointerStartPosition.x - pointerPosition.x;
-      worldManager.camera.direction.y =
-        cameraStartDirection.y + dist / CAMERA_ROTATE_RATE;
+      worldManager.camera.rotate(
+        cameraStartDirection.y + dist / CAMERA_ROTATE_RATE
+      );
     }
   } else if ($mode === "play" && !isControllingAvatar) {
     if (pointerState === "interactive-click" && atLeastMinDragDistance()) {
