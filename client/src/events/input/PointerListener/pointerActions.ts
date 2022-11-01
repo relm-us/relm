@@ -116,14 +116,13 @@ export function onPointerUp() {
   }
 
   const $mode = get(worldUIMode);
-
-  if ($mode === "build") {
+  if (pointerState === "drag-camera") {
+    worldManager.camera.setModeFollow();
+  } else if ($mode === "build") {
     if (pointerState === "click") {
       selectionLogic.mouseup(worldManager.selection);
     } else if (pointerState === "drag") {
       worldManager.selection.syncEntities();
-    } else if (pointerState === "drag-camera") {
-      worldManager.camera.setModeFollow();
     }
   } else if ($mode === "play") {
     if (
@@ -170,13 +169,18 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
 
   mouse.set(finder._normalizedCoord);
 
-  if ($mode === "build") {
+  if (pointerState === "click" && get(dragAction) === "rotate") {
+    cameraStartDirection.copy(worldManager.camera.direction);
+    setNextPointerState("drag-camera");
+  } else if (pointerState === "drag-camera") {
+    const dist = pointerStartPosition.x - pointerPosition.x;
+    worldManager.camera.rotate(
+      cameraStartDirection.y + dist / CAMERA_ROTATE_RATE
+    );
+  } else if ($mode === "build") {
     if (pointerState === "click" && atLeastMinDragDistance()) {
       // drag  mode start
-      if (get(dragAction) === "rotate") {
-        cameraStartDirection.copy(worldManager.camera.direction);
-        setNextPointerState("drag-camera");
-      } else if (worldManager.selection.length > 0 && pointerPoint) {
+      if (worldManager.selection.length > 0 && pointerPoint) {
         setNextPointerState("drag");
         worldManager.selection.savePositions();
         worldManager.dragPlane.setOrientation(shiftKeyOnClick ? "XY" : "XZ");
@@ -213,11 +217,6 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
 
       worldManager.selection.clear(true);
       worldManager.selection.addEntityIds(contained);
-    } else if (pointerState === "drag-camera") {
-      const dist = pointerStartPosition.x - pointerPosition.x;
-      worldManager.camera.rotate(
-        cameraStartDirection.y + dist / CAMERA_ROTATE_RATE
-      );
     }
   } else if ($mode === "play" && !isControllingAvatar) {
     if (pointerState === "interactive-click" && atLeastMinDragDistance()) {

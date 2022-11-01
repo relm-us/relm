@@ -323,6 +323,9 @@ export class WorldManager {
             );
             this.camera.dampening = CAMERA_BUILD_DAMPENING;
 
+            // Build mode ground-dragging default action
+            dragAction.set("pan");
+
             break;
           case "play":
             this.world.systems.get(InteractorSystem).active = true;
@@ -337,6 +340,9 @@ export class WorldManager {
             // Reset camera direction to "north"
             this.camera.direction.y = 0;
             this.camera.setModeFollow();
+
+            // Play mode ground-dragging default action
+            dragAction.set("pan");
 
             // Center the avatar on camera
             this.camera.center();
