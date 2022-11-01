@@ -1,0 +1,3 @@
+The code I'm contributing is mine, and I have the right to license it.
+I grant Relm.US Inc. a license to distribute said code under the terms of this agreement, under any license as Relm.US Inc. sees fit.
+Kent Bull
