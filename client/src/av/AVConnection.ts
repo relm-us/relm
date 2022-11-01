@@ -1,4 +1,4 @@
-import { writable, Writable } from "svelte/store";
+import { get, writable, Writable } from "svelte/store";
 
 import { localAudioTrack as localAudioTrackStore } from "~/ui/VideoMirror";
 import { localVisualTrackStore } from "./localVisualTrackStore";
@@ -45,6 +45,17 @@ export class AVConnection {
     await this.adapter.connect(roomId, token, { displayName });
     this.watchLocalTrackChanges();
     this.watchRemoteTrackChanges();
+
+    this.adapter.on("disconnected", () => {
+      for (let participantId in this.audioTrackStores) {
+        // `.set` only exists on remote 'writable' stores
+        this.audioTrackStores[participantId].set?.(null);
+      }
+      for (let participantId in this.videoTrackStores) {
+        // `.set` only exists on remote 'writable' stores
+        this.videoTrackStores[participantId].set?.(null);
+      }
+    });
 
     this.connectedStore.set(true);
 

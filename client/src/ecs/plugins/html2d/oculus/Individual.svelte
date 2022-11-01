@@ -20,18 +20,14 @@
   export let videoTrack = null;
   export let diameter: number = null;
   export let cuts: Cut[] = null;
-
-  // TODO: Restore proximity audio
-  //
-  // style="--background-image:url({shineImg}); --oculus-size: {(
-  //   volume * 100
-  // ).toFixed(3)}%"
 </script>
 
 <container style="--background-image:url({shineImg})">
   {#if videoTrack}
     <Oculus {color} {diameter} {cuts} on:click>
-      <Video track={videoTrack} {mirror} />
+      {#if videoTrack}
+        <Video track={videoTrack} {mirror} />
+      {/if}
     </Oculus>
   {/if}
   <NameTag {name} {color} {editable} on:change />

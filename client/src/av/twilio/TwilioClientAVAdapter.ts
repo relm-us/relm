@@ -72,6 +72,7 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
     );
 
     this.room.on("disconnected", (room, error) => {
+      this.emit("disconnected");
       if (logEnabled) console.log("AV disconnected", error);
     });
 
@@ -98,8 +99,6 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
   }
 
   _participantConnected(participant: RemoteParticipant) {
-    const participantId = participant.identity;
-
     this.emit("participant-added", {
       id: participant.identity,
       isDominant: false,

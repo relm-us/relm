@@ -5,7 +5,7 @@ import type {
   ConnectOptions,
   ConnectStatus,
   BandwidthEstimate,
-  SimplifiedTrack
+  SimplifiedTrack,
 } from "./types";
 
 interface AVAdapterEvents {
@@ -19,6 +19,8 @@ interface AVAdapterEvents {
 
   "bandwidth-estimate": (estimate: BandwidthEstimate) => void;
   "status-updated": (status: ConnectStatus) => void;
+
+  "disconnected": () => void;
 }
 
 export class UnimplementedError extends Error {
