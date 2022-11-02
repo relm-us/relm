@@ -1,4 +1,4 @@
-import { PerspectiveCamera } from "three";
+import { OrthographicCamera, PerspectiveCamera } from "three";
 
 import { World } from "~/ecs/base";
 
@@ -53,6 +53,8 @@ import { Dispatch } from "../ProgramTypes";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import { registerComponentMigrations } from "./registerComponentMigrations";
 
+const orthoTest = localStorage.getItem("ortho");
+
 export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
   const ecsWorld = new World({
     getTime: performance.now.bind(performance),
@@ -60,7 +62,9 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       CorePlugin({
         renderer: createRenderer(),
         scene: createScene(),
-        camera: new PerspectiveCamera(35, 1, 0.1, 200),
+        camera: orthoTest
+          ? new OrthographicCamera(-5, 5, 5, -5, 0.1, 200)
+          : new PerspectiveCamera(35, 1, 0.1, 200),
       }),
       PhysicsPlugin({
         // Pass the physics engine in to the plugin
