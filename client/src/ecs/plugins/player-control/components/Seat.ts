@@ -1,12 +1,13 @@
 import { Vector3, Quaternion } from "three";
 
-import { Component, NumberType } from "~/ecs/base";
+import { Component, NumberType, StringType } from "~/ecs/base";
 import { QuaternionType, Vector3Type } from "~/ecs/plugins/core";
 
 export class Seat extends Component {
   offset: Vector3;
   forward: Quaternion;
   swivel: number;
+  zone: string;
 
   // temp tracker, indicates if this seat is occupied
   seated: boolean;
@@ -33,6 +34,14 @@ export class Seat extends Component {
       default: null,
       editor: {
         label: "Swivel Range (deg)",
+      },
+    },
+
+    zone: {
+      type: StringType,
+      default: "",
+      editor: {
+        label: "Audio Zone",
       },
     },
   };

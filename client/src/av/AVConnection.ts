@@ -108,6 +108,15 @@ export class AVConnection {
         }
       }
     });
+
+    this.adapter.on("resources-removed", (resourceIds: string[]) => {
+      console.log("removed AV resources", resourceIds);
+    });
+
+    this.adapter.on("participant-removed", (participantId: string) => {
+      this.audioTrackStores[participantId].set?.(null);
+      this.videoTrackStores[participantId].set?.(null);
+    });
   }
 
   // Finds or creates an audio track associated with a remote participant

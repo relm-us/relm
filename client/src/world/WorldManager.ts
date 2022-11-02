@@ -438,6 +438,13 @@ export class WorldManager {
 
                 seat.seated = true;
 
+                if (seat.zone !== "") {
+                  this.dispatch({
+                    id: "rejoinAudioVideo",
+                    zone: seat.zone,
+                  });
+                }
+
                 this.participants.setAction({
                   state: "sit-chair",
                   seat,
@@ -470,8 +477,18 @@ export class WorldManager {
 
             case "sit-chair": {
               if ($key1 || $key2 || $key3 || $keySpace) {
-                (this.participants.local.actionState as any).seat.seated =
-                  false;
+                const seat: Seat = (this.participants.local.actionState as any)
+                  .seat;
+
+                seat.seated = false;
+
+                if (seat.zone !== "") {
+                  this.dispatch({
+                    id: "rejoinAudioVideo",
+                    zone: null,
+                  });
+                }
+
                 this.participants.setAction({ state: "free" });
               }
               break;
