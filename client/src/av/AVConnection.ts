@@ -25,7 +25,10 @@ export class AVConnection {
   adapter: ClientAVAdapter;
   audioTrackStores: Record<string, Writable<Track>>;
   videoTrackStores: Record<string, Writable<Track>>;
-  connectedStore: Writable<boolean> = writable(false);
+
+  // Keep track of what room we are currently connected to; helps
+  // avoid dup identity err https://www.twilio.com/docs/api/errors/532050
+  connected: string = null;
 
   constructor(participantId) {
     this.participantId = participantId;
@@ -40,6 +43,11 @@ export class AVConnection {
   }
 
   async connect({ roomId, token, displayName }: AVConnectOpts) {
+    if (this.connected === roomId) {
+      console.warn("Not joining AV: already connected", roomId);
+      return;
+    }
+
     if (logEnabled) console.log("Joining video conference room", this);
 
     await this.adapter.connect(roomId, token, { displayName });
@@ -47,17 +55,17 @@ export class AVConnection {
     this.watchRemoteTrackChanges();
 
     this.adapter.on("disconnected", () => {
-      for (let participantId in this.audioTrackStores) {
-        // `.set` only exists on remote 'writable' stores
+      this.connected = null;
+
+      // `.set` only exists on remote 'writable' stores, so this avoids setting
+      // localTrack stores to null
+      for (let participantId in this.audioTrackStores)
         this.audioTrackStores[participantId].set?.(null);
-      }
-      for (let participantId in this.videoTrackStores) {
-        // `.set` only exists on remote 'writable' stores
+      for (let participantId in this.videoTrackStores)
         this.videoTrackStores[participantId].set?.(null);
-      }
     });
 
-    this.connectedStore.set(true);
+    this.connected = roomId;
 
     return async () => {
       await this.adapter.disconnect();
@@ -65,13 +73,12 @@ export class AVConnection {
   }
 
   async disconnect() {
-    console.log("Leaving video conference room", this);
+    if (logEnabled) console.log("Leaving video conference room", this);
     try {
       await this.adapter.disconnect();
     } catch (err) {
       console.log("Unable to disconnect from video conference", err);
     }
-    this.connectedStore.set(false);
   }
 
   // Reactively waits for local participant's stream changes (e.g. if they
@@ -110,7 +117,7 @@ export class AVConnection {
     });
 
     this.adapter.on("resources-removed", (resourceIds: string[]) => {
-      console.log("removed AV resources", resourceIds);
+      if (logEnabled) console.log("removed AV resources", resourceIds);
     });
 
     this.adapter.on("participant-removed", (participantId: string) => {

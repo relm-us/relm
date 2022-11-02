@@ -333,7 +333,7 @@ export class ParticipantManager {
   }
 
   deinitParticipant(participant: Participant) {
-    if (participant.avatar) {
+    if (participant?.avatar) {
       Object.values(participant.avatar.entities).forEach((entity) =>
         entity?.destroy()
       );
