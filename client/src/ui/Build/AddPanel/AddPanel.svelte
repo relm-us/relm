@@ -5,6 +5,8 @@
   import IoIosArrowBack from "svelte-icons/io/IoIosArrowBack.svelte";
 
   import { createPrefab } from "~/prefab";
+  import { makeThing } from "~/prefab/makeThing";
+  import { makeHDImage } from "~/prefab/makeHDImage";
 
   import SidePanel, { Header } from "~/ui/lib/SidePanel";
   import Search from "~/ui/lib/Search";
@@ -61,9 +63,13 @@
           width = maxSide * result.aspect;
         }
 
-        createPrefab("Image", { url: result.types.webp, w: width, h: height });
+        createPrefab(makeHDImage, {
+          url: result.types.webp,
+          w: width,
+          h: height,
+        });
       } else if (result.types.gltf) {
-        createPrefab("Thing", { url: result.types.gltf });
+        createPrefab(makeThing, { url: result.types.gltf });
       }
     }
   };

@@ -3,7 +3,7 @@ import type { DecoratedECSWorld, Participant } from "~/types";
 import { EntityId } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
 import { RelmRestAPI } from "~/main/RelmRestAPI";
-import { createPrefab } from "~/prefab";
+import { createPrefabByName } from "~/prefab";
 import { inFrontOf } from "~/utils/inFrontOf";
 
 import { worldManager } from "~/world";
@@ -118,7 +118,11 @@ export class Inventory {
         // Make the item in front of the avatar
         const transform = this.participant.avatar.transform;
         const position = inFrontOf(transform.position, transform.rotation);
-        createPrefab(name, { x: position.x, y: position.y, z: position.z });
+        createPrefabByName(name, {
+          x: position.x,
+          y: position.y,
+          z: position.z,
+        });
       }
     }
   }
