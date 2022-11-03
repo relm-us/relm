@@ -10,8 +10,4 @@ export class Distance extends LocalComponent {
       },
     },
   };
-
-  static editor = {
-    label: "Distance",
-  };
 }
