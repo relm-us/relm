@@ -311,8 +311,8 @@ export class WorldManager {
       worldUIMode.subscribe(($mode) => {
         switch ($mode) {
           case "build":
+            this.enableInteraction(false);
             this.hoverOutline(null);
-            this.world.systems.get(InteractorSystem).active = false;
 
             // Always turn advanced edit off when entering build mode
             advancedEdit.set(false);
@@ -328,7 +328,7 @@ export class WorldManager {
 
             break;
           case "play":
-            this.world.systems.get(InteractorSystem).active = true;
+            this.enableInteraction(true);
             this.hideTransformControls();
 
             this.camera.setZoomRange(
@@ -403,8 +403,8 @@ export class WorldManager {
       ).subscribe(({ buildMode, overrideInvisible }) => {
         this.avatar.enableCanFly(buildMode);
         this.avatar.enableNonInteractive(buildMode);
-        this.avatar.enableInteractor(!buildMode);
 
+        this.enableInteraction(!buildMode);
         this.enableCollidersVisible(buildMode);
 
         const buildModeShift = buildMode && overrideInvisible;
@@ -454,6 +454,8 @@ export class WorldManager {
                   seat,
                   position,
                 });
+
+                this.enableInteraction(false);
               }
               break;
             }
@@ -481,6 +483,8 @@ export class WorldManager {
 
             case "sit-chair": {
               if ($key1 || $key2 || $key3 || $keySpace) {
+                this.enableInteraction(true);
+
                 const seat: Seat = (this.participants.local.actionState as any)
                   .seat;
 
@@ -627,6 +631,14 @@ export class WorldManager {
     const spec = this.light.getByName("DirectionalLight");
     spec.shadow = enabled;
     spec.modified();
+  }
+
+  enableInteraction(enabled = true) {
+    const system = this.world.systems.get(InteractorSystem) as InteractorSystem;
+    system.active = enabled;
+    if (!enabled) {
+      system.deselect();
+    }
   }
 
   hoverOutline(found: Entity) {

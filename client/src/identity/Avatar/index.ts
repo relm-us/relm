@@ -1,10 +1,6 @@
 import { Vector3 } from "three";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
-import {
-  AVATAR_BUILDER_INTERACTION,
-  AVATAR_INTERACTION,
-} from "~/config/colliderInteractions";
 import { AvatarEntities } from "~/types";
 
 import { Transform } from "~/ecs/plugins/core";
@@ -92,16 +88,6 @@ export class Avatar {
       this.entities.body.add(NonInteractive);
     } else {
       this.entities.body.maybeRemove(NonInteractive);
-    }
-  }
-
-  enableInteractor(enabled = true) {
-    const system = this.ecsWorld.systems.get(
-      InteractorSystem
-    ) as InteractorSystem;
-    system.active = enabled;
-    if (!enabled) {
-      system.deselect();
     }
   }
 }

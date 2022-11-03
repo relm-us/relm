@@ -10,9 +10,5 @@ export function isInteractive(entity: Entity) {
 
 export function isInteractiveNearby(entity: Entity) {
   if (!entity) return false;
-  return (
-    entity.has(Item) ||
-    (entity.has(Seat) && !entity.get(Seat).seated) ||
-    entity.has(Clickable)
-  );
+  return entity.has(Item) || entity.has(Seat) || entity.has(Clickable);
 }
