@@ -52,6 +52,6 @@ export function createPrefabByName(name, props = {}) {
   if (!prefab) {
     console.error(`Prefab not found: '${name}'`);
   } else {
-    createPrefab(prefab, props);
+    createPrefab(prefab.make, props);
   }
 }

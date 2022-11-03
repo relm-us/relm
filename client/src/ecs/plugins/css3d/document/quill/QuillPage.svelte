@@ -166,9 +166,6 @@
   r-document-wrapper :global(.ql-toolbar) {
     border-color: var(--bg-color-dark, #ccc) !important;
   }
-  r-document-wrapper :global(.ql-editor) {
-    padding: 12px 15px 4px 15px;
-  }
 
   r-document-wrapper.centered {
     justify-content: center;
