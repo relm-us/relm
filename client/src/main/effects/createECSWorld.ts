@@ -53,7 +53,9 @@ import { Dispatch } from "../ProgramTypes";
 import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import { registerComponentMigrations } from "./registerComponentMigrations";
 
-const orthoTest = localStorage.getItem("ortho");
+const ortho = localStorage.getItem("ortho")
+  ? JSON.parse(localStorage.getItem("ortho"))
+  : null;
 
 export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
   const ecsWorld = new World({
@@ -62,8 +64,15 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       CorePlugin({
         renderer: createRenderer(),
         scene: createScene(),
-        camera: orthoTest
-          ? new OrthographicCamera(-5, 5, 5, -5, 0.1, 200)
+        camera: ortho
+          ? new OrthographicCamera(
+              -ortho.width / 2,
+              ortho.width / 2,
+              ortho.height / 2,
+              -ortho.height / 2,
+              0.1,
+              200
+            )
           : new PerspectiveCamera(35, 1, 0.1, 200),
       }),
       PhysicsPlugin({

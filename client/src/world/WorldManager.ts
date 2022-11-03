@@ -342,7 +342,11 @@ export class WorldManager {
             this.camera.setModeFollow();
 
             // Play mode ground-dragging default action
-            dragAction.set("pan");
+            dragAction.set(
+              localStorage.getItem("defaultDrag") === "rotate"
+                ? "rotate"
+                : "pan"
+            );
 
             // Center the avatar on camera
             this.camera.center();
