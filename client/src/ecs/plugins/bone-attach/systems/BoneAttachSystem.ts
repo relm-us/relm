@@ -12,7 +12,7 @@ export class BoneAttachSystem extends System {
 
   static queries = {
     added: [BoneAttach, Model2Ref, Not(BoneAttachRef), Not(BoneAttachError)],
-    modified: [Modified(BoneAttach)],
+    modified: [Modified(BoneAttach), Model2Ref],
     removed: [Not(BoneAttach), BoneAttachRef],
   };
 
