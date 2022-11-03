@@ -1,4 +1,10 @@
-import { Component, StringType, BooleanType, JSONType } from "~/ecs/base";
+import {
+  Component,
+  StringType,
+  BooleanType,
+  JSONType,
+  RefType,
+} from "~/ecs/base";
 
 export class Document extends Component {
   docId: string;
@@ -7,12 +13,23 @@ export class Document extends Component {
   editable: boolean;
   simpleMode: boolean;
 
+  emptyFormat: Record<string, string>;
+  placeholder: string;
+
   static props = {
     docId: {
       type: StringType,
       default: "doc1",
       editor: {
         label: "Document ID",
+      },
+    },
+
+    placeholder: {
+      type: StringType,
+      default: "Start collaborating...",
+      editor: {
+        label: "Placeholder",
       },
     },
 
@@ -46,6 +63,15 @@ export class Document extends Component {
       default: false,
       editor: {
         label: "Simple Mode",
+      },
+    },
+
+    // An array of QuillJS formatting that will be applied whenever the doc is empty
+    emptyFormat: {
+      type: JSONType,
+      default: null,
+      editor: {
+        label: "Default Formatting",
       },
     },
   };

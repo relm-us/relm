@@ -3,6 +3,7 @@ import { makeBall } from "./makeBall";
 import { makeBox } from "./makeBox";
 import { makeDiamond } from "./makeDiamond";
 import { makeRock } from "./makeRock";
+import { makeStickyNote } from "./makeStickyNote";
 import { makeTv } from "./makeTv";
 import { makeWebBox } from "./makeWebBox";
 import { makeWhiteboard } from "./makeWhiteboard";

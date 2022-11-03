@@ -14,6 +14,8 @@
   export let bgColor: string;
   export let editable: boolean;
   export let simpleMode: boolean;
+  export let emptyFormat: Record<string, string> | null;
+  export let placeholder: string;
 
   export let visible: boolean;
   export let kind: string;
@@ -87,6 +89,9 @@
     cursors={simpleMode}
     centered={simpleMode}
     showToolbar={false}
+    {emptyFormat}
+    {placeholder}
+    autoSizeFont={simpleMode}
   >
     {#if $worldUIMode === "play" && !simpleMode}
       <QuillOverlay

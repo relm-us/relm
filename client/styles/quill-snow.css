@@ -40,6 +40,7 @@
   text-align: left;
   white-space: pre-wrap;
   word-wrap: break-word;
+  color: #212121;
 }
 .ql-editor > * {
   cursor: text;
@@ -393,6 +394,7 @@
   pointer-events: none;
   position: absolute;
   right: 15px;
+  text-align: center;
 }
 .ql-snow.ql-toolbar:after,
 .ql-snow .ql-toolbar:after {

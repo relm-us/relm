@@ -33,7 +33,13 @@ Quill.register(Size, true);
 export function quillInit(
   container,
   toolbar,
-  { cursors = true, readOnly = false, bounds = container }
+  {
+    cursors = true,
+    readOnly = false,
+    bounds = container,
+    emptyFormat = null,
+    placeholder = null,
+  }
 ): Quill {
   const modules = {
     cursors,
@@ -65,13 +71,34 @@ export function quillInit(
   }
   const editor = new Quill(container, {
     modules,
-    placeholder: "Start collaborating...",
-    theme: "snow", // or 'bubble'
+    placeholder,
+    theme: "snow",
     bounds,
     readOnly,
   });
 
+  if (emptyFormat) {
+    editor.on("editor-change", (changeType, to, from) => {
+      const isBlank = editor.getText() === "\n";
+      if (!isBlank) return;
+
+      if (changeType === "selection-change" && from === null && isBlank) {
+        applyFormats(editor, emptyFormat);
+      } else if (changeType === "text-change") {
+        applyFormats(editor, emptyFormat);
+      }
+    });
+  }
+
   return editor;
+}
+
+// Set the "current" formatting for the quill editor
+// e.g. "size", "36px"; "font", "quicksand"; "color", "#000000"
+function applyFormats(editor: Quill, formats: Record<string, string>) {
+  for (let [key, value] of Object.entries(formats)) {
+    editor.format(key, value);
+  }
 }
 
 // Bind Quill to a yjs document, and return an unbind function
@@ -79,11 +106,8 @@ export function quillBind(docId: string, editor: Quill) {
   let binding;
 
   worldManager.afterInit(() => {
-    binding = new QuillBinding(
-      worldManager.worldDoc.getDocument(docId),
-      editor,
-      worldManager.broker.slow
-    );
+    const ytext = worldManager.worldDoc.getDocument(docId);
+    binding = new QuillBinding(ytext, editor, worldManager.broker.slow);
   });
 
   return () => {
