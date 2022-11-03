@@ -69,11 +69,13 @@
     }
     bind(docId, showToolbar && toolbar ? toolbar : false);
 
-    (window as any).edt = editor;
-    (window as any).tbr = toolbar;
     if (autoSizeFont) {
       if (resizeObserver) resizeObserver.disconnect();
       resizeObserver = new ResizeObserver(() => {
+        // Oddly, `editor.getFormat()` grabs focus, so make sure we already have focus before
+        // proceeding, or else this Document will grab focus from the participant
+        if (!editor.hasFocus()) return;
+
         const size = getCurrentFontSize();
         if (isOverflown(container?.firstChild)) {
           editor.formatText(0, editor.getLength(), {
@@ -100,7 +102,6 @@
 
   function filterClick(event) {
     if (event.target === wrapper) {
-      editor.focus();
       dispatch("pageclick", event);
     }
   }

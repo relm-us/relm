@@ -83,6 +83,7 @@
 {#if visible}
   <QuillPage
     {docId}
+    {placeholder}
     {bgColor}
     bind:editor
     readOnly={!simpleMode}
@@ -90,8 +91,8 @@
     centered={simpleMode}
     showToolbar={false}
     {emptyFormat}
-    {placeholder}
     autoSizeFont={simpleMode}
+    on:pageclick={() => editor.focus()}
   >
     {#if $worldUIMode === "play" && !simpleMode}
       <QuillOverlay
@@ -112,6 +113,7 @@
   <DocumentFullwindow
     on:close={deactivate}
     docId={fullwindowDocId}
+    {placeholder}
     {editable}
     {bgColor}
     {kind}

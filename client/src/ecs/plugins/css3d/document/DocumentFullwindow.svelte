@@ -7,6 +7,7 @@
   import QuillPage from "./quill/QuillPage.svelte";
 
   export let docId: string;
+  export let placeholder: string;
   export let bgColor: string;
   export let editable: boolean;
   export let kind: string;
@@ -31,6 +32,7 @@
     >
       <QuillPage
         {docId}
+        {placeholder}
         {bgColor}
         bind:editor
         bind:toolbar

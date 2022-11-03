@@ -455,6 +455,8 @@ export class WorldManager {
                   position,
                 });
 
+                // Don't let participants seat-hop or interact with other objects nearby;
+                // spacebar should always let them dismount
                 this.enableInteraction(false);
               }
               break;

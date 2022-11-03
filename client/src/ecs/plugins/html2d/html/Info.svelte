@@ -70,7 +70,6 @@
   }
 
   function focus(el) {
-    console.log("focus", el);
     setTimeout(() => {
       el.focus();
       el.select();
