@@ -38,9 +38,10 @@
     display: block;
   }
   textarea {
-    width: 228px;
+    width: calc(100% - 8px);
     margin: 8px 0;
     overflow-wrap: anywhere;
+    resize: vertical;
   }
   .fixed-width {
     font-family: monospace;
