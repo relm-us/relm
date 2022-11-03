@@ -21,6 +21,7 @@ export function makeHDImage(
     ya = -Math.PI / 16,
     za = 0,
     url = "",
+    collide = false,
   }
 ) {
   const thing = makeEntity(world, "Image")
@@ -28,10 +29,22 @@ export function makeHDImage(
       position: new Vector3(x, y + h / 2, z),
       rotation: new Quaternion().setFromEuler(new Euler(xa, ya, za)),
     })
-    .add(Asset, {
-      asset: new Asset(url),
+    .add(CssPlane, {
+      circleRadius: 0.075,
+      rectangleSize: new Vector2(w, h),
     })
-    .add(Image, {});
+    .add(Draggable)
+    .add(HdImage, {
+      asset: new Asset(url),
+    });
+
+  if (collide) {
+    thing.add(Collider2, {
+      kind: "DYNAMIC",
+      shape: "BOX",
+      size: new Vector3(w, h, d),
+    });
+  }
 
   return thing;
 }

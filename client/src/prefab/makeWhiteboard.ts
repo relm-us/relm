@@ -1,7 +1,7 @@
+import { nanoid } from "nanoid";
 import { Vector3, Vector2, Color } from "three";
 
 import { CssPlane, Document } from "~/ecs/plugins/css3d";
-import { uuidv4 } from "~/utils/uuid";
 
 import { makeBox } from "./makeBox";
 
@@ -19,7 +19,7 @@ export function makeWhiteboard(world, { x = 0, y = 0, z = 0, color = "gray" }) {
     name: "Whiteboard",
   })
     .add(Document, {
-      docId: uuidv4(), // make a unique whiteboard each time
+      docId: nanoid(10), // make a unique whiteboard each time
       editable: true,
       bgColor: "#efefef",
     })

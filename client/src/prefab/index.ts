@@ -1,15 +1,9 @@
 // Regular construction set
 import { makeBall } from "./makeBall";
 import { makeBox } from "./makeBox";
-import { makeCard } from "./makeCard";
 import { makeDiamond } from "./makeDiamond";
-import { makeGround } from "./makeGround";
-import { makeImage } from "./makeImage";
-import { makeLabel } from "./makeLabel";
 import { makeRock } from "./makeRock";
-import { makeThing } from "./makeThing";
 import { makeTv } from "./makeTv";
-import { makeWall } from "./makeWall";
 import { makeWebBox } from "./makeWebBox";
 import { makeWhiteboard } from "./makeWhiteboard";
 
@@ -18,16 +12,11 @@ import { worldManager } from "~/world";
 export const directory = [
   { name: "Ball", make: makeBall },
   { name: "Box", make: makeBox },
-  { name: "Card", make: makeCard },
   { name: "Diamond", make: makeDiamond },
-  { name: "Ground", make: makeGround },
   { name: "Rock", make: makeRock },
-  { name: "Image", make: makeImage },
-  { name: "Thing", make: makeThing },
-  { name: "Label", make: makeLabel },
-  { name: "Wall", make: makeWall },
+  { name: "Sticky Note", make: makeStickyNote },
   { name: "Whiteboard", make: makeWhiteboard },
-  { name: "Web Page", make: makeWebBox },
+  { name: "Webview", make: makeWebBox },
   { name: "Television", make: makeTv },
 ];
 
