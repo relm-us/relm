@@ -8,10 +8,11 @@
   export let range = [0, 1];
   export let constrain = (value) => value;
 
+  const dispatch = createEventDispatcher();
+
   let container;
   let offset;
   let positionAsRatio;
-  let dispatch = createEventDispatcher();
 
   $: positionAsRatio = value / (range[1] - range[0]) + range[0];
 
@@ -61,7 +62,7 @@
 
   function onDragEnd() {
     document.body.style.cursor = "";
-    dispatch("end");
+    dispatch("end", value);
   }
 
   function onClick(event) {
@@ -70,6 +71,7 @@
   }
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <r-slider on:click={onClick}>
   <r-container bind:this={container}>
     <Rail>

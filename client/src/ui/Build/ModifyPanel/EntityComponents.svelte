@@ -89,7 +89,7 @@
   {#each primaryComponents as Component (Component)}
     <ComponentPane
       {Component}
-      component={entity.components.get(Component)}
+      {entity}
       on:destroy={() => destroyComponent(entity, Component)}
       on:modified={saveEntity(entity)}
     />
@@ -112,7 +112,7 @@
       {#each secondaryComponents as Component (Component)}
         <ComponentPane
           {Component}
-          component={entity.components.get(Component)}
+          {entity}
           on:destroy={() => destroyComponent(entity, Component)}
           on:modified={saveEntity(entity)}
         />

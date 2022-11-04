@@ -1,7 +1,11 @@
 <script lang="ts">
+  import type { Entity } from "~/ecs/base";
+  import type { Component, ComponentProperty } from "~/ecs/base/Component";
+
   import AssetType from "./types/AssetType.svelte";
   import BooleanType from "./types/BooleanType.svelte";
   import ColorType from "./types/ColorType.svelte";
+  import FaceMapColorsType from "./types/FaceMapColorsType.svelte";
   import JSONType from "./types/JSONType.svelte";
   import MiscType from "./types/MiscType.svelte";
   import NumberType from "./types/NumberType.svelte";
@@ -11,9 +15,10 @@
   import StringType from "./types/StringType.svelte";
   import Vector3Type from "./types/Vector3Type.svelte";
 
-  export let key;
-  export let component;
-  export let prop;
+  export let key: string;
+  export let component: Component;
+  export let prop: ComponentProperty;
+  export let entity: Entity = null;
   export let attrs = {};
 
   const Type = getTypeComponent(prop.editor?.input || prop.type.name);
@@ -28,6 +33,8 @@
         return ColorType;
       case "Entity":
         return StringType;
+      case "FaceMapColors":
+        return FaceMapColorsType;
       case "JSON":
         return JSONType;
       case "Number":
@@ -58,6 +65,7 @@
       {key}
       {component}
       {prop}
+      {entity}
       {attrs}
       on:modified
     />

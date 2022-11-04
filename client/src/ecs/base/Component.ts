@@ -19,15 +19,11 @@ export type StaticProperty = {};
 
 export type TypeOfComponent = typeof Component;
 
-// export type ComponentClass = typeof Component & {
-//   props: Properties;
-//   editor?: { label: string };
-// };
-export interface ComponentClass {
+export type ComponentClass = typeof Component & {
   new (): Component;
   props: Properties;
-  editor?: { label: string };
-}
+  editor?: { label: string; description: string };
+};
 
 export class Component {
   name: string;

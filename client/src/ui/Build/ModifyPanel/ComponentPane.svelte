@@ -1,4 +1,7 @@
 <script lang="ts">
+  import type { Entity } from "~/ecs/base";
+  import type { ComponentClass } from "~/ecs/base/Component";
+
   import { onMount } from "svelte";
   import { createEventDispatcher } from "svelte";
 
@@ -6,8 +9,11 @@
 
   import Property from "./Property.svelte";
 
-  export let Component;
-  export let component;
+  export let Component: ComponentClass;
+  export let entity: Entity;
+
+  let component;
+  $: component = entity.components.get(Component);
 
   const dispatch = createEventDispatcher();
 
@@ -81,6 +87,7 @@
         {key}
         {component}
         {prop}
+        {entity}
         attrs={propAttrs(prop)}
         on:modified={onModified}
       />

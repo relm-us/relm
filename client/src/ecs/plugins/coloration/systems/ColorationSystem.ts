@@ -3,6 +3,7 @@ import { Color, BufferAttribute, Mesh } from "three";
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
 import { Model2Ref } from "~/ecs/plugins/form";
 import { FaceMapColors, ColorApplied } from "../components";
+import { getFacemapNames } from "../getFacemapNames";
 
 export class ColorationSystem extends System {
   order = Groups.Simulation + 1;
@@ -91,16 +92,6 @@ export class ColorationSystem extends System {
         (node as Mesh).geometry = (node as Mesh).geometry.clone();
       }
     });
-  }
-}
-
-function getFacemapNames(node) {
-  if ("facemaps" in node.userData) {
-    return node.userData["facemaps"];
-  } else if (node.parent) {
-    return getFacemapNames(node.parent);
-  } else {
-    return null;
   }
 }
 
