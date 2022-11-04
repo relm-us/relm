@@ -110,7 +110,7 @@ export class Shape2System extends System {
       (mesh.value.material as MeshStandardMaterial).map = null;
     }
 
-    entity.remove(Shape2Texture);
+    entity.maybeRemove(Shape2Texture);
   }
 
   attach(entity: Entity) {
