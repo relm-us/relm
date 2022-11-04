@@ -7,17 +7,12 @@
   import ColorPicker from "~/ui/lib/ColorPicker";
   import { Model2Ref } from "~/ecs/plugins/form";
   import { getFacemapNames } from "~/ecs/plugins/coloration/getFacemapNames";
-  import { getAll } from "@tweenjs/tween.js";
   import Slider from "~/ui/lib/Slider";
 
   export let key: string;
   export let component: Component;
   export let entity: Entity;
   export let prop;
-
-  (window as any).key1 = key;
-  (window as any).component1 = component;
-  (window as any).entity1 = entity;
 
   const dispatch = createEventDispatcher();
 
