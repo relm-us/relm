@@ -17,7 +17,7 @@ export const directory = [
   { name: "Rock", make: makeRock },
   { name: "Sticky Note", make: makeStickyNote },
   { name: "Whiteboard", make: makeWhiteboard },
-  { name: "Webview", make: makeWebBox },
+  { name: "Web Page", make: makeWebBox },
   { name: "Television", make: makeTv },
 ];
 

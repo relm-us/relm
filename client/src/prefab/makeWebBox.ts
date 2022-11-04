@@ -12,7 +12,7 @@ export function makeWebBox(
     z = 0,
     w = 3.2,
     h = 3.2,
-    d = 0.6,
+    d = 0.15,
     yOffset = 0,
     url = "https://google.com?igu=1",
     color = "gray",
