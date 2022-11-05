@@ -1,5 +1,5 @@
 import {
-  PlaneBufferGeometry,
+  PlaneGeometry,
   MeshStandardMaterial,
   Mesh,
   DoubleSide,
@@ -118,7 +118,7 @@ export class ImageSystem extends System {
   }
 
   buildMesh(size: { width: number; height: number }) {
-    const geometry = new PlaneBufferGeometry(size.width, size.height);
+    const geometry = new PlaneGeometry(size.width, size.height);
     const material = new MeshStandardMaterial({
       roughness: 0.8,
       metalness: 0,

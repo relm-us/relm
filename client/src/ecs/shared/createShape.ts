@@ -4,9 +4,9 @@ import {
   Vector3,
   BufferGeometry,
   CapsuleGeometry,
-  BoxBufferGeometry,
-  SphereBufferGeometry,
-  CylinderBufferGeometry,
+  BoxGeometry,
+  SphereGeometry,
+  CylinderGeometry,
   MathUtils,
 } from "three";
 
@@ -105,21 +105,21 @@ export function shapeParamsToGeometry(
 ): BufferGeometry {
   switch (shape.type) {
     case "BOX":
-      return new BoxBufferGeometry(
+      return new BoxGeometry(
         shape.size.x + padding * 2,
         shape.size.y + padding * 2,
         shape.size.z + padding * 2
       );
 
     case "SPHERE":
-      return new SphereBufferGeometry(
+      return new SphereGeometry(
         shape.diameter / 2 + padding,
         shape.widthSegments,
         shape.heightSegments
       );
 
     case "CYLINDER":
-      return new CylinderBufferGeometry(
+      return new CylinderGeometry(
         shape.diameter / 2 + padding,
         shape.diameter / 2 + padding,
         shape.height + padding * 2,

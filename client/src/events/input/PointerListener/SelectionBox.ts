@@ -4,7 +4,7 @@ import {
   Box3,
   Object3D,
   Mesh,
-  BoxBufferGeometry,
+  BoxGeometry,
   MeshStandardMaterial,
   Color,
 } from "three";
@@ -33,7 +33,7 @@ export class SelectionBox {
 
   constructor(world: DecoratedECSWorld) {
     this.world = world;
-    const geometry = new BoxBufferGeometry(1, 1, 1);
+    const geometry = new BoxGeometry(1, 1, 1);
     const material = new MeshStandardMaterial({
       transparent: true,
       opacity: 0.4,
@@ -105,7 +105,7 @@ export class SelectionBox {
   applyRange() {
     const size = new Vector3();
     this.box.getSize(size);
-    const geometry = new BoxBufferGeometry(size.x, size.y, size.z);
+    const geometry = new BoxGeometry(size.x, size.y, size.z);
     this.object.position.copy(this.center);
     this.object.geometry = geometry;
   }

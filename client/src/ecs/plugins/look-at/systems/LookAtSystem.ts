@@ -78,8 +78,8 @@ export class LookAtSystem extends System {
     const parent = entity.getParent();
     if (parent) {
       m1.extractRotation(parent.get(Transform).matrix);
-      q1.setFromRotationMatrix(m1);
-      transform.rotation.premultiply(q1.inverse());
+      q1.setFromRotationMatrix(m1).invert();
+      transform.rotation.premultiply(q1);
     }
 
     if (lookAt.oneShot) {
