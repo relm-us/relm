@@ -71,7 +71,6 @@ export class CameraSystem extends System {
           transform.position,
           transform.rotation,
           this.frustumShape,
-          0xffffffff,
           (collider: Collider) => {
             const entity = this.physics.colliders.get(collider.handle);
 

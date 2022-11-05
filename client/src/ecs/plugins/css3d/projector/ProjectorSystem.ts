@@ -61,7 +61,6 @@ export class ProjectorSystem extends RenderableBaseSystem {
           transform.position,
           transform.rotation,
           shape,
-          0xffffffff,
           (collider: Collider) => {
             const entity = this.physics.colliders.get(collider.handle);
 

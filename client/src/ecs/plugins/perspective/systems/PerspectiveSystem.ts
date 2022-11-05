@@ -1,3 +1,4 @@
+import { Ray, RayColliderIntersection } from "@dimforge/rapier3d";
 import { Vector3 } from "three";
 
 import { difference } from "~/utils/setOps";
@@ -9,7 +10,6 @@ import { TranslucentApplied } from "~/ecs/plugins/translucent";
 
 import { Perspective } from "../Perspective";
 import { Physics } from "../../physics";
-import { Ray, RayColliderIntersection } from "@dimforge/rapier3d";
 
 const vDir = new Vector3();
 const entitiesBetween: Set<Entity> = new Set();
@@ -69,7 +69,6 @@ export class PerspectiveSystem extends System {
       ray,
       distance,
       false,
-      0xffffffff,
       (intersect: RayColliderIntersection) => {
         const entity = this.physics.colliders.get(intersect.collider.handle);
         entitiesBetween.add(entity);

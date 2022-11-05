@@ -34,7 +34,6 @@ export function intersectionPointWithGround(
     rayDown,
     MAX_GROUND_TOI,
     true, // treat origin, if inside shape, as hollow
-    AVATAR_INTERACTION,
     (isect) => {
       if (maxToi === null || isect.toi < maxToi) {
         vec.copy(rayDown.dir as Vector3).multiplyScalar(isect.toi);
@@ -46,7 +45,9 @@ export function intersectionPointWithGround(
         // Keep looking for ground
         return true;
       }
-    }
+    },
+    null,
+    AVATAR_INTERACTION
   );
 
   return contactBelow;

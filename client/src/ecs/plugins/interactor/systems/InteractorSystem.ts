@@ -61,7 +61,6 @@ export class InteractorSystem extends System {
         probeCenter,
         NO_ROTATION,
         this.probe,
-        0xffffffff,
         (collider: Collider) => {
           const entity = this.physics.colliders.get(collider.handle);
           if (!entity.parent && isInteractiveNearby(entity)) {
