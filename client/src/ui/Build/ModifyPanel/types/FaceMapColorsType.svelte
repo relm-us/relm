@@ -8,6 +8,7 @@
   import { Model2Ref } from "~/ecs/plugins/form";
   import { getFacemapNames } from "~/ecs/plugins/coloration/getFacemapNames";
   import Slider from "~/ui/lib/Slider";
+  import NumberInput from "./utils/NumberInput.svelte";
 
   export let key: string;
   export let component: Component;
@@ -16,7 +17,7 @@
 
   const dispatch = createEventDispatcher();
 
-  function getAllFacemapNames(): string[] {
+  function getAllFacemapNames(entity): string[] {
     const ref: Model2Ref = entity.get(Model2Ref);
     const scene = ref?.value?.scene;
     if (!scene) return [];
@@ -59,27 +60,35 @@
       dispatch("modified");
     };
 
-  const getFacemapWeight = (name: string): number => {
+  const getFacemapWeight = (component, name: string): number => {
     const pair = component[key][name];
     if (pair) return pair[1];
     else return 0;
   };
 
-  const setFacemapWeight =
+  function setFacemapWeight(name: string, weight: number, finalize: boolean) {
+    if (!(name in component[key])) {
+      component[key][name] = ["#FFFFFF", weight];
+    } else {
+      component[key][name][1] = weight;
+    }
+
+    // Notify ECS system
+    component.modified();
+
+    // Dispatch a message that will sync yjs
+    if (finalize) dispatch("modified");
+  }
+
+  const setFacemapWeightNumberInput =
+    (name: string) =>
+    ({ detail }) =>
+      setFacemapWeight(name, detail.value, detail.final);
+
+  const setFacemapWeightSlider =
     (name: string, finalize: boolean) =>
-    ({ detail: weight }) => {
-      if (!(name in component[key])) {
-        component[key][name] = ["#FFFFFF", weight];
-      } else {
-        component[key][name][1] = weight;
-      }
-
-      // Notify ECS system
-      component.modified();
-
-      // Dispatch a message that will sync yjs
-      if (finalize) dispatch("modified");
-    };
+    ({ detail: weight }) =>
+      setFacemapWeight(name, weight, finalize);
 
   let value;
   $: {
@@ -95,17 +104,21 @@
   <r-label>{(prop.editor && prop.editor.label) || key}:</r-label>
 
   <r-list>
-    {#each getAllFacemapNames() as name}
+    {#each getAllFacemapNames(entity) as name}
       <r-row>
         <r-line1>
           <div>{name}</div>
         </r-line1>
         <r-line2>
-          <div style="width: 100%">
+          <NumberInput
+            value={getFacemapWeight(component, name)}
+            on:value={setFacemapWeightNumberInput(name)}
+          />
+          <div style="width: 100%; padding: 0 6px">
             <Slider
-              value={getFacemapWeight(name)}
-              on:change={setFacemapWeight(name, false)}
-              on:end={setFacemapWeight(name, true)}
+              value={getFacemapWeight(component, name)}
+              on:change={setFacemapWeightSlider(name, false)}
+              on:end={setFacemapWeightSlider(name, true)}
             />
           </div>
           <ColorPicker
