@@ -1,9 +1,6 @@
 import { LocalVideoTrack } from "twilio-video";
 
-export async function createScreenTrack(
-  height = 720,
-  width = 1280
-): Promise<LocalVideoTrack> {
+export async function createScreenTrack(): Promise<LocalVideoTrack> {
   if (
     typeof navigator === "undefined" ||
     !navigator.mediaDevices ||
@@ -13,10 +10,7 @@ export async function createScreenTrack(
   }
 
   const stream = await navigator.mediaDevices.getDisplayMedia({
-    video: {
-      height: height,
-      width: width,
-    },
+    video: true,
     // TODO: create a merge stream so we can do karaoke :)
     audio: false,
   });

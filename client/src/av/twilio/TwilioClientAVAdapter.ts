@@ -40,7 +40,7 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
       // Available only in Small Group or Group Rooms only. Please set "Room Type"
       // to "Group" or "Small Group" in your Twilio Console:
       // https://www.twilio.com/console/video/configure
-      // dominantSpeaker: true,
+      dominantSpeaker: false,
 
       // Comment this line if you are playing music.
       // maxAudioBitrate: 16000,
@@ -49,7 +49,12 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
       // to adapt your encoded video quality for each RemoteParticipant based on
       // their individual bandwidth constraints. This has no utility if you are
       // using Peer-to-Peer Rooms, so you can comment this line.
-      // preferredVideoCodecs: "auto",
+      // preferredVideoCodecs: [
+      //   {
+      //     codec: "VP8",
+      //     simulcast: true,
+      //   },
+      // ],
 
       // We'll add audio and video tracks manually from local(*)TrackStore
       audio: false,
@@ -158,7 +163,10 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
     this.emit("resources-removed", [publication.trackSid]);
   }
 
-  publishLocalTracks(tracks: Array<MediaStreamTrack>) {
+  publishLocalTracks(
+    tracks: Array<MediaStreamTrack>,
+    priority: "low" | "standard" | "high" = "standard"
+  ) {
     if (this.room.state !== "connected") {
       console.warn("TwilioClient not publishing local tracks; not connected");
       return;
@@ -175,7 +183,7 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
         localParticipant.unpublishTracks(prevTracks);
       }
 
-      localParticipant.publishTrack(track);
+      localParticipant.publishTrack(track, { priority });
     }
   }
 

@@ -10,6 +10,8 @@ export const localVisualTrackStore: Readable<
   [localShareTrackStore, localVideoTrackStore],
   ([$localShareTrack, $localVideoTrack], set) => {
     if ($localShareTrack) {
+      // TODO: make a type-safe way to pass the priority to publishLocalTracks
+      ($localShareTrack as any).priority = "high";
       set($localShareTrack);
     } else {
       if ($localShareTrack) $localShareTrack.stop();

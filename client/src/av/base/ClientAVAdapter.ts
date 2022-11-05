@@ -29,7 +29,6 @@ export class UnimplementedError extends Error {
   }
 }
 
-// prettier-ignore
 export class ClientAVAdapter extends TypedEmitter<AVAdapterEvents> {
   origin: string;
 
@@ -37,20 +36,39 @@ export class ClientAVAdapter extends TypedEmitter<AVAdapterEvents> {
     roomId: string,
     identityOrToken: string, // may be token, may be username, depends on service
     options: ConnectOptions = {}
-  ) { throw new UnimplementedError(); }
+  ) {
+    throw new UnimplementedError();
+  }
 
-  async disconnect() { throw new UnimplementedError(); }
+  async disconnect() {
+    throw new UnimplementedError();
+  }
 
-  enableMic() { throw new UnimplementedError(); }
-  disableMic(pause: boolean = false) { throw new UnimplementedError(); }
+  enableMic() {
+    throw new UnimplementedError();
+  }
+  disableMic(pause: boolean = false) {
+    throw new UnimplementedError();
+  }
 
-  enableCam() { throw new UnimplementedError(); }
-  disableCam(pause: boolean = false) { throw new UnimplementedError(); }
+  enableCam() {
+    throw new UnimplementedError();
+  }
+  disableCam(pause: boolean = false) {
+    throw new UnimplementedError();
+  }
 
-  enableShare() { throw new UnimplementedError(); }
-  disableShare(pause: boolean = false) { throw new UnimplementedError(); }
+  enableShare() {
+    throw new UnimplementedError();
+  }
+  disableShare(pause: boolean = false) {
+    throw new UnimplementedError();
+  }
 
-  publishLocalTracks(tracks: Array<MediaStreamTrack | SimplifiedTrack>) {
+  publishLocalTracks(
+    tracks: Array<MediaStreamTrack | SimplifiedTrack>,
+    priority: "low" | "standard" | "high" = "standard"
+  ) {
     throw new UnimplementedError();
   }
   unpublishLocalTracks(tracks: Array<MediaStreamTrack | SimplifiedTrack>) {
