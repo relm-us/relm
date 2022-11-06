@@ -5,8 +5,6 @@ import type {
   RigidBodyDesc,
 } from "@dimforge/rapier3d";
 
-import type { DecoratedECSWorld } from "~/types";
-
 import { Object3D, MathUtils, Box3, Quaternion, Vector3 } from "three";
 
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
@@ -136,7 +134,7 @@ export class Collider2System extends System {
     }
 
     const body = this.createRigidBody(entity, spec.behavior);
-    this.physics.bodies.set(body.handle, entity);
+    this.physics.addBody(body, entity);
 
     const collider = this.createCollider(
       spec,
@@ -145,7 +143,7 @@ export class Collider2System extends System {
       offset,
       spec.behavior
     );
-    this.physics.colliders.set(collider.handle, entity);
+    this.physics.addCollider(collider, entity);
 
     entity.add(Collider2Ref, { body, collider, size: spec.size });
   }
@@ -203,16 +201,10 @@ export class Collider2System extends System {
   }
 
   remove(entity) {
-    const { world } = (this.world as DecoratedECSWorld).physics;
     const ref: Collider2Ref = entity.get(Collider2Ref);
 
-    world.removeCollider(ref.collider, false);
-    this.physics.colliders.delete(ref.collider.handle);
-
-    if (ref.body) {
-      world.removeRigidBody(ref.body);
-      this.physics.bodies.delete(ref.body.handle);
-    }
+    if (ref.collider) this.physics.removeCollider(ref.collider);
+    if (ref.body) this.physics.removeBody(ref.body);
 
     entity.remove(Collider2Ref);
     entity.maybeRemove(Collider2Implicit);

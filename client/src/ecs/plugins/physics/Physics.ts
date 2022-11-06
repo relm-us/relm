@@ -1,5 +1,8 @@
 import type {
+  Collider,
   EventQueue,
+  RigidBody,
+  RigidBodyDesc,
   Vector3,
   World as RapierWorld,
 } from "@dimforge/rapier3d";
@@ -31,6 +34,24 @@ export class Physics {
 
     this.colliders = new Map();
     this.bodies = new Map();
+  }
+
+  addBody(body: RigidBody, entity: Entity) {
+    this.bodies.set(body.handle, entity);
+  }
+
+  removeBody(body: RigidBody) {
+    this.world.removeRigidBody(body);
+    this.bodies.delete(body.handle);
+  }
+
+  addCollider(collider: Collider, entity: Entity) {
+    this.colliders.set(collider.handle, entity);
+  }
+
+  removeCollider(collider: Collider) {
+    this.world.removeCollider(collider, false);
+    this.colliders.delete(collider.handle);
   }
 
   deinit() {
