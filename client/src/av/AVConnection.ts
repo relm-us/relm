@@ -88,17 +88,21 @@ export class AVConnection {
     // Whenever local audio source or settings change, update the adapter
     localAudioTrackStore.subscribe((track: MediaStreamTrack) => {
       if (logEnabled) console.log("localAudioTrackStore changed", track);
-      track.applyConstraints({ height: 720, width: 1280, frameRate: 24 });
-      this.adapter.publishLocalTracks([track]);
+      if (track) {
+        track.applyConstraints({ height: 720, width: 1280, frameRate: 24 });
+        this.adapter.publishLocalTracks([track]);
+      }
     });
 
     // Whenever local video/screenshare source or settings change, update the adapter
     localVisualTrackStore.subscribe((track) => {
       if (logEnabled) console.log("localVisualTrackStore changed", track);
-      this.adapter.publishLocalTracks(
-        [track],
-        (track as any).priority ?? "standard"
-      );
+      if (track) {
+        this.adapter.publishLocalTracks(
+          [track],
+          (track as any).priority ?? "standard"
+        );
+      }
     });
   }
 
