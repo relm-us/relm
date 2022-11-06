@@ -69,6 +69,7 @@ export class Collider2System extends System {
     this.queries.implicitToExplicit.forEach((entity) => {
       entity.remove(Collider2Implicit);
       entity.maybeRemove(Collider2Ref);
+      this.build(entity);
     });
 
     this.queries.added.forEach((entity) => {
@@ -104,17 +105,14 @@ export class Collider2System extends System {
       ref.body.setTranslation(transform.position, true);
       ref.body.setRotation(transform.rotation, true);
 
-      // TODO: Why does this happen EVERY loop? Slows things down.
-
-      // if (entity.has(Collider2Implicit)) {
-      //   // When scaling an object that has an implicit collider, we need to
-      //   // re-calculate the size of the implicit collider
-      //   if (!ref.size.equals(transform.scale)) {
-      //     this.remove(entity);
-      //     entity.add(Collider2Implicit);
-      //     this.build(entity);
-      //   }
-      // }
+      // When scaling an object that has an implicit collider, we need to
+      // re-calculate the size of the implicit collider
+      const implicit: Collider2Implicit = entity.get(Collider2Implicit);
+      if (!ref.size.equals(implicit.size)) {
+        this.remove(entity);
+        entity.add(Collider2Implicit, { size: ref.size });
+        this.build(entity);
+      }
     });
   }
 
@@ -199,8 +197,6 @@ export class Collider2System extends System {
       .setDensity(MathUtils.clamp(collider.density, 0, 1000))
       .setFriction(collider.friction)
       .setSensor(behavior.isSensor)
-      // .setActiveEvents(behavior.isSensor ? 1 : 3)
-      // .setActiveHooks(behavior.isSensor ? 1 : 3)
       .setCollisionGroups(behavior.interaction);
 
     return world.createCollider(colliderDesc, body);
