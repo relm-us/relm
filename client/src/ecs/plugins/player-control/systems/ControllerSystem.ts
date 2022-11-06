@@ -156,11 +156,13 @@ export class ControllerSystem extends System {
         newFriction = 0.01;
       }
 
-      const collider: Collider2 = entity.get(Collider2);
-      if (collider.friction !== newFriction) {
-        collider.friction = newFriction;
-        collider.modified();
-      }
+      // TODO: fix: collider.friction is never equal to newFriction
+
+      // const collider: Collider2 = entity.get(Collider2);
+      // if (collider.friction !== newFriction) {
+      //   collider.friction = newFriction;
+      //   collider.modified();
+      // }
 
       const anim: Animation = entity.get(Animation);
       if (anim) {
