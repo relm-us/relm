@@ -5,7 +5,7 @@ import { Presentation } from "~/ecs/plugins/core";
 import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
 
 import { BoneTwist, BoneTwistError, BoneTwistRef } from "../components";
-import { Model2Ref } from "~/ecs/plugins/form";
+import { Model2Ref } from "~/ecs/plugins/model";
 
 const vUp = new Vector3(0, 1, 0);
 const vOrigin = new Vector3(0, 0, 0);

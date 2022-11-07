@@ -4,7 +4,7 @@ import { Vector3 } from "three";
 
 import { Collider2 } from "~/ecs/plugins/collider";
 import { Asset as AssetComp } from "~/ecs/plugins/asset";
-import { Model2 } from "~/ecs/plugins/form";
+import { Model2 } from "~/ecs/plugins/model";
 
 import { makeEntity } from "./makeEntity";
 

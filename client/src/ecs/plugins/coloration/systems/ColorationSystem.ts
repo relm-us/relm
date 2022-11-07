@@ -1,7 +1,7 @@
 import { Color, BufferAttribute, Mesh } from "three";
 
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
-import { Model2Ref } from "~/ecs/plugins/form";
+import { Model2Ref } from "~/ecs/plugins/model";
 import { FaceMapColors, ColorApplied } from "../components";
 import { getFacemapNames } from "../getFacemapNames";
 

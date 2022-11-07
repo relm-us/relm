@@ -1,5 +1,5 @@
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
-import { Model2Ref } from "~/ecs/plugins/form";
+import { Model2Ref } from "~/ecs/plugins/model";
 import { Morph, MorphApplied } from "../components";
 
 export class MorphSystem extends System {

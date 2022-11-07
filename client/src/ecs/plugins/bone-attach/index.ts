@@ -1,6 +1,6 @@
 import { createPlugin } from "~/ecs/base";
 import CorePlugin from "~/ecs/plugins/core";
-import FormPlugin from "~/ecs/plugins/form";
+import ModelPlugin from "~/ecs/plugins/model";
 
 import * as Components from "./components";
 import * as Systems from "./systems";
@@ -11,7 +11,7 @@ export { Components };
 
 export default createPlugin({
   name: "bone-attach",
-  plugins: [CorePlugin, FormPlugin],
+  plugins: [CorePlugin, ModelPlugin],
   systems: Object.values(Systems),
   components: Object.values(Components),
 });

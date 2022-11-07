@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 
 import { Entity } from "~/ecs/base";
 import { Asset, Transform } from "~/ecs/plugins/core";
-import { Model2 } from "~/ecs/plugins/form";
+import { Model2 } from "~/ecs/plugins/model";
 import { Asset as AssetComp } from "~/ecs/plugins/asset";
 import { Html2d } from "~/ecs/plugins/html2d";
 

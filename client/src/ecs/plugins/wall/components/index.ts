@@ -1,4 +1,4 @@
 export { Wall } from "./Wall";
-export { WallMesh } from "./WallMesh";
+export { WallMeshRef } from "./WallMeshRef";
 export { WallColliderRef } from "./WallColliderRef";
 export { WallVisible } from "./WallVisible";

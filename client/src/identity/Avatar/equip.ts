@@ -11,7 +11,7 @@ import { Entity } from "~/ecs/base";
 import { makeEntity } from "~/prefab/makeEntity";
 import { Asset, Transform } from "~/ecs/plugins/core";
 import { Asset as AssetComp } from "~/ecs/plugins/asset";
-import { Model2 } from "~/ecs/plugins/form";
+import { Model2 } from "~/ecs/plugins/model";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
 import { makeBox } from "~/prefab/makeBox";
 import { AlwaysOnStage } from "~/ecs/plugins/camera";

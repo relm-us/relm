@@ -1,6 +1,9 @@
-import { LocalComponent, RefType } from "~/ecs/base";
+import { Collider } from "@dimforge/rapier3d";
+import { RefType, StateComponent } from "~/ecs/base";
 
-export class WallColliderRef extends LocalComponent {
+export class WallColliderRef extends StateComponent {
+  value: Collider;
+
   static props = {
     value: {
       type: RefType,

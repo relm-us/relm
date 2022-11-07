@@ -5,9 +5,11 @@
   import { createEventDispatcher } from "svelte";
 
   import ColorPicker from "~/ui/lib/ColorPicker";
-  import { Model2Ref } from "~/ecs/plugins/form";
-  import { getFacemapNames } from "~/ecs/plugins/coloration/getFacemapNames";
   import Slider from "~/ui/lib/Slider";
+
+  import { Model2Ref } from "~/ecs/plugins/model";
+  import { getFacemapNames } from "~/ecs/plugins/coloration/getFacemapNames";
+
   import NumberInput from "./utils/NumberInput.svelte";
 
   export let key: string;

@@ -1,7 +1,8 @@
 <script lang="ts">
   import type { Component, Entity } from "~/ecs/base";
 
-  import { Model2Ref } from "~/ecs/plugins/form";
+  import { Model2Ref } from "~/ecs/plugins/model";
+
   import SelectType from "./SelectType.svelte";
 
   export let key: string;

@@ -1,7 +1,7 @@
 import { AnimationMixer, LoopOnce } from "three";
 
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
-import { Model2Ref } from "~/ecs/plugins/form";
+import { Model2Ref } from "~/ecs/plugins/model";
 
 import { Animation, MixerRef } from "../components";
 

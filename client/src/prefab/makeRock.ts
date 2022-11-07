@@ -4,7 +4,7 @@ import { Vector3, Quaternion, Euler } from "three";
 
 import { makeEntity } from "./makeEntity";
 import { Asset as AssetComp } from "~/ecs/plugins/asset";
-import { Model2 } from "~/ecs/plugins/form";
+import { Model2 } from "~/ecs/plugins/model";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
 import { pickOne } from "~/utils/pickOne";
 import { Html2d } from "~/ecs/plugins/html2d";

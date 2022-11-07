@@ -11,19 +11,19 @@ import { colliderMaterial } from "~/ecs/shared/colliderMaterial";
 import { worldUIMode } from "~/stores/worldUIMode";
 import { isBrowser } from "~/utils/isBrowser";
 
-import { Wall, WallMesh, WallColliderRef, WallVisible } from "../components";
+import { Wall, WallMeshRef, WallColliderRef, WallVisible } from "../components";
 import { WallGeometry, wallGeometryData } from "../WallGeometry";
 export class WallSystem extends System {
   active = isBrowser();
   order = Groups.Initialization;
 
   static queries = {
-    added: [Object3DRef, Wall, Not(WallMesh)],
+    added: [Object3DRef, Wall, Not(WallMeshRef)],
     // needsCollider: [Wall, RigidBodyRef, Not(WallColliderRef)],
-    modified: [Object3DRef, Modified(Wall), WallMesh],
+    modified: [Object3DRef, Modified(Wall), WallMeshRef],
     modifiedTransform: [WallColliderRef, Modified(Transform)],
-    removedObj: [Not(Object3DRef), WallMesh],
-    removed: [Object3DRef, Not(Wall), WallMesh],
+    removedObj: [Not(Object3DRef), WallMeshRef],
+    removed: [Object3DRef, Not(Wall), WallMeshRef],
 
     needsVisible: [Wall, Not(WallVisible)],
     needsHidden: [WallVisible],
@@ -47,11 +47,11 @@ export class WallSystem extends System {
     //   this.buildCollider(entity);
     // });
     this.queries.removedObj.forEach((entity) => {
-      const mesh = entity.get(WallMesh).value;
+      const mesh = entity.get(WallMeshRef).value;
       mesh.parent.remove(mesh);
       mesh.geometry.dispose();
       mesh.material.dispose();
-      entity.remove(WallMesh);
+      entity.remove(WallMeshRef);
     });
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
@@ -108,18 +108,18 @@ export class WallSystem extends System {
     // Notify dependencies, e.g. BoundingBox, that object3d has changed
     entity.get(Object3DRef)?.modified();
 
-    entity.add(WallMesh, { value: mesh });
+    entity.add(WallMeshRef, { value: mesh });
   }
 
   remove(entity) {
-    const mesh = entity.get(WallMesh).value;
+    const mesh = entity.get(WallMeshRef).value;
     if (mesh) {
       const object3d: Object3D = entity.get(Object3DRef).value;
       object3d.remove(mesh);
       mesh.geometry.dispose();
       mesh.material.dispose();
 
-      entity.remove(WallMesh);
+      entity.remove(WallMeshRef);
     }
   }
 

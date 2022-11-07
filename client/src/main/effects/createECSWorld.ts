@@ -26,7 +26,6 @@ import DiamondPlugin from "~/ecs/plugins/diamond";
 import DistancePlugin from "~/ecs/plugins/distance";
 import FirePlugin from "~/ecs/plugins/fire";
 import FollowPlugin from "~/ecs/plugins/follow";
-import FormPlugin from "~/ecs/plugins/form";
 import Html2dPlugin from "~/ecs/plugins/html2d";
 import ImagePlugin from "~/ecs/plugins/image";
 import InteractorPlugin from "~/ecs/plugins/interactor";
@@ -34,6 +33,7 @@ import ItemPlugin from "~/ecs/plugins/item";
 import LightingPlugin from "~/ecs/plugins/lighting";
 import LineHelperPlugin from "~/ecs/plugins/line-helper";
 import LookAtPlugin from "~/ecs/plugins/look-at";
+import ModelPlugin from "~/ecs/plugins/model";
 import MorphPlugin from "~/ecs/plugins/morph";
 import NonInteractivePlugin from "~/ecs/plugins/non-interactive";
 import OutlinePlugin from "~/ecs/plugins/outline";
@@ -42,6 +42,7 @@ import PlayerControlPlugin from "~/ecs/plugins/player-control";
 import PointerPositionPlugin from "~/ecs/plugins/pointer-position";
 import PortalPlugin from "~/ecs/plugins/portal";
 import PhysicsPlugin from "~/ecs/plugins/physics";
+import ShapePlugin from "~/ecs/plugins/shape";
 import SkyboxPlugin from "~/ecs/plugins/skybox";
 import SpinPlugin from "~/ecs/plugins/spin";
 import TransformControlsPlugin from "~/ecs/plugins/transform-controls";
@@ -98,7 +99,6 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       DistancePlugin,
       FirePlugin,
       FollowPlugin,
-      FormPlugin,
       Html2dPlugin,
       ImagePlugin,
       InteractorPlugin,
@@ -106,6 +106,7 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       LightingPlugin,
       LineHelperPlugin,
       LookAtPlugin,
+      ModelPlugin,
       MorphPlugin,
       NonInteractivePlugin,
       OutlinePlugin,
@@ -114,6 +115,7 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       PlayerControlPlugin,
       PointerPositionPlugin,
       PortalPlugin,
+      ShapePlugin,
       SkyboxPlugin,
       SpinPlugin,
       TransformControlsPlugin,

@@ -35,7 +35,7 @@ import {
   WAVING,
 } from "~/config/constants";
 import { Oculus } from "~/ecs/plugins/html2d";
-import { Model2 } from "~/ecs/plugins/form";
+import { Model2 } from "~/ecs/plugins/model";
 import { Transform } from "~/ecs/plugins/core";
 import { Collider2 } from "~/ecs/plugins/collider";
 

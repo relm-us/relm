@@ -3,7 +3,7 @@ import { System, Groups, Entity, Not, Modified } from "~/ecs/base";
 import { Object3DRef, Presentation } from "~/ecs/plugins/core";
 
 import { BoneAttach, BoneAttachError, BoneAttachRef } from "../components";
-import { Model2Ref } from "~/ecs/plugins/form";
+import { Model2Ref } from "~/ecs/plugins/model";
 
 export class BoneAttachSystem extends System {
   presentation: Presentation;

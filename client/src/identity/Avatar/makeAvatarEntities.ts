@@ -2,14 +2,18 @@ import { Euler, Quaternion, Vector3 } from "three";
 
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
-import { AVATAR_HEIGHT_UNSCALED, COLLIDER_HEIGHT_STAND, IDLE } from "~/config/constants";
+import {
+  AVATAR_HEIGHT_UNSCALED,
+  COLLIDER_HEIGHT_STAND,
+  IDLE,
+} from "~/config/constants";
 import { AvatarEntities } from "~/types";
 
 import { makeEntity } from "~/prefab/makeEntity";
 
 import { Entity } from "~/ecs/base";
 import { Asset, Transform } from "~/ecs/plugins/core";
-import { Model2 } from "~/ecs/plugins/form";
+import { Model2 } from "~/ecs/plugins/model";
 import { Asset as AssetComp } from "~/ecs/plugins/asset";
 import { PointerPosition } from "~/ecs/plugins/pointer-position";
 import { Impactable } from "~/ecs/plugins/physics";

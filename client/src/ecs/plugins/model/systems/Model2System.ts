@@ -1,14 +1,14 @@
 import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
-import { Mesh, Group, Object3D } from "three";
+import { Group, Object3D } from "three";
 
 import { Entity, System, Not, Modified, Groups, EntityId } from "~/ecs/base";
 import { Object3DRef } from "~/ecs/plugins/core";
 import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 import { clone } from "~/ecs/shared/SkeletonUtils";
+import { makeError } from "~/ecs/shared/makeError";
 
 import { Model2, Model2Ref } from "../components";
-import { makeError } from "~/ecs/shared/makeError";
 
 import { firstTimePrepareScene } from "../utils/firstTimePrepareScene";
 

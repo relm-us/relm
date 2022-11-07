@@ -3,7 +3,7 @@ import type { TransformData, Participant } from "~/types";
 import { Vector3, Euler, AnimationClip } from "three";
 
 import { Transform } from "~/ecs/plugins/core";
-import { Model2, Model2Ref } from "~/ecs/plugins/form";
+import { Model2, Model2Ref } from "~/ecs/plugins/model";
 import { Animation } from "~/ecs/plugins/animation";
 
 import { Avatar } from "../Avatar";
