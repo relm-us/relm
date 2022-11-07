@@ -2,6 +2,7 @@
   import type { Entity } from "~/ecs/base";
   import type { Component, ComponentProperty } from "~/ecs/base/Component";
 
+  import AnimationSelectType from "./types/AnimationSelectType.svelte";
   import AssetType from "./types/AssetType.svelte";
   import BooleanType from "./types/BooleanType.svelte";
   import ColorType from "./types/ColorType.svelte";
@@ -25,6 +26,8 @@
 
   function getTypeComponent(propType) {
     switch (propType) {
+      case "AnimationSelect":
+        return AnimationSelectType;
       case "Asset":
         return AssetType;
       case "Boolean":

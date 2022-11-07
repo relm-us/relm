@@ -164,14 +164,4 @@
   r-line2 {
     display: flex;
   }
-  /* color {
-    display: flex;
-    align-items: center;
-  }
-  color-value {
-    padding-right: 8px;
-    font-family: Consolas, "Liberation Mono", Monaco, "Lucida Console",
-      monospace;
-    font-size: 12px;
-  } */
 </style>

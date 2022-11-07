@@ -1,9 +1,11 @@
 <script lang="ts">
+  import type { Component } from "~/ecs/base";
+
   import { createEventDispatcher } from "svelte";
   import Select from "svelte-select";
 
   export let key: string;
-  export let component;
+  export let component: Component;
   export let prop;
 
   const dispatch = createEventDispatcher();
@@ -17,7 +19,7 @@
     }
   }
 
-  function getLabelForKey(key) {
+  function getLabelForKey(key, prop) {
     return prop.editor.options.find((item) => item.value === component[key]);
   }
 
@@ -32,7 +34,7 @@
   <Select
     isClearable={false}
     items={prop.editor.options}
-    value={getLabelForKey(key)}
+    value={getLabelForKey(key, prop)}
     on:select={onSelect}
   />
 </r-select-type>
