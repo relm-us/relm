@@ -16,12 +16,13 @@ import {
 } from "~/ecs/shared/createShape";
 
 import {
+  Behavior,
   Collider2,
   Collider2Ref,
   Collider2Implicit,
   PhysicsOptions,
+  Collider2Explicit,
 } from "../components";
-import { Behavior } from "../components/Collider2";
 
 const _b3 = new Box3();
 
@@ -46,18 +47,18 @@ export class Collider2System extends System {
     added: [Transform, Collider2, Not(Collider2Ref)],
     modified: [Transform, Modified(Collider2), Collider2Ref],
 
-    // TODO: Since Collider2Ref is not a StateComponent, this `removed` query
-    //       is never used. Collider2Ref must remain a LocalComponent, because
-    //       when CameraSystem deactivates an entity, we need it to go "on ice",
-    //       and not get removed, so that its rapier physics collider remains
-    //       intact. Otherwise, we will never be able to tell when it comes back
-    //       "on stage" and needs to be thawed.
-    // removed: [Not(Collider2), Collider2Ref, Not(Collider2Implicit)],
+    // Since it's required for Collider2Ref to be a LocalComponent (in order
+    // for the on-stage/off-stage magic to work in CameraSystem), we need
+    // another way to detect if a collider is truly removed due to user
+    // interaction or on-stage action. We use Collider2Explicit (a State-
+    // Component) for this purpose.
+    removed: [Not(Collider2), Collider2Explicit, Not(Collider2Implicit)],
 
     addImplicit: [
       Transform,
       Object3DRef,
       Not(Collider2),
+      Not(Collider2Ref),
       Not(Collider2Implicit),
     ],
     modifiedObject: [Transform, Modified(Object3DRef)],
@@ -71,7 +72,7 @@ export class Collider2System extends System {
 
   update() {
     this.queries.added.forEach((entity) => {
-      this.build(entity);
+      this.build(entity, true);
     });
 
     this.queries.modified.forEach((entity) => {
@@ -79,9 +80,14 @@ export class Collider2System extends System {
       this.build(entity);
     });
 
-    // this.queries.removed.forEach((entity) => {
-    //   this.remove(entity);
-    // });
+    this.queries.removed.forEach((entity) => {
+      if (entity.destroying) {
+        const ref: Collider2Explicit = entity.get(Collider2Explicit);
+        if (ref.collider) this.physics.removeCollider(ref.collider);
+        if (ref.body) this.physics.removeBody(ref.body);
+      }
+      entity.remove(Collider2Explicit);
+    });
 
     this.queries.addImplicit.forEach((entity) => {
       entity.add(Collider2Implicit);
@@ -105,7 +111,7 @@ export class Collider2System extends System {
     });
   }
 
-  build(entity: Entity) {
+  build(entity: Entity, explicit: boolean = false) {
     const transform: Transform = entity.get(Transform);
     let spec: Collider2 = entity.get(Collider2);
 
@@ -137,6 +143,9 @@ export class Collider2System extends System {
     this.physics.addCollider(collider, entity);
 
     entity.add(Collider2Ref, { body, collider, size: spec.size });
+
+    if (explicit || entity.has(Collider2Explicit))
+      entity.add(Collider2Explicit, { body, collider });
   }
 
   createRigidBody(entity: Entity, behavior: Behavior): RigidBody {

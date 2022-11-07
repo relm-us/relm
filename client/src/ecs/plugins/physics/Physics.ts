@@ -9,27 +9,29 @@ import type {
 import { World, Entity } from "~/ecs/base";
 
 export class Physics {
+  // The ECS world
+  hecsWorld: World;
+
+  // A late-bound reference to the entire Rapier3d physics library
   rapier: any;
+
+  // The physics engine world
   world: RapierWorld;
-  gravity: Vector3;
 
   // rapier queue of collision/trigger events
   eventQueue: EventQueue;
 
-  // Map from rapier ColliderRef handle to Entity
+  // Map from rapier Collider handle to Entity
   colliders: Map<number, Entity>;
 
-  // Map from rapier RigidBodyRef handle to Entity
+  // Map from rapier RigidBody handle to Entity
   bodies: Map<number, Entity>;
-
-  hecsWorld: World;
 
   constructor(world: World, rapier) {
     this.hecsWorld = world;
 
     this.rapier = rapier;
-    this.gravity = new rapier.Vector3(0.0, -9.81, 0.0);
-    this.world = new rapier.World(this.gravity);
+    this.world = new rapier.World(new rapier.Vector3(0.0, -9.81, 0.0));
     this.eventQueue = new rapier.EventQueue(true);
 
     this.colliders = new Map();
@@ -41,6 +43,8 @@ export class Physics {
   }
 
   removeBody(body: RigidBody) {
+    if (!this.bodies.has(body.handle))
+      console.warn("no body handle", body.handle);
     this.bodies.delete(body.handle);
     this.world.removeRigidBody(body);
   }
@@ -50,6 +54,8 @@ export class Physics {
   }
 
   removeCollider(collider: Collider) {
+    if (!this.colliders.has(collider.handle))
+      console.warn("no collider handle", collider.handle);
     this.colliders.delete(collider.handle);
     this.world.removeCollider(collider, false);
   }
