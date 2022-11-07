@@ -37,9 +37,12 @@
   }
 
   const getFacemapColor = (name: string): string => {
-    const pair = component[key][name];
-    if (pair) return pair[0];
-    else return "#FFFFFF";
+    const facemap = component[key];
+    if (facemap) {
+      const pair = component[key][name];
+      if (pair) return pair[0];
+    }
+    return "#FFFFFF";
   };
 
   const setFacemapColor =
@@ -48,6 +51,9 @@
       const cssColor = detail.indexOf("#") === 0 ? detail.slice(0, 7) : detail;
       const color = new Color(cssColor);
       const newValue = "#" + color.getHexString();
+
+      // initialize if necessary
+      if (component[key] === null) component[key] = {};
 
       if (!(name in component[key])) {
         component[key][name] = [newValue, 0.0];
@@ -62,13 +68,20 @@
       dispatch("modified");
     };
 
-  const getFacemapWeight = (component, name: string): number => {
-    const pair = component[key][name];
-    if (pair) return pair[1];
-    else return 0;
+  const getFacemapWeight = (component: Component, name: string): number => {
+    const facemap = component[key];
+    if (facemap) {
+      const pair = facemap[name];
+      if (pair) return pair[1];
+    }
+
+    return 0;
   };
 
   function setFacemapWeight(name: string, weight: number, finalize: boolean) {
+    // initialize if necessary
+    if (component[key] === null) component[key] = {};
+
     if (!(name in component[key])) {
       component[key][name] = ["#FFFFFF", weight];
     } else {
