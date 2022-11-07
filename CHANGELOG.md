@@ -1,3 +1,681 @@
+2022-11-07
+- NEW: The Animation component's "clip name" field is now a drop-down populated by the Model's animation names.
+- FIXED: Colliders move when an object is moved. Previously, a browser refresh was required.
+- FIXED: Colliders are deleted when an object is deleted.
+
+2022-11-06
+- NEW: The Face Map Colors component now has a numeric entry in addition to a slider.
+- FIXED: The Face Map Colors component now correctly switches when a new entity is selected.
+- FIXED: Low resolution screen share should be higher-res now. (Needs testing)
+- NOTE: Some dependencies have been upgraded, such as the rapier3d.js physics engine and the twilio-video library. As usual, let me know if you see any regressions. 
+
+2022-11-04
+- FIXED: Uploading images and models (regression).
+- FIXED: Choosing a prefab from the "Add" panel broke (regression)
+- NEW: The Face Map Colors component now autodetects the facemap colors from the Model and presents a slider and color picker for each pair.
+
+2022-11-03
+- NEW: Sticky note prefab! When in build mode, visit "prefabs" at the bottom of the "Add" pane and choose "Sticky Note".
+- NEW: When in "Simple Mode", Document now auto-adjusts the size of the font, like a sticky note in Miro.
+- NEW: Document component has a "placeholder" field that allows you to customize the "Start collaborating..." text
+- NEW: Document component has a "Default Formatting" field that can be used to set the default font size and color when the document is empty. e.g. {"font": "quicksand", "size": "36px", "color": "#000000" }
+- FIXED: The JSON field type's textarea in the Modify pane was too large.
+- FIXED: The interaction system is now disabled when seated, so you can't accidentally insta-sit in seats nearby
+- REMOVED: The following prefabs have been removed: Card, Ground, Thing, Label, Wall 
+
+2022-11-02
+- NEW: Audio zones for seated participants! There is now an "Audio Zone" field in the Seat component. Participants who sit in a Seat with matching "Audio Zone" identifiers will have a private breakout-like conversation together. Note that these Audio Zone identifiers can match with the Audio Zone component's zone as well (for example, if seating around a conference table should allow people to enter the same conversation as a nearby room--via virtual video conferencing...?)
+- NEW: Audio zones! You can now set up a region of space (cube, cylinder) that will cause the participants within to be in a private audio zone / breakout room.
+
+Use the Audio Zone component in combination with a Collider component to create this effect. Set the Collider's Kind drop-down to the new "Sensor" type. This is important as it allows participants to enter the space (i.e. not a barrier) but also trigger an effect (i.e. switch audio/video rooms).
+
+Note that it is NOT important that the Audio Zone completely encloses the participants. They just have to be touching it (via their body's capsule collider). 
+
+2022-11-01
+- FIXED: Multiple re-entry causing many avatars if the preset avatar image was multi-clicked.
+- FIXED: The rotation tool no longer "resets" the angle with each mouse drag, and also properly respects the positions of all selected objects when rotating together.
+
+2022-10-31
+- NEW: Sitting on chairs! There is now a Seat component that can be added to any object. This makes the object interactive as a seat, and pressing spacebar when near the seat will make you sit on it
+
+2022-10-29
+- CHANGED: New icons for move/rotate/scale in Modify panel
+- CHANGED: Notifications now use a new library called svelte-toast, and are placed at the top of the screen.
+- FIXED: NameTag placeholder text (e.g. "Add your name") can now be translated.
+- FIXED: Mic select issue where a "preferred device ID" might be unavailable, causing default mic to not work 
+
+2022-10-28
+- FIXED: Having an incorrectly formatted color no longer bars you from logging in
+- NEW: There is now a Video/Audio Settings button that takes you to the video-mirror (cam/mic settings) page.
+- NEW: If you click the Camera Toggle or Mic Toggle buttons, but the browser has not yet been allowed access to mic/cam, a visual indicator shows you should click the Video/Audio Settings button.
+- CHANGED: The Camera Toggle button now toggles camera, rather than sending you to the video-mirror page.
+- FIXED: The camera and mic should no longer broadcast when muted. This should fix the issue where, in full-screen mode, you could still see/hear people who thought they were muted. (Needs testing)
+
+2022-10-27
+- NEW: The dashboard now has a Sign Up and Sign Out capability.
+
+2022-10-22
+- NEW: 2d login screen (https://staging.relm.us/dashboard.html)
+- NEW (Build Mode): KeepOnStage component. When an object tagged with this component is off stage, it won't be removed/recycled like other objects are. Useful in conjunction with WebPage component when the iframe should not be destroyed, or when using large Images that need to stay in GPU memory.
+- UPDATED: Complete i18n coverage, allowing non-English translations to reach all parts of the app (thanks Amber!)
+- CHANGED: Language around gender has been replaced with "chest" to focus on avatar shape rather than role.
+
+2022-10-11
+- CHANGED: The two avatar presets for newcomers have been expanded to six to try to give more options to a variety of bodies and styles. (Note: this is first step towards making it easier to select something suitable during the initial landing--we plan at some point to change to a "random roll" with option to go into a detail view for customization).
+- UPDATED: More i18n translation coverage. (This means that the French and Chinese translations, once caught up, will have more control over all the places where language is used).
+
+2022-10-08
+- NEW: The Document component now has a "Simple Mode" which, when enabled, will make a Document more like a "sticky note". It allows participants to edit the document inside the 3D world, and vertically centers the text.
+- NOTE: Some infrastructure for the Dashboard view is included in this deploy. Specifically, a new HTML page, and a new way of splitting the webpack dependencies so that only the necessary JS need load for each part of the overall Relm app (i.e 2D vs 3D parts). This may have affected load time--TBD if it is faster or slower though. 
+
+2022-10-07
+- NOTE: This deploy is purely a back-end change and should not affect anything. Filenames were changed and moved into subfolders during deployment. Let me know if you see anything amiss.
+
+2022-10-02
+- NEW: When a Document is created via copy/paste or through the Modify panel, it now gets a unique docId (rather than copying the docId). This prevents some confusing scenarios where people don't expect documents to be "linked" with the same content.
+- FIXED: Documents would sometimes not update when changing their docId
+- CHANGED: Render loop should be slightly smoother--uses the more reliable requestAnimationFrame method instead of setInterval even when framerate < 60fps
+- Add the last couple of fixes
+
+2022-10-01
+- FIXED: Conversation component can be dismissed by clicking anywhere on the screen.
+- IMPROVED: Conversation component transitions are smoother.
+- CHANGED: Conversation now takes up 1/3 of bottom half of screen (previously it would sometimes be quite small and unnoticed)
+- NEW: Sign In / Sign Up error messages are now translatable (i18n)
+- IMPROVED: The keyboard UX for Sign In / Sign Up has been improved, e.g. auto-focus on the first form field, pressing "enter" submits the form.
+- CHANGED: The toast notification is wider to accommodate longer error messages.
+- FIXED: Auto-pause does not engage when there is already a dialog open.
+- bring production up to date with staging
+
+2022-09-30
+- CHANGED: Chat panel now uses the standard Dialog with all of its styling (i.e. black & gold)
+- CHANGED: Invitation pop-up now uses the standard Dialog
+- FIXED: Quieted some unnecessary logs in the JS console
+- FIXED: The 'make admin' API call was not working correctly, and did not show an error when it failed.
+- FIXED: Possible slowdown due to physics engine spiral of death, where it would try to work harder with fewer and fewer available time slices
+- FIXED: Full screen video mode small oculuses should be correct (no more dups)
+- NEW: There is now a "Build mode" button. If you have build mode permission, you will see a button with "wrench" icon that toggles build mode (just like the Tab key).
+- NEW: If the buttons at the bottom of the screen (i.e. in the "dock") exceed the width of the screen (e.g. mobile devices), you can now scroll horizontally through the dock to see all buttons.
+- FIXED: A regression that prevented the Profile button pop-up from showing.
+
+2022-09-29
+- FIXED: Local portals work again
+
+2022-09-28
+- NEW: Relm occupancy stats! There is now a Portal Occupancy sub-type of the Html2d component that allows you to show how many participants are in the relm that a portal goes to. Enter the name of the relm you want to track in the Title field of the Html2d component.
+- FIXED: Loading progress numbers have been "wrong" for a while, which has lead to some weird things shown or missing at the beginning of a relm experience. If you see this happening and have build mode, just "move" something (anything) and it should correct the statistics; then reload to test. 
+
+2022-09-23
+- NEW: Particles component now has an Initial P. Count parameter that lets you set the initial number of particles in the system.
+- FIXED: Particles systems can be moved without needing to refresh the page.
+- NEW: Particles component now has "Still" and "Raining" patterns.
+- NEW: Particles component's "Ring" pattern can now have particles "fall" towards the center.
+- CHANGED: Particles component's "Disperse (2D)" and "Disperse (3D)" has been replaced by "Explode", which can do both effects via changing its params.
+- CHANGED: The portal animation now looks better, with the "Ring" pattern having particles fall towards center.
+
+2022-09-22
+- IMPROVED: The Particles component has been completely revamped. The dependency on three-nebula has been removed. Particles are now GPU accelerated. More ways to control particles, and many sprites to choose from (from Kenney particle pack: https://www.kenney.nl/assets/particle-pack)
+- CHANGED: The portal animation has changed (will also undergo more changes soon)
+- UPDATED: The French translation has been updated 
+
+2022-09-21
+- REMOVED: Variable framerate based on inactivity. (We now have "Graphics Quality" settings which deprecate the automated framerate backoff)
+- FIXED: Debug pane now shows FPS 0 when world is in paused state
+- FIXED: (maybe?) an issue with setInterval causing browser slowdown 
+- FIXED: Remote portals are working again! A few issues have been resolved including multiple/duplicate avatars at the destination, failing to load, and other reliability issues.
+- UPDATED: Chinese translation 
+
+2022-09-20
+- NEW: After 3 seconds of no mouse/pointer activity, the avatar's head will revert to center (looks more natural, especially when gathered in a circle).
+- FIXED: When there is an error during a yjs observer callback, the world should no longer "freeze"; instead, a warning message will be displayed in the JS console.
+- FIXED: Mobile users can now edit their name.
+- Bring production up to date with staging server
+
+2022-09-18
+- FIXED: When entering a relm with video OFF, then subsequently turning video ON, the oculus would not show above the avatar until the avatar was moved (e.g. arrow keys) or screen resized. This has been fixed.
+
+2022-09-16
+- NEW: Faster updates between server and all participants; less duplicate data is shared over the wire, and is shared less often (every 1/20 sec, instead of every 1/60 sec). This should result in a higher maximum simultaneous participant count! [Note: needs some testing]
+- FIXED: Ghosts of other participants should no longer appear after the participants leave a space
+
+2022-09-13
+- CHANGED: Slight change to skin tones and hair colors
+
+2022-09-12
+- NEW: There is now a "Graphics Quality" option in the Profile menu. Graphics quality can be set to "lowest", "low", "medium", "high", or "highest" (default is "medium").
+- IMPROVED: Hair colors now have 7 options instead of 5.
+- FIXED: (regression) Keyboard controls in combination with shift key were sometimes not registering.
+- FIXED: (regression) Avatar walking animation could "moon walk" when left + right, or up + down keys pressed.
+
+2022-09-09
+- NEW: Avatar's unique color can now be selected via the Change Your Avatar panel (i.e. the participant's name's background color, and the oculus border color)
+- CHANGED: To run using the keyboard, use the Shift key instead of double-tapping the arrow keys.
+- FIXED: Color picker selection issues have been fixed, including a regression where picker would show up behind the dialog window.
+- IMPROVED: Skin tones in "Change Your Avatar" dialog are now more realistic and have 7 options instead of 5.
+- IMPROVED: "Change Your Avatar" has a cleaner look. Fewer lines, better use of gold accent color.
+- FIXED: When clicking a slider, you can now click the rail itself to "jump" to a position, rather than being forced to drag the knob. (Knob can still be dragged). 
+
+2022-09-08
+- NEW: There is now a pop-up menu on the Profile button (see below). This menu now includes "Sign in / Sign out", "Language", and "Change Your Avatar" options.
+- NEW: There is a "Language" selection dialog in the Profile button (Translation is a work in progress; French and Simplified Chinese have the most support at about ~20% coverage)
+- CHANGED: The Avatar Builder button is now the "Profile" button
+- REMOVED: There is no longer a "Sign In/Sign Out" icon button (it is now part of the Profile button)
+- NEW: Language selection is now kept in localStorage so that it will keep your selection for next time (TODO: store your selection on the server if you are logged in)
+- IMPROVED: Language selection is now in the language of the participant (e.g. Chinese is 中文)
+
+2022-09-07
+- NEW: The 'q' and 'e' keys rotate the camera view left and right (respectively) by 90 degrees. EXPERIMENTAL
+- FIXED: Fire shows through collider visualization in build mode
+- FIXED: When viewing a Document full window, if another participant changed the page, there was a JS error.
+- FIXED: (regression) The "auto pause" feature did not show the pause dialog, so it was confusing why you were unable to move.
+
+2022-09-05
+- FIXED: Escape key works for dialog pop-ups (sign in / sign out)
+- FIXED: CSS styles on Panel Tabs, buttons, and entryways
+
+2022-09-03
+- NEW: UI refresh for Pause and Sign In / Sign Out dialogs
+- REMOVED: Mini-map (for now) since it is not working correctly and hasn't been since the objects-on-stage optimization
+- IMPROVED: i18n translation coverage (Thanks Amber!)
+- CHANGED: Button default look--it's now orange and curvier.
+- FIXED: Some of the Twitter OAuth flow has been fixed (but there appears to be another bug remaining that prevents login)
+
+2022-08-30
+- CHANGED: Avatar faces north on first arrival.
+- FIXED: Some spacing issues with toolbar + document in full window mode.
+- FIXED: Login screen shows up again (layer issue).
+
+2022-08-29
+- FIXED: Issue with the server that sometimes created duplicate permissions. This could sometimes result in admin losing admin.
+- NEW (Build Mode): The ability to group/ungroup a selection has been restored as a Toolbar button (keyboard shortcut: "3")
+- NEW (Build Mode): Toolbar buttons now have tooltips when mouse hovers over them.
+- FIXED (Build Mode): Toolbar icon background color changes even while hovered with mouse.
+- FIXED (Build Mode): Toolbar icons display consistent state (past tense, "enabled"/"disabled").
+- IMPROVED: Pause menu toggle is smaller and less pronounced; click anywhere on background to unpause.
+
+2022-08-28
+- NEW (Build Mode): With admin permission, there is now a way to add multiple objects to the same asset in the Asset Library. Select multiple objects, then select "Add to Library".
+- NEW (Build Mode): Toolbar buttons that toggle now have a green background color when in toggled state.
+- FIXED (Build Mode): In the Add panel, the prefab buttons are back as a grayed option at the bottom of the panel.
+- FIXED: Images embedded in QuillJS documents are uploaded directly to our asset server rather than taking space in the (Yjs) Y.Doc. This makes images-in-documents generally useful since relm load time will no longer be affected by the size or number of images in Document components.
+
+2022-08-27
+- NEW (Build Mode): There is now a toolbar that shows buttons along with shortcut keys:
+  - "1": toggles between "select object" / "select ground" modes
+  - "2": toggles between "pan camera" / "rotate camera" modes 
+- CHANGED (Build Mode): The build panel is now on the RIGHT hand side. This fixes a long-standing issue with the scroll bar, and makes the toolbar and debug pane fit better on screen.
+- CHANGED (Build Mode): The "Add" panel UI has been updated to make it clearer that there is a separation between the Asset Library and the "Upload" button.
+- REMOVED (Build Mode): The "Add" panel no longer has prefabs. It's intended that we begin to replace prefabs with the Asset Library assets. 
+
+2022-08-26
+- FIXED: The drag plane is always relative to the avatar's position, not the object that is clicked on.
+- FIXED: The Oculus (video bubble) no longer gets "cut" by non-existing Oculuses (i.e. when someone else has their camera turned off).
+- FIXED: The ability to drag objects in build mode has been restored. Recently, there was a regression where objects could only be dragged if the center of the new TransformControls widget was clicked and dragged; now, any part of the object can be clicked and dragged to move on the XZ plane. 
+- CHANGED: When in Build Mode, the camera dampening is reduced (faster camera panning). Panning speed remains the same for Play Mode.
+
+2022-08-25
+- NEW: WebPage component now has "Fit" attribute, just like the HDImage component (options are Cover and Contain).
+- CHANGED: HDImage background is now white for transparent images or images that do not completely cover the CSSPlane.
+- CHANGED: The Pause screen now fades the world behind it so it's more obvious that the world is Paused. In order to contrast with dark/black, the Pause component is now white.
+- NEW (Build Mode): There is now a Projector component that can be used to project your video or shared screen onto a surface such as a TV or screen.
+
+2022-08-24
+- NEW: WebPage component can be clicked in play mode to go "full window".
+- NEW: WebPage component now has a "Cover Image" which can be customized. This replaces the former automated "screenshot" capability.
+- CHANGED: WebPage components can no longer be interacted with while in their 3d place (i.e. play mode).
+- FIXED: HDImage component no longer shows full-window overlay when switching back to build mode.
+
+2022-08-16
+- FIXED: YouTube component was missing Embed ID
+
+2022-08-14
+- NEW (Build Mode): Click and drag using the right mouse button to rotate the camera angle.
+- NEW (Build Mode): Avatar controller directions are camera-axis-aligned rather than world-axis-aligned.
+- NEW: When returning to play mode from build mode, the camera moves to center the avatar on screen, and rotates to regular play mode angle.
+- CHANGED (Build Mode): You can zoom farther away (compared to play mode).
+- CHANGED (Build Mode): Regular click + drag no longer creates a selection box; instead, it pans the camera.
+
+2022-08-13
+- FIXED: Brief CSS3D flash when object enters stage.
+- FIXED: When web page screenshot was unavailable, WebPage component would allow nonsensical CSS3D behind it.
+- FIXED: Initial camera angle was incorrect for a single frame when world initially loaded.
+- FIXED: Directional light moved very slowly to its correct position when world initially loaded.
+- FIXED: Colliders in build mode no longer share the same transparency; fixes an issue where all collider meshes could turn opaque.
+- FIXED: TransformControls, when dragged, could also occasionally cause an HTML drag to occur if cursor was over an img tag.
+- IMPROVED: Accessibility alt text for img tags representing screenshots of websites.
+- FIXED: White ghost error state should be fixed. Appearance data is now transmitted alongside position data. This probably a transitional state, prior to geckos.io fast updates. NOTE: This may slightly reduce the max number of people in a room.
+- UPDATED: We're now using Webpack 5.x (from 4.x), which gives us a more modern deploy, slightly smaller files, improved future-proofing for compatibility with certain libraries (such as postprocessing) and updated security dependencies
+
+2022-08-12
+- FIXED: Sitting and hand-raised animations work again
+- CHANGED: Camera has slightly slower, smoother movement. NOTE: It's now easier to change the camera angles via code. This supports future development where build mode and play mode camera operation will diverge.
+
+2022-08-08
+- CHANGED: Removed "zoom-in" effect when world finishes loading
+- FIXED: Participant name is now slightly above avatar's head when video oculus is disabled (previously, it floated high above the head).
+- FIXED: Inaccuracy causing a black border around CSS3D objects has been removed.
+- NOTE: For self-hosted servers, it is now easier to set the camera angle using the CAMERA_ANGLE constant.
+- Update production
+
+2022-08-07
+- IMPROVED: Fire material has slight speed improvement when used multiple times in a scene.
+- FIXED: Deprecated TranslucentOptions are now ignored (not reported in JS Console)
+- FIXED: When zooming with scroll wheel, FPS increases to 60 and there is less flashing of objects as they re-assemble onto the stage.
+- FIXED: Video support on mobile
+- FIXED: Equipped item did not show its model when attached to the avatar.
+- This updates Prod to include everything in Staging
+
+2022-08-06
+- NEW: The TransformControls buttons are now visible when multiple objects are selected, so you can switch from translate to rotate (for example).
+- FIXED: TransformControls now moves all selected objects, instead of just the one to which the TransformControls are attached.
+- FIXED: TransformControls now rotates all selected objects when in "rotation" mode.
+- FIXED: Implicit colliders are positioned at the center of their model, and the physics boundaries are calculated correctly if the scale changes.
+- FIXED: Number dragger would sometimes not keep final value.
+- FIXED: Modifying the collider size repeatedly would sometimes make the shape & collider disappear, requiring starting over.
+- FIXED: Some editor properties that were meant to be hidden are now hidden again (e.g. entityId in the Transform component)
+- FIXED: Former avatars have been restored, due to some issues with normals & animations in the latest set.
+
+2022-08-04
+- NEW: A Translucent component allows designers to add translucent effect to any object. In addition, changing the End Opacity allows an object to become translucent when obscuring the participant's avatar.
+- REMOVED: No more TranslucentOptions (they are part of Translucent now).
+- CHANGED: Objects are not translucent-by-default when obscuring the participant's avatar.
+
+2022-08-02
+- NEW: Error Cat! When a model does not load properly, an Error Cat will show the reason why. If you would like to hide the Error messages, there is a new "Show errors" toggle in the Debug pane (Ctrl-D).
+- FIXED: Image component no longer needs to be reloaded to see changes; it also uses the Asset component to load its texture. NOTE: Old Images will need to be updated to use the Asset component.
+- FIXED: When HDImage is clicked, it will always "contain" in full window mode so that participants can see the whole image, even if it came from an image in "cover" mode.
+
+2022-07-31
+- IMPROVED: Interactable items are easier to reach if they are higher up, or near the avatar.
+- FIXED: Holding "spacebar" picks up items again. (regression)
+- FIXED: Fire animation speed stays constant even with framerate (FPS) fluctuations
+- FIXED: Fire texture sometimes did not load properly creating "faint/wispy" looking fire
+
+2022-07-30
+- NEW: Server endpoint /relm/edit has updateEntity, createEntity and deleteEntity variants. This allows external services such as n8n to modify, create, or delete entities and their components within a relm. See postman collections json in server/docs for more details. (Thanks @William!)
+- NEW: Avatar puts arms out when falling (T-Pose; at some point we will replace with a proper "Falling" animation).
+- FIXED: Flying in build mode (spacebar) works again.
+- FIXED: Asset loading issue caused when entities inactivated (off stage) during initial relm load.
+- FIXED: Avatar animations don't "flicker" when running down stairs.
+- IMPROVED: Framerate optimization by only calculating updateMatrixWorld once per object3d
+- IMPROVED: Transform Controls gadget interface is simplified. Unnecessary planes have been removed. Translation gadget's central area is now used for XZ plane translation. Colors match Relm color palette.
+- CHANGED: Default invitation "maxUses" is now 20 (instead of 1).
+- FIXED: Avatars no longer slip/slide down stairs when standing still
+- FIXED: Delete / Backspace key should delete in build mode again.
+
+2022-07-26
+- NEW: Logins! You can currently log in via email + pass code, and we will soon enable login via 3rd parties such as google, facebook, linkedin.
+- FIXED: Some browser key combinations were not working due to our having disabled them.
+
+2022-07-19
+- NEW: When glTF fails to load, an Html2d Info box shows the Error message hovering over the thing that failed to load.
+- FIXED: Html2d Info boxes no longer allow the "click" to go through to the world/background when intending to open or click URL.
+- FIXED: Undo/Redo should be working again.
+
+2022-07-14
+- FIXED: Modify panel's draggable number adjustment-by-dragging defaults to 0.01, except for rotation, which defaults to 1.0
+- FIXED: Oculus size in "full screen" conference mode is now correct (previously, the oculus was tiny, and the name of the person would overlap and obscure it).
+- FIXED: Equipped items can be seen again.
+
+2022-07-13
+- FIXED: When the TransformControls go off-screen in build mode, it no longer causes a JS console error loop.
+- FIXED: The "translate", "rotate", and "scale" TransformControls switcher buttons in the Modify panel are working again.
+- FIXED: Components with Vector2 type such as CSSPlane, Document, and Image have been restored so that their X/Y values can be updated. 
+- NEW: Collider component has a "Rotation" field. This can help make collider shapes more naturally line up with their 3d model or shape.
+- FIXED: Chat bubbles were sometimes not shown
+- FIXED: Deleted components were not always synced to other participants, so they would (for example) continue to see a shape or collider when in fact it had been deleted by someone else.
+- FIXED: An issue with collider visibility in build mode when adding/removing a collider. Previously, it was required to leave build mode and re-enter build mode to see the collider that had just been added or removed.
+- FIXED: Number entry fields in Modify panel are more consistent in look and feel. Pressing "TAB" key switches to next field as expected. 
+- CHANGED: Rather than using the "shift" key to select  Ground objects, you should now press 1 (numeric key 1) to toggle "advanced selection mode." There is no longer any ambiguity between "shift to select several objects" and "shift to select the ground".
+
+2022-07-12
+- IMPROVED: Significant speedup (framerate) for larger worlds. Relm can now tell what is "on camera" and only spends CPU time on active objects within that view. Objects that are "off camera" are put on ice until they are needed.
+- NEW: An Asset component contains glTF or image data for other components such as Model or Shape (see below).
+- CHANGED: "Ethereal" collider type is now "No Collision" collider type.
+- CHANGED: The Collider component has been completely re-worked. There are several new fields, including "Kind" and "Size". The corresponding RigidBody no longer exists (use Collider "Kind" attribute instead).
+- CHANGED: The Model component has been completely re-worked. An accompanying Asset component is now required. There is a Compatibility toggle that can be used to help smooth the transition to the new Model component.
+- CHANGED: The Shape component has been completely re-worked. An accompanying Asset component is optional. If present, it will be used as the texture.
+- FIXED: Objects that obscure the Avatar are accurately calculated again so that they become transparent.
+- FIXED: A long-standing bug where models with a large "Y" dimension were not properly re-sized to a 1x1x1 "standard cube" when initialized.
+- FIXED: When other avatars were inside a collider and in "build mode", they would jitter/vibrate to other observers.
+- FIXED: The Asset type in the Modify panel accepts pasted text (e.g. a .glb URL)
+- FIXED: Dynamic physics objects now have some friction so they don't bounce and roll infinitely. 
+
+NOTE: Because this is a major refactor, I expect some things will have broken, or may behave slightly differently. Let me know if you see things that need attention. Thanks!
+
+2022-07-08
+- NEW: Video oculus no longer overlaps with other video oculii (?). People meeting together look a bit like a hexagonal hive.
+- NEW: With the debug pane (Ctrl-D) you can now set the framerate (FPS) and keep it locked.
+- FIXED: An issue with portals that prevented collision events from triggering properly.
+- NOTE: A few optimizations here and there as well.
+
+2022-07-05
+- NEW: The Debug pane (ctrl-d) now has a "debug physics" toggle. When enabled, it shows an overlay of what the physics engine "sees".
+- NOTE: "Rapier3d" (javascript library for 3d physics) has been updated to 0.8.1. There may be some slight performance improvements.
+
+2022-07-04
+- FIXED: The background is no longer extremely bright due to the Bloom effect
+- NOTE: "Three" (javascript library) has been updated from 0.131.0 to 0.141.0. This is a fairly large jump. I made a few changes to bring our code up to date. I noticed a few minor changes, such as Diamond colors and possibly the Bloom effect are different.
+
+2022-06-27
+- NEW (build mode): Move, rotate, and scale controls directly on the object. Note that you can switch to "move", "rotate", or "scale" using the new buttons above the Transform component in the Modify panel
+
+2022-06-25
+- Bring production env up to date with staging
+- FIXED: Slight mismatch between walking animation speed and avatar movement speed.
+
+(specifically: you should be able to import relms, including documents, that were exported from staging relms)
+- FIXED: An issue when importing a relm would cause duplicate objects with the same ID, which in turn caused loading issues and inability to "delete" objects.
+
+2022-06-24
+- FIXED (build mode): Documents & their contents should now be exported / imported & cloned to new relms.
+- FIXED (build mode): Changing a Document's docId now immediately reflects the change, rather than requiring a reload.
+- FIXED: In full-screen video mode, the text "undefined" was showing at the top of the screen.
+- NEW: Documents can have multiple pages. There are two new buttons overlaid on top of a Document--"next" and "previous"--that let participants navigate forward and backward through various pages. NOTE: To create multiple pages in build mode, add a JSON array to the "Pages" field. For example: ["doc1", "doc2"] would yield a 2-page Document.
+- FIXED: When uploading an image, it uses the image's aspect ratio for the contain boundary.
+- NEW (build mode): The Color Picker has a section that can be opened to type in or paste hex / hsl / rgb colors.
+- CHANGED (build mode): The Color Picker now has 18 color swatches max instead of 12.
+
+2022-06-22
+- NEW: Documents (e.g. whiteboards) have two new font sizes: 36 & 40
+- CHANGED: Documents no longer have "underline", and "strike-thru" is now part of the Bold/Italics section.
+- FIXED: Documents allow adding URL/Links. Previously, the pop-up link entry window would close as soon as you focused it.
+- FIXED (Build Mode): WebPage component now has visible URL in editor.
+
+2022-06-21
+- NOTES:
+  - Updated some libraries, including uuid and uppy (file uploads).
+  - Changed isPublic flag for relms to a more flexible publicPermits object. This allows us, for example, to make it so a relm is publicly editable.
+- NEW: The Relm backend now supports cloning relms without giving access to the parent/original relm.
+- FIXED: Asset library thumbnails.
+- Bring Production environment up to date with latest changes
+
+2022-06-20
+- NEW: Internationalization (i18n) support. The client/src/i18n/ folder contains languages--currently en and fr. Only a few basic phrases have been made available for translation at this stage. This update is intended to open the doors to begin translation efforts.
+- NEW: RELM_TITLE, RELM_LANG_DEFAULT, and RELM_FONTS_URL are now env vars available when building relm-client. The RELM_FONTS_URL is intended to replace fonts.googleapis.com because it is not GDPR compliant (google tracks you). Uses google-api-compatible https://fonts.bunny.net/css instead. 
+
+2022-06-17
+- NEW: I've added Umami self-hosted analytics script to staging and production. Setting the environment variable RELM_ANALYTICS_SCRIPT to the HTML that you would like embedded in the page will embed the script.
+
+Example: RELM_ANALYTICS_SCRIPT=<script async defer src="https://usage.relm.us/umami.js"></script>
+- NEW: When building the relm-client frontend, there is now a RELM_SERVER environment variable that must be set. This is a more robust way of configuring the client to talk to its server backend, without custom "if" statements in the code.
+
+2022-06-14
+- CHANGED: All code references to x-relm-id, secureId, postman relmId, playerId and participantId referred to the same thing, and have now been updated to participantId for consistency and less confusion. Browsers that store the participant's ID with the deprecated secureId will still be honored, but new sessions will use participantId.
+- NOTES:
+  1. The database table players has been renamed to participants and columns with the name player_id have been renamed to participant_id.
+  2. Also note that the Postman collection documentation has been overhauled to use these new participantId names. If you have a Postman environment stored, you should update relmId to participantId and relmSig to participantSig.
+
+2022-06-11
+- NEW (Build/Deploy): There is now an "AV_ENABLED" client config flag that can be set to false if audio/video capabilities should be disabled for the entire environment (all relms).
+- NOTE: We have moved to a new server for PRODUCTION! It's much larger (48 GB of memory / 1 TB hard drive) and should be able to host us well into the future. However, all relms have been removed on production. I took a snapshot backup and can restore any individual relm as-needed.
+
+2022-06-09
+- NEW: When in full-screen video mode (for both camera and screenshare), all participants' Oculuses (occulii?) are now visible.
+- FIXED: When playing a youtube video, your mic will be muted so as not to add audio feedback for others.
+- FIXED: Visiting a relm with a trailing slash caused it to say the relm "does not exist."
+- FIXED: The "invite" server API is now like the new "relm" API: the relmName is expected to be passed as part of the JSON body, rather than as part of the URL.
+- NEW (Build Mode): There is now an HD Image Css3D component that is different and generally better than a regular Image component:
+  - it has higher definition & looks crisper
+  - it is not subject to world lighting conditions
+  - it can be clicked to view full-screen
+- CHANGED: If you use the "Upload" button in the Add panel it will now result in an HD Image being added to the world. By default, it is Draggable.
+
+2022-06-08
+- NEW: There is now a /relm/clone API endpoint that allows you to clone a relm without special admin permission, as long as the relm you are cloning grants you permission to do so. This is a step towards a "trial mode" for relm where visitors can have their own relms to play with.
+- CHANGED: The server API has changed from /relm/[relmName]/[action] to /relm/[action], and the relmName must now be passed as part of the JSON document. Most API endpoints are now using the "POST" method since it allows for this information to be passed via the JSON document.
+- FIXED: Video should be more "even" for everyone, as we've changed from "collaboration" mode to "grid" mode on the Twilio server. Needs testing.
+- FIXED: Regression in the server that made the server unaware of relm content if the relm had not previously been loaded into memory.
+- NEW: If a relm is set with cloning permissions, participants can now be sent to /[relmName]/new and Relm will create a new, cloned copy of the base relm (/[relmName]), and redirect them to that new clone, with permissions set according to the base relm's settings.
+
+2022-06-03
+- CHANGED: Avatar's name is now shown as a Name Tag beneath the Oculus. The Name Tag can be edited, just like the label used to be editable.
+- CHANGED: Rather than being white for all participants, the Oculus' perimeter color now matches the participant's unique color. (Note: participants will at some future time be able to choose their "unique color").
+- FIXED: Bug in video-mirror that prevented "Continue" button from continuing when video is unavailable.
+- FIXED: Oculus has less jitter because it uses subpixel accuracy for its position.
+- FIXED: The "Thing" prefab has returned, re-enabling uploading of GLBs.
+- FIXED: Duplicate avatar when clicking someone else's Name Tag.
+
+2022-05-27
+- NEW: There is an Invite button that can be used to invite others to the relm, if you have invite permission yourself.
+
+2022-05-25
+- NEW: The Item component now has Held Position, Held Rotation, and Held Scale properties to make it possible to orient the item properly when attached at the hand, back, or head.
+- CHANGED: The minimum duration for a "long press" with the spacebar has been reduced to 350ms (from 1000ms).
+- FIXED: All participants can see what others have equipped.
+- FIXED: Bug that duplicated the presence of an equipped/held item.
+- FIXED: Equipped items' FaceMapColors weren't being applied.
+
+2022-05-24
+- NEW: The Item component has an "Attach To" field where you can select where the item attaches to the avatar when equipped, e.g. Right Hand, Head, Back.
+- NEW: Held objects now look like themselves, rather than the "red box" placeholder.
+- NEW: The Diamond prefab now has an Info pane (Html2d) to show a label or link.
+- CHANGED: The Rock prefab's Info pane (Html2d) is now zoom variant.
+- FIXED: Dropping an item attached to the back no longer decapitates the avatar.
+
+2022-05-23
+- NEW: Objects with the Item component can now be taken in Play mode (long-press on spacebar) and dropped (press 'z' key for now)! This is an MVP inventory system. Lots more to work on to make it more visual / intuitive.
+- NEW: When you have at least one item in your inventory, your avatar will show you carrying a red box (for now).
+- NEW: The Item component now has a "power" field where you can enter things like "make:Rock" or "make:Box". A participant holding such an item will be able to make rocks or boxes by pressing space bar IF they are currently holding the item with that power.
+- FIXED: Items are dropped in front of the avatar, rather than centered within the avatar.
+
+2022-05-21
+- NEW (Build Mode): You can now add a Whiteboard via the prefab list ("Add" panel, near the bottom of the list of buttons). Each whiteboard added is unique as expected (but you can edit the docId if you want it to sync with another whiteboard).
+- CHANGED (Build Mode): The "YouTube TV" prefab button now says "TV (youtube)". In addition, this creates a box with the new YouTube component, rather than Renderable component. The "TV" is no longer a parent/child pair of objects.
+- CHANGED (Build Mode): The "Web Page" prefab button now creates a box with the new WebPage component, rather than Renderable component. The "Web Page" is no longer a parent/child pair of objects.
+- DEPRECATED (Build Mode): The "Renderable" component should no longer be used. We will keep it around for a while, but you should use Document, YouTube, or WebPage components instead.
+- DEBUG NOTE: Whenever a getUserMedia request is made, we now log it in the JS console. This may be useful as we attempt to figure out why some people cannot use their webcams ("Use Cam and Mic" button looks clickable, but nothing happens when clicked).
+- NEW (Build Mode): You can now add a "Rock" via the prefab list in the "Add" panel. Rocks are randomly shaped and colored, with Draggable and Clickable preset. When clicked, they can be labeled via an Info component (Html2d). This type of Rock is currently being used in Hakomi-like coaching sessions.
+- FIXED: Sharing a screen with different proportions/dimensions than the viewing screen now "contains" the screen when viewing so you can see the whole thing.
+- FIXED: Browser screen sharing overlay should now stop when screen sharing is done. (Needs testing).
+
+2022-05-13
+- NEW: Documents have box shadow and animated pop-up
+- Bring production up to date with staging environment
+- FIXED: Removed additional saturation/brightness in video feed
+
+2022-05-12
+- NEW: In play mode, you can click a Document and it will show a pop-up version that is easier to edit. The pop-up is screen-aligned and proportional.
+- NEW: Documents can be made visible/invisible.
+- NEW: Text within Documents can be set to one of 5 fonts: Helvetica (Sans-Serif), Quicksand, Cormorant Garamond, Oswald, or Square Peg
+- NEW: Text can be changed to various sizes.
+- NEW: Text can be changed to various colors.
+- NEW: Document can grow beyond the bounds of the CssPlane and be scrolled when in pop-up view.
+- NEW: CssPlanes (and hence, Documents) have a new "Offset" value that allows them to be in front of, or to the side of the object they are connected with.
+- CHANGED: The Document rich text editing Toolbar is no longer embedded inside the CssPlane. Instead, it hovers near the top of the screen if the Document is set to 'editable'.
+- FIXED: Twilio screen sharing quality should be good now.
+- DEBUG: When a GLTF fails to load, the JS console will show the URL of the GLTF so it can be debugged. 
+
+2022-05-07
+- NEW: A "Document" Component that allows for rich text & collaborative text editing! This new component uses QuillJS in the backend (rich text), combined with Yjs (collab editing). Currently, you must also have a Renderable component, and a CssPlane component to make a Document.
+- NEW: The CssPlane Component now has a "Rounded Rectangle" type. This means youtube videos, web pages, and the new Document component type can have rounded edges even though they are actually CSS/HTML components.
+- NEW (API): The server has a new API endpoint, /relm/[relmname]/edit that allows to programmatically change any object property of a relm.
+- FIXED: Copy-to-clipboard issue when trying to copy the Object ID from the Modify panel
+
+2022-05-06
+- FIXED: Issue with dependencies that caused an error when calling the server API, e.g. to create a new relm
+
+2022-04-28
+- NEW: Conversation UI! Add help, guidance, or storyline to relms by making NPCs talk to the participant. This works differently from speech bubbles--whereas speech bubbles are visible to everyone in the world, the Conversation UI only appears on the screen of the participant that triggered it. NOTE: To make multiple paragraphs or "sections" that the participant needs to click through, separate sections with "---" (three dashes).
+
+Not yet implemented for mobile-sized screens.
+- FIXED: Conversation UI works in Mobile.
+- NEW (Build Mode): Assets can now be deleted by pressing the "X" button next to the asset size.
+
+2022-04-26
+- CHANGED: Audio volume now has automatic gain (meaning people with different mic volumes should sound more like they have the same mic volume, if possible)
+- CHANGED: Speech bubbles not attached to avatars no longer have a "close" button (removed because it was buggy)
+- FIXED: Zoom-variant speech bubbles are now anchored properly to the NPC/thing they are representing (speech bubbles would work fine when "Zoom Invariant" was true, but not when false)
+- FIXED: Oculus no longer covers avatar's face (regression due to speech bubble change)
+- FIXED: Speech bubbles don't change size in awkward ways as much as they used to (e.g. simply walking around would change others' speech bubble sizes due to browser layout engine)
+
+2022-04-01
+- NEW (Build Mode): Renderable has a 'visible' property that can be used to turn CSS3D things such as videos and web pages on and off. NOTE: unfortunately, the "punch-through" is still visible, so when not visible it may look like a black box for example. Needs further thought, and maybe a refactor so that all things can be set to visible true/false.
+
+2022-03-30
+- FIXED: Oculus height was not showing properly from remote perspective (it looked correct for "self")
+
+2022-03-29
+- NEW: When participant does not move their avatar, the world framerate is slowly reduced to improve CPU/battery life. Minimum FPS is currently set to 20 (Experimental).
+- FIXED: When many participants were in a relm, there was a slow-down due to an inefficient handling of avatar transform data (N^2).
+- NOTES: Refactored several aspects of multi-player data distribution. Things should work as before, but it would be helpful to test that nothing has broken.
+
+2022-03-25
+- FIXED (Build Mode): Copy/paste tries to accommodate the position of the avatar so that things copied are at the same height as the avatar when pasted.
+
+2022-03-17
+- CHANGED: Updated Relm logo to new design
+- REMOVED (Build Mode): TransformEffects component (deprecated)
+
+2022-03-15
+- FIXED: A few small UI fixes for Info box, e.g. mouseup caused edit mode to flicker on then off in some cases
+- FIXED (Build Mode): Adding objects did not always show up at the height level (y position) of the builder's avatar.
+
+2022-03-14
+- NEW: Html2d objects can toggle "zoom invariance"; in other words, labels can grow and shrink based on camera position so that they appear to be "in the world" rather than hovering above it in the UI layer.
+- NEW (Build Mode): A "Zoom Size" property for Html2d component now makes it possible to adjust the non-zoom-invariant size of text.
+- FIXED: When avatar name is empty, it can still be edited. Shows a pencil icon.
+- REMOVED (Build Mode): Html2d "Label" type no longer has draggable toggle.
+- CHANGED: The Info box (Html2d type) now has a more consistent UI, regardless of whether or not it is "editable." An arrow facing forward/down indicates whether it is expanded, and a button with pencil icon toggles "edit" mode
+
+2022-03-13
+- FIXED: When a Component is deleted, it is now synced and removed from everyone's world document.
+- FIXED: When avatar is near a Draggable, it no longer highlights the Draggable object as if it can be interacted with via spacebar.
+- FIXED: When in full-screen video conference mode, the "Close" icon is now larger and has a black outline so it can be seen more easily.
+- FIXED: Warn when _facemaps attribute is not present in changeFacemapColor rather than crashing.
+- IMPROVED: When in full-screen vidoe conference mode, the framerate of the world in the background is reduced to 1 fps to save on CPU/GPU.
+- Bring production up to date with staging
+
+2022-03-11
+- FIXED: Others' video feed no longer freezes when entering video-mirror and returning
+- FIXED: Multiple audio publications caused "robotic sounding" voice when returning from video-mirror
+- FIXED: Local video oculus would show even when video was not requested, and even though others (correctly) did not see video
+- FIXED: When no video camera hardware is available, fall back to audio-only (mic) mode. Update video-mirror dependency to 4.4.0. 
+
+2022-03-10
+- NEW (Build Mode): Draggable component has new "snap to grid" option with settings for size of grid and offset.
+- NEW (Build Mode): The import/export screen now imports and exports settings and entryways
+- FIXED: A bug where objects outside of the maximum world size would cause a freeze (world max extent is currently (-250, -250, -250) to (250, 250, 250))
+- FIXED (Build Mode): Drag-to-select box direction was incorrect when SHIFT key held.
+- FIXED: Video no longer freezes when returning from video-mirror screen
+
+2022-03-09
+- NEW: There is now a Draggable component. When added to an object, the object can be dragged by participants in play mode. (Useful for games like chess and checkers!)
+- NEW: When hovering with mouse in Play mode, interactive items show outline (i.e. if the object has one of Clickable, Item, or Draggable components).
+- FIXED (Build Mode): When entering build mode, interactive objects' outlines disappear (since they are no longer active/interactive in build mode.
+- FIXED: Avatar control via mouse/touch works again.
+- FIXED: Additional error preventing 2 or more participants from joining (due to xz/XZ variable rename) 
+- FIXED: When a youtube video is stopped, it resumes when clicking on another youtube video (as a result, both are playing)
+
+2022-03-08
+- NEW (Build Mode): The Settings panel now has a Proximity Audio toggle, which can be configured per-relm. The related button has been removed from the UI overlay.
+- NEW (Build Mode): The Clickable component has a dropdown for axis when set to "Flip Over".
+- CHANGED (Build Mode): The "rotation" numbers in the Transform component are now Degrees (instead of radians).
+- CHANGED (Build Mode): The Clickable component defaults to "Toggle Html2d" again
+- CHANGED (Build Mode): Dragging number values in the Modify panel used to depend on the size of the value, but was confusing. It is now more consistent:
+  - Transform/position values change by 0.01
+  - Transform/rotation values change by 1.0 degree
+  - Transform/scale values change by 0.01
+  - Other values change by 1.0
+- IMPROVED (Build Mode): Library Asset search in Add panel is faster and more stable.
+- NOTES: This deploy regularizes the server API (back end) and may include some regressions in things that make API requests such as permissions and asset library.
+
+2022-03-03
+- FIXED: Error in TransformSystem that could happen under recursion condition (see screenshot above).
+
+2022-03-02
+- FIXED: Walls are visible again
+- FIXED: Diamonds spin again
+- FIXED: It was possible to create Clickable links that contained javascript or other possible security concerns. Clickable URLs are now filtered to prevent this. (Normal http: and https: links are fine).
+- CHANGED: Camera does not zoom into web pages any more
+
+2022-03-01
+- NEW (API): Admins can access a new /asset/library/update API endpoint to change asset metadata. For example:
+
+{
+  "assetId": "97ad91ab-a7fe-4e8a-8cd0-ef058e66b72d",
+  "name": "Stout Green Tree",
+  "description": "A wide green oak tree",
+  "tags": ["furniture"]
+
+}
+
+2022-02-28
+- NEW (Build Mode): Add panel assets are paginated with 'Prev' and 'Next' buttons.
+- NEW (Build Mode): There is now an Item component that can be added to objects. This indicates an item will (in future) be able to be picked up by a participant. (NOTE: Inventory / picking up not yet implemented).
+- NEW: An object that has the Item or Clickable component will now show an outline around it when the participant is nearby and facing the object.
+- NEW: Pressing "Space Bar" on an outlined Clickable will trigger its action (e.g. flip, toggle Html2d etc.)
+- FIXED (Build Mode): The Transform component's "rotation"  property should work properly again when dragging the number values.
+- FIXED: Wall System error that prevented a relm from loading
+- FIXED: Error when deleting objects. 
+- FIXED: Double-tap to run now works from a stand-still.
+- CHANGED (Build Mode): Outlines are now white & gray instead of green (due to some technical issues).
+- IMPROVED (Build Mode): Add panel has some formatting love. You can also now "close" the selected asset from the library.
+- IMPROVED: Initial framerate at world-load time should be slightly faster due to all objects starting as non-visible except those within the view of the camera.
+
+
+2022-02-27
+- FIXED (Build Mode): "Copy" shortcut key (e.g. Ctrl-C / Cmd-C) should work again without needing to first click-focus on any arbitrary elements.
+- IMPROVED: Motion that originates from the physics engine (such as avatar motion) is smoother than it was when framerate is between 30 and 60 fps.
+
+2022-02-25
+- FIXED: After deleting flames, the world freezes
+- FIXED: Clickable shows URL text field for both Open URL  & Open URL (new tab)
+- FIXED: New relms (specifically, relms with fewer than 9 objects) should not throw an error
+- FIXED: Support WebGL1 context for iOS devices
+- IMPROVED: Using a potentially better/faster anti-aliasing technique called multisamping (MSAA)
+- IMPROVED: Html2d options are a little more organized, especially for "Info" type.
+- NOTES: - Bring all of latest changes to production environment
+- Speed improvements, editing improvements, interaction with objects, outlines, Firefox compatibility for youtube videos, etc
+
+2022-02-24
+- NEW (Build Mode): Bloom Effect! Creates a glow/aura around brightly colored objects.
+- NEW (Build Mode): Selected green outlines pulsate gently.
+- FIXED: Speech bubbles are once again attached to their avatar.
+- IMPROVED: Faster framerate / render speed in medium-to-large relms. 
+
+NOTE: there are a couple of regressions that I'll work on in future:
+1. Some objects appear/disappear suddenly (especially tall objects at the moment). This is due to some inaccuracy in the algorithm that determines what is "on screen".
+2. Some large objects do not go transparent when they should (e.g. roof, wall). This, too, is due to the algorithm only knowing about the "center" of things, rather than their boundaries.
+
+2022-02-21
+- NEW: Performance panel has a "High-def" mode toggle. If you have a high-resolution screen, you can use this to improve the crispness of images, text, and other details in Relm. (In future, this will probably be "auto-enabled" when FPS is high).
+- NEW (Debug): Framerates higher than 60fps can be tested by setting relm.setFps(null) in the javascript console. It's also possible to pin the framerate to a specific number, e.g. relm.setFps(60).
+- IMPROVED: Performance in some situations:
+  - Simplified physics loop
+  - Only update objects' world transform when underlying transform has changed
+  - IntersectionFinder is slightly optimized
+  - Shader details are only queried when viewing them on the performance panel
+- NOTES:
+  - updated three.js dependency to 0.131.0
+
+2022-02-20
+- CHANGED: (Experimental) Render process uses post-processing effects.
+  1. Rendering might be slower on some hardware (need to test)
+  2. The 'outline' in build mode now uses a post-processing effect that looks better than our mesh-only outline
+  3. The anti-aliasing effect is slightly lower quality, due to the built-in SMAA being better than the post-processing FXAA algorithm
+
+2022-02-18
+- NEW (Debug): relm.showAll() will show all objects as a scrollable image overlay. (Step toward Inventory system)
+- NEW (Debug): There is now a "Photo Booth" class that can be used to convert 3D objects to HTML images. This capability is a dependency of the upcoming Inventory work. To see a photo of an object: object = relm.getObject3D(5); img = relm.photoBooth.showShot(object). Change the number (e.g. 5) to other values to see other objects.
+
+2022-02-17
+- NEW (Build Mode): There is now a Camera pane in settings, and the Field of View of the camera can be adjusted per-relm. This is mostly for experimentation at this point, to see if there are better defaults than the "35 deg" value we chose long ago.
+- FIXED (Debug): relm.topView() doesn't rotate strangely, and keeps "north as north".
+
+2022-02-15
+- NEW (Debug): In Javascript console, you can call relm.topView() to get a top view of the world. It takes an optional parameter, so you can adjust the height, e.g. relm.topView(100)
+- NEW (Debug): Added ability to pan while in topView mode
+- NEW: YouTube videos respect proximity audio when participant has the setting enabled.
+- FIXED: YouTube videos don't flicker when entering build mode or when going behind them (transparency-related).
+- FIXED: YouTube player on FireFox works better now--you can play and pause.
+- FIXED: YouTube player only requires single click to play.
+- FIXED (Build Mode): Components with editable string type works again (e.g. Embed IDs for youtube videos)
+- FIXED (Build Mode): "Renderable" component's pane correctly shows its title.
+- FIXED: Youtube Videos with "Always On" (now "Force Embed") didn't do anything. Now it forces the renderable to use an iframe. NOTE: this slows down some browsers, especially firefox.
+- CHANGED (Build Mode): "Always On" Renderable setting for youtube videos is now called "Force Embed" to more clearly describe what it does: it forces an iframe to be embedded immediately, rather than covering with an image before activation.
+- IMPROVED: CSS formatting for components' editable strings, vector2, and boolean (switch) types are more consistent and compact.
+
 2022-02-10
 - NEW (Build Mode): There is a new "Card" prefab option in the "Add" panel.
 - NEW (Build Mode): The Clickable component has a "Flip Over" option. When clicked in play mode, the object will flip over.
@@ -60,6 +738,7 @@
 
 2022-02-01
 - NEW: Shadow maps enabled by default, with better dynamic coverage as you zoom 
+
 UPDATE: Disabled shadows again. Not quite good enough yet.
 
 2022-01-31
@@ -102,7 +781,7 @@ UPDATE: Disabled shadows again. Not quite good enough yet.
 - CHANGED: Icon order is different. Icons are separated into 2 groups: video conferencing, other.
 - FIXED: Sometimes loading stats were not properly re-computed on worlds, making loading take forever.
 - FIXED: JWT permissions are now respected when set.
-- FIXED: You can no longer go "full screen" on yourself 🙂
+- FIXED: You can no longer go "full screen" on yourself :)‚
 - FIXED: Context menu (right-click) no longer works in 3D world zones. (still works on text/html areas)
 - FIXED: Permission issue preventing users with all-relms permits from entering build mode
 - FIXED: Assets that failed to load due to an error were not counted in the loading screen, which sometimes resulted in 'forever loading'. 
@@ -324,6 +1003,7 @@ UPDATE: Disabled shadows again. Not quite good enough yet.
 
 2021-06-03
 - NEW: Avatar Builder lets you customize your avatar. Note: clothing choices not yet available, but coming soon; also note that choices are not yet saved.
+
 (for now, click smiley icon to open Avatar Builder)
 
 2021-06-01
@@ -749,6 +1429,7 @@ UPDATE: Disabled shadows again. Not quite good enough yet.
     - UI for entity w/ physics to sleep/wake
     - Build/Play buttons are centered
 - FIXED: Pointer events in side-panel were being ignored
+
 direction. Works in Play Mode only.
 
 2020-11-25
@@ -817,6 +1498,7 @@ direction. Works in Play Mode only.
 - NEW: Shadow map follows avatar.
 - NEW: There's a large field of "green grass" below the floating platform.
 - NEW: Added a "step" button that steps through individual render frames. (Slow motion).
+
 (Note: you can use space bar for "thruster" boost)
 - NEW: AssetType in editor shows asset URLs (e.g. GLBs)
 - NEW: Component panes in editor can be minimized
@@ -832,6 +1514,7 @@ direction. Works in Play Mode only.
 
 2020-11-12
 - NEW: Editor panel now shows components and internal data/types for each component. Read-only.
+
 lol Chris, you have a dry sense of humor
 - NEW: You can group and ungroup things with the Group/Ungroup button.
 - NEW: When selecting a grouped entity, the whole group will be selected.
@@ -874,6 +1557,9 @@ lol Chris, you have a dry sense of humor
 - FIXED: Sometimes the box would lose the ability to be controlled.
 
 2020-10-29
+
 Demo is up: https://staging.gatherengine.org/
+
 There isn't much to look at, but it shows the progress I'm making with three.js and our new Entity-Component-System called HECS.
+
 
