@@ -687,6 +687,13 @@ export class WorldManager {
   }
 
   showTransformControls(entity, onChange?: Function) {
+    if (!entity) {
+      // TODO: why is entity null in some cases?
+      //       see https://discord.com/channels/755888642370699265/817782963222609941/1039208106950918225
+      console.warn("can't show transform controls, entity is null");
+      return;
+    }
+
     this.transformEntity = entity;
 
     entity.add(TransformControls, {
