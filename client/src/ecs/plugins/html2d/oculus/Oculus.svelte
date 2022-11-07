@@ -9,6 +9,7 @@
 </script>
 
 <CircleMask {diameter} {cuts}>
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <oculus
     style="--oculus-border-color: {color}; --diameter: {diameter}px"
     on:click

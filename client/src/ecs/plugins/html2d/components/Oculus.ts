@@ -120,18 +120,20 @@ export class Oculus extends LocalComponent {
     },
   };
 
-  isCachedPositionInvalid(v1: Vector3) {
+  isCachedPositionInvalid(v1: Vector3, diameter: number) {
     return (
       this.x === undefined ||
       this.y === undefined ||
+      this.diameter === undefined ||
       Math.abs(this.x - v1.x) >= HTML2D_MOTION_THRESHOLD ||
-      Math.abs(this.y - v1.y) >= HTML2D_MOTION_THRESHOLD
+      Math.abs(this.y - v1.y) >= HTML2D_MOTION_THRESHOLD ||
+      Math.abs(this.diameter - diameter) >= 1
     );
   }
 
-  setCachedPosition(x, y, diameter) {
-    this.x = x;
-    this.y = y;
+  setCachedPosition(v1: Vector3, diameter: number) {
+    this.x = v1.x;
+    this.y = v1.y;
     this.diameter = diameter;
   }
 

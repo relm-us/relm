@@ -137,20 +137,21 @@ export class OculusSystem extends System {
     v1.add(spec.offset);
 
     const dist = this.presentation.camera.parent.position.distanceTo(v1);
+    const diameter = Math.round(1200 / dist);
 
     this.htmlPresentation.project(v1);
 
     const { container, component } = entity.get(OculusRef) as OculusRef;
 
-    if (spec.isCachedPositionInvalid(v1)) {
-      spec.setCachedPosition(v1.x, v1.y, Math.round(1200 / dist));
+    if (spec.isCachedPositionInvalid(v1, diameter)) {
+      spec.setCachedPosition(v1, diameter);
 
       container.style.left = spec.x.toFixed(3) + "px";
       container.style.top = spec.y.toFixed(3) + "px";
 
-      const diameter = spec.diameter.toFixed(3);
-      container.style.width = `${diameter}px`;
-      container.style.height = `${diameter}px`;
+      const fixedDiameter = diameter.toFixed(3);
+      container.style.width = `${fixedDiameter}px`;
+      container.style.height = `${fixedDiameter}px`;
     }
 
     return {
