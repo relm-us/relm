@@ -43,11 +43,16 @@ export class Collider2System extends System {
   order = Groups.Presentation + 299;
 
   static queries = {
-    implicitToExplicit: [Collider2, Collider2Implicit],
-
     added: [Transform, Collider2, Not(Collider2Ref)],
     modified: [Transform, Modified(Collider2), Collider2Ref],
-    removed: [Transform, Not(Collider2), Collider2Ref, Not(Collider2Implicit)],
+
+    // TODO: Since Collider2Ref is not a StateComponent, this `removed` query
+    //       is never used. Collider2Ref must remain a LocalComponent, because
+    //       when CameraSystem deactivates an entity, we need it to go "on ice",
+    //       and not get removed, so that its rapier physics collider remains
+    //       intact. Otherwise, we will never be able to tell when it comes back
+    //       "on stage" and needs to be thawed.
+    // removed: [Not(Collider2), Collider2Ref, Not(Collider2Implicit)],
 
     addImplicit: [
       Transform,
@@ -56,7 +61,8 @@ export class Collider2System extends System {
       Not(Collider2Implicit),
     ],
     modifiedObject: [Transform, Modified(Object3DRef)],
-    modifiedTransform: [Modified(Transform), Collider2Ref, Collider2Implicit],
+    modifiedTransform: [Modified(Transform), Collider2Ref],
+    implicitToExplicit: [Collider2, Collider2Implicit],
   };
 
   init({ physics }) {
@@ -64,12 +70,6 @@ export class Collider2System extends System {
   }
 
   update() {
-    this.queries.implicitToExplicit.forEach((entity) => {
-      entity.remove(Collider2Implicit);
-      entity.maybeRemove(Collider2Ref);
-      this.build(entity);
-    });
-
     this.queries.added.forEach((entity) => {
       this.build(entity);
     });
@@ -79,9 +79,9 @@ export class Collider2System extends System {
       this.build(entity);
     });
 
-    this.queries.removed.forEach((entity) => {
-      this.remove(entity);
-    });
+    // this.queries.removed.forEach((entity) => {
+    //   this.remove(entity);
+    // });
 
     this.queries.addImplicit.forEach((entity) => {
       entity.add(Collider2Implicit);
@@ -95,22 +95,13 @@ export class Collider2System extends System {
     });
 
     this.queries.modifiedTransform.forEach((entity) => {
-      const transform: Transform = entity.get(Transform);
-      const ref: Collider2Ref = entity.get(Collider2Ref);
+      this.modifiedTransform(entity);
+    });
 
-      // Anticipate the need for PhysicsSystem to have an up-to-date translation
-      // and rotation from a modified Transform
-      ref.body.setTranslation(transform.position, true);
-      ref.body.setRotation(transform.rotation, true);
-
-      // When scaling an object that has an implicit collider, we need to
-      // re-calculate the size of the implicit collider
-      const implicit: Collider2Implicit = entity.get(Collider2Implicit);
-      if (!ref.size.equals(implicit.size)) {
-        this.remove(entity);
-        entity.add(Collider2Implicit, { size: ref.size });
-        this.build(entity);
-      }
+    this.queries.implicitToExplicit.forEach((entity) => {
+      entity.remove(Collider2Implicit);
+      entity.maybeRemove(Collider2Ref);
+      this.build(entity);
     });
   }
 
@@ -200,7 +191,7 @@ export class Collider2System extends System {
     return world.createCollider(colliderDesc, body);
   }
 
-  remove(entity) {
+  remove(entity: Entity) {
     const ref: Collider2Ref = entity.get(Collider2Ref);
 
     if (ref.collider) this.physics.removeCollider(ref.collider);
@@ -208,5 +199,25 @@ export class Collider2System extends System {
 
     entity.remove(Collider2Ref);
     entity.maybeRemove(Collider2Implicit);
+  }
+
+  modifiedTransform(entity: Entity) {
+    const transform: Transform = entity.get(Transform);
+    const ref: Collider2Ref = entity.get(Collider2Ref);
+
+    // Anticipate the need for PhysicsSystem to have an up-to-date translation
+    // and rotation from a modified Transform
+    ref.body.setTranslation(transform.position, true);
+    ref.body.setRotation(transform.rotation, true);
+
+    // When scaling an object that has an implicit collider, we need to
+    // re-calculate the size of the collider since the collider is calculated
+    // automatically
+    const implicit: Collider2Implicit = entity.get(Collider2Implicit);
+    if (implicit && !ref.size.equals(implicit.size)) {
+      this.remove(entity);
+      entity.add(Collider2Implicit, { size: ref.size });
+      this.build(entity);
+    }
   }
 }

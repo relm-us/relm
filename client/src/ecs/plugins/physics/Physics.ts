@@ -41,8 +41,8 @@ export class Physics {
   }
 
   removeBody(body: RigidBody) {
-    this.world.removeRigidBody(body);
     this.bodies.delete(body.handle);
+    this.world.removeRigidBody(body);
   }
 
   addCollider(collider: Collider, entity: Entity) {
@@ -50,8 +50,8 @@ export class Physics {
   }
 
   removeCollider(collider: Collider) {
-    this.world.removeCollider(collider, false);
     this.colliders.delete(collider.handle);
+    this.world.removeCollider(collider, false);
   }
 
   deinit() {
