@@ -39,14 +39,14 @@ export interface SavedIdentityData {
 
   // Participant's preferred color (chosen randomly at first)
   color: string;
-  
+
   // Has participant notified that they will be "away"?
   status: PlayerStatus;
 
   // Avatar appearance, based on Avatar Builder settings
   appearance?: Appearance;
 
-  // If the participant is holding / wearing / has something equipped 
+  // If the participant is holding / wearing / has something equipped
   equipment?: Equipment;
 }
 
@@ -74,6 +74,10 @@ export type Equipment = {
   position: [number, number, number];
   rotation: [number, number, number, number];
   scale: [number, number, number];
-  model?: string;
-  colors?: any;
+  object: EquipmentObject;
 };
+
+export type EquipmentObject =
+  | { type: "empty" }
+  | { type: "model"; assetUrl: string; facemapColors: any }
+  | { type: "shape"; shape: string };

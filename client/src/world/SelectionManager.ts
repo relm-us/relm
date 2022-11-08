@@ -198,7 +198,7 @@ export class SelectionManager {
         if ($selected.size > 0) {
           // Transform Controls
           const entityId = first($selected);
-          const entity = this.wdoc.world.entities.getById(entityId);
+          const entity = this.worldManager.world.entities.getById(entityId);
           this.worldManager.showTransformControls(entity);
         } else {
           this.worldManager.hideTransformControls();

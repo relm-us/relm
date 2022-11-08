@@ -1,4 +1,5 @@
 import type { DecoratedECSWorld, Participant } from "~/types";
+import type { Equipment, EquipmentObject } from "relm-common";
 
 import { EntityId } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
@@ -7,6 +8,7 @@ import { createPrefabByName } from "~/prefab";
 import { inFrontOf } from "~/utils/inFrontOf";
 
 import { worldManager } from "~/world";
+import { Vector3 } from "three";
 
 export class Inventory {
   api: RelmRestAPI;
@@ -45,21 +47,40 @@ export class Inventory {
   syncIndicator() {
     const entityJSON = this.firstHeldEntityJSON;
 
-    let equipment;
+    let equipment: Equipment;
     if (entityJSON) {
+      const object = this.getEquipmentObjectFromJSON(entityJSON);
+
+      const s1 = new Vector3().fromArray(entityJSON.Transform.scale);
+      const s2 = new Vector3().fromArray(entityJSON.Item.scale);
+
       equipment = {
         bone: entityJSON.Item.attach,
         position: entityJSON.Item.position,
         rotation: entityJSON.Item.rotation,
-        scale: entityJSON.Item.scale,
-        model: entityJSON.Asset?.value.url,
-        colors: entityJSON.FaceMapColors
-          ? JSON.parse(entityJSON.FaceMapColors.colors)
-          : undefined,
+        scale: s1.multiply(s2).toArray(),
+        object,
       };
     }
 
     worldManager.participants.setEquipment(equipment);
+  }
+
+  getEquipmentObjectFromJSON(entityJSON: any): EquipmentObject {
+    if (entityJSON.Asset && entityJSON.Model2) {
+      return {
+        type: "model",
+        assetUrl: entityJSON.Asset.value.url,
+        facemapColors: entityJSON.FaceMapColors
+          ? JSON.parse(entityJSON.FaceMapColors.colors)
+          : undefined,
+      };
+    } else if (entityJSON.Shape2) {
+      // TODO: implement shape
+      return { type: "shape", shape: null };
+    } else {
+      return { type: "empty" };
+    }
   }
 
   async take(entityId: EntityId) {

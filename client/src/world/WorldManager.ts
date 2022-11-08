@@ -57,7 +57,7 @@ import { makeLight } from "~/prefab/makeLight";
 import { Entity } from "~/ecs/base";
 import { Collider2, Collider2Ref } from "~/ecs/plugins/collider";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
-import { ControllerState, Seat } from "~/ecs/plugins/player-control";
+import { Seat } from "~/ecs/plugins/player-control";
 import { Follow } from "~/ecs/plugins/follow";
 import { intersectionPointWithGround } from "~/ecs/shared/isMakingContactWithGround";
 import { Transition } from "~/ecs/plugins/transition";

@@ -151,6 +151,8 @@ asset.post(
       }
     }
 
+    // TODO: validate entity has Item component and is permitted to be picked up
+
     if (entity) {
       let asset;
       try {
