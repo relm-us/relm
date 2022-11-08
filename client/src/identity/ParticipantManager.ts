@@ -292,7 +292,7 @@ export class ParticipantManager {
 
       case "leave-chair": {
         const transform = body.get(Transform);
-        const position = inFrontOf(transform.position, transform.rotation, 1);
+        const position = inFrontOf(transform.position, transform.rotation, 0.6);
         transform.position.copy(position);
 
         controller.animOverride = null;
