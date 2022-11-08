@@ -14,6 +14,7 @@ export class Animation extends Component {
       default: null,
       editor: {
         label: "Clip Name",
+        // This is a very specific input type designed just for this Component
         input: "AnimationSelect",
       },
     },
