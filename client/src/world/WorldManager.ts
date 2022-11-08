@@ -6,6 +6,7 @@ import type {
   AnimationOverride,
   ParticipantMap,
   UpdateData,
+  ActionSitChair,
 } from "~/types";
 
 import type { Dispatch, State } from "~/main/ProgramTypes";
@@ -18,6 +19,7 @@ import {
   HemisphereLight,
   DirectionalLight,
   Clock,
+  Quaternion,
 } from "three";
 import * as THREE from "three";
 import { localVideoTrack } from "~/ui/VideoMirror";
@@ -424,7 +426,9 @@ export class WorldManager {
             return;
           }
 
-          switch (this.participants.currentAction) {
+          const action = this.participants.local.actionState;
+
+          switch (action.state) {
             case "free": {
               if ($key1) {
                 this.participants.setAction({ state: "waving" });
@@ -440,9 +444,15 @@ export class WorldManager {
                 );
 
                 const seat: Seat = InteractorSystem.selected.get(Seat);
+
+                // Place the avatar at the designated location within the "seat" object
                 const offset = new Vector3().copy(seat.offset);
                 offset.applyQuaternion(transform.rotation);
                 position.add(offset);
+
+                // Face the avatar at the designated (default) direction
+                const rotation = new Quaternion().copy(transform.rotation);
+                rotation.multiply(seat.forward);
 
                 seat.seated = true;
 
@@ -457,6 +467,7 @@ export class WorldManager {
                   state: "sit-chair",
                   seat,
                   position,
+                  rotation,
                 });
 
                 // Don't let participants seat-hop or interact with other objects nearby;
@@ -491,19 +502,16 @@ export class WorldManager {
               if ($key1 || $key2 || $key3 || $keySpace) {
                 this.enableInteraction(true);
 
-                const seat: Seat = (this.participants.local.actionState as any)
-                  .seat;
+                action.seat.seated = false;
 
-                seat.seated = false;
-
-                if (seat.zone !== "") {
+                if (action.seat.zone !== "") {
                   this.dispatch({
                     id: "rejoinAudioVideo",
                     zone: null,
                   });
                 }
 
-                this.participants.setAction({ state: "free" });
+                this.participants.setAction({ state: "leave-chair" });
               }
               break;
             }

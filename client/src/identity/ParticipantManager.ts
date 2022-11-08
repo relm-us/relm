@@ -38,6 +38,8 @@ import { Oculus } from "~/ecs/plugins/html2d";
 import { Model2 } from "~/ecs/plugins/model";
 import { Transform } from "~/ecs/plugins/core";
 import { Collider2 } from "~/ecs/plugins/collider";
+import { Vector3 } from "three";
+import { inFrontOf } from "~/utils/inFrontOf";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -233,42 +235,49 @@ export class ParticipantManager {
       return;
     }
 
+    this.local.actionState = action;
+
     const controller: ControllerState = body.get(ControllerState);
     const oculus: Oculus = body.get(Oculus);
 
     switch (action.state) {
-      case "free":
+      case "free": {
         controller.animOverride = null;
         oculus.targetOffset.y = OCULUS_HEIGHT_STAND;
         this.setModelOffset(0);
         this.setColliderHeight(COLLIDER_HEIGHT_STAND);
         break;
+      }
 
-      case "waving":
+      case "waving": {
         controller.animOverride = { clipName: WAVING, loop: true };
         oculus.targetOffset.y = OCULUS_HEIGHT_STAND;
         this.setModelOffset(0);
         this.setColliderHeight(COLLIDER_HEIGHT_STAND);
         break;
+      }
 
-      case "raise-hand":
+      case "raise-hand": {
         controller.animOverride = { clipName: RAISING_HAND, loop: false };
         oculus.targetOffset.y = OCULUS_HEIGHT_STAND;
         this.setModelOffset(0);
         this.setColliderHeight(COLLIDER_HEIGHT_STAND);
         break;
+      }
 
-      case "sit-ground":
+      case "sit-ground": {
         controller.animOverride = { clipName: STAND_SIT, loop: false };
         oculus.targetOffset.y = OCULUS_HEIGHT_SIT_GROUND;
         this.setModelOffset(0);
         this.setColliderHeight(COLLIDER_HEIGHT_STAND);
         break;
+      }
 
-      case "sit-chair":
-        if (action.position) {
-          body.get(Transform).position.copy(action.position);
-        }
+      case "sit-chair": {
+        const transform = body.get(Transform);
+
+        transform.position.copy(action.position);
+        transform.rotation.copy(action.rotation);
 
         controller.animOverride = { clipName: CHAIR_SIT, loop: false };
         oculus.targetOffset.y = OCULUS_HEIGHT_SIT_CHAIR;
@@ -279,9 +288,22 @@ export class ParticipantManager {
         // Adjust avatar's collider so that it rests on rear end
         this.setColliderHeight(COLLIDER_HEIGHT_SIT_CHAIR);
         break;
-    }
+      }
 
-    this.local.actionState = action;
+      case "leave-chair": {
+        const transform = body.get(Transform);
+        const position = inFrontOf(transform.position, transform.rotation, 1);
+        transform.position.copy(position);
+
+        controller.animOverride = null;
+        oculus.targetOffset.y = OCULUS_HEIGHT_STAND;
+        this.setModelOffset(0);
+        this.setColliderHeight(COLLIDER_HEIGHT_STAND);
+
+        this.setAction({ state: "free" });
+        break;
+      }
+    }
   }
 
   setModelOffset(z: number) {

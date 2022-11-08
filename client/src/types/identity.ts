@@ -1,4 +1,4 @@
-import type { Vector3 } from "three";
+import type { Quaternion, Vector3 } from "three";
 import type {
   Appearance,
   Equipment,
@@ -67,12 +67,24 @@ export type AvatarEntities = {
   equipped?: Entity;
 };
 
+export type ActionSitChair = {
+  state: "sit-chair";
+  seat: Seat;
+  position: Vector3;
+  rotation: Quaternion;
+};
+
+export type ActionLeaveChair = {
+  state: "leave-chair";
+};
+
 export type ActionState =
   | { state: "free" }
   | { state: "waving" }
   | { state: "raise-hand" }
   | { state: "sit-ground" }
-  | { state: "sit-chair"; seat: Seat; position: Vector3 };
+  | ActionSitChair
+  | ActionLeaveChair;
 
 export type Participant = {
   participantId: string;
