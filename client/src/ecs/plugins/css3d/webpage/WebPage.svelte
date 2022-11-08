@@ -1,10 +1,15 @@
 <script lang="ts">
-  import type { Asset } from "~/ecs/plugins/core";
+  import type { Entity } from "~/ecs/base";
+  import { Asset, Transform } from "~/ecs/plugins/core";
 
-  import { Vector2 } from "three";
+  import { Vector2, Vector3 } from "three";
+
   import { fade } from "svelte/transition";
 
+  import { worldManager } from "~/world";
   import { assetUrl } from "~/config/assetUrl";
+  import { AVATAR_POINTER_TAP_MAX_DISTANCE } from "~/config/constants";
+
   import { pointerStateDelayed } from "~/events/input/PointerListener/pointerActions";
   import { worldUIMode } from "~/stores/worldUIMode";
   import Fullwindow from "~/ui/lib/Fullwindow.svelte";
@@ -13,26 +18,36 @@
   export let size: Vector2;
   export let url: string;
   export let visible: boolean;
+  export let entity: Entity;
   export let fit: "COVER" | "CONTAIN";
 
-  let bigscreen = false;
+  let fullwindow = false;
 
-  const activate = () => {
-    if (pointerStateDelayed !== "interactive-drag") {
-      bigscreen = true;
-    }
-  };
-  const deactivate = () => {
-    bigscreen = false;
-    console.log("deactivate");
-  };
+  function activateFullwindow() {
+    // don't allow activating in build mode
+    if ($worldUIMode === "build") return;
+
+    // don't allow activating from accidental drag clicks
+    if (pointerStateDelayed === "interactive-drag") return;
+
+    // don't allow activating an image that is too far away from the avatar
+    const p1: Vector3 = entity.get(Transform).position;
+    const p2: Vector3 = worldManager.participants.local.avatar.position;
+    if (p1.distanceTo(p2) > AVATAR_POINTER_TAP_MAX_DISTANCE) return;
+
+    fullwindow = true;
+  }
+
+  function deactivateFullwindow() {
+    fullwindow = false;
+  }
 
   function getDomain(url: string) {
     return new URL(url).hostname;
   }
 
   $: if ($worldUIMode === "build") {
-    bigscreen = false;
+    fullwindow = false;
   }
 
   // ignore other props
@@ -40,8 +55,12 @@
 </script>
 
 {#if visible}
-  {#if bigscreen}
-    <Fullwindow active={bigscreen} on:click={deactivate} on:close={deactivate}>
+  {#if fullwindow}
+    <Fullwindow
+      active={fullwindow}
+      on:click={deactivateFullwindow}
+      on:close={deactivateFullwindow}
+    >
       <r-frame transition:fade>
         <iframe
           title="Web Page"
@@ -79,9 +98,10 @@
     </r-cover-image>
   {/if}
 
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <overlay
     class:cloudy={$worldUIMode === "build"}
-    on:click={$worldUIMode === "build" ? undefined : activate}
+    on:click={activateFullwindow}
     on:mousedown|preventDefault
   />
 {/if}

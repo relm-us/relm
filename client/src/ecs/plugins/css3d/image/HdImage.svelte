@@ -1,9 +1,15 @@
 <script lang="ts">
-  import type { Asset } from "~/ecs/plugins/core";
+  import type { Entity } from "~/ecs/base";
 
   import { fade } from "svelte/transition";
+  import { Vector3 } from "three";
 
+  import { worldManager } from "~/world";
+  import { AVATAR_POINTER_TAP_MAX_DISTANCE } from "~/config/constants";
   import { assetUrl } from "~/config/assetUrl";
+
+  import { Asset, Transform } from "~/ecs/plugins/core";
+
   import { pointerStateDelayed } from "~/events/input/PointerListener/pointerActions";
   import { worldUIMode } from "~/stores/worldUIMode";
   import Fullwindow from "~/ui/lib/Fullwindow.svelte";
@@ -11,16 +17,31 @@
   export let asset: Asset;
   export let fit: "COVER" | "CONTAIN";
   export let visible: boolean;
+  export let entity: Entity;
 
-  let bigscreen = false;
+  let fullwindow = false;
 
-  const activate = () => {
-    if (pointerStateDelayed !== "interactive-drag") bigscreen = true;
-  };
-  const deactivate = () => (bigscreen = false);
+  function activateFullwindow() {
+    // don't allow activating in build mode
+    if ($worldUIMode === "build") return;
+
+    // don't allow activating from accidental drag clicks
+    if (pointerStateDelayed === "interactive-drag") return;
+
+    // don't allow activating an image that is too far away from the avatar
+    const p1: Vector3 = entity.get(Transform).position;
+    const p2: Vector3 = worldManager.participants.local.avatar.position;
+    if (p1.distanceTo(p2) > AVATAR_POINTER_TAP_MAX_DISTANCE) return;
+
+    fullwindow = true;
+  }
+
+  function deactivateFullwindow() {
+    fullwindow = false;
+  }
 
   $: if ($worldUIMode === "build") {
-    bigscreen = false;
+    fullwindow = false;
   }
 
   // ignore other props
@@ -28,8 +49,8 @@
 </script>
 
 {#if visible}
-  {#if bigscreen}
-    <Fullwindow on:click={deactivate} on:close={deactivate}>
+  {#if fullwindow}
+    <Fullwindow on:click={deactivateFullwindow} on:close={deactivateFullwindow}>
       <r-fullwindow-image transition:fade>
         <img class="contain" src={assetUrl(asset.url)} alt={asset.name} />
       </r-fullwindow-image>
@@ -38,12 +59,13 @@
 
   <!-- Always show image in its Css3d container -->
   <r-image>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <img
       class:cover={fit === "COVER"}
       class:contain={fit === "CONTAIN"}
       src={assetUrl(asset.url)}
       alt={asset.name === "" ? "HD Image" : asset.name}
-      on:click={$worldUIMode === "build" ? undefined : activate}
+      on:click={activateFullwindow}
       on:mousedown|preventDefault
     />
   </r-image>

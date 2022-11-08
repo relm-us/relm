@@ -35,6 +35,10 @@ export const AVATAR_HEIGHT_UNSCALED = 7;
 // Time to revert to centered head after no mouse/pointer movement (millis)
 export const AVATAR_RECENTER_HEAD_NO_POINTER_MOTION = 3000;
 
+// Only allow mouse/tap on things near the avatar; heuristic for avoiding activating
+// things far away and behind floors or walls
+export const AVATAR_POINTER_TAP_MAX_DISTANCE = 15;
+
 // How quickly to move the camera as it follows the participant
 export const CAMERA_PLAY_DAMPENING = 0.4;
 export const CAMERA_BUILD_DAMPENING = 0.2;
