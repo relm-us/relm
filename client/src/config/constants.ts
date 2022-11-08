@@ -31,6 +31,8 @@ export const AVATAR_HEIGHT = 1.5;
 // Due to the way GLB is exported, it is much larger in local
 // transform, and we need to take that into account at times
 export const AVATAR_HEIGHT_UNSCALED = 7;
+// Scale the avatar body down due to the way it is stored in GLB format
+export const AVATAR_BODY_SCALE = 0.25;
 
 // Time to revert to centered head after no mouse/pointer movement (millis)
 export const AVATAR_RECENTER_HEAD_NO_POINTER_MOTION = 3000;

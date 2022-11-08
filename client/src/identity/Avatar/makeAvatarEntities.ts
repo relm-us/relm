@@ -3,6 +3,7 @@ import { Euler, Quaternion, Vector3 } from "three";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
 import {
+  AVATAR_BODY_SCALE,
   AVATAR_HEIGHT_UNSCALED,
   COLLIDER_HEIGHT_STAND,
   IDLE,
@@ -33,16 +34,16 @@ export function makeAvatarEntities(
 ): AvatarEntities {
   // Create the avatar's torso, which we connect everything else to
   const body: Entity = makeEntity(world, "Avatar", participantId)
+    .add(Transform, {
+      position: new Vector3().copy(position),
+      rotation: new Quaternion().setFromEuler(new Euler(0, Math.PI, 0)),
+      scale: new Vector3().setScalar(AVATAR_BODY_SCALE),
+    })
     .add(PointerPosition, {
       offset: new Vector3(0, 1, 0),
     })
     .add(Repulsive)
     .add(Impactable)
-    .add(Transform, {
-      position: new Vector3().copy(position),
-      rotation: new Quaternion().setFromEuler(new Euler(0, Math.PI, 0)),
-      scale: new Vector3(0.25, 0.25, 0.25),
-    })
     .add(AssetComp, {
       value: new Asset(avatarsGlb),
     })
