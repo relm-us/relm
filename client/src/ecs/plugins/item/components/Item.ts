@@ -29,6 +29,7 @@ export class Item extends Component {
           { label: "Right Hand", value: "HAND" },
           { label: "Head", value: "HEAD" },
           { label: "Back", value: "BACK" },
+          { label: "Hips", value: "HIPS" },
         ],
       },
     },

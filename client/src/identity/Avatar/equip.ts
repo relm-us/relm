@@ -98,6 +98,37 @@ function makeHeldEntity(world: DecoratedECSWorld, equipment: Equipment) {
   return entity.activate();
 }
 
+/**
+ * Bones:
+ *
+ * mixamorigHips
+ * mixamorigSpine
+ * mixamorigSpine1
+ * mixamorigSpine2
+ * mixamorigNeck
+ * mixamorigHead
+ * mixamorigHeadTop_End
+ * mixamorigLeftShoulder
+ * mixamorigLeftArm
+ * mixamorigLeftForeArm
+ * mixamorigLeftHand
+ * mixamorigRightShoulder
+ * mixamorigRightArm
+ * mixamorigRightForeArm
+ * mixamorigRightHand
+ * mixamorigLeftUpLeg
+ * mixamorigLeftLeg
+ * mixamorigLeftFoot
+ * mixamorigLeftToeBase
+ * mixamorigLeftToe_End
+ * mixamorigRightUpLeg
+ * mixamorigRightLeg
+ * mixamorigRightFoot
+ * mixamorigRightToeBase
+ * mixamorigRightToe_End
+ *
+ */
+
 function getBoneAttachParams(equipment: Equipment) {
   const height = 1.0;
   switch (equipment.bone) {
@@ -112,6 +143,13 @@ function getBoneAttachParams(equipment: Equipment) {
       return {
         boneName: "mixamorigSpine2",
         position: new Vector3(0, 0, -height / 2 - BACK_OFFSET),
+        rotation: new Quaternion(),
+        scale: new Vector3(1, 1, 1),
+      };
+    case "HIPS":
+      return {
+        boneName: "mixamorigHips",
+        position: new Vector3(0, 0, 0),
         rotation: new Quaternion(),
         scale: new Vector3(1, 1, 1),
       };
