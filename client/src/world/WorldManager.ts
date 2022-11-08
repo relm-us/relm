@@ -433,12 +433,16 @@ export class WorldManager {
               } else if ($key3) {
                 this.participants.setAction({ state: "raise-hand" });
               } else if ($keySpace && InteractorSystem.selected?.has(Seat)) {
+                const transform: Transform =
+                  InteractorSystem.selected.get(Transform);
                 const position: Vector3 = new Vector3().copy(
-                  InteractorSystem.selected.get(Transform).position
+                  transform.position
                 );
 
                 const seat: Seat = InteractorSystem.selected.get(Seat);
-                position.add(seat.offset);
+                const offset = new Vector3().copy(seat.offset);
+                offset.applyQuaternion(transform.rotation);
+                position.add(offset);
 
                 seat.seated = true;
 
