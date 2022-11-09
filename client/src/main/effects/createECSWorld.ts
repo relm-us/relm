@@ -16,6 +16,7 @@ import BloomPlugin from "~/ecs/plugins/bloom";
 import BoneAttachPlugin from "~/ecs/plugins/bone-attach";
 import BoneTwistPlugin from "~/ecs/plugins/bone-twist";
 import CameraPlugin from "~/ecs/plugins/camera";
+import ChildAttachPlugin from "~/ecs/plugins/child-attach";
 import ClickablePlugin from "~/ecs/plugins/clickable";
 import ColliderPlugin from "~/ecs/plugins/collider";
 import ColliderVisiblePlugin from "~/ecs/plugins/collider-visible";
@@ -89,6 +90,7 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       BoneAttachPlugin,
       BoneTwistPlugin,
       CameraPlugin,
+      ChildAttachPlugin,
       ClickablePlugin,
       ColliderPlugin,
       ColliderVisiblePlugin,

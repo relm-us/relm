@@ -1,4 +1,4 @@
-import { Box3, Object3D, Vector3, Bone } from "three";
+import { Object3D, Bone } from "three";
 import { System, Groups, Entity, Not, Modified } from "~/ecs/base";
 import { Object3DRef, Presentation } from "~/ecs/plugins/core";
 
@@ -56,18 +56,11 @@ export class BoneAttachSystem extends System {
     if (entityToAttach) {
       const object: Object3D = entityToAttach.get(Object3DRef)?.value;
       if (object) {
-        // TODO: take bounding box size into consideration
-        const box = new Box3();
-        box.setFromObject(object);
-        const size = new Vector3();
-        box.getSize(size);
-
         const container = new Object3D();
         container.position.copy(spec.position);
         container.quaternion.copy(spec.rotation);
         container.scale.copy(spec.scale);
         container.add(object);
-        (window as any).obj1 = object;
 
         bone.add(container);
 

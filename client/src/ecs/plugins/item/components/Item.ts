@@ -26,6 +26,7 @@ export class Item extends Component {
         label: "Attach To",
         input: "Select",
         options: [
+          { label: "Center", value: "CENTER" },
           { label: "Head", value: "HEAD" },
           { label: "Back", value: "BACK" },
           { label: "Hips", value: "HIPS" },

@@ -11,11 +11,12 @@ import { makeBox } from "~/prefab/makeBox";
 import { Entity } from "~/ecs/base";
 import { BoneAttach } from "~/ecs/plugins/bone-attach";
 import { Item } from "~/ecs/plugins/item";
-import { Asset, Transform } from "~/ecs/plugins/core";
+import { Asset, Object3DRef, Transform } from "~/ecs/plugins/core";
 import { Asset as AssetComp } from "~/ecs/plugins/asset";
 import { Model2 } from "~/ecs/plugins/model";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
 import { AlwaysOnStage } from "~/ecs/plugins/camera";
+import { ChildAttach } from "~/ecs/plugins/child-attach";
 
 const HAND_LENGTH = 0.25;
 const BACK_OFFSET = 0.25;
@@ -38,12 +39,15 @@ export function showHoldingIndicator(
   entities: AvatarEntities,
   equipment: Equipment
 ) {
+  if (!entities) {
+    console.warn("Can't showHoldingIndicator: avatar not available");
+    return;
+  }
+
   const heldEntity = makeHeldEntity(
     entities.body.world as DecoratedECSWorld,
     equipment
   ).activate();
-
-  const { boneName, rotation } = getBoneAttachParams(equipment);
 
   const item = new Item(null).fromJSON({
     position: equipment.position,
@@ -51,8 +55,16 @@ export function showHoldingIndicator(
     scale: equipment.scale,
   });
 
-  if (entities) {
-    // Will add (or modify, if BoneAttach already exists)
+  if (equipment.bone === "CENTER") {
+    // not a bone
+    entities.body.add(ChildAttach, {
+      entityToAttachId: heldEntity.id,
+      position: item.position.divideScalar(AVATAR_BODY_SCALE),
+      rotation: item.rotation,
+      scale: item.scale.divideScalar(AVATAR_BODY_SCALE),
+    });
+  } else {
+    const { boneName, rotation } = getBoneAttachParams(equipment);
     entities.body.add(BoneAttach, {
       entityToAttachId: heldEntity.id,
       boneName,
@@ -60,8 +72,6 @@ export function showHoldingIndicator(
       rotation: item.rotation.premultiply(rotation),
       scale: item.scale.divideScalar(AVATAR_BODY_SCALE),
     });
-  } else {
-    console.warn("Can't showHoldingIndicator: avatar not available");
   }
 
   return heldEntity;
@@ -70,6 +80,7 @@ export function showHoldingIndicator(
 export function removeHoldingIndicator(entities: AvatarEntities) {
   if (!entities) return;
 
+  entities.body.maybeRemove(ChildAttach);
   entities.body.maybeRemove(BoneAttach);
   entities.equipped?.destroy();
   delete entities.equipped;
