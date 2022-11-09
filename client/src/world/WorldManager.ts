@@ -592,7 +592,7 @@ export class WorldManager {
     if (zone === null) {
       toast.push(`Entered Main Audio Zone`);
     } else {
-      toast.push(`Entered Audio Zone: {zone}`);
+      toast.push(`Entered Audio Zone: ${zone}`);
     }
 
     this.dispatch({
