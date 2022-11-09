@@ -27,6 +27,7 @@
 
   <div class="capsule">
     <NumberInput
+      scaleFactor={prop.editor.increment ?? 1}
       value={component[key]}
       decimals={3}
       on:value={onValueChanged}
