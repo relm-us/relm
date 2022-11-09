@@ -457,10 +457,7 @@ export class WorldManager {
                 seat.seated = true;
 
                 if (seat.zone !== "") {
-                  this.dispatch({
-                    id: "rejoinAudioVideo",
-                    zone: seat.zone,
-                  });
+                  this.changeAudioZone(seat.zone);
                 }
 
                 this.participants.setAction({
@@ -505,10 +502,7 @@ export class WorldManager {
                 action.seat.seated = false;
 
                 if (action.seat.zone !== "") {
-                  this.dispatch({
-                    id: "rejoinAudioVideo",
-                    zone: null,
-                  });
+                  this.changeAudioZone(null);
                 }
 
                 this.participants.setAction({ state: "leave-chair" });
@@ -592,6 +586,19 @@ export class WorldManager {
 
   getColliderEntities() {
     return this.world.entities.getAllBy((entity) => entity.has(Collider2));
+  }
+
+  changeAudioZone(zone: string = null) {
+    if (zone === null) {
+      toast.push(`Entered Main Audio Zone`);
+    } else {
+      toast.push(`Entered Audio Zone: {zone}`);
+    }
+
+    this.dispatch({
+      id: "rejoinAudioVideo",
+      zone,
+    });
   }
 
   applyGraphicsQuality(quality) {
