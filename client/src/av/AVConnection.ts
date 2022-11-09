@@ -3,7 +3,7 @@ import { get, writable, Writable } from "svelte/store";
 import { localAudioTrack as localAudioTrackStore } from "~/ui/VideoMirror";
 import { localVisualTrackStore } from "./localVisualTrackStore";
 
-import { ClientAVAdapter } from "./base/ClientAVAdapter";
+import { AVAdapterEvents, ClientAVAdapter } from "./base/ClientAVAdapter";
 import { TwilioClientAVAdapter } from "./twilio/TwilioClientAVAdapter";
 import { AVResource, Track, TrackKind } from "./base/types";
 import { groupBy } from "~/utils/groupBy";
@@ -25,6 +25,8 @@ export class AVConnection {
   adapter: ClientAVAdapter;
   audioTrackStores: Record<string, Writable<Track>>;
   videoTrackStores: Record<string, Writable<Track>>;
+
+  unsubs: Function[] = [];
 
   // Keep track of what room we are currently connected to; helps
   // avoid dup identity err https://www.twilio.com/docs/api/errors/532050
@@ -54,7 +56,7 @@ export class AVConnection {
     this.watchLocalTrackChanges();
     this.watchRemoteTrackChanges();
 
-    this.adapter.on("disconnected", () => {
+    this.subscribe("disconnected", () => {
       this.connected = null;
 
       // `.set` only exists on remote 'writable' stores, so this avoids setting
@@ -63,6 +65,8 @@ export class AVConnection {
         this.audioTrackStores[participantId].set?.(null);
       for (let participantId in this.videoTrackStores)
         this.videoTrackStores[participantId].set?.(null);
+
+      this.unsubscribeAll();
     });
 
     this.connected = roomId;
@@ -113,7 +117,7 @@ export class AVConnection {
     // participant's resources, but are not guaranteed to be so; therefore,
     // we group by a participant ID and then accept the resources as part
     // of our internal stream stores.
-    this.adapter.on("resources-added", (resources: AVResource[]) => {
+    this.subscribe("resources-added", (resources: AVResource[]) => {
       const groups = groupBy(resources, "participantId");
 
       for (const [participantId, resources] of Object.entries(groups)) {
@@ -124,11 +128,11 @@ export class AVConnection {
       }
     });
 
-    this.adapter.on("resources-removed", (resourceIds: string[]) => {
+    this.subscribe("resources-removed", (resourceIds: string[]) => {
       if (logEnabled) console.log("removed AV resources", resourceIds);
     });
 
-    this.adapter.on("participant-removed", (participantId: string) => {
+    this.subscribe("participant-removed", (participantId: string) => {
       this.audioTrackStores[participantId].set?.(null);
       this.videoTrackStores[participantId].set?.(null);
     });
@@ -182,5 +186,17 @@ export class AVConnection {
       const store = this.getTrackStore(participantId, track.kind as TrackKind);
       store.set(track);
     }
+  }
+
+  subscribe(
+    channel: keyof AVAdapterEvents,
+    fn: AVAdapterEvents[keyof AVAdapterEvents]
+  ) {
+    this.adapter.on(channel, fn);
+    this.unsubs.push(() => this.adapter.off(channel, fn));
+  }
+
+  unsubscribeAll() {
+    this.unsubs.forEach((unsub) => unsub());
   }
 }

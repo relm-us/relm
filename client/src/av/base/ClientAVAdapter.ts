@@ -8,7 +8,7 @@ import type {
   SimplifiedTrack,
 } from "./types";
 
-interface AVAdapterEvents {
+export type AVAdapterEvents = {
   "participant-added": (peer: AVParticipant) => void;
   "participant-updated": (peer: AVParticipant) => void;
   "participant-removed": (peerId: string) => void;
@@ -21,7 +21,7 @@ interface AVAdapterEvents {
   "status-updated": (status: ConnectStatus) => void;
 
   "disconnected": () => void;
-}
+};
 
 export class UnimplementedError extends Error {
   constructor(public reason = "Not Implemented") {
