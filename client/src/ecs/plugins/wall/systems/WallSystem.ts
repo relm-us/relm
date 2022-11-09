@@ -1,18 +1,12 @@
-import { Object3D, Mesh, MeshStandardMaterial } from "three";
-import { get } from "svelte/store";
-
-import { OBJECT_INTERACTION } from "~/config/colliderInteractions";
+import { Mesh, MeshStandardMaterial } from "three";
 
 import { System, Not, Modified, Groups } from "~/ecs/base";
-import { Object3DRef, Transform } from "~/ecs/plugins/core";
-// import { RigidBodyRef } from "~/ecs/plugins/physics";
-import { colliderMaterial } from "~/ecs/shared/colliderMaterial";
+import { Object3DRef } from "~/ecs/plugins/core";
 
-import { worldUIMode } from "~/stores/worldUIMode";
 import { isBrowser } from "~/utils/isBrowser";
 
-import { Wall, WallMeshRef, WallColliderRef, WallVisible } from "../components";
-import { WallGeometry, wallGeometryData } from "../WallGeometry";
+import { Wall, WallMeshRef } from "../components";
+import { WallGeometry } from "../WallGeometry";
 export class WallSystem extends System {
   active = isBrowser();
   order = Groups.Initialization;
@@ -20,7 +14,7 @@ export class WallSystem extends System {
   static queries = {
     added: [Object3DRef, Wall, Not(WallMeshRef)],
     modified: [Object3DRef, Modified(Wall), WallMeshRef],
-    removed: [Object3DRef, Not(Wall), WallMeshRef],
+    removed: [Not(Wall), WallMeshRef],
   };
 
   update() {
