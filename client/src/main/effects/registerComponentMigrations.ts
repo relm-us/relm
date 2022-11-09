@@ -149,4 +149,8 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
   ecsWorld.migrations.register("TranslucentOptions", (world, entity, data) => {
     // ignore
   });
+
+  ecsWorld.migrations.register("Item", (world, entity, data) => {
+    entity.addByName("Item2", { compat: true }, true).fromJSON(data);
+  });
 }

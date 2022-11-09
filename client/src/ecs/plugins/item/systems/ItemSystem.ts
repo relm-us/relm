@@ -2,11 +2,11 @@ import { worldManager } from "~/world";
 
 import { Entity, System } from "~/ecs/base";
 
-import { Item, Taken } from "../components";
+import { Item2, Taken } from "../components";
 
 export class ItemSystem extends System {
   static queries = {
-    taken: [Item, Taken],
+    taken: [Item2, Taken],
   };
 
   update() {

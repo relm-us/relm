@@ -1,15 +1,18 @@
 import { Vector3, Quaternion } from "three";
 
-import { Component, StringType } from "~/ecs/base";
+import { BooleanType, Component, StringType } from "~/ecs/base";
 import { QuaternionType, Vector3Type } from "~/ecs/plugins/core";
 
-export class Item extends Component {
+export class Item2 extends Component {
   power: string;
   attach: string;
 
   position: Vector3;
   rotation: Quaternion;
   scale: Vector3;
+
+  // Triggers compatibility mode with v1 equipment mounting points
+  compat: boolean;
 
   static props = {
     power: {
@@ -61,6 +64,14 @@ export class Item extends Component {
       default: new Vector3(1, 1, 1),
       editor: {
         label: "Held Scale",
+      },
+    },
+
+    compat: {
+      type: BooleanType,
+      default: false,
+      editor: {
+        label: "Compatibility Mode",
       },
     },
   };

@@ -1,14 +1,14 @@
 import { Entity } from "~/ecs/base";
-import { Item } from "~/ecs/plugins/item";
+import { Item2 } from "~/ecs/plugins/item";
 import { Clickable, Draggable } from "~/ecs/plugins/clickable";
 import { Seat } from "~/ecs/plugins/player-control";
 
 export function isInteractive(entity: Entity) {
   if (!entity) return false;
-  return entity.has(Item) || entity.has(Clickable) || entity.has(Draggable);
+  return entity.has(Item2) || entity.has(Clickable) || entity.has(Draggable);
 }
 
 export function isInteractiveNearby(entity: Entity) {
   if (!entity) return false;
-  return entity.has(Item) || entity.has(Seat) || entity.has(Clickable);
+  return entity.has(Item2) || entity.has(Seat) || entity.has(Clickable);
 }

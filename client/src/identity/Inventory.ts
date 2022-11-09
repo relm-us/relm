@@ -51,14 +51,18 @@ export class Inventory {
     if (entityJSON) {
       const object = this.getEquipmentObjectFromJSON(entityJSON);
 
+      const item = entityJSON.Item2 ?? entityJSON.Item;
+      const version = item.compat === true ? "1" : "2";
+
       const s1 = new Vector3().fromArray(entityJSON.Transform.scale);
-      const s2 = new Vector3().fromArray(entityJSON.Item.scale);
+      const s2 = new Vector3().fromArray(item.scale);
 
       equipment = {
-        bone: entityJSON.Item.attach,
-        position: entityJSON.Item.position,
-        rotation: entityJSON.Item.rotation,
-        scale: s1.multiply(s2).toArray(),
+        version,
+        bone: item.attach,
+        position: item.position,
+        rotation: item.rotation,
+        scale: version === "2" ? s1.multiply(s2).toArray() : item.scale,
         object,
       };
     }

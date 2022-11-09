@@ -70,6 +70,7 @@ export type Appearance = {
 };
 
 export type Equipment = {
+  version: string;
   bone: string;
   position: [number, number, number];
   rotation: [number, number, number, number];

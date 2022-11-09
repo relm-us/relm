@@ -3,6 +3,12 @@ import type { World } from "./World";
 
 export type Migration = (world: World, entity: Entity, data: any) => void;
 
+/**
+ * A sane way to keep components as they were, while providing
+ * an upgrade path for better ways of building components.
+ *
+ * See registerComponentMigrations.ts
+ */
 export class MigrationManager {
   world: World;
   migrations: Record<string, Migration>;

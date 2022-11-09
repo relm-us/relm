@@ -10,8 +10,8 @@ import { makeBox } from "~/prefab/makeBox";
 
 import { Entity } from "~/ecs/base";
 import { BoneAttach } from "~/ecs/plugins/bone-attach";
-import { Item } from "~/ecs/plugins/item";
-import { Asset, Object3DRef, Transform } from "~/ecs/plugins/core";
+import { Item2 } from "~/ecs/plugins/item";
+import { Asset, Transform } from "~/ecs/plugins/core";
 import { Asset as AssetComp } from "~/ecs/plugins/asset";
 import { Model2 } from "~/ecs/plugins/model";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
@@ -49,7 +49,7 @@ export function showHoldingIndicator(
     equipment
   ).activate();
 
-  const item = new Item(null).fromJSON({
+  const item = new Item2(null).fromJSON({
     position: equipment.position,
     rotation: equipment.rotation,
     scale: equipment.scale,
@@ -64,14 +64,31 @@ export function showHoldingIndicator(
       scale: item.scale.divideScalar(AVATAR_BODY_SCALE),
     });
   } else {
-    const { boneName, rotation } = getBoneAttachParams(equipment);
-    entities.body.add(BoneAttach, {
-      entityToAttachId: heldEntity.id,
-      boneName,
-      position: item.position.divideScalar(AVATAR_BODY_SCALE),
-      rotation: item.rotation.premultiply(rotation),
-      scale: item.scale.divideScalar(AVATAR_BODY_SCALE),
-    });
+    const version = equipment.version ?? "1";
+
+    if (version === "1") {
+      const attachParams = getBoneAttachParamsLegacy(equipment);
+      const { position, rotation, scale } = equipment;
+      const item = new Item2(null).fromJSON({ position, rotation, scale });
+      attachParams.position.add(item.position);
+      attachParams.rotation.copy(item.rotation);
+      attachParams.scale.copy(item.scale);
+
+      // Will add (or modify, if BoneAttach already exists)
+      entities.body.add(BoneAttach, {
+        entityToAttachId: heldEntity.id,
+        ...attachParams,
+      });
+    } else if (version === "2") {
+      const { boneName, rotation } = getBoneAttachParams(equipment);
+      entities.body.add(BoneAttach, {
+        entityToAttachId: heldEntity.id,
+        boneName,
+        position: item.position.divideScalar(AVATAR_BODY_SCALE),
+        rotation: item.rotation.premultiply(rotation),
+        scale: item.scale.divideScalar(AVATAR_BODY_SCALE),
+      });
+    }
   }
 
   return heldEntity;
@@ -151,6 +168,40 @@ function getBoneAttachParams(equipment: Equipment) {
       return { boneName: "mixamorigLeftToeBase", rotation };
     default:
       /* RIGHT_HAND */ return { boneName: "mixamorigRightHand", rotation };
+  }
+}
+
+function getBoneAttachParamsLegacy(equipment: Equipment) {
+  const height = 1.0;
+  switch (equipment.bone) {
+    case "HEAD":
+      return {
+        boneName: "mixamorigHeadTop_End",
+        position: new Vector3(0, height / 2, 0),
+        rotation: new Quaternion(),
+        scale: new Vector3(1, 1, 1),
+      };
+    case "BACK":
+      return {
+        boneName: "mixamorigSpine2",
+        position: new Vector3(0, 0, -height / 2 - BACK_OFFSET),
+        rotation: new Quaternion(),
+        scale: new Vector3(1, 1, 1),
+      };
+    case "HIPS":
+      return {
+        boneName: "mixamorigHips",
+        position: new Vector3(0, 0, 0),
+        rotation: new Quaternion(),
+        scale: new Vector3(1, 1, 1),
+      };
+    default:
+      return {
+        boneName: "mixamorigRightHand",
+        position: new Vector3(0, height / 2 + HAND_LENGTH, 0),
+        rotation: new Quaternion(),
+        scale: new Vector3(1, 1, 1),
+      };
   }
 }
 
