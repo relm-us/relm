@@ -6,7 +6,6 @@ import type {
   ParticipantMap,
   UpdateData,
 } from "~/types";
-import type { RigidBody } from "@dimforge/rapier3d";
 
 import { Readable, Writable, writable, get as getStore } from "svelte/store";
 import { Appearance, Equipment } from "relm-common";
@@ -22,7 +21,7 @@ import {
 import { ParticipantBroker } from "./ParticipantBroker";
 import { setAvatarFromParticipant } from "./Avatar";
 import { AVConnection } from "~/av";
-import { ControllerState } from "~/ecs/plugins/player-control";
+import { ControllerState, Repulsive } from "~/ecs/plugins/player-control";
 import {
   CHAIR_SIT,
   COLLIDER_HEIGHT_SIT_CHAIR,
@@ -38,7 +37,6 @@ import { Oculus } from "~/ecs/plugins/html2d";
 import { Model2 } from "~/ecs/plugins/model";
 import { Transform } from "~/ecs/plugins/core";
 import { Collider2 } from "~/ecs/plugins/collider";
-import { Vector3 } from "three";
 import { inFrontOf } from "~/utils/inFrontOf";
 
 const logEnabled = (localStorage.getItem("debug") || "")
@@ -69,7 +67,6 @@ export class ParticipantManager {
     const map = getStore(this._store);
     if (map?.get) return map.get(participantId);
     else console.warn("can't get participant", map);
-    // return getStore(this._store).get(participantId);
   }
 
   set(participantId, participant: Participant) {
@@ -77,7 +74,6 @@ export class ParticipantManager {
       $map.set(participantId, participant);
       return $map;
     });
-    console.log("set map", getStore(this._store));
   }
 
   constructor(
@@ -244,6 +240,7 @@ export class ParticipantManager {
       case "free": {
         controller.animOverride = null;
         oculus.targetOffset.y = OCULUS_HEIGHT_STAND;
+        this.setRepulsive(true);
         this.setModelOffset(0);
         this.setColliderHeight(COLLIDER_HEIGHT_STAND);
         break;
@@ -252,6 +249,7 @@ export class ParticipantManager {
       case "waving": {
         controller.animOverride = { clipName: WAVING, loop: true };
         oculus.targetOffset.y = OCULUS_HEIGHT_STAND;
+        this.setRepulsive(true);
         this.setModelOffset(0);
         this.setColliderHeight(COLLIDER_HEIGHT_STAND);
         break;
@@ -260,6 +258,7 @@ export class ParticipantManager {
       case "raise-hand": {
         controller.animOverride = { clipName: RAISING_HAND, loop: false };
         oculus.targetOffset.y = OCULUS_HEIGHT_STAND;
+        this.setRepulsive(true);
         this.setModelOffset(0);
         this.setColliderHeight(COLLIDER_HEIGHT_STAND);
         break;
@@ -268,6 +267,7 @@ export class ParticipantManager {
       case "sit-ground": {
         controller.animOverride = { clipName: STAND_SIT, loop: false };
         oculus.targetOffset.y = OCULUS_HEIGHT_SIT_GROUND;
+        this.setRepulsive(false);
         this.setModelOffset(0);
         this.setColliderHeight(COLLIDER_HEIGHT_STAND);
         break;
@@ -281,6 +281,8 @@ export class ParticipantManager {
 
         controller.animOverride = { clipName: CHAIR_SIT, loop: false };
         oculus.targetOffset.y = OCULUS_HEIGHT_SIT_CHAIR;
+
+        this.setRepulsive(false);
 
         // Center on the seated rear end, rather than the feet
         this.setModelOffset(2);
@@ -303,6 +305,17 @@ export class ParticipantManager {
         this.setAction({ state: "free" });
         break;
       }
+    }
+  }
+
+  setRepulsive(enabled: boolean) {
+    const body = this.local.avatar?.entities.body;
+    if (enabled) {
+      console.log("add repulsive");
+      body.add(Repulsive);
+    } else {
+      console.log("remove repulsive");
+      body.remove(Repulsive);
     }
   }
 

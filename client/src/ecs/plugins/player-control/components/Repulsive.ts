@@ -1,3 +1,3 @@
-import { Component } from "~/ecs/base";
+import { LocalComponent } from "~/ecs/base";
 
-export class Repulsive extends Component {}
+export class Repulsive extends LocalComponent {}

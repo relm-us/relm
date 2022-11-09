@@ -24,13 +24,7 @@ import {
 
 import { Controller, ControllerState, Repulsive } from "../components";
 
-import {
-  transition,
-  newKeyState,
-  isKeyActive,
-  KeyState,
-  KPR,
-} from "~/ecs/shared/KeyState";
+import { transition, newKeyState, isKeyActive } from "~/ecs/shared/KeyState";
 import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
 import { FALLING } from "~/config/constants";
 import { changeAnimationClip } from "~/identity/Avatar/changeAnimationClip";
@@ -296,6 +290,9 @@ export class ControllerSystem extends System {
   }
 
   repelFromOthers(entity: Entity) {
+    // Don't repel from others unless we are, ourselves, also repulsive
+    if (!entity.has(Repulsive)) return;
+
     const body: RapierRigidBody = entity.get(Collider2Ref).body;
 
     p1.copy(entity.get(Transform).position);
