@@ -43,6 +43,7 @@
     clear: both;
     width: 150px;
 
+    color: var(--background-gray);
     text-align: center;
 
     span {
