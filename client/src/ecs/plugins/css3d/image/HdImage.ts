@@ -20,12 +20,37 @@ export class HdImage extends Component {
         ],
       },
     },
-    
+
     asset: {
       type: AssetType,
       editor: {
         label: "Image",
         accept: ".png,.jpg,.jpeg",
+      },
+    },
+
+    caption: {
+      type: StringType,
+      default: "",
+      editor: {
+        label: "Caption",
+      },
+    },
+
+    captionUrl: {
+      type: StringType,
+      default: "",
+      editor: {
+        label: "Caption URL",
+      },
+    },
+
+    captionBg: {
+      type: StringType,
+      default: "#1a1e23",
+      editor: {
+        label: "Caption Color",
+        input: "Color",
       },
     },
   };

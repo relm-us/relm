@@ -41,17 +41,17 @@
   });
 </script>
 
-<fullscreen bind:this={el} class:fullwindow>
+<r-fullscreen bind:this={el} class:fullwindow>
   <slot />
-  <upper-left-corner>
-    <icon on:click={handleClose}><IoIosClose /></icon>
-  </upper-left-corner>
-</fullscreen>
+  <r-upper-left-corner>
+    <r-icon on:click={handleClose}><IoIosClose /></r-icon>
+  </r-upper-left-corner>
+</r-fullscreen>
 
 <svelte:window on:keydown={handleKeyDown} />
 
 <style>
-  fullscreen {
+  r-fullscreen {
     display: block;
   }
 
@@ -64,13 +64,13 @@
     z-index: 100;
   }
 
-  upper-left-corner {
+  r-upper-left-corner {
     position: absolute;
     left: 20px;
     top: 20px;
   }
 
-  icon {
+  r-icon {
     display: block;
     width: 48px;
     height: 48px;
@@ -78,7 +78,7 @@
 
     color: white;
   }
-  icon :global(path) {
+  r-icon :global(path) {
     stroke-width: 12px;
     stroke: black;
   }
