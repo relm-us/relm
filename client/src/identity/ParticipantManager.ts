@@ -311,10 +311,8 @@ export class ParticipantManager {
   setRepulsive(enabled: boolean) {
     const body = this.local.avatar?.entities.body;
     if (enabled) {
-      console.log("add repulsive");
       body.add(Repulsive);
     } else {
-      console.log("remove repulsive");
       body.remove(Repulsive);
     }
   }
