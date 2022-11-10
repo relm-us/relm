@@ -59,7 +59,7 @@
   }
 
   function showDocumentView() {
-    documentView = true;
+    if (entity.has(Document)) documentView = true;
   }
 
   function onMouseDown(event) {
