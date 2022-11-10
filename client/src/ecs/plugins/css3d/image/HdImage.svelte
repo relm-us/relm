@@ -2,9 +2,10 @@
   import type { Entity } from "~/ecs/base";
 
   import { fade } from "svelte/transition";
-  import { Vector3 } from "three";
+  import { Vector2, Vector3 } from "three";
 
   import FaExternalLinkAlt from "svelte-icons/fa/FaExternalLinkAlt.svelte";
+  import FaArrowAltCircleRight from "svelte-icons/fa/FaArrowAltCircleRight.svelte";
 
   import { worldManager } from "~/world";
   import { AVATAR_POINTER_TAP_MAX_DISTANCE } from "~/config/constants";
@@ -19,6 +20,9 @@
 
   import FullwindowClose from "~/ui/lib/FullwindowClose.svelte";
 
+  import { Document } from "../components";
+  import DocumentFullwindow from "../document/DocumentFullwindow.svelte";
+
   export let asset: Asset;
   export let fit: "COVER" | "CONTAIN";
   export let caption: string;
@@ -28,6 +32,7 @@
   export let entity: Entity;
 
   let fullwindow = false;
+  let documentView = false;
 
   function activateFullwindow() {
     // don't allow activating in build mode
@@ -50,6 +55,11 @@
     showCenterButtons.set(true);
 
     fullwindow = false;
+    documentView = false;
+  }
+
+  function showDocumentView() {
+    documentView = true;
   }
 
   function onMouseDown(event) {
@@ -65,10 +75,23 @@
   $$props;
 </script>
 
-{#if visible}
+{#if documentView}
+  <!-- <DocumentFullwindow
+    on:close={deactivateFullwindow}
+    {...entity.get(Document)}
+  /> -->
+  <DocumentFullwindow
+    on:close={deactivateFullwindow}
+    {...entity.get(Document)}
+    size={new Vector2(500, 800)}
+  />
+{:else if visible}
   {#if fullwindow}
-    <FullwindowClose on:close={deactivateFullwindow}>
-      <r-full-display transition:fade>
+    <FullwindowClose
+      on:click={showDocumentView}
+      on:close={deactivateFullwindow}
+    >
+      <r-full-display transition:fade={{ duration: 200 }}>
         <r-full-wrapper>
           <r-full-image>
             <img class="contain" src={assetUrl(asset.url)} alt={asset.name} />
@@ -95,24 +118,29 @@
               </r-caption>
             </r-full-footer>
           {/if}
+          {#if entity.has(Document)}
+            <r-look-inside>
+              <FaArrowAltCircleRight />
+            </r-look-inside>
+          {/if}
         </r-full-wrapper>
       </r-full-display>
     </FullwindowClose>
   {/if}
-
-  <!-- Always show image in its Css3d container -->
-  <r-image>
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <img
-      class:cover={fit === "COVER"}
-      class:contain={fit === "CONTAIN"}
-      src={assetUrl(asset.url)}
-      alt={asset.name === "" ? "HD Image" : asset.name}
-      on:pointerdown={activateFullwindow}
-      on:mousedown|preventDefault={onMouseDown}
-    />
-  </r-image>
 {/if}
+
+<!-- Always show image in its Css3d container -->
+<r-image>
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <img
+    class:cover={fit === "COVER"}
+    class:contain={fit === "CONTAIN"}
+    src={assetUrl(asset.url)}
+    alt={asset.name === "" ? "HD Image" : asset.name}
+    on:pointerdown={activateFullwindow}
+    on:mousedown|preventDefault={onMouseDown}
+  />
+</r-image>
 
 <style>
   r-image img {
@@ -149,6 +177,7 @@
   }
 
   r-full-wrapper {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -235,5 +264,18 @@
 
     /* slightly better vertical center, next to text */
     margin-top: 2px;
+  }
+
+  r-look-inside {
+    position: absolute;
+    left: calc(50% + 40px);
+    bottom: 50%;
+
+    display: block;
+    width: 64px;
+    height: 64px;
+
+    opacity: 0.8;
+    color: white;
   }
 </style>

@@ -9,6 +9,7 @@
   import QuillPage from "./quill/QuillPage.svelte";
   import { Document } from "./Document";
   import DocumentFullwindow from "./DocumentFullwindow.svelte";
+  import { HdImage } from "../components";
 
   export let docId: string;
   export let bgColor: string;
@@ -80,7 +81,7 @@
   $$props;
 </script>
 
-{#if visible}
+{#if visible && !entity.has(HdImage)}
   <QuillPage
     {docId}
     {placeholder}

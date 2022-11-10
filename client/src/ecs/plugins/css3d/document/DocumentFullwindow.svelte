@@ -10,7 +10,7 @@
   export let placeholder: string;
   export let bgColor: string;
   export let editable: boolean;
-  export let kind: string;
+  export let kind: string = "ROUNDED";
   export let radius: number;
   export let size: Vector2;
 
