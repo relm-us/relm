@@ -22,6 +22,7 @@
 
   import { Document } from "../components";
   import DocumentFullwindow from "../document/DocumentFullwindow.svelte";
+  import Image from "./Image.svelte";
 
   export let asset: Asset;
   export let fit: "COVER" | "CONTAIN";
@@ -76,10 +77,6 @@
 </script>
 
 {#if documentView}
-  <!-- <DocumentFullwindow
-    on:close={deactivateFullwindow}
-    {...entity.get(Document)}
-  /> -->
   <DocumentFullwindow
     on:close={deactivateFullwindow}
     {...entity.get(Document)}
@@ -94,7 +91,7 @@
       <r-full-display transition:fade={{ duration: 200 }}>
         <r-full-wrapper>
           <r-full-image>
-            <img class="contain" src={assetUrl(asset.url)} alt={asset.name} />
+            <Image fit="CONTAIN" src={assetUrl(asset.url)} alt={asset.name} />
           </r-full-image>
           {#if caption !== ""}
             <r-full-footer>
@@ -131,42 +128,16 @@
 
 <!-- Always show image in its Css3d container -->
 <r-image>
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <img
-    class:cover={fit === "COVER"}
-    class:contain={fit === "CONTAIN"}
+  <Image
+    {fit}
     src={assetUrl(asset.url)}
     alt={asset.name === "" ? "HD Image" : asset.name}
     on:pointerdown={activateFullwindow}
-    on:mousedown|preventDefault={onMouseDown}
+    on:mousedown={onMouseDown}
   />
 </r-image>
 
 <style>
-  r-image img {
-    width: 100%;
-    height: 100%;
-
-    /* For `alt` text */
-    text-align: center;
-  }
-
-  r-image img::before {
-    /* For `alt` text */
-    line-height: 3em;
-    background: white;
-    color: black;
-    font-size: 28px;
-  }
-
-  img.cover {
-    object-fit: cover;
-  }
-
-  img.contain {
-    object-fit: contain;
-  }
-
   r-full-display {
     display: flex;
     justify-content: center;
@@ -198,13 +169,6 @@
     r-full-image {
       width: 100%;
     }
-  }
-
-  r-full-image img {
-    width: 100%;
-    height: 100%;
-
-    pointer-events: all;
   }
 
   r-full-footer {
