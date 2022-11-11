@@ -90,7 +90,11 @@ export class Entity {
 
   remove(Component: TypeOfComponent): Entity {
     if (!this.components.has(Component)) {
-      console.trace("Entity: cannot remove component as it doesnt have one");
+      console.trace(
+        "Entity: cannot remove component as it doesn't have one",
+        this.id,
+        Component?.name
+      );
       return;
     }
     this.components.delete(Component);
@@ -277,7 +281,7 @@ export class Entity {
     return data;
   }
 
-  fromJSON(data) {
+  fromJSON(data, debug = false) {
     this.id = data.id;
     this.name = data.name;
     this.parent = data.parent;
@@ -302,6 +306,7 @@ export class Entity {
         continue;
       }
 
+      if (debug) debugger;
       const Component = this.world.components.getByName(key);
       if (Component) {
         this.add(Component, undefined, true).fromJSON(data[key]);

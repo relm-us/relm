@@ -75,6 +75,12 @@ export class WorldDoc extends EventEmitter {
   // An UndoManager allowing users to undo/redo edits on `entities`
   undoManager: Y.UndoManager;
 
+  // Whenever an entity goes off stage, it is deactivated; however,
+  // we need access to inactive entities to modify them at any time,
+  // since someone else in the world could be editing entities that
+  // are "off stage" to you (or others).
+  inactiveEntities: Map<EntityId, Entity> = new Map();
+
   unsubs: Function[] = [];
 
   constructor(ecsWorld: DecoratedECSWorld) {
@@ -104,6 +110,20 @@ export class WorldDoc extends EventEmitter {
     this.undoManager = new Y.UndoManager([this.entities], {
       captureTimeout: UNDO_CAPTURE_TIMEOUT,
     });
+
+    // Keep track of inactive entities so we can re-activate them if they
+    // have been edited while "off stage"
+    const addInactive = (entity: Entity) => {
+      this.inactiveEntities.set(entity.id as string, entity);
+    };
+    this.world.on("entity-inactive", addInactive);
+    this.unsubs.push(() => this.world.off("entity-inactive", addInactive));
+
+    const removeInactive = (entity: Entity) => {
+      this.inactiveEntities.delete(entity.id as string);
+    };
+    this.world.on("entity-active", removeInactive);
+    this.unsubs.push(() => this.world.off("entity-active", removeInactive));
   }
 
   connect(
@@ -275,6 +295,10 @@ export class WorldDoc extends EventEmitter {
       const yentity: YEntity = this.entities.get(index);
       const yid = yentity._item.id;
       const hid = this.yids.get(yIdToString(yid));
+
+      // If editing something off-stage, activate it first
+      this.inactiveEntities.get(hid)?.activate();
+
       const entity = this.world.entities.getById(hid);
       if (entity) {
         return entity;
@@ -314,6 +338,9 @@ export class WorldDoc extends EventEmitter {
         });
       } else if (event.path.length === 2) {
         const entity = this._getEntityFromEventPath(event.path);
+
+        // inactive entity
+        if (entity === null) return;
 
         if (isEntityAttribute(event.path[1] as string)) {
           const attr = event.path[1] as string;
@@ -365,6 +392,9 @@ export class WorldDoc extends EventEmitter {
         // Update a component's values
         // e.g. event.path = [ 0, "components", 2, "values" ]
         const entity = this._getEntityFromEventPath(event.path);
+
+        // inactive entity
+        if (entity === null) return;
 
         // Retrieve the updated component
         const getComponentFromPath = (path) => {
