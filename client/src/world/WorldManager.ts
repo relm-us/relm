@@ -423,6 +423,11 @@ export class WorldManager {
         ) => {
           if ($mode !== "play") {
             this.participants.setAction({ state: "free" });
+            // TODO: Is this the best option for build mode? Send them to
+            //       the Main audio zone? It's better than keeping them
+            //       "trapped" in an audio zone, e.g. switching to build
+            //       mode while seated.
+            this.changeAudioZone(null);
             return;
           }
 
