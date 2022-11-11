@@ -118,6 +118,7 @@ export class WorldManager {
   entryway: string;
   relmDocId: string;
   avConnection: AVConnection;
+  audioZone: string;
 
   // Make key state available for debugging
   keyLeft = keyLeft;
@@ -197,6 +198,7 @@ export class WorldManager {
     this.entryway = pageParams.entryway;
     this.relmDocId = relmDocId;
     this.avConnection = avConnection;
+    this.audioZone = null;
 
     (window as any).THREE = THREE;
 
@@ -594,6 +596,8 @@ export class WorldManager {
   }
 
   changeAudioZone(zone: string = null) {
+    if (zone === this.audioZone) return;
+
     if (zone === null) {
       toast.push(`Entered Main Audio Zone`, {
         classes: ["audio"],
@@ -608,6 +612,8 @@ export class WorldManager {
       id: "rejoinAudioVideo",
       zone,
     });
+
+    this.audioZone = zone;
   }
 
   applyGraphicsQuality(quality) {
