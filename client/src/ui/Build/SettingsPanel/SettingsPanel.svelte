@@ -8,6 +8,7 @@
   import FogSettings from "./FogSettings.svelte";
   import CameraSettings from "./CameraSettings.svelte";
   import AudioSettings from "./AudioSettings.svelte";
+  import AvatarSettings from "./AvatarSettings.svelte";
   import LightingSettings from "./LightingSettings.svelte";
 
   import { _ } from "~/i18n";
@@ -26,11 +27,17 @@
 
     <AudioSettings />
 
+    <AvatarSettings />
+
     <LightingSettings />
 
     <r-buttons>
-      <Button on:click={() => ($openPanel = "export")}>{$_("SettingsPanel.import_export")}</Button>
-      <Button on:click={() => ($openPanel = "performance")}>{$_("SettingsPanel.performance")}</Button>
+      <Button on:click={() => ($openPanel = "export")}
+        >{$_("SettingsPanel.import_export")}</Button
+      >
+      <Button on:click={() => ($openPanel = "performance")}
+        >{$_("SettingsPanel.performance")}</Button
+      >
     </r-buttons>
   </r-settings>
 </SidePanel>

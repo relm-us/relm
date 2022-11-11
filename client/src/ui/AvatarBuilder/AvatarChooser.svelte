@@ -24,6 +24,7 @@
         bottom: 3,
         shoes: 3,
         skinColor: "#947159",
+        fantasySkinColor: "#947159",
         hairColor: "#f1bbdf",
         topColor: "#0a545e",
         bottomColor: "#1e2022",
@@ -43,6 +44,7 @@
         bottom: 3,
         shoes: 4,
         skinColor: "#d0b4a8",
+        fantasySkinColor: "#d0b4a8",
         hairColor: "#aa9d90",
         topColor: "#6a8e4d",
         bottomColor: "#141313",
@@ -62,6 +64,7 @@
         bottom: 3,
         shoes: 4,
         skinColor: "#c2a482",
+        fantasySkinColor: "#c2a482",
         hairColor: "#9a3300",
         topColor: "#155920",
         bottomColor: "#fbe202",
@@ -81,6 +84,7 @@
         bottom: 0,
         shoes: 1,
         skinColor: "#2c1e0b",
+        fantasySkinColor: "#2c1e0b",
         hairColor: "#0a0a0a",
         topColor: "#c11869",
         bottomColor: "#7472fa",
@@ -100,6 +104,7 @@
         bottom: 1,
         shoes: 3,
         skinColor: "#855a32",
+        fantasySkinColor: "#855a32",
         hairColor: "#3d2107",
         topColor: "#515357",
         bottomColor: "#0d142b",
@@ -119,6 +124,7 @@
         bottom: 3,
         shoes: 3,
         skinColor: "#57351d",
+        fantasySkinColor: "#57351d",
         hairColor: "#20150b",
         topColor: "#fbfbfb",
         bottomColor: "#6f6c58",
@@ -141,6 +147,7 @@
     <h1>{$_("AvatarBuilder.choose_yours")}</h1>
     <r-avatars>
       {#each Object.entries(presets) as [id, preset], i}
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <r-avatar on:click={pick(id)}>
           <img src={preset.image} alt="Avatar {id}" />
         </r-avatar>

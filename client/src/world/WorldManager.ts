@@ -97,6 +97,7 @@ import { Oculus } from "~/ecs/plugins/html2d";
 import { rollRandomAppearance } from "~/identity/Avatar/appearance";
 import { releaseAllKeys } from "~/events/input/comboTable";
 import { portalOccupancy } from "~/stores/portalOccupancy";
+import { fantasySkin } from "~/stores/fantasySkin";
 
 // Make THREE accessible for debugging
 (window as any).THREE = THREE;
@@ -285,6 +286,9 @@ export class WorldManager {
         } else {
           audioMode.set("world");
         }
+
+        const fantasySkinEnabled: boolean = $settings.get("fantasySkin");
+        fantasySkin.set(fantasySkinEnabled);
       })
     );
 

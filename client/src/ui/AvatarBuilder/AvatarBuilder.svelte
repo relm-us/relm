@@ -10,6 +10,7 @@
     TopType,
     BottomType,
     ShoeType,
+    Appearance,
   } from "relm-common";
 
   import Slider from "~/ui/lib/Slider";
@@ -36,6 +37,7 @@
   import iconShoes02 from "./icons/shoes-02.png";
   import iconShoes03 from "./icons/shoes-03.png";
   import iconShoes04 from "./icons/shoes-04.png";
+  import { fantasySkin } from "~/stores/fantasySkin";
 
   export let genderSlider: number;
   export let widthSlider: number;
@@ -46,6 +48,7 @@
   export let bottom: BottomType;
   export let shoes: ShoeType;
   export let skinColor: string;
+  export let fantasySkinColor: string;
   export let hairColor: string;
   export let topColor: string;
   export let bottomColor: string;
@@ -55,7 +58,7 @@
 
   // Accepts 6-hex or 8-hex colors and returns 6-hex; or 'white' if invalid input
   function validColor(color) {
-    if (color.indexOf("#") === 0 && color.length >= 7) {
+    if (color && color.indexOf("#") === 0 && color.length >= 7) {
       return color.slice(0, 7);
     } else {
       return "#ffffff";
@@ -63,7 +66,7 @@
   }
 
   $: {
-    const appearance = {
+    const appearance: Appearance = {
       genderSlider,
       widthSlider,
       beard,
@@ -73,6 +76,7 @@
       bottom,
       shoes,
       skinColor,
+      fantasySkinColor: validColor(fantasySkinColor),
       hairColor,
       topColor: validColor(topColor),
       bottomColor: validColor(bottomColor),
@@ -136,17 +140,25 @@
   </div>
 </Section>
 
-<Section name={$_("AvatarBuilder.skintone")}>
-  <div class="row">
-    {#each AVAILABLE_SKIN_COLORS as color}
-      <Color
-        value={color}
-        selected={skinColor === color}
-        on:click={setSkinColor(color)}
-      />
-    {/each}
-  </div>
-</Section>
+{#if $fantasySkin}
+  <Section name={$_("AvatarBuilder.fantasyskintone")}>
+    <div class="row">
+      <ColorPick bind:value={fantasySkinColor} />
+    </div>
+  </Section>
+{:else}
+  <Section name={$_("AvatarBuilder.skintone")}>
+    <div class="row">
+      {#each AVAILABLE_SKIN_COLORS as color}
+        <Color
+          value={color}
+          selected={skinColor === color}
+          on:click={setSkinColor(color)}
+        />
+      {/each}
+    </div>
+  </Section>
+{/if}
 
 <Section name={$_("AvatarBuilder.hair")}>
   <div class="row evenly">

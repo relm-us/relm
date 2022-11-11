@@ -17,6 +17,7 @@ export function getDefaultAppearance(gender: BinaryGender): Appearance {
     shoes: gender === "male" ? 3 : 4,
 
     skinColor: AVAILABLE_SKIN_COLORS[2],
+    fantasySkinColor: AVAILABLE_SKIN_COLORS[2],
     hairColor: AVAILABLE_HAIR_COLORS[2],
     topColor: "#fbfbfb",
     bottomColor: "#2e2b19",
@@ -25,7 +26,7 @@ export function getDefaultAppearance(gender: BinaryGender): Appearance {
   };
 }
 
-function inclusiveCheck(value : number, lower : number, upper : number) {
+function inclusiveCheck(value: number, lower: number, upper: number) {
   return value >= lower && value <= upper;
 }
 
@@ -40,19 +41,35 @@ function isValidHair(hair) {
  * @returns if the appearance contains valid Appearance properties.
  */
 export function isValidAppearance(payload) {
-  return (typeof payload === "object")
-            && (typeof payload.genderSlider === "number" && inclusiveCheck(payload.genderSlider, 0, 1))
-            && (typeof payload.widthSlider === "number" && inclusiveCheck(payload.widthSlider, 0, 1))
-            && (typeof payload.beard === "boolean")
-            && (typeof payload.belt === "boolean")
-            && (typeof payload.hair === "string" && isValidHair(payload.hair))
-            && (typeof payload.top === "number" && inclusiveCheck(payload.top, 0, 4))
-            && (typeof payload.bottom === "number" && inclusiveCheck(payload.bottom, 0, 4))
-            && (typeof payload.shoes === "number" && inclusiveCheck(payload.shoes, 0, 4))
-            && (typeof payload.skinColor === "string" && isValidColor(payload.skinColor))
-            && (typeof payload.hairColor === "string" && isValidColor(payload.hairColor))
-            && (typeof payload.topColor === "string" && isValidColor(payload.topColor))
-            && (typeof payload.bottomColor === "string" && isValidColor(payload.bottomColor))
-            && (typeof payload.beltColor === "string" && isValidColor(payload.beltColor))
-            && (typeof payload.shoeColor === "string" && isValidColor(payload.shoeColor));
+  return (
+    typeof payload === "object" &&
+    typeof payload.genderSlider === "number" &&
+    inclusiveCheck(payload.genderSlider, 0, 1) &&
+    typeof payload.widthSlider === "number" &&
+    inclusiveCheck(payload.widthSlider, 0, 1) &&
+    typeof payload.beard === "boolean" &&
+    typeof payload.belt === "boolean" &&
+    typeof payload.hair === "string" &&
+    isValidHair(payload.hair) &&
+    typeof payload.top === "number" &&
+    inclusiveCheck(payload.top, 0, 4) &&
+    typeof payload.bottom === "number" &&
+    inclusiveCheck(payload.bottom, 0, 4) &&
+    typeof payload.shoes === "number" &&
+    inclusiveCheck(payload.shoes, 0, 4) &&
+    typeof payload.skinColor === "string" &&
+    isValidColor(payload.skinColor) &&
+    typeof payload.fantasySkinColor === "string" &&
+    isValidColor(payload.fantasySkinColor) &&
+    typeof payload.hairColor === "string" &&
+    isValidColor(payload.hairColor) &&
+    typeof payload.topColor === "string" &&
+    isValidColor(payload.topColor) &&
+    typeof payload.bottomColor === "string" &&
+    isValidColor(payload.bottomColor) &&
+    typeof payload.beltColor === "string" &&
+    isValidColor(payload.beltColor) &&
+    typeof payload.shoeColor === "string" &&
+    isValidColor(payload.shoeColor)
+  );
 }

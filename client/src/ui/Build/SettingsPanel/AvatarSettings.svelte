@@ -1,26 +1,23 @@
 <script lang="ts">
   import { worldManager } from "~/world";
-  import { audioMode } from "~/stores/audioMode";
+  import { fantasySkin } from "~/stores/fantasySkin";
 
   import Pane from "~/ui/lib/Pane";
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import { _ } from "~/i18n";
 
-  let audioModeIsProximity = $audioMode === "proximity";
-  $: if (audioModeIsProximity) {
-    $audioMode = "proximity";
-    worldManager.worldDoc.settings.y.set("audioMode", "proximity");
+  $: if ($fantasySkin) {
+    worldManager.worldDoc.settings.y.set("fantasySkin", true);
   } else {
-    $audioMode = "world";
-    worldManager.worldDoc.settings.y.set("audioMode", "world");
+    worldManager.worldDoc.settings.y.set("fantasySkin", false);
   }
 </script>
 
-<Pane title={$_("AudioSettings.title")}>
-  <r-label>{$_("AudioSettings.proximity_audio")}</r-label>
+<Pane title={$_("AvatarSettings.title")}>
+  <r-label>{$_("AvatarSettings.fantasy_skin")}</r-label>
   <r-setting>
     <r-switch>
-      <ToggleSwitch bind:enabled={audioModeIsProximity} />
+      <ToggleSwitch bind:enabled={$fantasySkin} />
     </r-switch>
   </r-setting>
 </Pane>

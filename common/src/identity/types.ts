@@ -62,6 +62,7 @@ export type Appearance = {
   shoes: ShoeType;
 
   skinColor: string;
+  fantasySkinColor: string;
   hairColor: string;
   topColor: string;
   bottomColor: string;

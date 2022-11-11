@@ -4,6 +4,9 @@ import {
   AVAILABLE_SKIN_COLORS,
   BinaryGender,
 } from "relm-common";
+import { get } from "svelte/store";
+
+import { fantasySkin } from "~/stores/fantasySkin";
 
 import { Morph } from "~/ecs/plugins/morph";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
@@ -81,6 +84,7 @@ export function getDefaultAppearance(gender: BinaryGender): Appearance {
     shoes: gender === "male" ? 3 : 4,
 
     skinColor: AVAILABLE_SKIN_COLORS[2],
+    fantasySkinColor: AVAILABLE_SKIN_COLORS[2],
     hairColor: AVAILABLE_HAIR_COLORS[2],
     topColor: "#fbfbfb",
     bottomColor: "#2e2b19",
@@ -103,6 +107,7 @@ export function rollRandomAppearance(): Appearance {
     bottom: pickOne([0, 1, 2, 3]),
     shoes: pickOne([0, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4]),
     skinColor: pickOne(AVAILABLE_SKIN_COLORS),
+    fantasySkinColor: pickOne(AVAILABLE_SKIN_COLORS),
     hairColor: pickOne(AVAILABLE_HAIR_COLORS),
     topColor: pickOne(UNIQUE_COLOR_PALETTE),
     bottomColor: pickOne(UNIQUE_COLOR_PALETTE),
@@ -116,6 +121,8 @@ function appearanceToCharacterTraits(appearance: Appearance): {
   colors: object;
 } {
   if (!appearance) throw Error("avatar appearance undefined");
+
+  const fantasyMode = get(fantasySkin);
 
   let genderSlider = appearance.genderSlider;
   let widthSlider = appearance.widthSlider;
@@ -190,7 +197,10 @@ function appearanceToCharacterTraits(appearance: Appearance): {
 
   const colors = {};
   for (const vertexGroup of skinGroup)
-    colors[vertexGroup] = [appearance.skinColor, 0.9];
+    colors[vertexGroup] = [
+      fantasyMode ? appearance.fantasySkinColor : appearance.skinColor,
+      0.9,
+    ];
   for (const vertexGroup of hairGroup)
     colors[vertexGroup] = [appearance.hairColor, 0.9];
   for (const vertexGroup of topGroup)
