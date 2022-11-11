@@ -99,10 +99,17 @@ export class Shape2System extends System {
     (mesh.value.material as MeshStandardMaterial).map = texture;
 
     if (spec.fixedTexture) {
-      const w = spec.size.x;
-      const h = spec.size.z;
       const tw = texture.image.naturalWidth;
       const th = texture.image.naturalHeight;
+
+      let w, h;
+      if (spec.kind === "BOX") {
+        w = spec.size.x;
+        h = spec.size.z;
+      } else {
+        w = spec.size.x; // radius
+        h = spec.size.x; // radius
+      }
 
       const repeatX = (spec.textureScale * w) / (tw / TEXTURE_PER_WORLD_UNIT);
       const repeatY = (spec.textureScale * h) / (th / TEXTURE_PER_WORLD_UNIT);
