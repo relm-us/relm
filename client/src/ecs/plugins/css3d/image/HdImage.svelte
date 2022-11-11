@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Entity } from "~/ecs/base";
 
-  import { fade } from "svelte/transition";
+  import { fade, fly } from "svelte/transition";
   import { Vector2, Vector3 } from "three";
 
   import FaExternalLinkAlt from "svelte-icons/fa/FaExternalLinkAlt.svelte";
@@ -88,10 +88,15 @@
       on:click={showDocumentView}
       on:close={deactivateFullwindow}
     >
-      <r-full-display transition:fade={{ duration: 200 }}>
+      <r-full-display in:fade={{ duration: 200 }} out:fly={{ x: -200 }}>
         <r-full-wrapper>
           <r-full-image>
             <Image fit="CONTAIN" src={assetUrl(asset.url)} alt={asset.name} />
+            {#if entity.has(Document)}
+              <button class="look-inside" on:click={showDocumentView}>
+                <FaArrowAltCircleRight />
+              </button>
+            {/if}
           </r-full-image>
           {#if caption !== ""}
             <r-full-footer>
@@ -114,11 +119,6 @@
                 {/if}
               </r-caption>
             </r-full-footer>
-          {/if}
-          {#if entity.has(Document)}
-            <r-look-inside>
-              <FaArrowAltCircleRight />
-            </r-look-inside>
           {/if}
         </r-full-wrapper>
       </r-full-display>
@@ -158,17 +158,9 @@
 
   r-full-image {
     display: flex;
-  }
-
-  @media (min-aspect-ratio: 1) {
-    r-full-image {
-      height: 100%;
-    }
-  }
-  @media (max-aspect-ratio: 1) {
-    r-full-image {
-      width: 100%;
-    }
+    justify-content: center;
+    max-width: 100%;
+    max-height: 100%;
   }
 
   r-full-footer {
@@ -230,9 +222,13 @@
     margin-top: 2px;
   }
 
-  r-look-inside {
+  button.look-inside {
+    border: 0;
+    padding: 0;
+    background: none;
+
     position: absolute;
-    left: calc(50% + 40px);
+    right: 0;
     bottom: 50%;
 
     display: block;
@@ -241,5 +237,7 @@
 
     opacity: 0.8;
     color: white;
+
+    pointer-events: all;
   }
 </style>

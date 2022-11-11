@@ -11,15 +11,14 @@
   {src}
   {alt}
   on:pointerdown
+  on:pointerup
   on:mousedown|preventDefault
+  on:mouseup
   on:click
 />
 
 <style>
   img {
-    width: 100%;
-    height: 100%;
-
     pointer-events: all;
 
     /* For `alt` text */
@@ -35,10 +34,13 @@
   }
 
   img.cover {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
   }
 
   img.contain {
-    object-fit: contain;
+    max-width: 100%;
+    max-height: 100%;
   }
 </style>
