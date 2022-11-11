@@ -14,6 +14,7 @@ import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 
 import { Shape2, Shape2Mesh, Shape2Texture } from "../components";
 import { shapeParamsToGeometry, toShapeParams } from "~/ecs/shared/createShape";
+import { TEXTURE_PER_WORLD_UNIT } from "~/config/constants";
 
 export class Shape2System extends System {
   active = isBrowser();
@@ -97,7 +98,22 @@ export class Shape2System extends System {
 
     (mesh.value.material as MeshStandardMaterial).map = texture;
 
-    texture.repeat.set(spec.textureScale, spec.textureScale);
+    if (spec.fixedTexture) {
+      const w = spec.size.x;
+      const h = spec.size.z;
+      const tw = texture.image.naturalWidth;
+      const th = texture.image.naturalHeight;
+
+      const repeatX = (spec.textureScale * w) / (tw / TEXTURE_PER_WORLD_UNIT);
+      const repeatY = (spec.textureScale * h) / (th / TEXTURE_PER_WORLD_UNIT);
+
+      texture.repeat.set(repeatX, repeatY);
+
+      // center it
+      texture.offset.set(-((repeatX - 1) / 2), -((repeatY - 1) / 2));
+    } else {
+      texture.repeat.set(spec.textureScale, spec.textureScale);
+    }
     texture.wrapS = RepeatWrapping;
     texture.wrapT = RepeatWrapping;
 

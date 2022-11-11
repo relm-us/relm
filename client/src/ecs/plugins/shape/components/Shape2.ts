@@ -1,4 +1,4 @@
-import { Component, StringType, NumberType } from "~/ecs/base";
+import { Component, StringType, NumberType, BooleanType } from "~/ecs/base";
 import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 import { ShapeType } from "~/types/shapes";
@@ -15,6 +15,7 @@ export class Shape2 extends Component {
   metalness: number;
 
   textureScale: number;
+  fixedTexture: boolean;
 
   static props = {
     kind: {
@@ -93,6 +94,15 @@ export class Shape2 extends Component {
       default: 1.0,
       editor: {
         label: "Texture Scale",
+        increment: 0.01,
+      },
+    },
+
+    fixedTexture: {
+      type: BooleanType,
+      default: false,
+      editor: {
+        label: "Fixed Texture",
       },
     },
   };
