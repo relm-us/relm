@@ -1,10 +1,13 @@
 <script type="ts">
   import { toast } from "@zerodevx/svelte-toast";
   import { onMount } from "svelte";
-  import { TEXTURE_PER_WORLD_UNIT } from "~/config/constants";
+
+  import { worldManager } from "~/world";
+
+  import { worldUIMode } from "~/stores";
+
   import { createPrefab } from "~/prefab";
   import { makeHDImage } from "~/prefab/makeHDImage";
-  import { worldManager } from "~/world";
 
   async function getImageDimensions(
     file: File
@@ -23,6 +26,8 @@
 
   onMount(() => {
     document.addEventListener("paste", async (event) => {
+      if ($worldUIMode === "build") return;
+
       const item = Array.from(event.clipboardData.items).find(
         (i) => i.kind === "file"
       );
