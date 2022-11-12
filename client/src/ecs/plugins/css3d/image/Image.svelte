@@ -1,6 +1,6 @@
 <script lang="ts">
   export let src;
-  export let fit: "CONTAIN" | "COVER" = "CONTAIN";
+  export let fit: "CONTAIN" | "CONTAIN-MAX" | "COVER" = "CONTAIN";
   export let alt = "image";
 </script>
 
@@ -8,6 +8,7 @@
 <img
   class:cover={fit === "COVER"}
   class:contain={fit === "CONTAIN"}
+  class:contain-max={fit === "CONTAIN-MAX"}
   {src}
   {alt}
   on:pointerdown
@@ -40,6 +41,12 @@
   }
 
   img.contain {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  img.contain-max {
     max-width: 100%;
     max-height: 100%;
   }

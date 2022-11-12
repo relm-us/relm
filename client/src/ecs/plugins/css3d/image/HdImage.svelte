@@ -63,11 +63,6 @@
     if (entity.has(Document)) documentView = true;
   }
 
-  function onMouseDown(event) {
-    // Prevent click-thru to world, where Draggable might get activated
-    if ($worldUIMode === "play") event.stopPropagation();
-  }
-
   $: if ($worldUIMode === "build") {
     fullwindow = false;
   }
@@ -91,7 +86,11 @@
       <r-full-display in:fade={{ duration: 200 }} out:fly={{ x: -200 }}>
         <r-full-wrapper>
           <r-full-image>
-            <Image fit="CONTAIN" src={assetUrl(asset.url)} alt={asset.name} />
+            <Image
+              fit="CONTAIN-MAX"
+              src={assetUrl(asset.url)}
+              alt={asset.name}
+            />
             {#if entity.has(Document)}
               <button class="look-inside" on:click={showDocumentView}>
                 <FaArrowAltCircleRight />
@@ -132,8 +131,7 @@
     {fit}
     src={assetUrl(asset.url)}
     alt={asset.name === "" ? "HD Image" : asset.name}
-    on:pointerdown={activateFullwindow}
-    on:mousedown={onMouseDown}
+    on:click={activateFullwindow}
   />
 </r-image>
 

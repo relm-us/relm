@@ -1,8 +1,5 @@
 import type { AuthenticationHeaders, SavedIdentityData } from "relm-common";
-import type {
-  LibraryAsset,
-  LoginCredentials,
-} from "~/types";
+import type { LibraryAsset, LoginCredentials } from "~/types";
 
 import { CancellablePromise } from "real-cancellable-promise";
 import { simpleFetch } from "~/utils/simpleFetch";
@@ -53,14 +50,19 @@ export class RelmRestAPI {
   }
 
   post<T>(path, params = {}): CancellablePromise<T> {
-    const body = JSON.stringify(params, null, 2);
+    let body;
+    let headers = {
+      ...this.authHeaders,
+    };
+    if (params instanceof FormData) body = params;
+    else {
+      headers["Content-Type"] = "application/json";
+      headers["Accept"] = "application/json";
+      body = JSON.stringify(params, null, 2);
+    }
     return simpleFetch(`${this.url}${path}`, {
       method: "POST",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        ...this.authHeaders,
-      },
+      headers,
       body,
     });
   }
@@ -356,6 +358,23 @@ export class RelmRestAPI {
       | { status: "error"; code?: number; reason: string };
 
     const result: Result = await this.get("/relms/mine");
+
+    return result;
+  }
+
+  async upload(file: File) {
+    type Result =
+      | {
+          status: "success";
+          files: Record<string, string>;
+        }
+      | { status: "error"; code?: number; reason: string };
+
+    var data = new FormData();
+    data.append("name", file.name);
+    data.append("file", file);
+
+    const result: Result = await this.post("/asset/upload", data);
 
     return result;
   }
