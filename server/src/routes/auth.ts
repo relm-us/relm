@@ -114,6 +114,7 @@ auth.post(
       bottom: appearancePayload.bottom,
       shoes: appearancePayload.shoes,
       skinColor: appearancePayload.skinColor,
+      fantasySkinColor: appearancePayload.fantasySkinColor,
       hairColor: appearancePayload.hairColor,
       topColor: appearancePayload.topColor,
       bottomColor: appearancePayload.bottomColor,

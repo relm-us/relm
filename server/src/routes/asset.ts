@@ -291,6 +291,10 @@ asset.post(
   // middleware.authenticated(),
   // middleware.authorized("edit"),
   wrapAsync(async (req, res) => {
+    if (!req.files) {
+      return respondWithError(res, "expecting files");
+    }
+
     if (!("file" in req.files)) {
       return respondWithError(res, "expecting 'file' in form-data");
     }

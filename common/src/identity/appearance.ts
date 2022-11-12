@@ -59,8 +59,9 @@ export function isValidAppearance(payload) {
     inclusiveCheck(payload.shoes, 0, 4) &&
     typeof payload.skinColor === "string" &&
     isValidColor(payload.skinColor) &&
-    typeof payload.fantasySkinColor === "string" &&
-    isValidColor(payload.fantasySkinColor) &&
+    (!payload.fantasySkinColor ||
+      (typeof payload.fantasySkinColor === "string" &&
+        isValidColor(payload.fantasySkinColor))) &&
     typeof payload.hairColor === "string" &&
     isValidColor(payload.hairColor) &&
     typeof payload.topColor === "string" &&
