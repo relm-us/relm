@@ -1,7 +1,7 @@
 import type { Mesh } from "three";
 import { StateComponent, RefType } from "~/ecs/base";
 
-export class Shape2Mesh extends StateComponent {
+export class ShapeMesh extends StateComponent {
   value: Mesh;
 
   static props = {

@@ -1,1 +1,1 @@
-export { Shape2System } from "./Shape2System";
+export { ShapeSystem } from "./ShapeSystem";

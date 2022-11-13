@@ -12,11 +12,11 @@ import { Entity, System, Not, Modified, Groups } from "~/ecs/base";
 import { Object3DRef } from "~/ecs/plugins/core";
 import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 
-import { Shape2, Shape2Mesh, Shape2Texture } from "../components";
+import { Shape2, ShapeMesh, ShapeTexture } from "../components";
 import { shapeParamsToGeometry, toShapeParams } from "~/ecs/shared/createShape";
 import { TEXTURE_PER_WORLD_UNIT } from "~/config/constants";
 
-export class Shape2System extends System {
+export class ShapeSystem extends System {
   active = isBrowser();
 
   // Must be after AssetSystem
@@ -24,13 +24,13 @@ export class Shape2System extends System {
 
   static queries = {
     modified: [Modified(Shape2)],
-    modifiedAsset: [Modified(Asset), Shape2Texture],
+    modifiedAsset: [Modified(Asset), ShapeTexture],
 
-    added: [Shape2, Object3DRef, Not(Shape2Mesh)],
-    addedAsset: [Shape2, Shape2Mesh, AssetLoaded, Not(Shape2Texture)],
+    added: [Shape2, Object3DRef, Not(ShapeMesh)],
+    addedAsset: [Shape2, ShapeMesh, AssetLoaded, Not(ShapeTexture)],
 
-    removed: [Not(Shape2), Shape2Mesh],
-    removedAsset: [Not(Asset), Shape2Texture],
+    removed: [Not(Shape2), ShapeMesh],
+    removedAsset: [Not(Asset), ShapeTexture],
   };
 
   update() {
@@ -50,7 +50,7 @@ export class Shape2System extends System {
       if (loaded.kind === "TEXTURE") this.buildTexture(entity);
       else {
         console.warn("ignoring non-texture asset for shape", entity.id);
-        entity.add(Shape2Texture);
+        entity.add(ShapeTexture);
       }
     });
 
@@ -74,7 +74,7 @@ export class Shape2System extends System {
         emissive: shape.emissive,
       })
     );
-    entity.add(Shape2Mesh, { value: mesh });
+    entity.add(ShapeMesh, { value: mesh });
 
     // Final step, attach the mesh to the entity's object3d container
     this.attach(entity);
@@ -83,18 +83,18 @@ export class Shape2System extends System {
   remove(entity: Entity) {
     this.detach(entity);
 
-    const mesh: Shape2Mesh = entity.get(Shape2Mesh);
+    const mesh: ShapeMesh = entity.get(ShapeMesh);
 
     if (mesh) {
       mesh.value.geometry?.dispose();
-      entity.remove(Shape2Mesh);
+      entity.remove(ShapeMesh);
     }
   }
 
   buildTexture(entity: Entity) {
     const spec: Shape2 = entity.get(Shape2);
     const texture: Texture = entity.get(AssetLoaded).value;
-    const mesh: Shape2Mesh = entity.get(Shape2Mesh);
+    const mesh: ShapeMesh = entity.get(ShapeMesh);
 
     (mesh.value.material as MeshStandardMaterial).map = texture;
 
@@ -124,23 +124,23 @@ export class Shape2System extends System {
     texture.wrapS = RepeatWrapping;
     texture.wrapT = RepeatWrapping;
 
-    entity.add(Shape2Texture);
+    entity.add(ShapeTexture);
   }
 
   removeTexture(entity: Entity) {
-    const mesh: Shape2Mesh = entity.get(Shape2Mesh);
+    const mesh: ShapeMesh = entity.get(ShapeMesh);
     if (mesh) {
       (mesh.value.material as MeshStandardMaterial).map = null;
     }
 
-    entity.maybeRemove(Shape2Texture);
+    entity.maybeRemove(ShapeTexture);
   }
 
   attach(entity: Entity) {
     const object3dref: Object3DRef = entity.get(Object3DRef);
 
     // Attach shape mesh to container object3d
-    const mesh: Shape2Mesh = entity.get(Shape2Mesh);
+    const mesh: ShapeMesh = entity.get(ShapeMesh);
     object3dref.value.add(mesh.value);
 
     // Notify dependencies, e.g. BoundingBox, that object3d has changed
@@ -149,7 +149,7 @@ export class Shape2System extends System {
 
   detach(entity: Entity) {
     // Detach shape mesh from container object3d
-    const mesh: Shape2Mesh = entity.get(Shape2Mesh);
+    const mesh: ShapeMesh = entity.get(ShapeMesh);
     mesh?.value.removeFromParent();
 
     // Notify dependencies, (e.g. collider), that object3d has changed

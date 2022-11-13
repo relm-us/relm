@@ -9,7 +9,7 @@ export * from "./components";
 export { Components };
 
 export default createPlugin({
-  name: "shape2",
+  name: "shape",
   plugins: [CorePlugin],
   systems: Object.values(Systems) as any,
   components: Object.values(Components),
