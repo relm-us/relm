@@ -8,24 +8,24 @@ import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
 import { clone } from "~/ecs/shared/SkeletonUtils";
 import { makeError } from "~/ecs/shared/makeError";
 
-import { Model2, Model2Ref } from "../components";
+import { Model2, ModelRef } from "../components";
 
 import { firstTimePrepareScene } from "../utils/firstTimePrepareScene";
 
 const cache: Map<string, Group> = new Map();
 
-export class Model2System extends System {
+export class ModelSystem extends System {
   errorScene: Group;
 
   // Must be after AssetSystem
   order = Groups.Initialization + 10;
 
   static queries = {
-    added: [Model2, AssetLoaded, Not(Model2Ref)],
+    added: [Model2, AssetLoaded, Not(ModelRef)],
     modifiedAsset: [Model2, Modified(Asset)],
-    removed: [Model2Ref, Not(Model2)],
-    removedAsset: [Model2Ref, Not(Asset)],
-    modified: [Modified(Model2), Model2Ref],
+    removed: [ModelRef, Not(Model2)],
+    removedAsset: [ModelRef, Not(Asset)],
+    modified: [Modified(Model2), ModelRef],
   };
 
   update() {
@@ -82,13 +82,13 @@ export class Model2System extends System {
       );
     }
 
-    entity.add(Model2Ref, { value: { ...gltf, scene } });
+    entity.add(ModelRef, { value: { ...gltf, scene } });
 
     this.attach(entity);
   }
 
   remove(entity: Entity) {
-    const ref: Model2Ref = entity.get(Model2Ref);
+    const ref: ModelRef = entity.get(ModelRef);
 
     if (ref) {
       if (ref.value) {
@@ -101,7 +101,7 @@ export class Model2System extends System {
       }
     }
 
-    entity.maybeRemove(Model2Ref);
+    entity.maybeRemove(ModelRef);
   }
 
   attach(entity: Entity) {
@@ -110,7 +110,7 @@ export class Model2System extends System {
     if (object3dref) {
       const object3d = object3dref.value;
 
-      const gltf: GLTF = entity.get(Model2Ref).value;
+      const gltf: GLTF = entity.get(ModelRef).value;
       object3d.add(gltf.scene);
 
       // Notify dependencies (e.g. colliders) that object3d has changed
@@ -124,7 +124,7 @@ export class Model2System extends System {
     if (object3dref) {
       const object3d = object3dref.value;
 
-      const child: GLTF = entity.get(Model2Ref).value;
+      const child: GLTF = entity.get(ModelRef).value;
       object3d.remove(child.scene);
 
       // Notify dependencies (e.g. colliders) that object3d has changed
@@ -136,7 +136,7 @@ export class Model2System extends System {
     const errorEntity = makeError(entity, msg);
 
     // Empty object
-    entity.add(Model2Ref, {
+    entity.add(ModelRef, {
       value: {
         scene: new Object3D(),
         animations: [],
@@ -165,7 +165,7 @@ export class Model2System extends System {
 
   updateOffset(entity: Entity) {
     const spec: Model2 = entity.get(Model2);
-    const ref: Model2Ref = entity.get(Model2Ref);
+    const ref: ModelRef = entity.get(ModelRef);
 
     ref.value.scene?.position.copy(spec.offset);
   }

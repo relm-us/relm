@@ -1,7 +1,7 @@
 import { AnimationMixer, LoopOnce } from "three";
 
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
-import { Model2Ref } from "~/ecs/plugins/model";
+import { ModelRef } from "~/ecs/plugins/model";
 
 import { Animation, MixerRef } from "../components";
 
@@ -9,7 +9,7 @@ export class AnimationSystem extends System {
   order = Groups.Simulation + 1;
 
   static queries = {
-    new: [Animation, Model2Ref, Not(MixerRef)],
+    new: [Animation, ModelRef, Not(MixerRef)],
     modified: [Modified(Animation)],
     active: [Animation, MixerRef],
     removed: [Not(Animation), MixerRef],
@@ -34,7 +34,7 @@ export class AnimationSystem extends System {
 
   build(entity: Entity) {
     // Create Mixer
-    const ref: Model2Ref = entity.get(Model2Ref);
+    const ref: ModelRef = entity.get(ModelRef);
     const mixer = new AnimationMixer(ref.value.scene);
     entity.add(MixerRef, { value: mixer });
 
@@ -51,7 +51,7 @@ export class AnimationSystem extends System {
     const mixer = entity.get(MixerRef)?.value;
     if (!mixer) return;
 
-    const ref: Model2Ref = entity.get(Model2Ref);
+    const ref: ModelRef = entity.get(ModelRef);
 
     if (spec.transition === 0) {
       mixer.stopAllAction();

@@ -1,13 +1,13 @@
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
-import { Model2Ref } from "~/ecs/plugins/model";
+import { ModelRef } from "~/ecs/plugins/model";
 import { Morph, MorphApplied } from "../components";
 
 export class MorphSystem extends System {
   order = Groups.Simulation + 1;
 
   static queries = {
-    new: [Morph, Model2Ref, Not(MorphApplied)],
-    modified: [Modified(Morph), Model2Ref],
+    new: [Morph, ModelRef, Not(MorphApplied)],
+    modified: [Modified(Morph), ModelRef],
     removed: [Not(Morph), MorphApplied],
   };
 
@@ -29,7 +29,7 @@ export class MorphSystem extends System {
   }
 
   resetInfluences(entity: Entity) {
-    const ref: Model2Ref = entity.get(Model2Ref);
+    const ref: ModelRef = entity.get(ModelRef);
     const scene = ref?.value?.scene;
     if (!scene) return;
 
@@ -44,7 +44,7 @@ export class MorphSystem extends System {
   }
 
   setInfluences(entity: Entity) {
-    const ref: Model2Ref = entity.get(Model2Ref);
+    const ref: ModelRef = entity.get(ModelRef);
     const scene = ref?.value?.scene;
     if (!scene) return;
 

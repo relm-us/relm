@@ -7,7 +7,7 @@
   import ColorPicker from "~/ui/lib/ColorPicker";
   import Slider from "~/ui/lib/Slider";
 
-  import { Model2Ref } from "~/ecs/plugins/model";
+  import { ModelRef } from "~/ecs/plugins/model";
   import { getFacemapNames } from "~/ecs/plugins/coloration/getFacemapNames";
 
   import NumberInput from "./utils/NumberInput.svelte";
@@ -20,7 +20,7 @@
   const dispatch = createEventDispatcher();
 
   function getAllFacemapNames(entity): string[] {
-    const ref: Model2Ref = entity.get(Model2Ref);
+    const ref: ModelRef = entity.get(ModelRef);
     const scene = ref?.value?.scene;
     if (!scene) return [];
 

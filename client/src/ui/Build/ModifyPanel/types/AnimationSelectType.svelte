@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Component, Entity } from "~/ecs/base";
 
-  import { Model2Ref } from "~/ecs/plugins/model";
+  import { ModelRef } from "~/ecs/plugins/model";
 
   import SelectType from "./SelectType.svelte";
 
@@ -11,7 +11,7 @@
   export let prop;
 
   function getAllAnimationOptions(entity): { label: string; value: string }[] {
-    const ref: Model2Ref = entity.get(Model2Ref);
+    const ref: ModelRef = entity.get(ModelRef);
     if (ref)
       return ref.value.animations.map((clip) => ({
         label: clip.name,

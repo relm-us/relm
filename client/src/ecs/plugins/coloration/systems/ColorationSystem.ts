@@ -1,7 +1,7 @@
 import { Color, BufferAttribute, Mesh } from "three";
 
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
-import { Model2Ref } from "~/ecs/plugins/model";
+import { ModelRef } from "~/ecs/plugins/model";
 import { FaceMapColors, ColorApplied } from "../components";
 import { getFacemapNames } from "../getFacemapNames";
 
@@ -9,8 +9,8 @@ export class ColorationSystem extends System {
   order = Groups.Simulation + 1;
 
   static queries = {
-    new: [FaceMapColors, Model2Ref, Not(ColorApplied)],
-    modified: [Modified(FaceMapColors), Model2Ref],
+    new: [FaceMapColors, ModelRef, Not(ColorApplied)],
+    modified: [Modified(FaceMapColors), ModelRef],
     removed: [Not(FaceMapColors), ColorApplied],
   };
 
@@ -33,7 +33,7 @@ export class ColorationSystem extends System {
   }
 
   resetFaceMapColors(entity: Entity) {
-    const ref: Model2Ref = entity.get(Model2Ref);
+    const ref: ModelRef = entity.get(ModelRef);
     const scene = ref?.value?.scene;
     if (!scene) return;
 
@@ -50,7 +50,7 @@ export class ColorationSystem extends System {
   }
 
   setFaceMapColors(entity: Entity) {
-    const ref: Model2Ref = entity.get(Model2Ref);
+    const ref: ModelRef = entity.get(ModelRef);
     const scene = ref?.value?.scene;
     if (!scene) return;
 
@@ -83,7 +83,7 @@ export class ColorationSystem extends System {
   }
 
   cloneGeometry(entity: Entity) {
-    const ref: Model2Ref = entity.get(Model2Ref);
+    const ref: ModelRef = entity.get(ModelRef);
     const scene = ref?.value?.scene;
     if (!scene) return;
 

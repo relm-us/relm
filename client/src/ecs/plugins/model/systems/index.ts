@@ -1,1 +1,1 @@
-export { Model2System } from "./Model2System";
+export { ModelSystem } from "./ModelSystem";
