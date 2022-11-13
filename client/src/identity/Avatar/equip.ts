@@ -12,8 +12,7 @@ import { Entity } from "~/ecs/base";
 import { BoneAttach } from "~/ecs/plugins/bone-attach";
 import { Item2 } from "~/ecs/plugins/item";
 import { Asset, Transform } from "~/ecs/plugins/core";
-import { Asset as AssetComp } from "~/ecs/plugins/asset";
-import { Model2 } from "~/ecs/plugins/model";
+import { Model3 } from "~/ecs/plugins/model";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
 import { AlwaysOnStage } from "~/ecs/plugins/camera";
 import { ChildAttach } from "~/ecs/plugins/child-attach";
@@ -113,8 +112,7 @@ function makeHeldEntity(
       const entity = makeEntity(world, "Held")
         .add(AlwaysOnStage)
         .add(Transform)
-        .add(AssetComp, { value: new Asset(object.assetUrl) })
-        .add(Model2);
+        .add(Model3, { asset: new Asset(object.assetUrl) });
 
       if (object.facemapColors) {
         entity.add(FaceMapColors, {

@@ -11,16 +11,32 @@ import { Asset } from "~/ecs/plugins/core";
 import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 
 export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
-  // Migrate from 'Model' to 'Model2'
+  // Migrate from `Model` to `Model3`
+  // - `Model` treats bounding box differently, so we need `compat` flag
   ecsWorld.migrations.register("Model", (world, entity, data) => {
     const assetUrl = data.asset?.url;
-    if (assetUrl) {
-      entity.add(world.components.getByName("Asset"), {
-        value: new Asset(assetUrl),
-      });
+
+    entity.addByName("Model3", {
+      compat: true,
+      asset: new Asset(assetUrl),
+    });
+
+    entity.removeByName("Asset");
+  });
+
+  // Migrate from 'Model2' to 'Model3'
+  // - `Model2` relies on a sibling `Asset` component, but
+  // - `Model3` contains the asset as a property, `asset`
+  ecsWorld.migrations.register("Model2", (world, entity, data) => {
+    const model3 = entity.addByName("Model3", undefined, true);
+    model3.fromJSON(data);
+
+    const asset = entity.getByName("Asset");
+    if (asset) {
+      model3.asset = asset.value;
     }
 
-    entity.add(world.components.getByName("Model2"), { compat: true });
+    entity.removeByName("Asset");
   });
 
   // Migrate from 'Shape' to 'Shape2'

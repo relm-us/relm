@@ -1,8 +1,10 @@
-import { System, Groups } from "~/ecs/base";
+import { System, Groups, Entity } from "~/ecs/base";
 
 import { Presentation } from "~/ecs/plugins/core";
 import { assetUrl } from "~/config/assetUrl";
 import { checkModelValid } from "../utils/checkModelValid";
+
+export type Kind = "TEXTURE" | "GLTF" | null;
 
 let loaderIds = 0;
 
@@ -15,8 +17,7 @@ export class AssetSystemBase extends System {
   AssetComponent: any;
   AssetLoadingComponent: any;
   AssetLoadedComponent: any;
-  urlField: string = "url";
-  kindField: string = "kind";
+  assetField: string = "asset";
 
   order = Groups.Initialization;
 
@@ -24,10 +25,10 @@ export class AssetSystemBase extends System {
     this.presentation = presentation;
   }
 
-  async load(entity) {
+  async load(entity: Entity) {
     const spec = entity.get(this.AssetComponent);
 
-    if (spec[this.urlField] === "") {
+    if (this.getUrl(spec) === "") {
       this.loadingError(entity, "url is blank");
       return;
     }
@@ -60,8 +61,8 @@ export class AssetSystemBase extends System {
     if (loadingId === id) {
       entity.remove(this.AssetLoadingComponent);
       entity.add(this.AssetLoadedComponent, {
-        kind: spec[this.kindField],
-        cacheKey: spec[this.urlField],
+        kind: this.getKind(spec),
+        cacheKey: this.getUrl(spec),
         value,
       });
     } else {
@@ -87,7 +88,7 @@ export class AssetSystemBase extends System {
   async loadByKind(entity) {
     const spec = entity.get(this.AssetComponent);
 
-    let url = spec[this.urlField];
+    let url = this.getUrl(spec);
     if (
       !url.startsWith("http") &&
       // Some assets such as humanoid-003.glb are loaded from our local server's
@@ -98,7 +99,7 @@ export class AssetSystemBase extends System {
       url = assetUrl(url);
     }
 
-    switch (spec[this.kindField]) {
+    switch (this.getKind(spec)) {
       case "TEXTURE":
         return await this.presentation.loadTexture(url);
       case "GLTF":
@@ -109,5 +110,23 @@ export class AssetSystemBase extends System {
       default:
         throw Error("unknown asset kind");
     }
+  }
+
+  getUrl(spec): string {
+    const field = spec[this.assetField];
+    return (field?.url || "").toLowerCase();
+  }
+
+  getKind(spec): Kind {
+    const url = this.getUrl(spec);
+    if (url !== "") {
+      // TODO: Get the asset type from MIME info at time of upload
+      if (/\.(glb|gltf)$/.test(url)) {
+        return "GLTF";
+      } else if (/\.(png|jpg|jpeg|webp)$/.test(url)) {
+        return "TEXTURE";
+      }
+    }
+    return null;
   }
 }

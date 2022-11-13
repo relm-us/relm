@@ -14,7 +14,7 @@ import { makeEntity } from "~/prefab/makeEntity";
 
 import { Entity } from "~/ecs/base";
 import { Asset, Transform } from "~/ecs/plugins/core";
-import { Model2 } from "~/ecs/plugins/model";
+import { Model3 } from "~/ecs/plugins/model";
 import { Asset as AssetComp } from "~/ecs/plugins/asset";
 import { PointerPosition } from "~/ecs/plugins/pointer-position";
 import { Impactable } from "~/ecs/plugins/physics";
@@ -44,10 +44,7 @@ export function makeAvatarEntities(
     })
     .add(Repulsive)
     .add(Impactable)
-    .add(AssetComp, {
-      value: new Asset(avatarsGlb),
-    })
-    .add(Model2)
+    .add(Model3, { asset: new Asset(avatarsGlb) })
     .add(Animation, {
       clipName: IDLE,
     })

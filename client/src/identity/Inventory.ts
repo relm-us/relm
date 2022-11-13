@@ -71,7 +71,7 @@ export class Inventory {
   }
 
   getEquipmentObjectFromJSON(entityJSON: any): EquipmentObject {
-    if (entityJSON.Asset && entityJSON.Model2) {
+    if (entityJSON.Asset && entityJSON.Model3) {
       return {
         type: "model",
         assetUrl: entityJSON.Asset.value.url,

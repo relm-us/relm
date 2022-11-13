@@ -17,6 +17,7 @@ export class AssetSystem extends AssetSystemBase {
     this.AssetComponent = Asset;
     this.AssetLoadingComponent = AssetLoading;
     this.AssetLoadedComponent = AssetLoaded;
+    this.assetField = "value";
   }
 
   update() {

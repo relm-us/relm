@@ -34,7 +34,7 @@ import {
   WAVING,
 } from "~/config/constants";
 import { Oculus } from "~/ecs/plugins/html2d";
-import { Model2 } from "~/ecs/plugins/model";
+import { Model3 } from "~/ecs/plugins/model";
 import { Transform } from "~/ecs/plugins/core";
 import { Collider2 } from "~/ecs/plugins/collider";
 import { inFrontOf } from "~/utils/inFrontOf";
@@ -318,7 +318,7 @@ export class ParticipantManager {
   }
 
   setModelOffset(z: number) {
-    const model: Model2 = this.local.avatar?.entities.body.get(Model2);
+    const model: Model3 = this.local.avatar?.entities.body.get(Model3);
     if (model && model.offset.z !== z) {
       model.offset.z = z;
       model.modified();

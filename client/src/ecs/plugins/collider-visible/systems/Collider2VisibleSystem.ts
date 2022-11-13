@@ -76,7 +76,7 @@ export class Collider2VisibleSystem extends System {
 
   build(entity) {
     const collider: Collider2 = entity.get(Collider2);
-    const object3d: Object3D = entity.get(Object3DRef).value;
+    const object3dref: Object3DRef = entity.get(Object3DRef);
 
     const geometry: BufferGeometry = shapeParamsToGeometry(
       toShapeParams(collider.shape, collider.size, 0.25),
@@ -90,8 +90,11 @@ export class Collider2VisibleSystem extends System {
     const mesh = new Mesh(geometry, material.clone());
     mesh.quaternion.copy(collider.rotation);
 
-    object3d.add(mesh);
+    object3dref.value.add(mesh);
     entity.add(Collider2VisibleRef, { value: mesh });
+
+    // Notify dependencies (e.g. outlines) that object3d has changed
+    object3dref.modified();
 
     this.setInverseScale(entity);
   }

@@ -3,8 +3,7 @@ import { Transform, Asset } from "~/ecs/plugins/core";
 import { Vector3, Quaternion, Euler } from "three";
 
 import { makeEntity } from "./makeEntity";
-import { Asset as AssetComp } from "~/ecs/plugins/asset";
-import { Model2 } from "~/ecs/plugins/model";
+import { Model3 } from "~/ecs/plugins/model";
 import { FaceMapColors } from "~/ecs/plugins/coloration";
 import { pickOne } from "~/utils/pickOne";
 import { Html2d } from "~/ecs/plugins/html2d";
@@ -53,8 +52,7 @@ export function makeRock(
       position: new Vector3(x, y + h / 2, z),
       rotation: new Quaternion().setFromEuler(new Euler(xa, ya, za)),
     })
-    .add(AssetComp, { value: new Asset(url) })
-    .add(Model2)
+    .add(Model3, { asset: new Asset(url) })
     .add(FaceMapColors, {
       colors: {
         color1: [

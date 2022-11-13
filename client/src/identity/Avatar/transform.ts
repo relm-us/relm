@@ -3,7 +3,7 @@ import type { TransformData, Participant } from "~/types";
 import { Vector3, Euler, AnimationClip } from "three";
 
 import { Transform } from "~/ecs/plugins/core";
-import { Model2, ModelRef } from "~/ecs/plugins/model";
+import { Model3, ModelRef } from "~/ecs/plugins/model";
 import { Animation } from "~/ecs/plugins/animation";
 
 import { Avatar } from "../Avatar";
@@ -44,7 +44,7 @@ export function avatarGetTransformData(
   }
 
   // Get animation data
-  const model: Model2 = entities.body.get(Model2);
+  const model: Model3 = entities.body.get(Model3);
   const ref: ModelRef = entities.body.get(ModelRef);
   const clips: AnimationClip[] = ref?.value?.animations;
   const animation: Animation = entities.body.get(Animation);
@@ -105,7 +105,7 @@ export function avatarSetTransformData(
   if (oculus) oculus.targetOffset.y = oculusOffset;
 
   // Set animation data
-  const model: Model2 = entities.body.get(Model2);
+  const model: Model3 = entities.body.get(Model3);
   const ref: ModelRef = entities.body.get(ModelRef);
   const clips = ref?.value.animations;
   if (clips && clipIndex >= 0 && clipIndex < clips.length) {

@@ -1,11 +1,9 @@
 import { Euler, Quaternion, Vector3 } from "three";
-import type { DecoratedECSWorld } from "~/types";
 import { nanoid } from "nanoid";
 
 import { Entity } from "~/ecs/base";
 import { Asset, Transform } from "~/ecs/plugins/core";
-import { Model2 } from "~/ecs/plugins/model";
-import { Asset as AssetComp } from "~/ecs/plugins/asset";
+import { Model3 } from "~/ecs/plugins/model";
 import { Html2d } from "~/ecs/plugins/html2d";
 
 import errorCatGlb from "./error-cat.glb";
@@ -26,8 +24,9 @@ export function makeError(entity: Entity, msg = null) {
       // Make it so that clicking on the error entity forwards to the original
       entityId: entity.id,
     })
-    .add(AssetComp, { value: new Asset(errorCatGlb) })
-    .add(Model2)
+    .add(Model3, {
+      asset: new Asset(errorCatGlb),
+    })
     .add(Html2d, {
       kind: "INFO",
       title: "Error",

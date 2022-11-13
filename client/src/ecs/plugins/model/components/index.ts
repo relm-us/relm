@@ -1,2 +1,4 @@
-export { Model2 } from "./Model2";
+export { Model3 } from "./Model3";
 export { ModelRef } from "./ModelRef";
+export { ModelAssetLoading } from "./ModelAssetLoading";
+export { ModelAssetLoaded } from "./ModelAssetLoaded";

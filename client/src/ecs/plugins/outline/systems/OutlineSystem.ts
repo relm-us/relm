@@ -1,6 +1,6 @@
 import { Object3D } from "three";
 
-import { System, Groups, Not, Entity } from "~/ecs/base";
+import { System, Groups, Not, Entity, Modified } from "~/ecs/base";
 import { Object3DRef, Presentation } from "~/ecs/plugins/core";
 import { Outline, OutlineApplied } from "../components";
 
@@ -12,6 +12,7 @@ export class OutlineSystem extends System {
 
   static queries = {
     added: [Outline, Not(OutlineApplied), Object3DRef],
+    modifiedObj3d: [Modified(Object3DRef)],
     removed: [Not(Outline), OutlineApplied],
   };
 
@@ -22,6 +23,10 @@ export class OutlineSystem extends System {
   }
 
   update() {
+    this.queries.modifiedObj3d.forEach((entity) => {
+      this.removeOutline(entity);
+    });
+
     this.queries.added.forEach((entity) => {
       this.addOutline(entity);
     });

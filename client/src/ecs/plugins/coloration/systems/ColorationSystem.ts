@@ -12,6 +12,7 @@ export class ColorationSystem extends System {
     new: [FaceMapColors, ModelRef, Not(ColorApplied)],
     modified: [Modified(FaceMapColors), ModelRef],
     removed: [Not(FaceMapColors), ColorApplied],
+    removedRef: [Not(ModelRef), ColorApplied],
   };
 
   update() {
@@ -22,6 +23,9 @@ export class ColorationSystem extends System {
       this.setFaceMapColors(entity);
     });
     this.queries.removed.forEach((entity) => {
+      this.remove(entity);
+    });
+    this.queries.removedRef.forEach((entity) => {
       this.remove(entity);
     });
   }
