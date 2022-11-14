@@ -89,6 +89,9 @@ export class Shape3 extends Component {
       default: 0.25,
       editor: {
         label: "Roughness",
+        increment: 0.01,
+        min: 0,
+        max: 1,
       },
     },
 
@@ -97,6 +100,9 @@ export class Shape3 extends Component {
       default: 0.0,
       editor: {
         label: "Metalness",
+        increment: 0.01,
+        min: 0,
+        max: 1,
       },
     },
 

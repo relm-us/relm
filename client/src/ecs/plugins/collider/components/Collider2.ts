@@ -135,6 +135,8 @@ export class Collider2 extends Component {
       default: 1,
       editor: {
         label: "Density",
+        increment: 0.01,
+        min: 0,
       },
     },
 
@@ -143,6 +145,8 @@ export class Collider2 extends Component {
       default: 0.01,
       editor: {
         label: "Friction",
+        increment: 0.01,
+        min: 0,
       },
     },
   };

@@ -10,6 +10,8 @@
   export let value: number;
   export let decimals = 1;
   export let scaleFactor = 1;
+  export let min = null;
+  export let max = null;
 
   const dispatch = createEventDispatcher();
 
@@ -21,6 +23,8 @@
 
     // Set local value
     value = newValue;
+    if (min !== null) value = Math.max(min, value);
+    if (max !== null) value = Math.min(max, value);
 
     // Notify components 'above' to also set value
     dispatch("value", { value, final });
@@ -50,11 +54,9 @@
 <Capsule
   {editing}
   {label}
-  on:mousedown={dragger.mousedown}
+  on:pointerdown={dragger.pointerdown}
   on:change={onChange}
   on:cancel={onCancel}
   value={formatNumber(value, editing, decimals)}
   type="number"
 />
-
-<svelte:window on:mousemove={dragger.mousemove} on:mouseup={dragger.mouseup} />

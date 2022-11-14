@@ -27,10 +27,12 @@
 
   <div class="capsule">
     <NumberInput
-      scaleFactor={prop.editor.increment ?? 1}
+      on:value={onValueChanged}
       value={component[key]}
       decimals={3}
-      on:value={onValueChanged}
+      scaleFactor={prop.editor.increment ?? 1}
+      min={prop.editor.min ?? null}
+      max={prop.editor.max ?? null}
     />
   </div>
 </r-number-type>
