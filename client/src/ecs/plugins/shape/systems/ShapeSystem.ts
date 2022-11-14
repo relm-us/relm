@@ -34,7 +34,7 @@ export class ShapeSystem extends System {
     addedAsset: [Shape3, ShapeMesh, ShapeAssetLoaded, Not(ShapeTexture)],
 
     removed: [Not(Shape3), ShapeMesh],
-    // removedAsset: [Not(Asset), ShapeTexture],
+    removedTexture: [Not(Shape3), ShapeTexture],
   };
 
   update() {
@@ -66,9 +66,9 @@ export class ShapeSystem extends System {
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
     });
-    // this.queries.removedAsset.forEach((entity) => {
-    //   this.removeTexture(entity);
-    // });
+    this.queries.removedTexture.forEach((entity) => {
+      this.removeTexture(entity);
+    });
   }
 
   build(entity: Entity) {

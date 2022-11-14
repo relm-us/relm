@@ -18,10 +18,10 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
 
     entity.addByName("Model3", {
       compat: true,
-      asset: new Asset(assetUrl),
+      asset: assetUrl ? new Asset(assetUrl) : undefined,
     });
 
-    entity.removeByName("Asset");
+    if (entity.hasByName("Asset")) entity.removeByName("Asset");
   });
 
   // Migrate from 'Model2' to 'Model3'
@@ -97,6 +97,7 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
   ecsWorld.migrations.register("Shape2", (world, entity, data) => {
     const shape3 = entity.addByName("Shape3", undefined, true);
     shape3.fromJSON(data);
+    shape3.fixedTexture = false;
 
     const asset = entity.getByName("Asset");
     if (asset) {
