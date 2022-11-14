@@ -2,7 +2,7 @@ import { Transform } from "~/ecs/plugins/core";
 
 import { Color, Vector3 } from "three";
 
-import { Shape2 } from "~/ecs/plugins/shape";
+import { Shape3 } from "~/ecs/plugins/shape";
 import { Collider2 } from "~/ecs/plugins/collider";
 
 import { makeEntity } from "./makeEntity";
@@ -34,7 +34,7 @@ export function makeBall(
     .add(Transform, {
       position: new Vector3(x, y + r, z),
     })
-    .add(Shape2, {
+    .add(Shape3, {
       kind: "SPHERE",
       size: new Vector3(r * 2, 1, 1),
       color: "#" + linearColor.getHexString(),

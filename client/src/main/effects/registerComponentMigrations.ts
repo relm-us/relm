@@ -34,20 +34,12 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
     const asset = entity.getByName("Asset");
     if (asset) {
       model3.asset = asset.value;
+      entity.removeByName("Asset");
     }
-
-    entity.removeByName("Asset");
   });
 
-  // Migrate from 'Shape' to 'Shape2'
+  // Migrate from `Shape` to `Shape3`
   ecsWorld.migrations.register("Shape", (world, entity, data) => {
-    const assetUrl = data.texture?.url;
-    if (assetUrl) {
-      entity.add(world.components.getByName("Asset"), {
-        value: new Asset(assetUrl),
-      });
-    }
-
     let kind: ShapeType = data.kind;
     let size: Vector3 = new Vector3(1, 1, 1);
     let detail: number = 0.25;
@@ -84,7 +76,8 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
         break;
     }
 
-    entity.add(world.components.getByName("Shape2"), {
+    const assetUrl = data.texture?.url;
+    entity.add(world.components.getByName("Shape3"), {
       kind,
       size,
       detail,
@@ -93,7 +86,22 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
       roughness: data.roughness,
       metalness: data.metalness,
       textureScale: data.textureScale,
+      asset: assetUrl ? new Asset(assetUrl) : undefined,
     });
+  });
+
+  // Migrate from `Shape2` to `Shape3`
+  // - `Shape2` relies on a sibling `Asset` component, but
+  // - `Shape3` contains the asset as a property, `asset`
+  ecsWorld.migrations.register("Shape2", (world, entity, data) => {
+    const shape3 = entity.addByName("Shape3", undefined, true);
+    shape3.fromJSON(data);
+
+    const asset = entity.getByName("Asset");
+    if (asset) {
+      shape3.asset = asset.value;
+      entity.removeByName("Asset");
+    }
   });
 
   // Ignore RigidBody

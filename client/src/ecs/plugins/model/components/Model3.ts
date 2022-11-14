@@ -2,6 +2,13 @@ import { Vector3 } from "three";
 import { BooleanType, Component } from "~/ecs/base";
 import { Asset, AssetType, Vector3Type } from "~/ecs/plugins/core";
 
+/**
+ * A 3D model, i.e. a glTF asset.
+ *
+ * Note that the numeric suffix (`3`) is a version number, allowing
+ * us to migrate to newer representations of a Model component, with-
+ * out disrupting previous Model/Model2 expectations.
+ */
 export class Model3 extends Component {
   asset: Asset;
   offset: Vector3;

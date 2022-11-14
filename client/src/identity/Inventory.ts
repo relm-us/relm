@@ -79,7 +79,7 @@ export class Inventory {
           ? JSON.parse(entityJSON.FaceMapColors.colors)
           : undefined,
       };
-    } else if (entityJSON.Shape2) {
+    } else if (entityJSON.Shape3) {
       // TODO: implement shape
       return { type: "shape", shape: null };
     } else {

@@ -7,12 +7,7 @@ import { Object3DRef } from "~/ecs/plugins/core";
 import { clone } from "~/ecs/shared/SkeletonUtils";
 import { makeError } from "~/ecs/shared/makeError";
 
-import {
-  Model3,
-  ModelAssetLoaded,
-  ModelAssetLoading,
-  ModelRef,
-} from "../components";
+import { Model3, ModelAssetLoaded, ModelRef } from "../components";
 
 import { firstTimePrepareScene } from "../utils/firstTimePrepareScene";
 

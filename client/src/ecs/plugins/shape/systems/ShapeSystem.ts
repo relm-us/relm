@@ -10,9 +10,14 @@ import { isBrowser } from "~/utils/isBrowser";
 
 import { Entity, System, Not, Modified, Groups } from "~/ecs/base";
 import { Object3DRef } from "~/ecs/plugins/core";
-import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
+import { loadedAssetKind } from "~/ecs/plugins/asset";
 
-import { Shape2, ShapeMesh, ShapeTexture } from "../components";
+import {
+  Shape3,
+  ShapeMesh,
+  ShapeTexture,
+  ShapeAssetLoaded,
+} from "../components";
 import { shapeParamsToGeometry, toShapeParams } from "~/ecs/shared/createShape";
 import { TEXTURE_PER_WORLD_UNIT } from "~/config/constants";
 
@@ -23,14 +28,13 @@ export class ShapeSystem extends System {
   order = Groups.Initialization + 10;
 
   static queries = {
-    modified: [Modified(Shape2)],
-    modifiedAsset: [Modified(Asset), ShapeTexture],
+    modified: [Modified(Shape3)],
 
-    added: [Shape2, Object3DRef, Not(ShapeMesh)],
-    addedAsset: [Shape2, ShapeMesh, AssetLoaded, Not(ShapeTexture)],
+    added: [Shape3, Object3DRef, Not(ShapeMesh)],
+    addedAsset: [Shape3, ShapeMesh, ShapeAssetLoaded, Not(ShapeTexture)],
 
-    removed: [Not(Shape2), ShapeMesh],
-    removedAsset: [Not(Asset), ShapeTexture],
+    removed: [Not(Shape3), ShapeMesh],
+    // removedAsset: [Not(Asset), ShapeTexture],
   };
 
   update() {
@@ -38,32 +42,37 @@ export class ShapeSystem extends System {
       this.remove(entity);
       this.removeTexture(entity);
     });
-    this.queries.modifiedAsset.forEach((entity) => {
-      this.removeTexture(entity);
-    });
 
     this.queries.added.forEach((entity) => {
       this.build(entity);
     });
     this.queries.addedAsset.forEach((entity) => {
-      const loaded: AssetLoaded = entity.get(AssetLoaded);
-      if (loaded.kind === "TEXTURE") this.buildTexture(entity);
-      else {
-        console.warn("ignoring non-texture asset for shape", entity.id);
-        entity.add(ShapeTexture);
+      const loaded: ShapeAssetLoaded = entity.get(ShapeAssetLoaded);
+      switch (loadedAssetKind(loaded)) {
+        case "GLTF":
+          console.warn("ignoring non-texture asset for shape", entity.id);
+          entity.add(ShapeTexture);
+          break;
+
+        case "TEXTURE":
+          this.buildTexture(entity);
+          break;
+
+        default:
+        // do nothing
       }
     });
 
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
     });
-    this.queries.removedAsset.forEach((entity) => {
-      this.removeTexture(entity);
-    });
+    // this.queries.removedAsset.forEach((entity) => {
+    //   this.removeTexture(entity);
+    // });
   }
 
   build(entity: Entity) {
-    const shape: Shape2 = entity.get(Shape2);
+    const shape: Shape3 = entity.get(Shape3);
 
     const mesh = this.makeMesh(
       shape,
@@ -92,8 +101,8 @@ export class ShapeSystem extends System {
   }
 
   buildTexture(entity: Entity) {
-    const spec: Shape2 = entity.get(Shape2);
-    const texture: Texture = entity.get(AssetLoaded).value;
+    const spec: Shape3 = entity.get(Shape3);
+    const texture: Texture = entity.get(ShapeAssetLoaded).value;
     const mesh: ShapeMesh = entity.get(ShapeMesh);
 
     (mesh.value.material as MeshStandardMaterial).map = texture;
@@ -157,7 +166,7 @@ export class ShapeSystem extends System {
     object3dref?.modified();
   }
 
-  makeMesh(shape: Shape2, material: Material) {
+  makeMesh(shape: Shape3, material: Material) {
     const geometry = shapeParamsToGeometry(
       toShapeParams(shape.kind, shape.size, shape.detail)
     );

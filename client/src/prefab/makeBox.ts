@@ -1,7 +1,7 @@
 import { Color, Vector3, Quaternion, Euler } from "three";
 
 import { Transform } from "~/ecs/plugins/core";
-import { Shape2 } from "~/ecs/plugins/shape";
+import { Shape3 } from "~/ecs/plugins/shape";
 import { Collider2 } from "~/ecs/plugins/collider";
 
 import { makeEntity } from "./makeEntity";
@@ -33,7 +33,7 @@ export function makeBox(
       position: new Vector3(x, y + h / 2, z),
       rotation: new Quaternion().setFromEuler(new Euler(rx, ry, rz, "XYZ")),
     })
-    .add(Shape2, {
+    .add(Shape3, {
       color: "#" + linearColor.getHexString(),
       size: new Vector3(w, h, d),
       metalness,

@@ -1,9 +1,13 @@
-import { DecoratedECSWorld } from "~/types";
-import { Dispatch, State } from "../ProgramTypes";
+import type { DecoratedECSWorld } from "~/types";
+
 import { SkyboxRef } from "~/ecs/plugins/skybox";
 import { AssetLoaded } from "~/ecs/plugins/asset";
 import { ModelAssetLoaded } from "~/ecs/plugins/model";
+import { ShapeAssetLoaded } from "~/ecs/plugins/shape";
+
 import { WorldDoc } from "~/y-integration/WorldDoc";
+
+import { Dispatch, State } from "../ProgramTypes";
 
 const ENTITIES_COUNT_IDLE_INC = 5;
 // Number of assets we will pretend have been loaded; we use
@@ -52,7 +56,11 @@ export const pollLoadingState =
 function countAssets(ecsWorld: DecoratedECSWorld) {
   let count = 0;
   ecsWorld.entities.entities.forEach((e) => {
-    if (e.has(AssetLoaded) || e.has(ModelAssetLoaded)) {
+    if (
+      e.has(AssetLoaded) ||
+      e.has(ModelAssetLoaded) ||
+      e.has(ShapeAssetLoaded)
+    ) {
       count++;
     } else if (e.get(SkyboxRef)) {
       count++;
