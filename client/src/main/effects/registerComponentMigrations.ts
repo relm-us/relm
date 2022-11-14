@@ -85,8 +85,9 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
       emissive: data.emissive,
       roughness: data.roughness,
       metalness: data.metalness,
-      textureScale: data.textureScale,
       asset: assetUrl ? new Asset(assetUrl) : undefined,
+      textureScale: data.textureScale,
+      fixedTexture: data.fixedTexture === undefined ? false : data.fixedTexture,
     });
   });
 

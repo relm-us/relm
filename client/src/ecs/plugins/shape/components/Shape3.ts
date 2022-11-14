@@ -5,7 +5,7 @@ import { ShapeType } from "~/types/shapes";
 
 /**
  * A classic 3D shape, e.g. box, sphere, cylinder, capsule.
- * 
+ *
  * Note that the numeric suffix (`3`) is a version number, allowing
  * us to migrate to newer representations of a Shape component, with-
  * out disrupting previous Shape/Shape2 expectations.
@@ -113,14 +113,16 @@ export class Shape3 extends Component {
       editor: {
         label: "Texture Scale",
         increment: 0.01,
+        requires: [{ prop: "asset" }],
       },
     },
 
     fixedTexture: {
       type: BooleanType,
-      default: false,
+      default: true,
       editor: {
         label: "Fixed Texture",
+        requires: [{ prop: "asset" }],
       },
     },
   };

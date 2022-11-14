@@ -8,6 +8,7 @@
   import Pane from "~/ui/lib/Pane";
 
   import Property from "./Property.svelte";
+  import { Asset } from "~/ecs/plugins/core";
 
   export let Component: ComponentClass;
   export let entity: Entity;
@@ -32,7 +33,17 @@
 
     // if the `requires` field exists, check if we meet criteria
     return prop.editor.requires.reduce((acc, item) => {
-      return acc || component[item.prop] === item.value;
+      if (acc) return acc;
+
+      if (item.value === undefined) {
+        // The prop just needs to exist, it doesn't need to equal a value
+        if (component[item.prop] instanceof Asset) {
+          return component[item.prop].url !== "";
+        }
+        return component[item.prop];
+      } else {
+        return component[item.prop] === item.value;
+      }
     }, false);
   }
 
