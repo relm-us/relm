@@ -314,6 +314,18 @@ export class WorldManager {
       window.removeEventListener("hashchange", onHashChange)
     );
 
+    const onUrlChange = (event: PopStateEvent) => {
+      let relmName = window.location.pathname.replace(/^\//, "");
+      if (relmName === "") relmName = "default";
+
+      let entryway = window.location.hash.replace(/^\#/, "");
+      if (entryway === "") entryway = "default";
+
+      dispatch({ id: "enterPortal", relmName, entryway });
+    };
+    window.addEventListener("popstate", onUrlChange);
+    this.unsubs.push(() => window.removeEventListener("popstate", onUrlChange));
+
     this.unsubs.push(
       errorCat.subscribe(($enabled) => {
         this.world.entities
