@@ -1,7 +1,12 @@
 import { Entity } from "./Entity";
 import type { World } from "./World";
 
-export type Migration = (world: World, entity: Entity, data: any) => void;
+export type Migration = (
+  world: World,
+  entity: Entity,
+  componentData: any,
+  data: any
+) => void;
 
 /**
  * A sane way to keep components as they were, while providing
@@ -32,7 +37,17 @@ export class MigrationManager {
     return oldComponentName in this.migrations;
   }
 
-  migrate(oldComponentName: string, entity: Entity, data: any) {
-    return this.migrations[oldComponentName](this.world, entity, data);
+  migrate(
+    oldComponentName: string,
+    entity: Entity,
+    componentData: any,
+    data: any
+  ) {
+    return this.migrations[oldComponentName](
+      this.world,
+      entity,
+      componentData,
+      data
+    );
   }
 }

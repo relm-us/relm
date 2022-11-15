@@ -11,35 +11,39 @@ import { Asset } from "~/ecs/plugins/core";
 import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 
 export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
+  // Ignore `Asset`
+  ecsWorld.migrations.register("Asset", (world, entity, componentData) => {});
+
   // Migrate from `Model` to `Model3`
   // - `Model` treats bounding box differently, so we need `compat` flag
-  ecsWorld.migrations.register("Model", (world, entity, data) => {
-    const assetUrl = data.asset?.url;
+  ecsWorld.migrations.register("Model", (world, entity, componentData) => {
+    const assetUrl = componentData.asset?.url;
 
     entity.addByName("Model3", {
       compat: true,
       asset: assetUrl ? new Asset(assetUrl) : undefined,
     });
-
-    if (entity.hasByName("Asset")) entity.removeByName("Asset");
   });
 
-  // Migrate from 'Model2' to 'Model3'
+  // Migrate from `Model2` to `Model3`
   // - `Model2` relies on a sibling `Asset` component, but
   // - `Model3` contains the asset as a property, `asset`
-  ecsWorld.migrations.register("Model2", (world, entity, data) => {
-    const model3 = entity.addByName("Model3", undefined, true);
-    model3.fromJSON(data);
+  ecsWorld.migrations.register(
+    "Model2",
+    (world, entity, componentData, data) => {
+      const model3 = entity.addByName("Model3", undefined, true);
+      model3.fromJSON(componentData);
 
-    const asset = entity.getByName("Asset");
-    if (asset) {
-      model3.asset = asset.value;
-      entity.removeByName("Asset");
+      if ("Asset" in data) {
+        model3.asset = new Asset(data["Asset"].value.url);
+      }
     }
-  });
+  );
 
   // Migrate from `Shape` to `Shape3`
-  ecsWorld.migrations.register("Shape", (world, entity, data) => {
+  ecsWorld.migrations.register("Shape", (world, entity, componentData) => {
+    const data = componentData;
+
     let kind: ShapeType = data.kind;
     let size: Vector3 = new Vector3(1, 1, 1);
     let detail: number = 0.25;
@@ -94,23 +98,29 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
   // Migrate from `Shape2` to `Shape3`
   // - `Shape2` relies on a sibling `Asset` component, but
   // - `Shape3` contains the asset as a property, `asset`
-  ecsWorld.migrations.register("Shape2", (world, entity, data) => {
-    const shape3 = entity.addByName("Shape3", undefined, true);
-    shape3.fromJSON(data);
-    shape3.fixedTexture = false;
+  ecsWorld.migrations.register(
+    "Shape2",
+    (world, entity, componentData, data) => {
+      const shape3 = entity.addByName("Shape3", undefined, true);
+      shape3.fromJSON(componentData);
+      shape3.fixedTexture = false;
 
-    const asset = entity.getByName("Asset");
-    if (asset) {
-      shape3.asset = asset.value;
-      entity.removeByName("Asset");
+      if ("Asset" in data) {
+        shape3.asset = new Asset(data["Asset"].value.url);
+      }
     }
-  });
+  );
 
   // Ignore RigidBody
-  ecsWorld.migrations.register("RigidBody", (world, entity, data) => {});
+  ecsWorld.migrations.register(
+    "RigidBody",
+    (world, entity, componentData) => {}
+  );
 
   // Migrate from 'Collider' to 'Collider2'
-  ecsWorld.migrations.register("Collider", (world, entity, data) => {
+  ecsWorld.migrations.register("Collider", (world, entity, componentData) => {
+    const data = componentData;
+
     const transform = entity.getByName("Transform");
     const Collider2 = world.components.getByName("Collider2");
     const collider = entity.add(Collider2, undefined, true);
@@ -161,22 +171,27 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
     collider.size.copy(size);
   });
 
-  ecsWorld.migrations.register("Image", (world, entity, data) => {
-    entity.addByName("Image", undefined, true).fromJSON(data);
+  // TODO: Migrate Image component properly
 
-    const assetUrl = data.asset?.url;
-    if (assetUrl) {
-      entity.add(world.components.getByName("Asset"), {
-        value: new Asset(assetUrl),
-      });
+  // ecsWorld.migrations.register("Image", (world, entity, componentData) => {
+  //   entity.addByName("Image", undefined, true).fromJSON(componentData);
+
+  //   const assetUrl = data.asset?.url;
+  //   if (assetUrl) {
+  //     entity.add(world.components.getByName("Asset"), {
+  //       value: new Asset(assetUrl),
+  //     });
+  //   }
+  // });
+
+  ecsWorld.migrations.register(
+    "TranslucentOptions",
+    (world, entity, componentData) => {
+      // ignore
     }
-  });
+  );
 
-  ecsWorld.migrations.register("TranslucentOptions", (world, entity, data) => {
-    // ignore
-  });
-
-  ecsWorld.migrations.register("Item", (world, entity, data) => {
-    entity.addByName("Item2", { compat: true }, true).fromJSON(data);
+  ecsWorld.migrations.register("Item", (world, entity, componentData) => {
+    entity.addByName("Item2", { compat: true }, true).fromJSON(componentData);
   });
 }

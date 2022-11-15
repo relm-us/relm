@@ -313,7 +313,7 @@ export class Entity {
     }
 
     for (const key of migratableKeys) {
-      this.world.migrations.migrate(key, this, data[key]);
+      this.world.migrations.migrate(key, this, data[key], data);
     }
 
     this.needsBind = true;
