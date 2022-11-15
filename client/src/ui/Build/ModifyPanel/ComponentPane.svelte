@@ -35,14 +35,17 @@
     return prop.editor.requires.reduce((acc, item) => {
       if (acc) return acc;
 
+      const property = component && component[item.prop];
+      if (!property) return acc;
+
       if (item.value === undefined) {
         // The prop just needs to exist, it doesn't need to equal a value
-        if (component[item.prop] instanceof Asset) {
-          return component[item.prop].url !== "";
+        if (property instanceof Asset) {
+          return property.url !== "";
         }
-        return component[item.prop];
+        return Boolean(property);
       } else {
-        return component[item.prop] === item.value;
+        return property === item.value;
       }
     }, false);
   }
