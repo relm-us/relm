@@ -37,8 +37,8 @@ export const ydocStats = async (ydoc: WSSharedDoc) => {
         (name === "Image" && !empty((values.get("asset") as any)?.url)) ||
         (name === "Shape" && !empty((values.get("texture") as any)?.url)) ||
         (name === "Skybox" && !empty((values.get("image") as any)?.url)) ||
-        // Model2 & Shape2 use `Asset` component
-        (name === "Asset" && !empty((values.get("value") as any)?.url))
+        (name === "Shape3" && !empty((values.get("asset") as any)?.url)) ||
+        (name === "Model3" && !empty((values.get("asset") as any)?.url))
       ) {
         assetsCount++;
       }
