@@ -296,6 +296,24 @@ export class WorldManager {
 
     this.world.perspective.setAvatar(this.avatar.entities.body);
 
+    const onHashChange = (event: HashChangeEvent) => {
+      const newEntryway = location.hash.replace(/^\#/, "");
+      const entryways = get(this.worldDoc.entryways) as Map<
+        string,
+        [number, number, number]
+      >;
+      const arr = entryways.get(newEntryway);
+      if (arr) {
+        this.moveTo(new Vector3().fromArray(arr));
+      } else {
+        toast.push(`'${newEntryway}' isn't an entryway`);
+      }
+    };
+    window.addEventListener("hashchange", onHashChange);
+    this.unsubs.push(() =>
+      window.removeEventListener("hashchange", onHashChange)
+    );
+
     this.unsubs.push(
       errorCat.subscribe(($enabled) => {
         this.world.entities

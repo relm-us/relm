@@ -528,6 +528,10 @@ export function makeProgram(): Program {
       case "gotPositionFromEntryway": {
         exists(msg.entrywayPosition, "entrywayPosition");
 
+        if (msg.entryway) {
+          state.pageParams.entryway = msg.entryway;
+        }
+
         return [
           {
             ...state,

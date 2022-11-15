@@ -119,7 +119,11 @@ export type Message =
     }
   | { id: "gotWorldDocStatus"; status: WorldDocStatus }
   | { id: "gotEntrywayUnsub"; entrywayUnsub: Function }
-  | { id: "gotPositionFromEntryway"; entrywayPosition: Vector3 }
+  | {
+      id: "gotPositionFromEntryway";
+      entrywayPosition: Vector3;
+      entryway?: string;
+    }
   | { id: "assumeOriginAsEntryway" }
   | { id: "gotEntrywayPosition" }
   | { id: "didMakeLocalParticipant"; localParticipant: Participant }

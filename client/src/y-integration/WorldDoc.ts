@@ -58,7 +58,7 @@ export class WorldDoc extends EventEmitter {
   documents: Y.Map<Y.Text>;
 
   // A map of entryways into this subrelm. Default is [0, 0, 0].
-  entryways: YReadableMap<any>;
+  entryways: YReadableMap<[number, number, number]>;
 
   // A map of settings for the world
   settings: YReadableMap<any>;
