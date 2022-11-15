@@ -93,6 +93,10 @@ export class Collider2VisibleSystem extends System {
     const mesh = new Mesh(geometry, material);
     mesh.quaternion.copy(collider.rotation);
 
+    // Render *after* any shape or model that is a child of our object3dref
+    // (required for transparency to work properly)
+    mesh.renderOrder = 1;
+
     object3dref.value.add(mesh);
     entity.add(Collider2VisibleRef, { value: mesh });
 
