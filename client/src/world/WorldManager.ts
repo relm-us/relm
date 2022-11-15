@@ -317,9 +317,16 @@ export class WorldManager {
 
     this.unsubs.push(
       worldUIMode.subscribe(($mode) => {
+        const buildMode = $mode === "build";
+
+        this.avatar.enableCanFly(buildMode);
+        this.avatar.enableNonInteractive(buildMode);
+
+        this.enableInteraction(!buildMode);
+        this.enableCollidersVisible(buildMode);
+
         switch ($mode) {
           case "build":
-            this.enableInteraction(false);
             this.hoverOutline(null);
 
             // Always turn advanced edit off when entering build mode
@@ -336,7 +343,6 @@ export class WorldManager {
 
             break;
           case "play":
-            this.enableInteraction(true);
             this.hideTransformControls();
 
             this.camera.setZoomRange(
@@ -362,6 +368,13 @@ export class WorldManager {
             break;
         }
       })
+    );
+
+    // Enable/disable ability to select "GROUND" type colliders in build mode
+    this.unsubs.push(
+      derived([worldUIMode, advancedEdit], ([$mode, $advanced]) => {
+        this.enableInteractiveGround($mode === "build" && $advanced);
+      }).subscribe(() => {})
     );
 
     const toggleAdvancedEdit = () => advancedEdit.update((value) => !value);
@@ -393,31 +406,6 @@ export class WorldManager {
     globalEvents.on("camera-rotate-right", cameraRotateRight);
     this.unsubs.push(() =>
       globalEvents.off("camera-rotate-right", cameraRotateRight)
-    );
-
-    // Make colliders visible in build mode
-    this.unsubs.push(
-      derived(
-        [worldUIMode, advancedEdit],
-        (
-          [$mode, $advanced],
-          set: (value: {
-            buildMode: boolean;
-            overrideInvisible: boolean;
-          }) => void
-        ) => {
-          set({ buildMode: $mode === "build", overrideInvisible: $advanced });
-        }
-      ).subscribe(({ buildMode, overrideInvisible }) => {
-        this.avatar.enableCanFly(buildMode);
-        this.avatar.enableNonInteractive(buildMode);
-
-        this.enableInteraction(!buildMode);
-        this.enableCollidersVisible(buildMode);
-
-        const buildModeShift = buildMode && overrideInvisible;
-        this.enableNonInteractiveGround(!buildModeShift);
-      })
     );
 
     this.unsubs.push(
@@ -648,8 +636,8 @@ export class WorldManager {
     this.applyGraphicsQuality(get(graphicsQuality));
   }
 
-  enableNonInteractiveGround(enabled = true) {
-    const action = enabled ? "add" : "maybeRemove";
+  enableInteractiveGround(enabled = true) {
+    const action = enabled ? "maybeRemove" : "add";
     const entities = this.getColliderEntities();
     for (const entity of entities) {
       if (entity.has(Collider2)) {
