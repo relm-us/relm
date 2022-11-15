@@ -1,3 +1,5 @@
+import { Vector2 } from "three";
+
 type EventHandler<E = Event, T = HTMLElement> = (
   event: E & { currentTarget: EventTarget & T }
 ) => any;
@@ -5,17 +7,17 @@ type EventHandler<E = Event, T = HTMLElement> = (
 const noop = () => {};
 
 export class NumberDragger {
-  mouseGrab = false;
-  mouseStartValue = null;
-  mouseStartCoords = null;
+  startValue = null;
+  pointerStartCoords = new Vector2();
+  pointerCurrCoords = new Vector2();
   currentValue = null;
   dragEngageDistance = 5;
   hasEverDragged = false;
   scaleFactor = 1;
 
-  mousedown: EventHandler<MouseEvent, Window>;
-  mouseup: EventHandler<MouseEvent, Window>;
-  mousemove: EventHandler<MouseEvent, Window>;
+  pointerdown: EventHandler<PointerEvent, Window>;
+  pointerup: EventHandler<PointerEvent, Window>;
+  pointermove: EventHandler<PointerEvent, Window>;
 
   getValue: Function;
   onDrag: Function;
@@ -43,17 +45,26 @@ export class NumberDragger {
 
     this.currentValue = null;
 
-    this.mousedown = ((event) => {
-      this.mouseGrab = true;
-      this.mouseStartValue = this.getValue();
+    this.pointerdown = ((event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      target.requestPointerLock();
+
+      window.addEventListener("pointerup", this.pointerup);
+      target.addEventListener("pointermove", this.pointermove);
+
+      this.pointerStartCoords.set(0, 0);
+      this.pointerCurrCoords.set(0, 0);
+      this.startValue = this.getValue();
       this.currentValue = this.getValue();
-      if (event.target.tagName !== "INPUT") {
+      if (target.tagName !== "INPUT") {
         event.preventDefault();
       }
     }).bind(this);
 
-    this.mouseup = ((event) => {
-      if (!this.mouseGrab) return;
+    this.pointerup = ((event: MouseEvent) => {
+      window.removeEventListener("pointerup", this.pointerup);
+      event.target.removeEventListener("pointermove", this.pointermove);
+      document.exitPointerLock();
 
       const delta = this.getDelta(event);
       if (!this.hasEverDragged && Math.abs(delta) <= this.dragEngageDistance) {
@@ -64,23 +75,19 @@ export class NumberDragger {
         }
       }
 
-      this.mouseGrab = false;
-      this.mouseStartValue = null;
-      this.mouseStartCoords = null;
+      this.startValue = null;
       this.currentValue = null;
       this.hasEverDragged = false;
     }).bind(this);
 
-    this.mousemove = ((event) => {
-      if (!this.mouseGrab) return;
-
+    this.pointermove = ((event) => {
       const delta = this.getDelta(event);
       if (Math.abs(delta) > this.dragEngageDistance) {
         const threshold =
           this.dragEngageDistance * (delta > this.dragEngageDistance ? 1 : -1);
 
         this.currentValue =
-          this.mouseStartValue + (delta - threshold) * this.scaleFactor;
+          this.startValue + (delta - threshold) * this.scaleFactor;
         this.onDrag(this.currentValue);
         this.hasEverDragged = true;
       }
@@ -90,11 +97,11 @@ export class NumberDragger {
   }
 
   getDelta(event) {
-    const coords = { x: event.clientX, y: event.clientY };
-    if (this.mouseStartCoords === null) this.mouseStartCoords = coords;
+    this.pointerCurrCoords.x += event.movementX;
+    this.pointerCurrCoords.y += event.movementY;
 
-    const up = this.mouseStartCoords.y - coords.y;
-    const right = coords.x - this.mouseStartCoords.x;
+    const up = this.pointerStartCoords.y - this.pointerCurrCoords.y;
+    const right = this.pointerCurrCoords.x - this.pointerStartCoords.x;
     const delta = right + up;
 
     return delta;

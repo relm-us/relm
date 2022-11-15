@@ -48,10 +48,11 @@
   {#if label}
     <lbl>{label}</lbl>
   {/if}
+  <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
   <value
     class:no-label={!label}
     class:max-width={maxWidth}
-    on:mousedown
+    on:pointerdown
     on:keydown={onKeyDown}
     on:focus={onFocus}
     style={`cursor: ${cursor}`}

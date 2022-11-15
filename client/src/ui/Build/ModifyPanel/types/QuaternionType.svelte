@@ -79,17 +79,6 @@
     z: makeDragger("z"),
   };
 
-  const mousemove = (event) => {
-    draggers.x.mousemove(event);
-    draggers.y.mousemove(event);
-    draggers.z.mousemove(event);
-  };
-  const mouseup = (event) => {
-    draggers.x.mouseup(event);
-    draggers.y.mouseup(event);
-    draggers.z.mouseup(event);
-  };
-
   // ignore warning about missing props
   $$props;
 </script>
@@ -100,7 +89,7 @@
     {#each ["x", "y", "z"] as dim}
       <Capsule
         editing={editing[dim]}
-        on:mousedown={draggers[dim].mousedown}
+        on:pointerdown={draggers[dim].pointerdown}
         on:change={onInputChange(dim)}
         on:cancel={onInputCancel(dim)}
         label={dim.toUpperCase()}
@@ -111,8 +100,6 @@
     {/each}
   </div>
 </r-quaternion-type>
-
-<svelte:window on:mousemove={mousemove} on:mouseup={mouseup} />
 
 <style>
   div {
