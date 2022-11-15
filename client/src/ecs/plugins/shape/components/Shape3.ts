@@ -23,6 +23,7 @@ export class Shape3 extends Component {
 
   asset: Asset;
   textureScale: number;
+  textureRotate: number;
   fixedTexture: boolean;
 
   // local flag indicating re-build of shape is necessary after texture change
@@ -119,6 +120,16 @@ export class Shape3 extends Component {
       editor: {
         label: "Texture Scale",
         increment: 0.01,
+        requires: [{ prop: "asset" }],
+      },
+    },
+
+    textureRotate: {
+      type: NumberType,
+      default: 0,
+      editor: {
+        label: "Texture Rotation",
+        increment: 1,
         requires: [{ prop: "asset" }],
       },
     },

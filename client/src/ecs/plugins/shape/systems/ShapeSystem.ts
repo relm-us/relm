@@ -133,6 +133,8 @@ export class ShapeSystem extends System {
     texture.wrapS = RepeatWrapping;
     texture.wrapT = RepeatWrapping;
 
+    texture.rotation = (spec.textureRotate / 180) * Math.PI;
+
     entity.add(ShapeTexture);
   }
 
