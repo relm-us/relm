@@ -52,7 +52,7 @@
           toast.push("Unable to upload");
         }
       } else {
-        toast.push("Unable to upload/paste");
+        console.warn("No image files available to paste");
       }
     });
   });
