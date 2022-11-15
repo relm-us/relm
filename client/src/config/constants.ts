@@ -43,6 +43,9 @@ export const AVATAR_RECENTER_HEAD_NO_POINTER_MOTION = 3000;
 // things far away and behind floors or walls
 export const AVATAR_POINTER_TAP_MAX_DISTANCE = 15;
 
+// How many seconds can elapse before a full location reset; otherwise, refresh to last known coords
+export const RESTORE_LAST_LOCATION_REFRESH_SECONDS = 120;
+
 // How quickly to move the camera as it follows the participant
 export const CAMERA_PLAY_DAMPENING = 0.3;
 export const CAMERA_BUILD_DAMPENING = 0.15;

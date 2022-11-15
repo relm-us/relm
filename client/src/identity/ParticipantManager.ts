@@ -30,6 +30,7 @@ import {
   OCULUS_HEIGHT_SIT_GROUND,
   OCULUS_HEIGHT_STAND,
   RAISING_HAND,
+  RESTORE_LAST_LOCATION_REFRESH_SECONDS,
   STAND_SIT,
   WAVING,
 } from "~/config/constants";
@@ -38,6 +39,7 @@ import { Model3 } from "~/ecs/plugins/model";
 import { Transform } from "~/ecs/plugins/core";
 import { Collider2 } from "~/ecs/plugins/collider";
 import { inFrontOf } from "~/utils/inFrontOf";
+import { Vector3 } from "three";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -47,6 +49,7 @@ export class ParticipantManager {
   dispatch: Dispatch;
   broker: ParticipantBroker;
   avConnection: AVConnection;
+  lastLocationTimestamp: number = 0;
   unsubs: Function[] = [];
 
   _store: Writable<ParticipantMap>;
@@ -111,6 +114,38 @@ export class ParticipantManager {
   listen(signal: string, fn) {
     this.broker.on(signal, fn);
     this.unsubs.push(() => this.broker.off(signal, fn));
+  }
+
+  maybeSaveLastLocation(relmName: string) {
+    const now = Number(new Date());
+    if (now - this.lastLocationTimestamp > 1000) {
+      this.lastLocationTimestamp = now;
+      localStorage.setItem(
+        "lastLocation",
+        JSON.stringify({
+          ts: now,
+          relm: relmName,
+          position: this.local.avatar.position.toArray(),
+        })
+      );
+    }
+  }
+
+  maybeGetLastLocation(relmName: string) {
+    const now = Number(new Date());
+    if (!localStorage.getItem("lastLocation")) return null;
+
+    const lastLocation = JSON.parse(localStorage.getItem("lastLocation"));
+
+    // If less than two minutes ago, restore last location
+    if (
+      now - lastLocation.ts < RESTORE_LAST_LOCATION_REFRESH_SECONDS * 1000 &&
+      lastLocation.relm === relmName
+    ) {
+      return new Vector3().fromArray(lastLocation.position);
+    } else {
+      return null;
+    }
   }
 
   sendMyRapidData() {

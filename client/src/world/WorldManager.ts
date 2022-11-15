@@ -895,6 +895,8 @@ export class WorldManager {
       this.myDataLastSentAt = now;
     }
 
+    this.participants.maybeSaveLastLocation(this.relmName);
+
     this.camera.update(delta);
   }
 
@@ -953,12 +955,6 @@ export class WorldManager {
     if (instantaneousCamera) this.camera.moveTo(position);
   }
 
-  findGroundAtXZ(x, z) {
-    const skyPoint = new Vector3(x, 100, z);
-    const hitPoint = intersectionPointWithGround(this.world.physics, skyPoint);
-    return hitPoint;
-  }
-
   moveToXZ(x, z, instantaneousCamera = true) {
     const hitPoint = this.findGroundAtXZ(x, z);
     if (hitPoint) {
@@ -966,6 +962,22 @@ export class WorldManager {
     } else {
       toast.push(`No ground at that point`);
     }
+  }
+
+  maybeRestoreLastLocation(): boolean {
+    const position = this.participants.maybeGetLastLocation(this.relmName);
+    if (position) {
+      this.moveTo(position);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  findGroundAtXZ(x, z) {
+    const skyPoint = new Vector3(x, 100, z);
+    const hitPoint = intersectionPointWithGround(this.world.physics, skyPoint);
+    return hitPoint;
   }
 
   moveThingLocally(entityId: string, position: Vector3) {

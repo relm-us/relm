@@ -603,7 +603,9 @@ export function makeProgram(): Program {
 
       case "loadedAndReady": {
         if (state.entrywayPosition && state.doneLoading) {
-          worldManager.moveTo(state.entrywayPosition);
+          if (!worldManager.maybeRestoreLastLocation()) {
+            worldManager.moveTo(state.entrywayPosition);
+          }
 
           if (state.entrywayUnsub) {
             state.entrywayUnsub();
