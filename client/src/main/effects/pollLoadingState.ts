@@ -3,6 +3,7 @@ import type { DecoratedECSWorld } from "~/types";
 import { SkyboxRef } from "~/ecs/plugins/skybox";
 import { AssetLoaded } from "~/ecs/plugins/asset";
 import { ModelAssetLoaded } from "~/ecs/plugins/model";
+import { ImageAssetLoaded } from "~/ecs/plugins/image";
 import { ShapeAssetLoaded } from "~/ecs/plugins/shape";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
@@ -59,10 +60,10 @@ function countAssets(ecsWorld: DecoratedECSWorld) {
     if (
       e.has(AssetLoaded) ||
       e.has(ModelAssetLoaded) ||
-      e.has(ShapeAssetLoaded)
+      e.has(ShapeAssetLoaded) ||
+      e.has(ImageAssetLoaded) ||
+      e.has(SkyboxRef)
     ) {
-      count++;
-    } else if (e.get(SkyboxRef)) {
       count++;
     }
   });
