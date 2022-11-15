@@ -83,11 +83,14 @@ export class Collider2VisibleSystem extends System {
       0.04
     );
 
-    const material = collider.behavior.isSensor
-      ? sensorMaterial
-      : colliderMaterial;
+    const material = (
+      collider.behavior.isSensor ? sensorMaterial : colliderMaterial
+    ).clone();
 
-    const mesh = new Mesh(geometry, material.clone());
+    // Prevent `TranslucentSystem` from affecting the collider visualization
+    material.userData.translucentImmune = true;
+
+    const mesh = new Mesh(geometry, material);
     mesh.quaternion.copy(collider.rotation);
 
     object3dref.value.add(mesh);

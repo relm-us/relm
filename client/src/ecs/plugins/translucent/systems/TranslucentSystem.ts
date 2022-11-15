@@ -116,7 +116,8 @@ export class TranslucentSystem extends System {
 
   saveTranslucentProperties(object: Object3D) {
     traverseMaterials(object, (material) => {
-      if (material.userData.translucent) return;
+      if (material.userData.translucent || material.userData.translucentImmune)
+        return;
 
       material.userData.translucent = {
         transparent: material.transparent,
@@ -148,6 +149,8 @@ export class TranslucentSystem extends System {
     twoSided: boolean
   ) {
     traverseMaterials(object, (material) => {
+      if (material.userData.translucentImmune) return true;
+
       material.transparent = true;
       material.opacity = opacity;
       material.side = twoSided ? DoubleSide : FrontSide;

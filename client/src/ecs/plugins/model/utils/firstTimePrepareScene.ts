@@ -12,7 +12,9 @@ export function firstTimePrepareScene(
   // TODO: Find a better way to fix bounding box for skinned mesh general case
   if (isAvatar) scene.traverse(rotateSkinnedMeshBB);
 
-  scene.traverse((e) => (e.castShadow = true));
+  scene.traverse((node) => {
+    node.castShadow = true;
+  });
 
   // TODO: Optimization: move `normalize` to Loader?
   normalize(scene, { backwardsCompatMode });
