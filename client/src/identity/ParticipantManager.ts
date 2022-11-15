@@ -116,7 +116,7 @@ export class ParticipantManager {
     this.unsubs.push(() => this.broker.off(signal, fn));
   }
 
-  maybeSaveLastLocation(relmName: string) {
+  maybeSaveLastLocation(relmName: string, entryway: string) {
     const now = Number(new Date());
     if (now - this.lastLocationTimestamp > 1000) {
       this.lastLocationTimestamp = now;
@@ -124,14 +124,15 @@ export class ParticipantManager {
         "lastLocation",
         JSON.stringify({
           ts: now,
-          relm: relmName,
+          relmName,
+          entryway,
           position: this.local.avatar.position.toArray(),
         })
       );
     }
   }
 
-  maybeGetLastLocation(relmName: string) {
+  maybeGetLastLocation(relmName: string, entryway: string) {
     const now = Number(new Date());
     if (!localStorage.getItem("lastLocation")) return null;
 
@@ -140,7 +141,8 @@ export class ParticipantManager {
     // If less than two minutes ago, restore last location
     if (
       now - lastLocation.ts < RESTORE_LAST_LOCATION_REFRESH_SECONDS * 1000 &&
-      lastLocation.relm === relmName
+      lastLocation.relmName === relmName &&
+      lastLocation.entryway === entryway
     ) {
       return new Vector3().fromArray(lastLocation.position);
     } else {

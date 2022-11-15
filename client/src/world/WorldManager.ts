@@ -895,7 +895,7 @@ export class WorldManager {
       this.myDataLastSentAt = now;
     }
 
-    this.participants.maybeSaveLastLocation(this.relmName);
+    this.participants.maybeSaveLastLocation(this.relmName, this.entryway);
 
     this.camera.update(delta);
   }
@@ -965,7 +965,10 @@ export class WorldManager {
   }
 
   maybeRestoreLastLocation(): boolean {
-    const position = this.participants.maybeGetLastLocation(this.relmName);
+    const position = this.participants.maybeGetLastLocation(
+      this.relmName,
+      this.entryway
+    );
     if (position) {
       this.moveTo(position);
       return true;
