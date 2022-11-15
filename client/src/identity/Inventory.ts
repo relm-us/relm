@@ -71,7 +71,15 @@ export class Inventory {
   }
 
   getEquipmentObjectFromJSON(entityJSON: any): EquipmentObject {
-    if (entityJSON.Asset && entityJSON.Model3) {
+    if (entityJSON.Model3) {
+      return {
+        type: "model",
+        assetUrl: entityJSON.Model3.asset.url,
+        facemapColors: entityJSON.FaceMapColors
+          ? JSON.parse(entityJSON.FaceMapColors.colors)
+          : undefined,
+      };
+    } else if (entityJSON.Asset && entityJSON.Model2) {
       return {
         type: "model",
         assetUrl: entityJSON.Asset.value.url,
