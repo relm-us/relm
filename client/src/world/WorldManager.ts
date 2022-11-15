@@ -332,6 +332,10 @@ export class WorldManager {
             // Always turn advanced edit off when entering build mode
             advancedEdit.set(false);
 
+            // Move camera in order to re-center avatar when build panel is open
+            this.camera.pan.x += this.camera.zoomDistance / 8;
+
+            // Allow buiders to zoom out farther, faster
             this.camera.setZoomRange(
               CAMERA_BUILD_ZOOM_MIN,
               CAMERA_BUILD_ZOOM_MAX

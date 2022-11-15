@@ -87,6 +87,14 @@ export class CameraManager {
     return camera.value.children[0] as PerspectiveCamera;
   }
 
+  get zoomRange(): number {
+    return (this.zoomedOutDistance - this.zoomedInDistance) * this.zoom;
+  }
+
+  get zoomDistance(): number {
+    return this.zoomRange + this.zoomedInDistance;
+  }
+
   constructor(ecsWorld: DecoratedECSWorld, avatar: Entity) {
     this.ecsWorld = ecsWorld;
     this.avatar = avatar;
@@ -231,9 +239,7 @@ export class CameraManager {
     if (max < min) max = min;
 
     // Try to preserve camera distance
-    const currDistance =
-      (this.zoomedOutDistance - this.zoomedInDistance) * this.zoom;
-    this.zoom = MathUtils.clamp(currDistance / (max - min), 0, 1);
+    this.zoom = MathUtils.clamp(this.zoomRange / (max - min), 0, 1);
     viewportScale.set(this.zoom * 100);
 
     this.zoomedInDistance = min;
@@ -252,11 +258,10 @@ export class CameraManager {
       "YXZ"
     );
 
-    const range = this.zoomedOutDistance - this.zoomedInDistance;
     this.followOffset
       .set(0, 0, 1)
       .applyEuler(directionNeg)
-      .multiplyScalar(this.zoomedInDistance + range * this.zoom)
+      .multiplyScalar(this.zoomDistance)
       .add(this.pan);
   }
 

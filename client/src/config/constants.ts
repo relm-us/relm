@@ -44,8 +44,8 @@ export const AVATAR_RECENTER_HEAD_NO_POINTER_MOTION = 3000;
 export const AVATAR_POINTER_TAP_MAX_DISTANCE = 15;
 
 // How quickly to move the camera as it follows the participant
-export const CAMERA_PLAY_DAMPENING = 0.4;
-export const CAMERA_BUILD_DAMPENING = 0.2;
+export const CAMERA_PLAY_DAMPENING = 0.3;
+export const CAMERA_BUILD_DAMPENING = 0.15;
 
 // How quickly to rotate the camera in build mode (higher is slower / more accurate)
 export const CAMERA_ROTATE_RATE = 100;
