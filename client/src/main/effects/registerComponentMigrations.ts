@@ -111,6 +111,18 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
     }
   );
 
+  ecsWorld.migrations.register(
+    "Image",
+    (world, entity, componentData, data) => {
+      const image = entity.addByName("Image", undefined, true);
+      image.fromJSON(componentData);
+
+      if ("Asset" in data) {
+        image.asset = new Asset(data["Asset"].value.url);
+      }
+    }
+  );
+
   // Ignore RigidBody
   ecsWorld.migrations.register(
     "RigidBody",
@@ -170,19 +182,6 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
 
     collider.size.copy(size);
   });
-
-  // TODO: Migrate Image component properly
-
-  // ecsWorld.migrations.register("Image", (world, entity, componentData) => {
-  //   entity.addByName("Image", undefined, true).fromJSON(componentData);
-
-  //   const assetUrl = data.asset?.url;
-  //   if (assetUrl) {
-  //     entity.add(world.components.getByName("Asset"), {
-  //       value: new Asset(assetUrl),
-  //     });
-  //   }
-  // });
 
   ecsWorld.migrations.register(
     "TranslucentOptions",

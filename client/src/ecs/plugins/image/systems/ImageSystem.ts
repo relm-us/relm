@@ -7,11 +7,16 @@ import {
 } from "three";
 
 import { System, Not, Modified, Groups, Entity } from "~/ecs/base";
-import { Queries } from "~/ecs/base/Query";
-
-import { Image, ImageMesh, ImageTexture } from "../components";
 import { Presentation, Object3DRef } from "~/ecs/plugins/core";
-import { Asset, AssetLoaded } from "~/ecs/plugins/asset";
+import { Queries } from "~/ecs/base/Query";
+import { loadedAssetKind } from "~/ecs/plugins/asset";
+
+import {
+  Image,
+  ImageAssetLoaded,
+  ImageMesh,
+  ImageTexture,
+} from "../components";
 
 type Size = {
   width: number;
@@ -20,16 +25,7 @@ type Size = {
 
 /**
  * ImageSystem represents a 3D model, and is responsible for attaching it
- * to a threejs Object3D, contained by an ECS Object3D component (note:
- * they share the same class name but are different--an ECS Object3D is
- * a component that holds a reference to a threejs Object3D).
- *
- * ImageSystem relies on AssetSystem to load the 3d model asset and present
- * it as an `AssetLoaded` component.
- *
- * When an entity has a Image, it need not have an Asset component right
- * away--the ImageSystem will add an Asset component as needed to load the
- * 3D model asset.
+ * to a threejs Object3D, contained by an ECS Object3D component
  */
 export class ImageSystem extends System {
   presentation: Presentation;
@@ -38,13 +34,12 @@ export class ImageSystem extends System {
 
   static queries: Queries = {
     modified: [Modified(Image)],
-    modifiedAsset: [Modified(Asset), ImageTexture],
 
     added: [Image, Object3DRef, Not(ImageMesh)],
-    addedAsset: [Image, ImageMesh, AssetLoaded, Not(ImageTexture)],
+    addedAsset: [Image, ImageMesh, ImageAssetLoaded, Not(ImageTexture)],
 
-    removed: [Not(Image), ImageMesh],
-    removedAsset: [Not(Asset), ImageTexture],
+    removedMesh: [Not(Image), ImageMesh],
+    removedAsset: [Not(Image), ImageTexture],
   };
 
   init({ presentation }) {
@@ -53,20 +48,17 @@ export class ImageSystem extends System {
 
   update() {
     this.queries.modified.forEach((entity) => {
-      console.log("modified", entity.id);
       this.removeTexture(entity);
       this.remove(entity);
-    });
-    this.queries.modifiedAsset.forEach((entity) => {
-      this.removeTexture(entity);
     });
 
     this.queries.added.forEach((entity) => {
       this.build(entity);
     });
+
     this.queries.addedAsset.forEach((entity) => {
-      const loaded: AssetLoaded = entity.get(AssetLoaded);
-      if (loaded.kind === "TEXTURE") this.buildTexture(entity);
+      const loaded: ImageAssetLoaded = entity.get(ImageAssetLoaded);
+      if (loadedAssetKind(loaded) === "TEXTURE") this.buildTexture(entity);
       else {
         console.warn("ignoring non-texture asset for shape", entity.id);
         entity.add(ImageTexture);
@@ -76,7 +68,8 @@ export class ImageSystem extends System {
     this.queries.removedAsset.forEach((entity) => {
       this.removeTexture(entity);
     });
-    this.queries.removed.forEach((entity) => {
+
+    this.queries.removedMesh.forEach((entity) => {
       this.remove(entity);
     });
   }
@@ -133,7 +126,7 @@ export class ImageSystem extends System {
 
   buildTexture(entity: Entity) {
     const spec: Image = entity.get(Image);
-    const texture: Texture = entity.get(AssetLoaded).value;
+    const texture: Texture = entity.get(ImageAssetLoaded).value;
     let mesh: ImageMesh = entity.get(ImageMesh);
 
     const image = { width: texture.image.width, height: texture.image.height };
