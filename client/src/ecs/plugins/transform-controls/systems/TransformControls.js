@@ -37,8 +37,11 @@ const _mouseUpEvent = { type: "mouseUp", mode: null };
 const _objectChangeEvent = { type: "objectChange" };
 
 const red = 0xae4836;
+const redHighlight = 0xff5d41;
 const green = 0x11876f;
+const greenHighlight = 0x00d3a8;
 const blue = 0x68b7d5;
+const blueHighlight = 0x00c8ff;
 const yellow = 0xede6bb;
 
 class TransformControls extends Object3D {
@@ -383,7 +386,8 @@ class TransformControls extends Object3D {
       }
     } else if (mode === "scale") {
       if (axis.search("XYZ") !== -1) {
-        let d = this.pointEnd.divideScalar(20).length() / this.pointStart.length();
+        let d =
+          this.pointEnd.divideScalar(20).length() / this.pointStart.length();
 
         if (this.pointEnd.dot(this.pointStart) < 0) d *= -1;
 
@@ -741,15 +745,15 @@ class TransformControlsGizmo extends Object3D {
 
     const matRedTransparent = gizmoMaterial.clone();
     matRedTransparent.color.setHex(red);
-    matRedTransparent.opacity = 0.5;
+    matRedTransparent.opacity = 0.75;
 
     const matGreenTransparent = gizmoMaterial.clone();
     matGreenTransparent.color.setHex(green);
-    matGreenTransparent.opacity = 0.5;
+    matGreenTransparent.opacity = 0.75;
 
     const matBlueTransparent = gizmoMaterial.clone();
     matBlueTransparent.color.setHex(blue);
-    matBlueTransparent.opacity = 0.5;
+    matBlueTransparent.opacity = 0.75;
 
     const matWhiteTransparent = gizmoMaterial.clone();
     matWhiteTransparent.opacity = 0.25;
@@ -871,35 +875,35 @@ class TransformControlsGizmo extends Object3D {
     const pickerTranslate = {
       X: [
         [
-          new Mesh(new CylinderGeometry(0.2, 0, 0.6, 4), matInvisible),
+          new Mesh(new CylinderGeometry(0.1, 0, 0.6, 4), matInvisible),
           [0.3, 0, 0],
           [0, 0, -Math.PI / 2],
         ],
         [
-          new Mesh(new CylinderGeometry(0.2, 0, 0.6, 4), matInvisible),
+          new Mesh(new CylinderGeometry(0.1, 0, 0.6, 4), matInvisible),
           [-0.3, 0, 0],
           [0, 0, Math.PI / 2],
         ],
       ],
       Y: [
         [
-          new Mesh(new CylinderGeometry(0.2, 0, 0.6, 4), matInvisible),
+          new Mesh(new CylinderGeometry(0.1, 0, 0.6, 4), matInvisible),
           [0, 0.3, 0],
         ],
         [
-          new Mesh(new CylinderGeometry(0.2, 0, 0.6, 4), matInvisible),
+          new Mesh(new CylinderGeometry(0.1, 0, 0.6, 4), matInvisible),
           [0, -0.3, 0],
           [0, 0, Math.PI],
         ],
       ],
       Z: [
         [
-          new Mesh(new CylinderGeometry(0.2, 0, 0.6, 4), matInvisible),
+          new Mesh(new CylinderGeometry(0.1, 0, 0.6, 4), matInvisible),
           [0, 0, 0.3],
           [Math.PI / 2, 0, 0],
         ],
         [
-          new Mesh(new CylinderGeometry(0.2, 0, 0.6, 4), matInvisible),
+          new Mesh(new CylinderGeometry(0.1, 0, 0.6, 4), matInvisible),
           [0, 0, -0.3],
           [-Math.PI / 2, 0, 0],
         ],
@@ -1596,14 +1600,18 @@ class TransformControlsGizmo extends Object3D {
 
       if (this.enabled && this.axis) {
         if (handle.name === this.axis) {
-          handle.material.color.setHex(yellow);
+          if (this.axis === "X") handle.material.color.setHex(redHighlight);
+          if (this.axis === "Y") handle.material.color.setHex(greenHighlight);
+          if (this.axis === "Z") handle.material.color.setHex(blueHighlight);
           handle.material.opacity = 1.0;
         } else if (
           this.axis.split("").some(function (a) {
             return handle.name === a;
           })
         ) {
-          handle.material.color.setHex(yellow);
+          if (this.axis === "X") handle.material.color.setHex(redHighlight);
+          if (this.axis === "Y") handle.material.color.setHex(greenHighlight);
+          if (this.axis === "Z") handle.material.color.setHex(blueHighlight);
           handle.material.opacity = 1.0;
         }
       }
