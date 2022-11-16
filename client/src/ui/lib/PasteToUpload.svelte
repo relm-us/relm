@@ -33,11 +33,13 @@
       );
 
       if (item) {
-        const result = await worldManager.api.upload(item.getAsFile());
+        const file = item.getAsFile();
+
+        const result = await worldManager.api.upload(file);
         if (result.status === "success") {
           const url = result.files.webp;
 
-          let { width, height } = await getImageDimensions(item.getAsFile());
+          let { width, height } = await getImageDimensions(file);
 
           const largestSide = Math.max(width, height) / 2;
           width /= largestSide;
