@@ -2,14 +2,24 @@ import { Not, Modified, Entity } from "~/ecs/base";
 import { Object3DRef } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
 
-import { Document, DocumentRef, CssPlane } from "../components";
+import { Document, DocumentRef, CssPlane, HdImage } from "../components";
 import { RenderableBaseSystem } from "../base/RenderableBaseSystem";
 
 import DocumentComponent from "./Document.svelte";
 
 export class DocumentSystem extends RenderableBaseSystem {
   static queries: Queries = {
-    added: [Document, Not(DocumentRef)],
+    /**
+     * Q: Why Not(HdImage)?
+     *
+     * A: When an HdImage is also available, we always present the HdImage
+     *    as the thing inside a CssPlane to be clicked and manipulated in
+     *    the 3D world. It behaves as the "book cover" for the Document.
+     *
+     *    If we also add a Document CssPlane, there can be pointer event
+     *    masking, where the user can't click to open the HdImage.
+     */
+    added: [Document, Not(DocumentRef), Not(HdImage)],
     modified: [Modified(Document), DocumentRef],
     modifiedCssPlane: [Modified(CssPlane), DocumentRef],
     active: [Document, DocumentRef, Object3DRef],

@@ -11,12 +11,12 @@
   import { AVATAR_POINTER_TAP_MAX_DISTANCE } from "~/config/constants";
   import { assetUrl } from "~/config/assetUrl";
   import { cleanLink } from "~/utils/cleanLink";
+  import { pointerStateDelayed } from "~/events/input/PointerListener/pointerActions";
 
   import { Asset, Transform } from "~/ecs/plugins/core";
 
   import { worldUIMode } from "~/stores/worldUIMode";
   import { showCenterButtons } from "~/stores/showCenterButtons";
-  import { pointerStateDelayed } from "~/events/input/PointerListener/pointerActions";
 
   import FullwindowClose from "~/ui/lib/FullwindowClose.svelte";
 
@@ -36,6 +36,7 @@
   let documentView = false;
 
   function activateFullwindow() {
+    console.log("activateFullwindow");
     // don't allow activating in build mode
     if ($worldUIMode === "build") return;
 
