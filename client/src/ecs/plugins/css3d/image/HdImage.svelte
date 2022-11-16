@@ -68,6 +68,14 @@
     fullwindow = false;
   }
 
+  function flyOrFade(node, options) {
+    if (documentView) {
+      return fly(node, options);
+    } else {
+      return fade(node, options);
+    }
+  }
+
   // ignore other props
   $$props;
 </script>
@@ -77,6 +85,7 @@
     on:close={deactivateFullwindow}
     {...entity.get(Document)}
     size={new Vector2(500, 800)}
+    flyTransition={true}
   />
 {:else if visible}
   {#if fullwindow}
@@ -84,7 +93,7 @@
       on:click={showDocumentView}
       on:close={deactivateFullwindow}
     >
-      <r-full-display in:fade={{ duration: 200 }} out:fly={{ x: -200 }}>
+      <r-full-display in:fade={{ duration: 200 }} out:flyOrFade={{ x: -200 }}>
         <r-full-wrapper>
           <r-full-image>
             <Image

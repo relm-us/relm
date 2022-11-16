@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Vector2 } from "three";
-  import { slide } from "svelte/transition";
+  import { slide, fly } from "svelte/transition";
 
   import Fullwindow from "~/ui/lib/Fullwindow.svelte";
 
@@ -14,6 +14,16 @@
   export let radius: number;
   export let size: Vector2;
 
+  export let flyTransition: boolean = false;
+
+  function slideOrFly(node, options) {
+    if (flyTransition) {
+      return fly(node, options);
+    } else {
+      return slide(node, options);
+    }
+  }
+
   let editor = null;
   let toolbar = null;
 
@@ -25,7 +35,8 @@
     <div style="height:{editable ? 64 : 0}px" />
 
     <r-page-margin
-      transition:slide
+      in:slideOrFly={{ x: 200, delay: 200 }}
+      out:slide
       style="--x:{size.x}px;--y:{size.y}px;--radius:{radius * 150}px"
       class:rounded={kind === "ROUNDED"}
       class:circle={kind === "CIRCLE"}
