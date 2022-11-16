@@ -24,6 +24,7 @@ export class DocumentSystem extends RenderableBaseSystem {
     modifiedCssPlane: [Modified(CssPlane), DocumentRef],
     active: [Document, DocumentRef, Object3DRef],
     removed: [Not(Document), DocumentRef],
+    hdImagePresent: [HdImage, DocumentRef],
   };
 
   init({ cssPresentation }) {
@@ -40,5 +41,6 @@ export class DocumentSystem extends RenderableBaseSystem {
     this.queries.modifiedCssPlane.forEach((entity) => this.rebuild(entity));
     this.queries.active.forEach((entity) => this.transform(entity));
     this.queries.removed.forEach((entity) => this.remove(entity));
+    this.queries.hdImagePresent.forEach((entity) => this.remove(entity));
   }
 }
