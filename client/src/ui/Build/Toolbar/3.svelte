@@ -2,7 +2,7 @@
   import FaObjectGroup from "svelte-icons/fa/FaObjectGroup.svelte";
   import FaObjectUngroup from "svelte-icons/fa/FaObjectUngroup.svelte";
 
-  import { globalEvents } from "~/events";
+  import { globalEvents } from "~/events/globalEvents";
   import { selectedGroups } from "~/stores/selection";
 
   import ToolButton from "./ToolButton.svelte";

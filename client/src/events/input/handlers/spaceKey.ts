@@ -1,7 +1,7 @@
 import { LONG_PRESS_THRESHOLD } from "~/config/constants";
 import { keySpace } from "~/stores/keys";
 
-import { globalEvents } from "~/events";
+import { globalEvents } from "~/events/globalEvents";
 
 import { Action, registerAction } from "../comboTable";
 import { callEach } from "~/utils/callEach";

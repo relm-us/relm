@@ -3,7 +3,7 @@
 
   import Button from "~/ui/lib/Button";
 
-  import { globalEvents } from "~/events";
+  import { globalEvents } from "~/events/globalEvents";
   import { openPanel } from "~/stores";
 
   import PerformancePanel from "~/ui/Debug/PerformancePanel";

@@ -2,7 +2,7 @@
   import FaArrowsAlt from "svelte-icons/fa/FaArrowsAlt.svelte";
   import FaCircleNotch from "svelte-icons/fa/FaCircleNotch.svelte";
 
-  import { globalEvents } from "~/events";
+  import { globalEvents } from "~/events/globalEvents";
   import { dragAction } from "~/stores/dragAction";
 
   import ToolButton from "./ToolButton.svelte";

@@ -1,4 +1,4 @@
-import { globalEvents } from "~/events";
+import { globalEvents } from "~/events/globalEvents";
 import { callEach } from "~/utils/callEach";
 import { keyQ, keyE } from "~/stores/keys";
 

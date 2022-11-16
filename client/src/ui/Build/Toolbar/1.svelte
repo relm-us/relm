@@ -2,13 +2,13 @@
   import FaMousePointer from "svelte-icons/fa/FaMousePointer.svelte";
   import FaMountain from "svelte-icons/fa/FaMountain.svelte";
 
-  import { globalEvents } from "~/events";
+  import { globalEvents } from "~/events/globalEvents";
   import { advancedEdit } from "~/stores/advancedEdit";
 
   import ToolButton from "./ToolButton.svelte";
 
   function onClick() {
-    globalEvents.emit("advanced-edit");
+    globalEvents.emit("toggle-advanced-edit");
   }
 </script>
 

@@ -1,4 +1,4 @@
-import { globalEvents } from "~/events";
+import { globalEvents } from "~/events/globalEvents";
 import { key1, key2, key3 } from "~/stores/keys";
 import { callEach } from "~/utils/callEach";
 import { Action, registerAction } from "../comboTable";
@@ -16,7 +16,7 @@ export function register(): Function {
       ["build"],
       ["1"],
       (pressed) => {
-        pressed && globalEvents.emit("advanced-edit");
+        pressed && globalEvents.emit("toggle-advanced-edit");
       },
     ],
     [
@@ -24,7 +24,7 @@ export function register(): Function {
       ["2"],
       (pressed) => {
         key2.set(pressed);
-        pressed && globalEvents.emit("sit");
+        pressed && globalEvents.emit("sit-ground");
       },
     ],
     [

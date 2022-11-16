@@ -85,7 +85,7 @@ import { audioMode, AudioMode } from "~/stores/audioMode";
 import { Outline } from "~/ecs/plugins/outline";
 import { InteractorSystem } from "~/ecs/plugins/interactor";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
-import { globalEvents } from "~/events";
+import { globalEvents } from "~/events/globalEvents";
 import { advancedEdit } from "~/stores/advancedEdit";
 import { errorCat } from "~/stores/errorCat";
 import { viewportScale } from "~/stores/viewportScale";
@@ -413,9 +413,9 @@ export class WorldManager {
     );
 
     const toggleAdvancedEdit = () => advancedEdit.update((value) => !value);
-    globalEvents.on("advanced-edit", toggleAdvancedEdit);
+    globalEvents.on("toggle-advanced-edit", toggleAdvancedEdit);
     this.unsubs.push(() =>
-      globalEvents.off("advanced-edit", toggleAdvancedEdit)
+      globalEvents.off("toggle-advanced-edit", toggleAdvancedEdit)
     );
 
     const toggleDragAction = () =>

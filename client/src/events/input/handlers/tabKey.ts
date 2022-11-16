@@ -1,4 +1,4 @@
-import { globalEvents } from "~/events";
+import { globalEvents } from "~/events/globalEvents";
 import { registerAction } from "../comboTable";
 
 export function register(): Function {
