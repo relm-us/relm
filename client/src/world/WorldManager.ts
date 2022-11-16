@@ -297,7 +297,9 @@ export class WorldManager {
     this.world.perspective.setAvatar(this.avatar.entities.body);
 
     const onHashChange = (event: HashChangeEvent) => {
-      const newEntryway = location.hash.replace(/^\#/, "");
+      let newEntryway = location.hash.replace(/^\#/, "");
+      if (newEntryway === "") newEntryway = "default";
+
       const entryways = get(this.worldDoc.entryways) as Map<
         string,
         [number, number, number]
@@ -318,10 +320,12 @@ export class WorldManager {
       let relmName = window.location.pathname.replace(/^\//, "");
       if (relmName === "") relmName = "default";
 
-      let entryway = window.location.hash.replace(/^\#/, "");
-      if (entryway === "") entryway = "default";
+      if (relmName !== this.relmName) {
+        let entryway = window.location.hash.replace(/^\#/, "");
+        if (entryway === "") entryway = "default";
 
-      dispatch({ id: "enterPortal", relmName, entryway });
+        dispatch({ id: "enterPortal", relmName, entryway });
+      }
     };
     window.addEventListener("popstate", onUrlChange);
     this.unsubs.push(() => window.removeEventListener("popstate", onUrlChange));
