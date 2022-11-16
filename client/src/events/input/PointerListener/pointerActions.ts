@@ -1,7 +1,7 @@
 import { Euler, Object3D, Vector2, Vector3 } from "three";
 import { get } from "svelte/store";
 
-import { globalEvents } from "~/events";
+import { globalEvents } from "~/events/globalEvents";
 import { pointerPointInSelection } from "./selectionLogic";
 import * as selectionLogic from "./selectionLogic";
 
@@ -88,9 +88,9 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
 
     pointerDownFound = finder.entityIdsAt(pointerPosition);
 
-    if (
-      pointerDownFound.includes(worldManager.avatar.entities.body.id as string)
-    ) {
+    const { avatarBody, local } = getAvatarAmongFound(pointerDownFound);
+
+    if (avatarBody && local) {
       addTouchController(worldManager.avatar.entities.body);
       isControllingAvatar = true;
     } else if (interactiveEntity?.has(Draggable)) {
@@ -130,7 +130,15 @@ export function onPointerUp() {
       worldManager.selection.syncEntities();
     }
   } else if ($mode === "play") {
-    if (
+    const { avatarBody, local } = getAvatarAmongFound(pointerDownFound);
+
+    if (isControllingAvatar) {
+      removeTouchController(worldManager.avatar.entities.body);
+      isControllingAvatar = false;
+    } else if (avatarBody && !local) {
+      // Broadcast participantId of the avatar that was clicked
+      globalEvents.emit("interact-other-avatar", avatarBody.id as string);
+    } else if (
       (pointerState === "click" || pointerState === "interactive-click") &&
       pointerDownFound.length > 0
     ) {
@@ -144,9 +152,6 @@ export function onPointerUp() {
     } else if (pointerState === "interactive-drag") {
       worldManager.selection.syncEntities();
       interactiveEntity = null;
-    } else if (isControllingAvatar) {
-      removeTouchController(worldManager.avatar.entities.body);
-      isControllingAvatar = false;
     }
   }
 
@@ -167,8 +172,6 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
   const finder = world.presentation.intersectionFinder;
 
   pointerPosition.set(x, y);
-
-  globalEvents.emit("mouseActivity");
 
   const pointerMoveFound = finder.entityIdsAt(pointerPosition);
 
@@ -309,4 +312,24 @@ function setDragPlaneOrigin(screenPosition: Vector2) {
   const position = new Vector3();
   planes.getWorldFromScreen(screenPosition, position);
   worldManager.dragPlane.setOrigin(position);
+}
+
+function getAvatarAmongFound(foundEntityIds: string[]): {
+  avatarBody: Entity;
+  local: boolean;
+} {
+  const avatarEntities = foundEntityIds
+    .map((entityId) => worldManager.world.entities.getById(entityId))
+    .filter((entity) => entity.name === "Avatar");
+  if (avatarEntities.length > 0) {
+    return {
+      avatarBody: avatarEntities[0],
+      local: avatarEntities[0] === worldManager.avatar.entities.body,
+    };
+  } else {
+    return {
+      avatarBody: null,
+      local: false,
+    };
+  }
 }
