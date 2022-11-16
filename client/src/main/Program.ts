@@ -305,8 +305,9 @@ export function makeProgram(): Program {
         worldManager.stop();
         state.avDisconnect?.();
 
-        let newUrl = `/${msg.relmName}`;
-        if (msg.entryway !== "default") newUrl += `#${msg.entryway}`;
+        let newUrl = "/";
+        if (msg.relmName !== "default") newUrl += msg.relmName;
+        if (msg.entryway !== "default") newUrl += "#" + msg.entryway;
         window.history.pushState(
           { relmName: msg.relmName, entryway: msg.entryway },
           msg.relmName,
