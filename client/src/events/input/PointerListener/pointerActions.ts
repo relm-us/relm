@@ -63,14 +63,17 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
   pointerPosition.set(x, y);
   pointerStartPosition.set(x, y);
 
-  pointerDownFound = finder.entityIdsAt(pointerPosition);
-
   if ($mode === "build") {
     // At this point, at least a 'click' has started. TBD if it's a drag.
     setNextPointerState("click");
     shiftKeyOnClick = shiftKey;
 
     setDragPlaneOrigin(pointerPosition);
+
+    // Don't allow clicking other avatars in build mode
+    pointerDownFound = finder
+      .entityIdsAt(pointerPosition)
+      .filter(havingAvatar(false));
 
     // Begin tracking what was clicked on, in case this is a click
     selectionLogic.mousedown(pointerDownFound, shiftKey);
@@ -82,6 +85,8 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
     if (pointerPoint) worldManager.dragPlane.setOrigin(pointerPoint);
   } else if ($mode === "play") {
     interactiveEntity = firstInteractiveEntity(pointerDownFound);
+
+    pointerDownFound = finder.entityIdsAt(pointerPosition);
 
     if (
       pointerDownFound.includes(worldManager.avatar.entities.body.id as string)
@@ -280,6 +285,12 @@ function firstInteractiveEntity(entityIds: string[]) {
     .map((entityId) => worldManager.world.entities.getById(entityId))
     .find((entity) => isInteractive(entity));
 }
+
+const havingAvatar = (yes: boolean) => (entityId) => {
+  const name = worldManager.world.entities.getById(entityId).name;
+  if (yes) return name === "Avatar";
+  else return name !== "Avatar";
+};
 
 function atLeastMinDragDistance() {
   return (
