@@ -24,7 +24,15 @@
         maxFileSize: 1024 * 1024 * 16,
         maxNumberOfFiles: 12,
         minNumberOfFiles: 1,
-        allowedFileTypes: ["image/*", ".gltf", ".glb", ".wav", ".mp3", ".ogg"],
+        allowedFileTypes: [
+          "image/*",
+          ".gltf",
+          ".glb",
+          ".wav",
+          ".mp3",
+          ".ogg",
+          ".webm",
+        ],
       },
     })
       .use(XHRUpload, {

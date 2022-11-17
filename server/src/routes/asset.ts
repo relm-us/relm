@@ -319,6 +319,7 @@ asset.post(
         case ".ogg":
         case ".mp3":
         case ".wav":
+        case ".webm":
           const sound = await conversion.moveOrUploadContentAddressable(
             asset.tempFilePath,
             extension
