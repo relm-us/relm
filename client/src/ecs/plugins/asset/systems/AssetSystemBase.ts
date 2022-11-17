@@ -108,7 +108,9 @@ export class AssetSystemBase extends System {
         if (valid.type === "ok") return gltf;
         else throw Error(`invalid glTF: ${valid.reason}`);
       case "SOUND":
-        return;
+        // TODO: don't assume field is called `preload`
+        const howl = await this.presentation.loadSound(url, spec.preload);
+        return howl;
       default:
         throw Error("unknown asset kind");
     }

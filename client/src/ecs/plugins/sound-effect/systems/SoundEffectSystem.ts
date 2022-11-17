@@ -6,7 +6,11 @@ import { System, Groups, Entity } from "~/ecs/base";
 import { Presentation } from "~/ecs/plugins/core";
 import { Impact } from "~/ecs/plugins/physics";
 
-import { SoundEffect, SoundEffectEntered } from "../components";
+import {
+  SoundAssetLoaded,
+  SoundEffect,
+  SoundEffectEntered,
+} from "../components";
 
 export class SoundEffectSystem extends System {
   presentation: Presentation;
@@ -35,12 +39,14 @@ export class SoundEffectSystem extends System {
   }
 
   enterSoundEffect(entity: Entity) {
-    const spec = entity.get(SoundEffect);
-    entity.add(SoundEffectEntered, { zone: spec.zone });
+    const spec: SoundEffect = entity.get(SoundEffect);
+    const loaded: SoundAssetLoaded = entity.get(SoundAssetLoaded);
 
-    var sound = new Howl({ src: [assetUrl(spec.asset.url)] });
-
-    sound.play();
+    if (loaded) {
+      entity.add(SoundEffectEntered);
+      if (!spec.preload) loaded.value.load();
+      loaded.value.play();
+    }
   }
 
   leaveSoundEffect(entity: Entity) {

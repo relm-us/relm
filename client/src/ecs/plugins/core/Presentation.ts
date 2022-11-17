@@ -11,6 +11,7 @@ import {
   Object3D,
 } from "three";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { Howl, Howler } from "howler";
 
 import {
   EffectComposer,
@@ -186,12 +187,24 @@ export class Presentation {
     this.renderer.setAnimationLoop(fn);
   }
 
-  async loadGltf(url): Promise<GLTF> {
+  async loadGltf(url: string): Promise<GLTF> {
     return await gltfLoader.loadAsync(url);
   }
 
   async loadTexture(url: string): Promise<Texture> {
     return await textureLoader.loadAsync(url);
+  }
+
+  async loadSound(url: string, preload: boolean = true): Promise<Howl> {
+    const howl = new Howl({ src: url, preload });
+    if (preload) {
+      return new Promise((resolve, reject) => {
+        howl.once("load", () => resolve(howl));
+        howl.on("loaderror", reject);
+      });
+    } else {
+      return howl;
+    }
   }
 
   updateSize() {

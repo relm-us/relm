@@ -1,14 +1,23 @@
-import { Component } from "~/ecs/base";
-import { AssetType } from "~/ecs/plugins/core";
+import { BooleanType, Component } from "~/ecs/base";
+import { Asset, AssetType } from "~/ecs/plugins/core";
 
 export class SoundEffect extends Component {
-  asset: string;
+  asset: Asset;
+  preload: boolean;
 
   static props = {
     asset: {
       type: AssetType,
       editor: {
         label: "Sound Asset",
+      },
+    },
+
+    preload: {
+      type: BooleanType,
+      default: true,
+      editor: {
+        label: "Preload Asset",
       },
     },
   };

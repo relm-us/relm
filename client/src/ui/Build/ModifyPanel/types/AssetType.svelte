@@ -23,7 +23,6 @@
   $: value = component[key].url;
 
   const onUpload = ({ detail }) => {
-    console.log("onUpload", detail);
     for (const result of detail.results) {
       if (result.types.webp) {
         setAssetUrl(result.types.webp);
