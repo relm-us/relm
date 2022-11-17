@@ -316,6 +316,15 @@ asset.post(
 
     try {
       switch (extension) {
+        case ".ogg":
+        case ".mp3":
+        case ".wav":
+          const sound = await conversion.moveOrUploadContentAddressable(
+            asset.tempFilePath,
+            extension
+          );
+          return conversion.fileUploadSuccess(res, { sound });
+
         case ".jpg":
         case ".jpeg":
         case ".gif":

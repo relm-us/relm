@@ -29,6 +29,8 @@
         setAssetUrl(result.types.webp);
       } else if (result.types.gltf) {
         setAssetUrl(result.types.gltf);
+      } else if (result.types.sound) {
+        setAssetUrl(result.types.sound);
       }
     }
   };

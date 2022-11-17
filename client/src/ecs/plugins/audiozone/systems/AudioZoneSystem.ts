@@ -1,9 +1,6 @@
-import { Quaternion, Vector3 } from "three";
-import { cleanLink } from "~/utils/cleanLink";
-
 import { worldManager } from "~/world";
 import { System, Groups, Entity } from "~/ecs/base";
-import { Presentation, Transform } from "~/ecs/plugins/core";
+import { Presentation } from "~/ecs/plugins/core";
 
 import { AudioZone, AudioZoneEntered } from "../components";
 import { Impact } from "~/ecs/plugins/physics";

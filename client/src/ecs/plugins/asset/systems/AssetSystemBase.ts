@@ -4,7 +4,7 @@ import { Presentation } from "~/ecs/plugins/core";
 import { assetUrl } from "~/config/assetUrl";
 import { checkModelValid } from "../utils/checkModelValid";
 
-export type Kind = "TEXTURE" | "GLTF" | null;
+export type Kind = "TEXTURE" | "GLTF" | "SOUND" | null;
 
 let loaderIds = 0;
 
@@ -107,6 +107,8 @@ export class AssetSystemBase extends System {
         const valid = checkModelValid(gltf.scene);
         if (valid.type === "ok") return gltf;
         else throw Error(`invalid glTF: ${valid.reason}`);
+      case "SOUND":
+        return;
       default:
         throw Error("unknown asset kind");
     }
@@ -125,6 +127,8 @@ export class AssetSystemBase extends System {
         return "GLTF";
       } else if (/\.(png|jpg|jpeg|webp)$/.test(url)) {
         return "TEXTURE";
+      } else if (/\.(wav|ogg|mp3)/.test(url)) {
+        return "SOUND";
       }
     }
     return null;

@@ -1,0 +1,1 @@
+export { SoundEffectSystem } from "./SoundEffectSystem";

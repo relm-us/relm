@@ -46,6 +46,7 @@ import PhysicsPlugin from "~/ecs/plugins/physics";
 import ShapePlugin from "~/ecs/plugins/shape";
 import SkyboxPlugin from "~/ecs/plugins/skybox";
 import SpinPlugin from "~/ecs/plugins/spin";
+import SoundEffectPlugin from "~/ecs/plugins/sound-effect";
 import TransformControlsPlugin from "~/ecs/plugins/transform-controls";
 import TransitionPlugin from "~/ecs/plugins/transition";
 import TranslucentPlugin from "~/ecs/plugins/translucent";
@@ -120,6 +121,7 @@ export const createECSWorld = (rapier) => (dispatch: Dispatch) => {
       ShapePlugin,
       SkyboxPlugin,
       SpinPlugin,
+      SoundEffectPlugin,
       TransformControlsPlugin,
       TransitionPlugin,
       TranslucentPlugin,
