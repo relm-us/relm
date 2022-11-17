@@ -129,7 +129,7 @@ export class AssetSystemBase extends System {
         return "GLTF";
       } else if (/\.(png|jpg|jpeg|webp)$/.test(url)) {
         return "TEXTURE";
-      } else if (/\.(wav|ogg|mp3)/.test(url)) {
+      } else if (/\.(wav|ogg|mp3|webm)/.test(url)) {
         return "SOUND";
       }
     }

@@ -42,7 +42,7 @@ export class SoundEffectSystem extends System {
     const spec: SoundEffect = entity.get(SoundEffect);
     const loaded: SoundAssetLoaded = entity.get(SoundAssetLoaded);
 
-    if (loaded) {
+    if (loaded?.value) {
       entity.add(SoundEffectEntered);
       if (!spec.preload) loaded.value.load();
       loaded.value.play();
