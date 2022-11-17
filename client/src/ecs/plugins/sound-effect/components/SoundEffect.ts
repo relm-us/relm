@@ -9,7 +9,7 @@ export class SoundEffect extends Component {
     asset: {
       type: AssetType,
       editor: {
-        label: "Sound Asset",
+        label: "Sound Asset (.webm)",
       },
     },
 

@@ -26,7 +26,7 @@ export class Image extends Component {
     asset: {
       type: AssetType,
       editor: {
-        label: "Image Asset",
+        label: "Image Asset (.png)",
       },
     },
 

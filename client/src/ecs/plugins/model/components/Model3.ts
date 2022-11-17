@@ -22,7 +22,7 @@ export class Model3 extends Component {
     asset: {
       type: AssetType,
       editor: {
-        label: "Model Asset",
+        label: "Model Asset (.glb)",
       },
     },
 
