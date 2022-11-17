@@ -17,6 +17,7 @@ importers:
       '@cerner/duplicate-package-checker-webpack-plugin': ^2.3.0
       '@dimforge/rapier3d': 0.9.0
       '@tweenjs/tween.js': ^18.6.4
+      '@types/howler': ^2.2.7
       '@types/jest': ^27.0.0
       '@types/node': ^17.0.5
       '@types/protoo-client': ^4.0.1
@@ -161,6 +162,7 @@ importers:
       '@babel/preset-env': 7.18.2_@babel+core@7.17.9
       '@babel/runtime': 7.18.3
       '@cerner/duplicate-package-checker-webpack-plugin': 2.3.0_webpack@5.74.0
+      '@types/howler': 2.2.7
       '@types/jest': 27.5.2
       '@types/node': 17.0.23
       '@types/protoo-client': 4.0.1
@@ -3778,6 +3780,10 @@ packages:
       '@types/unist': 2.0.6
     dev: true
 
+  /@types/howler/2.2.7:
+    resolution: {integrity: sha512-PEZldwZqJJw1PWRTpupyC7ajVTZA8aHd8nB/Y0n6zRZi5u8ktYDntsHj13ltEiBRqWwF06pASxBEvCTxniG8eA==}
+    dev: true
+
   /@types/html-minifier-terser/6.1.0:
     resolution: {integrity: sha512-oh/6byDPnL1zeNXFrDXFLyZjkr1MsBG667IM792caf1L2UPOOMf65NFzjUH/ltyfwjAGfs1rsX1eftK0jC/KIg==}
     dev: true
@@ -6775,19 +6781,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dev: false
-
-  /follow-redirects/1.14.9_debug@4.3.4:
-    resolution: {integrity: sha512-MQDfihBQYMcyy5dhRDJUHcw7lb2Pv/TuE6xP1vyraLukNDHKbDxDNaOE3NbCAdKQApno+GPRyo1YAp89yCjK4w==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
-    dependencies:
-      debug: 4.3.4
-    dev: true
 
   /for-each/0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
@@ -7309,7 +7302,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.14.9_debug@4.3.4
+      follow-redirects: 1.14.9
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
