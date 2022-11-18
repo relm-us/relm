@@ -35,19 +35,19 @@
   }
 </script>
 
-<Dialog title="Sign Up" {canCancel} on:cancel>
+<Dialog title={$_("SignUpDialog.title")} {canCancel} on:cancel>
   <r-container>
     <r-form>
       <SignInTextInput
-        label={$_("SignUpDialog.email")}
         type="email"
+        label={$_("SignUpDialog.email")}
         bind:value={email}
         bind:this={emailInstance}
         on:submit={onSignUp}
       />
       <SignInTextInput
-        label={$_("SignUpDialog.pass_code")}
         type="password"
+        label={$_("SignUpDialog.password")}
         bind:value={password}
         on:submit={onSignUp}
       />

@@ -35,24 +35,24 @@
   }
 </script>
 
-<Dialog title="Sign In" {canCancel} on:cancel>
+<Dialog title={$_("SignInDialog.title")} {canCancel} on:cancel>
   <r-container>
     <r-form>
       <SignInTextInput
-        label="email"
         type="email"
+        label={$_("SignInDialog.email")}
         bind:value={email}
         on:submit={onSignIn}
       />
       <SignInTextInput
-        label="pass code"
         type="password"
+        label={$_("SignInDialog.password")}
         bind:value={password}
         on:submit={onSignIn}
       />
     </r-form>
 
-    <Button on:click={onSignIn}>Sign In</Button>
+    <Button on:click={onSignIn}>{$_("SignInDialog.sign_in")}</Button>
 
     <!-- <r-or> or enter via: </r-or> -->
 
@@ -60,7 +60,8 @@
 
     {#if allowSignUp}
       <r-sign-up>
-        New here? <button on:click={onSignUp}>Sign Up</button>
+        {$_("SignInDialog.new_here")}
+        <button on:click={onSignUp}>{$_("SignInDialog.sign_up")}</button>
       </r-sign-up>
     {/if}
   </r-container>

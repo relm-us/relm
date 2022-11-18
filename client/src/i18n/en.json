@@ -207,12 +207,21 @@
     "import_export": "Import/Export",
     "performance": "Performance"
   },
-  "SignUpDialog": {
-    "already_have_account": "Already have an account?",
+  "SignInDialog": {
+    "title": "Sign In",
     "sign_in": "Sign In",
     "sign_up": "Sign Up",
-    "pass_code": "pass code",
-    "email": "email"
+    "email": "email",
+    "password": "pass code",
+    "new_here": "New here?"
+  },
+  "SignUpDialog": {
+    "title": "Sign Up",
+    "sign_in": "Sign In",
+    "sign_up": "Sign Up",
+    "email": "email",
+    "password": "pass code",
+    "already_have_account": "Already have an account?"
   },
   "SkyboxSettings": {
     "title": "Skybox",
