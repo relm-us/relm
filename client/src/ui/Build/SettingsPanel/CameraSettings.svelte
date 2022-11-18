@@ -24,7 +24,7 @@
   });
 </script>
 
-<Pane title="Camera">
+<Pane title={$_("CameraSettings.title")}>
   <r-label>{$_("CameraSettings.field_of_view")}</r-label>
   <r-setting>
     <r-slider>

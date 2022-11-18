@@ -57,6 +57,7 @@
     "settings": "Settings"
   },
   "CameraSettings": {
+    "title": "Camera",
     "field_of_view": "Field of View"
   },
   "CenterCamera": {
@@ -79,20 +80,6 @@
     "viewport": "Viewport:",
     "participants": "Participants:"
   },
-  "Overlay": {
-    "tooltips": {
-      "set_up_video": "Set up Cam & Mic",
-      "build_mode": "Toggle build mode",
-      "mute": "Mute",
-      "unmute": "Unmute",
-      "mute_video": "Disable Camera",
-      "unmute_video": "Enable Camera",
-      "share_screen": "Share screen",
-      "chat_open": "Open chat",
-      "invite_someone": "Invite someone to be with you here",
-      "profile": "Your profile"
-    }
-  },
   "EditorPanel": {
     "modify": "Modify",
     "nothing_selected": "Nothing selected",
@@ -106,6 +93,7 @@
     "entity_deactivated": "Entity Deactivated"
   },
   "EntrywaySettings": {
+    "title": "Entryways",
     "set_default": "Set Default to Here",
     "new_entryway_name": "New Entryway Name:"
   },
@@ -115,7 +103,7 @@
     "apply": "Apply"
   },
   "FogSettings": {
-    "fog": "Fog"
+    "title": "Fog"
   },
   "GroupUngroupButton": {
     "group": "Group",
@@ -133,7 +121,7 @@
     "title": "Language"
   },
   "LightingSettings": {
-    "lighting": "Lighting",
+    "title": "Lighting",
     "ambient": "Ambient:",
     "hemisphere": "Hemisphere:",
     "sky": "Sky:",
@@ -158,6 +146,20 @@
   },
   "MessageHistory": {
     "empty_chat": "Empty chat history"
+  },
+  "Overlay": {
+    "tooltips": {
+      "set_up_video": "Set up Cam & Mic",
+      "build_mode": "Toggle build mode",
+      "mute": "Mute",
+      "unmute": "Unmute",
+      "mute_video": "Disable Camera",
+      "unmute_video": "Enable Camera",
+      "share_screen": "Share screen",
+      "chat_open": "Open chat",
+      "invite_someone": "Invite someone to be with you here",
+      "profile": "Your profile"
+    }
   },
   "Pause": {
     "title": "Paused",
@@ -213,7 +215,7 @@
     "email": "email"
   },
   "SkyboxSettings": {
-    "skybox": "Skybox",
+    "title": "Skybox",
     "blue_sky": "Blue Sky",
     "stars": "Stars",
     "pink_clouds": "Pink Clouds",

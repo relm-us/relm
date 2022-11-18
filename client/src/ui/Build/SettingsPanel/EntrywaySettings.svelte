@@ -36,7 +36,7 @@
   }
 </script>
 
-<Pane title="Entryways">
+<Pane title={$_("EntrywaySettings.title")}>
   <r-setting>
     <Button on:click={setDefaultEntryway}>
       {$_("EntrywaySettings.set_default")}

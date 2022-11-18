@@ -44,7 +44,7 @@
   });
 </script>
 
-<Pane title={$_("FogSettings.fog")}>
+<Pane title={$_("FogSettings.title")}>
   <r-setting>
     <r-slider>
       <Slider on:change={onSlideFog} value={fogDensity} />

@@ -42,7 +42,7 @@
 </script>
 
 <r-pop-button>
-  <Tooltip tip="Your profile" enabled={!pop} top>
+  <Tooltip tip={$_("Overlay.tooltips.profile")} enabled={!pop} top>
     <div bind:this={button}>
       <CircleButton
         on:click={onClick}

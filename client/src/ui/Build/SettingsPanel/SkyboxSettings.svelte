@@ -41,7 +41,7 @@
   }
 </script>
 
-<Pane title={$_("SkyboxSettings.skybox")}>
+<Pane title={$_("SkyboxSettings.title")}>
   <r-setting>
     <div class="select-skyboxes">
       <SkyboxOption

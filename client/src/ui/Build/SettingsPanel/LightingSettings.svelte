@@ -85,7 +85,7 @@
   });
 </script>
 
-<Pane title={$_("LightingSettings.lighting")}>
+<Pane title={$_("LightingSettings.title")}>
   <r-setting style="padding-top: 4px">
     <r-title>
       {$_("LightingSettings.ambient")}

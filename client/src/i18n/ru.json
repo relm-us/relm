@@ -109,7 +109,7 @@
       "apply": "Принять"
     },
     "FogSettings": {
-      "fog": "Туман"
+      "title": "Туман"
     },
     "GroupUngroupButton": {
       "group": "Сгруппировать",
@@ -127,7 +127,7 @@
       "title": "Язык"
     },
     "LightingSettings": {
-      "lighting": "Освещение",
+      "title": "Освещение",
       "ambient": "Рассеянный свет:",
       "hemisphere": "Полусфера:",
       "sky": "Небо:",
