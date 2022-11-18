@@ -22,7 +22,7 @@ import {
   DRAG_DISTANCE_THRESHOLD,
 } from "~/config/constants";
 import { Draggable } from "~/ecs/plugins/clickable/components/Draggable";
-import { Entity } from "~/ecs/base";
+import { Entity, EntityId } from "~/ecs/base";
 import { isInteractive } from "~/utils/isInteractive";
 import { dragAction } from "~/stores/dragAction";
 
@@ -55,6 +55,13 @@ let interactiveEntity: Entity;
 let shiftKeyOnClick = false;
 const cameraStartDirection = new Euler();
 
+/**
+ * Pointer DOWN Event--mouse, touch, etc.
+ *
+ * @param x pointer X position on screen
+ * @param y pointer Y position on screen
+ * @param shiftKey whether or not the "shift" key on the keyboard is pressed
+ */
 export function onPointerDown(x: number, y: number, shiftKey: boolean) {
   const $mode = get(worldUIMode);
   const world = worldManager.world;
@@ -114,6 +121,9 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
   }
 }
 
+/**
+ * Pointer UP Event
+ */
 export function onPointerUp() {
   if (isControllingTransform) {
     if (pointerState !== "initial") setNextPointerState("initial");
@@ -161,6 +171,9 @@ export function onPointerUp() {
   setNextPointerState("initial");
 }
 
+/**
+ * Pointer MOVE Event
+ */
 export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
   if (isControllingTransform) {
     if (pointerState !== "initial") setNextPointerState("initial");
@@ -173,7 +186,7 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
 
   pointerPosition.set(x, y);
 
-  const pointerMoveFound = finder.entityIdsAt(pointerPosition);
+  const pointerMoveFound: EntityId[] = finder.entityIdsAt(pointerPosition);
 
   mouse.set(finder._normalizedCoord);
 
@@ -262,7 +275,8 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
       worldManager.camera.setPan(-dragOffset.x, -dragOffset.z);
     } else {
       // hovering over clickable/draggable results in outline
-      worldManager.hoverOutline(firstInteractiveEntity(pointerMoveFound));
+      // const entity = firstInteractiveEntity(pointerMoveFound);
+      globalEvents.emit("highlight-possible-actions", pointerMoveFound);
     }
   }
 }

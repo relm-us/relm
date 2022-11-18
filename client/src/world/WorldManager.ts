@@ -54,7 +54,7 @@ import { setControl } from "~/events/input/PointerListener/pointerActions";
 
 import { makeLight } from "~/prefab/makeLight";
 
-import { Entity } from "~/ecs/base";
+import { Entity, EntityId } from "~/ecs/base";
 import { Collider2, Collider2Ref } from "~/ecs/plugins/collider";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { Seat } from "~/ecs/plugins/player-control";
@@ -85,7 +85,7 @@ import { audioMode, AudioMode } from "~/stores/audioMode";
 import { Outline } from "~/ecs/plugins/outline";
 import { InteractorSystem } from "~/ecs/plugins/interactor";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
-import { globalEvents } from "~/events/globalEvents";
+import { GlobalEvents, globalEvents } from "~/events/globalEvents";
 import { advancedEdit } from "~/stores/advancedEdit";
 import { errorCat } from "~/stores/errorCat";
 import { viewportScale } from "~/stores/viewportScale";
@@ -98,6 +98,7 @@ import { rollRandomAppearance } from "~/identity/Avatar/appearance";
 import { releaseAllKeys } from "~/events/input/comboTable";
 import { portalOccupancy } from "~/stores/portalOccupancy";
 import { fantasySkin } from "~/stores/fantasySkin";
+import { isInteractive } from "~/utils/isInteractive";
 
 // Make THREE accessible for debugging
 (window as any).THREE = THREE;
@@ -412,36 +413,7 @@ export class WorldManager {
       }).subscribe(() => {})
     );
 
-    const toggleAdvancedEdit = () => advancedEdit.update((value) => !value);
-    globalEvents.on("toggle-advanced-edit", toggleAdvancedEdit);
-    this.unsubs.push(() =>
-      globalEvents.off("toggle-advanced-edit", toggleAdvancedEdit)
-    );
-
-    const toggleDragAction = () =>
-      dragAction.update((value) => (value === "pan" ? "rotate" : "pan"));
-    globalEvents.on("toggle-drag-action", toggleDragAction);
-    this.unsubs.push(() =>
-      globalEvents.off("toggle-drag-action", toggleDragAction)
-    );
-
-    const toggleSelectionAsGroup = () => this.selection.toggleGroup();
-    globalEvents.on("toggle-selection-as-group", toggleSelectionAsGroup);
-    this.unsubs.push(() =>
-      globalEvents.off("toggle-drag-action", toggleSelectionAsGroup)
-    );
-
-    const cameraRotateLeft = () => this.camera.rotateLeft90();
-    globalEvents.on("camera-rotate-left", cameraRotateLeft);
-    this.unsubs.push(() =>
-      globalEvents.off("camera-rotate-left", cameraRotateLeft)
-    );
-
-    const cameraRotateRight = () => this.camera.rotateRight90();
-    globalEvents.on("camera-rotate-right", cameraRotateRight);
-    this.unsubs.push(() =>
-      globalEvents.off("camera-rotate-right", cameraRotateRight)
-    );
+    this.registerGlobalEventListeners();
 
     this.unsubs.push(
       derived(
@@ -616,6 +588,36 @@ export class WorldManager {
   afterInit(fn: Function) {
     if (this.didInit) fn();
     else this.afterInitFns.push(fn);
+  }
+
+  addGlobalEventListener<K extends keyof GlobalEvents>(
+    event: K,
+    fn: GlobalEvents[K]
+  ) {
+    globalEvents.on(event, fn);
+    this.unsubs.push(() => globalEvents.off(event, fn));
+  }
+
+  registerGlobalEventListeners() {
+    const reg = this.addGlobalEventListener.bind(this);
+
+    reg("toggle-advanced-edit", () => advancedEdit.update((value) => !value));
+
+    reg("toggle-drag-action", () =>
+      dragAction.update((value) => (value === "pan" ? "rotate" : "pan"))
+    );
+
+    reg("toggle-selection-as-group", () => this.selection.toggleGroup());
+
+    reg("camera-rotate-left", () => this.camera.rotateLeft90());
+    reg("camera-rotate-right", () => this.camera.rotateRight90());
+
+    reg("highlight-possible-actions", (entityIds: EntityId[]) => {
+      const firstInteractiveEntity = entityIds
+        .map((entityId) => this.world.entities.getById(entityId))
+        .find((entity) => isInteractive(entity));
+      this.hoverOutline(firstInteractiveEntity);
+    });
   }
 
   getColliderEntities() {

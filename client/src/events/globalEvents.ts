@@ -1,5 +1,5 @@
 import type { WorldUIMode } from "~/stores/worldUIMode";
-import type { EntityId } from "~/ecs/base";
+import type { Entity, EntityId } from "~/ecs/base";
 
 import { TypedEmitter } from "tiny-typed-emitter";
 
@@ -18,16 +18,20 @@ export type GlobalEvents = {
   "delete": () => void;
   "escape": () => void;
   "switch-mode": (switchTo?: WorldUIMode) => void;
-  "drop-item": (item: any) => void;
+
   "action": () => void;
   "action-long": () => void;
+  "highlight-possible-actions": (entityIds: EntityId[]) => void;
+  "clear-highlighted-actions": () => void;
+  "drop-item": (item: any) => void;
+  "sit-ground": () => void;
+  "interact-other-avatar": (participantId: string) => void;
+
   "toggle-advanced-edit": () => void;
   "toggle-drag-action": () => void;
   "toggle-selection-as-group": () => void;
   "camera-rotate-left": () => void;
   "camera-rotate-right": () => void;
-  "interact-other-avatar": (participantId: string) => void;
-  "sit-ground": () => void;
 };
 
 export class GlobalEventEmitter extends TypedEmitter<GlobalEvents> {}
