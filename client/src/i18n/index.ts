@@ -15,6 +15,7 @@ export const languageMap = {
   "en": "English",
   "en-US": "English",
   "fr": "Français",
+  "ru": "Русский",
   "zh-Hans": "中文",
 };
 
@@ -24,6 +25,7 @@ addMessages("en", en);
 
 // Asynchronously add other languages, loaded on demand
 register("fr", () => import("./fr.json"));
+register("ru", () => import("./ru.json"));
 register("zh-Hans", () => import("./zh-Hans.json"));
 
 init({

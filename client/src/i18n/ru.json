@@ -1,0 +1,233 @@
+{
+    "ActionsPanel": {
+      "title": "Действия",
+      "invalid_json": "Недействительный JSON",
+      "apply": "Принять"
+    },
+    "AddPanel": {
+      "search_assets": "Поиск Ассетов...",
+      "add_asset": "Добавить",
+      "prev": "Предыдущий",
+      "next": "Следующий",
+      "loading": "Загрузка...",
+      "empty_results": "Пустая страница",
+      "add": "Добавить"
+    },
+    "AdminAddToLibrary": {
+      "thumbnail": "Обложка",
+      "uploaded": "Загружено!",
+      "add": "Добавить"
+    },
+    "AssetType": {
+      "size": "Размер:"
+    },
+    "AudioSettings": {
+      "proximity_audio": "Только звуки поблизости:"
+    },
+    "AvatarBuilder": {
+      "gender": "Грудь",
+      "body": "Тело",
+      "skintone": "Тон кожи",
+      "hair": "Волосы",
+      "shirt": "Футболка",
+      "pants": "Штаны",
+      "shoes": "Обувь",
+      "belt": "Ремень?",
+      "belt_yes": "Да",
+      "belt_no": "Нет",
+      "narrow": "Худой",
+      "wide": "Крупный",
+      "choose_yours": "Выбери свой Аватар",
+      "customize_later": "(вы можете настроить его позже)",
+      "male": "Маскулинное",
+      "female": "Феминное",
+      "title": "Аватар",
+      "unique_color": "Ваш уникальный цвет"
+    },
+    "BuildPanel": {
+      "add": "Добавить",
+      "modify": "Модифицикации",
+      "actions": "Действия",
+      "settings": "Настройки"
+    },
+    "CameraSettings": {
+      "field_of_view": "Поле зрения"
+    },
+    "CenterCamera": {
+      "recenter": "Отцентровать камеру"
+    },
+    "ChatDialog": {
+      "title": "Чат"
+    },
+    "ColorPreview": {
+      "invalid_color": "Недействительный Цвет"
+    },
+    "DebugPane": {
+      "debug_physics": "Отладить физику?",
+      "show_errors": "Показать ошибки?",
+      "framerate": "Частота кадров:",
+      "fps": "FPS",
+      "audio": "Звук:",
+      "video": "Видео:",
+      "loading": "Загрузка:",
+      "viewport": "Область просмотра:",
+      "participants": "Участники:"
+    },
+    "Overlay": {
+      "tooltips": {
+        "set_up_video": "Настроить камеру и микрофон",
+        "build_mode": "Переключить режим сторйки",
+        "mute": "Выключить звук",
+        "unmute": "Включить звук",
+        "mute_video": "Выключить камеру",
+        "unmute_video": "Включить камеру",
+        "share_screen": "Транслировать экран",
+        "chat_open": "Открыть чат",
+        "invite_someone": "Пригласите кого-нибудь составить вам компанию",
+        "profile": "Ваш профиль"
+      }
+    },
+    "EditorPanel": {
+      "modify": "Модифицировать",
+      "nothing_selected": "Ничего не выбрано",
+      "click_on_object": "Кликните по объекту, чтобы выбрать",
+      "delete_object": "Удалить этот объект",
+      "debug_in_console": "Отладить в консоли",
+      "objects": "Объекты: {count}"
+    },
+    "EntityComponents": {
+      "internal_components": "Внутренние компоненты",
+      "entity_deactivated": "Структура выключена"
+    },
+    "EntrywaySettings": {
+      "set_default": "Поставить начальную точку входа здесь",
+      "new_entryway_name": "Название новой точки входа:"
+    },
+    "ExportPanel": {
+      "title": "Импорт / Экспорт",
+      "invalid_json": "Недопустимый JSON",
+      "apply": "Принять"
+    },
+    "FogSettings": {
+      "fog": "Туман"
+    },
+    "GroupUngroupButton": {
+      "group": "Сгруппировать",
+      "ungroup": "Разгруппировать"
+    },
+    "InviteDialog": {
+      "allow_build_mode": "Разрешить режим постройки?",
+      "allow_inviting": "Разрешить добавлять других?",
+      "loading": "Загрузка ...",
+      "max_uses": "Максимальное Число использований",
+      "title": "Пригласить",
+      "close": "Закрыть"
+    },
+    "LanguageDialog": {
+      "title": "Язык"
+    },
+    "LightingSettings": {
+      "lighting": "Освещение",
+      "ambient": "Рассеянный свет:",
+      "hemisphere": "Полусфера:",
+      "sky": "Небо:",
+      "ground": "Земля:",
+      "directional": "Направленный:",
+      "position": "Позиция:",
+      "reset_lighting": "Сброс освещения"
+    },
+    "LoginManager": {
+      "invalid_credentials": "Введенный вами e-mail адрес или код доступа не соответствует нашим записям.",
+      "invalid_email": "Введенный вами e-mail адрес почты не похож на e-mail адрес.",
+      "email_already_used": "Похоже, что кто-то уже использует этот адрес электронной почты. Вы хотели войти в систему?"
+    },
+    "NameTag": {
+      "add_your_name": "Добавьте ваше имя"
+    },
+    "MediaSetup": {
+      "you're_about_to_join": "Вы собираетесь погрузиться в социальный опыту с аудио и видео.",
+      "or": "или",
+      "join_without": "Присоединиться без аудио / видео",
+      "logo": "Лого"
+    },
+    "MessageHistory": {
+      "empty_chat": "История чата пуста"
+    },
+    "Pause": {
+      "title": "Пауза",
+      "continue": "Продолжить"
+    },
+    "PerformancePanel": {
+      "performance": "Производительность",
+      "fps": "FPS",
+      "render_calls": "Вызовы рендеринга",
+      "triangles": "Треугольники",
+      "extended_stats": "Расширенная статистика",
+      "systems": "Системы",
+      "shaders": "Шейдеры",
+      "id": "ID",
+      "name": "Имя",
+      "used": "Используется"
+    },
+    "PortalOccupancy": {
+      "count": "{count, plural, =0 {Empty} =1 {1 Person} other {# People}}"
+    },
+    "ProfileButton": {
+      "sign_in": "Войти",
+      "sign_out": "Выйти",
+      "language": "Язык",
+      "graphics_quality": "Качество графики",
+      "change_avatar": "Изменить ваш Аватар",
+      "signed_in_as": "Вы вошли в систему как {name}",
+      "example": "someone@example.com"
+    },
+    "RenderQualityDialog": {
+      "title": "Качество GFX",
+      "0": "Самое низкое",
+      "0_desc": "Самое низкое качество, низкая частота кадров (20 fps). Лучше всего подходит для очень старой техники.",
+      "1": "Низкое",
+      "1_desc": "Низкое качество графики, средняя частота кадров (30 fps).",
+      "2": "Среднее",
+      "2_desc": "Графика среднего качества, средняя частота кадров (30 fps).",
+      "3": "Высокое",
+      "3_desc": "Высококачественная графика, высокая частота кадров (60 fps).",
+      "4": "Высшее",
+      "4_desc": "Высочайшее качество графики, высокая частота кадров (60 fps). Включает тени."
+    },
+    "SettingsPanel": {
+      "relm_settings": "Настройки Relm",
+      "import_export": "Импорт/Экспорт",
+      "performance": "Производительность"
+    },
+    "SignUpDialog": {
+      "already_have_account": "Уже зарегестрированы?",
+      "sign_in": "Войти",
+      "sign_up": "Зарегестрироваться",
+      "pass_code": "Пароль",
+      "email": "email"
+    },
+    "SkyboxSettings": {
+      "skybox": "Скайбокс",
+      "blue_sky": "Голубое Небо",
+      "stars": "Звезды",
+      "pink_clouds": "Розовые Облака",
+      "galaxy": "Галактика"
+    },
+    "SystemToggle": {
+      "enabled": "Включено:"
+    },
+    "UploadButton": {
+      "upload": "Загрузить"
+    },
+    "VideoMirror": {
+      "join_cam_off": "Присоединиться без камеры",
+      "join_mic_off": "Присоедениться без микрофона",
+      "join_cam_mic_off": "Присоедениться без камеры и микрофона",
+      "cam_unavailable": "(Камера недоступна)",
+      "cam_mic_blocked": "Камера и микрофон заблокированы",
+      "cam_mic_not_active": "Камера и микрофон неактивны",
+      "try_again": "Попробуйте снова",
+      "request_perms": "Использовать Камеру и Микрофон",
+      "continue": "Продолжить"
+    }
+  }
