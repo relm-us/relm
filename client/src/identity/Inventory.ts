@@ -98,6 +98,9 @@ export class Inventory {
   async take(entityId: EntityId) {
     const entity = this.world.entities.getById(entityId);
 
+    console.log("take", entityId, entity);
+    if (!entity) return;
+
     const yCenter =
       entity.get(Transform).position.y - this.participant.avatar.position.y;
 
@@ -112,6 +115,8 @@ export class Inventory {
   }
 
   async drop(assetId?: string) {
+    console.log("drop", assetId, this.heldAsset);
+
     if (!assetId) {
       if (this.heldAsset) {
         assetId = this.heldAsset.assetId;
@@ -137,14 +142,20 @@ export class Inventory {
     }
   }
 
+  get power(): string {
+    const json = this.firstHeldEntityJSON;
+    return json?.Item2?.power ?? json?.Item.power;
+  }
+
   actionable(): boolean {
-    return Boolean(this.firstHeldEntityJSON?.Item.power);
+    console.log("actionable", this.power, this.firstHeldEntityJSON);
+    return Boolean(this.power);
   }
 
   action() {
-    const power = this.firstHeldEntityJSON?.Item.power;
-    if (power) {
-      const parts = power.split(":");
+    console.log("action", this.power, this.firstHeldEntityJSON);
+    if (this.power) {
+      const parts = this.power.split(":");
       if (parts[0] === "make") {
         const name = parts[1];
 

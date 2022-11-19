@@ -30,13 +30,6 @@ import { WorldDoc } from "~/y-integration/WorldDoc";
 
 import { exportRelm, importRelm } from "./Export";
 
-import { worldUIMode } from "~/stores/worldUIMode";
-import { fpsTime } from "~/stores/stats";
-import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
-
-// Animation keys
-import { key1, key2, key3 } from "~/stores/keys";
-import { keyLeft, keyRight, keyUp, keyDown, keySpace } from "~/stores/keys";
 import {
   CAMERA_BUILD_DAMPENING,
   CAMERA_BUILD_ZOOM_MAX,
@@ -47,10 +40,8 @@ import {
 } from "~/config/constants";
 
 import { config } from "~/config";
-
-import { DragPlane } from "~/events/input/PointerListener/DragPlane";
-import { SelectionBox } from "~/events/input/PointerListener/SelectionBox";
-import { setControl } from "~/events/input/PointerListener/pointerActions";
+import { delay } from "~/utils/delay";
+import { RelmRestAPI } from "~/main/RelmRestAPI";
 
 import { makeLight } from "~/prefab/makeLight";
 
@@ -64,11 +55,12 @@ import { Transition } from "~/ecs/plugins/transition";
 import { CameraSystem } from "~/ecs/plugins/camera/systems";
 import { TransformControls } from "~/ecs/plugins/transform-controls";
 import { Collider2VisibleSystem } from "~/ecs/plugins/collider-visible/systems";
-
-import { Inventory } from "~/identity/Inventory";
-import { SelectionManager } from "./SelectionManager";
-import { ChatManager } from "./ChatManager";
-import { CameraManager } from "./CameraManager";
+import { Outline } from "~/ecs/plugins/outline";
+import { InteractorSystem } from "~/ecs/plugins/interactor";
+import { Object3DRef, Transform } from "~/ecs/plugins/core";
+import { Clickable, Clicked } from "~/ecs/plugins/clickable";
+import { Item2, Taken } from "~/ecs/plugins/item";
+import { Oculus } from "~/ecs/plugins/html2d";
 
 import { AVConnection } from "~/av";
 import { localShareTrackStore } from "~/av/localVisualTrackStore";
@@ -78,27 +70,35 @@ import { participantId } from "~/identity/participantId";
 import { Avatar } from "~/identity/Avatar";
 import { ParticipantManager } from "~/identity/ParticipantManager";
 import { ParticipantBroker } from "~/identity/ParticipantBroker";
-import { delay } from "~/utils/delay";
-import { RelmRestAPI } from "~/main/RelmRestAPI";
-import { PhotoBooth } from "./PhotoBooth";
-import { audioMode, AudioMode } from "~/stores/audioMode";
-import { Outline } from "~/ecs/plugins/outline";
-import { InteractorSystem } from "~/ecs/plugins/interactor";
-import { Object3DRef, Transform } from "~/ecs/plugins/core";
+import { LoginManager } from "~/identity/LoginManager";
+import { rollRandomAppearance } from "~/identity/Avatar/appearance";
+
 import { GlobalEvents, globalEvents } from "~/events/globalEvents";
+import { releaseAllKeys } from "~/events/input/comboTable";
+import { DragPlane } from "~/events/input/PointerListener/DragPlane";
+import { SelectionBox } from "~/events/input/PointerListener/SelectionBox";
+import { setControl } from "~/events/input/PointerListener/pointerActions";
+
+import { worldUIMode } from "~/stores/worldUIMode";
+import { fpsTime } from "~/stores/stats";
+import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
+import { key1, key2, key3 } from "~/stores/keys";
+import { keyLeft, keyRight, keyUp, keyDown, keySpace } from "~/stores/keys";
+import { audioMode, AudioMode } from "~/stores/audioMode";
 import { advancedEdit } from "~/stores/advancedEdit";
 import { errorCat } from "~/stores/errorCat";
 import { viewportScale } from "~/stores/viewportScale";
 import { dragAction } from "~/stores/dragAction";
 import { openDialog } from "~/stores/openDialog";
-import { LoginManager } from "~/identity/LoginManager";
 import { graphicsQuality } from "~/stores/graphicsQuality";
-import { Oculus } from "~/ecs/plugins/html2d";
-import { rollRandomAppearance } from "~/identity/Avatar/appearance";
-import { releaseAllKeys } from "~/events/input/comboTable";
 import { portalOccupancy } from "~/stores/portalOccupancy";
 import { fantasySkin } from "~/stores/fantasySkin";
-import { isInteractive } from "~/utils/isInteractive";
+
+import { PhotoBooth } from "./PhotoBooth";
+import { Inventory } from "~/identity/Inventory";
+import { SelectionManager } from "./SelectionManager";
+import { ChatManager } from "./ChatManager";
+import { CameraManager } from "./CameraManager";
 
 // Make THREE accessible for debugging
 (window as any).THREE = THREE;
@@ -146,9 +146,14 @@ export class WorldManager {
   camera: CameraManager;
   photoBooth: PhotoBooth;
 
-  focusedEntity: Entity;
-  transformEntity: Entity;
+  outlinedEntity: Entity;
+  focusedProximity: Entity;
+  focusedPointer: Entity;
+  get focusedEntity(): Entity {
+    return this.focusedProximity ?? this.focusedPointer;
+  }
 
+  transformEntity: Entity;
   _dragPlane: DragPlane;
   _selectionBox: SelectionBox;
 
@@ -205,7 +210,9 @@ export class WorldManager {
     (window as any).THREE = THREE;
 
     this.selection = new SelectionManager(this);
-    this.focusedEntity = null;
+    this.outlinedEntity = null;
+    this.focusedProximity = null;
+    this.focusedPointer = null;
 
     this.participants = new ParticipantManager(
       dispatch,
@@ -443,14 +450,13 @@ export class WorldManager {
                 this.participants.setAction({ state: "sit-ground" });
               } else if ($key3) {
                 this.participants.setAction({ state: "raise-hand" });
-              } else if ($keySpace && InteractorSystem.selected?.has(Seat)) {
-                const transform: Transform =
-                  InteractorSystem.selected.get(Transform);
+              } else if ($keySpace && this.focusedEntity?.has(Seat)) {
+                const transform: Transform = this.focusedEntity.get(Transform);
                 const position: Vector3 = new Vector3().copy(
                   transform.position
                 );
 
-                const seat: Seat = InteractorSystem.selected.get(Seat);
+                const seat: Seat = this.focusedEntity.get(Seat);
 
                 // Place the avatar at the designated location within the "seat" object
                 const offset = new Vector3().copy(seat.offset);
@@ -615,11 +621,13 @@ export class WorldManager {
     this.addGlobalEventListener("camera-rotate-right", () =>
       this.camera.rotateRight90()
     );
-    this.addGlobalEventListener("focus-entity", (entity: Entity) => {
-      console.log("entity", entity);
-      if (entity && entity !== this.focusedEntity) this.focus(entity);
-      else if (!entity && this.focusedEntity) this.blur();
-    });
+    this.addGlobalEventListener(
+      "focus-entity",
+      (entity: Entity, kind: "proximity" | "pointer") => {
+        if (kind === "proximity") this.focusProximity(entity);
+        if (kind === "pointer") this.focusPointer(entity);
+      }
+    );
   }
 
   getColliderEntities() {
@@ -704,19 +712,54 @@ export class WorldManager {
     const system = this.world.systems.get(InteractorSystem) as InteractorSystem;
     system.active = enabled;
     if (!enabled) {
-      system.deselect();
+      this.blur();
     }
   }
 
-  focus(entity: Entity) {
-    this.focusedEntity?.maybeRemove(Outline);
-    this.focusedEntity = entity;
-    this.focusedEntity.add(Outline);
+  focusProximity(entity: Entity) {
+    if (entity === this.focusedProximity) return;
+    this.focusedProximity = entity;
+    this._focusSync();
+  }
+
+  focusPointer(entity: Entity) {
+    if (entity === this.focusedPointer) return;
+    this.focusedPointer = entity;
+    this._focusSync();
+  }
+
+  _focusSync() {
+    if (!this.outlinedEntity || this.outlinedEntity !== this.focusedEntity) {
+      this.outlinedEntity?.maybeRemove(Outline);
+      this.focusedEntity?.add(Outline);
+      this.outlinedEntity = this.focusedEntity;
+    }
   }
 
   blur() {
-    this.focusedEntity?.maybeRemove(Outline);
-    this.focusedEntity = null;
+    this.outlinedEntity?.maybeRemove(Outline);
+    this.outlinedEntity = null;
+    this.focusedPointer = null;
+    this.focusedProximity = null;
+  }
+
+  action(entity: Entity = this.focusedEntity) {
+    // Can't perform an action on something that isn't focused
+    if (entity !== this.focusedEntity) return;
+
+    if (get(worldUIMode) === "play") {
+      if (entity) {
+        if (entity.has(Clickable) && !entity.has(Clicked)) {
+          entity.add(Clicked);
+        } else if (this.inventory.actionable()) {
+          this.inventory.action();
+        } else if (entity.has(Item2) && !entity.get(Taken)) {
+          entity.add(Taken);
+        }
+      } else {
+        this.inventory.drop();
+      }
+    }
   }
 
   topView(height: number = 40, hideAvatar: boolean = true) {

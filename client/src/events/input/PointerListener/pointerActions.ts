@@ -154,11 +154,7 @@ export function onPointerUp() {
     ) {
       // Even though there may be several entities stacked under the pointer,
       // we only want to trigger the front-most (visible) thing as clicked.
-      const entities = worldManager.world.entities;
-      const frontMostEntity = entities.getById(pointerDownFound[0]);
-      if (frontMostEntity.has(Clickable)) {
-        frontMostEntity.add(Clicked);
-      }
+      worldManager.action(firstInteractiveEntity(pointerDownFound));
     } else if (pointerState === "interactive-drag") {
       worldManager.selection.syncEntities();
       interactiveEntity = null;
@@ -276,7 +272,7 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
     } else {
       // hovering over clickable/draggable results in outline
       const entity = firstInteractiveEntity(pointerMoveFound);
-      globalEvents.emit("focus-entity", entity);
+      globalEvents.emit("focus-entity", entity, "pointer");
     }
   }
 }

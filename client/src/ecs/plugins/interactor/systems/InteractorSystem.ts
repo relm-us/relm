@@ -8,13 +8,14 @@ import {
 
 import { isInteractiveNearby } from "~/utils/isInteractive";
 
-import { System, Groups, Entity } from "~/ecs/base";
+import { System, Groups, Entity, Modified } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
 import { Outline } from "~/ecs/plugins/outline";
 import { Physics } from "~/ecs/plugins/physics";
 
 import { Interactor } from "../components";
 import { Ball, Collider } from "@dimforge/rapier3d";
+import { globalEvents } from "~/events/globalEvents";
 
 const vOut = new Vector3(0, 0, 1);
 const vProjectOutward = new Vector3();
@@ -25,8 +26,6 @@ const PROBE_HEIGHT = 1.0;
 const NO_ROTATION = new Quaternion();
 
 export class InteractorSystem extends System {
-  static selected: Entity = null;
-
   presentation: Presentation;
   physics: Physics;
   sphereHelper: Mesh;
@@ -77,18 +76,11 @@ export class InteractorSystem extends System {
         return aPos.distanceTo(probeCenter) - bPos.distanceTo(probeCenter);
       });
 
-      const shouldOutline: Entity = this.candidates.length
+      const focusEntity: Entity = this.candidates.length
         ? this.candidates[0]
         : null;
 
-      if (shouldOutline !== InteractorSystem.selected) {
-        this.deselect();
-      }
-
-      if (shouldOutline && !shouldOutline.has(Outline)) {
-        shouldOutline.add(Outline);
-        InteractorSystem.selected = shouldOutline;
-      }
+      globalEvents.emit("focus-entity", focusEntity, "proximity");
     });
   }
 
@@ -118,13 +110,5 @@ export class InteractorSystem extends System {
       this.presentation.scene.add(interactor.sphereHelper);
     }
     interactor.sphereHelper.position.copy(center);
-  }
-
-  deselect() {
-    const selected = InteractorSystem.selected;
-    if (selected && selected.has(Outline)) {
-      selected.remove(Outline);
-      InteractorSystem.selected = null;
-    }
   }
 }

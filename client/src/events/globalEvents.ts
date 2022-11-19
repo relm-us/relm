@@ -1,5 +1,5 @@
 import type { WorldUIMode } from "~/stores/worldUIMode";
-import type { Entity, EntityId } from "~/ecs/base";
+import type { Entity } from "~/ecs/base";
 
 import { TypedEmitter } from "tiny-typed-emitter";
 
@@ -7,10 +7,8 @@ import { onUndo, onRedo } from "./onUndoRedo";
 import { onDelete } from "./onDelete";
 import { onEscape } from "./onEscape";
 import { onSwitchMode } from "./onSwitchMode";
-import { onDropItem } from "./onDropItem";
-import { onAction } from "./onAction";
-import { onActionLong } from "./onActionLong";
 import { onInteractOtherAvatar } from "./onInteractOtherAvatar";
+import { worldManager } from "~/world";
 
 export type GlobalEvents = {
   "undo": () => void;
@@ -20,9 +18,7 @@ export type GlobalEvents = {
   "switch-mode": (switchTo?: WorldUIMode) => void;
 
   "action": () => void;
-  "action-long": () => void;
-  "focus-entity": (entity: Entity) => void;
-  "drop-item": (item: any) => void;
+  "focus-entity": (entity: Entity, kind: "proximity" | "pointer") => void;
   "sit-ground": () => void;
   "interact-other-avatar": (participantId: string) => void;
 
@@ -44,9 +40,7 @@ globalEvents.on("delete", onDelete);
 globalEvents.on("escape", onEscape);
 
 globalEvents.on("switch-mode", onSwitchMode);
-globalEvents.on("drop-item", onDropItem);
 
-globalEvents.on("action", onAction);
-globalEvents.on("action-long", onActionLong);
+globalEvents.on("action", () => worldManager.action());
 
 globalEvents.on("interact-other-avatar", onInteractOtherAvatar);

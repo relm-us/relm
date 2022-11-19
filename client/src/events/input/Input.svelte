@@ -15,7 +15,6 @@
   import * as arrowKeys from "./handlers/arrowKeys";
   import * as debugKey from "./handlers/debugKey";
   import * as deleteKey from "./handlers/deleteKey";
-  import * as dropKey from "./handlers/dropKey";
   import * as enterKey from "./handlers/enterKey";
   import * as escapeKey from "./handlers/escapeKey";
   import * as numberKeys from "./handlers/numberKeys";
@@ -87,7 +86,6 @@
       arrowKeys.register(),
       debugKey.register(),
       deleteKey.register(),
-      dropKey.register(),
       enterKey.register(),
       escapeKey.register(),
       numberKeys.register(),
