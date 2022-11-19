@@ -9,6 +9,7 @@ import { inFrontOf } from "~/utils/inFrontOf";
 
 import { worldManager } from "~/world";
 import { Vector3 } from "three";
+import { AlwaysOnStage } from "~/ecs/plugins/camera";
 
 export class Inventory {
   api: RelmRestAPI;
@@ -98,8 +99,16 @@ export class Inventory {
   async take(entityId: EntityId) {
     const entity = this.world.entities.getById(entityId);
 
-    console.log("take", entityId, entity);
     if (!entity) return;
+
+    // If we don't add AlwaysOnStage, entity will get double-inactivated:
+    // - once when the asset is removed from the document by the server
+    // - once when the CameraSystem detects the asset is "off stage"
+    //
+    // The delayed 2nd inactivation has the unfortunate side-effect of
+    // causing the item to be unpickup-able, because it is not within the
+    // list of active entities in the world.
+    entity.add(AlwaysOnStage);
 
     const yCenter =
       entity.get(Transform).position.y - this.participant.avatar.position.y;
@@ -115,8 +124,6 @@ export class Inventory {
   }
 
   async drop(assetId?: string) {
-    console.log("drop", assetId, this.heldAsset);
-
     if (!assetId) {
       if (this.heldAsset) {
         assetId = this.heldAsset.assetId;
@@ -148,12 +155,10 @@ export class Inventory {
   }
 
   actionable(): boolean {
-    console.log("actionable", this.power, this.firstHeldEntityJSON);
     return Boolean(this.power);
   }
 
   action() {
-    console.log("action", this.power, this.firstHeldEntityJSON);
     if (this.power) {
       const parts = this.power.split(":");
       if (parts[0] === "make") {

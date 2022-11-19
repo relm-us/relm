@@ -8,9 +8,8 @@ import {
 
 import { isInteractiveNearby } from "~/utils/isInteractive";
 
-import { System, Groups, Entity, Modified } from "~/ecs/base";
+import { System, Groups, Entity } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
-import { Outline } from "~/ecs/plugins/outline";
 import { Physics } from "~/ecs/plugins/physics";
 
 import { Interactor } from "../components";
