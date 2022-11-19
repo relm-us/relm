@@ -32,11 +32,18 @@
   export let visible: boolean;
   export let entity: Entity;
 
+  export let clicked: boolean = false;
+
+  $: if (clicked) {
+    if (fullwindow) deactivateFullwindow();
+    else activateFullwindow();
+    clicked = false;
+  }
+
   let fullwindow = false;
   let documentView = false;
 
   function activateFullwindow() {
-    console.log("activateFullwindow");
     // don't allow activating in build mode
     if ($worldUIMode === "build") return;
 

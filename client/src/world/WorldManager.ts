@@ -99,6 +99,7 @@ import { Inventory } from "~/identity/Inventory";
 import { SelectionManager } from "./SelectionManager";
 import { ChatManager } from "./ChatManager";
 import { CameraManager } from "./CameraManager";
+import { HdImage, HdImageRef } from "~/ecs/plugins/css3d";
 
 // Make THREE accessible for debugging
 (window as any).THREE = THREE;
@@ -751,6 +752,9 @@ export class WorldManager {
       if (entity) {
         if (entity.has(Clickable) && !entity.has(Clicked)) {
           entity.add(Clicked);
+        } else if (entity.has(HdImageRef)) {
+          const renderable = entity.get(HdImageRef).value.userData.renderable;
+          renderable.$set({ clicked: true });
         } else if (this.inventory.actionable()) {
           this.inventory.action();
         } else if (entity.has(Item2) && !entity.get(Taken)) {
