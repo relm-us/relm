@@ -34,10 +34,10 @@ export class CameraSystem extends System {
   static queries: Queries = {
     added: [Object3DRef, Camera, Not(CameraAttached)],
     removed: [Not(Camera), CameraAttached],
+    // For entities tagged with "KeepOnStage", promote to StateComponent
+    promote: [KeepOnStage, Not(AlwaysOnStage)],
 
     active: [Camera, CameraAttached],
-
-    promote: [KeepOnStage, Not(AlwaysOnStage)],
   };
 
   init({ physics, presentation }) {
@@ -58,6 +58,7 @@ export class CameraSystem extends System {
 
     this.queries.added.forEach((entity) => this.build(entity));
     this.queries.removed.forEach((entity) => this.remove(entity));
+    this.queries.promote.forEach((entity) => entity.add(AlwaysOnStage));
 
     if (this.world.version % 13 === 0 || CameraSystem.stageNeedsUpdate) {
       CameraSystem.stageNeedsUpdate = false;
@@ -95,7 +96,7 @@ export class CameraSystem extends System {
         const lastSeen = (entity as any).lastSeenOnSet;
         if (this.world.version - lastSeen > 30) {
           this.recentlyOnSet.delete(entity);
-          entity.deactivate();
+          if (!isAlwaysOnStage(entity)) entity.deactivate();
         }
       }
     }

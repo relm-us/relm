@@ -1,3 +1,3 @@
-import { LocalComponent } from "~/ecs/base";
+import { StateComponent } from "~/ecs/base";
 
-export class AlwaysOnStage extends LocalComponent {}
+export class AlwaysOnStage extends StateComponent {}
