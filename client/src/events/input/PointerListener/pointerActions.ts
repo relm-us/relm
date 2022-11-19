@@ -275,8 +275,8 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
       worldManager.camera.setPan(-dragOffset.x, -dragOffset.z);
     } else {
       // hovering over clickable/draggable results in outline
-      // const entity = firstInteractiveEntity(pointerMoveFound);
-      globalEvents.emit("highlight-possible-actions", pointerMoveFound);
+      const entity = firstInteractiveEntity(pointerMoveFound);
+      globalEvents.emit("focus-entity", entity);
     }
   }
 }
@@ -297,7 +297,7 @@ export function setNextPointerState(nextState: PointerState) {
   setTimeout(() => (pointerStateDelayed = nextState), 100);
 }
 
-function firstInteractiveEntity(entityIds: string[]) {
+function firstInteractiveEntity(entityIds: EntityId[]) {
   return entityIds
     .map((entityId) => worldManager.world.entities.getById(entityId))
     .find((entity) => isInteractive(entity));

@@ -146,7 +146,7 @@ export class WorldManager {
   camera: CameraManager;
   photoBooth: PhotoBooth;
 
-  hoverOutlineEntity: Entity;
+  focusedEntity: Entity;
   transformEntity: Entity;
 
   _dragPlane: DragPlane;
@@ -205,6 +205,7 @@ export class WorldManager {
     (window as any).THREE = THREE;
 
     this.selection = new SelectionManager(this);
+    this.focusedEntity = null;
 
     this.participants = new ParticipantManager(
       dispatch,
@@ -362,7 +363,7 @@ export class WorldManager {
 
         switch ($mode) {
           case "build":
-            this.hoverOutline(null);
+            this.blur();
 
             // Always turn advanced edit off when entering build mode
             advancedEdit.set(false);
@@ -599,24 +600,25 @@ export class WorldManager {
   }
 
   registerGlobalEventListeners() {
-    const reg = this.addGlobalEventListener.bind(this);
-
-    reg("toggle-advanced-edit", () => advancedEdit.update((value) => !value));
-
-    reg("toggle-drag-action", () =>
+    this.addGlobalEventListener("toggle-advanced-edit", () =>
+      advancedEdit.update((value) => !value)
+    );
+    this.addGlobalEventListener("toggle-drag-action", () =>
       dragAction.update((value) => (value === "pan" ? "rotate" : "pan"))
     );
-
-    reg("toggle-selection-as-group", () => this.selection.toggleGroup());
-
-    reg("camera-rotate-left", () => this.camera.rotateLeft90());
-    reg("camera-rotate-right", () => this.camera.rotateRight90());
-
-    reg("highlight-possible-actions", (entityIds: EntityId[]) => {
-      const firstInteractiveEntity = entityIds
-        .map((entityId) => this.world.entities.getById(entityId))
-        .find((entity) => isInteractive(entity));
-      this.hoverOutline(firstInteractiveEntity);
+    this.addGlobalEventListener("toggle-selection-as-group", () =>
+      this.selection.toggleGroup()
+    );
+    this.addGlobalEventListener("camera-rotate-left", () =>
+      this.camera.rotateLeft90()
+    );
+    this.addGlobalEventListener("camera-rotate-right", () =>
+      this.camera.rotateRight90()
+    );
+    this.addGlobalEventListener("focus-entity", (entity: Entity) => {
+      console.log("entity", entity);
+      if (entity && entity !== this.focusedEntity) this.focus(entity);
+      else if (!entity && this.focusedEntity) this.blur();
     });
   }
 
@@ -706,17 +708,15 @@ export class WorldManager {
     }
   }
 
-  hoverOutline(found: Entity) {
-    if (found) {
-      if (!found.has(Outline)) {
-        this.hoverOutlineEntity?.maybeRemove(Outline);
-        found.add(Outline);
-        this.hoverOutlineEntity = found;
-      }
-    } else if (this.hoverOutlineEntity) {
-      this.hoverOutlineEntity.maybeRemove(Outline);
-      this.hoverOutlineEntity = null;
-    }
+  focus(entity: Entity) {
+    this.focusedEntity?.maybeRemove(Outline);
+    this.focusedEntity = entity;
+    this.focusedEntity.add(Outline);
+  }
+
+  blur() {
+    this.focusedEntity?.maybeRemove(Outline);
+    this.focusedEntity = null;
   }
 
   topView(height: number = 40, hideAvatar: boolean = true) {

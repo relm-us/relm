@@ -21,8 +21,7 @@ export type GlobalEvents = {
 
   "action": () => void;
   "action-long": () => void;
-  "highlight-possible-actions": (entityIds: EntityId[]) => void;
-  "clear-highlighted-actions": () => void;
+  "focus-entity": (entity: Entity) => void;
   "drop-item": (item: any) => void;
   "sit-ground": () => void;
   "interact-other-avatar": (participantId: string) => void;
