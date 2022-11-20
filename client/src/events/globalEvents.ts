@@ -3,12 +3,14 @@ import type { Entity } from "~/ecs/base";
 
 import { TypedEmitter } from "tiny-typed-emitter";
 
+import { worldManager } from "~/world";
+
 import { onUndo, onRedo } from "./onUndoRedo";
 import { onDelete } from "./onDelete";
 import { onEscape } from "./onEscape";
 import { onSwitchMode } from "./onSwitchMode";
 import { onInteractOtherAvatar } from "./onInteractOtherAvatar";
-import { worldManager } from "~/world";
+import "./keyboardControl";
 
 export type GlobalEvents = {
   "undo": () => void;

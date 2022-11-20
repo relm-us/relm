@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { Vector3 } from "three";
+import { Vector2, Vector3 } from "three";
 import type { RigidBody as RapierRigidBody } from "@dimforge/rapier3d";
 
 import { signedAngleBetweenVectors } from "~/utils/signedAngleBetweenVectors";
@@ -24,10 +24,10 @@ import {
 
 import { Controller, ControllerState, Repulsive } from "../components";
 
-import { transition, newKeyState, isKeyActive } from "~/ecs/shared/KeyState";
 import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
 import { FALLING } from "~/config/constants";
 import { changeAnimationClip } from "~/identity/Avatar/changeAnimationClip";
+import { controlDirection } from "~/stores/controlDirection";
 
 const STILL_SPEED = 0;
 const WALK_SPEED = 1;
@@ -36,27 +36,6 @@ const FLYING_SPEED = 3;
 
 const FALL_NORMAL = 1;
 const FALL_FAST = 8;
-
-const keysState = {
-  left: newKeyState(),
-  right: newKeyState(),
-  up: newKeyState(),
-  down: newKeyState(),
-};
-const spaceState = newKeyState();
-
-function getVectorFromKeys() {
-  const left = isKeyActive(keysState.left) ? -1 : 0;
-  const right = isKeyActive(keysState.right) ? 1 : 0;
-
-  const up = isKeyActive(keysState.up) ? -1 : 0;
-  const down = isKeyActive(keysState.down) ? 1 : 0;
-
-  vectorFromKeys.x = left + right;
-  vectorFromKeys.z = up + down;
-
-  return vectorFromKeys.normalize();
-}
 
 const bodyFacing = new Vector3();
 const thrust = new Vector3();
@@ -67,6 +46,7 @@ const vDir = new Vector3();
 const cameraAlignedDir = new Vector3();
 const p1 = new Vector3();
 const p2 = new Vector3();
+const v2dir = new Vector2();
 
 const vectorFromKeys = new Vector3();
 
@@ -86,13 +66,6 @@ export class ControllerSystem extends System {
   }
 
   update() {
-    // Keep global state for each keyboard key
-    transition(keysState.left, get(keyLeft));
-    transition(keysState.right, get(keyRight));
-    transition(keysState.up, get(keyUp));
-    transition(keysState.down, get(keyDown));
-    transition(spaceState, get(keySpace));
-
     this.queries.added.forEach((entity) => {
       this.initState(entity);
     });
@@ -102,10 +75,20 @@ export class ControllerSystem extends System {
       const state: ControllerState = entity.get(ControllerState);
       state.grounded = this.isGrounded(entity);
 
-      if (spec.touchEnabled) {
-        this.useTouch(entity, state);
-      } else if (spec.keysEnabled) {
-        this.useKeys(state);
+      if (spec.touchEnabled) this.useTouch(entity);
+
+      const direction = get(controlDirection);
+      v2dir.copy(direction).normalize();
+      state.direction.x = v2dir.x;
+      state.direction.z = v2dir.y;
+
+      const v2len = direction.length();
+      if (v2len < 0.5) {
+        state.speed = 0;
+      } else if (v2len < 1.5) {
+        state.speed = 1;
+      } else {
+        state.speed = 2;
       }
 
       // Override speed if flying
@@ -211,41 +194,15 @@ export class ControllerSystem extends System {
     );
   }
 
-  useKeys(state: ControllerState) {
-    state.direction = getVectorFromKeys();
-    if (state.direction.x !== 0 || state.direction.z !== 0) {
-      if (get(keyShift)) {
-        state.speed = 2;
-      } else {
-        state.speed = 1;
-      }
-    } else {
-      state.speed = 0;
-    }
-  }
-
-  useTouch(entity: Entity, state: ControllerState) {
+  useTouch(entity: Entity) {
     const pointer: WorldPlanes = entity.get(PointerPositionRef)?.value;
     if (pointer) {
       const position = entity.get(Transform).position;
 
       vDir.copy(pointer.points.XZ).sub(position);
-      vDir.y = 0;
-      const distance = vDir.length();
 
-      if (distance > 2) {
-        state.speed = 2;
-      } else if (state.speed === 2 && distance > 0.5 && distance < 1.5) {
-        // Switching back to walking shouldn't "flicker" between states, use distance < 1.5
-        state.speed = 1;
-      } else if (state.speed === 0 && distance > 0.5) {
-        state.speed = 1;
-      } else if (distance <= 0.5) {
-        state.speed = 0;
-      }
-
-      vDir.normalize();
-      state.direction.copy(vDir);
+      const dir = new Vector2(vDir.x, vDir.z);
+      controlDirection.set(dir);
     }
   }
 
@@ -256,7 +213,7 @@ export class ControllerSystem extends System {
   ) {
     const body: RapierRigidBody = entity.get(Collider2Ref).body;
 
-    if (isKeyActive(spaceState)) {
+    if (get(keySpace)) {
       vDir.copy(vUp).multiplyScalar(thrustMagnitude);
       body.addForce(vDir, true);
     }

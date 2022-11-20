@@ -1,6 +1,5 @@
 import { System, Groups, Not, Entity, Modified } from "~/ecs/base";
 import { Presentation } from "~/ecs/plugins/core";
-import { Clicked } from "../../clickable";
 
 import {
   Conversation,

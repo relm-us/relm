@@ -1,5 +1,6 @@
-import { keyUp, keyDown, keyLeft, keyRight, keyQ, keyE } from "~/stores/keys";
+import { keyUp, keyDown, keyLeft, keyRight } from "~/stores/keys";
 import { callEach } from "~/utils/callEach";
+
 import { Action, registerAction } from "../comboTable";
 
 export function register(): Function {
