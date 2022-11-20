@@ -46,6 +46,10 @@
 
 {#if visible}
   <Portal>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <r-event-overlay on:click={onCancel} />
+
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <r-conversation
       bind:this={el}
       transition:fly={{ y: 250, duration: 600 }}
@@ -94,9 +98,16 @@
   </Portal>
 {/if}
 
-<svelte:window bind:innerWidth={width} on:click={onCancel} />
+<svelte:window bind:innerWidth={width} />
 
 <style>
+  r-event-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
   r-conversation {
     position: absolute;
     bottom: 0;

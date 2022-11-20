@@ -35,7 +35,7 @@ export class Conversation extends Component {
 
     visible: {
       type: BooleanType,
-      default: false,
+      default: true,
       editor: {
         label: "Visible",
       },

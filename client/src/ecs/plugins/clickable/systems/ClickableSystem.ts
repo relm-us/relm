@@ -6,7 +6,7 @@ import { System, Groups, Entity } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
 import { Transition } from "~/ecs/plugins/transition";
 import { Html2d } from "~/ecs/plugins/html2d";
-import { Conversation } from "~/ecs/plugins/conversation";
+import { Conversation, ConversationActive } from "~/ecs/plugins/conversation";
 
 import { Clickable, Clicked } from "../components";
 
@@ -69,8 +69,11 @@ export class ClickableSystem extends System {
       case "TOGGLE_CONV": {
         const convo = entity.get(Conversation);
         if (convo) {
-          convo.visible = !convo.visible;
-          convo.modified();
+          if (entity.has(ConversationActive)) {
+            entity.remove(ConversationActive);
+          } else {
+            entity.add(ConversationActive);
+          }
         } else {
           console.warn("Can't toggle: no Conversation component");
         }
