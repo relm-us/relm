@@ -99,7 +99,12 @@ import { Inventory } from "~/identity/Inventory";
 import { SelectionManager } from "./SelectionManager";
 import { ChatManager } from "./ChatManager";
 import { CameraManager } from "./CameraManager";
-import { HdImage, HdImageRef } from "~/ecs/plugins/css3d";
+import {
+  DocumentRef,
+  HdImage,
+  HdImageRef,
+  WebPageRef,
+} from "~/ecs/plugins/css3d";
 
 // Make THREE accessible for debugging
 (window as any).THREE = THREE;
@@ -754,6 +759,12 @@ export class WorldManager {
           entity.add(Clicked);
         } else if (entity.has(HdImageRef)) {
           const renderable = entity.get(HdImageRef).value.userData.renderable;
+          renderable.$set({ clicked: true });
+        } else if (entity.has(DocumentRef)) {
+          const renderable = entity.get(DocumentRef).value.userData.renderable;
+          renderable.$set({ clicked: true });
+        } else if (entity.has(WebPageRef)) {
+          const renderable = entity.get(WebPageRef).value.userData.renderable;
           renderable.$set({ clicked: true });
         } else if (this.inventory.actionable()) {
           this.inventory.action();

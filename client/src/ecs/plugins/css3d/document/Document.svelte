@@ -25,15 +25,23 @@
   export let pageList: string[];
   export let entity: Entity;
 
+  export let clicked: boolean = false;
+
+  $: if (clicked) {
+    if (fullwindow) deactivateFullwindow();
+    else activateFullwindow();
+    clicked = false;
+  }
+
   let editor = null;
 
   // We need to keep track of the docId at the moment the participant clicks to make
   // it "full window" because the full window view should not be affected by others
   // changing the docId with the next/back buttons.
   let fullwindowDocId;
-  let fullwindowMode = false;
+  let fullwindow = false;
 
-  $: if (editor) editor.enable(editable && fullwindowMode);
+  $: if (editor) editor.enable(editable && fullwindow);
 
   let page = -1;
   $: pageList.length, (page = pageList.findIndex((pageId) => docId === pageId));
@@ -44,14 +52,14 @@
   let showNext = false;
   $: showNext = page >= 0 && page < pageList.length - 1;
 
-  const activate = () => {
+  const activateFullwindow = () => {
     fullwindowDocId = docId;
-    fullwindowMode = true;
+    fullwindow = true;
   };
 
-  const deactivate = () => {
+  const deactivateFullwindow = () => {
     fullwindowDocId = null;
-    fullwindowMode = false;
+    fullwindow = false;
   };
 
   function setDocId(newDocId) {
@@ -100,7 +108,7 @@
         cloudy={false}
         {showPrev}
         {showNext}
-        on:click={activate}
+        on:click={activateFullwindow}
         on:prev={prevPage}
         on:next={nextPage}
       />
@@ -110,9 +118,9 @@
   </QuillPage>
 {/if}
 
-{#if fullwindowMode}
+{#if fullwindow}
   <DocumentFullwindow
-    on:close={deactivate}
+    on:close={deactivateFullwindow}
     docId={fullwindowDocId}
     {placeholder}
     {editable}

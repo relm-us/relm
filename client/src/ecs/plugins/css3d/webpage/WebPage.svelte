@@ -21,6 +21,14 @@
   export let entity: Entity;
   export let fit: "COVER" | "CONTAIN";
 
+  export let clicked: boolean = false;
+
+  $: if (clicked) {
+    if (fullwindow) deactivateFullwindow();
+    else activateFullwindow();
+    clicked = false;
+  }
+
   let fullwindow = false;
 
   function activateFullwindow() {
