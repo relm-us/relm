@@ -75,8 +75,6 @@ export class ControllerSystem extends System {
       const state: ControllerState = entity.get(ControllerState);
       state.grounded = this.isGrounded(entity);
 
-      if (spec.touchEnabled) this.useTouch(entity);
-
       const direction = get(controlDirection);
       v2dir.copy(direction).normalize();
       state.direction.x = v2dir.x;
@@ -192,18 +190,6 @@ export class ControllerSystem extends System {
       isMakingContactWithGround(this.physics, transform.position) ||
       isMakingContactWithGround(this.physics, p1)
     );
-  }
-
-  useTouch(entity: Entity) {
-    const pointer: WorldPlanes = entity.get(PointerPositionRef)?.value;
-    if (pointer) {
-      const position = entity.get(Transform).position;
-
-      vDir.copy(pointer.points.XZ).sub(position);
-
-      const dir = new Vector2(vDir.x, vDir.z);
-      controlDirection.set(dir);
-    }
   }
 
   considerFlying(

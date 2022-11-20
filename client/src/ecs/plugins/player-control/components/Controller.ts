@@ -3,7 +3,6 @@ import { IDLE, WALKING, RUNNING, FLYING } from "~/config/constants";
 
 export class Controller extends LocalComponent {
   keysEnabled: boolean;
-  touchEnabled: boolean;
   canFly: boolean;
   torques: Array<number>;
   thrusts: Array<number>;
@@ -16,11 +15,6 @@ export class Controller extends LocalComponent {
     keysEnabled: {
       type: BooleanType,
       default: true,
-    },
-
-    touchEnabled: {
-      type: BooleanType,
-      default: false,
     },
 
     canFly: {

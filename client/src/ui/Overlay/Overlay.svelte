@@ -17,12 +17,16 @@
   import CenterButtons from "./CenterButtons.svelte";
   import DialogStack from "./DialogStack.svelte";
   import PauseAutomatically from "./PauseAutomatically.svelte";
+  import TouchControls from "./TouchControls.svelte";
 
   export let dispatch; // Program dispatch
   export let state: State;
 
   let buildMode = false;
   $: buildMode = $permits.includes("edit") && $worldUIMode === "build";
+
+  let touchControls;
+  $: (window as any).touchControls = touchControls;
 </script>
 
 <!-- Pause game if participant is not focused on window, to save CPU/GPU resources -->
@@ -52,6 +56,8 @@
     </r-toolbar-wrapper>
   </overlay-content>
 </overlay>
+
+<TouchControls bind:this={touchControls} />
 
 {#if $showCenterButtons}
   <CenterButtons {dispatch} />

@@ -6,7 +6,6 @@ import * as Components from "./components";
 import * as Systems from "./systems";
 
 export * from "./components";
-export * from "./utils";
 
 export { Components };
 

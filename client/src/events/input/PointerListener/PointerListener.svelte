@@ -5,12 +5,9 @@
 
   import { isInputEvent } from "../isInputEvent";
 
-  import {
-    isControllingAvatar,
-    onPointerUp,
-    onPointerDown,
-    onPointerMove,
-  } from "./pointerActions";
+  import { onPointerUp, onPointerDown, onPointerMove } from "./pointerActions";
+
+  let downEvent;
 
   function eventTargetsWorld(event, uiMode) {
     // If we're in between worlds, it can't be a world targetting event
@@ -27,57 +24,20 @@
     return hasAncestor(event.target, worldManager.world.presentation.viewport);
   }
 
-  /**
-   * Mouse Events
-   */
-
-  function onMouseDown(event: MouseEvent) {
+  function onDown(event: MouseEvent) {
     if (!eventTargetsWorld(event, $worldUIMode)) return;
+
+    downEvent = event;
 
     onPointerDown(event.clientX, event.clientY, event.shiftKey);
   }
 
-  function onMouseMove(event: MouseEvent) {
-    if (isControllingAvatar) {
-      // Sometimes mouse movement will highlight text, e.g. avatar name
-      window.getSelection().removeAllRanges();
-      event.preventDefault();
-    }
+  function onMove(event: MouseEvent) {
     if (!eventTargetsWorld(event, $worldUIMode)) return;
-    onPointerMove(event.clientX, event.clientY, event.shiftKey);
+    onPointerMove(event.clientX, event.clientY, event.shiftKey, downEvent);
   }
 
-  function onMouseUp(event: MouseEvent) {
-    if (!eventTargetsWorld(event, $worldUIMode)) return;
-
-    event.preventDefault();
-
-    onPointerUp();
-  }
-
-  /**
-   * Touch Events
-   */
-
-  function onTouchStart(event: TouchEvent) {
-    if (!eventTargetsWorld(event, $worldUIMode)) return;
-
-    event.preventDefault();
-
-    var touch = event.changedTouches[0];
-    onPointerDown(touch.clientX, touch.clientY, event.shiftKey);
-  }
-
-  function onTouchMove(event: TouchEvent) {
-    if (!eventTargetsWorld(event, $worldUIMode)) return;
-
-    event.preventDefault();
-
-    var touch = event.changedTouches[0];
-    onPointerMove(touch.clientX, touch.clientY, event.shiftKey);
-  }
-
-  function onTouchEnd(event: TouchEvent) {
+  function onUp(event: MouseEvent) {
     if (!eventTargetsWorld(event, $worldUIMode)) return;
 
     event.preventDefault();
@@ -87,11 +47,7 @@
 </script>
 
 <svelte:window
-  on:mousemove={onMouseMove}
-  on:mousedown={onMouseDown}
-  on:mouseup={onMouseUp}
-  on:touchstart={onTouchStart}
-  on:touchmove={onTouchMove}
-  on:touchend={onTouchEnd}
-  on:touchcancel={onPointerUp}
+  on:pointerdown={onDown}
+  on:pointermove={onMove}
+  on:pointerup={onUp}
 />

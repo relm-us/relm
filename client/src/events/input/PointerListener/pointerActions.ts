@@ -5,13 +5,8 @@ import { globalEvents } from "~/events/globalEvents";
 import { pointerPointInSelection } from "./selectionLogic";
 import * as selectionLogic from "./selectionLogic";
 
-import {
-  addTouchController,
-  removeTouchController,
-} from "~/ecs/plugins/player-control";
 import { Object3DRef } from "~/ecs/plugins/core";
 import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
-import { Clickable, Clicked } from "~/ecs/plugins/clickable";
 
 import { worldManager } from "~/world";
 import { worldUIMode } from "~/stores/worldUIMode";
@@ -26,7 +21,6 @@ import { Entity, EntityId } from "~/ecs/base";
 import { isInteractive } from "~/utils/isInteractive";
 import { dragAction } from "~/stores/dragAction";
 
-export let isControllingAvatar: boolean = false;
 export let isControllingTransform: boolean = false;
 
 export function setControl(value: boolean) {
@@ -40,6 +34,7 @@ const cameraPanOffset = new Vector3();
 type PointerState =
   | "initial"
   | "click"
+  | "control"
   | "drag"
   | "interactive-click"
   | "interactive-drag"
@@ -95,12 +90,7 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
 
     pointerDownFound = finder.entityIdsAt(pointerPosition);
 
-    const { avatarBody, local } = getAvatarAmongFound(pointerDownFound);
-
-    if (avatarBody && local) {
-      addTouchController(worldManager.avatar.entities.body);
-      isControllingAvatar = true;
-    } else if (interactiveEntity?.has(Draggable)) {
+    if (interactiveEntity?.has(Draggable)) {
       // Clicked on an interactive entity, perhaps starting a play-mode drag?
       setNextPointerState("interactive-click");
 
@@ -112,8 +102,9 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
       worldManager.selection.clear();
       worldManager.selection.addEntityId(interactiveEntity.id);
     } else {
-      // At this point, at least a 'click' has started. TBD if it's a drag.
+      // At this point, at least a 'click' has started. TBD if it's a drag or avatar control.
       setNextPointerState("click");
+
       worldManager.dragPlane.setOrientation("XZ");
 
       setDragPlaneOrigin(pointerPosition);
@@ -122,55 +113,14 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
 }
 
 /**
- * Pointer UP Event
- */
-export function onPointerUp() {
-  if (isControllingTransform) {
-    if (pointerState !== "initial") setNextPointerState("initial");
-    return;
-  }
-
-  const $mode = get(worldUIMode);
-  if (pointerState === "drag-camera") {
-    worldManager.camera.setModeFollow();
-  } else if ($mode === "build") {
-    if (pointerState === "click") {
-      selectionLogic.mouseup(worldManager.selection);
-    } else if (pointerState === "drag") {
-      worldManager.selection.syncEntities();
-    }
-  } else if ($mode === "play") {
-    const { avatarBody, local } = getAvatarAmongFound(pointerDownFound);
-
-    if (isControllingAvatar) {
-      removeTouchController(worldManager.avatar.entities.body);
-      isControllingAvatar = false;
-    } else if (avatarBody && !local) {
-      // Broadcast participantId of the avatar that was clicked
-      globalEvents.emit("interact-other-avatar", avatarBody.id as string);
-    } else if (
-      (pointerState === "click" || pointerState === "interactive-click") &&
-      pointerDownFound.length > 0
-    ) {
-      // Even though there may be several entities stacked under the pointer,
-      // we only want to trigger the front-most (visible) thing as clicked.
-      worldManager.action(firstInteractiveEntity(pointerDownFound));
-    } else if (pointerState === "interactive-drag") {
-      worldManager.selection.syncEntities();
-      interactiveEntity = null;
-    }
-  }
-
-  worldManager.selectionBox.hide();
-
-  // reset mouse mode
-  setNextPointerState("initial");
-}
-
-/**
  * Pointer MOVE Event
  */
-export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
+export function onPointerMove(
+  x: number,
+  y: number,
+  shiftKeyOnMove: boolean,
+  pointerdownInit: PointerEvent
+) {
   if (isControllingTransform) {
     if (pointerState !== "initial") setNextPointerState("initial");
     return;
@@ -235,7 +185,7 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
       worldManager.selection.clear(true);
       worldManager.selection.addEntityIds(contained);
     }
-  } else if ($mode === "play" && !isControllingAvatar) {
+  } else if ($mode === "play") {
     if (pointerState === "interactive-click" && atLeastMinDragDistance()) {
       setNextPointerState("interactive-drag");
       worldManager.selection.savePositions();
@@ -262,13 +212,14 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
         }
       });
     } else if (pointerState === "click" && atLeastMinDragDistance()) {
-      // drag  mode start
-      setNextPointerState("drag");
-      cameraPanOffset.copy(worldManager.camera.pan);
-    } else if (pointerState === "drag") {
-      const delta = worldManager.dragPlane.getDelta(pointerPosition);
-      dragOffset.copy(delta).sub(cameraPanOffset);
-      worldManager.camera.setPan(-dragOffset.x, -dragOffset.z);
+      (window as any).touchControls.begin(pointerdownInit, () => {
+        // interactiveEntity = null;
+        // pointerMoveFound.length = 0;
+        // worldManager.selection.clear();
+        pointerDownFound.length = 0;
+        setNextPointerState("initial");
+      });
+      setNextPointerState("control");
     } else {
       // hovering over clickable/draggable results in outline
       const entity = firstInteractiveEntity(pointerMoveFound);
@@ -277,9 +228,53 @@ export function onPointerMove(x: number, y: number, shiftKeyOnMove: boolean) {
   }
 }
 
+/**
+ * Pointer UP Event
+ */
+export function onPointerUp() {
+  if (isControllingTransform) {
+    if (pointerState !== "initial") setNextPointerState("initial");
+    return;
+  }
+
+  const $mode = get(worldUIMode);
+  if (pointerState === "drag-camera") {
+    worldManager.camera.setModeFollow();
+  } else if ($mode === "build") {
+    if (pointerState === "click") {
+      selectionLogic.mouseup(worldManager.selection);
+    } else if (pointerState === "drag") {
+      worldManager.selection.syncEntities();
+    }
+  } else if ($mode === "play") {
+    const { avatarBody, local } = getAvatarAmongFound(pointerDownFound);
+
+    if (avatarBody && !local) {
+      // Broadcast participantId of the avatar that was clicked
+      globalEvents.emit("interact-other-avatar", avatarBody.id as string);
+    } else if (
+      (pointerState === "click" || pointerState === "interactive-click") &&
+      pointerDownFound.length > 0
+    ) {
+      // Even though there may be several entities stacked under the pointer,
+      // we only want to trigger the front-most (visible) thing as clicked.
+      worldManager.action(firstInteractiveEntity(pointerDownFound));
+    } else if (pointerState === "interactive-drag") {
+      worldManager.selection.syncEntities();
+      interactiveEntity = null;
+    }
+  }
+
+  worldManager.selectionBox.hide();
+
+  // reset mouse mode
+  setNextPointerState("initial");
+}
+
 export function setNextPointerState(nextState: PointerState) {
   if (
     nextState === "drag" ||
+    nextState === "control" ||
     nextState === "drag-select" ||
     nextState === "interactive-drag"
   ) {
