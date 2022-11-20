@@ -86,9 +86,9 @@ export function onPointerDown(x: number, y: number, shiftKey: boolean) {
 
     if (pointerPoint) worldManager.dragPlane.setOrigin(pointerPoint);
   } else if ($mode === "play") {
-    interactiveEntity = firstInteractiveEntity(pointerDownFound);
-
     pointerDownFound = finder.entityIdsAt(pointerPosition);
+
+    interactiveEntity = firstInteractiveEntity(pointerDownFound);
 
     if (interactiveEntity?.has(Draggable)) {
       // Clicked on an interactive entity, perhaps starting a play-mode drag?
