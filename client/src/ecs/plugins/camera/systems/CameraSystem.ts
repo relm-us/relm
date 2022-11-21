@@ -1,5 +1,5 @@
 import { Collider, ConvexPolyhedron } from "@dimforge/rapier3d";
-import { Vector3, PerspectiveCamera } from "three";
+import { Vector3, PerspectiveCamera, Matrix4 } from "three";
 
 import { System, Not, Groups, Entity } from "~/ecs/base";
 import { Queries } from "~/ecs/base/Query";
@@ -17,6 +17,10 @@ function isAlwaysOnStage(entity) {
   return entity.has(AlwaysOnStage) || entity.has(KeepOnStage);
 }
 
+const vUp = new Vector3(0, 1, 0);
+const v1 = new Vector3();
+const m4 = new Matrix4();
+
 export class CameraSystem extends System {
   physics: Physics;
   camera: PerspectiveCamera;
@@ -27,17 +31,16 @@ export class CameraSystem extends System {
   recentlyOnSet: Set<Entity>;
   nowOnSet: Set<Entity>;
 
-  order = Groups.Initialization;
+  order = Groups.Presentation + 400;
 
   static stageNeedsUpdate: boolean = false;
 
   static queries: Queries = {
     added: [Object3DRef, Camera, Not(CameraAttached)],
+    active: [Camera, CameraAttached],
     removed: [Not(Camera), CameraAttached],
     // For entities tagged with "KeepOnStage", promote to StateComponent
     promote: [KeepOnStage, Not(AlwaysOnStage)],
-
-    active: [Camera, CameraAttached],
   };
 
   init({ physics, presentation }) {
@@ -57,6 +60,7 @@ export class CameraSystem extends System {
     }
 
     this.queries.added.forEach((entity) => this.build(entity));
+    this.queries.active.forEach((entity) => this.move(entity));
     this.queries.removed.forEach((entity) => this.remove(entity));
     this.queries.promote.forEach((entity) => entity.add(AlwaysOnStage));
 
@@ -108,6 +112,20 @@ export class CameraSystem extends System {
     object3d.add(this.camera);
 
     entity.add(CameraAttached);
+  }
+
+  move(entity: Entity) {
+    const camera: Camera = entity.get(Camera);
+    const transform: Transform = entity.get(Transform);
+
+    v1.setFromSpherical(camera.sphere);
+
+    transform.position.copy(camera.center).add(v1);
+
+    m4.lookAt(transform.position, camera.lookAt, vUp);
+    transform.rotation.setFromRotationMatrix(m4);
+
+    transform.modified();
   }
 
   remove(entity: Entity) {

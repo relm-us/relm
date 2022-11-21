@@ -26,7 +26,8 @@ export class OculusSystem extends System {
   perspective: Perspective;
   circles: CutCircle[] = [];
 
-  order = Groups.Presentation + 251;
+  // After CameraSystem
+  order = Groups.Presentation + 450;
 
   static queries = {
     new: [Oculus, Not(OculusRef)],

@@ -7,9 +7,7 @@
 
   export let world;
 
-  const scaleRange = { min: 0, max: 100 };
-
-  let scale = get(viewportScale);
+  const scaleRange = { min: 0, max: 400 };
 
   function onWheel(event: WheelEvent) {
     const el = event.target as HTMLElement;
@@ -18,13 +16,13 @@
       !hasPointerInteractAncestor(el)
     ) {
       const wheelStep = MathUtils.clamp(event.deltaY, -5, 5);
-      scale = MathUtils.clamp(
-        scale + wheelStep,
+      const scale = MathUtils.clamp(
+        get(viewportScale) * scaleRange.max + wheelStep,
         scaleRange.min,
         scaleRange.max
       );
 
-      viewportScale.set(scale);
+      viewportScale.set(scale / scaleRange.max);
     }
   }
 </script>

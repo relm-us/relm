@@ -391,7 +391,6 @@ export class WorldManager {
 
             // Reset camera direction to "north"
             this.camera.direction.y = 0;
-            this.camera.setModeFollow();
 
             // Play mode ground-dragging default action
             dragAction.set(
@@ -535,11 +534,7 @@ export class WorldManager {
       ).subscribe(() => {})
     );
 
-    this.unsubs.push(
-      viewportScale.subscribe(($scale) => {
-        this.didChangeZoom();
-      })
-    );
+    this.unsubs.push(viewportScale.subscribe(($zoom) => this.didChangeZoom()));
 
     // Pre-compile assets to prevent some jank while exploring the world
     this.world.presentation.compile();
@@ -781,7 +776,8 @@ export class WorldManager {
   topView(height: number = 40, hideAvatar: boolean = true) {
     const avatar = this.participants.local.avatar;
 
-    this.camera.setModeAbove(height);
+    this.camera.viewFromAbove(height);
+
     if (avatar && hideAvatar) {
       avatar.entities.body.traverse((e) => {
         e.getByName("Object3D").value.visible = false;

@@ -57,10 +57,10 @@ export const CAMERA_BUILD_ZOOM_MIN = 5;
 export const CAMERA_BUILD_ZOOM_MAX = 50;
 
 // Angle (in radians) from which the camera looks down
-export const DEFAULT_CAMERA_ANGLE = (37.5 / 180) * Math.PI;
+export const DEFAULT_CAMERA_ANGLE = (52.5 / 180) * Math.PI;
 
-// 0 - 100, where 100 is completely zoomed out
-export const DEFAULT_VIEWPORT_ZOOM = 35.0;
+// 0 to 1.0, where 1 is completely zoomed out
+export const DEFAULT_VIEWPORT_ZOOM = 0.35;
 
 // Milliseconds for UI cross-fade transitions
 export const CROSS_FADE_DURATION = 200;

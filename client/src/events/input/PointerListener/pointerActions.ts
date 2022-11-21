@@ -239,7 +239,7 @@ export function onPointerUp() {
 
   const $mode = get(worldUIMode);
   if (pointerState === "drag-camera") {
-    worldManager.camera.setModeFollow();
+    // camera drag mode?
   } else if ($mode === "build") {
     if (pointerState === "click") {
       selectionLogic.mouseup(worldManager.selection);

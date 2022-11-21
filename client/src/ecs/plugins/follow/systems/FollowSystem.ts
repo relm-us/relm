@@ -1,64 +1,51 @@
 import { Vector3, MathUtils } from "three";
 
-import { Groups, System } from "~/ecs/base";
+import { Entity, Groups, System } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
+import { easeTowards } from "~/ecs/shared/easeTowards";
 
-import { Follow } from "../components";
+import { Follow, FollowPoint } from "../components";
 
 const DECEL_RADIUS = 2;
 const DAMPENING_CONSTANT = 5;
 
-const targetPosition = new Vector3();
-const vector = new Vector3();
+const v1 = new Vector3();
+const v2 = new Vector3();
 
 export class FollowSystem extends System {
   order = Groups.Initialization;
 
   static queries = {
     active: [Follow],
+    activePoint: [FollowPoint],
   };
 
   update() {
     this.queries.active.forEach((entity) => {
-      this.follow(this.world, entity);
+      const spec: Follow = entity.get(Follow);
+      this.getTargetFromFollow(spec, v1);
+      this.follow(entity, v1, spec.dampening);
+    });
+
+    this.queries.activePoint.forEach((entity) => {
+      const spec: FollowPoint = entity.get(FollowPoint);
+      this.follow(entity, spec.target, spec.dampening);
     });
   }
 
-  // TODO: account for render speed when following?
-  follow(world, entity) {
-    const spec: Follow = entity.get(Follow);
+  follow(entity: Entity, target: Vector3, dampening: number) {
     const transform: Transform = entity.get(Transform);
+    easeTowards(transform.position, target, dampening);
+    transform.modified();
+  }
 
-    const targetTransform: Transform = world.entities
+  getTargetFromFollow(spec: Follow, result: Vector3) {
+    const targetTransform: Transform = this.world.entities
       .getById(spec.target)
       ?.get(Transform);
     if (!targetTransform) return;
 
-    targetPosition.copy(targetTransform.positionWorld);
-    targetPosition.add(spec.offset);
-
-    const distance = transform.position.distanceTo(targetPosition);
-
-    let speed = 0;
-
-    if (distance === 0) {
-      // arrived; do nothing
-    } else {
-      speed =
-        MathUtils.clamp(distance, 0, DECEL_RADIUS) /
-        DECEL_RADIUS /
-        (spec.dampening * DAMPENING_CONSTANT);
-
-      // arrow pointing to where we need to go
-      vector.copy(targetPosition).sub(transform.position);
-      if (vector.length() > speed) {
-        vector.normalize().multiplyScalar(speed);
-      } else {
-        // small vector; will soon arrive
-      }
-
-      transform.position.add(vector);
-      transform.modified();
-    }
+    result.copy(targetTransform.positionWorld);
+    result.add(spec.offset);
   }
 }
