@@ -16,11 +16,9 @@ export function onSwitchMode(switchTo) {
   if (switchTo === "play") {
     worldUIMode.set("play");
     worldManager.selection.clear();
-    worldManager.avatar.enablePhysics(true);
     worldManager.avatar.enableTranslucency(false);
   } else if (switchTo === "build" && buildModePermitted) {
     worldUIMode.set("build");
-    worldManager.avatar.enablePhysics(false);
     worldManager.avatar.enableTranslucency(true);
   } else {
     throw new Error(`Unknown mode to switch to: ${switchTo}`);

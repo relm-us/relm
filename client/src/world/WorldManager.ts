@@ -6,7 +6,6 @@ import type {
   AnimationOverride,
   ParticipantMap,
   UpdateData,
-  ActionSitChair,
 } from "~/types";
 
 import type { Dispatch, State } from "~/main/ProgramTypes";
@@ -61,6 +60,7 @@ import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { Clickable, Clicked } from "~/ecs/plugins/clickable";
 import { Item2, Taken } from "~/ecs/plugins/item";
 import { Oculus } from "~/ecs/plugins/html2d";
+import { DocumentRef, HdImageRef, WebPageRef } from "~/ecs/plugins/css3d";
 
 import { AVConnection } from "~/av";
 import { localShareTrackStore } from "~/av/localVisualTrackStore";
@@ -85,7 +85,6 @@ import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 import { key1, key2, key3 } from "~/stores/keys";
 import { keyLeft, keyRight, keyUp, keyDown, keySpace } from "~/stores/keys";
 import { audioMode, AudioMode } from "~/stores/audioMode";
-import { advancedEdit } from "~/stores/advancedEdit";
 import { errorCat } from "~/stores/errorCat";
 import { viewportScale } from "~/stores/viewportScale";
 import { dragAction } from "~/stores/dragAction";
@@ -93,18 +92,13 @@ import { openDialog } from "~/stores/openDialog";
 import { graphicsQuality } from "~/stores/graphicsQuality";
 import { portalOccupancy } from "~/stores/portalOccupancy";
 import { fantasySkin } from "~/stores/fantasySkin";
+import { colliderEditMode } from "~/stores/colliderEditMode";
 
 import { PhotoBooth } from "./PhotoBooth";
 import { Inventory } from "~/identity/Inventory";
 import { SelectionManager } from "./SelectionManager";
 import { ChatManager } from "./ChatManager";
 import { CameraManager } from "./CameraManager";
-import {
-  DocumentRef,
-  HdImage,
-  HdImageRef,
-  WebPageRef,
-} from "~/ecs/plugins/css3d";
 
 // Make THREE accessible for debugging
 (window as any).THREE = THREE;
@@ -371,15 +365,9 @@ export class WorldManager {
         this.avatar.enableCanFly(buildMode);
         this.avatar.enableNonInteractive(buildMode);
 
-        this.enableInteraction(!buildMode);
-        this.enableCollidersVisible(buildMode);
-
         switch ($mode) {
           case "build":
             this.blur();
-
-            // Always turn advanced edit off when entering build mode
-            advancedEdit.set(false);
 
             // Allow buiders to zoom out farther, faster
             this.camera.setZoomRange(
@@ -420,10 +408,22 @@ export class WorldManager {
       })
     );
 
-    // Enable/disable ability to select "GROUND" type colliders in build mode
+    // Switch between various collider edit modes when in build mode
     this.unsubs.push(
-      derived([worldUIMode, advancedEdit], ([$mode, $advanced]) => {
-        this.enableInteractiveGround($mode === "build" && $advanced);
+      derived([worldUIMode, colliderEditMode], ([$mode, $edit]) => {
+        const visible = $mode === "build" && $edit !== "invisible";
+        this.enableCollidersVisible(visible);
+
+        const interact =
+          $mode === "play" || ($mode === "build" && $edit !== "invisible");
+        this.enableInteraction(interact);
+
+        const physics =
+          $mode === "play" || ($mode === "build" && $edit === "invisible");
+        this.avatar.enablePhysics(physics);
+
+        const interactGround = $mode === "build" && $edit === "ground";
+        this.enableInteractiveGround(interactGround);
       }).subscribe(() => {})
     );
 
@@ -612,8 +612,12 @@ export class WorldManager {
   }
 
   registerGlobalEventListeners() {
-    this.addGlobalEventListener("toggle-advanced-edit", () =>
-      advancedEdit.update((value) => !value)
+    this.addGlobalEventListener("cycle-advanced-edit", () =>
+      colliderEditMode.update(($edit) => {
+        if ($edit === "normal") return "invisible";
+        if ($edit === "invisible") return "ground";
+        if ($edit === "ground") return "normal";
+      })
     );
     this.addGlobalEventListener("toggle-drag-action", () =>
       dragAction.update((value) => (value === "pan" ? "rotate" : "pan"))

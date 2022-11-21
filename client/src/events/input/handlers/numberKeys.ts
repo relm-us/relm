@@ -16,7 +16,7 @@ export function register(): Function {
       ["build"],
       ["1"],
       (pressed) => {
-        pressed && globalEvents.emit("toggle-advanced-edit");
+        pressed && globalEvents.emit("cycle-advanced-edit");
       },
     ],
     [

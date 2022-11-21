@@ -24,7 +24,7 @@ export type GlobalEvents = {
   "sit-ground": () => void;
   "interact-other-avatar": (participantId: string) => void;
 
-  "toggle-advanced-edit": () => void;
+  "cycle-advanced-edit": () => void;
   "toggle-drag-action": () => void;
   "toggle-selection-as-group": () => void;
   "camera-rotate-left": () => void;

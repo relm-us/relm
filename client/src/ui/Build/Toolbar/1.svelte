@@ -1,34 +1,44 @@
 <script lang="ts">
-  import FaMousePointer from "svelte-icons/fa/FaMousePointer.svelte";
+  import FaRegSquare from "svelte-icons/fa/FaRegSquare.svelte";
+  import FaLowVision from "svelte-icons/fa/FaLowVision.svelte";
   import FaMountain from "svelte-icons/fa/FaMountain.svelte";
 
   import { globalEvents } from "~/events/globalEvents";
-  import { advancedEdit } from "~/stores/advancedEdit";
+  import { colliderEditMode } from "~/stores/colliderEditMode";
 
   import ToolButton from "./ToolButton.svelte";
 
   function onClick() {
-    globalEvents.emit("toggle-advanced-edit");
+    globalEvents.emit("cycle-advanced-edit");
   }
 </script>
 
 <!-- Object/Ground Select -->
-{#if $advancedEdit}
+{#if $colliderEditMode === "normal"}
   <ToolButton
     shortcut={"1"}
-    bgState={1}
-    tip={"Selecting Ground Enabled"}
+    bgState={0}
+    tip={"Colliders visible"}
     on:click={onClick}
   >
-    <FaMountain />
+    <FaRegSquare />
+  </ToolButton>
+{:else if $colliderEditMode === "invisible"}
+  <ToolButton
+    shortcut={"1"}
+    bgState={2}
+    tip={"Colliders invisible"}
+    on:click={onClick}
+  >
+    <FaLowVision />
   </ToolButton>
 {:else}
   <ToolButton
     shortcut={"1"}
-    bgState={0}
-    tip={"Selecting Ground Disabled"}
+    bgState={3}
+    tip={"Ground colliders selectable"}
     on:click={onClick}
   >
-    <FaMousePointer />
+    <FaMountain />
   </ToolButton>
 {/if}
