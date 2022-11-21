@@ -607,8 +607,8 @@ export class WorldManager {
     event: K,
     fn: GlobalEvents[K]
   ) {
-    globalEvents.on(event, fn);
-    this.unsubs.push(() => globalEvents.off(event, fn));
+    globalEvents.addListener(event, fn);
+    this.unsubs.push(() => globalEvents.removeListener(event, fn));
   }
 
   registerGlobalEventListeners() {
