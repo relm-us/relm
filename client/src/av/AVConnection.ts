@@ -193,8 +193,8 @@ export class AVConnection {
     fn: AVAdapterEvents[keyof AVAdapterEvents]
   ) {
     const adapter = this.adapter;
-    adapter.on(channel, fn);
-    this.unsubs.push(() => adapter.off(channel, fn));
+    adapter.addListener(channel, fn);
+    this.unsubs.push(() => adapter.removeListener(channel, fn));
   }
 
   unsubscribeAll() {
