@@ -2,7 +2,6 @@ import { Euler, MathUtils, Object3D, Vector2, Vector3 } from "three";
 import { get } from "svelte/store";
 
 import { globalEvents } from "~/events/globalEvents";
-import { pointerPointInSelection } from "./selectionLogic";
 import * as selectionLogic from "./selectionLogic";
 
 import { Object3DRef } from "~/ecs/plugins/core";
@@ -267,6 +266,8 @@ export function onPointerUp() {
     } else if (pointerState === "interactive-drag") {
       worldManager.selection.syncEntities();
       interactiveEntity = null;
+    } else {
+      // nothing to do
     }
   }
 
@@ -342,4 +343,10 @@ function getAvatarAmongFound(foundEntityIds: string[]): {
       local: false,
     };
   }
+}
+
+function pointerPointInSelection(selection, found) {
+  const entity = selection.entities.find((e) => found.includes(e.id));
+  const object3d: Object3D = entity?.get(Object3DRef)?.value;
+  return object3d?.userData.lastIntersectionPoint;
 }

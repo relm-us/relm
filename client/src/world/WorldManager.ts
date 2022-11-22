@@ -151,7 +151,7 @@ export class WorldManager {
   focusedProximity: Entity;
   focusedPointer: Entity;
   get focusedEntity(): Entity {
-    return this.focusedProximity ?? this.focusedPointer;
+    return this.focusedPointer ?? this.focusedProximity;
   }
 
   transformEntity: Entity;

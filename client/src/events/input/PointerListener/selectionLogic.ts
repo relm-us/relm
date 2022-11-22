@@ -94,9 +94,3 @@ export function mousedown(
   found = foundOnMousedown;
   shiftKey = shiftKeyOnMousedown;
 }
-
-export function pointerPointInSelection(selection, found) {
-  const entity = selection.entities.find((e) => found.includes(e.id));
-  const object3d: Object3D = entity?.get(Object3DRef)?.value;
-  return object3d?.userData.lastIntersectionPoint;
-}
