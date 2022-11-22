@@ -7,7 +7,9 @@
 
   export let world;
 
-  const scaleRange = { min: 0, max: 400 };
+  const scaleRange = { min: 0, max: 200 };
+
+  // TODO: Does this normalize better? https://www.npmjs.com/package/normalize-wheel-es
 
   function onWheel(event: WheelEvent) {
     const el = event.target as HTMLElement;
