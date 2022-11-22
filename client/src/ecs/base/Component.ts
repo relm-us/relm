@@ -8,7 +8,11 @@ export type ComponentProperty = {
   editor?: {
     label?: string;
     input?: string;
-    options?: Array<{ label: string; value: string | number }>;
+    options?:
+      | Array<{ label: string; value: string | number }>
+      | ((
+          component: Component
+        ) => Array<{ label: string; value: string | number }>);
     requires?: Array<{ prop: string; value?: string | number | boolean }>;
   };
 };

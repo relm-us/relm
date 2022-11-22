@@ -7,9 +7,13 @@ In the `editor` section of a component descriptor, you can add the following gen
 - `input`: the type of input to present to the user in the editor. This will override the default input that the editor picks for each type.
 
   Input types:
+
   - "Color": a color picker
+
   - "Entity": an entity selector--i.e. to allow the user to set a reference/target to another object
+
   - "Select": a drop-down select. Use the `options` attribute as a sibling to `input` to populate the select box. For example:
+
     ```js
       pattern: {
         type: StringType,
@@ -25,6 +29,10 @@ In the `editor` section of a component descriptor, you can add the following gen
         },
       },
     ```
+
+    Note: The `options` can be a function that returns `label`, `value` pairs also.
+
+  - "Text": a textarea for string input. Larger than "String" input type, e.g. for editing scripts.
 
 - `label`: the name of the property that will be shown to the user
 

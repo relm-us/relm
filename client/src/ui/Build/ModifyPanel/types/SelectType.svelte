@@ -19,8 +19,15 @@
     }
   }
 
-  function getLabelForKey(key, prop) {
-    return prop.editor.options.find((item) => item.value === component[key]);
+  function getLabelForKey(key, items) {
+    return items.find((item) => item.value === component[key]);
+  }
+
+  let items = [];
+  $: if (typeof prop.editor.options === "function") {
+    items = prop.editor.options(component);
+  } else {
+    items = prop.editor.options;
   }
 
   // ignore warning about missing props
@@ -32,9 +39,9 @@
 
   <!-- https://github.com/rob-balfre/svelte-select -->
   <Select
+    {items}
     isClearable={false}
-    items={prop.editor.options}
-    value={getLabelForKey(key, prop)}
+    value={getLabelForKey(key, items)}
     on:select={onSelect}
   />
 </r-select-type>
