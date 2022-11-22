@@ -1,13 +1,14 @@
-import { Security } from "relm-common";
-import { Participant } from "types/identity";
-import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
-import { WorldDoc } from "~/y-integration/WorldDoc";
-import { worldManager } from "~/world";
+import type { PageParams } from "~/types";
+import type { Participant } from "~/types/identity";
+import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
-import { Dispatch, State } from "../ProgramTypes";
-import { ParticipantBroker } from "~/identity/ParticipantBroker";
-import { AVConnection } from "~/av";
-import { PageParams } from "~/types";
+import type { WorldDoc } from "~/y-integration/WorldDoc";
+import type { ParticipantBroker } from "~/identity/ParticipantBroker";
+import type { AVConnection } from "~/av";
+
+import type { Dispatch, State } from "../ProgramTypes";
+
+import { worldManager } from "~/world";
 
 export const initWorldManager =
   (
