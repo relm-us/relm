@@ -37,26 +37,6 @@ export class Avatar {
     return this.transform.position;
   }
 
-  set position(newCoords: Vector3) {
-    const entity = this.entities.body;
-
-    const transform = entity.get(Transform);
-    // How much to move Avatar by to arrive at newCoords
-    const delta = new Vector3().copy(newCoords).sub(transform.position);
-
-    // Move the participant
-    entity.traverse(
-      (e) => {
-        // Update ECS Transform object
-        const transform = e.get(Transform);
-        transform.position.add(delta);
-        transform.modified();
-      },
-      false,
-      true
-    );
-  }
-
   enableCanFly(enabled = true) {
     const controller = this.entities.body.get(Controller);
     if (!controller) return;
