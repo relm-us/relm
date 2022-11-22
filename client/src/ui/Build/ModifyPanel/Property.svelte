@@ -14,6 +14,7 @@
   import RefType from "./types/RefType.svelte";
   import SelectType from "./types/SelectType.svelte";
   import StringType from "./types/StringType.svelte";
+  import TextType from "./types/TextType.svelte";
   import Vector3Type from "./types/Vector3Type.svelte";
 
   export let key: string;
@@ -50,6 +51,8 @@
         return SelectType;
       case "String":
         return StringType;
+      case "Text":
+        return TextType;
       case "Vector2":
       case "Vector3":
         return Vector3Type;
