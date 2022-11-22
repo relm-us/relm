@@ -16,10 +16,10 @@
       style = "--bg-color: #89cf82; --bg-hover-color: #89cf82";
       break;
     case 2:
-      style = "--bg-color: #eb8572; --bg-hover-color: #eb8572";
+      style = "--bg-color: #67b7d4; --bg-hover-color: #67b7d4";
       break;
     case 3:
-      style = "--bg-color: #67b7d4; --bg-hover-color: #67b7d4";
+      style = "--bg-color: #eb8572; --bg-hover-color: #eb8572";
       break;
     default:
       style = null;

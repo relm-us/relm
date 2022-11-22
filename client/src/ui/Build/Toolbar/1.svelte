@@ -18,27 +18,27 @@
   <ToolButton
     shortcut={"1"}
     bgState={0}
-    tip={"Colliders visible"}
+    tip={"Edit objects only"}
     on:click={onClick}
   >
     <FaRegSquare />
   </ToolButton>
-{:else if $colliderEditMode === "invisible"}
+{:else if $colliderEditMode === "ground"}
   <ToolButton
     shortcut={"1"}
     bgState={2}
-    tip={"Colliders invisible"}
-    on:click={onClick}
-  >
-    <FaLowVision />
-  </ToolButton>
-{:else}
-  <ToolButton
-    shortcut={"1"}
-    bgState={3}
-    tip={"Ground colliders selectable"}
+    tip={"Edit floors only"}
     on:click={onClick}
   >
     <FaMountain />
+  </ToolButton>
+{:else if $colliderEditMode === "invisible"}
+  <ToolButton
+    shortcut={"1"}
+    bgState={3}
+    tip={"Hide colliders"}
+    on:click={onClick}
+  >
+    <FaLowVision />
   </ToolButton>
 {/if}

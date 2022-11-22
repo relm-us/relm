@@ -411,6 +411,8 @@ export class WorldManager {
     // Switch between various collider edit modes when in build mode
     this.unsubs.push(
       derived([worldUIMode, colliderEditMode], ([$mode, $edit]) => {
+        this.selection.clear();
+
         const visible = $mode === "build" && $edit !== "invisible";
         this.enableCollidersVisible(visible);
 
@@ -614,9 +616,9 @@ export class WorldManager {
   registerGlobalEventListeners() {
     this.addGlobalEventListener("cycle-advanced-edit", () =>
       colliderEditMode.update(($edit) => {
-        if ($edit === "normal") return "invisible";
-        if ($edit === "invisible") return "ground";
-        if ($edit === "ground") return "normal";
+        if ($edit === "normal") return "ground";
+        if ($edit === "ground") return "invisible";
+        if ($edit === "invisible") return "normal";
       })
     );
     this.addGlobalEventListener("toggle-drag-action", () =>
@@ -638,10 +640,6 @@ export class WorldManager {
         if (kind === "pointer") this.focusPointer(entity);
       }
     );
-  }
-
-  getColliderEntities() {
-    return this.world.entities.getAllBy((entity) => entity.has(Collider2));
   }
 
   changeAudioZone(zone: string = null) {
@@ -694,14 +692,13 @@ export class WorldManager {
   }
 
   enableInteractiveGround(enabled = true) {
-    const action = enabled ? "maybeRemove" : "add";
-    const entities = this.getColliderEntities();
-    for (const entity of entities) {
-      if (entity.has(Collider2)) {
-        const collider: Collider2 = entity.get(Collider2);
-        if (collider.kind === "GROUND") {
-          entity[action](NonInteractive);
-        }
+    for (const entity of this.world.entities.entities.values()) {
+      if (entity.name === "Avatar") continue;
+      const collider: Collider2 = entity.get(Collider2);
+      if (collider?.kind === "GROUND") {
+        entity[enabled ? "maybeRemove" : "add"](NonInteractive);
+      } else {
+        entity[enabled ? "add" : "maybeRemove"](NonInteractive);
       }
     }
   }
