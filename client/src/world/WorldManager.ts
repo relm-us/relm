@@ -1036,17 +1036,15 @@ export class WorldManager {
   }
 
   moveTo(position: Vector3, instantaneousCamera = true) {
-    // TODO: Why do we have to move the physics body?
-    // Problem: When holding down the arrow key into a portal, `transform.modified()`
-    // is insufficient to move the avatar.
     const body: RigidBody = this.avatar.entities.body.get(Collider2Ref)?.body;
     if (body) {
       body.setTranslation(position, true);
-    } else {
-      const transform = this.participants.local.avatar.transform;
-      transform.position.copy(position);
-      transform.modified(); // update physics engine
     }
+
+    const transform = this.participants.local.avatar.transform;
+    transform.position.copy(position);
+    transform.modified(); // update physics engine
+
     if (instantaneousCamera) this.camera.moveTo(position);
   }
 
