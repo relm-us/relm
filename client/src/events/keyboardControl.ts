@@ -2,6 +2,7 @@ import { get, derived } from "svelte/store";
 import { controlDirection } from "~/stores/controlDirection";
 
 import { keyUp, keyDown, keyLeft, keyRight, keyShift } from "~/stores/keys";
+import { pressed } from "./input/pressed";
 
 derived(
   [keyUp, keyDown, keyLeft, keyRight, keyShift, keyShift],
@@ -18,3 +19,14 @@ derived(
     controlDirection.set(dir);
   }
 ).subscribe(() => {});
+
+// Useful to be able to clear all pressed keys, e.g. when input focus leaves the browser
+export function releaseHeldKeys() {
+  keyUp.set(false);
+  keyDown.set(false);
+  keyLeft.set(false);
+  keyRight.set(false);
+  keyShift.set(false);
+
+  pressed.clear();
+}

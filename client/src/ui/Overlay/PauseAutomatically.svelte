@@ -3,6 +3,7 @@
   import { uploadingDialogOpen } from "~/stores/uploadingDialogOpen";
   import { openDialog } from "~/stores/openDialog";
   import { worldManager } from "~/world";
+  import { globalEvents } from "~/events/globalEvents";
 
   function onChangeFocus(_event) {
     const hasFocus = document.hasFocus();
@@ -15,6 +16,9 @@
     ) {
       worldManager.togglePaused();
     }
+
+    // Drop all held keys
+    globalEvents.emit("release-held-keys");
   }
 </script>
 

@@ -24,11 +24,9 @@
   import * as spaceKey from "./handlers/spaceKey";
   import * as tabKey from "./handlers/tabKey";
   import * as undoRedoKeys from "./handlers/undoRedoKeys";
+  import { pressed } from "./pressed";
 
   export let world;
-
-  // Current set of pressed keys
-  export const pressed: Set<string> = new Set();
 
   function getActionFromEvent(event: KeyboardEvent) {
     const mods = [];

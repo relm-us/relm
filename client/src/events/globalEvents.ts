@@ -11,6 +11,7 @@ import { onEscape } from "./onEscape";
 import { onSwitchMode } from "./onSwitchMode";
 import { onInteractOtherAvatar } from "./onInteractOtherAvatar";
 import "./keyboardControl";
+import { releaseHeldKeys } from "./keyboardControl";
 
 export type GlobalEvents = {
   "undo": () => void;
@@ -29,6 +30,8 @@ export type GlobalEvents = {
   "toggle-selection-as-group": () => void;
   "camera-rotate-left": () => void;
   "camera-rotate-right": () => void;
+
+  "release-held-keys": () => void;
 };
 
 export class GlobalEventEmitter extends TypedEmitter<GlobalEvents> {}
@@ -46,3 +49,5 @@ globalEvents.on("switch-mode", onSwitchMode);
 globalEvents.on("action", () => worldManager.action());
 
 globalEvents.on("interact-other-avatar", onInteractOtherAvatar);
+
+globalEvents.on("release-held-keys", releaseHeldKeys);
