@@ -143,7 +143,7 @@ export class ParticlesSystem extends System {
       maxParticles: spec.maxParticles,
       fadeIn: spec.fadeIn,
       fadeOut: spec.fadeOut,
-      texture: textures[spec.sprite] || textures["circle_05"],
+      texture: textures[spec.sprite]() || textures["circle_05"](),
       blending: AdditiveBlending,
       onTop: spec.onTop,
       onTick: (system, time) => {
