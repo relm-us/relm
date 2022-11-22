@@ -185,8 +185,9 @@ export class CameraManager {
       .add(this.pan);
   }
 
-  rotate(dir: number) {
-    this.direction.y = dir;
+  rotate({ x, y }) {
+    if (x !== undefined) this.direction.x = x;
+    if (y !== undefined) this.direction.y = y;
   }
 
   rotateLeft90() {

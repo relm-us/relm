@@ -36,6 +36,7 @@ import {
   CAMERA_PLAY_DAMPENING,
   CAMERA_PLAY_ZOOM_MAX,
   CAMERA_PLAY_ZOOM_MIN,
+  DEFAULT_CAMERA_ANGLE,
 } from "~/config/constants";
 
 import { config } from "~/config";
@@ -391,6 +392,7 @@ export class WorldManager {
 
             // Reset camera direction to "north"
             this.camera.direction.y = 0;
+            this.camera.direction.x = DEFAULT_CAMERA_ANGLE;
 
             // Play mode ground-dragging default action
             dragAction.set(

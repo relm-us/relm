@@ -1,4 +1,4 @@
-import { Euler, Object3D, Vector2, Vector3 } from "three";
+import { Euler, MathUtils, Object3D, Vector2, Vector3 } from "three";
 import { get } from "svelte/store";
 
 import { globalEvents } from "~/events/globalEvents";
@@ -140,10 +140,15 @@ export function onPointerMove(
     cameraStartDirection.copy(worldManager.camera.direction);
     setNextPointerState("drag-camera");
   } else if (pointerState === "drag-camera") {
-    const dist = pointerStartPosition.x - pointerPosition.x;
-    worldManager.camera.rotate(
-      cameraStartDirection.y + dist / CAMERA_ROTATE_RATE
+    const distX = pointerStartPosition.x - pointerPosition.x;
+    const distY = pointerStartPosition.y - pointerPosition.y;
+    const x = MathUtils.clamp(
+      cameraStartDirection.x + distY / CAMERA_ROTATE_RATE,
+      Math.PI / 16,
+      Math.PI - Math.PI / 16
     );
+    const y = cameraStartDirection.y + distX / CAMERA_ROTATE_RATE;
+    worldManager.camera.rotate({ x: x < 0.1 ? 0.1 : x, y });
   } else if ($mode === "build") {
     if (pointerState === "click" && atLeastMinDragDistance()) {
       // drag  mode start
