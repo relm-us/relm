@@ -16,6 +16,7 @@ export class PortalActive extends LocalComponent {
   countdown: number;
   animatedEntity: Entity;
   triggered: boolean;
+  restoreAttrs: any;
 
   static props = {
     destination: {
@@ -34,6 +35,11 @@ export class PortalActive extends LocalComponent {
     triggered: {
       type: BooleanType,
       default: false,
+    },
+
+    restoreAttrs: {
+      type: RefType,
+      default: {},
     },
   };
 }

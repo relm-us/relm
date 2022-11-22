@@ -1,15 +1,15 @@
-import { Vector3 } from "three";
-
 import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
 import { Impact, Impactable } from "~/ecs/plugins/physics";
 import { Controller } from "~/ecs/plugins/player-control";
+import { Particles } from "~/ecs/plugins/particles";
+import { Collider2 } from "~/ecs/plugins/collider";
+import { Animation } from "~/ecs/plugins/animation";
 
 import { worldManager } from "~/world";
 
 import { Portal, PortalActive } from "../components";
 import { inFrontOf } from "~/utils/inFrontOf";
-import { Particles } from "../../particles";
 
 const portalsDisabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -50,15 +50,27 @@ export class PortalSystem extends System {
       const portal: Portal = entity.get(Portal);
 
       if (portal.kind === "LOCAL") {
-        entity.add(PortalActive, {
-          destination: {
-            type: "LOCAL",
-            // Make participant show up on the "other side" of the
-            // portal destination, depending on movement direction.
-            coords: inFrontOf(portal.coords, transform.rotation),
+        const active = entity.add(
+          PortalActive,
+          {
+            destination: {
+              type: "LOCAL",
+              // Make participant show up on the "other side" of the
+              // portal destination, depending on movement direction.
+              coords: inFrontOf(portal.coords, transform.rotation),
+            },
+            countdown: 2000,
+            animatedEntity: otherEntity,
           },
-          countdown: 2000,
-          animatedEntity: otherEntity,
+          true
+        );
+
+        // Make participant's avatar slow down
+        this.saveAttrs(active, otherEntity);
+        this.setAttrs(otherEntity, {
+          density: 10,
+          timeScale: 0.1,
+          transition: 0,
         });
       } else if (portal.kind === "REMOTE") {
         entity.add(PortalActive, {
@@ -82,6 +94,7 @@ export class PortalSystem extends System {
         active.triggered = true;
 
         if (active.destination.type === "LOCAL") {
+          this.restoreAttrs(active);
           worldManager.moveTo(active.destination.coords, false);
         } else if (active.destination.type === "REMOTE") {
           worldManager.dispatch({
@@ -97,5 +110,29 @@ export class PortalSystem extends System {
         entity.remove(PortalActive);
       }
     });
+  }
+
+  saveAttrs(active: PortalActive, otherEntity: Entity) {
+    const ref: Collider2 = otherEntity.get(Collider2);
+    active.restoreAttrs.density = ref.density;
+
+    const anim: Animation = otherEntity.get(Animation);
+    active.restoreAttrs.timeScale = anim.timeScale;
+    active.restoreAttrs.transition = anim.transition;
+  }
+
+  restoreAttrs(active: PortalActive) {
+    this.setAttrs(active.animatedEntity, active.restoreAttrs);
+  }
+
+  setAttrs(otherEntity: Entity, { density, timeScale, transition }) {
+    const ref: Collider2 = otherEntity.get(Collider2);
+    ref.density = density;
+    ref.modified();
+
+    const anim: Animation = otherEntity.get(Animation);
+    anim.timeScale = timeScale;
+    anim.transition = transition;
+    anim.modified();
   }
 }
