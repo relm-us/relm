@@ -139,7 +139,7 @@ export class CameraSystem extends System {
   }
 
   getFrustumShape(): ConvexPolyhedron {
-    const vertices = getCameraFrustumVertices(this.camera, null, -3);
+    const vertices = getCameraFrustumVertices(this.camera, 50, -3);
     return new this.physics.rapier.ConvexPolyhedron(
       vertices.flatMap((v) => [v.x, v.y, v.z])
     );
