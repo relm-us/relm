@@ -148,6 +148,7 @@ export type Message =
   | { id: "gotLoadingState"; assetsCount: number; entitiesCount: number }
   | { id: "loadedAndReady" }
   | { id: "startPlaying" }
+  | { id: "showGameScreen" }
   | { id: "recomputeWorldDocStats" }
   | { id: "error"; message: string; stack?: any };
 

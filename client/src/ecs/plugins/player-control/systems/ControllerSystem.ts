@@ -71,6 +71,8 @@ export class ControllerSystem extends System {
     });
 
     this.queries.active.forEach((entity) => {
+      if (!worldManager.camera) return;
+
       const spec: Controller = entity.get(Controller);
       const state: ControllerState = entity.get(ControllerState);
       state.grounded = this.isGrounded(entity);
@@ -105,6 +107,7 @@ export class ControllerSystem extends System {
       }
 
       // Modify direction to align with camera axis, rather than world axis
+      // TODO: Don't depend on worldManager.camera, use this.presentation.camera
       cameraAlignedDir
         .copy(state.direction)
         .applyAxisAngle(vUp, worldManager.camera.direction.y);

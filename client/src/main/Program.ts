@@ -13,7 +13,7 @@ import { isEqual } from "~/utils/isEqual";
 import AvatarChooser from "~/ui/AvatarBuilder/AvatarChooser.svelte";
 
 import { AVConnection } from "~/av/AVConnection";
-import { AV_ENABLED, DEFAULT_NOTIFICATION_WAIT } from "~/config/constants";
+import { AV_ENABLED, INITIAL_LOAD_GAME_WAIT } from "~/config/constants";
 
 import { preferredDeviceIds } from "~/stores/preferredDeviceIds";
 import { askAvatarSetup } from "~/stores/askAvatarSetup";
@@ -633,7 +633,7 @@ export function makeProgram(): Program {
         }
       }
 
-      case "startPlaying":
+      case "startPlaying": {
         const data = get(state.localIdentityData);
         const identityData: UpdateData = {
           clientId: state.worldDoc.ydoc.clientID,
@@ -649,13 +649,27 @@ export function makeProgram(): Program {
             // a default together
             getDefaultAppearance("male"),
         };
+
         if (state.participantQuickAppearance) {
           identityData.appearance = state.participantQuickAppearance;
         }
+
         return [
-          { ...state, screen: "game-world" },
-          send({ id: "updateLocalIdentityData", identityData }),
+          { ...state },
+          Cmd.batch([
+            send({ id: "updateLocalIdentityData", identityData }),
+            (dispatch) => {
+              setTimeout(() => {
+                dispatch({ id: "showGameScreen" });
+              }, INITIAL_LOAD_GAME_WAIT);
+            },
+          ]),
         ];
+      }
+
+      case "showGameScreen": {
+        return [{ ...state, screen: "game-world" }];
+      }
 
       // We store entrywayUnsub for later when we may need it for a portal
       case "gotEntrywayUnsub": {
