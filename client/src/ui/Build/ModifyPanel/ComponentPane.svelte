@@ -36,7 +36,7 @@
       if (acc) return acc;
 
       const property = component && component[item.prop];
-      if (!property) return acc;
+      if (property === undefined) return acc;
 
       if (item.value === undefined) {
         // The prop just needs to exist, it doesn't need to equal a value

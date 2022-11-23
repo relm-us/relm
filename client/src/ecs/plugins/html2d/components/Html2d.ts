@@ -173,6 +173,9 @@ export class Html2d extends Component {
       default: 1.0,
       editor: {
         label: "Zoom Size",
+        increment: 0.01,
+        min: 0.1,
+        max: 5,
         requires: [{ prop: "zoomInvariant", value: false }],
       },
     },
