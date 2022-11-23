@@ -150,7 +150,11 @@
   "NeedsMigrationDialog": {
     "title": "Update",
     "upgrade": "Upgrade World",
-    "skip": "Skip for now"
+    "skip": "Skip for now",
+    "software_changed": "Relm's software has changed since last this world was edited. Please upgrade this world.",
+    "explain_skip": "You can skip this step, but you might encounter some issues with build mode or play mode interactions.",
+    "upgrading": "Upgrading...",
+    "done_refresh": "Great! Now please refresh the browser page."
   },
   "Overlay": {
     "tooltips": {
