@@ -15,7 +15,7 @@ importers:
       '@babel/preset-env': ^7.11.5
       '@babel/runtime': ^7.12.1
       '@cerner/duplicate-package-checker-webpack-plugin': ^2.3.0
-      '@dimforge/rapier3d': 0.9.0
+      '@dimforge/rapier3d': 0.10.0
       '@tweenjs/tween.js': ^18.6.4
       '@types/howler': ^2.2.7
       '@types/jest': ^27.0.0
@@ -109,7 +109,7 @@ importers:
       y-quill: 0.1.4
       yjs: 13.5.27
     dependencies:
-      '@dimforge/rapier3d': 0.9.0
+      '@dimforge/rapier3d': 0.10.0
       '@tweenjs/tween.js': 18.6.4
       '@uppy/core': 2.3.1
       '@uppy/dashboard': 2.3.0_@uppy+core@2.3.1
@@ -1694,8 +1694,8 @@ packages:
       '@jridgewell/trace-mapping': 0.3.9
     dev: true
 
-  /@dimforge/rapier3d/0.9.0:
-    resolution: {integrity: sha512-43O4/k5naF/oIwExpcjCMzVUCL39Gz7iutp/uAgRE4ifa7cIckdxSeJaNFv7iYY+57Q7nKDqlzZglPjE0hWM0w==}
+  /@dimforge/rapier3d/0.10.0:
+    resolution: {integrity: sha512-sNYpXHkWoiQTEIUsCFAQRV1hhdm//NzT/KDTvjGBK/O0HHbG3Pea/tftUrAz779mNJgkOZDr5mxzFy3Mhd5Nrg==}
     dev: false
 
   /@discoveryjs/json-ext/0.5.7:
@@ -6783,19 +6783,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dev: false
-
-  /follow-redirects/1.14.9_debug@4.3.4:
-    resolution: {integrity: sha512-MQDfihBQYMcyy5dhRDJUHcw7lb2Pv/TuE6xP1vyraLukNDHKbDxDNaOE3NbCAdKQApno+GPRyo1YAp89yCjK4w==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
-    dependencies:
-      debug: 4.3.4
-    dev: true
 
   /for-each/0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
@@ -7317,7 +7304,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.14.9_debug@4.3.4
+      follow-redirects: 1.14.9
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
