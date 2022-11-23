@@ -140,8 +140,6 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
       if ("Asset" in data) {
         image.asset = new Asset(data["Asset"].value.url);
       }
-
-      tagNeedsMigrating(entity);
     }
   );
 
