@@ -55,6 +55,7 @@ export const CAMERA_PLAY_ZOOM_MIN = 5;
 export const CAMERA_PLAY_ZOOM_MAX = 25;
 export const CAMERA_BUILD_ZOOM_MIN = 5;
 export const CAMERA_BUILD_ZOOM_MAX = 50;
+export const CAMERA_FRUSTUM_FAR_PLANE = 100;
 
 // Angle (in radians) from which the camera looks down
 export const DEFAULT_CAMERA_ANGLE = (52.5 / 180) * Math.PI;

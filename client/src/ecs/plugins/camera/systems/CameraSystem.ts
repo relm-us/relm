@@ -1,5 +1,6 @@
 import { Collider, ConvexPolyhedron } from "@dimforge/rapier3d";
 import { Vector3, PerspectiveCamera, Matrix4 } from "three";
+import { CAMERA_FRUSTUM_FAR_PLANE } from "~/config/constants";
 
 import { System, Not, Groups, Entity } from "~/ecs/base";
 import { Queries } from "~/ecs/base/Query";
@@ -139,7 +140,11 @@ export class CameraSystem extends System {
   }
 
   getFrustumShape(): ConvexPolyhedron {
-    const vertices = getCameraFrustumVertices(this.camera, 50, -3);
+    const vertices = getCameraFrustumVertices(
+      this.camera,
+      CAMERA_FRUSTUM_FAR_PLANE,
+      -3
+    );
     return new this.physics.rapier.ConvexPolyhedron(
       vertices.flatMap((v) => [v.x, v.y, v.z])
     );
