@@ -8,19 +8,11 @@ import { worldManager } from "~/world";
 import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
 import { Physics } from "~/ecs/plugins/physics";
-import { Collider2, Collider2Ref } from "~/ecs/plugins/collider";
+import { Collider3, ColliderRef } from "~/ecs/plugins/collider";
 import { Animation } from "~/ecs/plugins/animation";
-import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
 import { isMakingContactWithGround } from "~/ecs/shared/isMakingContactWithGround";
 
-import {
-  keyUp,
-  keyDown,
-  keyLeft,
-  keyRight,
-  keySpace,
-  keyShift,
-} from "~/stores/keys";
+import { keySpace } from "~/stores/keys";
 
 import { Controller, ControllerState, Repulsive } from "../components";
 
@@ -57,7 +49,7 @@ export class ControllerSystem extends System {
 
   static queries = {
     added: [Controller, Not(ControllerState)],
-    active: [Controller, ControllerState, Transform, Collider2Ref],
+    active: [Controller, ControllerState, Transform, ColliderRef],
     repulsive: [Repulsive, Transform],
   };
 
@@ -96,7 +88,7 @@ export class ControllerSystem extends System {
         this.considerFlying(entity, state, spec.thrusts[FLYING_SPEED]);
       }
 
-      const rigidBody: RapierRigidBody = entity.get(Collider2Ref)?.body;
+      const rigidBody: RapierRigidBody = entity.get(ColliderRef)?.body;
       if (rigidBody) {
         rigidBody.setGravityScale(
           state.grounded || spec.canFly ? FALL_NORMAL : FALL_FAST,
@@ -134,7 +126,7 @@ export class ControllerSystem extends System {
         newFriction = 0.01;
       }
 
-      const collider: Collider2 = entity.get(Collider2);
+      const collider: Collider3 = entity.get(Collider3);
       if (collider.friction !== newFriction) {
         collider.friction = newFriction;
         collider.modified();
@@ -200,7 +192,7 @@ export class ControllerSystem extends System {
     state: ControllerState,
     thrustMagnitude: number
   ) {
-    const body: RapierRigidBody = entity.get(Collider2Ref).body;
+    const body: RapierRigidBody = entity.get(ColliderRef).body;
 
     if (get(keySpace)) {
       vDir.copy(vUp).multiplyScalar(thrustMagnitude);
@@ -214,7 +206,7 @@ export class ControllerSystem extends System {
   }
 
   torqueTowards(entity: Entity, direction: Vector3, torqueMagnitude: number) {
-    const body: RapierRigidBody = entity.get(Collider2Ref).body;
+    const body: RapierRigidBody = entity.get(ColliderRef).body;
     const rotation = entity.get(Transform).rotation;
 
     bodyFacing.copy(vOut);
@@ -228,7 +220,7 @@ export class ControllerSystem extends System {
   }
 
   thrustTowards(entity: Entity, direction: Vector3, thrustMagnitude: number) {
-    const body: RapierRigidBody = entity.get(Collider2Ref).body;
+    const body: RapierRigidBody = entity.get(ColliderRef).body;
 
     thrust.copy(direction);
     thrust.multiplyScalar(thrustMagnitude);
@@ -239,7 +231,7 @@ export class ControllerSystem extends System {
     // Don't repel from others unless we are, ourselves, also repulsive
     if (!entity.has(Repulsive)) return;
 
-    const body: RapierRigidBody = entity.get(Collider2Ref).body;
+    const body: RapierRigidBody = entity.get(ColliderRef).body;
 
     p1.copy(entity.get(Transform).position);
     // Add a little noise so that if entities are exactly on

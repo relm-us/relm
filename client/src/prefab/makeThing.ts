@@ -2,7 +2,7 @@ import { Transform, Asset } from "~/ecs/plugins/core";
 
 import { Vector3 } from "three";
 
-import { Collider2 } from "~/ecs/plugins/collider";
+import { Collider3 } from "~/ecs/plugins/collider";
 import { Model3 } from "~/ecs/plugins/model";
 
 import { makeEntity } from "./makeEntity";
@@ -18,7 +18,7 @@ export function makeThing(
       scale: new Vector3(w, h, d),
     })
     .add(Model3, { asset: new Asset(url) })
-    .add(Collider2, {
+    .add(Collider3, {
       size: new Vector3(w, h, d),
       kind: dynamic ? "DYNAMIC" : "BARRIER",
     });

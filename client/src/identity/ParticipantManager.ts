@@ -37,7 +37,7 @@ import {
 import { Oculus } from "~/ecs/plugins/html2d";
 import { Model3 } from "~/ecs/plugins/model";
 import { Transform } from "~/ecs/plugins/core";
-import { Collider2 } from "~/ecs/plugins/collider";
+import { Collider3 } from "~/ecs/plugins/collider";
 import { inFrontOf } from "~/utils/inFrontOf";
 import { Vector3 } from "three";
 
@@ -363,7 +363,7 @@ export class ParticipantManager {
   }
 
   setColliderHeight(height: number) {
-    const collider: Collider2 = this.local.avatar?.entities.body.get(Collider2);
+    const collider: Collider3 = this.local.avatar?.entities.body.get(Collider3);
     if (collider && collider.size.y !== height) {
       collider.size.y = height;
       collider.modified();

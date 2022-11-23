@@ -1,1 +1,1 @@
-export { Collider2System } from "./Collider2System";
+export { ColliderSystem } from "./ColliderSystem";

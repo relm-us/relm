@@ -3,7 +3,7 @@ import { Transform } from "~/ecs/plugins/core";
 import { Color, Vector3 } from "three";
 
 import { Shape3 } from "~/ecs/plugins/shape";
-import { Collider2 } from "~/ecs/plugins/collider";
+import { Collider3 } from "~/ecs/plugins/collider";
 
 import { makeEntity } from "./makeEntity";
 
@@ -45,7 +45,7 @@ export function makeBall(
 
   // Optionally add a collider that matches the dimensions of the visible shape
   if (collider) {
-    entity.add(Collider2, {
+    entity.add(Collider3, {
       shape: "SPHERE",
       size: new Vector3(r * 2, 1, 1),
       kind: dynamic ? "DYNAMIC" : "BARRIER",

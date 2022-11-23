@@ -28,7 +28,7 @@ export type Behavior = {
   isSensor: boolean;
 };
 
-export class Collider2 extends Component {
+export class Collider3 extends Component {
   // Kinds of colliders:
   // - ETHEREAL: Immobile; never collides
   // - SENSOR: Immobile; never collides, but acts as a sensor that can trigger other effects

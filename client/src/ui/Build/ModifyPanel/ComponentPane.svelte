@@ -76,6 +76,7 @@
     return !["Transform"].includes(Component.name);
   }
 
+  // If a Component has a corresponding Activator Component, return it
   function getActivator(entity, componentName) {
     return entity.world.components.activators[componentName];
   }

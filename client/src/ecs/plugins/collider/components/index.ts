@@ -1,6 +1,6 @@
-export { Collider2, type Behavior } from "./Collider2";
-export { Collider2Ref } from "./Collider2Ref";
-export { Collider2Explicit } from "./Collider2Explicit";
-export { Collider2Implicit } from "./Collider2Implicit";
-export { Collider2Inactive } from "./Collider2Inactive";
+export { Collider3, type Behavior } from "./Collider3";
+export { Collider3Active } from "./Collider3Active";
+export { ColliderRef } from "./ColliderRef";
+export { ColliderExplicit } from "./ColliderExplicit";
+export { ColliderImplicit } from "./ColliderImplicit";
 export { PhysicsOptions } from "./PhysicsOptions";

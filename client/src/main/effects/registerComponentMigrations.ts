@@ -212,4 +212,11 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
     // Version 2 requires "Active" component
     entity.addByName("Bloom2Active");
   });
+
+  // Migrate from Collider2 to Collider3
+  ecsWorld.migrations.register("Collider2", (world, entity, componentData) => {
+    entity.addByName("Collider3", undefined, true).fromJSON(componentData);
+    // Version 3 requires "Active" component
+    entity.addByName("Collider3Active");
+  });
 }

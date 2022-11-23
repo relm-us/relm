@@ -7,41 +7,43 @@ import {
 } from "~/ecs/shared/colliderMaterial";
 import { shapeParamsToGeometry, toShapeParams } from "~/ecs/shared/createShape";
 
-import { Collider2 } from "~/ecs/plugins/collider";
+import { Collider3, Collider3Active } from "~/ecs/plugins/collider";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 
-import { Collider2VisibleRef } from "../components";
+import { ColliderVisibleRef } from "../components";
 
 const _v3 = new Vector3();
 
-export class Collider2VisibleSystem extends System {
+export class ColliderVisibleSystem extends System {
   order = Groups.Initialization;
 
   static enabled: boolean = false;
 
   static queries = {
-    all: [Collider2VisibleRef],
+    all: [ColliderVisibleRef],
 
-    modified: [Object3DRef, Modified(Collider2), Collider2VisibleRef],
-    modifiedTransform: [Object3DRef, Modified(Transform), Collider2VisibleRef],
     added: [
       Object3DRef,
-      Collider2,
-      // Not(Collider2Implicit),
+      Collider3,
+      Collider3Active,
       Not(NonInteractive),
-      Not(Collider2VisibleRef),
+      Not(ColliderVisibleRef),
     ],
-    removed: [Object3DRef, Not(Collider2), Collider2VisibleRef],
-    removedInteractive: [Object3DRef, NonInteractive, Collider2VisibleRef],
+    modified: [Object3DRef, Modified(Collider3), ColliderVisibleRef],
+    modifiedTransform: [Object3DRef, Modified(Transform), ColliderVisibleRef],
+    removed: [Object3DRef, Not(Collider3), ColliderVisibleRef],
+    removedInteractive: [Object3DRef, NonInteractive, ColliderVisibleRef],
+    deactivated: [Collider3, ColliderVisibleRef, Not(Collider3Active)],
   };
 
   update() {
-    if (Collider2VisibleSystem.enabled) {
+    if (ColliderVisibleSystem.enabled) {
       this.queries.modified.forEach((entity) => this.remove(entity));
       this.queries.modifiedTransform.forEach((entity) => this.remove(entity));
       this.queries.added.forEach((entity) => this.build(entity));
       this.queries.removed.forEach((entity) => this.remove(entity));
       this.queries.removedInteractive.forEach((entity) => this.remove(entity));
+      this.queries.deactivated.forEach((entity) => this.remove(entity));
     } else {
       this.queries.all.forEach((entity) => {
         this.remove(entity);
@@ -55,8 +57,8 @@ export class Collider2VisibleSystem extends System {
   // not either.
   setInverseScale(entity) {
     const transform: Transform = entity.get(Transform);
-    const collider: Collider2 = entity.get(Collider2);
-    const ref: Collider2VisibleRef = entity.get(Collider2VisibleRef);
+    const collider: Collider3 = entity.get(Collider3);
+    const ref: ColliderVisibleRef = entity.get(ColliderVisibleRef);
     ref.value.scale.set(
       1 / transform.scale.x,
       1 / transform.scale.y,
@@ -70,12 +72,12 @@ export class Collider2VisibleSystem extends System {
     // Slight adjustment to z fixes an issue with Fire:
     // - When both transparent objects are at precisely the same distance from the camera,
     //   the render order is indeterminate
-    // - We force the Collider2Visible to by slightly "in front" so that both can be seen.
+    // - We force the ColliderVisible to by slightly "in front" so that both can be seen.
     ref.value.position.z += 0.001;
   }
 
   build(entity) {
-    const collider: Collider2 = entity.get(Collider2);
+    const collider: Collider3 = entity.get(Collider3);
     const object3dref: Object3DRef = entity.get(Object3DRef);
 
     const geometry: BufferGeometry = shapeParamsToGeometry(
@@ -98,7 +100,7 @@ export class Collider2VisibleSystem extends System {
     mesh.renderOrder = 1;
 
     object3dref.value.add(mesh);
-    entity.add(Collider2VisibleRef, { value: mesh });
+    entity.add(ColliderVisibleRef, { value: mesh });
 
     // Notify dependencies (e.g. outlines) that object3d has changed
     object3dref.modified();
@@ -107,11 +109,11 @@ export class Collider2VisibleSystem extends System {
   }
 
   remove(entity) {
-    const mesh = entity.get(Collider2VisibleRef).value;
+    const mesh = entity.get(ColliderVisibleRef).value;
 
     mesh.geometry.dispose();
     mesh.removeFromParent();
 
-    entity.remove(Collider2VisibleRef);
+    entity.remove(ColliderVisibleRef);
   }
 }

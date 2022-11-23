@@ -1,7 +1,7 @@
 import { Color, Vector3 } from "three";
 
 import { Transform } from "~/ecs/plugins/core";
-import { Collider2 } from "~/ecs/plugins/collider";
+import { Collider3 } from "~/ecs/plugins/collider";
 import { Shape3 } from "~/ecs/plugins/shape";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 
@@ -21,7 +21,7 @@ export function makeGround(world, { x = 0, y = 0, z = 0, h = 1 }) {
       roughness: 0.8,
       emissive: "#000000",
     })
-    .add(Collider2, {
+    .add(Collider3, {
       kind: "GROUND",
       shape: "CYLINDER",
       size: new Vector3(30, h, 1),

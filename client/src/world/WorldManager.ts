@@ -45,8 +45,8 @@ import { RelmRestAPI } from "~/main/RelmRestAPI";
 
 import { makeLight } from "~/prefab/makeLight";
 
-import { Entity, EntityId } from "~/ecs/base";
-import { Collider2, Collider2Ref } from "~/ecs/plugins/collider";
+import { Entity } from "~/ecs/base";
+import { Collider3, ColliderRef } from "~/ecs/plugins/collider";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { Seat } from "~/ecs/plugins/player-control";
 import { Follow } from "~/ecs/plugins/follow";
@@ -54,7 +54,7 @@ import { intersectionPointWithGround } from "~/ecs/shared/isMakingContactWithGro
 import { Transition } from "~/ecs/plugins/transition";
 import { CameraSystem } from "~/ecs/plugins/camera/systems";
 import { TransformControls } from "~/ecs/plugins/transform-controls";
-import { Collider2VisibleSystem } from "~/ecs/plugins/collider-visible/systems";
+import { ColliderVisibleSystem } from "~/ecs/plugins/collider-visible/systems";
 import { Outline } from "~/ecs/plugins/outline";
 import { InteractorSystem } from "~/ecs/plugins/interactor";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
@@ -701,7 +701,7 @@ export class WorldManager {
   enableInteractiveGround(enabled = true) {
     for (const entity of this.world.entities.entities.values()) {
       if (entity.name === "Avatar") continue;
-      const collider: Collider2 = entity.get(Collider2);
+      const collider: Collider3 = entity.get(Collider3);
       if (collider?.kind === "GROUND") {
         entity[enabled ? "maybeRemove" : "add"](NonInteractive);
       } else {
@@ -711,7 +711,7 @@ export class WorldManager {
   }
 
   enableCollidersVisible(enabled = true) {
-    Collider2VisibleSystem.enabled = enabled;
+    ColliderVisibleSystem.enabled = enabled;
   }
 
   enableShadows(enabled) {
@@ -1044,7 +1044,7 @@ export class WorldManager {
   }
 
   moveTo(position: Vector3, instantaneousCamera = true) {
-    const body: RigidBody = this.avatar.entities.body.get(Collider2Ref)?.body;
+    const body: RigidBody = this.avatar.entities.body.get(ColliderRef)?.body;
     if (body) {
       body.setTranslation(position, true);
     }

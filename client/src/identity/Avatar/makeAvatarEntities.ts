@@ -17,7 +17,11 @@ import { Asset, Transform } from "~/ecs/plugins/core";
 import { Model3 } from "~/ecs/plugins/model";
 import { PointerPosition } from "~/ecs/plugins/pointer-position";
 import { Impactable } from "~/ecs/plugins/physics";
-import { PhysicsOptions, Collider2 } from "~/ecs/plugins/collider";
+import {
+  PhysicsOptions,
+  Collider3,
+  Collider3Active,
+} from "~/ecs/plugins/collider";
 import { Animation } from "~/ecs/plugins/animation";
 import { Repulsive } from "~/ecs/plugins/player-control";
 import { AlwaysOnStage } from "~/ecs/plugins/camera";
@@ -51,12 +55,13 @@ export function makeAvatarEntities(
       rotRestrict: "Y",
     })
     .add(AlwaysOnStage)
-    .add(Collider2, {
+    .add(Collider3, {
       kind: kinematic ? "AVATAR-OTHER" : "AVATAR-PLAY",
       shape: "CAPSULE",
       size: new Vector3(0.5, COLLIDER_HEIGHT_STAND, 0),
       offset: new Vector3(0, 1.1, 0),
     })
+    .add(Collider3Active)
     .add(Particles, {
       pattern: "RING",
       params: new Vector3(2, 0.05, 1),

@@ -2,7 +2,7 @@ import type { Mesh } from "three";
 
 import { LocalComponent, RefType } from "~/ecs/base";
 
-export class Collider2VisibleRef extends LocalComponent {
+export class ColliderVisibleRef extends LocalComponent {
   value: Mesh;
 
   static props = {

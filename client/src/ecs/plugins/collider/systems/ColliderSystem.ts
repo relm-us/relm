@@ -17,55 +17,61 @@ import {
 
 import {
   Behavior,
-  Collider2,
-  Collider2Ref,
-  Collider2Implicit,
+  Collider3,
+  ColliderRef,
+  Collider3Active,
+  ColliderImplicit,
+  ColliderExplicit,
   PhysicsOptions,
-  Collider2Explicit,
-  Collider2Inactive,
 } from "../components";
+
+type ColliderParams = {
+  spec: Collider3;
+  rotation: Quaternion;
+  offset: Vector3;
+};
 
 const _b3 = new Box3();
 
-export class Collider2System extends System {
+export class ColliderSystem extends System {
   physics: Physics;
 
   /**
-   * If the Collider2 is modified in rapid succession (such as when
+   * If the Collider3 is modified in rapid succession (such as when
    * a designer is actively resizing a collider), then it's possible
    * the physics world will not yet include the newly re-built collider
    * in its calculation of what is "on stage" (i.e. within view of the
    * camera frustum). If the entity does not appear to be on stage, the
    * entity will be de-activated, and all ECS Components will be removed
-   * (including the Collider2 being modified).
+   * (including the Collider3 being modified).
    *
-   * Therefore, it's important that Collider2System occur after CameraSystem
+   * Therefore, it's important that Collider3System occur after CameraSystem
    * and before PhysicsSystem.
    */
   order = Groups.Presentation + 299;
 
   static queries = {
-    added: [Transform, Collider2, Not(Collider2Ref), Not(Collider2Inactive)],
-    modified: [Transform, Modified(Collider2), Collider2Ref],
+    added: [Transform, Collider3, Collider3Active, Not(ColliderRef)],
+    modified: [Transform, Modified(Collider3), ColliderRef],
 
-    // Since it's required for Collider2Ref to be a LocalComponent (in order
+    // Since it's required for ColliderRef to be a LocalComponent (in order
     // for the on-stage/off-stage magic to work in CameraSystem), we need
     // another way to detect if a collider is truly removed due to user
-    // interaction or on-stage action. We use Collider2Explicit (a State-
+    // interaction or on-stage action. We use ColliderExplicit (a State-
     // Component) for this purpose.
-    removed: [Not(Collider2), Collider2Explicit, Not(Collider2Implicit)],
-    inactive: [Collider2, Collider2Ref, Collider2Inactive],
+    removed: [Not(Collider3), ColliderExplicit, Not(ColliderImplicit)],
+    deactivated: [ColliderRef, ColliderExplicit, Not(Collider3Active)],
 
     addImplicit: [
       Transform,
       Object3DRef,
-      Not(Collider2),
-      Not(Collider2Ref),
-      Not(Collider2Implicit),
+      Not(Collider3),
+      Not(ColliderRef),
+      Not(ColliderImplicit),
     ],
-    modifiedObject: [Transform, Modified(Object3DRef)],
-    modifiedTransform: [Modified(Transform), Collider2Ref],
-    implicitToExplicit: [Collider2, Collider2Implicit],
+    modifiedObject: [Transform, ColliderRef, Modified(Object3DRef)],
+    modifiedTransform: [Modified(Transform), ColliderRef],
+    implicitToExplicit: [Collider3, Collider3Active, ColliderImplicit],
   };
 
   init({ physics }) {
@@ -74,7 +80,10 @@ export class Collider2System extends System {
 
   update() {
     this.queries.added.forEach((entity) => {
-      this.build(entity, true);
+      this.build(entity, this.makeExplicitColliderParams(entity));
+
+      const ref: ColliderRef = entity.get(ColliderRef);
+      entity.add(ColliderExplicit, { body: ref.body, collider: ref.collider });
     });
 
     this.queries.modified.forEach((entity) => {
@@ -84,28 +93,29 @@ export class Collider2System extends System {
 
     this.queries.removed.forEach((entity) => {
       if (entity.destroying) {
-        const ref: Collider2Explicit = entity.get(Collider2Explicit);
+        const ref: ColliderExplicit = entity.get(ColliderExplicit);
         if (ref.collider) this.physics.removeCollider(ref.collider);
         if (ref.body) this.physics.removeBody(ref.body);
       }
-      entity.remove(Collider2Explicit);
+      entity.remove(ColliderExplicit);
     });
-    this.queries.inactive.forEach((entity) => {
-      const ref: Collider2Explicit = entity.get(Collider2Explicit);
-      if (ref.collider) this.physics.removeCollider(ref.collider);
-      if (ref.body) this.physics.removeBody(ref.body);
 
-      entity.remove(Collider2Explicit);
+    this.queries.deactivated.forEach((entity) => {
+      entity.remove(ColliderExplicit);
+      this.remove(entity);
+
+      entity.add(ColliderImplicit);
+      this.build(entity, this.makeImplicitColliderParams(entity));
     });
 
     this.queries.addImplicit.forEach((entity) => {
-      entity.add(Collider2Implicit);
+      entity.add(ColliderImplicit);
       this.build(entity);
     });
     this.queries.modifiedObject.forEach((entity) => {
-      const isImplicit = entity.has(Collider2Implicit);
+      const isImplicit = entity.has(ColliderImplicit);
       this.remove(entity);
-      if (isImplicit) entity.add(Collider2Implicit);
+      if (isImplicit) entity.add(ColliderImplicit);
       this.build(entity);
     });
 
@@ -114,47 +124,59 @@ export class Collider2System extends System {
     });
 
     this.queries.implicitToExplicit.forEach((entity) => {
-      entity.remove(Collider2Implicit);
-      entity.maybeRemove(Collider2Ref);
+      entity.remove(ColliderImplicit);
+      entity.maybeRemove(ColliderRef);
       this.build(entity);
     });
   }
 
-  build(entity: Entity, explicit: boolean = false) {
-    const transform: Transform = entity.get(Transform);
-    let spec: Collider2 = entity.get(Collider2);
-
-    // Implicit collider needs to have bounding box calculated
-    let rotation = new Quaternion();
-    let offset = new Vector3();
-    if (!spec) {
-      spec = new Collider2(this.world);
-      const object3d: Object3D = entity.get(Object3DRef).value;
-
-      _b3.setFromObject(object3d);
-      _b3.getSize(spec.size);
-      _b3.getCenter(offset).sub(transform.position);
-
-      // The AABB needs to be inverted so that the usual rotation re-aligns it to the world axes
-      rotation.copy(transform.rotation).invert();
-    }
-
-    const body = this.createRigidBody(entity, spec.behavior);
+  build(
+    entity: Entity,
+    params: ColliderParams = this.makeColliderParams(entity)
+  ) {
+    const body = this.createRigidBody(entity, params.spec.behavior);
     this.physics.addBody(body, entity);
 
     const collider = this.createCollider(
-      spec,
+      params.spec,
       body,
-      rotation,
-      offset,
-      spec.behavior
+      params.rotation,
+      params.offset,
+      params.spec.behavior
     );
     this.physics.addCollider(collider, entity);
 
-    entity.add(Collider2Ref, { body, collider, size: spec.size });
+    entity.add(ColliderRef, { body, collider, size: params.spec.size });
+  }
 
-    if (explicit || entity.has(Collider2Explicit))
-      entity.add(Collider2Explicit, { body, collider });
+  makeColliderParams(entity: Entity): ColliderParams {
+    const spec: Collider3 = entity.get(Collider3);
+    if (spec) return this.makeExplicitColliderParams(entity);
+    else return this.makeImplicitColliderParams(entity);
+  }
+
+  makeImplicitColliderParams(entity: Entity): ColliderParams {
+    const transform: Transform = entity.get(Transform);
+
+    let rotation = new Quaternion();
+    let offset = new Vector3();
+
+    const spec = new Collider3(this.world);
+    const object3d: Object3D = entity.get(Object3DRef).value;
+
+    _b3.setFromObject(object3d);
+    _b3.getSize(spec.size);
+    _b3.getCenter(offset).sub(transform.position);
+
+    // The AABB needs to be inverted so that the usual rotation re-aligns it to the world axes
+    rotation.copy(transform.rotation).invert();
+
+    return { spec, rotation, offset };
+  }
+
+  makeExplicitColliderParams(entity: Entity): ColliderParams {
+    const spec: Collider3 = entity.get(Collider3);
+    return { spec, rotation: new Quaternion(), offset: new Vector3() };
   }
 
   createRigidBody(entity: Entity, behavior: Behavior): RigidBody {
@@ -181,7 +203,7 @@ export class Collider2System extends System {
   }
 
   createCollider(
-    collider: Collider2,
+    collider: Collider3,
     body: RigidBody,
     rotation: Quaternion,
     offset: Vector3,
@@ -210,18 +232,18 @@ export class Collider2System extends System {
   }
 
   remove(entity: Entity) {
-    const ref: Collider2Ref = entity.get(Collider2Ref);
+    const ref: ColliderRef = entity.get(ColliderRef);
 
     if (ref.collider) this.physics.removeCollider(ref.collider);
     if (ref.body) this.physics.removeBody(ref.body);
 
-    entity.remove(Collider2Ref);
-    entity.maybeRemove(Collider2Implicit);
+    entity.remove(ColliderRef);
+    entity.maybeRemove(ColliderImplicit);
   }
 
   modifiedTransform(entity: Entity) {
     const transform: Transform = entity.get(Transform);
-    const ref: Collider2Ref = entity.get(Collider2Ref);
+    const ref: ColliderRef = entity.get(ColliderRef);
 
     // Anticipate the need for PhysicsSystem to have an up-to-date translation
     // and rotation from a modified Transform
@@ -231,10 +253,10 @@ export class Collider2System extends System {
     // When scaling an object that has an implicit collider, we need to
     // re-calculate the size of the collider since the collider is calculated
     // automatically
-    const implicit: Collider2Implicit = entity.get(Collider2Implicit);
+    const implicit: ColliderImplicit = entity.get(ColliderImplicit);
     if (implicit && !ref.size.equals(implicit.size)) {
       this.remove(entity);
-      entity.add(Collider2Implicit, { size: ref.size });
+      entity.add(ColliderImplicit, { size: ref.size });
       this.build(entity);
     }
   }

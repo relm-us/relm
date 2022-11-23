@@ -5,10 +5,9 @@ import { AvatarEntities } from "~/types";
 
 import { Transform } from "~/ecs/plugins/core";
 import { Controller } from "~/ecs/plugins/player-control";
-import { Collider2 } from "~/ecs/plugins/collider";
+import { Collider3 } from "~/ecs/plugins/collider";
 import { Translucent } from "~/ecs/plugins/translucent";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
-import { InteractorSystem } from "~/ecs/plugins/interactor";
 
 export { setAppearance } from "./appearance";
 export { setEmoji } from "./emoji";
@@ -46,7 +45,7 @@ export class Avatar {
 
   enablePhysics(enabled = true) {
     this.entities.body.traverse((entity) => {
-      const collider: Collider2 = entity.get(Collider2);
+      const collider: Collider3 = entity.get(Collider3);
       if (!collider) return;
 
       collider.kind = enabled ? "AVATAR-PLAY" : "AVATAR-BUILD";

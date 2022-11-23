@@ -3,7 +3,7 @@ import { Presentation, Transform } from "~/ecs/plugins/core";
 import { Impact, Impactable } from "~/ecs/plugins/physics";
 import { Controller } from "~/ecs/plugins/player-control";
 import { Particles } from "~/ecs/plugins/particles";
-import { Collider2 } from "~/ecs/plugins/collider";
+import { Collider3 } from "~/ecs/plugins/collider";
 import { Animation } from "~/ecs/plugins/animation";
 
 import { worldManager } from "~/world";
@@ -113,7 +113,7 @@ export class PortalSystem extends System {
   }
 
   saveAttrs(active: PortalActive, otherEntity: Entity) {
-    const ref: Collider2 = otherEntity.get(Collider2);
+    const ref: Collider3 = otherEntity.get(Collider3);
     active.restoreAttrs.density = ref.density;
 
     const anim: Animation = otherEntity.get(Animation);
@@ -126,7 +126,7 @@ export class PortalSystem extends System {
   }
 
   setAttrs(otherEntity: Entity, { density, timeScale, transition }) {
-    const ref: Collider2 = otherEntity.get(Collider2);
+    const ref: Collider3 = otherEntity.get(Collider3);
     ref.density = density;
     ref.modified();
 

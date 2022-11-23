@@ -4,7 +4,6 @@ import { Vector2, Vector3, Quaternion, Euler } from "three";
 
 import { makeEntity } from "./makeEntity";
 
-import { Collider2 } from "~/ecs/plugins/collider";
 import { CssPlane, HdImage } from "~/ecs/plugins/css3d";
 import { Draggable } from "~/ecs/plugins/clickable";
 
@@ -37,14 +36,6 @@ export function makeHDImage(
     .add(HdImage, {
       asset: new Asset(url),
     });
-
-  if (collide) {
-    thing.add(Collider2, {
-      kind: "DYNAMIC",
-      shape: "BOX",
-      size: new Vector3(w, h, d),
-    });
-  }
 
   return thing;
 }

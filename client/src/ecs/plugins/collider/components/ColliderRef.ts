@@ -4,7 +4,7 @@ import type { Vector3 } from "three";
 import { LocalComponent, RefType } from "~/ecs/base";
 import { Vector3Type } from "~/ecs/plugins/core";
 
-export class Collider2Ref extends LocalComponent {
+export class ColliderRef extends LocalComponent {
   body: RigidBody;
   collider: Collider;
   size: Vector3;

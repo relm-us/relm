@@ -1,1 +1,1 @@
-export { Collider2VisibleRef } from "./Collider2VisibleRef";
+export { ColliderVisibleRef } from "./ColliderVisibleRef";

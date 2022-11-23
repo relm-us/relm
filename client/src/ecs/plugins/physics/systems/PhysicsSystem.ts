@@ -48,7 +48,7 @@ export class PhysicsSystem extends System {
       entity.remove(Impact);
     });
 
-    // NOTE: Collider2System will have already updated the rigid body's translation
+    // NOTE: ColliderSystem will have already updated the rigid body's translation
     //       and rotation by this point.
 
     this.fixedUpdate(delta);
