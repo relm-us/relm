@@ -97,6 +97,8 @@ export class ControllerSystem extends System {
       // Override speed if flying
       if (spec.canFly) {
         this.considerFlying(entity, state, spec.thrusts[FLYING_SPEED]);
+      } else {
+        state.hovering = false;
       }
 
       let gravityScale;
