@@ -1,8 +1,8 @@
 import type { Collider, RigidBody } from "@dimforge/rapier3d";
 
-import { StateComponent, RefType } from "~/ecs/base";
+import { RefType, StateComponent } from "~/ecs/base";
 
-export class ColliderExplicit extends StateComponent {
+export class ImplicitColliderApplied extends StateComponent {
   body: RigidBody;
   collider: Collider;
 

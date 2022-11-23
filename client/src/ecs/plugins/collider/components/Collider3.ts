@@ -28,6 +28,10 @@ export type Behavior = {
   isSensor: boolean;
 };
 
+export type ColliderModAttrs = {
+  friction?: number;
+};
+
 export class Collider3 extends Component {
   // Kinds of colliders:
   // - ETHEREAL: Immobile; never collides
@@ -66,7 +70,11 @@ export class Collider3 extends Component {
   // Collider density. Mass is calculated based on collider volume * density.
   density: number;
 
+  // Collider friction against other colliders; 1.0 is normal
   friction: number;
+
+  // Quick modifications that don't need full
+  modifiedAttrs: ColliderModAttrs | null;
 
   static props = {
     kind: {
@@ -210,5 +218,10 @@ export class Collider3 extends Component {
       default:
         throw Error(`unknown collider kind ${this.kind}`);
     }
+  }
+
+  modifyAttr(attrs: ColliderModAttrs) {
+    this.modifiedAttrs = { ...this.modifiedAttrs, ...attrs };
+    this.modified();
   }
 }

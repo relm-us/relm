@@ -1046,11 +1046,11 @@ export class WorldManager {
   }
 
   moveTo(position: Vector3, instantaneousCamera = true) {
+    // Update physics position
     const body: RigidBody = this.avatar.entities.body.get(ColliderRef)?.body;
-    if (body) {
-      body.setTranslation(position, true);
-    }
+    if (body) body.setTranslation(position, true);
 
+    // Update ECS position
     const transform = this.participants.local.avatar.transform;
     transform.position.copy(position);
     transform.modified(); // update physics engine
@@ -1183,7 +1183,7 @@ export class WorldManager {
   }
 
   upgradeWorld() {
-    for (let entity of migratedEntities) {
+    for (let entity of migratedEntities.values()) {
       console.log("upgrading migrated entity", entity.id);
       if (!entity.active) entity.activate();
       this.worldDoc.syncFrom(entity);

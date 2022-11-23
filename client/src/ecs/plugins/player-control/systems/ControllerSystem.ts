@@ -138,8 +138,7 @@ export class ControllerSystem extends System {
 
       const collider: Collider3 = entity.get(Collider3);
       if (collider.friction !== newFriction) {
-        collider.friction = newFriction;
-        collider.modified();
+        collider.modifyAttr({ friction: newFriction });
       }
 
       const anim: Animation = entity.get(Animation);
