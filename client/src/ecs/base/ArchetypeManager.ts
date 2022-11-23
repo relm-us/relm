@@ -1,12 +1,25 @@
-import { Archetype } from "./Archetype";
+import type { Entity } from "./Entity";
 import type { World } from "./World";
 
-export class ArchetypeManager {
+import { Archetype } from "./Archetype";
+import { TypedEmitter } from "tiny-typed-emitter";
+
+export type ArchetypeManagerEvents = {
+  "entity-component-change": (
+    entity: Entity,
+    Component: any,
+    isAdded: boolean
+  ) => void;
+};
+
+export class ArchetypeManager extends TypedEmitter<ArchetypeManagerEvents> {
   world: World;
   archetypes: Record<number, Archetype>;
   initialId: string;
 
   constructor(world) {
+    super();
+
     this.world = world;
     this.archetypes = {};
     this.initialId = null;
@@ -27,14 +40,16 @@ export class ArchetypeManager {
     this.addToArchetype(entity);
   }
 
-  onEntityComponentChange(entity, Component, isAdded) {
+  onEntityComponentChange(entity: Entity, Component, isAdded: boolean) {
+    this.emit("entity-component-change", entity, Component, isAdded);
+
     if (entity.active) {
       this.removeFromArchetype(entity);
     }
 
     if (Component.id === undefined) {
       console.error(Component);
-      throw Error('Unregistered component');
+      throw Error("Unregistered component");
     }
 
     entity.archetypeId =

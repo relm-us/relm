@@ -25,6 +25,7 @@ export type TypeOfComponent = typeof Component;
 
 export type ComponentClass = typeof Component & {
   new (): Component;
+  id: number;
   props: Properties;
   editor?: { label: string; description: string };
 };
