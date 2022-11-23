@@ -147,6 +147,11 @@
   "MessageHistory": {
     "empty_chat": "Empty chat history"
   },
+  "NeedsMigrationDialog": {
+    "title": "Update",
+    "upgrade": "Upgrade World",
+    "skip": "Skip for now"
+  },
   "Overlay": {
     "tooltips": {
       "set_up_video": "Set up Cam & Mic",

@@ -9,7 +9,8 @@ type DialogType =
   | "invite"
   | "language"
   | "graphics-quality"
-  | "avatar-appearance";
+  | "avatar-appearance"
+  | "needs-migration";
 
 export const openDialog: Writable<DialogType> = writable(null);
 

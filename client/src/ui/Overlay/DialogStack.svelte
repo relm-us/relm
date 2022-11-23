@@ -13,6 +13,7 @@
   import GraphicsQualityDialog from "~/ui/Dialogs/GraphicsQualityDialog.svelte";
   import InviteDialog from "~/ui//Dialogs/InviteDialog.svelte";
   import LanguageDialog from "~/ui/Dialogs/LanguageDialog.svelte";
+  import NeedsMigrationDialog from "~/ui/Dialogs/NeedsMigrationDialog.svelte";
   import PauseDialog from "~/ui/Dialogs/PauseDialog.svelte";
   import SignInDialog from "~/ui//Dialogs/SignInDialog.svelte";
   import SignUpDialog from "~/ui//Dialogs/SignUpDialog.svelte";
@@ -53,6 +54,8 @@
       />
     {:else if $openDialog === "pause"}
       <PauseDialog on:cancel={() => worldManager.togglePaused()} />
+    {:else if $openDialog === "needs-migration"}
+      <NeedsMigrationDialog on:cancel={() => ($openDialog = null)} />
     {/if}
   </div>
 {/if}

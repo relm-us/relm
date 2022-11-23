@@ -309,6 +309,7 @@ export class Entity {
     }
 
     for (const key of migratableKeys) {
+      console.log("migrate", this.id, key);
       this.world.migrations.migrate(key, this, data[key], data);
     }
 

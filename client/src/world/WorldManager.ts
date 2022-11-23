@@ -94,13 +94,14 @@ import { graphicsQuality } from "~/stores/graphicsQuality";
 import { portalOccupancy } from "~/stores/portalOccupancy";
 import { fantasySkin } from "~/stores/fantasySkin";
 import { colliderEditMode } from "~/stores/colliderEditMode";
+import { needsMigration } from "~/stores/needsMigration";
+import { permits } from "~/stores/permits";
 
 import { PhotoBooth } from "./PhotoBooth";
 import { Inventory } from "~/identity/Inventory";
 import { SelectionManager } from "./SelectionManager";
 import { ChatManager } from "./ChatManager";
 import { CameraManager } from "./CameraManager";
-import { RemoteComponent } from "~/ecs/shared/RemoteComponent";
 
 // Make THREE accessible for debugging
 (window as any).THREE = THREE;
@@ -222,15 +223,6 @@ export class WorldManager {
       avConnection,
       participants
     ).init();
-
-    this.world.archetypes.addListener(
-      "entity-component-change",
-      (entity, Component, isAdded) => {
-        if (Component instanceof RemoteComponent) {
-          console.log("component change", entity.id, Component.name, isAdded);
-        }
-      }
-    );
 
     // It's important that broker.subscribe() happen AFTER the
     // ParticipantManager exists and starts listening:
@@ -547,6 +539,15 @@ export class WorldManager {
     );
 
     this.unsubs.push(viewportScale.subscribe(($zoom) => this.didChangeZoom()));
+
+    // Notify participants with edit permission if the world needs upgrading
+    this.unsubs.push(
+      needsMigration.subscribe(($needed) => {
+        if ($needed && get(permits).includes("edit")) {
+          openDialog.set("needs-migration");
+        }
+      })
+    );
 
     // Pre-compile assets to prevent some jank while exploring the world
     this.world.presentation.compile();
@@ -1177,6 +1178,29 @@ export class WorldManager {
       } catch (err) {
         console.warn(err);
       }
+    }
+  }
+
+  isImpermanent(entity) {
+    return (
+      entity.name === "Avatar" ||
+      entity.name === "AvatarHead" ||
+      entity.name === "AvatarEmoji" ||
+      entity.name === "DirectionalLight" ||
+      entity.name === "Camera"
+    );
+  }
+
+  upgradeWorld() {
+    for (let entity of this.world.entities.entities.values()) {
+      if (this.isImpermanent(entity)) return;
+      this.worldDoc.syncFrom(entity);
+    }
+
+    for (let entity of this.worldDoc.inactiveEntities.values()) {
+      if (this.isImpermanent(entity)) return;
+      entity.activate();
+      this.worldDoc.syncFrom(entity);
     }
   }
 }

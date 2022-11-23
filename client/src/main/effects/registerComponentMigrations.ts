@@ -7,8 +7,10 @@ import {
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
 import { Vector3, MathUtils } from "three";
-import { Asset } from "~/ecs/plugins/core";
+
 import { GROUND_INTERACTION } from "~/config/colliderInteractions";
+import { Asset } from "~/ecs/plugins/core";
+import { needsMigration } from "~/stores/needsMigration";
 
 export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
   // Ignore `Asset`
@@ -23,6 +25,9 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
       compat: true,
       asset: assetUrl ? new Asset(assetUrl) : undefined,
     });
+
+    console.log("Model");
+    needsMigration.set(true);
   });
 
   // Migrate from `Model2` to `Model3`
@@ -37,6 +42,9 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
       if ("Asset" in data) {
         model3.asset = new Asset(data["Asset"].value.url);
       }
+
+      console.log("Model2");
+      needsMigration.set(true);
     }
   );
 
@@ -93,6 +101,9 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
       textureScale: data.textureScale,
       fixedTexture: data.fixedTexture === undefined ? false : data.fixedTexture,
     });
+
+    console.log("Shape");
+    needsMigration.set(true);
   });
 
   // Migrate from `Shape2` to `Shape3`
@@ -108,6 +119,9 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
       if ("Asset" in data) {
         shape3.asset = new Asset(data["Asset"].value.url);
       }
+
+      console.log("Shape2");
+      needsMigration.set(true);
     }
   );
 
@@ -129,13 +143,14 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
     (world, entity, componentData) => {}
   );
 
-  // Migrate from 'Collider' to 'Collider2'
+  // Migrate from 'Collider' to 'Collider3'
   ecsWorld.migrations.register("Collider", (world, entity, componentData) => {
     const data = componentData;
 
     const transform = entity.getByName("Transform");
-    const Collider2 = world.components.getByName("Collider2");
-    const collider = entity.add(Collider2, undefined, true);
+    const Collider3 = world.components.getByName("Collider3");
+    const collider = entity.add(Collider3, undefined, true);
+    entity.addByName("Collider3Active");
 
     collider.shape = data.shape;
     collider.offset.fromArray(data.offset).multiply(transform.scale);
@@ -181,6 +196,9 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
     }
 
     collider.size.copy(size);
+
+    console.log("Collider");
+    needsMigration.set(true);
   });
 
   ecsWorld.migrations.register(
@@ -192,6 +210,9 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
 
   ecsWorld.migrations.register("Item", (world, entity, componentData) => {
     entity.addByName("Item2", { compat: true }, true).fromJSON(componentData);
+
+    console.log("Item");
+    needsMigration.set(true);
   });
 
   // Migrate from FaceMapColors to FaceMapColors2
@@ -203,6 +224,9 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
         .fromJSON(componentData);
       // Version 2 requires "Active" component
       entity.addByName("FaceMapColorsActive");
+
+      console.log("FaceMapColors");
+      needsMigration.set(true);
     }
   );
 
@@ -211,6 +235,9 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
     entity.addByName("Bloom2", undefined, true).fromJSON(componentData);
     // Version 2 requires "Active" component
     entity.addByName("Bloom2Active");
+
+    console.log("Bloom");
+    needsMigration.set(true);
   });
 
   // Migrate from Collider2 to Collider3
@@ -218,5 +245,8 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
     entity.addByName("Collider3", undefined, true).fromJSON(componentData);
     // Version 3 requires "Active" component
     entity.addByName("Collider3Active");
+
+    console.log("Collider2", componentData);
+    needsMigration.set(true);
   });
 }
