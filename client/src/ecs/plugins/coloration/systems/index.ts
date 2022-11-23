@@ -1,1 +1,1 @@
-export { ColorationSystem } from "./ColorationSystem";
+export { FaceMapColorsSystem } from "./FaceMapColorsSystem";

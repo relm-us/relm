@@ -22,6 +22,7 @@ import {
   Collider2Implicit,
   PhysicsOptions,
   Collider2Explicit,
+  Collider2Inactive,
 } from "../components";
 
 const _b3 = new Box3();
@@ -44,7 +45,7 @@ export class Collider2System extends System {
   order = Groups.Presentation + 299;
 
   static queries = {
-    added: [Transform, Collider2, Not(Collider2Ref)],
+    added: [Transform, Collider2, Not(Collider2Ref), Not(Collider2Inactive)],
     modified: [Transform, Modified(Collider2), Collider2Ref],
 
     // Since it's required for Collider2Ref to be a LocalComponent (in order
@@ -53,6 +54,7 @@ export class Collider2System extends System {
     // interaction or on-stage action. We use Collider2Explicit (a State-
     // Component) for this purpose.
     removed: [Not(Collider2), Collider2Explicit, Not(Collider2Implicit)],
+    inactive: [Collider2, Collider2Ref, Collider2Inactive],
 
     addImplicit: [
       Transform,
@@ -86,6 +88,13 @@ export class Collider2System extends System {
         if (ref.collider) this.physics.removeCollider(ref.collider);
         if (ref.body) this.physics.removeBody(ref.body);
       }
+      entity.remove(Collider2Explicit);
+    });
+    this.queries.inactive.forEach((entity) => {
+      const ref: Collider2Explicit = entity.get(Collider2Explicit);
+      if (ref.collider) this.physics.removeCollider(ref.collider);
+      if (ref.body) this.physics.removeBody(ref.body);
+
       entity.remove(Collider2Explicit);
     });
 

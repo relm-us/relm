@@ -4,7 +4,7 @@ import { Vector3, Quaternion, Euler } from "three";
 
 import { makeEntity } from "./makeEntity";
 import { Model3 } from "~/ecs/plugins/model";
-import { FaceMapColors } from "~/ecs/plugins/coloration";
+import { FaceMapColors2 } from "~/ecs/plugins/coloration";
 import { pickOne } from "~/utils/pickOne";
 import { Html2d } from "~/ecs/plugins/html2d";
 import { Clickable, Draggable } from "~/ecs/plugins/clickable";
@@ -53,7 +53,7 @@ export function makeRock(
       rotation: new Quaternion().setFromEuler(new Euler(xa, ya, za)),
     })
     .add(Model3, { asset: new Asset(url) })
-    .add(FaceMapColors, {
+    .add(FaceMapColors2, {
       colors: {
         color1: [
           pickOne(colors),

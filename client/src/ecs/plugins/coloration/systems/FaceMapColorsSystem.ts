@@ -2,30 +2,47 @@ import { Color, BufferAttribute, Mesh } from "three";
 
 import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
 import { ModelRef } from "~/ecs/plugins/model";
-import { FaceMapColors, ColorApplied } from "../components";
+import {
+  FaceMapColors2,
+  FaceMapColorsActive,
+  FaceMapColorsApplied,
+} from "../components";
 import { getFacemapNames } from "../getFacemapNames";
 
-export class ColorationSystem extends System {
+export class FaceMapColorsSystem extends System {
   order = Groups.Simulation + 1;
 
   static queries = {
-    new: [FaceMapColors, ModelRef, Not(ColorApplied)],
-    modified: [Modified(FaceMapColors), ModelRef],
-    removed: [Not(FaceMapColors), ColorApplied],
-    removedRef: [Not(ModelRef), ColorApplied],
+    added: [
+      FaceMapColors2,
+      FaceMapColorsActive,
+      ModelRef,
+      Not(FaceMapColorsApplied),
+    ],
+    modified: [Modified(FaceMapColors2), ModelRef],
+    removed: [Not(FaceMapColors2), FaceMapColorsApplied],
+    removedModel: [Not(ModelRef), FaceMapColorsApplied],
+    deactivated: [FaceMapColorsApplied, Not(FaceMapColorsActive)],
   };
 
   update() {
-    this.queries.new.forEach((entity) => {
+    this.queries.added.forEach((entity) => {
       this.build(entity);
     });
+
     this.queries.modified.forEach((entity) => {
       this.setFaceMapColors(entity);
     });
+
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
     });
-    this.queries.removedRef.forEach((entity) => {
+
+    this.queries.removedModel.forEach((entity) => {
+      this.remove(entity);
+    });
+
+    this.queries.deactivated.forEach((entity) => {
       this.remove(entity);
     });
   }
@@ -33,7 +50,7 @@ export class ColorationSystem extends System {
   build(entity: Entity) {
     this.cloneGeometry(entity);
     this.setFaceMapColors(entity);
-    entity.add(ColorApplied);
+    entity.add(FaceMapColorsApplied);
   }
 
   resetFaceMapColors(entity: Entity) {
@@ -58,7 +75,7 @@ export class ColorationSystem extends System {
     const scene = ref?.value?.scene;
     if (!scene) return;
 
-    const spec = entity.get(FaceMapColors);
+    const spec = entity.get(FaceMapColors2);
 
     if (!spec.colors) return;
 
@@ -83,7 +100,7 @@ export class ColorationSystem extends System {
 
   remove(entity: Entity) {
     this.resetFaceMapColors(entity);
-    entity.remove(ColorApplied);
+    entity.remove(FaceMapColorsApplied);
   }
 
   cloneGeometry(entity: Entity) {

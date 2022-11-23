@@ -16,6 +16,9 @@
   let component;
   $: component = entity.components.get(Component);
 
+  let isActive;
+  $: isActive = checkActive(entity, Component.name);
+
   const dispatch = createEventDispatcher();
 
   function propRequires(prop) {
@@ -69,9 +72,36 @@
     dispatch("modified");
   };
 
-  const canDestroy = () => {
+  function canDestroy() {
     return !["Transform"].includes(Component.name);
-  };
+  }
+
+  function getActivator(entity, componentName) {
+    return entity.world.components.activators[componentName];
+  }
+
+  function canActivate(entity, componentName) {
+    return Boolean(getActivator(entity, componentName));
+  }
+
+  function checkActive(entity, componentName) {
+    const Activator = getActivator(entity, componentName);
+    return entity.components.has(Activator);
+  }
+
+  function activate(entity, componentName) {
+    const Activator = getActivator(entity, componentName);
+    entity.add(Activator);
+    isActive = true;
+    onModified();
+  }
+
+  function deactivate(entity, componentName) {
+    const Activator = getActivator(entity, componentName);
+    entity.maybeRemove(Activator);
+    isActive = false;
+    onModified();
+  }
 
   if (Component.name === "Transform") {
     const UPDATE_FREQUENCY_MS = 400;
@@ -88,7 +118,11 @@
 <Pane
   title={Component.editor ? Component.editor.label : Component.name}
   showClose={canDestroy()}
+  showActivate={canActivate(entity, Component.name)}
+  {isActive}
   on:close={() => dispatch("destroy")}
+  on:activate={() => activate(entity, Component.name)}
+  on:deactivate={() => deactivate(entity, Component.name)}
 >
   {#if Component.editor?.description}
     <r-desc>

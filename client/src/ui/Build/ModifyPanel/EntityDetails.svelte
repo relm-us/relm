@@ -12,7 +12,7 @@
   const dispatch = createEventDispatcher();
 
   let componentOptions;
-  $: componentOptions = getComponentOptions(worldManager.world, entity);
+  $: componentOptions = getComponentOptions(entity);
 
   let selectedValue;
 
@@ -31,7 +31,7 @@
       worldManager.worldDoc.syncFrom(entity);
       dispatch("modified");
 
-      componentOptions = getComponentOptions(worldManager.world, entity);
+      componentOptions = getComponentOptions(entity);
       selectedValue = undefined;
     }, 300);
   };

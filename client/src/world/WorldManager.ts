@@ -100,6 +100,7 @@ import { Inventory } from "~/identity/Inventory";
 import { SelectionManager } from "./SelectionManager";
 import { ChatManager } from "./ChatManager";
 import { CameraManager } from "./CameraManager";
+import { RemoteComponent } from "~/ecs/shared/RemoteComponent";
 
 // Make THREE accessible for debugging
 (window as any).THREE = THREE;
@@ -221,6 +222,15 @@ export class WorldManager {
       avConnection,
       participants
     ).init();
+
+    this.world.archetypes.addListener(
+      "entity-component-change",
+      (entity, Component, isAdded) => {
+        if (Component instanceof RemoteComponent) {
+          console.log("component change", entity.id, Component.name, isAdded);
+        }
+      }
+    );
 
     // It's important that broker.subscribe() happen AFTER the
     // ParticipantManager exists and starts listening:

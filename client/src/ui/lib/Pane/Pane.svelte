@@ -2,40 +2,51 @@
   import { createEventDispatcher } from "svelte";
 
   // https://svelte-icons.vercel.app/
-  import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
-  import IoIosMenu from "svelte-icons/io/IoIosMenu.svelte";
+  import IoMdClose from "svelte-icons/io/IoMdClose.svelte";
+  import IoMdFlash from "svelte-icons/io/IoMdFlash.svelte";
+  import IoMdFlashOff from "svelte-icons/io/IoMdFlashOff.svelte";
 
   export let title: string;
   export let subtitle: string = null;
   export let minimized = false;
 
   export let showClose = false;
-  export let showSettings = false;
+  export let showActivate = false;
+  export let isActive = true;
 
   function onMinimize() {
     minimized = !minimized;
     dispatch("minimize", minimized);
   }
 
+  function onClose() {
+    dispatch("close");
+  }
+
+  function onToggleActive() {
+    dispatch(isActive ? "deactivate" : "activate");
+  }
+
   const dispatch = createEventDispatcher();
 </script>
 
 <r-pane>
-  <icon-bar>
+  <r-icon-bar>
     {#if showClose}
-      <icon on:mousedown|preventDefault={() => dispatch("close")}>
-        <IoIosClose />
-      </icon>
+      <r-icon on:mousedown|preventDefault={onClose}>
+        <IoMdClose />
+      </r-icon>
     {/if}
-    {#if showSettings}
-      <icon
-        class="small"
-        on:mousedown|preventDefault={() => dispatch("settings")}
-      >
-        <IoIosMenu />
-      </icon>
+    {#if showActivate}
+      <r-icon on:mousedown|preventDefault={onToggleActive}>
+        {#if isActive}
+          <IoMdFlash />
+        {:else}
+          <IoMdFlashOff />
+        {/if}
+      </r-icon>
     {/if}
-  </icon-bar>
+  </r-icon-bar>
 
   {#if title}
     <r-label on:mousedown|preventDefault={onMinimize}>
@@ -86,25 +97,26 @@
     color: #eee;
   }
 
-  icon-bar {
+  r-icon-bar {
     display: flex;
     position: absolute;
     justify-content: flex-start;
     flex-direction: row-reverse;
 
     top: 2px;
-    right: 8px;
+    right: 6px;
 
     cursor: pointer;
     pointer-events: all;
   }
-  icon {
-    width: 24px;
-    height: 24px;
-    margin-left: -2px;
-    margin-right: -2px;
+  r-icon {
+    display: block;
+    width: 18px;
+    height: 18px;
+    padding: 2px;
   }
-  icon.small {
-    transform: scale(0.75);
+  r-icon:hover {
+    background-color: rgba(255, 255, 255, 0.35);
+    border-radius: 3px;
   }
 </style>

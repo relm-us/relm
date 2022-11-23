@@ -1,10 +1,9 @@
-import type { DecoratedECSWorld } from "~/types";
 import { Entity } from "~/ecs/base";
 import { sortAlphabetically } from "./sortAlphabetically";
 
-export function getComponentOptions(world: DecoratedECSWorld, entity: Entity = null) {
-  const entityComponentNames = entity?.Components.map((c) => c.name);
-  const components = Object.values(world.components.componentsByName)
+export function getComponentOptions(entity: Entity) {
+  const entityComponentNames = entity.Components.map((c) => c.name);
+  const components = Object.values(entity.world.components.components)
     .filter((Component: any) => {
       return (
         Component.editor &&

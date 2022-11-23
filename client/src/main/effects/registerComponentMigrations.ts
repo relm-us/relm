@@ -193,4 +193,23 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
   ecsWorld.migrations.register("Item", (world, entity, componentData) => {
     entity.addByName("Item2", { compat: true }, true).fromJSON(componentData);
   });
+
+  // Migrate from FaceMapColors to FaceMapColors2
+  ecsWorld.migrations.register(
+    "FaceMapColors",
+    (world, entity, componentData) => {
+      entity
+        .addByName("FaceMapColors2", undefined, true)
+        .fromJSON(componentData);
+      // Version 2 requires "Active" component
+      entity.addByName("FaceMapColorsActive");
+    }
+  );
+
+  // Migrate from Bloom to Bloom2
+  ecsWorld.migrations.register("Bloom", (world, entity, componentData) => {
+    entity.addByName("Bloom2", undefined, true).fromJSON(componentData);
+    // Version 2 requires "Active" component
+    entity.addByName("Bloom2Active");
+  });
 }

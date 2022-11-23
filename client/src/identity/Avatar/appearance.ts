@@ -9,7 +9,7 @@ import { get } from "svelte/store";
 import { fantasySkin } from "~/stores/fantasySkin";
 
 import { Morph } from "~/ecs/plugins/morph";
-import { FaceMapColors } from "~/ecs/plugins/coloration";
+import { FaceMapColors2, FaceMapColorsActive } from "~/ecs/plugins/coloration";
 
 import { AvatarEntities } from "~/types";
 import { pickOne } from "~/utils/pickOne";
@@ -33,10 +33,11 @@ export function setAppearance(
   }
 
   if (colors) {
-    if (!entities.body.has(FaceMapColors)) {
-      entities.body.add(FaceMapColors, { colors });
+    if (!entities.body.has(FaceMapColors2)) {
+      entities.body.add(FaceMapColors2, { colors });
+      entities.body.add(FaceMapColorsActive);
     } else {
-      const facemap = entities.body.get(FaceMapColors);
+      const facemap = entities.body.get(FaceMapColors2);
       facemap.colors = colors;
       facemap.modified();
     }
