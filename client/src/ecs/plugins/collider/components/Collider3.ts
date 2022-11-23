@@ -30,6 +30,9 @@ export type Behavior = {
 
 export type ColliderModAttrs = {
   friction?: number;
+  gravityScale?: number;
+  angularDamping?: number;
+  linearDamping?: number;
 };
 
 export class Collider3 extends Component {

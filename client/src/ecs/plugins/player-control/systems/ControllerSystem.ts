@@ -77,6 +77,7 @@ export class ControllerSystem extends System {
 
       const spec: Controller = entity.get(Controller);
       const state: ControllerState = entity.get(ControllerState);
+      const collider: Collider3 = entity.get(Collider3);
       state.grounded = this.isGrounded(entity);
 
       const direction = get(controlDirection);
@@ -98,15 +99,18 @@ export class ControllerSystem extends System {
         this.considerFlying(entity, state, spec.thrusts[FLYING_SPEED]);
       }
 
-      const rigidBody: RapierRigidBody = entity.get(ColliderRef)?.body;
-      if (rigidBody) {
-        rigidBody.setGravityScale(
-          state.grounded || spec.canFly ? FALL_NORMAL : FALL_FAST,
-          false
-        );
-        rigidBody.setAngularDamping(spec.angDamps[state.speed]);
-        rigidBody.setLinearDamping(spec.linDamps[state.speed]);
-      }
+      let gravityScale;
+      if (state.hovering) gravityScale = 0;
+      else if (state.grounded) gravityScale = FALL_NORMAL;
+      else if (spec.canFly) gravityScale = FALL_NORMAL;
+      else if (!state.grounded) gravityScale = FALL_FAST;
+      else gravityScale = FALL_NORMAL;
+
+      collider.modifyAttr({
+        gravityScale,
+        angularDamping: spec.angDamps[state.speed],
+        linearDamping: spec.linDamps[state.speed],
+      });
 
       // Modify direction to align with camera axis, rather than world axis
       // TODO: Don't depend on worldManager.camera, use this.presentation.camera
@@ -136,7 +140,6 @@ export class ControllerSystem extends System {
         newFriction = 0.01;
       }
 
-      const collider: Collider3 = entity.get(Collider3);
       if (collider.friction !== newFriction) {
         collider.modifyAttr({ friction: newFriction });
       }
@@ -202,7 +205,6 @@ export class ControllerSystem extends System {
     thrustMagnitude: number
   ) {
     const ref: ColliderRef = entity.get(ColliderRef);
-    // const body = ref.body;
 
     if (get(keySpace)) {
       vDir.copy(vUp).multiplyScalar(thrustMagnitude);
@@ -210,11 +212,7 @@ export class ControllerSystem extends System {
     }
 
     if (doublePressedSpace) {
-      const options: PhysicsOptions = entity.get(PhysicsOptions);
-      const spec: Collider3 = entity.get(Collider3);
-      setTimeout(() => {
-        ref.body.sleep();
-      }, 100);
+      state.hovering = !state.hovering;
       doublePressedSpace = false;
     }
 
@@ -233,7 +231,10 @@ export class ControllerSystem extends System {
 
     const angle = signedAngleBetweenVectors(bodyFacing, direction, vUp);
     torque.set(0, angle * torqueMagnitude, 0);
-    body.addTorque(torque, true);
+
+    if (torqueMagnitude >= 0.01) {
+      body.addTorque(torque, true);
+    }
 
     return angle;
   }
@@ -241,9 +242,11 @@ export class ControllerSystem extends System {
   thrustTowards(entity: Entity, direction: Vector3, thrustMagnitude: number) {
     const body: RapierRigidBody = entity.get(ColliderRef).body;
 
-    thrust.copy(direction);
-    thrust.multiplyScalar(thrustMagnitude);
-    body.addForce(thrust, true);
+    if (thrustMagnitude >= 0.01) {
+      thrust.copy(direction);
+      thrust.multiplyScalar(thrustMagnitude);
+      body.addForce(thrust, true);
+    }
   }
 
   repelFromOthers(entity: Entity) {

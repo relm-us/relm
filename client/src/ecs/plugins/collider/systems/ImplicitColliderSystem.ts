@@ -125,8 +125,8 @@ export class ImplicitColliderSystem extends System {
 
     // Anticipate the need for PhysicsSystem to have an up-to-date translation
     // and rotation from a modified Transform
-    ref.body.setTranslation(transform.position, true);
-    ref.body.setRotation(transform.rotation, true);
+    ref.body.setTranslation(transform.position, false);
+    ref.body.setRotation(transform.rotation, false);
 
     // When scaling an object that has an implicit collider, we need to
     // re-calculate the size of the collider since the collider is calculated

@@ -8,6 +8,7 @@ export class ControllerState extends LocalComponent {
   grounded: boolean;
   direction: Vector3;
   animOverride: AnimationOverride;
+  hovering: boolean;
 
   static props = {
     speed: {
@@ -28,6 +29,11 @@ export class ControllerState extends LocalComponent {
     animOverride: {
       type: RefType,
       default: null,
+    },
+
+    hovering: {
+      type: BooleanType,
+      default: false,
     },
   };
 }

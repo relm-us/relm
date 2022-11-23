@@ -4,7 +4,12 @@ import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { Physics } from "~/ecs/plugins/physics";
 
-import { Collider3, ColliderRef, Collider3Active } from "../components";
+import {
+  Collider3,
+  ColliderRef,
+  Collider3Active,
+  PhysicsOptions,
+} from "../components";
 import { createCollider } from "../shared/createCollider";
 import { createRigidBody } from "../shared/createRigidBody";
 
@@ -100,10 +105,28 @@ export class ColliderSystem extends System {
   modifyFromAttrs(entity: Entity) {
     const ref: ColliderRef = entity.get(ColliderRef);
     const spec: Collider3 = entity.get(Collider3);
+    const options: PhysicsOptions = entity.get(PhysicsOptions);
+
     if ("friction" in spec.modifiedAttrs) {
       spec.friction = spec.modifiedAttrs.friction;
       ref.collider.setFriction(spec.modifiedAttrs.friction);
     }
+
+    if ("gravityScale" in spec.modifiedAttrs) {
+      options.gravityScale = spec.modifiedAttrs.gravityScale;
+      ref.body.setGravityScale(spec.modifiedAttrs.gravityScale, false);
+    }
+
+    if ("angularDamping" in spec.modifiedAttrs) {
+      options.angDamp = spec.modifiedAttrs.angularDamping;
+      ref.body.setAngularDamping(spec.modifiedAttrs.angularDamping);
+    }
+
+    if ("linearDamping" in spec.modifiedAttrs) {
+      options.linDamp = spec.modifiedAttrs.linearDamping;
+      ref.body.setLinearDamping(spec.modifiedAttrs.linearDamping);
+    }
+
     spec.modifiedAttrs = null;
   }
 
