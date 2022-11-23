@@ -134,6 +134,7 @@ export class ColliderSystem extends System {
     entity: Entity,
     params: ColliderParams = this.makeColliderParams(entity)
   ) {
+    if (entity.name === "Avatar") console.log("build avatar");
     const body = this.createRigidBody(entity, params.spec.behavior);
     this.physics.addBody(body, entity);
 
@@ -199,7 +200,9 @@ export class ColliderSystem extends System {
       .setAngularDamping(options.angDamp)
       .restrictRotations(rr.includes("X"), rr.includes("Y"), rr.includes("Z"));
 
-    return world.createRigidBody(bodyDesc);
+    const body: RigidBody = world.createRigidBody(bodyDesc);
+
+    return body;
   }
 
   createCollider(

@@ -14,6 +14,9 @@ export class PhysicsOptions extends Component {
   // e.g. "Y" would restrict rotations to only the Y axis
   rotRestrict: string;
 
+  // Ratio to scale gravity; 1 is "normal"
+  gravityScale: number;
+
   static props = {
     additionalMass: {
       type: NumberType,
@@ -45,6 +48,11 @@ export class PhysicsOptions extends Component {
       editor: {
         label: "Rotation Restrictions",
       },
+    },
+
+    gravityScale: {
+      type: NumberType,
+      default: 0,
     },
   };
 }

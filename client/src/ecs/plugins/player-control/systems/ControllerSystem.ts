@@ -8,7 +8,7 @@ import { worldManager } from "~/world";
 import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
 import { Physics } from "~/ecs/plugins/physics";
-import { Collider3, ColliderRef } from "~/ecs/plugins/collider";
+import { Collider3, ColliderRef, PhysicsOptions } from "~/ecs/plugins/collider";
 import { Animation } from "~/ecs/plugins/animation";
 import { isMakingContactWithGround } from "~/ecs/shared/isMakingContactWithGround";
 
@@ -16,7 +16,6 @@ import { keySpace } from "~/stores/keys";
 
 import { Controller, ControllerState, Repulsive } from "../components";
 
-import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
 import { FALLING } from "~/config/constants";
 import { changeAnimationClip } from "~/identity/Avatar/changeAnimationClip";
 import { controlDirection } from "~/stores/controlDirection";
@@ -40,7 +39,18 @@ const p1 = new Vector3();
 const p2 = new Vector3();
 const v2dir = new Vector2();
 
-const vectorFromKeys = new Vector3();
+let lastPressedSpace: number = -1000;
+let doublePressedSpace: boolean = false;
+keySpace.subscribe((pressed) => {
+  const now = performance.now();
+  if (pressed) {
+    if (now - lastPressedSpace < 300) {
+      console.log("double pressed");
+      doublePressedSpace = true;
+    }
+    lastPressedSpace = now;
+  }
+});
 
 export class ControllerSystem extends System {
   physics: Physics;
@@ -192,11 +202,21 @@ export class ControllerSystem extends System {
     state: ControllerState,
     thrustMagnitude: number
   ) {
-    const body: RapierRigidBody = entity.get(ColliderRef).body;
+    const ref: ColliderRef = entity.get(ColliderRef);
+    // const body = ref.body;
 
     if (get(keySpace)) {
       vDir.copy(vUp).multiplyScalar(thrustMagnitude);
-      body.addForce(vDir, true);
+      ref.body.addForce(vDir, true);
+    }
+
+    if (doublePressedSpace) {
+      const options: PhysicsOptions = entity.get(PhysicsOptions);
+      const spec: Collider3 = entity.get(Collider3);
+      setTimeout(() => {
+        ref.body.sleep();
+      }, 100);
+      doublePressedSpace = false;
     }
 
     // Call on alternate damping values & flying animation
