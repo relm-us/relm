@@ -6,7 +6,7 @@ import { Not, Modified } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
 import { Physics } from "~/ecs/plugins/physics";
-import { ColliderRef } from "~/ecs/plugins/collider";
+import { ColliderRef, ImplicitColliderRef } from "~/ecs/plugins/collider";
 
 import { RenderableBaseSystem } from "../base/RenderableBaseSystem";
 import { CssPlane } from "../components";
@@ -49,7 +49,7 @@ export class ProjectorSystem extends RenderableBaseSystem {
       // Find nearest video stream and share it
       if (this.world.version % 17 === 0) {
         const transform: Transform = entity.get(Transform);
-        const ref: ColliderRef = entity.get(ColliderRef);
+        const ref: ImplicitColliderRef = entity.get(ImplicitColliderRef);
         const shape = new this.physics.rapier.Cuboid(
           ref.size.x / 2 + NEAR_EXTENT,
           ref.size.y / 2,
