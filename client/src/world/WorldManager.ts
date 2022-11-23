@@ -102,6 +102,7 @@ import { Inventory } from "~/identity/Inventory";
 import { SelectionManager } from "./SelectionManager";
 import { ChatManager } from "./ChatManager";
 import { CameraManager } from "./CameraManager";
+import { migratedEntities } from "~/main/effects/registerComponentMigrations";
 
 // Make THREE accessible for debugging
 (window as any).THREE = THREE;
@@ -1181,25 +1182,10 @@ export class WorldManager {
     }
   }
 
-  isImpermanent(entity) {
-    return (
-      entity.name === "Avatar" ||
-      entity.name === "AvatarHead" ||
-      entity.name === "AvatarEmoji" ||
-      entity.name === "DirectionalLight" ||
-      entity.name === "Camera"
-    );
-  }
-
   upgradeWorld() {
-    for (let entity of this.world.entities.entities.values()) {
-      if (this.isImpermanent(entity)) return;
-      this.worldDoc.syncFrom(entity);
-    }
-
-    for (let entity of this.worldDoc.inactiveEntities.values()) {
-      if (this.isImpermanent(entity)) return;
-      entity.activate();
+    for (let entity of migratedEntities) {
+      console.log("upgrading migrated entity", entity.id);
+      if (!entity.active) entity.activate();
       this.worldDoc.syncFrom(entity);
     }
   }

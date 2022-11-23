@@ -1,5 +1,5 @@
 import type { AuthenticationHeaders } from "relm-common";
-import type { DecoratedECSWorld, WorldDocStatus } from "~/types";
+import type { DecoratedECSWorld } from "~/types";
 
 import * as Y from "yjs";
 import { readableMap, YReadableMap } from "svelt-yjs";
@@ -35,6 +35,10 @@ import { uuidv4 } from "~/utils/uuid";
 import { Transition } from "~/ecs/plugins/transition";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
+
+const logEnabled = (localStorage.getItem("debug") || "")
+  .split(":")
+  .includes("worlddoc");
 
 export class WorldDoc extends EventEmitter {
   // The Hecs world that this document will synchronize with
@@ -193,7 +197,7 @@ export class WorldDoc extends EventEmitter {
   }
 
   recomputeStats() {
-    console.log("asking server to recompute stats");
+    if (logEnabled) console.log("asking server to recompute stats");
     this.settings.y.set("recompute", uuidv4());
   }
 
@@ -218,6 +222,11 @@ export class WorldDoc extends EventEmitter {
       const after = entity.toJSON();
 
       const diff = DeepDiff(before, after);
+
+      if (logEnabled) {
+        console.log("syncFrom", entity.id, entity.name, before, after, diff);
+      }
+
       applyDiffToYEntity(diff, yentity, this.ydoc);
     } else {
       /* This entity is new to WorldDoc */

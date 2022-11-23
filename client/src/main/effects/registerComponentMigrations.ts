@@ -5,6 +5,7 @@ import {
   ShapeType,
 } from "~/types/shapes";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
+import type { Entity } from "~/ecs/base";
 
 import { Vector3, MathUtils } from "three";
 
@@ -12,9 +13,18 @@ import { GROUND_INTERACTION } from "~/config/colliderInteractions";
 import { Asset } from "~/ecs/plugins/core";
 import { needsMigration } from "~/stores/needsMigration";
 
+export const migratedEntities: Set<Entity> = new Set();
+
+function tagNeedsMigrating(entity) {
+  migratedEntities.add(entity);
+  needsMigration.set(true);
+}
+
 export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
   // Ignore `Asset`
-  ecsWorld.migrations.register("Asset", (world, entity, componentData) => {});
+  ecsWorld.migrations.register("Asset", (world, entity, componentData) => {
+    tagNeedsMigrating(entity);
+  });
 
   // Migrate from `Model` to `Model3`
   // - `Model` treats bounding box differently, so we need `compat` flag
@@ -26,8 +36,7 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
       asset: assetUrl ? new Asset(assetUrl) : undefined,
     });
 
-    console.log("Model");
-    needsMigration.set(true);
+    tagNeedsMigrating(entity);
   });
 
   // Migrate from `Model2` to `Model3`
@@ -43,8 +52,7 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
         model3.asset = new Asset(data["Asset"].value.url);
       }
 
-      console.log("Model2");
-      needsMigration.set(true);
+      tagNeedsMigrating(entity);
     }
   );
 
@@ -102,8 +110,7 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
       fixedTexture: data.fixedTexture === undefined ? false : data.fixedTexture,
     });
 
-    console.log("Shape");
-    needsMigration.set(true);
+    tagNeedsMigrating(entity);
   });
 
   // Migrate from `Shape2` to `Shape3`
@@ -120,8 +127,7 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
         shape3.asset = new Asset(data["Asset"].value.url);
       }
 
-      console.log("Shape2");
-      needsMigration.set(true);
+      tagNeedsMigrating(entity);
     }
   );
 
@@ -134,14 +140,15 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
       if ("Asset" in data) {
         image.asset = new Asset(data["Asset"].value.url);
       }
+
+      tagNeedsMigrating(entity);
     }
   );
 
   // Ignore RigidBody
-  ecsWorld.migrations.register(
-    "RigidBody",
-    (world, entity, componentData) => {}
-  );
+  ecsWorld.migrations.register("RigidBody", (world, entity, componentData) => {
+    tagNeedsMigrating(entity);
+  });
 
   // Migrate from 'Collider' to 'Collider3'
   ecsWorld.migrations.register("Collider", (world, entity, componentData) => {
@@ -197,22 +204,20 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
 
     collider.size.copy(size);
 
-    console.log("Collider");
-    needsMigration.set(true);
+    tagNeedsMigrating(entity);
   });
 
   ecsWorld.migrations.register(
     "TranslucentOptions",
     (world, entity, componentData) => {
-      // ignore
+      tagNeedsMigrating(entity);
     }
   );
 
   ecsWorld.migrations.register("Item", (world, entity, componentData) => {
     entity.addByName("Item2", { compat: true }, true).fromJSON(componentData);
 
-    console.log("Item");
-    needsMigration.set(true);
+    tagNeedsMigrating(entity);
   });
 
   // Migrate from FaceMapColors to FaceMapColors2
@@ -225,8 +230,7 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
       // Version 2 requires "Active" component
       entity.addByName("FaceMapColorsActive");
 
-      console.log("FaceMapColors");
-      needsMigration.set(true);
+      tagNeedsMigrating(entity);
     }
   );
 
@@ -236,8 +240,7 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
     // Version 2 requires "Active" component
     entity.addByName("Bloom2Active");
 
-    console.log("Bloom");
-    needsMigration.set(true);
+    tagNeedsMigrating(entity);
   });
 
   // Migrate from Collider2 to Collider3
@@ -246,7 +249,6 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
     // Version 3 requires "Active" component
     entity.addByName("Collider3Active");
 
-    console.log("Collider2", componentData);
-    needsMigration.set(true);
+    tagNeedsMigrating(entity);
   });
 }
