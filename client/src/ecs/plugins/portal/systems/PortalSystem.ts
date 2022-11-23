@@ -2,7 +2,7 @@ import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
 import { Impact, Impactable } from "~/ecs/plugins/physics";
 import { Controller } from "~/ecs/plugins/player-control";
-import { Particles } from "~/ecs/plugins/particles";
+import { ParticlesActive } from "~/ecs/plugins/particles";
 import { Collider3 } from "~/ecs/plugins/collider";
 import { Animation } from "~/ecs/plugins/animation";
 
@@ -44,7 +44,7 @@ export class PortalSystem extends System {
       if (!otherEntity.has(Controller)) return;
 
       // Make avatar light up
-      otherEntity.get(Particles).enabled = true;
+      otherEntity.add(ParticlesActive);
 
       const transform = otherEntity.get(Transform);
       const portal: Portal = entity.get(Portal);
@@ -105,7 +105,7 @@ export class PortalSystem extends System {
         }
 
         // Animation complete
-        active.animatedEntity.get(Particles).enabled = false;
+        active.animatedEntity.maybeRemove(ParticlesActive);
       } else if (active.countdown <= -500 && active.triggered) {
         entity.remove(PortalActive);
       }

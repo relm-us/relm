@@ -3,7 +3,7 @@ import { Vector3, Color, AdditiveBlending } from "three";
 import { System, Groups, Entity, Not, Modified } from "~/ecs/base";
 import { Object3DRef, Presentation, Transform } from "~/ecs/plugins/core";
 
-import { Particles, ParticlesRef } from "../components";
+import { Particles2, ParticlesActive, ParticlesRef } from "../components";
 import { GPUParticleSystem } from "../GPUParticleSystem";
 
 import { textures } from "../textures";
@@ -14,7 +14,7 @@ function rand(low, high) {
 }
 
 const motionPattern = {
-  STILL: (spec: Particles, transform: Transform, options) => {
+  STILL: (spec: Particles2, transform: Transform, options) => {
     options.position.set(
       rand(-spec.params.x / 2, spec.params.x / 2),
       rand(-spec.params.y / 2, spec.params.y / 2),
@@ -26,7 +26,7 @@ const motionPattern = {
 
     return options;
   },
-  EXPLODE: (spec: Particles, transform: Transform, options) => {
+  EXPLODE: (spec: Particles2, transform: Transform, options) => {
     options.position.set(0, 0, 0);
     options.velocity.set(
       rand(-spec.params.x, spec.params.x),
@@ -35,7 +35,7 @@ const motionPattern = {
     );
     return options;
   },
-  RING: (spec: Particles, transform: Transform, options) => {
+  RING: (spec: Particles2, transform: Transform, options) => {
     const theta = Math.random() * Math.PI * 2;
     const radius = Math.max(spec.params.x, 0.1);
     const x = Math.cos(theta) * radius;
@@ -51,7 +51,7 @@ const motionPattern = {
 
     return options;
   },
-  TRAILS: (spec: Particles, transform: Transform, options) => {
+  TRAILS: (spec: Particles2, transform: Transform, options) => {
     const radius = Math.max(spec.params.x, 0.1);
     options.position.set(
       Math.cos(spec.theta) * radius,
@@ -66,7 +66,7 @@ const motionPattern = {
 
     return options;
   },
-  RAINING: (spec: Particles, transform: Transform, options) => {
+  RAINING: (spec: Particles2, transform: Transform, options) => {
     options.velocity.set(0, -rand(0.5, 2), 0);
     options.position.set(
       rand(-spec.params.x / 2, spec.params.x / 2),
@@ -84,11 +84,11 @@ export class ParticlesSystem extends System {
   order = Groups.Simulation - 1;
 
   static queries = {
-    new: [Particles, Not(ParticlesRef)],
-    active: [Particles, ParticlesRef],
-    modified: [Modified(Particles), ParticlesRef],
+    new: [Particles2, Not(ParticlesRef)],
+    active: [Particles2, ParticlesRef],
+    modified: [Modified(Particles2), ParticlesRef],
     modifiedTransform: [Modified(Transform), ParticlesRef],
-    removed: [Not(Particles), ParticlesRef],
+    removed: [Not(Particles2), ParticlesRef],
   };
 
   init({ presentation }) {
@@ -103,7 +103,7 @@ export class ParticlesSystem extends System {
     this.queries.new.forEach((entity) => this.build(entity));
 
     this.queries.modifiedTransform.forEach((entity) => {
-      const spec: Particles = entity.get(Particles);
+      const spec: Particles2 = entity.get(Particles2);
       const transform: Transform = entity.get(Transform);
       const system: GPUParticleSystem = entity.get(ParticlesRef).value;
       system.position.copy(transform.position);
@@ -121,7 +121,7 @@ export class ParticlesSystem extends System {
     const ref: Object3DRef = entity.get(Object3DRef);
     if (!ref) return;
 
-    const spec: Particles = entity.get(Particles);
+    const spec: Particles2 = entity.get(Particles2);
     const transform: Transform = entity.get(Transform);
 
     const options = {
@@ -154,7 +154,7 @@ export class ParticlesSystem extends System {
         needMore += spec.rate * delta;
 
         // Fizzle out when disabled
-        if (!spec.enabled) {
+        if (!entity.has(ParticlesActive)) {
           needMore = 0;
           system.initialTime = system.time;
           return;

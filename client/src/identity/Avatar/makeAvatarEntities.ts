@@ -25,7 +25,7 @@ import {
 import { Animation } from "~/ecs/plugins/animation";
 import { Repulsive } from "~/ecs/plugins/player-control";
 import { AlwaysOnStage } from "~/ecs/plugins/camera";
-import { Particles } from "~/ecs/plugins/particles";
+import { Particles2 } from "~/ecs/plugins/particles";
 
 import avatarsGlb from "./avatars.glb";
 
@@ -62,12 +62,11 @@ export function makeAvatarEntities(
       offset: new Vector3(0, 1.1, 0),
     })
     .add(Collider3Active)
-    .add(Particles, {
+    .add(Particles2, {
       pattern: "RING",
       params: new Vector3(2, 0.05, 1),
       offset: new Vector3(0, 1.5, 0),
       sprite: "circle_05",
-      enabled: false,
       onTop: true,
       relative: false,
       startColor: "#ff00ff",

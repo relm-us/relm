@@ -13,13 +13,12 @@ import { Vector3Type } from "~/ecs/plugins/core";
 
 import { textures } from "../textures";
 
-export class Particles extends Component {
+export class Particles2 extends Component {
   pattern: "STILL" | "EXPLODE" | "RING" | "TRAILS" | "RAINING";
   params: Vector3;
 
   sprite: string;
 
-  enabled: boolean;
   onTop: boolean;
 
   startColor: string;
@@ -90,16 +89,6 @@ export class Particles extends Component {
           label: key,
           value: key,
         })),
-      },
-    },
-
-    enabled: {
-      type: BooleanType,
-      default: true,
-      editor: {
-        label: "Enabled?",
-        // Tell the BooleanType.svelte to quietly change the value (no `.modified()`)
-        skipModify: true,
       },
     },
 

@@ -249,4 +249,13 @@ export function registerComponentMigrations(ecsWorld: DecoratedECSWorld) {
 
     tagNeedsMigrating(entity);
   });
+
+  // Migrate from Particles to Particles2
+  ecsWorld.migrations.register("Particles", (world, entity, componentData) => {
+    entity.addByName("Particles2", undefined, true).fromJSON(componentData);
+    // Version 2 requires "Active" component
+    entity.addByName("ParticlesActive");
+
+    tagNeedsMigrating(entity);
+  });
 }

@@ -1,1 +1,2 @@
-export { Particles, ParticlesRef, ParticlesLoading } from "./Particles";
+export { Particles2, ParticlesRef, ParticlesLoading } from "./Particles2";
+export { ParticlesActive } from "./ParticlesActive";
