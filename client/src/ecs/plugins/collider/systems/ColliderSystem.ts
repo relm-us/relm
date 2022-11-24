@@ -107,22 +107,27 @@ export class ColliderSystem extends System {
     const spec: Collider3 = entity.get(Collider3);
     const options: PhysicsOptions = entity.get(PhysicsOptions);
 
-    if ("friction" in spec.modifiedAttrs) {
+    if (spec.modifiedAttrs.density !== undefined) {
+      spec.density = spec.modifiedAttrs.density;
+      ref.collider.setDensity(spec.modifiedAttrs.density);
+    }
+
+    if (spec.modifiedAttrs.friction !== undefined) {
       spec.friction = spec.modifiedAttrs.friction;
       ref.collider.setFriction(spec.modifiedAttrs.friction);
     }
 
-    if ("gravityScale" in spec.modifiedAttrs) {
+    if (spec.modifiedAttrs.gravityScale !== undefined) {
       options.gravityScale = spec.modifiedAttrs.gravityScale;
       ref.body.setGravityScale(spec.modifiedAttrs.gravityScale, false);
     }
 
-    if ("angularDamping" in spec.modifiedAttrs) {
+    if (spec.modifiedAttrs.angularDamping !== undefined) {
       options.angDamp = spec.modifiedAttrs.angularDamping;
       ref.body.setAngularDamping(spec.modifiedAttrs.angularDamping);
     }
 
-    if ("linearDamping" in spec.modifiedAttrs) {
+    if (spec.modifiedAttrs.linearDamping !== undefined) {
       options.linDamp = spec.modifiedAttrs.linearDamping;
       ref.body.setLinearDamping(spec.modifiedAttrs.linearDamping);
     }

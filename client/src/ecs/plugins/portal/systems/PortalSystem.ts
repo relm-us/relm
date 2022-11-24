@@ -127,8 +127,7 @@ export class PortalSystem extends System {
 
   setAttrs(otherEntity: Entity, { density, timeScale, transition }) {
     const ref: Collider3 = otherEntity.get(Collider3);
-    ref.density = density;
-    ref.modified();
+    ref.modifyAttr({ density });
 
     const anim: Animation = otherEntity.get(Animation);
     anim.timeScale = timeScale;

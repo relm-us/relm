@@ -29,6 +29,7 @@ export type Behavior = {
 };
 
 export type ColliderModAttrs = {
+  density?: number;
   friction?: number;
   gravityScale?: number;
   angularDamping?: number;
