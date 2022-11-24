@@ -30,7 +30,7 @@
     setTimeout(() => {
       entity.addByName(componentName, optionsHook(componentName));
       const Activator = entity.world.components.activators[componentName];
-      if ((Activator as any).defaultActive !== false) {
+      if (Activator && (Activator as any).defaultActive !== false) {
         entity.add(Activator);
       }
       worldManager.worldDoc.syncFrom(entity);
