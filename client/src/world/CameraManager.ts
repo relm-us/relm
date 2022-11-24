@@ -204,6 +204,10 @@ export class CameraManager {
     if (y !== undefined) this.direction.y = y;
   }
 
+  rotate0() {
+    this.targetDir.y = 0;
+  }
+
   rotateLeft90() {
     this.targetDir.y = this.direction.y === 0 ? Math.PI / 2 : 0;
   }

@@ -394,7 +394,7 @@ export class WorldManager {
             this.camera.dampening = CAMERA_PLAY_DAMPENING;
 
             // Reset camera direction to "north"
-            this.camera.direction.y = 0;
+            this.camera.rotate0();
             this.camera.direction.x = DEFAULT_CAMERA_ANGLE;
 
             // Play mode ground-dragging default action
