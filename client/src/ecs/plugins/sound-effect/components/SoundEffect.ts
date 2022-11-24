@@ -4,6 +4,7 @@ import { Asset, AssetType } from "~/ecs/plugins/core";
 export class SoundEffect extends Component {
   asset: Asset;
   preload: boolean;
+  volume: number;
   fadeIn: number;
   fadeOut: number;
   loop: boolean;
@@ -21,6 +22,17 @@ export class SoundEffect extends Component {
       default: true,
       editor: {
         label: "Preload Asset",
+      },
+    },
+
+    volume: {
+      type: NumberType,
+      default: 1.0,
+      editor: {
+        label: "Volume",
+        min: 0,
+        max: 1,
+        increment: 0.01,
       },
     },
 

@@ -51,8 +51,8 @@ export class SoundEffectSystem extends System {
       const sound = loaded.value;
       entity.add(SoundEffectEntered);
       if (!spec.preload) sound.load();
-      if (spec.fadeIn) sound.fade(0, 1, spec.fadeIn);
-      else sound.volume(1);
+      if (spec.fadeIn) sound.fade(0, spec.volume, spec.fadeIn);
+      else sound.volume(spec.volume);
       sound.loop(spec.loop);
       sound.play();
     }
@@ -65,7 +65,7 @@ export class SoundEffectSystem extends System {
     if (loaded?.value) {
       const sound = loaded.value;
       if (spec.fadeOut) {
-        sound.fade(1, 0, spec.fadeOut);
+        sound.fade(spec.volume, 0, spec.fadeOut);
         sound.once("fade", () => sound.stop());
       } else {
         sound.stop();
