@@ -17,7 +17,7 @@ export class Asset extends Component {
   };
 
   static editor = {
-    label: "Asset",
+    label: "[old] Asset",
   };
 
   get url(): string {
