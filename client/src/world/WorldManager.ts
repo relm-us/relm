@@ -1046,15 +1046,7 @@ export class WorldManager {
   }
 
   moveTo(position: Vector3, instantaneousCamera = true) {
-    // Update physics position
-    const body: RigidBody = this.avatar.entities.body.get(ColliderRef)?.body;
-    if (body) body.setTranslation(position, true);
-
-    // Update ECS position
-    const transform = this.participants.local.avatar.transform;
-    transform.position.copy(position);
-    transform.modified(); // update physics engine
-
+    this.participants.moveTo(position);
     if (instantaneousCamera) this.camera.moveTo(position);
   }
 

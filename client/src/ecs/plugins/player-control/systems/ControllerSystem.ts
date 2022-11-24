@@ -8,7 +8,7 @@ import { worldManager } from "~/world";
 import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
 import { Physics } from "~/ecs/plugins/physics";
-import { Collider3, ColliderRef, PhysicsOptions } from "~/ecs/plugins/collider";
+import { Collider3, ColliderRef } from "~/ecs/plugins/collider";
 import { Animation } from "~/ecs/plugins/animation";
 import { isMakingContactWithGround } from "~/ecs/shared/isMakingContactWithGround";
 

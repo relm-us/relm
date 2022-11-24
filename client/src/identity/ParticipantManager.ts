@@ -37,9 +37,10 @@ import {
 import { Oculus } from "~/ecs/plugins/html2d";
 import { Model3 } from "~/ecs/plugins/model";
 import { Transform } from "~/ecs/plugins/core";
-import { Collider3 } from "~/ecs/plugins/collider";
+import { Collider3, ColliderRef } from "~/ecs/plugins/collider";
 import { inFrontOf } from "~/utils/inFrontOf";
 import { Vector3 } from "three";
+import { RigidBody } from "@dimforge/rapier3d";
 
 const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -313,7 +314,7 @@ export class ParticipantManager {
       case "sit-chair": {
         const transform = body.get(Transform);
 
-        transform.position.copy(action.position);
+        this.moveTo(action.position);
         transform.rotation.copy(action.rotation);
 
         controller.animOverride = { clipName: CHAIR_SIT, loop: false };
@@ -343,6 +344,18 @@ export class ParticipantManager {
         break;
       }
     }
+  }
+
+  moveTo(position: Vector3) {
+    // Update physics position
+    const body: RigidBody =
+      this.local.avatar.entities.body.get(ColliderRef)?.body;
+    if (body) body.setTranslation(position, true);
+
+    // Update ECS position
+    const transform = this.local.avatar.transform;
+    transform.position.copy(position);
+    transform.modified(); // update physics engine
   }
 
   setRepulsive(enabled: boolean) {
