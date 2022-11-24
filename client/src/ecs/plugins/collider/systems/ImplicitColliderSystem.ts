@@ -1,24 +1,15 @@
-import { Object3D, Box3, Quaternion, Vector3 } from "three";
+import type { Physics } from "~/ecs/plugins/physics";
+import type { DecoratedECSWorld } from "~/types";
 
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
-import { Physics } from "~/ecs/plugins/physics";
 
-import {
-  Collider3,
-  ImplicitColliderRef,
-  ImplicitColliderApplied,
-} from "../components";
 import { createCollider } from "../shared/createCollider";
 import { createRigidBody } from "../shared/createRigidBody";
+import { makeImplicitColliderParams } from "../shared/makeImplicitColliderParams";
+import { ColliderParams } from "../shared/types";
 
-type ColliderParams = {
-  spec: Collider3;
-  rotation: Quaternion;
-  offset: Vector3;
-};
-
-const _b3 = new Box3();
+import { ImplicitColliderRef, ImplicitColliderApplied } from "../components";
 
 export class ImplicitColliderSystem extends System {
   physics: Physics;
@@ -27,8 +18,8 @@ export class ImplicitColliderSystem extends System {
   order = Groups.Presentation + 299;
 
   static queries = {
-    added: [Object3DRef, Not(ImplicitColliderRef), Transform],
-    removed: [Not(Object3DRef), ImplicitColliderApplied],
+    added: [Transform, Object3DRef, Not(ImplicitColliderRef)],
+    removed: [Not(Transform), ImplicitColliderApplied],
     modifiedObject: [Modified(Object3DRef), ImplicitColliderRef],
     modifiedTransform: [Modified(Transform), ImplicitColliderRef],
   };
@@ -65,7 +56,10 @@ export class ImplicitColliderSystem extends System {
 
   build(
     entity: Entity,
-    params: ColliderParams = this.makeImplicitColliderParams(entity)
+    params: ColliderParams = makeImplicitColliderParams(
+      this.world as DecoratedECSWorld,
+      entity
+    )
   ) {
     const body = createRigidBody(this.physics, entity, params.spec.behavior);
     this.physics.addBody(body, entity);
@@ -88,26 +82,6 @@ export class ImplicitColliderSystem extends System {
       body,
       collider,
     });
-  }
-
-  makeImplicitColliderParams(entity: Entity): ColliderParams {
-    const transform: Transform = entity.get(Transform);
-
-    let rotation = new Quaternion();
-    let offset = new Vector3();
-
-    // We only use Collider3 transiently here; it is not added as a Component
-    const spec = new Collider3(this.world);
-    const object3d: Object3D = entity.get(Object3DRef).value;
-
-    _b3.setFromObject(object3d);
-    _b3.getSize(spec.size);
-    _b3.getCenter(offset).sub(transform.position);
-
-    // The AABB needs to be inverted so that the usual rotation re-aligns it to the world axes
-    rotation.copy(transform.rotation).invert();
-
-    return { spec, rotation, offset };
   }
 
   remove(entity: Entity) {

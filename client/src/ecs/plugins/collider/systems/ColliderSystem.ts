@@ -1,3 +1,5 @@
+import type { ColliderParams } from "../shared/types";
+
 import { Quaternion, Vector3 } from "three";
 
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
@@ -12,12 +14,7 @@ import {
 } from "../components";
 import { createCollider } from "../shared/createCollider";
 import { createRigidBody } from "../shared/createRigidBody";
-
-type ColliderParams = {
-  spec: Collider3;
-  rotation: Quaternion;
-  offset: Vector3;
-};
+import { makeExplicitColliderParams } from "../shared/makeExplicitColliderParams";
 
 export class ColliderSystem extends System {
   physics: Physics;
@@ -50,7 +47,7 @@ export class ColliderSystem extends System {
 
   update() {
     this.queries.added.forEach((entity) => {
-      this.build(entity, this.makeExplicitColliderParams(entity));
+      this.build(entity);
     });
 
     this.queries.modified.forEach((entity) => {
@@ -79,7 +76,7 @@ export class ColliderSystem extends System {
 
   build(
     entity: Entity,
-    params: ColliderParams = this.makeExplicitColliderParams(entity)
+    params: ColliderParams = makeExplicitColliderParams(entity)
   ) {
     const body = createRigidBody(this.physics, entity, params.spec.behavior);
     this.physics.addBody(body, entity);
@@ -95,11 +92,6 @@ export class ColliderSystem extends System {
     this.physics.addCollider(collider, entity);
 
     entity.add(ColliderRef, { body, collider, size: params.spec.size });
-  }
-
-  makeExplicitColliderParams(entity: Entity): ColliderParams {
-    const spec: Collider3 = entity.get(Collider3);
-    return { spec, rotation: new Quaternion(), offset: new Vector3() };
   }
 
   modifyFromAttrs(entity: Entity) {
