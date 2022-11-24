@@ -10,14 +10,23 @@
   const dispatch = createEventDispatcher();
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <r-overlay class:cloudy on:click>
   {#if showPrev}
-    <r-nav class="prev" on:click|stopPropagation={() => dispatch("prev")}>
+    <r-nav
+      class="prev"
+      on:click|stopPropagation={() => dispatch("prev")}
+      on:pointerup|stopPropagation
+    >
       <r-icon><IoIosArrowBack /></r-icon>
     </r-nav>
   {/if}
   {#if showNext}
-    <r-nav class="next" on:click|stopPropagation={() => dispatch("next")}>
+    <r-nav
+      class="next"
+      on:click|stopPropagation={() => dispatch("next")}
+      on:pointerup|stopPropagation
+    >
       <r-icon><IoIosArrowForward /></r-icon>
     </r-nav>
   {/if}
