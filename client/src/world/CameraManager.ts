@@ -51,6 +51,7 @@ export class CameraManager {
 
   // The angle of rotation around the avatar
   direction: Euler = new Euler();
+  targetDir: Euler = new Euler();
 
   // The position of the camera, relative to its target (i.e. the avatar)
   followOffset: Vector3;
@@ -127,12 +128,26 @@ export class CameraManager {
 
     const camera: Camera = this.entity.get(Camera);
 
+    const incr = Math.PI * delta;
+    this.smoothRotateTowardsTarget(incr);
+
     v1.copy(avatar.position).add(this.pan);
     easeTowards(camera.center, v1, this.dampening);
     easeTowards(camera.lookAt, v1, this.dampening);
     camera.sphere.radius = this.zoomDistance;
     camera.sphere.phi = this.direction.x;
     camera.sphere.theta = this.direction.y;
+  }
+
+  smoothRotateTowardsTarget(incr: number) {
+    const arc = this.targetDir.y - this.direction.y;
+    if (arc !== 0) {
+      if (Math.abs(arc) < incr) {
+        this.direction.y = this.targetDir.y;
+      } else {
+        this.direction.y += Math.sign(arc) * incr;
+      }
+    }
   }
 
   setPan(x: number, z: number) {
@@ -190,11 +205,11 @@ export class CameraManager {
   }
 
   rotateLeft90() {
-    this.direction.y = this.direction.y === 0 ? Math.PI / 2 : 0;
+    this.targetDir.y = this.direction.y === 0 ? Math.PI / 2 : 0;
   }
 
   rotateRight90() {
-    this.direction.y = this.direction.y === 0 ? -Math.PI / 2 : 0;
+    this.targetDir.y = this.direction.y === 0 ? -Math.PI / 2 : 0;
   }
 
   viewFromAbove(height: number = 30) {
