@@ -255,6 +255,19 @@ export class WorldDoc extends EventEmitter {
     this.delete(entity);
   }
 
+  getById(entityId: string) {
+    const yentity = this.hids.get(entityId);
+    if (!yentity) {
+      console.warn(`Can't get entity from worldDoc, does not exist`, entityId);
+      return;
+    }
+
+    return findInYArray(
+      this.entities,
+      (yentity) => yentity.get("id") === entityId
+    );
+  }
+
   _deleteRecursive(entity: Entity) {
     const yentity = this.hids.get(entity.id);
     if (!yentity) {
