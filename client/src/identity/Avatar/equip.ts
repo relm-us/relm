@@ -13,7 +13,7 @@ import { BoneAttach } from "~/ecs/plugins/bone-attach";
 import { Item2 } from "~/ecs/plugins/item";
 import { Asset, Transform } from "~/ecs/plugins/core";
 import { Model3 } from "~/ecs/plugins/model";
-import { FaceMapColors2 } from "~/ecs/plugins/coloration";
+import { FaceMapColors2, FaceMapColorsActive } from "~/ecs/plugins/coloration";
 import { AlwaysOnStage } from "~/ecs/plugins/camera";
 import { ChildAttach } from "~/ecs/plugins/child-attach";
 
@@ -115,7 +115,7 @@ function makeHeldEntity(
         .add(Model3, { asset: new Asset(object.assetUrl) });
 
       if (object.facemapColors) {
-        entity.add(FaceMapColors2, {
+        entity.add(FaceMapColorsActive).add(FaceMapColors2, {
           colors: object.facemapColors,
         });
       }

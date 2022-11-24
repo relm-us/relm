@@ -51,6 +51,7 @@ export class Inventory {
     let equipment: Equipment;
     if (entityJSON) {
       const object = this.getEquipmentObjectFromJSON(entityJSON);
+      console.log("object", object);
 
       const item = entityJSON.Item2 ?? entityJSON.Item;
       const version = item.compat === true ? "1" : "2";
@@ -76,16 +77,16 @@ export class Inventory {
       return {
         type: "model",
         assetUrl: entityJSON.Model3.asset.url,
-        facemapColors: entityJSON.FaceMapColors
-          ? JSON.parse(entityJSON.FaceMapColors.colors)
+        facemapColors: entityJSON.FaceMapColors2
+          ? JSON.parse(entityJSON.FaceMapColors2.colors)
           : undefined,
       };
     } else if (entityJSON.Asset && entityJSON.Model2) {
       return {
         type: "model",
         assetUrl: entityJSON.Asset.value.url,
-        facemapColors: entityJSON.FaceMapColors
-          ? JSON.parse(entityJSON.FaceMapColors.colors)
+        facemapColors: entityJSON.FaceMapColors2
+          ? JSON.parse(entityJSON.FaceMapColors2.colors)
           : undefined,
       };
     } else if (entityJSON.Shape3) {
