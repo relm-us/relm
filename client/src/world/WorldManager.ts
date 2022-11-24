@@ -428,8 +428,11 @@ export class WorldManager {
           $mode === "play" || ($mode === "build" && $edit === "invisible");
         this.avatar.enablePhysics(physics);
 
-        const interactGround = $mode === "build" && $edit === "ground";
-        this.enableInteractiveGround(interactGround);
+        if ($mode === "build") {
+          this.enableCollidersNonInteractive($edit === "ground");
+        } else {
+          this.disableNonInteractives();
+        }
       }).subscribe(() => {})
     );
 
@@ -700,7 +703,7 @@ export class WorldManager {
     this.applyGraphicsQuality(get(graphicsQuality));
   }
 
-  enableInteractiveGround(enabled = true) {
+  enableCollidersNonInteractive(enabled = true) {
     for (const entity of this.world.entities.entities.values()) {
       if (entity.name === "Avatar") continue;
       const collider: Collider3 = entity.get(Collider3);
@@ -709,6 +712,13 @@ export class WorldManager {
       } else {
         entity[enabled ? "add" : "maybeRemove"](NonInteractive);
       }
+    }
+  }
+
+  disableNonInteractives() {
+    for (const entity of this.world.entities.entities.values()) {
+      if (entity.name === "Avatar") continue;
+      entity.maybeRemove(NonInteractive);
     }
   }
 
