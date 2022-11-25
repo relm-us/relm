@@ -51,7 +51,6 @@ export class Inventory {
     let equipment: Equipment;
     if (entityJSON) {
       const object = this.getEquipmentObjectFromJSON(entityJSON);
-      console.log("object", object);
 
       const item = entityJSON.Item2 ?? entityJSON.Item;
       const version = item.compat === true ? "1" : "2";
