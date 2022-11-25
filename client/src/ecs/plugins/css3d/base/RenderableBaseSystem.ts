@@ -73,7 +73,9 @@ export class RenderableBaseSystem extends System {
     const css3d = entity.get(this.EcsComponentRef)?.value;
     const cssPlane: CssPlane = entity.get(CssPlane);
 
-    copyTransform(css3d, transform, cssPlane.getFracScale(), cssPlane.offset);
+    if (cssPlane) {
+      copyTransform(css3d, transform, cssPlane.getFracScale(), cssPlane.offset);
+    }
   }
 
   rebuild(entity) {

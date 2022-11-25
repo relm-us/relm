@@ -301,7 +301,10 @@ function firstInteractiveEntity(entityIds: EntityId[]) {
 }
 
 const havingAvatar = (yes: boolean) => (entityId) => {
-  const name = worldManager.world.entities.getById(entityId).name;
+  const entity = worldManager.world.entities.getById(entityId);
+  if (!entity) return false;
+
+  const name = entity.name;
   if (yes) return name === "Avatar";
   else return name !== "Avatar";
 };
