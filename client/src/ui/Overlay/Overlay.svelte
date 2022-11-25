@@ -47,8 +47,14 @@
 
   <overlay-content>
     <r-toolbar-wrapper>
-      {#if $debugMode}
-        <DebugPane {state} />
+      {#if $debugMode !== "hidden"}
+        <DebugPane
+          {state}
+          expanded={$debugMode === "expanded"}
+          on:minimize={({ detail }) => {
+            $debugMode = detail === "expanded" ? "minimal" : "expanded";
+          }}
+        />
       {/if}
       {#if buildMode}
         <Toolbar />

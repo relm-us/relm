@@ -71,13 +71,13 @@
   },
   "DebugPane": {
     "debug_physics": "Debug physics?",
-    "show_errors": "Show errors?",
     "framerate": "Framerate:",
+    "collider_performance": "Collider perf:",
     "fps": "FPS",
     "audio": "Audio:",
     "video": "Video:",
     "loading": "Loading:",
-    "viewport": "Viewport:",
+    "viewport": "Viewport Size:",
     "participants": "Participants:"
   },
   "EditorPanel": {
