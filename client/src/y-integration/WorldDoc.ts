@@ -251,6 +251,9 @@ export class WorldDoc extends EventEmitter {
   }
 
   deleteById(entityId: string) {
+    if (this.inactiveEntities.has(entityId)) {
+      this.inactiveEntities.get(entityId).activate();
+    }
     const entity = this.world.entities.getById(entityId);
     this.delete(entity);
   }

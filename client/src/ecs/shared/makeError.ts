@@ -11,9 +11,7 @@ import errorCatGlb from "./error-cat.glb";
 export function makeError(entity: Entity, msg = null) {
   const transform: Transform = entity.get(Transform);
 
-  if (msg) {
-    console.warn(msg, entity.id);
-  }
+  console.warn("Error Cat created", entity, msg);
 
   return entity.world.entities
     .create("Error", nanoid())
