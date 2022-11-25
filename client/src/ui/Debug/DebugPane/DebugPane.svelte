@@ -10,10 +10,9 @@
   import { State } from "~/main/ProgramTypes";
   import { participantId } from "~/identity/participantId";
 
-  import { viewportSize, viewport } from "~/stores";
+  import { viewportSize } from "~/stores";
   import { localIdentityData } from "~/stores/identityData";
   import { fpsTime } from "~/stores/stats";
-  import { errorCat } from "~/stores/errorCat";
 
   import { PhysicsSystem } from "~/ecs/plugins/physics/systems";
 
@@ -23,13 +22,13 @@
   import Pane from "./Pane.svelte";
 
   import { _ } from "~/i18n";
+  import { intersectCalcTime } from "~/ecs/plugins/camera/systems/CameraSystem";
 
   export let state: State;
+  export let expanded: boolean = false;
 
   const participants: Readable<ParticipantMap> =
     worldManager.participants.store;
-
-  let minimized = true;
 
   let fps;
   $: fps = $fpsTime.reduce((cumu, val) => cumu + val, 0) / $fpsTime.length;
@@ -56,6 +55,8 @@
   let y = 0;
   let z = 0;
 
+  let avgIntersectCalcTime = 0;
+
   onMount(() => {
     const interval = setInterval(() => {
       if (!worldManager.participants || !worldManager.participants.local.avatar)
@@ -65,26 +66,28 @@
       y = worldManager.participants.local.avatar.position.y;
       z = worldManager.participants.local.avatar.position.z;
 
-      if (minimized) return;
+      avgIntersectCalcTime =
+        intersectCalcTime.reduce((total, time) => total + time, 0) /
+        intersectCalcTime.length;
     }, 150);
     return () => clearInterval(interval);
   });
 </script>
 
 <container class:connected={Boolean(state.worldDoc)}>
-  <Pane {title} {subtitle} showMinimize={true} bind:minimized>
+  <Pane
+    {title}
+    {subtitle}
+    showMinimize={true}
+    minimized={!expanded}
+    on:minimize
+  >
     <inner-scroll>
       <table>
         <tr>
           <th>{$_("DebugPane.debug_physics")}</th>
           <td>
             <ToggleSwitch bind:enabled={PhysicsSystem.showDebug} />
-          </td>
-        </tr>
-        <tr>
-          <th>{$_("DebugPane.show_errors")}</th>
-          <td>
-            <ToggleSwitch bind:enabled={$errorCat} />
           </td>
         </tr>
         <tr>
@@ -96,6 +99,16 @@
               on:change={({ detail }) => worldManager.setFps(parseInt(detail))}
             />
           </td>
+        </tr>
+        <tr>
+          <th>
+            {$_("DebugPane.collider_performance")}
+          </th>
+          <td
+            class:green={avgIntersectCalcTime < 1}
+            class:red={avgIntersectCalcTime > 3}
+            >{avgIntersectCalcTime.toFixed(3)} ms</td
+          >
         </tr>
         <tr>
           <th>{$_("DebugPane.audio")}</th>
@@ -120,7 +133,7 @@
         </tr>
         <tr>
           <th>{$_("DebugPane.viewport")}</th>
-          <td>{$viewport !== null} {vw}</td>
+          <td>{vw}</td>
         </tr>
 
         {#if showAbbreviatedIdentities}
@@ -190,5 +203,12 @@
     overflow: auto;
     pointer-events: all;
     max-height: 90vh;
+  }
+
+  .green {
+    color: rgba(0, 210, 24, 1);
+  }
+  .red {
+    color: red;
   }
 </style>

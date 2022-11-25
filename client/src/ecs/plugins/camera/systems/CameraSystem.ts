@@ -22,6 +22,8 @@ const vUp = new Vector3(0, 1, 0);
 const v1 = new Vector3();
 const m4 = new Matrix4();
 
+export const intersectCalcTime: number[] = Array(10).fill(0);
+let intersectCalcTimeIdx = 0;
 export class CameraSystem extends System {
   physics: Physics;
   camera: PerspectiveCamera;
@@ -68,6 +70,8 @@ export class CameraSystem extends System {
     if (this.world.version % 13 === 0 || CameraSystem.stageNeedsUpdate) {
       CameraSystem.stageNeedsUpdate = false;
 
+      const intersectCalcTimeBefore = performance.now();
+
       // There should be just 1 active camera, but we access it via forEach
       this.queries.active.forEach((entity) => {
         const transform: Transform = entity.get(Transform);
@@ -104,6 +108,11 @@ export class CameraSystem extends System {
           if (!isAlwaysOnStage(entity)) entity.deactivate();
         }
       }
+
+      const intersectCalcTimeAfter = performance.now();
+
+      intersectCalcTime[intersectCalcTimeIdx++ % intersectCalcTime.length] =
+        intersectCalcTimeAfter - intersectCalcTimeBefore;
     }
   }
 
