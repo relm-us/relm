@@ -37,6 +37,7 @@ export class ColliderSystem extends System {
     added: [Transform, Collider3, Collider3Active, Not(ColliderRef)],
     modified: [Transform, Modified(Collider3), ColliderRef],
     modifiedObject: [Transform, ColliderRef, Modified(Object3DRef)],
+    modifiedTransform: [Modified(Transform), ColliderRef],
     removed: [Not(Collider3), ColliderRef],
     deactivated: [ColliderRef, Not(Collider3Active)],
   };
@@ -63,6 +64,10 @@ export class ColliderSystem extends System {
     this.queries.modifiedObject.forEach((entity) => {
       this.remove(entity);
       this.build(entity);
+    });
+
+    this.queries.modifiedTransform.forEach((entity) => {
+      this.modifiedTransform(entity);
     });
 
     this.queries.removed.forEach((entity) => {
@@ -134,5 +139,27 @@ export class ColliderSystem extends System {
     if (ref.body) this.physics.removeBody(ref.body);
 
     entity.remove(ColliderRef);
+  }
+
+  modifiedTransform(entity: Entity) {
+    const transform: Transform = entity.get(Transform);
+    const spec: Collider3 = entity.get(Collider3);
+    const ref: ColliderRef = entity.get(ColliderRef);
+
+    // Anticipate the need for PhysicsSystem to have an up-to-date translation
+    // and rotation from a modified Transform
+    ref.body.setTranslation(transform.position, true);
+    ref.body.setRotation(transform.rotation, true);
+
+    // When scaling an object, we need to
+    // re-calculate the size of the collider since the collider is calculated
+    // automatically
+    // const implicit: ColliderImplicit = entity.get(ColliderImplicit);
+    // if (!ref.size.equals(spec.size)) {
+      // console.log("resized via modifiedTransform");
+      // this.remove(entity);
+      // this.build(entity);
+      // entity.get(Object3DRef).modified();
+    // }
   }
 }
