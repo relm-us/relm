@@ -64,14 +64,7 @@ export class ImplicitColliderSystem extends System {
     const body = createRigidBody(this.physics, entity, params.spec.behavior);
     this.physics.addBody(body, entity);
 
-    const collider = createCollider(
-      this.physics,
-      params.spec,
-      body,
-      params.rotation,
-      params.offset,
-      params.spec.behavior
-    );
+    const collider = createCollider(this.physics, params, body);
     this.physics.addCollider(collider, entity);
 
     // Story body & collider so it can go on ice when off stage

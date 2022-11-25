@@ -86,14 +86,7 @@ export class ColliderSystem extends System {
     const body = createRigidBody(this.physics, entity, params.spec.behavior);
     this.physics.addBody(body, entity);
 
-    const collider = createCollider(
-      this.physics,
-      params.spec,
-      body,
-      params.rotation,
-      params.offset,
-      params.spec.behavior
-    );
+    const collider = createCollider(this.physics, params, body);
     this.physics.addCollider(collider, entity);
 
     entity.add(ColliderRef, { body, collider, size: params.spec.size });
@@ -156,10 +149,10 @@ export class ColliderSystem extends System {
     // automatically
     // const implicit: ColliderImplicit = entity.get(ColliderImplicit);
     // if (!ref.size.equals(spec.size)) {
-      // console.log("resized via modifiedTransform");
-      // this.remove(entity);
-      // this.build(entity);
-      // entity.get(Object3DRef).modified();
+    // console.log("resized via modifiedTransform");
+    // this.remove(entity);
+    // this.build(entity);
+    // entity.get(Object3DRef).modified();
     // }
   }
 }

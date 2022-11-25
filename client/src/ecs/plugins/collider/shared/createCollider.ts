@@ -9,31 +9,29 @@ import {
 import { Physics } from "~/ecs/plugins/physics";
 
 import { Behavior, Collider3 } from "../components";
+import { ColliderParams } from "./types";
 
 export function createCollider(
   physics: Physics,
-  collider: Collider3,
-  body: RigidBody,
-  rotation: Quaternion,
-  offset: Vector3,
-  behavior: Behavior
+  params: ColliderParams,
+  body: RigidBody
 ): Collider {
   const colliderDesc: ColliderDesc = shapeParamsToColliderDesc(
     physics.rapier,
-    toShapeParams(collider.shape, collider.size)
+    toShapeParams(params.spec.shape, params.spec.size)
   )
     .setActiveCollisionTypes(physics.rapier.ActiveCollisionTypes.ALL)
     .setActiveEvents(physics.rapier.ActiveEvents.COLLISION_EVENTS)
     .setTranslation(
-      offset.x + collider.offset.x,
-      offset.y + collider.offset.y,
-      offset.z + collider.offset.z
+      params.offset.x + params.spec.offset.x,
+      params.offset.y + params.spec.offset.y,
+      params.offset.z + params.spec.offset.z
     )
-    .setRotation(rotation.multiply(collider.rotation))
-    .setDensity(MathUtils.clamp(collider.density, 0, 1000))
-    .setFriction(collider.friction)
-    .setSensor(behavior.isSensor)
-    .setCollisionGroups(behavior.interaction);
+    .setRotation(params.rotation.multiply(params.spec.rotation))
+    .setDensity(MathUtils.clamp(params.spec.density, 0, 1000))
+    .setFriction(params.spec.friction)
+    .setSensor(params.spec.behavior.isSensor)
+    .setCollisionGroups(params.spec.behavior.interaction);
 
   return physics.world.createCollider(colliderDesc, body);
 }
