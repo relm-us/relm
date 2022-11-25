@@ -1,4 +1,12 @@
-import { BufferGeometry, Mesh, Object3D, Vector3 } from "three";
+import {
+  BufferGeometry,
+  Group,
+  Matrix4,
+  Mesh,
+  Object3D,
+  Quaternion,
+  Vector3,
+} from "three";
 import { System, Groups, Not, Modified } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import {
@@ -12,7 +20,10 @@ import { NonInteractive } from "~/ecs/plugins/non-interactive";
 
 import { ColliderVisibleRef } from "../components";
 
+const _v1 = new Vector3();
+const _v2 = new Vector3();
 const _v3 = new Vector3();
+const _q1 = new Quaternion();
 
 export class ColliderVisibleSystem extends System {
   order = Groups.Initialization;
@@ -55,19 +66,19 @@ export class ColliderVisibleSystem extends System {
   // We must do this because rapier physics colliders do not scale,
   // and this "visible" representation of the collider therefore must
   // not either.
-  setInverseScale(entity) {
+  setGroupAndMeshTransform(entity) {
     const transform: Transform = entity.get(Transform);
     const collider: Collider3 = entity.get(Collider3);
     const ref: ColliderVisibleRef = entity.get(ColliderVisibleRef);
-    ref.value.scale.set(
+
+    ref.group.scale.set(
       1 / transform.scale.x,
       1 / transform.scale.y,
       1 / transform.scale.z
     );
 
-    // "undo" the scaled offset as well
-    _v3.copy(collider.offset).divide(transform.scale);
-    ref.value.position.copy(_v3);
+    ref.value.position.copy(collider.offset);
+    ref.value.quaternion.copy(collider.rotation);
 
     // Slight adjustment to z fixes an issue with Fire:
     // - When both transparent objects are at precisely the same distance from the camera,
@@ -93,26 +104,29 @@ export class ColliderVisibleSystem extends System {
     material.userData.translucentImmune = true;
 
     const mesh = new Mesh(geometry, material);
-    mesh.quaternion.copy(collider.rotation);
+
+    const group = new Group();
+    group.add(mesh);
 
     // Render *after* any shape or model that is a child of our object3dref
     // (required for transparency to work properly)
     mesh.renderOrder = 1;
 
-    object3dref.value.add(mesh);
-    entity.add(ColliderVisibleRef, { value: mesh });
+    object3dref.value.add(group);
+    entity.add(ColliderVisibleRef, { value: mesh, group });
 
     // Notify dependencies (e.g. outlines) that object3d has changed
     object3dref.modified();
 
-    this.setInverseScale(entity);
+    this.setGroupAndMeshTransform(entity);
   }
 
   remove(entity) {
-    const mesh = entity.get(ColliderVisibleRef).value;
+    const ref = entity.get(ColliderVisibleRef);
 
-    mesh.geometry.dispose();
-    mesh.removeFromParent();
+    ref.value.geometry.dispose();
+    ref.value.removeFromParent();
+    ref.group.removeFromParent();
 
     entity.remove(ColliderVisibleRef);
   }
