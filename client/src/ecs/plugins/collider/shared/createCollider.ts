@@ -1,6 +1,6 @@
 import type { Collider, ColliderDesc, RigidBody } from "@dimforge/rapier3d";
 
-import { MathUtils, Quaternion, Vector3 } from "three";
+import { MathUtils, Vector3 } from "three";
 
 import {
   shapeParamsToColliderDesc,
@@ -8,7 +8,6 @@ import {
 } from "~/ecs/shared/createShape";
 import { Physics } from "~/ecs/plugins/physics";
 
-import { Behavior, Collider3 } from "../components";
 import { ColliderParams } from "./types";
 
 export function createCollider(
@@ -16,9 +15,13 @@ export function createCollider(
   params: ColliderParams,
   body: RigidBody
 ): Collider {
+  const size = params.spec.autoscale
+    ? new Vector3().copy(params.spec.size).multiply(params.scale)
+    : params.spec.size;
+
   const colliderDesc: ColliderDesc = shapeParamsToColliderDesc(
     physics.rapier,
-    toShapeParams(params.spec.shape, params.spec.size)
+    toShapeParams(params.spec.shape, size)
   )
     .setActiveCollisionTypes(physics.rapier.ActiveCollisionTypes.ALL)
     .setActiveEvents(physics.rapier.ActiveEvents.COLLISION_EVENTS)

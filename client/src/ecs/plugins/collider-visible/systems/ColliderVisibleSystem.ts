@@ -71,11 +71,13 @@ export class ColliderVisibleSystem extends System {
     const collider: Collider3 = entity.get(Collider3);
     const ref: ColliderVisibleRef = entity.get(ColliderVisibleRef);
 
-    ref.group.scale.set(
-      1 / transform.scale.x,
-      1 / transform.scale.y,
-      1 / transform.scale.z
-    );
+    if (!collider.autoscale) {
+      ref.group.scale.set(
+        1 / transform.scale.x,
+        1 / transform.scale.y,
+        1 / transform.scale.z
+      );
+    }
 
     ref.value.position.copy(collider.offset);
     ref.value.quaternion.copy(collider.rotation);

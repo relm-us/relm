@@ -3,6 +3,7 @@ import type { Collider3 } from "../components";
 
 export type ColliderParams = {
   spec: Collider3;
-  rotation: Quaternion;
   offset: Vector3;
+  rotation: Quaternion;
+  scale: Vector3;
 };

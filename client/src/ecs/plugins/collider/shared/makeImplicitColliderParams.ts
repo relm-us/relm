@@ -23,9 +23,12 @@ export function makeImplicitColliderParams(
 
   let rotation = new Quaternion();
   let offset = new Vector3();
+  let scale = new Vector3(1, 1, 1);
 
   // We only use Collider3 transiently here; it is not added as a Component
-  const spec = new Collider3(world);
+  const spec = new Collider3(world, {
+    kind: "ETHEREAL",
+  });
   const object3d: Object3D = entity.get(Object3DRef).value;
 
   _b3.setFromObject(object3d);
@@ -47,5 +50,5 @@ export function makeImplicitColliderParams(
   // The AABB needs to be inverted so that the usual rotation re-aligns it to the world axes
   rotation.copy(transform.rotation).invert();
 
-  return { spec, rotation, offset };
+  return { spec, offset, rotation, scale };
 }

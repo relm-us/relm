@@ -2,7 +2,7 @@ import { Color, Vector3, Quaternion, Euler } from "three";
 
 import { Transform } from "~/ecs/plugins/core";
 import { Shape3 } from "~/ecs/plugins/shape";
-import { Collider3 } from "~/ecs/plugins/collider";
+import { Collider3, Collider3Active } from "~/ecs/plugins/collider";
 
 import { makeEntity } from "./makeEntity";
 
@@ -43,10 +43,12 @@ export function makeBox(
 
   // Optionally add a collider that matches the dimensions of the visible shape
   if (collider) {
-    entity.add(Collider3, {
-      shape: "BOX",
-      size: new Vector3(w, h, d),
-    });
+    entity
+      .add(Collider3, {
+        shape: "BOX*",
+        kind: "BARRIER",
+      })
+      .add(Collider3Active);
   }
   return entity;
 }

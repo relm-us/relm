@@ -56,7 +56,7 @@ export class Collider3 extends Component {
     | "AVATAR-OTHER";
 
   // Collider shapes
-  shape: ShapeType;
+  shape: ShapeType | "BOX*";
 
   // Collider size
   // - BOX: uses all x, y, z
@@ -83,7 +83,7 @@ export class Collider3 extends Component {
   static props = {
     kind: {
       type: StringType,
-      default: "ETHEREAL",
+      default: "BARRIER",
       editor: {
         label: "Kind",
         input: "Select",
@@ -99,11 +99,12 @@ export class Collider3 extends Component {
 
     shape: {
       type: StringType,
-      default: "BOX",
+      default: "BOX*",
       editor: {
         label: "Shape",
         input: "Select",
         options: [
+          { label: "Box (Autoscale)", value: "BOX*" },
           { label: "Box", value: "BOX" },
           { label: "Sphere", value: "SPHERE" },
           { label: "Cylinder", value: "CYLINDER" },
@@ -131,6 +132,12 @@ export class Collider3 extends Component {
       default: new Vector3(0, 0, 0),
       editor: {
         label: "Offset",
+        requires: [
+          { prop: "shape", value: "BOX" },
+          { prop: "shape", value: "SPHERE" },
+          { prop: "shape", value: "CYLINDER" },
+          { prop: "shape", value: "CAPSULE" },
+        ],
       },
     },
 
@@ -139,6 +146,12 @@ export class Collider3 extends Component {
       default: new Quaternion(),
       editor: {
         label: "Rotation",
+        requires: [
+          { prop: "shape", value: "BOX" },
+          { prop: "shape", value: "SPHERE" },
+          { prop: "shape", value: "CYLINDER" },
+          { prop: "shape", value: "CAPSULE" },
+        ],
       },
     },
 
@@ -222,6 +235,11 @@ export class Collider3 extends Component {
       default:
         throw Error(`unknown collider kind ${this.kind}`);
     }
+  }
+
+  // Some colliders can autoscale (e.g. BOX*)
+  get autoscale(): boolean {
+    return this.shape === "BOX*";
   }
 
   modifyAttr(attrs: ColliderModAttrs) {

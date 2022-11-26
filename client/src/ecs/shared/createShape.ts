@@ -83,12 +83,13 @@ export function createCapsule(
 }
 
 export function toShapeParams(
-  type: ShapeType,
+  type: ShapeType | "BOX*",
   size: Vector3,
   detail: number = 1.0
 ): ShapeParams {
   switch (type) {
     case "BOX":
+    case "BOX*":
       return createBox(size);
     case "SPHERE":
       return createSphere(size.x, detail);
