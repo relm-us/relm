@@ -200,8 +200,14 @@ export class CameraManager {
   }
 
   rotate({ x, y }) {
-    if (x !== undefined) this.direction.x = x;
-    if (y !== undefined) this.direction.y = y;
+    if (x !== undefined) {
+      this.targetDir.x = x;
+      this.direction.x = x;
+    }
+    if (y !== undefined) {
+      this.targetDir.y = y;
+      this.direction.y = y;
+    }
   }
 
   rotate0() {
