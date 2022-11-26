@@ -8,7 +8,7 @@ import { worldManager } from "~/world";
 import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
 import { Physics } from "~/ecs/plugins/physics";
-import { Collider3, ColliderRef } from "~/ecs/plugins/collider";
+import { Collider3, ColliderAttrs, ColliderRef } from "~/ecs/plugins/collider";
 import { Animation } from "~/ecs/plugins/animation";
 import { isMakingContactWithGround } from "~/ecs/shared/isMakingContactWithGround";
 
@@ -19,6 +19,7 @@ import { Controller, ControllerState, Repulsive } from "../components";
 import { FALLING } from "~/config/constants";
 import { changeAnimationClip } from "~/identity/Avatar/changeAnimationClip";
 import { controlDirection } from "~/stores/controlDirection";
+import { setColliderAttrs } from "../../collider/components/ColliderAttrs";
 
 const STILL_SPEED = 0;
 const WALK_SPEED = 1;
@@ -101,18 +102,15 @@ export class ControllerSystem extends System {
         state.hovering = false;
       }
 
-      let gravityScale;
+      let gravityScale = null;
       if (state.hovering) gravityScale = 0;
       else if (state.grounded) gravityScale = FALL_NORMAL;
       else if (spec.canFly) gravityScale = FALL_NORMAL;
       else if (!state.grounded) gravityScale = FALL_FAST;
       else gravityScale = FALL_NORMAL;
 
-      collider.modifyAttr({
-        gravityScale,
-        angularDamping: spec.angDamps[state.speed],
-        linearDamping: spec.linDamps[state.speed],
-      });
+      const angularDamping = spec.angDamps[state.speed];
+      const linearDamping = spec.linDamps[state.speed];
 
       // Modify direction to align with camera axis, rather than world axis
       // TODO: Don't depend on worldManager.camera, use this.presentation.camera
@@ -142,9 +140,14 @@ export class ControllerSystem extends System {
         newFriction = 0.01;
       }
 
-      if (collider.friction !== newFriction) {
-        collider.modifyAttr({ friction: newFriction });
-      }
+      const friction = newFriction;
+
+      setColliderAttrs(entity, {
+        friction,
+        gravityScale,
+        angularDamping,
+        linearDamping,
+      });
 
       const anim: Animation = entity.get(Animation);
       if (anim) {

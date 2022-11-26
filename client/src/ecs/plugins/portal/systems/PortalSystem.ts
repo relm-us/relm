@@ -3,13 +3,14 @@ import { Presentation, Transform } from "~/ecs/plugins/core";
 import { Impact, Impactable } from "~/ecs/plugins/physics";
 import { Controller } from "~/ecs/plugins/player-control";
 import { ParticlesActive } from "~/ecs/plugins/particles";
-import { Collider3 } from "~/ecs/plugins/collider";
+import { Collider3, ColliderAttrs } from "~/ecs/plugins/collider";
 import { Animation } from "~/ecs/plugins/animation";
 
 import { worldManager } from "~/world";
 
 import { Portal, PortalActive } from "../components";
 import { inFrontOf } from "~/utils/inFrontOf";
+import { setColliderAttrs } from "../../collider/components/ColliderAttrs";
 
 const portalsDisabled = (localStorage.getItem("debug") || "")
   .split(":")
@@ -126,8 +127,7 @@ export class PortalSystem extends System {
   }
 
   setAttrs(otherEntity: Entity, { density, timeScale, transition }) {
-    const ref: Collider3 = otherEntity.get(Collider3);
-    ref.modifyAttr({ density });
+    setColliderAttrs(otherEntity, { density });
 
     const anim: Animation = otherEntity.get(Animation);
     anim.timeScale = timeScale;

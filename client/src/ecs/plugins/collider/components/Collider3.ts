@@ -28,13 +28,7 @@ export type Behavior = {
   isSensor: boolean;
 };
 
-export type ColliderModAttrs = {
-  density?: number;
-  friction?: number;
-  gravityScale?: number;
-  angularDamping?: number;
-  linearDamping?: number;
-};
+export type ColliderModAttrs = {};
 
 export class Collider3 extends Component {
   // Kinds of colliders:
@@ -76,9 +70,6 @@ export class Collider3 extends Component {
 
   // Collider friction against other colliders; 1.0 is normal
   friction: number;
-
-  // Quick modifications that don't need full
-  modifiedAttrs: ColliderModAttrs | null;
 
   static props = {
     kind: {
@@ -240,10 +231,5 @@ export class Collider3 extends Component {
   // Some colliders can autoscale (e.g. BOX*)
   get autoscale(): boolean {
     return this.shape === "BOX*";
-  }
-
-  modifyAttr(attrs: ColliderModAttrs) {
-    this.modifiedAttrs = { ...this.modifiedAttrs, ...attrs };
-    this.modified();
   }
 }

@@ -11,6 +11,7 @@ import {
   ColliderRef,
   Collider3Active,
   PhysicsOptions,
+  ColliderAttrs,
 } from "../components";
 import { createCollider } from "../shared/createCollider";
 import { createRigidBody } from "../shared/createRigidBody";
@@ -36,6 +37,7 @@ export class ColliderSystem extends System {
   static queries = {
     added: [Transform, Collider3, Collider3Active, Not(ColliderRef)],
     modified: [Transform, Modified(Collider3), ColliderRef],
+    modifiedAttrs: [Transform, Modified(ColliderAttrs), ColliderRef],
     modifiedObject: [Transform, ColliderRef, Modified(Object3DRef)],
     modifiedTransform: [Modified(Transform), ColliderRef],
     removed: [Not(Collider3), ColliderRef],
@@ -52,13 +54,13 @@ export class ColliderSystem extends System {
     });
 
     this.queries.modified.forEach((entity) => {
-      const spec: Collider3 = entity.get(Collider3);
-      if (spec.modifiedAttrs) {
-        this.modifyFromAttrs(entity);
-      } else {
-        this.remove(entity);
-        this.build(entity);
-      }
+      this.remove(entity);
+      this.build(entity);
+    });
+
+    this.queries.modifiedAttrs.forEach((entity) => {
+      const attrs = entity.get(ColliderAttrs);
+      attrs.applyTo(entity);
     });
 
     this.queries.modifiedObject.forEach((entity) => {
@@ -90,39 +92,6 @@ export class ColliderSystem extends System {
     this.physics.addCollider(collider, entity);
 
     entity.add(ColliderRef, { body, collider, size: params.spec.size });
-  }
-
-  modifyFromAttrs(entity: Entity) {
-    const ref: ColliderRef = entity.get(ColliderRef);
-    const spec: Collider3 = entity.get(Collider3);
-    const options: PhysicsOptions = entity.get(PhysicsOptions);
-
-    if (spec.modifiedAttrs.density !== undefined) {
-      spec.density = spec.modifiedAttrs.density;
-      ref.collider.setDensity(spec.modifiedAttrs.density);
-    }
-
-    if (spec.modifiedAttrs.friction !== undefined) {
-      spec.friction = spec.modifiedAttrs.friction;
-      ref.collider.setFriction(spec.modifiedAttrs.friction);
-    }
-
-    if (spec.modifiedAttrs.gravityScale !== undefined) {
-      options.gravityScale = spec.modifiedAttrs.gravityScale;
-      ref.body.setGravityScale(spec.modifiedAttrs.gravityScale, false);
-    }
-
-    if (spec.modifiedAttrs.angularDamping !== undefined) {
-      options.angDamp = spec.modifiedAttrs.angularDamping;
-      ref.body.setAngularDamping(spec.modifiedAttrs.angularDamping);
-    }
-
-    if (spec.modifiedAttrs.linearDamping !== undefined) {
-      options.linDamp = spec.modifiedAttrs.linearDamping;
-      ref.body.setLinearDamping(spec.modifiedAttrs.linearDamping);
-    }
-
-    spec.modifiedAttrs = null;
   }
 
   remove(entity: Entity) {

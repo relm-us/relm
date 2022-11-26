@@ -417,21 +417,16 @@ export class WorldManager {
       derived([worldUIMode, colliderEditMode], ([$mode, $edit]) => {
         this.selection.clear();
 
-        const visible = $mode === "build" && $edit !== "invisible";
-        this.enableCollidersVisible(visible);
-
-        const interact =
-          $mode === "play" || ($mode === "build" && $edit !== "invisible");
-        this.enableInteraction(interact);
-
-        const physics =
-          $mode === "play" || ($mode === "build" && $edit === "invisible");
-        this.avatar.enablePhysics(physics);
-
-        if ($mode === "build") {
-          this.enableCollidersNonInteractive($edit === "ground");
-        } else {
+        if ($mode === "play") {
+          this.enableCollidersVisible(false);
+          this.enableInteraction(true);
+          this.avatar.enablePhysics(true);
           this.disableNonInteractives();
+        } else if ($mode === "build") {
+          this.enableCollidersVisible($edit !== "invisible");
+          this.enableInteraction($edit !== "invisible");
+          this.avatar.enablePhysics($edit === "invisible");
+          this.enableCollidersNonInteractive($edit === "ground");
         }
       }).subscribe(() => {})
     );
