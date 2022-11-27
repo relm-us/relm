@@ -85,7 +85,7 @@ export class CameraSystem extends System {
             const entity = this.physics.colliders.get(collider.handle);
 
             if (!isAlwaysOnStage(entity)) {
-              (entity as any).lastSeenOnSet = this.world.version;
+              entity.local.lastSeenOnStage = this.world.version;
               this.recentlyOnSet.add(entity);
             }
 
@@ -102,7 +102,7 @@ export class CameraSystem extends System {
       if (!this.deactivateOffCameraEntities) return;
 
       for (const entity of this.recentlyOnSet) {
-        const lastSeen = (entity as any).lastSeenOnSet;
+        const lastSeen = entity.local.lastSeenOnStage;
         if (this.world.version - lastSeen > 30) {
           this.recentlyOnSet.delete(entity);
           if (!isAlwaysOnStage(entity)) entity.deactivate();
@@ -162,7 +162,7 @@ export class CameraSystem extends System {
   addEverythingToSet() {
     for (const entity of this.world.entities.entities.values()) {
       if (!isAlwaysOnStage(entity)) {
-        (entity as any).lastSeenOnSet = this.world.version;
+        entity.local.lastSeenOnStage = this.world.version;
         this.recentlyOnSet.add(entity);
       }
     }

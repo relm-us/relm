@@ -10,7 +10,8 @@ export class Entity {
   name: string;
   world: World;
   id: EntityId;
-  meta: object;
+  meta: any;
+  local: any;
   Components: Array<TypeOfComponent>;
   components: Map<TypeOfComponent, Component>;
   parent: MaybeUnboundEntity;
@@ -28,6 +29,7 @@ export class Entity {
     this.id = id;
     this.name = name || null;
     this.meta = meta || {};
+    this.local = {};
     this.Components = [];
     this.components = new Map();
     this.parent = null;

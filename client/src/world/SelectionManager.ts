@@ -104,9 +104,8 @@ export class SelectionManager {
   savePositions() {
     for (const entity of this.entities) {
       const transform = entity.get(Transform);
-      (entity as any).savedPosition = new Vector3().copy(transform.position);
-
-      (entity as any).savedRotation = new Quaternion().copy(transform.rotation);
+      entity.local.savedPosition = new Vector3().copy(transform.position);
+      entity.local.savedRotation = new Quaternion().copy(transform.rotation);
     }
   }
 
@@ -119,7 +118,7 @@ export class SelectionManager {
       if (entity.getParent()) continue;
 
       const transform = entity.get(Transform);
-      const savedPos = (entity as any).savedPosition;
+      const savedPos = entity.local.savedPosition;
       if (savedPos) {
         transform.position.copy(savedPos).add(vector);
         adjust?.(transform.position);
@@ -138,8 +137,8 @@ export class SelectionManager {
       if (entity.getParent()) continue;
 
       const transform = entity.get(Transform);
-      const savedPos: Vector3 = (entity as any).savedPosition;
-      const savedRot: Quaternion = (entity as any).savedRotation;
+      const savedPos: Vector3 = entity.local.savedPosition;
+      const savedRot: Quaternion = entity.local.savedRotation;
       const pos: Vector3 = transform.position;
 
       // Reposition all selected objects based on new rotation angle
