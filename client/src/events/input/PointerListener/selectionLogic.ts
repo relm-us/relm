@@ -1,8 +1,11 @@
+import { get } from "svelte/store";
+
 import { SelectionManager } from "~/world/SelectionManager";
-import { groupTree } from "~/stores/selection";
 import { intersection } from "~/utils/setOps";
-import { Object3DRef } from "~/ecs/plugins/core";
-import { Object3D } from "three";
+import { BASE_LAYER_ID } from "~/config/constants";
+
+import { groupTree } from "~/stores/selection";
+import { layerActive } from "~/stores/layerActive";
 
 type EntityId = string;
 
@@ -30,11 +33,19 @@ function maybeSelectGroupContainingEntity(
 export function mouseup(selection: SelectionManager) {
   if (!found) return;
 
-  const foundSet: Set<string> = new Set(found);
+  const activeLayerId = get(layerActive);
+  const foundSet: Set<string> = new Set(
+    found.filter((entityId) => {
+      const entity = selection.worldManager.world.entities.getById(entityId);
+      return (
+        activeLayerId === BASE_LAYER_ID || entity.meta.layerId === activeLayerId
+      );
+    })
+  );
 
-  if (found.length === 0) {
+  if (foundSet.size === 0) {
     selection.clear(true);
-  } else if (found.length === 1) {
+  } else if (foundSet.size === 1) {
     // User is clicking on only one possible entity
 
     const entityId: string = found[0];
@@ -62,7 +73,7 @@ export function mouseup(selection: SelectionManager) {
         maybeSelectGroupContainingEntity(entityId, selection);
       }
     }
-  } else if (found.length > 1) {
+  } else if (foundSet.size > 1) {
     // User is clicking on a spot that contains several entities
 
     if (intersection(previousClickSet, foundSet).size !== foundSet.size) {
@@ -71,7 +82,7 @@ export function mouseup(selection: SelectionManager) {
     }
 
     // If we've reached the end of the cycle, start over
-    if (previousClickIndex >= found.length) {
+    if (previousClickIndex >= foundSet.size) {
       previousClickIndex = 0;
     }
 

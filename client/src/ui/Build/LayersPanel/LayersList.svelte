@@ -7,7 +7,7 @@
   import { layerActive } from "~/stores/layerActive";
 
   import LayerRow from "./LayerRow.svelte";
-  import { BASE_LAYER_ID } from "~/config/constants";
+  import { BASE_LAYER_ID, BASE_LAYER_NAME } from "~/config/constants";
 
   export let layers: Readable<Map<string, WorldLayer>>;
 
@@ -40,25 +40,35 @@
   const setLayerActive = (layerId: string) => () => {
     worldManager.setLayerActive(layerId);
   };
+
+  let sortedLayers: Array<WorldLayer & { id: string }>;
+
+  $: {
+    sortedLayers = Array.from($layers.entries()).map(([layerId, attrs]) => ({
+      id: layerId,
+      ...attrs,
+    }));
+    sortedLayers.sort((a, b) => (a.name ?? "").localeCompare(b.name));
+  }
 </script>
 
 <r-layers>
-  {#each Array.from($layers.entries()) as [layerId, attrs]}
+  {#each sortedLayers as layer}
     <LayerRow
-      id={layerId}
-      name={layerId === BASE_LAYER_ID ? "Base" : attrs.name}
-      visible={attrs.visible}
-      active={$layerActive === layerId}
-      edit={editLayerId === layerId}
-      on:show={setLayerVisible(layerId, true)}
-      on:hide={setLayerVisible(layerId, false)}
-      on:select={selectLayer(layerId, false)}
-      on:selectAdd={selectLayer(layerId, true)}
-      on:edit={editLayer(layerId, true)}
-      on:cancelEdit={editLayer(layerId, false)}
-      on:changeName={setLayerName(layerId)}
-      on:delete={deleteLayer(layerId)}
-      on:click={setLayerActive(layerId)}
+      id={layer.id}
+      name={layer.id === BASE_LAYER_ID ? BASE_LAYER_NAME : layer.name}
+      visible={layer.visible}
+      active={$layerActive === layer.id}
+      edit={editLayerId === layer.id}
+      on:show={setLayerVisible(layer.id, true)}
+      on:hide={setLayerVisible(layer.id, false)}
+      on:select={selectLayer(layer.id, false)}
+      on:selectAdd={selectLayer(layer.id, true)}
+      on:edit={editLayer(layer.id, true)}
+      on:cancelEdit={editLayer(layer.id, false)}
+      on:changeName={setLayerName(layer.id)}
+      on:delete={deleteLayer(layer.id)}
+      on:click={setLayerActive(layer.id)}
     />
   {/each}
 </r-layers>

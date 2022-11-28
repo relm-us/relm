@@ -71,6 +71,7 @@ export const INITIAL_LOAD_GAME_WAIT = 250;
 
 // Always have a "base" layer available, where entities go if no layer is explicitly selected
 export const BASE_LAYER_ID = "BASE_LAYER";
+export const BASE_LAYER_NAME = "All Layers";
 
 // Animation names from participant model GLB
 export const T_POSE = "a-pose";

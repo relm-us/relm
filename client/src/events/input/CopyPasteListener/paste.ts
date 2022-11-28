@@ -12,6 +12,8 @@ import {
   assignNewIds,
   deserializeCopyBuffer,
 } from "./common";
+import { layerActive } from "~/stores/layerActive";
+import { BASE_LAYER_ID } from "~/config/constants";
 
 export function paste(clipboardData?: DataTransfer) {
   const offset = new Vector3();
@@ -69,8 +71,14 @@ export function paste(clipboardData?: DataTransfer) {
   }
 
   // Update yjs WorldDoc
+  const destinationLayer = get(layerActive);
   for (const entity of entities) {
     entity.bind();
+    if (destinationLayer === BASE_LAYER_ID) {
+      delete entity.meta.layerId;
+    } else {
+      entity.meta.layerId = destinationLayer;
+    }
     worldManager.worldDoc.syncFrom(entity);
   }
 }

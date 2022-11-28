@@ -3,7 +3,7 @@
   import { get } from "svelte/store";
 
   import { worldManager } from "~/world";
-  import { BASE_LAYER_ID } from "~/config/constants";
+  import { BASE_LAYER_ID, BASE_LAYER_NAME } from "~/config/constants";
 
   import SidePanel, { Header } from "~/ui/lib/SidePanel";
   import { selectedEntities } from "~/stores/selection";
@@ -21,7 +21,7 @@
     });
     const layers = get(worldManager.worldDoc.getLayersDerivedStore());
     return Array.from(layerIds.values()).map((layerId) =>
-      layerId === BASE_LAYER_ID ? "Base" : layers.get(layerId)?.name
+      layerId === BASE_LAYER_ID ? BASE_LAYER_NAME : layers.get(layerId)?.name
     );
   }
 </script>
