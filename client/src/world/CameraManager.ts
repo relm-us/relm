@@ -8,6 +8,8 @@ import {
 
 import { Entity } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
+import { Camera, CameraSystem } from "~/ecs/plugins/camera";
+import { easeTowards } from "~/ecs/shared/easeTowards";
 
 import { viewportScale } from "~/stores";
 import { centerCameraVisible } from "~/stores/centerCameraVisible";
@@ -22,8 +24,7 @@ import {
   DEFAULT_CAMERA_ANGLE,
   DEFAULT_VIEWPORT_ZOOM,
 } from "~/config/constants";
-import { Camera } from "~/ecs/plugins/camera";
-import { easeTowards } from "~/ecs/shared/easeTowards";
+import { layersLocal } from "~/stores/layersLocal";
 
 const directionNeg = new Euler();
 const v1 = new Vector3();
@@ -75,6 +76,10 @@ export class CameraManager {
     return this.zoomRange + this.zoomedInDistance;
   }
 
+  get cameraSystem(): CameraSystem {
+    return this.ecsWorld.systems.get(CameraSystem) as CameraSystem;
+  }
+
   constructor(ecsWorld: DecoratedECSWorld, avatar: Entity) {
     this.ecsWorld = ecsWorld;
     this.avatar = avatar;
@@ -102,6 +107,10 @@ export class CameraManager {
     );
   }
 
+  worldInit() {
+    this.cameraSystem.beginDeactivatingOffStageEntities();
+  }
+
   deinit() {
     this.unsubs.forEach((f) => f());
     this.unsubs.length = 0;
@@ -120,6 +129,21 @@ export class CameraManager {
 
   isOffCenter(distance: number = 4) {
     return this.pan.length() > distance;
+  }
+
+  setCameraSystemLayerVisibility(layerId: string, visible: boolean) {
+    this.cameraSystem.visibleLayers.set(layerId, visible);
+    CameraSystem.stageNeedsUpdate = true;
+  }
+
+  keepLayerOnStage(layerId: string) {
+    this.cameraSystem.alwaysOnStageLayers.set(layerId, true);
+    CameraSystem.stageNeedsUpdate = true;
+  }
+
+  clearLayersKeptOnStage() {
+    this.cameraSystem.alwaysOnStageLayers.clear();
+    CameraSystem.stageNeedsUpdate = true;
   }
 
   update(delta: number) {

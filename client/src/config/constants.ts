@@ -69,6 +69,9 @@ export const CROSS_FADE_DURATION = 200;
 // Milliseconds to wait for transition between load screen and game screen
 export const INITIAL_LOAD_GAME_WAIT = 250;
 
+// Always have a "base" layer available, where entities go if no layer is explicitly selected
+export const BASE_LAYER_ID = "BASE_LAYER";
+
 // Animation names from participant model GLB
 export const T_POSE = "a-pose";
 export const FLYING = "flying";

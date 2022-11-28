@@ -1,9 +1,4 @@
 {
-  "ActionsPanel": {
-    "title": "Actions",
-    "invalid_json": "Invalid JSON",
-    "apply": "Apply"
-  },
   "AddPanel": {
     "search_assets": "Search Assets...",
     "add_asset": "Add",
@@ -53,7 +48,7 @@
   "BuildPanel": {
     "add": "Add",
     "modify": "Modify",
-    "actions": "Actions",
+    "layers": "Layers",
     "settings": "Settings"
   },
   "CameraSettings": {
@@ -116,6 +111,20 @@
     "max_uses": "Max Number of Uses",
     "title": "Invite",
     "close": "Close"
+  },
+  "LayersPanel": {
+    "title": "Layers",
+    "add_layer": "Add Layer",
+    "new_layer_name": "New Layer Name:",
+    "add": "Add",
+    "cancel": "Cancel",
+    "layer_visible_tip": "Toggle visibility",
+    "layer_select_tip": "Select layer's objects",
+    "layer_edit_tip": "Edit layer name",
+    "layer_delete_tip": "Delete layer name",
+    "selected_title": "Selected Objects",
+    "selected_count": "{count, plural, =0 {None} =1 {1 object} other {# objects}} in layers:",
+    "selected_object_layers": "Selected object layers:"
   },
   "LanguageDialog": {
     "title": "Language"

@@ -87,6 +87,16 @@
     transform: translateX(100%);
     margin-right: -8px;
   }
+  .tooltip.bottom.right {
+    right: 0;
+    bottom: 0;
+    transform: translateY(100%);
+  }
+  .tooltip.bottom.left {
+    left: 100%;
+    bottom: 0;
+    transform: translate(-100%, 100%);
+  }
 
   .tooltip.active {
     opacity: 1;

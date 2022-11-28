@@ -3,7 +3,7 @@ import { writable, Writable } from "svelte/store";
 type PanelType =
   | "add"
   | "modify"
-  | "actions"
+  | "layers"
   | "export"
   | "performance"
   | "settings";

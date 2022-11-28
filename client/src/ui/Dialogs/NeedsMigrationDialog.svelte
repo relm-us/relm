@@ -34,10 +34,7 @@
         <Button on:click={upgradeWorld}>
           {$_("NeedsMigrationDialog.upgrade")}
         </Button>
-        <Button
-          on:click={() => dispatch("cancel")}
-          style="--bg-color: var(--background-gray); --bg-hover-color: #21232A; --fg-color: var(--foreground-gray)"
-        >
+        <Button on:click={() => dispatch("cancel")} secondary={true}>
           {$_("NeedsMigrationDialog.skip")}
         </Button>
       </div>

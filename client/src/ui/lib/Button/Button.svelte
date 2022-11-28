@@ -3,6 +3,7 @@
 
   export let enabled = true;
   export let active: boolean = undefined;
+  export let secondary: boolean = false;
   export let style: string = undefined;
   export let tabindex: number = undefined;
   export let depress: boolean = true;
@@ -15,6 +16,7 @@
   class:disabled={!enabled}
   class:active={active === true}
   class:depress
+  class:secondary
   on:mousedown|stopPropagation={() => {
     dispatch("click");
   }}
@@ -46,6 +48,12 @@
     border-bottom-right-radius: var(--bottom-radius, var(--right-radius, 14px));
     border-top-left-radius: var(--top-radius, var(--left-radius, 14px));
     border-bottom-left-radius: var(--bottom-radius, var(--left-radius, 14px));
+  }
+
+  button.secondary {
+    --bg-color: var(--background-gray);
+    --bg-hover-color: #21232a;
+    --fg-color: var(--foreground-gray);
   }
   button:focus {
     outline: none;

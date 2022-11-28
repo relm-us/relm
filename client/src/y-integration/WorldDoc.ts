@@ -1,10 +1,15 @@
 import type { AuthenticationHeaders } from "relm-common";
-import type { DecoratedECSWorld } from "~/types";
+import type {
+  DecoratedECSWorld,
+  WorldLayer,
+  WorldLayerLocal,
+  WorldLayerGlobal,
+} from "~/types";
 
 import * as Y from "yjs";
-import { readableMap, YReadableMap } from "svelt-yjs";
 import { DeepDiff } from "deep-diff";
-import { WebsocketProvider } from "relm-common";
+import { WebsocketProvider, readableMap, YReadableMap } from "relm-common";
+import { derived, Readable } from "svelte/store";
 
 import { Entity, EntityId } from "~/ecs/base";
 
@@ -33,6 +38,7 @@ import { applyDiffToYEntity } from "./applyDiff";
 import { selectedEntities } from "~/stores/selection";
 import { uuidv4 } from "~/utils/uuid";
 import { Transition } from "~/ecs/plugins/transition";
+import { layersLocal } from "~/stores/layersLocal";
 
 const UNDO_CAPTURE_TIMEOUT = 50;
 
@@ -60,6 +66,9 @@ export class WorldDoc extends EventEmitter {
 
   // A map of collaborative documents
   documents: Y.Map<Y.Text>;
+
+  // Layer IDs mapped to attributes
+  layersGlobal: YReadableMap<WorldLayerGlobal>;
 
   // A map of entryways into this subrelm. Default is [0, 0, 0].
   entryways: YReadableMap<[number, number, number]>;
@@ -107,11 +116,12 @@ export class WorldDoc extends EventEmitter {
     this.messages = this.ydoc.getArray("messages");
     this.documents = this.ydoc.getMap("documents");
 
+    this.layersGlobal = readableMap(this.ydoc.getMap("layers"));
     this.entryways = readableMap(this.ydoc.getMap("entryways"));
     this.settings = readableMap(this.ydoc.getMap("settings"));
     this.actions = readableMap(this.ydoc.getMap("actions"));
 
-    this.undoManager = new Y.UndoManager([this.entities], {
+    this.undoManager = new Y.UndoManager([this.entities, this.layersGlobal.y], {
       captureTimeout: UNDO_CAPTURE_TIMEOUT,
     });
 
@@ -237,6 +247,49 @@ export class WorldDoc extends EventEmitter {
     for (const child of entity.getChildren()) {
       this.syncFrom(child);
     }
+  }
+
+  // Add layer, or set existing layer's name
+  setLayerName(layerId: string, name: string) {
+    this.layersGlobal.y.set(layerId, { name });
+    layersLocal.update(($layers) => {
+      $layers.set(layerId, { visible: true });
+      return $layers;
+    });
+  }
+
+  deleteLayer(layerId: string) {
+    this.layersGlobal.y.delete(layerId);
+    layersLocal.update(($layers) => {
+      $layers.delete(layerId);
+      return $layers;
+    });
+  }
+
+  setLayerVisible(layerId: string, visible: boolean) {
+    layersLocal.update(($layers) => {
+      $layers.set(layerId, { ...$layers.get(layerId), visible });
+      return $layers;
+    });
+  }
+
+  // Create a Svelte store that merge keys and values from both global and local layer data
+  getLayersDerivedStore(): Readable<Map<string, WorldLayer>> {
+    return derived(
+      [this.layersGlobal, layersLocal],
+      ([$global, $local], set) => {
+        const layers = new Map();
+        new Set([...$global.keys(), ...$local.keys()]).forEach((key) => {
+          const localAttrs = $local.get(key) ?? { visible: true };
+          const globalAttrs = $global.get(key);
+          layers.set(key, {
+            name: globalAttrs?.name,
+            visible: localAttrs.visible,
+          });
+        });
+        set(layers);
+      }
+    );
   }
 
   delete(entity: Entity) {

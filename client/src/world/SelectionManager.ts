@@ -190,7 +190,7 @@ export class SelectionManager {
       const removed = difference(previouslySelected, $selected);
 
       if ($selected.size === 1 && added.size === 1) {
-        openPanel.set("modify");
+        if (get(openPanel) !== "layers") openPanel.set("modify");
       }
 
       if (get(worldUIMode) === "build") {

@@ -1,5 +1,3 @@
-import type { RigidBody } from "@dimforge/rapier3d";
-
 import type {
   DecoratedECSWorld,
   PageParams,
@@ -30,6 +28,7 @@ import { WorldDoc } from "~/y-integration/WorldDoc";
 import { exportRelm, importRelm } from "./Export";
 
 import {
+  BASE_LAYER_ID,
   CAMERA_BUILD_DAMPENING,
   CAMERA_BUILD_ZOOM_MAX,
   CAMERA_BUILD_ZOOM_MIN,
@@ -46,7 +45,7 @@ import { RelmRestAPI } from "~/main/RelmRestAPI";
 import { makeLight } from "~/prefab/makeLight";
 
 import { Entity } from "~/ecs/base";
-import { Collider3, ColliderRef } from "~/ecs/plugins/collider";
+import { Collider3 } from "~/ecs/plugins/collider";
 import { NonInteractive } from "~/ecs/plugins/non-interactive";
 import { Seat } from "~/ecs/plugins/player-control";
 import { Follow } from "~/ecs/plugins/follow";
@@ -103,6 +102,8 @@ import { SelectionManager } from "./SelectionManager";
 import { ChatManager } from "./ChatManager";
 import { CameraManager } from "./CameraManager";
 import { migratedEntities } from "~/main/effects/registerComponentMigrations";
+import { layerActive } from "~/stores/layerActive";
+import { isEntityOnLayer } from "~/utils/isEntityOnLayer";
 
 // Make THREE accessible for debugging
 (window as any).THREE = THREE;
@@ -306,6 +307,14 @@ export class WorldManager {
     );
 
     this.camera.init();
+
+    this.unsubs.push(
+      this.worldDoc.getLayersDerivedStore().subscribe(($layers) => {
+        for (let [layerId, attrs] of $layers.entries()) {
+          this.camera.setCameraSystemLayerVisibility(layerId, attrs.visible);
+        }
+      })
+    );
 
     this.world.perspective.setAvatar(this.avatar.entities.body);
 
@@ -558,9 +567,8 @@ export class WorldManager {
     this.didInit = true;
     this.didDeinit = false;
 
-    const camsys = this.world.systems.get(CameraSystem) as CameraSystem;
-    camsys.beginDeactivatingOffCameraEntities();
-    camsys.addEverythingToSet();
+    // Begin culling off-stage entities
+    this.camera.worldInit();
   }
 
   async deinit() {
@@ -590,7 +598,7 @@ export class WorldManager {
     this.dragPlane.deinit();
 
     const camsys = this.world.systems.get(CameraSystem) as CameraSystem;
-    camsys.endDeactivatingOffCameraEntities();
+    camsys.endDeactivatingOffStageEntities();
 
     this._dragPlane = null;
     this._selectionBox = null;
@@ -790,6 +798,46 @@ export class WorldManager {
         this.inventory.drop();
       }
     }
+  }
+
+  getActivatedEntity(entityId: string) {
+    const inactiveEntity = this.worldDoc.inactiveEntities.get(entityId);
+    if (inactiveEntity) {
+      inactiveEntity.activate();
+      return inactiveEntity;
+    } else {
+      return this.world.entities.getById(entityId);
+    }
+  }
+
+  setLayerActive(layerId: string) {
+    layerActive.set(layerId);
+  }
+
+  selectLayer(layerId: string, additive: boolean) {
+    // Don't "add" to the selection, replace the selection
+    if (!additive) this.selection.clear();
+
+    if (layerId) {
+      // prevent camera system from deactivating entities in layer
+      this.camera.keepLayerOnStage(layerId);
+
+      this.worldDoc.inactiveEntities.forEach((entity) => {
+        if (isEntityOnLayer(entity, layerId)) {
+          entity.activate();
+          this.selection.addEntityId(entity.id);
+        }
+      });
+      this.world.entities.entities.forEach((entity) => {
+        if (isEntityOnLayer(entity, layerId)) {
+          this.selection.addEntityId(entity.id);
+        }
+      });
+    } else {
+      this.camera.clearLayersKeptOnStage();
+    }
+
+    CameraSystem.stageNeedsUpdate = true;
   }
 
   topView(height: number = 40, hideAvatar: boolean = true) {

@@ -1,6 +1,6 @@
 import { Collider, ConvexPolyhedron } from "@dimforge/rapier3d";
 import { Vector3, PerspectiveCamera, Matrix4 } from "three";
-import { CAMERA_FRUSTUM_FAR_PLANE } from "~/config/constants";
+import { BASE_LAYER_ID, CAMERA_FRUSTUM_FAR_PLANE } from "~/config/constants";
 
 import { System, Not, Groups, Entity } from "~/ecs/base";
 import { Queries } from "~/ecs/base/Query";
@@ -14,10 +14,6 @@ import {
   KeepOnStage,
 } from "../components";
 
-function isAlwaysOnStage(entity) {
-  return entity.has(AlwaysOnStage) || entity.has(KeepOnStage);
-}
-
 const vUp = new Vector3(0, 1, 0);
 const v1 = new Vector3();
 const m4 = new Matrix4();
@@ -29,9 +25,12 @@ export class CameraSystem extends System {
   camera: PerspectiveCamera;
   frustumShape: ConvexPolyhedron;
   frustumAspect: number;
-  deactivateOffCameraEntities: boolean;
 
-  recentlyOnSet: Set<Entity>;
+  visibleLayers: Map<string, boolean>;
+  alwaysOnStageLayers: Map<string, boolean>;
+
+  deactivateOffCameraEntities: boolean;
+  recentlyOnStage: Set<Entity>;
   nowOnSet: Set<Entity>;
 
   order = Groups.Presentation + 400;
@@ -52,7 +51,10 @@ export class CameraSystem extends System {
 
     this.buildFrustum();
 
-    this.recentlyOnSet = new Set();
+    this.visibleLayers = new Map();
+    this.alwaysOnStageLayers = new Map();
+
+    this.recentlyOnStage = new Set();
     this.deactivateOffCameraEntities = false;
   }
 
@@ -84,13 +86,13 @@ export class CameraSystem extends System {
           (collider: Collider) => {
             const entity = this.physics.colliders.get(collider.handle);
 
-            if (!isAlwaysOnStage(entity)) {
+            if (!this.isAlwaysOnStage(entity)) {
               entity.local.lastSeenOnStage = this.world.version;
-              this.recentlyOnSet.add(entity);
+              this.recentlyOnStage.add(entity);
             }
 
-            // Activate anything within the Frustum that is inactive
-            if (!entity.active) {
+            // Activate anything within the Frustum that is inactive, but should be visible
+            if (!entity.active && this.isEntityOnVisibleLayer(entity)) {
               entity.activate();
             }
 
@@ -101,11 +103,18 @@ export class CameraSystem extends System {
 
       if (!this.deactivateOffCameraEntities) return;
 
-      for (const entity of this.recentlyOnSet) {
+      for (const entity of this.recentlyOnStage) {
+        if (entity.active && !this.isEntityOnVisibleLayer(entity)) {
+          this.recentlyOnStage.delete(entity);
+          entity.deactivate();
+        }
+
+        if (this.isAlwaysOnStage(entity)) continue;
+
         const lastSeen = entity.local.lastSeenOnStage;
         if (this.world.version - lastSeen > 30) {
-          this.recentlyOnSet.delete(entity);
-          if (!isAlwaysOnStage(entity)) entity.deactivate();
+          this.recentlyOnStage.delete(entity);
+          entity.deactivate();
         }
       }
 
@@ -159,21 +168,46 @@ export class CameraSystem extends System {
     );
   }
 
-  addEverythingToSet() {
+  beginDeactivatingOffStageEntities() {
+    this.deactivateOffCameraEntities = true;
+
+    // Keep a timestamp of every entity on stage
     for (const entity of this.world.entities.entities.values()) {
-      if (!isAlwaysOnStage(entity)) {
-        entity.local.lastSeenOnStage = this.world.version;
-        this.recentlyOnSet.add(entity);
-      }
+      entity.local.lastSeenOnStage = this.world.version;
+      this.recentlyOnStage.add(entity);
     }
   }
 
-  beginDeactivatingOffCameraEntities() {
-    this.deactivateOffCameraEntities = true;
+  endDeactivatingOffStageEntities() {
+    this.deactivateOffCameraEntities = false;
   }
 
-  endDeactivatingOffCameraEntities() {
-    this.deactivateOffCameraEntities = false;
+  isAlwaysOnStage(entity) {
+    return (
+      entity.has(AlwaysOnStage) || this.isEntityOnAlwaysOnStageLayer(entity)
+    );
+  }
+
+  isEntityOnVisibleLayer(entity) {
+    if (entity.has(AlwaysOnStage)) return true;
+
+    const layerId = entity.meta.layerId;
+    if (!layerId) return this.visibleLayers.get(BASE_LAYER_ID);
+
+    const layer = this.visibleLayers.get(layerId);
+    if (layer == null /* `==` tests null or undefined */) return true;
+
+    return layer;
+  }
+
+  isEntityOnAlwaysOnStageLayer(entity) {
+    const layerId = entity.meta.layerId;
+    if (!layerId) return false;
+
+    const layer = this.alwaysOnStageLayers.get(layerId);
+    if (layer == null /* `==` tests null or undefined */) return false;
+
+    return layer;
   }
 }
 

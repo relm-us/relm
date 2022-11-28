@@ -35,6 +35,8 @@
   {#if label}
     <r-label>{label}</r-label>
   {/if}
+
+  <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
   <r-input class:no-label={!label} on:mousedown tabindex="0">
     <input
       type="text"
@@ -52,7 +54,7 @@
   r-text-input {
     display: flex;
     align-items: center;
-    font-size: 12px;
+    font-size: var(--font-size, 12px);
   }
   r-label {
     flex-shrink: 0;
@@ -96,6 +98,6 @@
     color: white;
     width: var(--input-width, 100%);
     border: 0;
-    font-size: 12px;
+    font-size: var(--font-size, 12px);
   }
 </style>

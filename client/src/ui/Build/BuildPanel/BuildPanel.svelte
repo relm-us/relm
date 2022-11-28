@@ -10,7 +10,7 @@
 
   import AddPanel from "../AddPanel";
   import ModifyPanel from "../ModifyPanel";
-  import ActionsPanel from "../ActionsPanel";
+  import LayersPanel from "../LayersPanel";
   import SettingsPanel from "../SettingsPanel";
   import ExportPanel from "../ExportPanel";
 
@@ -33,14 +33,15 @@
     on:click={() => ($openPanel = "modify")}>{$_("BuildPanel.modify")}</Button
   >
   <Button
-    active={$openPanel === "actions"}
+    active={$openPanel === "layers"}
     depress={false}
-    on:click={() => ($openPanel = "actions")}>{$_("BuildPanel.actions")}</Button
+    on:click={() => ($openPanel = "layers")}>{$_("BuildPanel.layers")}</Button
   >
   <Button
     active={$openPanel === "settings"}
     depress={false}
-    on:click={() => ($openPanel = "settings")}>{$_("BuildPanel.settings")}</Button
+    on:click={() => ($openPanel = "settings")}
+    >{$_("BuildPanel.settings")}</Button
   >
 </panel-tabs>
 
@@ -53,8 +54,8 @@
     <ModifyPanel on:minimize={toPlayMode} />
   {/if}
 
-  {#if $openPanel === "actions"}
-    <ActionsPanel on:minimize={toPlayMode} />
+  {#if $openPanel === "layers"}
+    <LayersPanel on:minimize={toPlayMode} />
   {/if}
 
   <!-- Export panel opens from button in SettingsPanel -->

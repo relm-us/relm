@@ -1,3 +1,5 @@
+import { get } from "svelte/store";
+
 // Regular construction set
 import { makeBall } from "./makeBall";
 import { makeBox } from "./makeBox";
@@ -9,6 +11,8 @@ import { makeWebBox } from "./makeWebBox";
 import { makeWhiteboard } from "./makeWhiteboard";
 
 import { worldManager } from "~/world";
+import { layerActive } from "~/stores/layerActive";
+import { BASE_LAYER_ID } from "~/config/constants";
 
 export const directory = [
   { name: "Ball", make: makeBall },
@@ -22,7 +26,13 @@ export const directory = [
 ];
 
 function activate(entity) {
+  const activeLayerId = get(layerActive);
+  if (activeLayerId !== BASE_LAYER_ID) {
+    entity.meta.layerId = activeLayerId;
+  }
+
   entity.activate();
+
   worldManager.worldDoc.syncFrom(entity);
   for (const child of entity.getChildren()) {
     activate(child);
