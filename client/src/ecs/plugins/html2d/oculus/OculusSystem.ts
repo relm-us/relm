@@ -15,6 +15,7 @@ import { CutCircle } from "./types";
 import { circleOverlapIntersectionPoints } from "./circleOverlapIntersectionPoints";
 
 const v1 = new Vector3();
+const v2 = new Vector3();
 
 /**
  * An Oculus is a "round window" in architectural design. Similarly, this Oculus
@@ -144,22 +145,23 @@ export class OculusSystem extends System {
 
     const { container, component } = entity.get(OculusRef) as OculusRef;
 
-    if (spec.isCachedPositionInvalid(v1, diameter)) {
-      spec.setCachedPosition(v1, diameter);
+    if (!spec.previous) spec.previous = new Vector3();
+    v2.copy(v1).add(spec.previous).divideScalar(2);
 
-      container.style.left = spec.x.toFixed(3) + "px";
-      container.style.top = spec.y.toFixed(3) + "px";
+    container.style.left = Math.floor(v2.x) + "px";
+    container.style.top = Math.floor(v2.y) + "px";
 
-      const fixedDiameter = diameter.toFixed(3);
-      container.style.width = `${fixedDiameter}px`;
-      container.style.height = `${fixedDiameter}px`;
-    }
+    const d = Math.floor(diameter);
+    container.style.width = `${d}px`;
+    container.style.height = `${d}px`;
+
+    spec.previous.copy(v2);
 
     return {
       component,
-      diameter: spec.diameter,
-      x: spec.x,
-      y: spec.y,
+      diameter,
+      x: v2.x,
+      y: v2.y,
       visible: spec.showVideo,
       cuts: null,
     };

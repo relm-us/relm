@@ -1029,7 +1029,6 @@ export class WorldManager {
   refreshOculii() {
     this.world.entities.getAllByComponent(Oculus).forEach((entity) => {
       const oculus: Oculus = entity.get(Oculus);
-      oculus.clearCache();
 
       // After visiting the video-mirror screen, each Svelte Video component
       // except the local video loses its feed, so we need to remove/add
