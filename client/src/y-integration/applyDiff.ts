@@ -9,6 +9,7 @@ import {
   jsonToYComponent,
   isEntityAttribute,
   findInYArray,
+  YMeta,
 } from "relm-common";
 
 export function applyChangeToYEntity(change: Change, yentity: YEntity) {
@@ -45,10 +46,8 @@ export function applyChangeToYEntity(change: Change, yentity: YEntity) {
                 break;
               case "children":
                 throw new Error(`Should be handled by ChangeKind.Array`);
-              case "meta":
+              default:
                 throw new Error(`Not implemented`);
-                // const ychildren: YChildren = yentity.get("children");
-                break;
             }
           } else {
             throw new Error(
@@ -84,8 +83,26 @@ export function applyChangeToYEntity(change: Change, yentity: YEntity) {
       } else if (change.path.length >= 2) {
         const componentName = change.path[0] as string;
         const propertyName = change.path[1] as string;
-        if (isEntityAttribute(key as string))
-          throw new Error(`Attributes must be primitive types '${key}'`);
+        if (isEntityAttribute(key as string)) {
+          if (key === "meta") {
+            if (
+              change.kind === ChangeKind.Update ||
+              change.kind === ChangeKind.Add
+            ) {
+              let ymeta = yentity.get("meta") as YMeta;
+              ymeta.set(change.path[1] as string, change.rhs);
+            } else if (change.kind === ChangeKind.Delete) {
+              let ymeta = yentity.get("meta") as YMeta;
+              ymeta.delete(change.path[1] as string);
+            } else {
+              throw new Error(
+                `Change for meta not implemented: '${change.kind}'`
+              );
+            }
+          } else {
+            throw new Error(`Attributes must be primitive types '${key}'`);
+          }
+        }
         if (change.path.length === 2) {
           // Set a Component property primitive, e.g. shape.sphereRadius = 1.0
           if (
