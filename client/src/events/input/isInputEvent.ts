@@ -7,15 +7,7 @@ function showIsInput(msg, target) {
   console.log(`isInputEvent true (${msg})`, target);
 }
 
-export function isInputEvent(event, debug = false) {
-  // e.g. Upload dialog needs to be able to accept paste events
-  if (get(uploadingDialogOpen)) {
-    if (debug) console.log("isInputEvent true (uploading)");
-    return true;
-  }
-
-  const el = event.target as HTMLElement;
-
+export function isInputElement(el, debug = false) {
   if (!el || !el.getAttribute) {
     if (debug) console.log("isInputEvent false (event has no target)", el);
     return false;
@@ -25,6 +17,10 @@ export function isInputEvent(event, debug = false) {
     // (INPUT, TEXTAREA, IFRAME)
     if (el.tagName === "INPUT") {
       if (debug) showIsInput("INPUT", el);
+      value = true;
+    }
+    if (el.tagName === "BUTTON") {
+      if (debug) showIsInput("BUTTON", el);
       value = true;
     }
     if (el.tagName === "TEXTAREA") {
@@ -55,4 +51,16 @@ export function isInputEvent(event, debug = false) {
 
     return value;
   }
+}
+
+export function isInputEvent(event, debug = false) {
+  // e.g. Upload dialog needs to be able to accept paste events
+  if (get(uploadingDialogOpen)) {
+    if (debug) console.log("isInputEvent true (uploading)");
+    return true;
+  }
+
+  const el = event.target as HTMLElement;
+
+  return isInputElement(el, debug);
 }

@@ -2,6 +2,7 @@
   import { SvelteComponent } from "svelte";
 
   import { createEventDispatcher } from "svelte";
+  import { globalEvents } from "~/events/globalEvents";
 
   export let enabled: boolean = true;
   export let size: number = 48;
@@ -12,13 +13,26 @@
 
   $: if (padding === null) padding = size / 6;
 
+  function onKeydown(event) {
+    if (
+      event.key !== "Enter" &&
+      event.key !== "Return" &&
+      event.key !== "Tab" &&
+      event.key !== " "
+    ) {
+      globalEvents.emit("focus-world");
+    }
+  }
+
   let dispatch = createEventDispatcher();
 </script>
 
 <button
   style="width: {size}px; height: {size}px; margin: {margin}px; padding: {padding}px"
   class:disabled={!enabled}
-  on:mousedown|stopPropagation={() => {
+  on:keydown={onKeydown}
+  on:mousedown|stopPropagation
+  on:click={() => {
     dispatch("click");
   }}
 >
@@ -50,7 +64,6 @@
     border-radius: 100%;
   }
   button:focus {
-    outline: none;
     border-bottom-color: rgba(255, 255, 255, 1);
   }
   button.disabled {

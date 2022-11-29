@@ -13,6 +13,7 @@
   import CopyPasteListener from "./CopyPasteListener";
 
   import * as arrowKeys from "./handlers/arrowKeys";
+  import * as buildKey from "./handlers/buildKey";
   import * as debugKey from "./handlers/debugKey";
   import * as deleteKey from "./handlers/deleteKey";
   import * as enterKey from "./handlers/enterKey";
@@ -82,6 +83,7 @@
   onMount(() => {
     const unregisters = [
       arrowKeys.register(),
+      buildKey.register(),
       debugKey.register(),
       deleteKey.register(),
       enterKey.register(),

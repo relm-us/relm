@@ -655,6 +655,13 @@ export class WorldManager {
         if (kind === "pointer") this.focusPointer(entity);
       }
     );
+    this.addGlobalEventListener("focus-world", () => {
+      // Give the document focus
+      window.focus();
+
+      // Remove focus from any focused element
+      (document.activeElement as any)?.blur();
+    });
   }
 
   changeAudioZone(zone: string = null) {

@@ -168,7 +168,7 @@
   "Overlay": {
     "tooltips": {
       "set_up_video": "Set up Cam & Mic",
-      "build_mode": "Toggle build mode",
+      "build_mode": "Toggle build mode (B)",
       "mute": "Mute",
       "unmute": "Unmute",
       "mute_video": "Disable Camera",

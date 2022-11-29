@@ -31,6 +31,7 @@ export type GlobalEvents = {
   "camera-rotate-left": () => void;
   "camera-rotate-right": () => void;
 
+  "focus-world": () => void;
   "release-held-keys": () => void;
 };
 
