@@ -4,6 +4,7 @@ export const PROTECTED_WORLD_DOC_KEYS = [
   "entities",
   "entryways",
   "identities",
+  "layers",
   "messages",
   "settings",
 ];
