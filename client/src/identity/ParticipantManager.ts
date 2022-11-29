@@ -46,6 +46,12 @@ const logEnabled = (localStorage.getItem("debug") || "")
   .split(":")
   .includes("participant");
 
+type LastLocation = {
+  ts: number;
+  relmName: string;
+  entryway: string;
+  position: [number, number, number];
+};
 export class ParticipantManager {
   dispatch: Dispatch;
   broker: ParticipantBroker;
@@ -133,22 +139,24 @@ export class ParticipantManager {
     }
   }
 
-  maybeGetLastLocation(relmName: string, entryway: string) {
+  get lastLocation(): LastLocation | null {
+    const item = localStorage.getItem("lastLocation");
+    if (item) return JSON.parse(item);
+    else return null;
+  }
+
+  isLastLocationRecent(relmName: string, entryway: string): boolean {
+    const loc = this.lastLocation;
+    if (loc == null) return false;
+
+    if (loc.relmName !== relmName || loc.entryway !== entryway) return false;
+
     const now = Number(new Date());
-    if (!localStorage.getItem("lastLocation")) return null;
+    return now - loc.ts < RESTORE_LAST_LOCATION_REFRESH_SECONDS * 1000;
+  }
 
-    const lastLocation = JSON.parse(localStorage.getItem("lastLocation"));
-
-    // If less than two minutes ago, restore last location
-    if (
-      now - lastLocation.ts < RESTORE_LAST_LOCATION_REFRESH_SECONDS * 1000 &&
-      lastLocation.relmName === relmName &&
-      lastLocation.entryway === entryway
-    ) {
-      return new Vector3().fromArray(lastLocation.position);
-    } else {
-      return null;
-    }
+  getLastLocation(): Vector3 {
+    return new Vector3().fromArray(this.lastLocation?.position ?? [0, 0, 0]);
   }
 
   sendMyRapidData() {

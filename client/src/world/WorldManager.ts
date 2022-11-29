@@ -1118,16 +1118,11 @@ export class WorldManager {
     }
   }
 
-  maybeRestoreLastLocation(): boolean {
-    const position = this.participants.maybeGetLastLocation(
-      this.relmName,
-      this.entryway
-    );
-    if (position) {
-      this.moveTo(position);
-      return true;
-    } else {
-      return false;
+  maybeRestoreLastLocation() {
+    if (this.participants.isLastLocationRecent(this.relmName, this.entryway)) {
+      if (window.confirm("Restore last location?")) {
+        this.moveTo(this.participants.getLastLocation());
+      }
     }
   }
 
