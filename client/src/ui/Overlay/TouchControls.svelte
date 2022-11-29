@@ -30,20 +30,18 @@
   }
 
   onMount(() => {
-    (window as any).nzone = zone;
-
     manager = nipplejs.create({
       zone,
       dynamicPage: true,
     });
 
-    manager.on("added", (_evt, n) => {
-      (n as any).on("move", move);
-      (n as any).on("end", end);
+    manager.on("added", (_evt, n: any) => {
+      n.on("move", move);
+      n.on("end", end);
     });
-    manager.on("removed", (_evt, n) => {
-      (n as any).off("move", move);
-      (n as any).off("end", end);
+    manager.on("removed", (_evt, n: any) => {
+      n.off("move", move);
+      n.off("end", end);
     });
 
     return () => {

@@ -27,7 +27,11 @@
   function onDown(event: MouseEvent) {
     if (!eventTargetsWorld(event, $worldUIMode)) return;
 
+    // Record this event so we can send it to TouchControls later if needed
     downEvent = event;
+
+    // Prevent selecting text in Firefox
+    event.preventDefault();
 
     onPointerDown(event.clientX, event.clientY, event.shiftKey);
   }

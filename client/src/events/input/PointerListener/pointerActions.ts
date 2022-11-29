@@ -217,9 +217,6 @@ export function onPointerMove(
       });
     } else if (pointerState === "click" && atLeastMinDragDistance()) {
       (window as any).touchControls.begin(pointerdownInit, () => {
-        // interactiveEntity = null;
-        // pointerMoveFound.length = 0;
-        // worldManager.selection.clear();
         pointerDownFound.length = 0;
         setNextPointerState("initial");
       });
