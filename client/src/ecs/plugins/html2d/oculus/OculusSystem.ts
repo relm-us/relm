@@ -145,15 +145,17 @@ export class OculusSystem extends System {
 
     const { container, component } = entity.get(OculusRef) as OculusRef;
 
-    if (!spec.previous) spec.previous = new Vector3();
-    v2.copy(v1).add(spec.previous).divideScalar(2);
+    if (!spec.previous) spec.previous = new Vector3().copy(v1);
 
-    container.style.left = Math.floor(v2.x) + "px";
-    container.style.top = Math.floor(v2.y) + "px";
+    v2.copy(spec.previous);
 
-    const d = Math.floor(diameter);
-    container.style.width = `${d}px`;
-    container.style.height = `${d}px`;
+    if (spec.previous.distanceToSquared(v1) >= 0.5) v2.lerp(v1, 0.5);
+
+    container.style.left = v2.x + "px";
+    container.style.top = v2.y + "px";
+
+    container.style.width = `${diameter}px`;
+    container.style.height = `${diameter}px`;
 
     spec.previous.copy(v2);
 

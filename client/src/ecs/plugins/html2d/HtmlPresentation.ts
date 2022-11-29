@@ -25,10 +25,38 @@ export class HtmlPresentation {
     return el;
   }
 
+  /**
+   * This function is an optimized equivalent of:
+   *
+   *   position.project(this.camera);
+   *   position.x = ((position.x + 1) * window.innerWidth) / 2;
+   *   position.y = (-(position.y - 1) * window.innerHeight) / 2;
+   *   position.z = 0;
+   */
   project(position: Vector3) {
-    position.project(this.camera);
-    position.x = ((position.x + 1) * window.innerWidth) / 2;
-    position.y = (-(position.y - 1) * window.innerHeight) / 2;
+    let Px = position.x;
+    let Py = position.y;
+    let Pz = position.z;
+
+    const Ie = this.camera.matrixWorldInverse.elements;
+    const Iw = Ie[3] * Px + Ie[7] * Py + Ie[11] * Pz + Ie[15];
+
+    const Ix = (Ie[0] * Px + Ie[4] * Py + Ie[8] * Pz + Ie[12]) / Iw;
+    const Iy = (Ie[1] * Px + Ie[5] * Py + Ie[9] * Pz + Ie[13]) / Iw;
+    const Iz = (Ie[2] * Px + Ie[6] * Py + Ie[10] * Pz + Ie[14]) / Iw;
+
+    const Me = this.camera.projectionMatrix.elements;
+    const Mw = Me[3] * Ix + Me[7] * Iy + Me[11] * Iz + Me[15];
+
+    const Mx =
+      (Me[0] * Ix + Me[4] * Iy + Me[8] * Iz + Me[12]) /
+      (Mw / window.innerWidth);
+    const My =
+      (Me[1] * Ix + Me[5] * Iy + Me[9] * Iz + Me[13]) /
+      (Mw / window.innerHeight);
+
+    position.x = (Mx + window.innerWidth) / 2;
+    position.y = (-My + window.innerHeight) / 2;
     position.z = 0;
   }
 
