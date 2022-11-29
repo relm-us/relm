@@ -264,5 +264,8 @@
     "try_again": "Try Again",
     "request_perms": "Use Cam & Mic",
     "continue": "Continue"
+  },
+  "WorldManager": {
+    "restore_location": "Restore last location?"
   }
 }

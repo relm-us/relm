@@ -22,6 +22,7 @@ import * as THREE from "three";
 import { localVideoTrack } from "~/ui/VideoMirror";
 import { derived, get } from "svelte/store";
 import { toast } from "@zerodevx/svelte-toast";
+import { _ } from "svelte-i18n";
 
 import { WorldDoc } from "~/y-integration/WorldDoc";
 
@@ -1120,7 +1121,7 @@ export class WorldManager {
 
   maybeRestoreLastLocation() {
     if (this.participants.isLastLocationRecent(this.relmName, this.entryway)) {
-      if (window.confirm("Restore last location?")) {
+      if (window.confirm(get(_)("WorldManager.restore_location"))) {
         this.moveTo(this.participants.getLastLocation());
       }
     }
