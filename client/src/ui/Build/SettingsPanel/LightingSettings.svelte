@@ -25,7 +25,6 @@
     ({ detail }) => {
       const color = detail.slice(0, 7);
       const property = getColorProperty();
-      console.log("change color", settingName, color, property);
       getColorProperty().copy(new Color(color));
       worldManager.worldDoc.settings.y.set(settingName, color);
     };
@@ -56,7 +55,6 @@
       pos = JSON.parse(`[${directionalPosition}]`);
     } catch (err) {}
     if (pos) {
-      console.log("pos", pos);
       const follow = worldManager.light.getByName("Follow");
       follow.offset.fromArray(pos);
       follow.modified();
@@ -159,7 +157,9 @@
   </r-setting>
 
   <r-setting style="border-bottom:0; padding-bottom: 3px">
-    <Button on:click={resetLighting}>{$_("LightingSettings.reset_lighting")}</Button>
+    <Button on:click={resetLighting}
+      >{$_("LightingSettings.reset_lighting")}</Button
+    >
   </r-setting>
 </Pane>
 
