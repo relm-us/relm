@@ -40,9 +40,6 @@ export function readableMap<T>(map: Y.Map<T>): YReadableMap<T> {
     // return unsubscribe function
     return () => {
       subs = subs.filter((sub) => sub !== handler);
-      if (subs.length === 0) {
-        map.unobserve(observer);
-      }
     };
   };
 
