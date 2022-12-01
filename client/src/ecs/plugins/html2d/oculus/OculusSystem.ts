@@ -149,7 +149,7 @@ export class OculusSystem extends System {
 
     v2.copy(spec.previous);
 
-    if (spec.previous.distanceToSquared(v1) >= 0.5) v2.lerp(v1, 0.5);
+    if (spec.previous.distanceToSquared(v1) >= 0.5) v2.copy(v1);
 
     container.style.left = v2.x + "px";
     container.style.top = v2.y + "px";
