@@ -8,15 +8,18 @@ import { Interactor } from "~/ecs/plugins/interactor";
 import { Controller } from "~/ecs/plugins/player-control";
 import { BoneTwist, headFollowsPointer } from "~/ecs/plugins/bone-twist";
 
-import { worldManager } from "~/world";
-
 import { makeAvatarEntities } from "~/identity/Avatar/makeAvatarEntities";
 import { participantId } from "~/identity/participantId";
 import { Avatar } from "~/identity/Avatar";
 
 export const makeLocalAvatar =
   (ecsWorld: DecoratedECSWorld, position: Vector3) => (dispatch: Dispatch) => {
-    const entities = makeAvatarEntities(ecsWorld, position, false, participantId);
+    const entities = makeAvatarEntities(
+      ecsWorld,
+      position,
+      false,
+      participantId
+    );
 
     const avatar = new Avatar(ecsWorld, entities);
 
@@ -25,7 +28,7 @@ export const makeLocalAvatar =
     };
 
     entities.body
-      .add(Controller, { onActivity: () => worldManager.didControlAvatar() })
+      .add(Controller)
       .add(Interactor)
       .add(BoneTwist, {
         boneName: "mixamorigHead",
