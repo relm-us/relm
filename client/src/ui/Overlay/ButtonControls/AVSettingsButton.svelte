@@ -1,16 +1,20 @@
 <script lang="ts">
   import type { Dispatch } from "~/main/ProgramTypes";
 
-  import { fly, slide } from "svelte/transition";
+  import { onMount } from "svelte";
+  import { fly } from "svelte/transition";
   import IoIosSettings from "svelte-icons/io/IoIosSettings.svelte";
   import IoMdArrowRoundDown from "svelte-icons/io/IoMdArrowRoundDown.svelte";
-  import { IconVideoEnabled, IconAudioEnabled } from "~/ui/VideoMirror";
 
+  import { firstFocusElement } from "~/stores/firstFocusElement";
+
+  import { IconVideoEnabled, IconAudioEnabled } from "~/ui/VideoMirror";
   import CircleButton from "~/ui/lib/CircleButton";
 
   export let dispatch: Dispatch;
 
   let drawingAttention = false;
+  let avSettingsEl: HTMLElement;
 
   const onClick = () => {
     dispatch({ id: "setUpAudioVideo" });
@@ -20,9 +24,15 @@
     drawingAttention = true;
     setTimeout(() => (drawingAttention = false), 2000);
   }
+
+  onMount(() => {
+    firstFocusElement.set(
+      avSettingsEl.getElementsByTagName("BUTTON")[0] as HTMLElement
+    );
+  });
 </script>
 
-<r-av-settings>
+<r-av-settings bind:this={avSettingsEl}>
   {#if drawingAttention}
     <r-attention in:fly={{ y: -100 }} out:fly>
       <IoMdArrowRoundDown />

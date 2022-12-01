@@ -6,6 +6,7 @@
   import { isInputEvent } from "../isInputEvent";
 
   import { onPointerUp, onPointerDown, onPointerMove } from "./pointerActions";
+  import { globalEvents } from "~/events/globalEvents";
 
   let downEvent;
 
@@ -32,6 +33,8 @@
 
     // Prevent selecting text in Firefox
     event.preventDefault();
+
+    globalEvents.emit("focus-world");
 
     onPointerDown(event.clientX, event.clientY, event.shiftKey);
   }

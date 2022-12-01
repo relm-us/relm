@@ -18,6 +18,7 @@
       event.key !== "Enter" &&
       event.key !== "Return" &&
       event.key !== "Tab" &&
+      event.key !== "Shift" &&
       event.key !== " "
     ) {
       globalEvents.emit("focus-world");
