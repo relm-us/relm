@@ -13,13 +13,10 @@ import { participantId } from "~/identity/participantId";
 import { Avatar } from "~/identity/Avatar";
 
 export const makeLocalAvatar =
-  (ecsWorld: DecoratedECSWorld, position: Vector3) => (dispatch: Dispatch) => {
-    const entities = makeAvatarEntities(
-      ecsWorld,
-      position,
-      false,
-      participantId
-    );
+  (ecsWorld: DecoratedECSWorld) => (dispatch: Dispatch) => {
+    const entities = makeAvatarEntities(ecsWorld, participantId, {
+      kinematic: false,
+    });
 
     const avatar = new Avatar(ecsWorld, entities);
 

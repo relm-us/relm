@@ -31,9 +31,11 @@ import avatarsGlb from "./avatars.glb";
 
 export function makeAvatarEntities(
   world: DecoratedECSWorld,
-  position: Vector3,
-  kinematic: boolean,
-  participantId: string
+  participantId: string,
+  {
+    position = new Vector3(),
+    kinematic = false,
+  }: { position?: Vector3; kinematic?: boolean }
 ): AvatarEntities {
   // Create the avatar's torso, which we connect everything else to
   const body: Entity = makeEntity(world, "Avatar", participantId)

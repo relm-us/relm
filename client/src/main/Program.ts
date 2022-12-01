@@ -563,7 +563,8 @@ export function makeProgram(): Program {
       }
 
       case "gotEntrywayPosition": {
-        return [state, makeLocalAvatar(state.ecsWorld, state.entrywayPosition)];
+        // TODO: Move this to prior initialization step and remove `gotEntrywayPosition`?
+        return [state, makeLocalAvatar(state.ecsWorld)];
       }
 
       case "didMakeLocalAvatar": {
@@ -616,7 +617,7 @@ export function makeProgram(): Program {
 
       case "loadedAndReady": {
         if (state.entrywayPosition && state.doneLoading) {
-          worldManager.maybeRestoreLastLocation();
+          worldManager.moveToInitialLocation(state.entrywayPosition);
 
           if (state.entrywayUnsub) {
             state.entrywayUnsub();

@@ -9,13 +9,20 @@ import { participantId as localParticipantId } from "../participantId";
 import { makeAvatarEntities } from "./makeAvatarEntities";
 
 export function makeRemoteAvatarEntities(
-  this: void,
   ecsWorld: DecoratedECSWorld,
-  position: Vector3,
   participantId: string,
-  getHeadAngle: () => number
+  {
+    position = new Vector3(),
+    getHeadAngle = () => 0,
+  }: {
+    getHeadAngle?: () => number;
+    position?: Vector3;
+  }
 ): AvatarEntities {
-  const entities = makeAvatarEntities(ecsWorld, position, true, participantId);
+  const entities = makeAvatarEntities(ecsWorld, participantId, {
+    position,
+    kinematic: true,
+  });
 
   entities.body
     .add(BoneTwist, {

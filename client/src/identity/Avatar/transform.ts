@@ -131,10 +131,12 @@ export function maybeMakeAvatar(
     const position = new Vector3().fromArray(transformData as number[], 1);
     const entities = makeRemoteAvatarEntities(
       ecsWorld,
-      position,
       participant.participantId,
-      () => {
-        return participant.avatar?.headAngle;
+      {
+        position,
+        getHeadAngle: () => {
+          return participant.avatar?.headAngle;
+        },
       }
     );
     participant.avatar = new Avatar(ecsWorld, entities);

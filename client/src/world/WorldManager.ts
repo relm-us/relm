@@ -1113,10 +1113,17 @@ export class WorldManager {
     }
   }
 
+  moveToInitialLocation(defaultPosition: Vector3) {
+    if (!this.maybeRestoreLastLocation()) {
+      this.moveTo(defaultPosition, true);
+    }
+  }
+
   maybeRestoreLastLocation() {
     if (this.participants.isLastLocationRecent(this.relmName, this.entryway)) {
       if (window.confirm(get(_)("WorldManager.restore_location"))) {
         this.moveTo(this.participants.getLastLocation());
+        return true;
       }
     }
   }
