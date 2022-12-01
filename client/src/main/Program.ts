@@ -656,6 +656,8 @@ export function makeProgram(): Program {
           { ...state },
           Cmd.batch([
             send({ id: "updateLocalIdentityData", identityData }),
+
+            // Do a little time-out here to allow the world to "look good" before entering
             (dispatch) => {
               setTimeout(() => {
                 dispatch({ id: "showGameScreen" });
