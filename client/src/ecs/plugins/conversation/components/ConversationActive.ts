@@ -1,4 +1,4 @@
-import { LocalComponent, RefType } from "~/ecs/base";
+import { LocalComponent } from "~/ecs/base";
 import { Conversation } from "./Conversation";
 
 export class ConversationActive extends LocalComponent {
