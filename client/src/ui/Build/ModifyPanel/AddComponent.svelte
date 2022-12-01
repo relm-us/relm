@@ -7,6 +7,7 @@
   import { worldManager } from "~/world";
   import { getComponentOptions } from "~/utils/getComponentOptions";
   import alphanumeric from "alphanumeric-id";
+  import { globalEvents } from "~/events/globalEvents";
 
   export let entity: Entity;
 
@@ -16,6 +17,11 @@
   $: componentOptions = getComponentOptions(entity);
 
   let selectedValue;
+  let listOpen;
+
+  function onKeydown(event) {
+    if (event.key === "Escape" && !listOpen) globalEvents.emit("focus-world");
+  }
 
   function optionsHook(componentName) {
     if (componentName === "Document") {
@@ -42,9 +48,11 @@
   };
 </script>
 
-<select-container>
+<select-container on:keydown={onKeydown}>
   <Select
     bind:value={selectedValue}
+    bind:listOpen
+    listOffset={0}
     placeholder="Add Component..."
     isClearable={false}
     items={componentOptions}
@@ -55,10 +63,13 @@
 <style>
   select-container {
     display: block;
-    width: 250px;
+    width: 222px;
     margin-top: 16px;
 
     --background: none;
-    --height: 24px;
+    --height: 28px;
+    --itemColor: var(--foreground-white);
+    --itemPadding: 0 16px;
+    --listMaxHeight: 350px;
   }
 </style>
