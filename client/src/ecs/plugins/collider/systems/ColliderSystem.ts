@@ -1,7 +1,5 @@
 import type { ColliderParams } from "../shared/types";
 
-import { Quaternion, Vector3 } from "three";
-
 import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { Physics } from "~/ecs/plugins/physics";
@@ -10,7 +8,6 @@ import {
   Collider3,
   ColliderRef,
   Collider3Active,
-  PhysicsOptions,
   ColliderAttrs,
 } from "../components";
 import { createCollider } from "../shared/createCollider";

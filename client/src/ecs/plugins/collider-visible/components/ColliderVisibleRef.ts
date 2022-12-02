@@ -1,8 +1,8 @@
 import type { Group, Mesh } from "three";
 
-import { LocalComponent, RefType } from "~/ecs/base";
+import { StateComponent, RefType } from "~/ecs/base";
 
-export class ColliderVisibleRef extends LocalComponent {
+export class ColliderVisibleRef extends StateComponent {
   value: Mesh;
   group: Group;
 

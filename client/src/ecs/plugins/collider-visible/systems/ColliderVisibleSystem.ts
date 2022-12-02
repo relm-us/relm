@@ -42,7 +42,7 @@ export class ColliderVisibleSystem extends System {
     ],
     modified: [Object3DRef, Modified(Collider3), ColliderVisibleRef],
     modifiedTransform: [Object3DRef, Modified(Transform), ColliderVisibleRef],
-    removed: [Object3DRef, Not(Collider3), ColliderVisibleRef],
+    removed: [Not(Collider3), ColliderVisibleRef],
     removedInteractive: [Object3DRef, NonInteractive, ColliderVisibleRef],
     deactivated: [Collider3, ColliderVisibleRef, Not(Collider3Active)],
   };
