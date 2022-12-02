@@ -133,8 +133,8 @@ export class AVConnection {
     });
 
     this.subscribe("participant-removed", (participantId: string) => {
-      this.audioTrackStores[participantId].set?.(null);
-      this.videoTrackStores[participantId].set?.(null);
+      this.audioTrackStores[participantId]?.set?.(null);
+      this.videoTrackStores[participantId]?.set?.(null);
     });
   }
 
