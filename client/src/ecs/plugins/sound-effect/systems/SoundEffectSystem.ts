@@ -1,10 +1,8 @@
-import { Howl, Howler } from "howler";
-
-import { assetUrl } from "~/config/assetUrl";
-
 import { System, Groups, Entity, Not } from "~/ecs/base";
 import { Presentation } from "~/ecs/plugins/core";
 import { Impact } from "~/ecs/plugins/physics";
+
+import { participantId } from "~/identity/participantId";
 
 import {
   SoundAssetLoaded,
@@ -29,6 +27,8 @@ export class SoundEffectSystem extends System {
   update() {
     this.queries.boundary.forEach((entity) => {
       const impact: Impact = entity.get(Impact);
+      if (impact.other?.id !== participantId) return;
+
       const enteredYet = entity.has(SoundEffectEntered);
 
       if (impact.started && !enteredYet) {
