@@ -9,6 +9,7 @@ import { PHYSICS_TIMESTEP } from "~/config/constants";
 
 import { System, Groups } from "~/ecs/base";
 import { Presentation, Transform } from "~/ecs/plugins/core";
+import { NonInteractive } from "~/ecs/plugins/non-interactive";
 
 import { Physics } from "..";
 import { Impact } from "../components";
@@ -79,10 +80,10 @@ export class PhysicsSystem extends System {
         const entity1 = this.physics.colliders.get(handle1);
         const entity2 = this.physics.colliders.get(handle2);
 
-        // if (contactStarted) {
-        entity1.add(Impact, { other: entity2, started });
-        entity2.add(Impact, { other: entity1, started });
-        // }
+        if (!entity1.has(NonInteractive) && !entity2.has(NonInteractive)) {
+          entity1.add(Impact, { other: entity2, started });
+          entity2.add(Impact, { other: entity1, started });
+        }
       }
     );
   }
