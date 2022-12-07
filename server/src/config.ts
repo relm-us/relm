@@ -1,6 +1,10 @@
 import dotenv from "dotenv";
 
-dotenv.config();
+if (process.env.NODE_ENV !== "test") {
+  dotenv.config();
+} else {
+  console.log("Not loading .env since this is a test env");
+}
 
 const SECURITY_CONFIG = {
   name: "ECDSA",
