@@ -1,4 +1,4 @@
-import { db, sql, INSERT, IN, raw } from "./db.js";
+import { db, sql, raw, INSERT, IN, WHERE } from "./db.js";
 import { arrayToBooleanObject, booleanObjectToArray } from "../utils/index.js";
 import { getRelm } from "./relm.js";
 import { filterMap } from "relm-common";
@@ -64,30 +64,45 @@ export async function setPermits({
     else throw Error(`relm not found: ${relmName}`);
   }
 
-  const attrs = {
+  const filter: any = {
     relm_id,
     participant_id: participantId,
+  };
+
+  const attrs = {
+    ...filter,
     permits: JSON.stringify(arrayToBooleanObject(permits)),
   };
 
-  if (union) {
-    await db.one(sql`
-      ${INSERT("permissions", attrs)}
-      ON CONFLICT(relm_id, participant_id)
-      DO UPDATE SET
+  const existingRow = await db.oneOrNone(
+    sql`SELECT * FROM permissions ${WHERE(filter)}`
+  );
+
+  if (existingRow) {
+    let query;
+    // UPDATE
+    if (union) {
+      query = sql`
+      UPDATE permissions SET
         updated_at = CURRENT_TIMESTAMP,
         permits = (permissions.permits || ${attrs.permits})::jsonb
-      RETURNING permits
-    `);
-  } else {
-    await db.one(sql`
-      ${INSERT("permissions", attrs)}
-      ON CONFLICT(relm_id, participant_id)
-      DO UPDATE SET
+      WHERE
+        permission_id = ${existingRow.permission_id}
+    `;
+    } else {
+      query = sql`
+      UPDATE permissions SET
         updated_at = CURRENT_TIMESTAMP,
-        permits = ${attrs.permits}
-      RETURNING permits
-    `);
+        permits = (${attrs.permits})::jsonb
+      WHERE
+        permission_id = ${existingRow.permission_id}
+    `;
+    }
+
+    await db.none(query);
+  } else {
+    // INSERT
+    await db.none(sql`${INSERT("permissions", attrs)}`);
   }
 }
 

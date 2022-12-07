@@ -4,7 +4,9 @@ import * as Permission from "./permission.js";
 
 import { uuidv4 } from "../utils/index.js";
 import { init, deinit } from "./db.js";
-import { Participant, Relm, User } from "./index.js";
+import * as Participant from "./participant.js";
+import * as Relm from "./relm.js";
+import * as User from "./user.js";
 
 describe("Permission model tests", () => {
   beforeAll(init);
@@ -161,13 +163,13 @@ describe("Permission model tests", () => {
     await Participant.addPubKeyDoc({
       participantId,
       pubKeyDoc: {
-        example: 0,
+        example: uuidv4(), // just needs to be unique,
       },
     });
     await Participant.addPubKeyDoc({
       participantId: participantId2,
       pubKeyDoc: {
-        example: 1,
+        example: uuidv4(), // just needs to be unique,
       },
     });
 
@@ -183,7 +185,7 @@ describe("Permission model tests", () => {
     });
 
     const userId = await User.createUser({
-      email: "example-permissions@example.com",
+      email: `${uuidv4()}@example.com`,
       password: "example",
     });
 
