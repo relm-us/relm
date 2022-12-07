@@ -148,9 +148,9 @@
     <r-avatars>
       {#each Object.entries(presets) as [id, preset], i}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <r-avatar on:click={pick(id)}>
+        <button class="avatar-btn" on:click={pick(id)}>
           <img src={preset.image} alt="Avatar {id}" />
-        </r-avatar>
+        </button>
       {/each}
     </r-avatars>
     <div class="spacer" />
@@ -182,19 +182,22 @@
     max-width: 500px;
   }
 
-  r-avatar {
-    display: block;
+  .avatar-btn {
+    display: flex;
     margin: 8px;
+    padding: 0;
+    border: 0;
+    background: none;
   }
 
-  r-avatar img {
+  .avatar-btn img {
     object-fit: cover;
     height: 225px;
     border: 2px solid transparent;
     border-radius: 5px;
   }
 
-  r-avatar img:hover {
+  .avatar-btn img:hover {
     border: 2px solid var(--selected-red);
   }
 
