@@ -155,7 +155,6 @@ relm.post(
         attrs.clonePermitAssigned = cpAsn;
       }
 
-      console.log('attrs', attrs)
       const relm = await Relm.createRelm(attrs);
 
       if (seedRelmId) {
@@ -248,7 +247,10 @@ relm.post(
   wrapAsync(async (req, res) => {
     const doc: Y.Doc = await getSyncedYDoc(req.relm.permanentDocId);
     req.relm.permanentDocSize = Y.encodeStateAsUpdate(doc).byteLength;
-    const twilioToken = twilio.getToken(req.authenticatedParticipantId);
+
+    const twilioId =
+      req.authenticatedParticipantId + "/" + req.relm.permanentDocId;
+    const twilioToken = twilio.getToken(twilioId);
 
     return respondWithSuccess(res, {
       action: "meta",
@@ -416,10 +418,8 @@ relm.post(
     }
 
     const doc: Y.Doc = await getSyncedYDoc(req.relm.permanentDocId);
-    // console.log("doc.actions", doc.getMap("actions").toJSON());
 
     const variables = await Variable.getVariables({ relmId });
-    // console.log("values", values);
     const results = {};
 
     for (let [operation, opValues] of Object.entries(changes)) {
@@ -511,7 +511,6 @@ relm.post(
 );
 
 async function setVariable(doc, variables, relmId, name, value) {
-  console.log("setVariable", name, value, variables);
   await Variable.setVariable({ relmId, name, value });
   variables[name] = value;
 
