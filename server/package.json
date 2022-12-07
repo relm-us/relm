@@ -17,7 +17,7 @@
     "tsconfig.json"
   ],
   "scripts": {
-    "test": "cross-env NODE_ENV=test DATABASE_NAME=relm-test jest src/**/*.test.ts",
+    "test": "cross-env NODE_ENV=test DATABASE_NAME=relm-test node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:stress": "ts-node --esm ./src/scripts/stressTestParticipants.ts",
     "start": "tsc && cross-env TMP_DIR=data/tmp ASSETS_DIR=data/assets node dist/server.js",
     "build": "tsc",
@@ -95,28 +95,20 @@
   },
   "jest": {
     "verbose": true,
-    "preset": "ts-jest",
-    "testEnvironment": "node",
+    "preset": "ts-jest/presets/default-esm",
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
     "roots": [
       "<rootDir>/src"
     ],
-    "coveragePathIgnorePatterns": [
-      "/node_modules/"
-    ],
-    "//": "when importing in ts, accept .js:",
     "transform": {
-      "\\.[jt]sx?$": "ts-jest"
-    },
-    "globals": {
-      "ts-jest": {
-        "useESM": true
-      }
-    },
-    "moduleNameMapper": {
-      "(.+)\\.js": "$1"
-    },
-    "extensionsToTreatAsEsm": [
-      ".ts"
-    ]
+      "\\.(js|ts)$": [
+        "ts-jest",
+        {
+          "useESM": true
+        }
+      ]
+    }
   }
 }
