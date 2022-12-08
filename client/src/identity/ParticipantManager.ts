@@ -404,7 +404,6 @@ export class ParticipantManager {
       modifiedIdentityData: true,
 
       actionState: { state: "free" },
-      modifiedActionState: false,
     };
 
     this.set(participantId, participant);

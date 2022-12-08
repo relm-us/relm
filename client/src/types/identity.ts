@@ -94,7 +94,6 @@ export type Participant = {
   modifiedIdentityData: boolean;
 
   actionState: ActionState;
-  modifiedActionState: boolean;
 
   // Avatar is responsible for all visuals/rendering of this identity
   avatar?: Avatar;

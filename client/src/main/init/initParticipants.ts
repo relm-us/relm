@@ -14,7 +14,6 @@ export function initParticipants() {
     modifiedIdentityData: false,
 
     actionState: { state: "free" },
-    modifiedActionState: false,
   });
   return participants;
 }
