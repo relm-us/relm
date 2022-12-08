@@ -40,13 +40,6 @@ export class ParticipantBroker extends EventEmitter {
     this.slow.setLocalStateField(key, value);
   }
 
-  setFields(data) {
-    this.slow.setLocalState({
-      ...this.slow.getLocalState(),
-      ...data,
-    });
-  }
-
   getField(key) {
     return this.slow.getLocalState()[key];
   }
