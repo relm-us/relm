@@ -141,23 +141,27 @@ export class OculusSystem extends System {
     const dist = this.presentation.camera.parent.position.distanceTo(v1);
     const diameter = Math.round(1200 / dist);
 
+    // Convert `v1` from 3d space to 2d space
     this.htmlPresentation.project(v1);
 
     const { container, component } = entity.get(OculusRef) as OculusRef;
 
-    if (!spec.previous) spec.previous = new Vector3().copy(v1);
+    // TODO: is there a way to detect a failed `project()` in a better way than this?
+    if (!isNaN(v1.x) && isFinite(v1.x) && !isNaN(v1.y) && isFinite(v1.y)) {
+      if (!spec.previous) spec.previous = new Vector3().copy(v1);
 
-    v2.copy(spec.previous);
+      v2.copy(spec.previous);
 
-    if (spec.previous.distanceToSquared(v1) >= 0.5) v2.copy(v1);
+      if (spec.previous.distanceToSquared(v1) >= 0.5) v2.copy(v1);
 
-    container.style.left = v2.x + "px";
-    container.style.top = v2.y + "px";
+      container.style.left = v2.x + "px";
+      container.style.top = v2.y + "px";
 
-    container.style.width = `${diameter}px`;
-    container.style.height = `${diameter}px`;
+      container.style.width = `${diameter}px`;
+      container.style.height = `${diameter}px`;
 
-    spec.previous.copy(v2);
+      spec.previous.copy(v2);
+    }
 
     return {
       component,
