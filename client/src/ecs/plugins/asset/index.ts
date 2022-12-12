@@ -5,7 +5,6 @@ import * as Components from "./components";
 import * as Systems from "./systems";
 
 export * from "./components";
-export { loadedAssetKind } from "./utils/loadedAssetKind";
 
 export { Components };
 

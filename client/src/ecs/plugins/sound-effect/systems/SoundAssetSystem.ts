@@ -1,4 +1,4 @@
-import { Not, Modified } from "~/ecs/base";
+import { Not, Modified, Entity } from "~/ecs/base";
 
 import { Queries } from "~/ecs/base/Query";
 import { AssetSystemBase } from "~/ecs/plugins/asset/systems/AssetSystemBase";
@@ -30,12 +30,27 @@ export class SoundAssetSystem extends AssetSystemBase {
       const spec: SoundEffect = entity.get(SoundEffect);
       if (spec.asset && spec.asset.url !== "") this.load(entity);
     });
+
     this.queries.modified.forEach((entity) => {
       this.remove(entity);
       this.load(entity);
     });
+
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
     });
+  }
+
+  async loadAsset(entity: Entity, url: string) {
+    const spec: SoundEffect = entity.get(SoundEffect);
+
+    if (/\.(wav|ogg|mp3|webm)/.test(url)) {
+      const howl = await this.presentation.loadSound(url, spec.preload);
+      return howl;
+    } else {
+      throw Error(
+        `ShapeAsset requires an image file for its texture (${entity.id})`
+      );
+    }
   }
 }

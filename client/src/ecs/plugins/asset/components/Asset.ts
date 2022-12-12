@@ -1,8 +1,8 @@
-import type { Kind } from "../systems/AssetSystemBase";
-
 import { Component } from "~/ecs/base";
 import { AssetType } from "~/ecs/plugins/core";
 import { Asset as CoreAsset } from "~/ecs/plugins/core/Asset";
+
+export type Kind = "TEXTURE" | "GLTF";
 
 export class Asset extends Component {
   value: CoreAsset;

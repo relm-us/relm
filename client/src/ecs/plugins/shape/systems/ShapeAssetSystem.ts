@@ -1,4 +1,4 @@
-import { Not, Modified } from "~/ecs/base";
+import { Not, Modified, Entity } from "~/ecs/base";
 
 import { Queries } from "~/ecs/base/Query";
 import { AssetSystemBase } from "~/ecs/plugins/asset/systems/AssetSystemBase";
@@ -26,6 +26,7 @@ export class ShapeAssetSystem extends AssetSystemBase {
       const spec: Shape3 = entity.get(Shape3);
       if (spec.asset && spec.asset.url !== "") this.load(entity);
     });
+
     this.queries.modified.forEach((entity) => {
       const spec: Shape3 = entity.get(Shape3);
       const loaded: ShapeAssetLoaded = entity.get(ShapeAssetLoaded);
@@ -37,8 +38,19 @@ export class ShapeAssetSystem extends AssetSystemBase {
         spec.needsRebuild = true;
       }
     });
+
     this.queries.removed.forEach((entity) => {
       this.remove(entity);
     });
+  }
+
+  async loadAsset(entity: Entity, url: string) {
+    if (/\.(png|jpg|jpeg|webp)$/.test(url)) {
+      return await this.presentation.loadTexture(url);
+    } else {
+      throw Error(
+        `ShapeAsset requires an image file for its texture (${entity.id})`
+      );
+    }
   }
 }

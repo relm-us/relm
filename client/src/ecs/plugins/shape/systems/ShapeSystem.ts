@@ -10,7 +10,6 @@ import { isBrowser } from "~/utils/isBrowser";
 
 import { Entity, System, Not, Modified, Groups } from "~/ecs/base";
 import { Object3DRef } from "~/ecs/plugins/core";
-import { loadedAssetKind } from "~/ecs/plugins/asset";
 
 import {
   Shape3,
@@ -46,21 +45,9 @@ export class ShapeSystem extends System {
     this.queries.added.forEach((entity) => {
       this.build(entity);
     });
+
     this.queries.addedAsset.forEach((entity) => {
-      const loaded: ShapeAssetLoaded = entity.get(ShapeAssetLoaded);
-      switch (loadedAssetKind(loaded)) {
-        case "GLTF":
-          console.warn("ignoring non-texture asset for shape", entity.id);
-          entity.add(ShapeTexture);
-          break;
-
-        case "TEXTURE":
-          this.buildTexture(entity);
-          break;
-
-        default:
-        // do nothing
-      }
+      this.buildTexture(entity);
     });
 
     this.queries.removedMesh.forEach((entity) => {

@@ -2,9 +2,6 @@ import { System, Groups, Entity } from "~/ecs/base";
 
 import { Presentation } from "~/ecs/plugins/core";
 import { assetUrl } from "~/config/assetUrl";
-import { checkModelValid } from "../utils/checkModelValid";
-
-export type Kind = "TEXTURE" | "GLTF" | "SOUND" | null;
 
 let loaderIds = 0;
 
@@ -61,7 +58,6 @@ export class AssetSystemBase extends System {
     if (loadingId === id) {
       entity.remove(this.AssetLoadingComponent);
       entity.add(this.AssetLoadedComponent, {
-        kind: this.getKind(spec),
         cacheKey: this.getUrl(spec),
         value,
       });
@@ -87,52 +83,28 @@ export class AssetSystemBase extends System {
 
   async loadByKind(entity) {
     const spec = entity.get(this.AssetComponent);
-
-    let url = this.getUrl(spec);
-    if (
-      !url.startsWith("http") &&
-      // Some assets such as humanoid-003.glb are loaded from our local server's
-      // public folder, rather than the ourrelm asset server:
-      !url.startsWith("/")
-    ) {
-      // relative URLs are assumed to be relative to our CDN asset server
-      url = assetUrl(url);
-    }
-
-    switch (this.getKind(spec)) {
-      case "TEXTURE":
-        return await this.presentation.loadTexture(url);
-      case "GLTF":
-        const gltf = await this.presentation.loadGltf(url);
-        const valid = checkModelValid(gltf.scene);
-        if (valid.type === "ok") return gltf;
-        else throw Error(`invalid glTF: ${valid.reason}`);
-      case "SOUND":
-        // TODO: don't assume field is called `preload`
-        const howl = await this.presentation.loadSound(url, spec.preload);
-        return howl;
-      default:
-        throw Error("unknown asset kind");
-    }
+    return await this.loadAsset(entity, this.getUrl(spec));
   }
 
   getUrl(spec): string {
     const field = spec[this.assetField];
-    return (field?.url || "").toLowerCase();
+    let url = (field?.url || "").toLowerCase();
+
+    if (
+      // Respect absolute URLS starting with `http` or `https`
+      !url.startsWith("http") &&
+      // Respect absolute paths starting with `/` that access local public folder
+      !url.startsWith("/")
+    ) {
+      // relative URLs are assumed to be relative to either the CDN asset server,
+      // or the expressjs relm-server, depending on configuration
+      return assetUrl(url);
+    } else {
+      return url;
+    }
   }
 
-  getKind(spec): Kind {
-    const url = this.getUrl(spec);
-    if (url !== "") {
-      // TODO: Get the asset type from MIME info at time of upload
-      if (/\.(glb|gltf)$/.test(url)) {
-        return "GLTF";
-      } else if (/\.(png|jpg|jpeg|webp)$/.test(url)) {
-        return "TEXTURE";
-      } else if (/\.(wav|ogg|mp3|webm)/.test(url)) {
-        return "SOUND";
-      }
-    }
-    return null;
+  async loadAsset(entity: Entity, url: string): Promise<any> {
+    throw Error("requires subclass implementation");
   }
 }

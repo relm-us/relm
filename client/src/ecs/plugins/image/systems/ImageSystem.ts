@@ -9,7 +9,6 @@ import {
 import { System, Not, Modified, Groups, Entity } from "~/ecs/base";
 import { Presentation, Object3DRef } from "~/ecs/plugins/core";
 import { Queries } from "~/ecs/base/Query";
-import { loadedAssetKind } from "~/ecs/plugins/asset";
 
 import {
   Image,
@@ -57,12 +56,7 @@ export class ImageSystem extends System {
     });
 
     this.queries.addedAsset.forEach((entity) => {
-      const loaded: ImageAssetLoaded = entity.get(ImageAssetLoaded);
-      if (loadedAssetKind(loaded) === "TEXTURE") this.buildTexture(entity);
-      else {
-        console.warn("ignoring non-texture asset for shape", entity.id);
-        entity.add(ImageTexture);
-      }
+      this.buildTexture(entity);
     });
 
     this.queries.removedAsset.forEach((entity) => {
