@@ -1,9 +1,9 @@
-import { BooleanType, Component, NumberType } from "~/ecs/base";
+import { BooleanType, Component, NumberType, StringType } from "~/ecs/base";
 import { Asset, AssetType } from "~/ecs/plugins/core";
 
 export class SoundEffect extends Component {
   asset: Asset;
-  preload: boolean;
+  loading: "PRELOAD" | "LAZYLOAD" | "STREAM";
   volume: number;
   fadeIn: number;
   fadeOut: number;
@@ -17,11 +17,17 @@ export class SoundEffect extends Component {
       },
     },
 
-    preload: {
-      type: BooleanType,
-      default: true,
+    loading: {
+      type: StringType,
+      default: "LAZYLOAD",
       editor: {
-        label: "Preload Asset",
+        label: "Load Method",
+        input: "Select",
+        options: [
+          { label: "Load as Needed", value: "LAZYLOAD" },
+          { label: "Load at Load Screen", value: "PRELOAD" },
+          { label: "Streaming Audio", value: "STREAM" },
+        ],
       },
     },
 

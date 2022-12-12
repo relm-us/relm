@@ -47,15 +47,20 @@ export class SoundEffectSystem extends System {
     const spec: SoundEffect = entity.get(SoundEffect);
     const loaded: SoundAssetLoaded = entity.get(SoundAssetLoaded);
 
-    if (loaded?.value) {
-      const sound = loaded.value;
-      entity.add(SoundEffectEntered);
-      if (!spec.preload) sound.load();
-      if (spec.fadeIn) sound.fade(0, spec.volume, spec.fadeIn);
-      else sound.volume(spec.volume);
-      sound.loop(spec.loop);
-      sound.play();
+    const sound = loaded.value;
+    // If this is a "LAZYLOAD" sound effect, load it now
+    if (sound.state() === "unloaded") sound.load();
+
+    if (spec.fadeIn) {
+      sound.fade(0, spec.volume, spec.fadeIn);
+    } else {
+      sound.volume(spec.volume);
     }
+
+    sound.loop(spec.loop);
+    sound.play();
+
+    entity.add(SoundEffectEntered);
   }
 
   leaveSoundEffect(entity: Entity) {

@@ -1,3 +1,5 @@
+import { Howl, Howler } from "howler";
+
 import { Not, Modified, Entity } from "~/ecs/base";
 
 import { Queries } from "~/ecs/base/Query";
@@ -45,7 +47,11 @@ export class SoundAssetSystem extends AssetSystemBase {
     const spec: SoundEffect = entity.get(SoundEffect);
 
     if (/\.(wav|ogg|mp3|webm)/.test(url)) {
-      const howl = await this.presentation.loadSound(url, spec.preload);
+      const howl = new Howl({
+        src: url,
+        html5: spec.loading === "STREAM",
+        preload: spec.loading === "PRELOAD",
+      });
       return howl;
     } else {
       throw Error(
