@@ -81,17 +81,19 @@
   </r-text>
 
   {#if value && value !== ""}
-    <r-row>
+    <r-detail>
       {#if formatSizeInKb(value)}
         <r-size>
           {$_("AssetType.size")}
           <div>{formatSizeInKb(value)}</div>
         </r-size>
+      {:else}
+        <div>unknown size</div>
       {/if}
-      <r-delete on:click={onDeleteAsset}>
+      <button class="delete" on:click={onDeleteAsset}>
         <icon><IoIosClose /></icon>
-      </r-delete>
-    </r-row>
+      </button>
+    </r-detail>
   {/if}
 
   <r-upload-button>
@@ -115,18 +117,35 @@
     flex-grow: 1;
     font-weight: bold;
     text-align: center;
+    padding-left: 6px;
   }
   r-upload-button {
     display: flex;
     justify-content: center;
     margin: 12px 0;
   }
-  r-row {
+  r-detail {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-top: 8px;
+    font-size: 11px;
+
+    margin: 0 4px;
+    background: #444;
+    padding: 3px 6px 2px 6px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
   }
-  r-delete:hover {
+
+  button.delete {
+    display: flex;
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--foreground-white);
+  }
+  button.delete:hover {
     background-color: black;
     border-radius: 4px;
   }
