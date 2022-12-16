@@ -16,9 +16,8 @@ export function respondWithSuccess(res, json) {
   res.end(generateSuccessMessage(json));
 }
 
+// This should only be called by error handlers
 export function respondWithFailure(res, reason, details = undefined) {
-  console.error(reason, JSON.stringify(details));
-
   res.writeHead(200, config.CONTENT_TYPE_JSON);
   res.end(generateFailureMessage(reason, details));
 }

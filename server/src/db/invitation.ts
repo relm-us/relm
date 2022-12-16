@@ -116,7 +116,7 @@ export async function getInvitation(
       if (invitationRelmId === relmId || invitationRelmId === null) {
         return mkInvitation(row);
       } else {
-        throw Error(`token not valid for this relm (try '${row.relm_name}')`);
+        throw Error("token not valid for this relm");
       }
     } else {
       return mkInvitation(row);

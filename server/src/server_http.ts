@@ -5,7 +5,7 @@ import cors from "cors";
 import * as middleware from "./middleware.js";
 import * as routes from "./routes/index.js";
 import passportMiddleware from "./passportAuth.js";
-import { respondWithError, uuidv4 } from "./utils/index.js";
+import { respondWithError, respondWithFailure, uuidv4 } from "./utils/index.js";
 
 export const app = express();
 
@@ -63,12 +63,18 @@ app.use((req, res) => {
 app.use((error, req, res, next) => {
   const errorId = uuidv4().split("-")[0];
   const code = error.status || 400;
+
+  let message = error.message;
+
+  // Special case for QueryResultError, show the SQL source of the error
+  if (error.query) message += "\n  Query: " + error.query.text;
+
   console.warn(
-    `[${getRemoteIP(req)}] ${req.originalUrl} ${code} (${errorId}): ${
-      error.message
-    }\n${error.stack}`
+    `[${getRemoteIP(req)}] ${
+      req.originalUrl
+    } ${code} (${errorId}): ${message}\n${error.stack}`
   );
-  respondWithError(res, `${error.message} (${errorId})`);
+  respondWithFailure(res, `${error.message} (${errorId})`);
 });
 
 // Used for logging IP addresses

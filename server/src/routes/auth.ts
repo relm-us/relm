@@ -18,11 +18,9 @@ import {
   isValidIdentity,
   isValidPasswordFormat,
   wrapAsyncPassport,
-  respondWithFailure,
   PassportResponse,
   respondWithErrorPostMessage,
   respondWithSuccessPostMessage,
-  respondWithFailurePostMessage,
 } from "../utils/index.js";
 
 export const auth = express.Router();
@@ -148,25 +146,25 @@ auth.post(
 
     // Check that the email is valid
     if (!isValidEmailFormat(email)) {
-      return respondWithFailure(res, "invalid_email");
+      return respondWithError(res, "invalid_email");
     }
 
     if (!isValidPasswordFormat(password)) {
-      return respondWithFailure(res, "invalid_password");
+      return respondWithError(res, "invalid_password");
     }
 
     // Check if someone is using that email
     const userExistsWithEmailProvided =
       (await User.getUserIdByEmail({ email })) !== null;
     if (userExistsWithEmailProvided) {
-      return respondWithFailure(res, "email_already_used");
+      return respondWithError(res, "email_already_used");
     }
 
     // Ensure the participant being registered isn't already linked.
     const participantId = req.authenticatedParticipantId;
     const existingUserId = await Participant.getUserId({ participantId });
     if (existingUserId !== null) {
-      return respondWithFailure(res, "participant_already_linked");
+      return respondWithError(res, "participant_already_linked");
     }
 
     const userId = await User.createUser({
@@ -188,9 +186,9 @@ auth.post(
     if (status === PassportResponse.ERROR) {
       return respondWithError(res, data.reason, data.details);
     } else if (status === PassportResponse.FAILURE) {
-      return respondWithFailure(res, data.reason, data.details);
+      return respondWithError(res, data.reason, data.details);
     } else if (status === PassportResponse.NO_USER_FOUND) {
-      return respondWithFailure(res, "invalid_credentials", {
+      return respondWithError(res, "invalid_credentials", {
         email: req.body?.email,
         passwordLength: req.body?.password?.length,
         participantId: req.authenticatedParticipantId,
@@ -236,7 +234,7 @@ function socialOAuthCallback(socialId) {
       if (status === PassportResponse.ERROR) {
         return respondWithErrorPostMessage(res, data.reason, data.details);
       } else if (status === PassportResponse.FAILURE) {
-        return respondWithFailurePostMessage(res, data.reason, data.details);
+        return respondWithErrorPostMessage(res, data.reason, data.details);
       }
 
       // Assign participant to user!
