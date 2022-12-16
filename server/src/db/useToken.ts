@@ -13,7 +13,7 @@ export async function useToken({ token, relmId, participantId }) {
     // Convert invitation to permissions
     await setPermits({
       participantId,
-      relmId: invite.relmId,
+      relmId,
       permits: [...invite.permits],
     });
 

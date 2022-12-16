@@ -64,6 +64,9 @@ export async function setPermits({
     else throw Error(`relm not found: ${relmName}`);
   }
 
+  // Guard against the possibility that neither relmId nor relmName was given
+  if (relm_id === undefined) throw Error("no relm specified");
+
   const filter: any = {
     relm_id,
     participant_id: participantId,
