@@ -1,6 +1,6 @@
 import { Collider, ConvexPolyhedron } from "@dimforge/rapier3d";
 import { Vector3, PerspectiveCamera, Matrix4 } from "three";
-import { BASE_LAYER_ID, CAMERA_FRUSTUM_FAR_PLANE } from "~/config/constants";
+import { BASE_LAYER_ID } from "~/config/constants";
 
 import { System, Not, Groups, Entity } from "~/ecs/base";
 import { Queries } from "~/ecs/base/Query";
@@ -14,12 +14,16 @@ import {
   KeepOnStage,
 } from "../components";
 
+import { getFrustumShape } from "../utils/frustum";
+
 const vUp = new Vector3(0, 1, 0);
 const v1 = new Vector3();
 const m4 = new Matrix4();
 
 export const intersectCalcTime: number[] = Array(10).fill(0);
+
 let intersectCalcTimeIdx = 0;
+
 export class CameraSystem extends System {
   physics: Physics;
   camera: PerspectiveCamera;
@@ -154,18 +158,7 @@ export class CameraSystem extends System {
 
   buildFrustum() {
     this.frustumAspect = this.camera.aspect;
-    this.frustumShape = this.getFrustumShape();
-  }
-
-  getFrustumShape(): ConvexPolyhedron {
-    const vertices = getCameraFrustumVertices(
-      this.camera,
-      CAMERA_FRUSTUM_FAR_PLANE,
-      -3
-    );
-    return new this.physics.rapier.ConvexPolyhedron(
-      vertices.flatMap((v) => [v.x, v.y, v.z])
-    );
+    this.frustumShape = getFrustumShape(this.camera, this.physics.rapier);
   }
 
   beginDeactivatingOffStageEntities() {
@@ -209,37 +202,4 @@ export class CameraSystem extends System {
 
     return layer;
   }
-}
-
-function getCameraFrustumVertices(
-  camera: PerspectiveCamera,
-  far: number = null,
-  padding: number = 0
-) {
-  const n = camera.near + padding;
-  const f = far ?? camera.far + padding;
-
-  const halfPI = Math.PI / 180;
-  const fov = camera.fov * halfPI; // convert degrees to radians
-
-  // Near Plane dimensions (near width, near height)
-  const nH = 2 * Math.tan(fov / 2) * n - padding;
-  const nW = nH * camera.aspect - padding; // width
-
-  // Far Plane dimensions (far width, far height)
-  const fH = 2 * Math.tan(fov / 2) * f - padding; // height
-  const fW = fH * camera.aspect - padding; // width
-
-  const vertices = [
-    new Vector3(nW / 2, nH / 2, -n),
-    new Vector3(-nW / 2, nH / 2, -n),
-    new Vector3(nW / 2, -nH / 2, -n),
-    new Vector3(-nW / 2, -nH / 2, -n),
-    new Vector3(fW / 2, fH / 2, -f),
-    new Vector3(-fW / 2, fH / 2, -f),
-    new Vector3(fW / 2, -fH / 2, -f),
-    new Vector3(-fW / 2, -fH / 2, -f),
-  ];
-
-  return vertices;
 }
