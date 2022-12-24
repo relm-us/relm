@@ -1,17 +1,13 @@
-import {
-  Euler,
-  PerspectiveCamera,
-  Quaternion,
-  Vector3,
-  MathUtils,
-} from "three";
+import { Euler, PerspectiveCamera, Vector3, MathUtils } from "three";
+
+import { get } from "svelte/store";
 
 import { Entity } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { Camera, CameraSystem } from "~/ecs/plugins/camera";
 import { easeTowards } from "~/ecs/shared/easeTowards";
 
-import { viewportScale } from "~/stores";
+import { viewportScale, worldUIMode } from "~/stores";
 import { centerCameraVisible } from "~/stores/centerCameraVisible";
 
 import { makeCamera } from "~/prefab/makeCamera";
@@ -24,7 +20,6 @@ import {
   DEFAULT_CAMERA_ANGLE,
   DEFAULT_VIEWPORT_ZOOM,
 } from "~/config/constants";
-import { layersLocal } from "~/stores/layersLocal";
 
 const directionNeg = new Euler();
 const v1 = new Vector3();
@@ -151,6 +146,11 @@ export class CameraManager {
     if (!this.entity || !avatar) return;
 
     const camera: Camera = this.entity.get(Camera);
+
+    // Auto-control panning when in play mode
+    if (get(worldUIMode) === "play") {
+      this.pan.copy(CameraSystem.gravityCentroid).sub(avatar.position);
+    }
 
     const incr = Math.PI * delta;
     this.smoothRotateTowardsTarget(incr);

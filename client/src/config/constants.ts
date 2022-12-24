@@ -18,6 +18,10 @@ export const TEXTURE_PER_WORLD_UNIT = 100;
 export const PROXIMITY_AUDIO_INNER_RADIUS = 3;
 export const PROXIMITY_AUDIO_OUTER_RADIUS = 6;
 
+// How close an avatar must be to consider its camera gravity mass
+export const PROXIMITY_CAMERA_GRAVITY_INNER_RADIUS = 5;
+export const PROXIMITY_CAMERA_GRAVITY_OUTER_RADIUS = 7;
+
 // Physics time-step is independent of render framerate
 export const PHYSICS_TIMESTEP = 1 / 60;
 

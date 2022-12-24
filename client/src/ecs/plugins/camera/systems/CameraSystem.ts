@@ -1,20 +1,27 @@
 import { Collider, ConvexPolyhedron } from "@dimforge/rapier3d";
-import { Vector3, PerspectiveCamera, Matrix4 } from "three";
-import { BASE_LAYER_ID } from "~/config/constants";
+import { Vector3, PerspectiveCamera, Matrix4, MathUtils } from "three";
+import {
+  BASE_LAYER_ID,
+  PROXIMITY_CAMERA_GRAVITY_INNER_RADIUS,
+  PROXIMITY_CAMERA_GRAVITY_OUTER_RADIUS,
+} from "~/config/constants";
 
 import { System, Not, Groups, Entity } from "~/ecs/base";
 import { Queries } from "~/ecs/base/Query";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { Physics } from "~/ecs/plugins/physics";
+import { DistanceRef } from "../../distance";
 
 import {
   Camera,
   CameraAttached,
+  CameraGravity,
   AlwaysOnStage,
   KeepOnStage,
 } from "../components";
 
 import { getFrustumShape } from "../utils/frustum";
+import { sCurve } from "../utils/sCurve";
 
 const vUp = new Vector3(0, 1, 0);
 const v1 = new Vector3();
@@ -41,12 +48,16 @@ export class CameraSystem extends System {
 
   static stageNeedsUpdate: boolean = false;
 
+  static gravityCentroid: Vector3 = new Vector3();
+
   static queries: Queries = {
     added: [Object3DRef, Camera, Not(CameraAttached)],
     active: [Camera, CameraAttached],
     removed: [Not(Camera), CameraAttached],
     // For entities tagged with "KeepOnStage", promote to StateComponent
     promote: [KeepOnStage, Not(AlwaysOnStage)],
+
+    gravity: [Transform, CameraGravity],
   };
 
   init({ physics, presentation }) {
@@ -73,60 +84,110 @@ export class CameraSystem extends System {
     this.queries.removed.forEach((entity) => this.remove(entity));
     this.queries.promote.forEach((entity) => entity.add(AlwaysOnStage));
 
+    this.calculateGravityCentroid();
+
     if (this.world.version % 13 === 0 || CameraSystem.stageNeedsUpdate) {
       CameraSystem.stageNeedsUpdate = false;
+      this.activateDeactivateEntitiesOnStage();
+    }
+  }
 
-      const intersectCalcTimeBefore = performance.now();
+  calculateGravityCentroid() {
+    let totalMass = 0;
+    CameraSystem.gravityCentroid.set(0, 0, 0);
+    const radiusRange =
+      PROXIMITY_CAMERA_GRAVITY_OUTER_RADIUS -
+      PROXIMITY_CAMERA_GRAVITY_INNER_RADIUS;
+    this.queries.gravity.forEach((entity) => {
+      const distance: number = entity.get(DistanceRef)?.value ?? 0;
 
-      // There should be just 1 active camera, but we access it via forEach
-      this.queries.active.forEach((entity) => {
-        const transform: Transform = entity.get(Transform);
+      const transform: Transform = entity.get(Transform);
+      const gravity: CameraGravity = entity.get(CameraGravity);
 
-        // NOTE: This call takes about 0.6 ms on my system, in a world of 30 entities.
-        this.physics.world.intersectionsWithShape(
-          transform.position,
-          transform.rotation,
-          this.frustumShape,
-          (collider: Collider) => {
-            const entity = this.physics.colliders.get(collider.handle);
+      // Don't count other avatars beyond range threshold
+      let mass;
+      if (distance < PROXIMITY_CAMERA_GRAVITY_INNER_RADIUS) {
+        mass = gravity.mass;
+      } else if (distance > PROXIMITY_CAMERA_GRAVITY_OUTER_RADIUS) {
+        mass = 0;
+      } else {
+        // Smooth transition between other avatar affecting/not affecting centroid
+        mass =
+          gravity.mass *
+          sCurve(
+            (PROXIMITY_CAMERA_GRAVITY_OUTER_RADIUS - distance) / radiusRange
+          );
+      }
 
-            if (!this.isAlwaysOnStage(entity)) {
-              entity.local.lastSeenOnStage = this.world.version;
-              this.recentlyOnStage.add(entity);
-            }
+      totalMass += mass;
+      v1.copy(gravity.offset)
+        .applyQuaternion(transform.rotation)
+        .add(transform.position)
+        .multiplyScalar(mass);
 
-            // Activate anything within the Frustum that is inactive, but should be visible
-            if (!entity.active && this.isEntityOnVisibleLayer(entity)) {
-              entity.activate();
-            }
+      CameraSystem.gravityCentroid.add(v1);
+    });
 
-            return true;
+    if (totalMass > 0) {
+      CameraSystem.gravityCentroid.divideScalar(totalMass);
+    }
+  }
+
+  activateDeactivateEntitiesOnStage() {
+    const intersectCalcTimeBefore = performance.now();
+
+    // There should be just 1 active camera, but we access it via forEach
+    this.queries.active.forEach((entity) => {
+      const transform: Transform = entity.get(Transform);
+
+      // NOTE: This call takes about 0.6 ms on my system, in a world of 30 entities.
+      this.physics.world.intersectionsWithShape(
+        transform.position,
+        transform.rotation,
+        this.frustumShape,
+        (collider: Collider) => {
+          const entity = this.physics.colliders.get(collider.handle);
+
+          if (!this.isAlwaysOnStage(entity)) {
+            entity.local.lastSeenOnStage = this.world.version;
+            this.recentlyOnStage.add(entity);
           }
-        );
-      });
 
-      if (!this.deactivateOffCameraEntities) return;
+          // Activate anything within the Frustum that is inactive, but should be visible
+          if (!entity.active && this.isEntityOnVisibleLayer(entity)) {
+            entity.activate();
+          }
 
-      for (const entity of this.recentlyOnStage) {
-        if (entity.active && !this.isEntityOnVisibleLayer(entity)) {
-          this.recentlyOnStage.delete(entity);
-          entity.deactivate();
+          return true;
         }
+      );
+    });
 
-        if (this.isAlwaysOnStage(entity)) continue;
+    if (!this.deactivateOffCameraEntities) return;
 
-        const lastSeen = entity.local.lastSeenOnStage;
-        if (this.world.version - lastSeen > 30) {
+    for (const entity of this.recentlyOnStage) {
+      if (entity.active && !this.isEntityOnVisibleLayer(entity)) {
+        this.recentlyOnStage.delete(entity);
+        entity.deactivate();
+      }
+
+      // if (this.isAlwaysOnStage(entity)) continue;
+
+      const lastSeen = entity.local.lastSeenOnStage;
+      if (this.world.version - lastSeen > 30) {
+        if (this.isAlwaysOnStage(entity)) {
+          continue;
+        } else {
           this.recentlyOnStage.delete(entity);
           entity.deactivate();
         }
       }
-
-      const intersectCalcTimeAfter = performance.now();
-
-      intersectCalcTime[intersectCalcTimeIdx++ % intersectCalcTime.length] =
-        intersectCalcTimeAfter - intersectCalcTimeBefore;
     }
+
+    const intersectCalcTimeAfter = performance.now();
+
+    intersectCalcTime[intersectCalcTimeIdx++ % intersectCalcTime.length] =
+      intersectCalcTimeAfter - intersectCalcTimeBefore;
   }
 
   build(entity: Entity) {

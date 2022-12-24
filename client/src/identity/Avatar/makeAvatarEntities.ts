@@ -24,7 +24,7 @@ import {
 } from "~/ecs/plugins/collider";
 import { Animation } from "~/ecs/plugins/animation";
 import { Repulsive } from "~/ecs/plugins/player-control";
-import { AlwaysOnStage } from "~/ecs/plugins/camera";
+import { AlwaysOnStage, CameraGravity } from "~/ecs/plugins/camera";
 import { Particles2 } from "~/ecs/plugins/particles";
 
 import avatarsGlb from "./avatars.glb";
@@ -46,6 +46,10 @@ export function makeAvatarEntities(
     })
     .add(PointerPosition, {
       offset: new Vector3(0, 1, 0),
+    })
+    .add(CameraGravity, {
+      mass: 1.0,
+      offset: new Vector3(0, 0, 0),
     })
     .add(Repulsive)
     .add(Impactable)

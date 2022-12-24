@@ -1,4 +1,4 @@
-import { Entity, System, Groups, Not, Modified } from "~/ecs/base";
+import { System, Groups, Not } from "~/ecs/base";
 import { Transform } from "~/ecs/plugins/core";
 import { Distance, DistanceRef } from "../components";
 

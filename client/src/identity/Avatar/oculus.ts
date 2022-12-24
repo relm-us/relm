@@ -4,9 +4,9 @@ import { Vector3 } from "three";
 
 import { OCULUS_HEIGHT_STAND } from "~/config/constants";
 import { Oculus, OculusRef } from "~/ecs/plugins/html2d";
+import { CameraGravity } from "~/ecs/plugins/camera";
 
 export function setOculus(
-  this: void,
   entities: AvatarEntities,
   participantId: string,
   name: string,
@@ -42,5 +42,12 @@ export function setOculus(
       oculus.showAudio = showAudio;
       oculus.showVideo = showVideo;
     }
+  }
+
+  const gravity = entities.body.get(CameraGravity);
+  if (showVideo) {
+    gravity.offset.set(0, OCULUS_HEIGHT_STAND, 0);
+  } else {
+    gravity.offset.set(0, 0, 0);
   }
 }
