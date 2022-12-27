@@ -1,11 +1,17 @@
-import { Vector3 } from "three";
+import { get } from "svelte/store";
+import { Mesh, MeshBasicMaterial, SphereGeometry, Vector3 } from "three";
 
 import { System, Groups, Entity } from "~/ecs/base";
 import { Queries } from "~/ecs/base/Query";
-import { Transform } from "~/ecs/plugins/core";
+import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import { participantId } from "~/identity/participantId";
+import { worldUIMode } from "~/stores";
 
-import { CameraGravity, CameraGravityActive } from "../components";
+import {
+  CameraGravity,
+  CameraGravityActive,
+  CameraGravityVisualRef,
+} from "../components";
 
 import { sCurve } from "../utils/sCurve";
 
@@ -30,12 +36,20 @@ export class CameraGravitySystem extends System {
 
     const participantTransform: Transform = this.world.entities
       .getById(participantId)
-      .get(Transform);
+      ?.get(Transform);
+
+    // Camera can exist before self avatar exists
+    if (!participantTransform) return;
+
+    const mode = get(worldUIMode);
 
     this.queries.gravity.forEach((entity) => {
-      // Other avatars are tracked with DistanceRef; non-avatar entities
-      // will be considered "0" distance away
-
+      if (mode === "play") {
+        this.removeVisual(entity);
+      } else {
+        this.removeVisual(entity);
+        this.buildVisual(entity);
+      }
       const transform: Transform = entity.get(Transform);
       const gravity: CameraGravity = entity.get(CameraGravity);
 
@@ -74,14 +88,26 @@ export class CameraGravitySystem extends System {
     }
   }
 
-  build(entity: Entity) {
-    // const object3d = entity.get(Object3DRef).value;
-    // object3d.add(this.camera);
-    // entity.add(CameraAttached);
+  buildVisual(entity: Entity) {
+    const object3d = entity.get(Object3DRef).value;
+    const gravity: CameraGravity = entity.get(CameraGravity);
+
+    const geometry = new SphereGeometry(0.1);
+    const material = new MeshBasicMaterial({ color: 0xffff00 });
+    const circle = new Mesh(geometry, material);
+
+    circle.position.setFromSpherical(gravity.sphere);
+
+    object3d.add(circle);
+
+    entity.add(CameraGravityVisualRef, { object: circle });
   }
 
-  remove(entity: Entity) {
-    // this.camera.parent.remove(this.camera);
-    // entity.remove(CameraAttached);
+  removeVisual(entity: Entity) {
+    const ref: CameraGravityVisualRef = entity.get(CameraGravityVisualRef);
+    if (ref) {
+      ref.object.removeFromParent();
+      entity.remove(CameraGravityVisualRef);
+    }
   }
 }

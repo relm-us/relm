@@ -74,7 +74,7 @@
 
   const makeAngleDragger = (dimension) => {
     return new NumberDragger({
-      scaleFactor: 0.1,
+      scaleFactor: 0.5,
       getValue: () => MathUtils.radToDeg(value[dimension]),
       onDrag: (newValue) => {
         setNewAngleValue(dimension, newValue);
