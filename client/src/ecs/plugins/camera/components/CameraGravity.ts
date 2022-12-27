@@ -1,11 +1,12 @@
-import { Vector3 } from "three";
+import { Spherical, Vector2 } from "three";
 
 import { Component, NumberType } from "~/ecs/base";
-import { Vector3Type } from "~/ecs/plugins/core";
+import { Vector2Type, SphericalType } from "~/ecs/plugins/core";
 
 export class CameraGravity extends Component {
   mass: number;
-  offset: Vector3;
+  range: number;
+  sphere: Spherical;
 
   static props = {
     mass: {
@@ -16,10 +17,19 @@ export class CameraGravity extends Component {
       },
     },
 
-    offset: {
-      type: Vector3Type,
+    range: {
+      type: Vector2Type,
+      default: new Vector2(5, 7),
       editor: {
-        label: "Offset",
+        label: "Range (radius)",
+        requires: [{ prop: "sphere", labels: ["inner", "outer"] }],
+      },
+    },
+
+    sphere: {
+      type: SphericalType,
+      editor: {
+        label: "Spherical Offset",
       },
     },
   };

@@ -4,7 +4,11 @@ import { get } from "svelte/store";
 
 import { Entity } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
-import { Camera, CameraSystem } from "~/ecs/plugins/camera";
+import {
+  Camera,
+  CameraGravitySystem,
+  CameraSystem,
+} from "~/ecs/plugins/camera";
 import { easeTowards } from "~/ecs/shared/easeTowards";
 
 import { viewportScale, worldUIMode } from "~/stores";
@@ -149,7 +153,7 @@ export class CameraManager {
 
     // Auto-control panning when in play mode
     if (get(worldUIMode) === "play") {
-      this.pan.copy(CameraSystem.gravityCentroid).sub(avatar.position);
+      this.pan.copy(CameraGravitySystem.centroid).sub(avatar.position);
     }
 
     const incr = Math.PI * delta;

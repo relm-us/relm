@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Euler, MathUtils, Quaternion } from "three";
+  import { Euler, MathUtils, Quaternion, Spherical } from "three";
   import { createEventDispatcher } from "svelte";
 
   import Capsule from "~/ui/lib/Capsule";
@@ -13,26 +13,30 @@
   const dispatch = createEventDispatcher();
 
   let editing = {
-    x: false,
-    y: false,
-    z: false,
+    radius: false,
+    phi: false,
+    theta: false,
   };
 
-  const q1: Quaternion = new Quaternion();
+  let value: Spherical;
+  $: value = new Spherical(
+    component[key].radius,
+    component[key].phi,
+    component[key].theta
+  );
 
-  let value: Euler;
-  $: value = new Euler(0, 0, 0, "YXZ").setFromQuaternion(component[key]); //component[key]
+  function onRadiusChange({ detail }) {
+    setNewValue("radius", parseFloat(detail));
+    dispatch("modified");
+    editing["radius"] = false;
+  }
 
   const onInputChange =
     (dimension) =>
     ({ detail }) => {
       const newValue = MathUtils.degToRad(parseFloat(detail));
       if (!Number.isNaN(newValue)) {
-        value[dimension] = newValue;
-        q1.setFromEuler(value);
-        component[key].copy(q1);
-
-        component.modified();
+        setNewValue(dimension, newValue);
         dispatch("modified");
         editing[dimension] = false;
       }
@@ -42,17 +46,19 @@
     editing[dimension] = false;
   };
 
-  const setNewValue = (dimension, newValue) => {
-    const floatValue = parseFloat(newValue);
-    value[dimension] = MathUtils.degToRad(floatValue);
-    q1.setFromEuler(value);
-    component[key].copy(q1);
+  function setNewValue(dimension, newValue) {
+    value[dimension] = newValue;
+    component[key].copy(value);
     component.modified();
+  }
+  const setNewAngleValue = (dimension, newValue) => {
+    setNewValue(dimension, MathUtils.degToRad(parseFloat(newValue)));
   };
 
   const makeDragger = (dimension) => {
     return new NumberDragger({
-      getValue: () => MathUtils.radToDeg(value[dimension]),
+      scaleFactor: 0.01,
+      getValue: () => value[dimension],
       onDrag: (newValue) => {
         setNewValue(dimension, newValue);
       },
@@ -66,10 +72,27 @@
     });
   };
 
+  const makeAngleDragger = (dimension) => {
+    return new NumberDragger({
+      scaleFactor: 0.1,
+      getValue: () => MathUtils.radToDeg(value[dimension]),
+      onDrag: (newValue) => {
+        setNewAngleValue(dimension, newValue);
+      },
+      onChange: (newValue) => {
+        setNewAngleValue(dimension, newValue);
+        dispatch("modified");
+      },
+      onClick: () => {
+        editing[dimension] = true;
+      },
+    });
+  };
+
   const draggers = {
-    x: makeDragger("x"),
-    y: makeDragger("y"),
-    z: makeDragger("z"),
+    radius: makeDragger("radius"),
+    phi: makeAngleDragger("phi"),
+    theta: makeAngleDragger("theta"),
   };
 
   // ignore warning about missing props
@@ -79,7 +102,16 @@
 <r-quaternion-type>
   <div>{(prop.editor && prop.editor.label) || key}:</div>
   <div class="capsules">
-    {#each ["x", "y", "z"] as dim}
+    <Capsule
+      editing={editing["radius"]}
+      on:pointerdown={draggers["radius"].pointerdown}
+      on:change={onRadiusChange}
+      on:cancel={onInputCancel("radius")}
+      label="RADIUS"
+      value={formatNumber(value["radius"], editing["radius"])}
+      type="number"
+    />
+    {#each ["phi", "theta"] as dim}
       <Capsule
         editing={editing[dim]}
         on:pointerdown={draggers[dim].pointerdown}
@@ -99,8 +131,10 @@
     display: flex;
   }
   div.capsules {
-    margin-top: 4px;
-    margin-bottom: 6px;
-    justify-content: space-around;
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+    margin: 4px 0 6px 6px;
   }
 </style>

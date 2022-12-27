@@ -58,7 +58,10 @@
 
     let attrs = {};
     for (const item of reqs) {
-      if (component[item.prop] === item.value) {
+      if (
+        (item.value !== undefined && component[item.prop] === item.value) ||
+        item.value === undefined
+      ) {
         attrs = item;
       }
     }

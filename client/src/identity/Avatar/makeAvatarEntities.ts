@@ -1,12 +1,15 @@
-import { Euler, Quaternion, Vector3 } from "three";
+import { Euler, Quaternion, Spherical, Vector3 } from "three";
 
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 
 import {
+  IDLE,
   AVATAR_BODY_SCALE,
   AVATAR_HEIGHT_UNSCALED,
   COLLIDER_HEIGHT_STAND,
-  IDLE,
+  OCULUS_HEIGHT_STAND,
+  PROXIMITY_CAMERA_GRAVITY_INNER_RADIUS,
+  PROXIMITY_CAMERA_GRAVITY_OUTER_RADIUS,
 } from "~/config/constants";
 import { AvatarEntities } from "~/types";
 
@@ -49,7 +52,11 @@ export function makeAvatarEntities(
     })
     .add(CameraGravity, {
       mass: 1.0,
-      offset: new Vector3(0, 0, 0),
+      range: new Vector3(
+        PROXIMITY_CAMERA_GRAVITY_INNER_RADIUS,
+        PROXIMITY_CAMERA_GRAVITY_OUTER_RADIUS
+      ),
+      sphere: new Spherical(OCULUS_HEIGHT_STAND),
     })
     .add(Repulsive)
     .add(Impactable)

@@ -49,7 +49,7 @@ export const AVATAR_POINTER_TAP_MAX_DISTANCE = 15;
 export const RESTORE_LAST_LOCATION_REFRESH_SECONDS = 120;
 
 // How quickly to move the camera as it follows the participant
-export const CAMERA_PLAY_DAMPENING = 0.3;
+export const CAMERA_PLAY_DAMPENING = 1.0;
 export const CAMERA_BUILD_DAMPENING = 0.15;
 
 // How quickly to rotate the camera in build mode (higher is slower / more accurate)

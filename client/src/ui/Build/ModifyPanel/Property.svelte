@@ -13,6 +13,7 @@
   import QuaternionType from "./types/QuaternionType.svelte";
   import RefType from "./types/RefType.svelte";
   import SelectType from "./types/SelectType.svelte";
+  import SphericalType from "./types/SphericalType.svelte";
   import StringType from "./types/StringType.svelte";
   import TextType from "./types/TextType.svelte";
   import Vector3Type from "./types/Vector3Type.svelte";
@@ -49,6 +50,8 @@
         return RefType;
       case "Select":
         return SelectType;
+      case "Spherical":
+        return SphericalType;
       case "String":
         return StringType;
       case "Text":
