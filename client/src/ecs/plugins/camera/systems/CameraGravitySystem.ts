@@ -1,13 +1,9 @@
 import { Vector3 } from "three";
-import {
-  PROXIMITY_CAMERA_GRAVITY_INNER_RADIUS,
-  PROXIMITY_CAMERA_GRAVITY_OUTER_RADIUS,
-} from "~/config/constants";
 
-import { System, Not, Groups, Entity } from "~/ecs/base";
+import { System, Groups, Entity } from "~/ecs/base";
 import { Queries } from "~/ecs/base/Query";
-import { Object3DRef, Transform } from "~/ecs/plugins/core";
-import { DistanceRef } from "../../distance";
+import { Transform } from "~/ecs/plugins/core";
+import { participantId } from "~/identity/participantId";
 
 import { CameraGravity } from "../components";
 
@@ -31,31 +27,37 @@ export class CameraGravitySystem extends System {
   calculateGravityCentroid() {
     let totalMass = 0;
     CameraGravitySystem.centroid.set(0, 0, 0);
-    const radiusRange =
-      PROXIMITY_CAMERA_GRAVITY_OUTER_RADIUS -
-      PROXIMITY_CAMERA_GRAVITY_INNER_RADIUS;
+
+    const participantTransform: Transform = this.world.entities
+      .getById(participantId)
+      .get(Transform);
+
     this.queries.gravity.forEach((entity) => {
       // Other avatars are tracked with DistanceRef; non-avatar entities
       // will be considered "0" distance away
-      const distance: number = entity.get(DistanceRef)?.value ?? 0;
 
       const transform: Transform = entity.get(Transform);
       const gravity: CameraGravity = entity.get(CameraGravity);
 
+      const distance: number = participantTransform.position.distanceTo(
+        transform.position
+      );
+
+      // use Vector2.x as innerRange and .y as outerRange
+      const innerRadius = gravity.range.x;
+      const outerRadius = gravity.range.y;
+      const radiusRange = Math.abs(outerRadius - innerRadius);
+
       let mass;
-      if (distance < PROXIMITY_CAMERA_GRAVITY_INNER_RADIUS) {
-        // Camera weight has full effect for "near" avatars (and all entities)
+      if (distance < innerRadius) {
+        // Camera weight has full effect for "near" entities
         mass = gravity.mass;
-      } else if (distance > PROXIMITY_CAMERA_GRAVITY_OUTER_RADIUS) {
-        // Camera weight has no effect for "far" avatars
+      } else if (distance > outerRadius) {
+        // Camera weight has no effect for "far" entities
         mass = 0;
       } else {
-        // Smooth transition between other avatar affecting/not affecting centroid
-        mass =
-          gravity.mass *
-          sCurve(
-            (PROXIMITY_CAMERA_GRAVITY_OUTER_RADIUS - distance) / radiusRange
-          );
+        // Smooth transition between "near" and "far" weighting
+        mass = gravity.mass * sCurve((outerRadius - distance) / radiusRange);
       }
 
       totalMass += mass;

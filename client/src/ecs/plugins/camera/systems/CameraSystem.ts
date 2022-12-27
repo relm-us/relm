@@ -1,5 +1,5 @@
 import { Collider, ConvexPolyhedron } from "@dimforge/rapier3d";
-import { Vector3, PerspectiveCamera, Matrix4, MathUtils } from "three";
+import { Vector3, PerspectiveCamera, Matrix4 } from "three";
 import { BASE_LAYER_ID } from "~/config/constants";
 
 import { System, Not, Groups, Entity } from "~/ecs/base";

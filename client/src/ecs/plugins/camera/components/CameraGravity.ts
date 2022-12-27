@@ -5,7 +5,7 @@ import { Vector2Type, SphericalType } from "~/ecs/plugins/core";
 
 export class CameraGravity extends Component {
   mass: number;
-  range: number;
+  range: Vector2;
   sphere: Spherical;
 
   static props = {
