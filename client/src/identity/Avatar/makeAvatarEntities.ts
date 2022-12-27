@@ -27,7 +27,11 @@ import {
 } from "~/ecs/plugins/collider";
 import { Animation } from "~/ecs/plugins/animation";
 import { Repulsive } from "~/ecs/plugins/player-control";
-import { AlwaysOnStage, CameraGravity } from "~/ecs/plugins/camera";
+import {
+  AlwaysOnStage,
+  CameraGravity,
+  CameraGravityActive,
+} from "~/ecs/plugins/camera";
 import { Particles2 } from "~/ecs/plugins/particles";
 
 import avatarsGlb from "./avatars.glb";
@@ -50,6 +54,8 @@ export function makeAvatarEntities(
     .add(PointerPosition, {
       offset: new Vector3(0, 1, 0),
     })
+
+    .add(CameraGravityActive)
     .add(CameraGravity, {
       mass: 1.0,
       range: new Vector3(
@@ -58,6 +64,7 @@ export function makeAvatarEntities(
       ),
       sphere: new Spherical(OCULUS_HEIGHT_STAND),
     })
+
     .add(Repulsive)
     .add(Impactable)
     .add(Model3, { asset: new Asset(avatarsGlb) })
@@ -68,13 +75,15 @@ export function makeAvatarEntities(
       rotRestrict: "Y",
     })
     .add(AlwaysOnStage)
+
+    .add(Collider3Active)
     .add(Collider3, {
       kind: kinematic ? "AVATAR-OTHER" : "AVATAR-PLAY",
       shape: "CAPSULE",
       size: new Vector3(0.5, COLLIDER_HEIGHT_STAND, 0),
       offset: new Vector3(0, 1.1, 0),
     })
-    .add(Collider3Active)
+
     .add(Particles2, {
       pattern: "RING",
       params: new Vector3(2, 0.05, 1),

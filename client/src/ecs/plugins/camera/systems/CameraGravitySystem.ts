@@ -5,7 +5,7 @@ import { Queries } from "~/ecs/base/Query";
 import { Transform } from "~/ecs/plugins/core";
 import { participantId } from "~/identity/participantId";
 
-import { CameraGravity } from "../components";
+import { CameraGravity, CameraGravityActive } from "../components";
 
 import { sCurve } from "../utils/sCurve";
 
@@ -17,7 +17,7 @@ export class CameraGravitySystem extends System {
   static centroid: Vector3 = new Vector3();
 
   static queries: Queries = {
-    gravity: [Transform, CameraGravity],
+    gravity: [Transform, CameraGravity, CameraGravityActive],
   };
 
   update() {
