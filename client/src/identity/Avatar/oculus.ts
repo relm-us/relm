@@ -43,11 +43,4 @@ export function setOculus(
       oculus.showVideo = showVideo;
     }
   }
-
-  const gravity: CameraGravity = entities.body.get(CameraGravity);
-  if (showVideo) {
-    gravity.sphere.phi = 0;
-  } else {
-    gravity.sphere.phi = Math.PI / 2;
-  }
 }

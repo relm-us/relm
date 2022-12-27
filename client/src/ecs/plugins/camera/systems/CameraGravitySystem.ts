@@ -1,5 +1,6 @@
 import { get } from "svelte/store";
 import { Mesh, MeshBasicMaterial, SphereGeometry, Vector3 } from "three";
+import { OCULUS_HEIGHT_STAND } from "~/config/constants";
 
 import { System, Groups, Entity } from "~/ecs/base";
 import { Queries } from "~/ecs/base/Query";
@@ -20,23 +21,34 @@ const v1 = new Vector3();
 export class CameraGravitySystem extends System {
   order = Groups.Presentation + 401;
 
+  /**
+   * The coordinates of the centroid of all CameraGravity entities
+   */
   static centroid: Vector3 = new Vector3();
+
+  /**
+   * Number of entities that are currently part of the gravity calculation
+   */
+  static count: number = 0;
 
   static queries: Queries = {
     gravity: [Transform, CameraGravity, CameraGravityActive],
   };
 
+  get participant(): Entity {
+    return this.world.entities.getById(participantId);
+  }
+
   update() {
-    this.calculateGravityCentroid();
+    CameraGravitySystem.count = this.calculateGravityCentroid();
   }
 
   calculateGravityCentroid() {
+    let gravityCount = 0;
     let totalMass = 0;
     CameraGravitySystem.centroid.set(0, 0, 0);
 
-    const participantTransform: Transform = this.world.entities
-      .getById(participantId)
-      ?.get(Transform);
+    const participantTransform: Transform = this.participant?.get(Transform);
 
     // Camera can exist before self avatar exists
     if (!participantTransform) return;
@@ -74,18 +86,28 @@ export class CameraGravitySystem extends System {
         mass = gravity.mass * sCurve((outerRadius - distance) / radiusRange);
       }
 
-      totalMass += mass;
-      v1.setFromSpherical(gravity.sphere)
-        .applyQuaternion(transform.rotation)
-        .add(transform.position)
-        .multiplyScalar(mass);
+      if (mass > 0) {
+        // track number of entities
+        gravityCount++;
 
-      CameraGravitySystem.centroid.add(v1);
+        totalMass += mass;
+        v1.setFromSpherical(gravity.sphere);
+        v1.applyQuaternion(transform.rotation);
+
+        // Constrain to XY plane
+        // v1.z = 0;
+
+        v1.add(transform.position).multiplyScalar(mass);
+
+        CameraGravitySystem.centroid.add(v1);
+      }
     });
 
     if (totalMass > 0) {
       CameraGravitySystem.centroid.divideScalar(totalMass);
     }
+
+    return gravityCount;
   }
 
   buildVisual(entity: Entity) {

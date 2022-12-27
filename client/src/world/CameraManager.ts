@@ -6,6 +6,7 @@ import { Entity } from "~/ecs/base";
 import { Object3DRef, Transform } from "~/ecs/plugins/core";
 import {
   Camera,
+  CameraGravity,
   CameraGravitySystem,
   CameraSystem,
 } from "~/ecs/plugins/camera";
@@ -18,11 +19,13 @@ import { makeCamera } from "~/prefab/makeCamera";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import {
   AVATAR_HEIGHT,
+  CAMERA_GRAVITY_TRANSITION_SPEED,
   CAMERA_PLAY_DAMPENING,
   CAMERA_PLAY_ZOOM_MAX,
   CAMERA_PLAY_ZOOM_MIN,
   DEFAULT_CAMERA_ANGLE,
   DEFAULT_VIEWPORT_ZOOM,
+  OCULUS_HEIGHT_STAND,
 } from "~/config/constants";
 
 const directionNeg = new Euler();
@@ -156,6 +159,27 @@ export class CameraManager {
       this.pan.copy(CameraGravitySystem.centroid).sub(avatar.position);
     }
 
+    const gravity: CameraGravity = this.avatar.get(CameraGravity);
+    if (gravity) {
+      if (CameraGravitySystem.count > 1) {
+        gravity.sphere.phi = easeNumberTowards(
+          gravity.sphere.phi,
+          0,
+          CAMERA_GRAVITY_TRANSITION_SPEED
+        );
+        gravity.sphere.radius = OCULUS_HEIGHT_STAND;
+      } else {
+        const zoomTrim = 4;
+        const zoomEffect = Math.min(this.zoom, 1 / zoomTrim) * zoomTrim;
+        gravity.sphere.phi = easeNumberTowards(
+          gravity.sphere.phi,
+          (zoomEffect * Math.PI) / 2,
+          CAMERA_GRAVITY_TRANSITION_SPEED
+        );
+        gravity.sphere.radius = OCULUS_HEIGHT_STAND;
+      }
+    }
+
     const incr = Math.PI * delta;
     this.smoothRotateTowardsTarget(incr);
 
@@ -252,5 +276,15 @@ export class CameraManager {
 
   viewFromAbove(height: number = 30) {
     // TODO: set spherical coords to height, 0, 0
+  }
+}
+
+function easeNumberTowards(start, dest, incr) {
+  if (start < dest - incr) {
+    return start + incr;
+  } else if (start > dest + incr) {
+    return start - incr;
+  } else {
+    return dest;
   }
 }

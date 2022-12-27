@@ -6,11 +6,7 @@ import { easeTowards } from "~/ecs/shared/easeTowards";
 
 import { Follow, FollowPoint } from "../components";
 
-const DECEL_RADIUS = 2;
-const DAMPENING_CONSTANT = 5;
-
 const v1 = new Vector3();
-const v2 = new Vector3();
 
 export class FollowSystem extends System {
   order = Groups.Initialization;
