@@ -10,6 +10,7 @@ import {
   CameraGravitySystem,
   CameraSystem,
 } from "~/ecs/plugins/camera";
+import { Oculus } from "~/ecs/plugins/html2d";
 import { easeTowards } from "~/ecs/shared/easeTowards";
 
 import { viewportScale, worldUIMode } from "~/stores";
@@ -19,7 +20,6 @@ import { makeCamera } from "~/prefab/makeCamera";
 import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
 import {
   AVATAR_HEIGHT,
-  CAMERA_GRAVITY_TRANSITION_SPEED,
   CAMERA_PLAY_DAMPENING,
   CAMERA_PLAY_ZOOM_MAX,
   CAMERA_PLAY_ZOOM_MIN,
@@ -52,6 +52,9 @@ export class CameraManager {
   zoomedInDistance: number = CAMERA_PLAY_ZOOM_MIN;
   zoomedOutDistance: number = CAMERA_PLAY_ZOOM_MAX;
 
+  // How much "dampening" to add to camera panning
+  dampening: number = CAMERA_PLAY_DAMPENING;
+
   // The angle of rotation around the avatar
   direction: Euler = new Euler();
   targetDir: Euler = new Euler();
@@ -61,9 +64,6 @@ export class CameraManager {
 
   // Track things that need cleaning up before deinit
   unsubs: Function[] = [];
-
-  // How much "dampening" to add to camera panning
-  dampening: number = CAMERA_PLAY_DAMPENING;
 
   get threeCamera(): PerspectiveCamera {
     const camera: Object3DRef = this.entity.get(Object3DRef);
@@ -160,25 +160,10 @@ export class CameraManager {
     }
 
     const gravity: CameraGravity = this.avatar.get(CameraGravity);
-    if (gravity) {
-      if (CameraGravitySystem.count > 1) {
-        gravity.sphere.phi = easeNumberTowards(
-          gravity.sphere.phi,
-          0,
-          CAMERA_GRAVITY_TRANSITION_SPEED
-        );
-        gravity.sphere.radius = OCULUS_HEIGHT_STAND;
-      } else {
-        const zoomTrim = 4;
-        const zoomEffect = Math.min(this.zoom, 1 / zoomTrim) * zoomTrim;
-        gravity.sphere.phi = easeNumberTowards(
-          gravity.sphere.phi,
-          (zoomEffect * Math.PI) / 2,
-          CAMERA_GRAVITY_TRANSITION_SPEED
-        );
-        gravity.sphere.radius = OCULUS_HEIGHT_STAND;
-      }
-    }
+    const oculus: Oculus = this.avatar.get(Oculus);
+    gravity.sphere.radius = oculus.showVideo
+      ? oculus.targetOffset.y
+      : OCULUS_HEIGHT_STAND / 2;
 
     const incr = Math.PI * delta;
     this.smoothRotateTowardsTarget(incr);
