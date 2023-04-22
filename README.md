@@ -1,16 +1,15 @@
-# Relm v5.0
+# Relm
 
-Relm is a community of artists, engineers, philosophers, and spiritual thinkers making a new kind of home on the internet.
+Relm is an open source 3D spatial platform for the web. You can use it to collaborate, video conference, meet, and create events online.
 
-Specifically, we're making a browser-based world that enables "virtual locality"--providing a way to be together with friends online in a community that meets more of our universal human needs than today's social networks do. Think of it as personal growth, spirituality-lite, and community, all being grown inside a browser so it's readily available and easy to use.
-
-See https://www.relm.us for more info.
-
-<img src="client/docs/relm-sample.webp">
+![Screenshot 1 - Quester](docs/scr1-quester.jpg)
+![Screenshot 2 - Whiteboard](docs/scr2-whiteboard.jpg)
+![Screenshot 3 - Pine Forest](docs/scr3-pineforest.jpg)
+![Screenshot 4 - Floating Island](docs/scr4-float-island.jpg)
 
 ## Local Development
 
-To run Relm 5.0 locally, you will need the following prerequisites:
+To run Relm locally, you will need the following prerequisites:
 
 1. nodejs (v14+ is recommended)
 2. postgresql (v13+ is recommended)
@@ -24,11 +23,11 @@ createdb relm
 Then, clone this repo, install the dependencies and run the server:
 
 ```bash
-yarn
-yarn start
+pnpm install
+pnpm dev
 ```
 
-This should start both the backend server (yjs, assets, permissions) and frontend server (hosting the client javascript files). Visit http://localhost:8080?token=setup to try it out.
+This should start both the backend server (yjs, assets, permissions) and frontend server (hosting the client javascript files). Visit http://localhost:8080/admin?token=setup to initialize a blank world and authorize your admin token.
 
 After your first-time use, the `?token=setup` is no longer required.
 
@@ -47,10 +46,3 @@ These are some rough notes on getting Relm running on your own hosted server:
 ```
 apt install ca-certificates fonts-liberation libappindicator3-1 libasound2 libatk-bridge2.0-0 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgbm1 libgcc1 libglib2.0-0 libgtk-3-0 libnspr4 libnss3 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 lsb-release wget xdg-utils
 ```
-## Visit Us?
-
-We're building a community around personal growth and spiritual-lite practices in an online space that gives us virtual locality. Interested? Check out https://www.relm.us and maybe join us on Discord.
-
-## Notes
-
-Download GitHub for desktop at https://desktop.github.com
