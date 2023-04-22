@@ -19,7 +19,7 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test DATABASE_NAME=relm-test node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:stress": "ts-node --esm ./src/scripts/stressTestParticipants.ts",
-    "start": "tsc && cross-env TMP_DIR=data/tmp ASSETS_DIR=data/assets node dist/server.js",
+    "dev": "tsc && cross-env TMP_DIR=data/tmp ASSETS_DIR=data/assets node dist/server.js",
     "build": "tsc",
     "pretest": "dropdb relm-test; createdb relm-test"
   },

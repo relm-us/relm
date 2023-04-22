@@ -13,6 +13,6 @@
     "quoteProps": "consistent"
   },
   "scripts": {
-    "start": "pnpm --filter=!relm-common start"
+    "dev": "pnpm --filter=!relm-common dev"
   }
 }

@@ -9,7 +9,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --node-env production",
-    "start": "webpack-dev-server",
+    "dev": "webpack-dev-server",
     "test": "jest",
     "test:watch": "yarn run test -- --watch",
     "validate": "svelte-check"
