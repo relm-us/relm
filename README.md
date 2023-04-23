@@ -11,6 +11,10 @@ Relm is an open source 3D spatial platform for the web. You can use it to collab
     <img src="docs/scr4-float-island.jpg" alt="Screenshot 4 - Floating Island" width="48%">
 </div>
 
+## Community
+
+You're welcome to visit our [Discord server here](https://discord.gg/4HEgzrErAd).
+
 ## Local Development
 
 To run Relm locally, you will need the following prerequisites:
