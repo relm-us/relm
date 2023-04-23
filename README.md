@@ -3,12 +3,12 @@
 Relm is an open source 3D spatial platform for the web. You can use it to collaborate, video conference, meet, and create events online.
 
 <div>
-    <img src="docs/scr1-quester.jpg" alt="Screenshot 1 - Quester" width="50%">
-    <img src="docs/scr2-whiteboard.jpg" alt="Screenshot 2 - Whiteboard" width="50%">
+    <img src="docs/scr1-quester.jpg" alt="Screenshot 1 - Quester" width="48%">
+    <img src="docs/scr2-whiteboard.jpg" alt="Screenshot 2 - Whiteboard" width="48%">
 </div>
 <div>
-    <img src="docs/scr3-pineforest.jpg" alt="Screenshot 3 - Pine Forest" width="50%">
-    <img src="docs/scr4-float-island.jpg" alt="Screenshot 4 - Floating Island" width="50%">
+    <img src="docs/scr3-pineforest.jpg" alt="Screenshot 3 - Pine Forest" width="48%">
+    <img src="docs/scr4-float-island.jpg" alt="Screenshot 4 - Floating Island" width="48%">
 </div>
 
 ## Local Development
