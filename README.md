@@ -2,10 +2,14 @@
 
 Relm is an open source 3D spatial platform for the web. You can use it to collaborate, video conference, meet, and create events online.
 
-![Screenshot 1 - Quester](docs/scr1-quester.jpg)
-![Screenshot 2 - Whiteboard](docs/scr2-whiteboard.jpg)
-![Screenshot 3 - Pine Forest](docs/scr3-pineforest.jpg)
-![Screenshot 4 - Floating Island](docs/scr4-float-island.jpg)
+<div>
+    <img src="docs/scr1-quester.jpg" alt="Screenshot 1 - Quester" width="50%">
+    <img src="docs/scr2-whiteboard.jpg" alt="Screenshot 2 - Whiteboard" width="50%">
+</div>
+<div>
+    <img src="docs/scr3-pineforest.jpg" alt="Screenshot 3 - Pine Forest" width="50%">
+    <img src="docs/scr4-float-island.jpg" alt="Screenshot 4 - Floating Island" width="50%">
+</div>
 
 ## Local Development
 
@@ -36,7 +40,7 @@ After your first-time use, the `?token=setup` is no longer required.
 These are some rough notes on getting Relm running on your own hosted server:
 
 - there's no need to run a javascript "frontend server" in production
-- instead, an nginx server works well; see scripts/nginx/* for sample setup
+- instead, an nginx server works well; see scripts/nginx/\* for sample setup
 - when running the backend server, make sure it has all of the env vars it needs; see `scripts/deploy-staging.sh` for an example.
 - you can proxy the backend server through nginx as well (see scripts/nginx/snippets)
 - you can serve files with brotli compression to get better load times
