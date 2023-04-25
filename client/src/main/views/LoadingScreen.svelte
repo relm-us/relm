@@ -30,9 +30,13 @@
 </script>
 
 <PageOverlay zIndex={3} justify="center">
-  <container on:click={click}>
-    <img src="/loading.png" alt="Loading" />
-    <progress-bar style="--percent:{progress * 140}%" />
+  <container>
+    <img src="/logo.png" alt="Loading" />
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <progress-container on:click={click}>
+      <img src="/progress-bar.png" alt="Loading" />
+      <progress-bar style="--percent:{progress * 140}%" />
+    </progress-container>
   </container>
   {#if showCounts}
     <r-stats>
@@ -44,26 +48,29 @@
 
 <style>
   container {
-    display: block;
+    display: flex;
     position: relative;
-    width: 263px;
-    height: 122px;
+    flex-direction: column;
+    min-width: 300px;
+    max-width: 66vw;
+  }
+  container > img {
+    width: 100%;
+    padding-bottom: 1rem;
+  }
+  progress-container {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    width: 100%;
   }
 
-  img {
-    position: absolute;
-    left: 0;
-    bottom: 0px;
-    width: 263px;
-    height: 122px;
-  }
-
-  progress-bar {
+  progress-container > progress-bar {
     position: absolute;
     bottom: 2px;
     left: 0;
     width: 100%;
-    height: 35px;
+    height: calc(100% - 4px);
     background: rgb(242, 156, 88);
     background: linear-gradient(
       180deg,
@@ -71,7 +78,7 @@
       rgba(220, 219, 167, 1) 100%
     );
     clip-path: circle(var(--percent) at left);
-    border-radius: 16px;
+    border-radius: 200px;
     z-index: -1;
   }
 
