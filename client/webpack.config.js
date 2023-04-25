@@ -317,6 +317,7 @@ for (let [template, options] of Object.entries(htmlPages)) {
           fontsUrl:
             process.env.RELM_FONTS_URL ??
             "https://fonts.bunny.net/css" /* "https://fonts.googleapis.com/css" */,
+          logoUrl: process.env.RELM_LOGO_URL ?? "/logo.png",
           langDefault: process.env.RELM_LANG_DEFAULT ?? "en",
           // The URL of the relm-server (backend) we will connect to:
           server: relmServer,

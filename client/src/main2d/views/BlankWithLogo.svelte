@@ -1,12 +1,12 @@
 <script lang="ts">
+  import { config } from "~/config";
   import PageOverlay from "~/ui/lib/PageOverlay";
-  import relmLogo from "~/ui/MediaSetup/relm-logo.png";
   $$props;
 </script>
 
 <PageOverlay>
   <r-column>
-    <div class="logo"><img src={relmLogo} alt="logo" width="150" /></div>
+    <div class="logo"><img src={config.logoUrl} alt="logo" width="150" /></div>
     <slot />
   </r-column>
 </PageOverlay>

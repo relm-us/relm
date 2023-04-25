@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { config } from "~/config";
   import { Dispatch } from "~/main/ProgramTypes";
 
   import PageOverlay from "~/ui/lib/PageOverlay";
@@ -31,7 +32,7 @@
 
 <PageOverlay zIndex={3} justify="center">
   <container>
-    <img src="/logo.png" alt="Loading" />
+    <img src={config.logoUrl} alt="Loading" />
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <progress-container on:click={click}>
       <img src="/progress-bar.png" alt="Loading" />
@@ -52,7 +53,7 @@
     position: relative;
     flex-direction: column;
     min-width: 300px;
-    max-width: 66vw;
+    max-width: min(66vw, 500px);
   }
   container > img {
     width: 100%;

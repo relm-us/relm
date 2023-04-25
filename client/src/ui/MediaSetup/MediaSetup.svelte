@@ -8,7 +8,7 @@
   import { askMediaSetup } from "~/stores/askMediaSetup";
   import ToggleSwitch from "~/ui/lib/ToggleSwitch";
   import PageOverlay from "~/ui/lib/PageOverlay";
-  import relmLogo from "./relm-logo.png";
+  import { config } from "~/config";
 
   export let audioDesired = true;
   export let videoDesired = true;
@@ -23,7 +23,7 @@
 
 <PageOverlay zIndex={5}>
   <logo>
-    <img src={relmLogo} alt={$_("MediaSetup.logo")} />
+    <img src={config.logoUrl} alt={$_("MediaSetup.logo")} />
   </logo>
 
   <message>
