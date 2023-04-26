@@ -43,6 +43,12 @@ This should start both the backend server (yjs, assets, permissions) and fronten
 
 After your first-time use, the `?token=setup` is no longer required.
 
+## Contributing
+
+That's very generous of you! You might like to check out the high-level [Architecture](ARCHITECTURE.md) document as well as the [Changelog](CHANGELOG.md). Please also join us on [Discord](https://discord.gg/4HEgzrErAd) if you'd like to chat, or start a [discussion](discussions).
+
+Once you're ready, there's a directory called [contributors](contributors) where we ask you to add a file indicating your willingness to grant the same license (AGPL) as we have.
+
 ## Notes on Production Deployment
 
 These are some rough notes on getting Relm running on your own hosted server:
