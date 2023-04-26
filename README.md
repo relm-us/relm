@@ -2,9 +2,7 @@
 
 Relm is an open source 3D spatial platform for the web. You can use it to meet, work, organize, collaborate, and hold online events.
 
-Even though distance and flat screens may separate you, Relm is built with a love for discovering the details that help you feel comfortable, at ease, and natural as you gather with your friends, family, and colleagues.
-
-If you use a service hosted by us or someone else, there is no setup required--it all works seamlessly in a browser. As open source software (AGPL), you are also welcome to set it up on your own server, modify the code, and host the service for your community.
+We've been learning how to re-create a feeling of togetherness online. Flat screens and distance are the constraints within which we create a work of art. Relm has been built with a love for discovering details that help us feel comfortable, at ease, and natural as we gather with friends, family, and colleagues. We hope you'll feel the same way when you try it out.
 
 <div>
     <img src="docs/scr1-quester.jpg" alt="Screenshot 1 - Quester" width="48%">
@@ -15,7 +13,11 @@ If you use a service hosted by us or someone else, there is no setup required--i
     <img src="docs/scr4-float-island.jpg" alt="Screenshot 4 - Floating Island" width="48%">
 </div>
 
-## Community
+If you use a service hosted by us or someone else, there is no setup required--it all works seamlessly in a browser.
+
+As open source software (AGPL), you are also welcome to set it up on your own server, modify the code, and host the service for your community.
+
+## Our Community
 
 You're welcome to visit our [Discord server here](https://discord.gg/4HEgzrErAd).
 
