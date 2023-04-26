@@ -1,0 +1,14 @@
+[Unit]
+Description=Relm Server (prod)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/relm-prod/relm-server
+ExecStart=/home/relm-prod/.local/share/pnpm/node dist/server.js
+User=relm-prod
+Group=relm-prod
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

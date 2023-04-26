@@ -5,6 +5,6 @@
 **/dist/
 server/data/
 screenshot-server/data/
-deploy/
+/deploy/
 **/.env
 relm-*.tgz
