@@ -1,6 +1,10 @@
 # Relm
 
-Relm is an open source 3D spatial platform for the web. You can use it to collaborate, video conference, meet, and create events online.
+Relm is an open source 3D spatial platform for the web. You can use it to meet, work, organize, collaborate, and hold online events.
+
+Even though distance and flat screens may separate you, Relm is built with a love for discovering the details that help you feel comfortable, at ease, and natural as you gather with your friends, family, and colleagues.
+
+If you use a service hosted by us or someone else, there is no setup required--it all works seamlessly in a browser. As open source software (AGPL), you are also welcome to set it up on your own server, modify the code, and host the service for your community.
 
 <div>
     <img src="docs/scr1-quester.jpg" alt="Screenshot 1 - Quester" width="48%">
@@ -57,4 +61,6 @@ apt install ca-certificates fonts-liberation libappindicator3-1 libasound2 libat
 
 ## License
 
-Relm's source code is licensed under the [GNU AGPL 3.0 license](LICENSE). We encourage you to use Relm for any purpose, including commercial purposes, but with the understanding that changes to the source code need to be made available to the public for the benefit of everyone.
+Relm's source code is licensed under the [GNU AGPL 3.0 license](LICENSE). We encourage you to use Relm for any purpose, including commercial, but with the understanding that changes to the source code must be made available to the public for the benefit of everyone.
+
+(C) 2021-2023 Duane Johnson and other contributors
