@@ -78,8 +78,8 @@ importers:
         specifier: ^0.10.0
         version: 0.10.0
       postprocessing:
-        specifier: 6.29.1
-        version: 6.29.1(three@0.143.0)
+        specifier: 6.32.2
+        version: 6.32.2(three@0.143.0)
       protoo-client:
         specifier: ^4.0.6
         version: 4.0.6
@@ -11021,11 +11021,11 @@ packages:
       - pg-native
     dev: false
 
-  /postprocessing@6.29.1(three@0.143.0):
-    resolution: {integrity: sha512-w+XoL2Z7YpVDsHbIeg6sldMMmDqZS4Hul1FDq3TjOeXZ0Wnp0Qy1EvR7QmYJxyWBux1cKQx/k3XO7LxfvPsZyg==}
+  /postprocessing@6.32.2(three@0.143.0):
+    resolution: {integrity: sha512-BpjIHeElXRmkcqO6p8Pi6W1uDcivQa2FVQ/Swnoo32Cg5bq/bb0mh9hXSHeCkIBD0W4D2KU8Fg7jBICztcN9iQ==}
     engines: {node: '>= 0.13.2'}
     peerDependencies:
-      three: '>= 0.125.0 < 0.147.0'
+      three: '>= 0.138.0 < 0.155.0'
     dependencies:
       three: 0.143.0
     dev: false
