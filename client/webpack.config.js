@@ -126,6 +126,7 @@ module.exports = {
     },
     extensions: [".js", ".ts", ".svelte"],
     mainFields: ["svelte", "browser", "module", "main"],
+    conditionNames: ["svelte", "require", "browser"]
   },
 
   experiments: {
