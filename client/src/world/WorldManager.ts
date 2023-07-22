@@ -752,6 +752,10 @@ export class WorldManager {
     }
   }
 
+  takeFocus() {
+    this.world.htmlPresentation.domElement.focus();
+  }
+
   focusProximity(entity: Entity) {
     if (entity === this.focusedProximity) return;
     this.focusedProximity = entity;
