@@ -7,7 +7,7 @@
   --selected-red-hover: rgba(220, 0, 0, 0.75);
 
   --orange: #896f03;
-  --selected-orange: #cba03f;
+  --selected-orange: rgb(203, 160, 63, 1.0);
   --selected-orange-hover: #ddb65e;
 
   --unselected-gray: rgba(50, 50, 50, 0.25);
@@ -64,7 +64,7 @@
   align-items: center;
 }
 ._toastContainer .audio {
-  --toastBackground: var(--selected-orange);
+  --toastBackground: rgb(203, 160, 63, 0.85);
   --toastColor: #003e69;
 }
 ._toastBtn {

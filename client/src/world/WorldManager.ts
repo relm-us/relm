@@ -668,12 +668,15 @@ export class WorldManager {
     if (zone === this.audioZone) return;
 
     if (zone === null) {
-      toast.push(`Entered Main Audio Zone`, {
+      toast.pop(0); // clear all toasts
+      toast.push(`Returned to Main Audio Zone`, {
         classes: ["audio"],
+        duration: 2000,
       });
     } else {
-      toast.push(`Entered Audio Zone: ${zone}`, {
+      toast.push(`Entered ${zone} Audio Zone`, {
         classes: ["audio"],
+        duration: 2000,
       });
     }
 

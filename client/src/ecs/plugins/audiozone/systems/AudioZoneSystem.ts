@@ -21,6 +21,12 @@ export class AudioZoneSystem extends System {
   update() {
     this.queries.boundary.forEach((entity) => {
       const impact: Impact = entity.get(Impact);
+
+      // AudioZone is only applicable to the player; we should ignore
+      // other objects or (remote) players entering/exiting audio zones
+      // because they should not affect what the player is hearing
+      if (impact.other !== worldManager.avatar.entities.body) return;
+
       const enteredYet = entity.has(AudioZoneEntered);
 
       if (impact.started && !enteredYet) {

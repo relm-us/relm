@@ -39,8 +39,8 @@ importers:
         specifier: 2.1.2
         version: 2.1.2(@uppy/core@2.3.1)
       '@zerodevx/svelte-toast':
-        specifier: ^0.8.0
-        version: 0.8.0
+        specifier: 0.9.5
+        version: 0.9.5(svelte@3.52.0)
       alphanumeric-id:
         specifier: ^1.0.1
         version: 1.0.1
@@ -4428,8 +4428,12 @@ packages:
     resolution: {integrity: sha512-uUrgZ8AxS+Lio0fZKAipJjAh415JyrOZowliZAzmnJSsf7piVL5w+G0+gFJ0KSu3QRhvui/7zuvpLz03YjXAhg==}
     dev: false
 
-  /@zerodevx/svelte-toast@0.8.0:
-    resolution: {integrity: sha512-PAcQQGhGYkdZJqPY7obnGIdlBoeoMteogYoN/nJn87CI5LYgRz6X9ST4AA65jyGlybWnniYzlrTT/dFepvuC/g==}
+  /@zerodevx/svelte-toast@0.9.5(svelte@3.52.0):
+    resolution: {integrity: sha512-JLeB/oRdJfT+dz9A5bgd3Z7TuQnBQbeUtXrGIrNWMGqWbabpepBF2KxtWVhL2qtxpRqhae2f6NAOzH7xs4jUSw==}
+    peerDependencies:
+      svelte: ^3.57.0 || ^4.0.0
+    dependencies:
+      svelte: 3.52.0
     dev: false
 
   /abab@2.0.5:
