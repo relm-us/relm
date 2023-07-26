@@ -34,8 +34,7 @@ export class ClientAVAdapter extends TypedEmitter<AVAdapterEvents> {
 
   async connect(
     roomId: string,
-    identityOrToken: string, // may be token, may be username, depends on service
-    options: ConnectOptions = {}
+    identityOrToken: string // may be token, may be username, depends on service
   ) {
     throw new UnimplementedError();
   }

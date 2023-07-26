@@ -52,7 +52,7 @@ export class AVConnection {
 
     if (logEnabled) console.log("Joining video conference room", this);
 
-    await this.adapter.connect(roomId, token, { displayName });
+    await this.adapter.connect(roomId, token);
     this.watchLocalTrackChanges();
     this.watchRemoteTrackChanges();
 

@@ -17,11 +17,7 @@ const logEnabled = (localStorage.getItem("debug") || "")
 export class TwilioClientAVAdapter extends ClientAVAdapter {
   room: Room;
 
-  async connect(
-    roomId: string,
-    identityOrToken: string,
-    { displayName = "user", produceAudio = true, produceVideo = true } = {}
-  ) {
+  async connect(roomId: string, identityOrToken: string) {
     const options: ConnectOptions = {
       name: roomId,
 
