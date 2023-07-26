@@ -87,7 +87,7 @@
     "core-js-bundle": "^3.21.1",
     "cross-env": "^7.0.2",
     "css-loader": "^4.2.0",
-    "css-minimizer-webpack-plugin": "^4.0.0",
+    "css-minimizer-webpack-plugin": "^5.0.1",
     "dotenv": "^10.0.0",
     "file-loader": "^6.2.0",
     "handlebars": "^4.7.7",
