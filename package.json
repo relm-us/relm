@@ -2,8 +2,8 @@
   "private": true,
 
   "engines": {
-    "node": "^14.13.1 || >=16.0.0",
-    "pnpm": ">=6"
+    "node": ">=16.0.0",
+    "pnpm": "^8.6.9"
   },
 
   "devDependencies": {
