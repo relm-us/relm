@@ -38,20 +38,6 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
       // https://www.twilio.com/console/video/configure
       dominantSpeaker: false,
 
-      // Comment this line if you are playing music.
-      // maxAudioBitrate: 16000,
-
-      // VP8 simulcast enables the media server in a Small Group or Group Room
-      // to adapt your encoded video quality for each RemoteParticipant based on
-      // their individual bandwidth constraints. This has no utility if you are
-      // using Peer-to-Peer Rooms, so you can comment this line.
-      // preferredVideoCodecs: [
-      //   {
-      //     codec: "VP8",
-      //     simulcast: true,
-      //   },
-      // ],
-
       // We'll add audio and video tracks manually from local(*)TrackStore
       audio: false,
       video: false,

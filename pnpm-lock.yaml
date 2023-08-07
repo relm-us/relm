@@ -138,8 +138,8 @@ importers:
         specifier: 2.1.0
         version: 2.1.0
       twilio-video:
-        specifier: 2.24.3
-        version: 2.24.3
+        specifier: 2.27.0
+        version: 2.27.0
       y-indexeddb:
         specifier: 9.0.7
         version: 9.0.7(yjs@13.5.27)
@@ -13394,8 +13394,8 @@ packages:
       safe-buffer: 5.2.1
     dev: false
 
-  /twilio-video@2.24.3:
-    resolution: {integrity: sha512-odk7yXIiMn+U6MZltF+rcwuHWs033FG2DG4moY+ok1mDjmkW9mP6NSM8pNj+1J63fvAiLoWHVKq27++iMgdLsw==}
+  /twilio-video@2.27.0:
+    resolution: {integrity: sha512-hdiYOKuujtLdG7A8Ae/8qeJWfL/zZXVTrh79fWq7d/QAgZ966R7QJdWkTAxdairhlhGLCu4cN4jOBxQ1Bqe9MQ==}
     engines: {node: '>=0.12'}
     dependencies:
       events: 3.3.0
