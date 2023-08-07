@@ -6,12 +6,15 @@
   export let color: string;
   export let diameter: number = null;
   export let cuts: Cut[] = null;
+  export let halo: number = 0;
+
+  $: haloThickness = Math.min(halo, 1) * 5;
 </script>
 
 <CircleMask {diameter} {cuts}>
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <oculus
-    style="--oculus-border-color: {color}; --diameter: {diameter}px"
+    style="--oculus-border-color: {color}; --diameter: {diameter}px; --halo-thickness: {haloThickness}px"
     on:click
   >
     <slot />
@@ -26,7 +29,8 @@
 
     width: var(--diameter, 100px);
     height: var(--diameter, 100px);
-    box-shadow: 0 0 5px var(--oculus-border-color, #cccccc);
+    box-shadow: 0 0 5px var(--halo-thickness)
+      var(--oculus-border-color, #cccccc);
     background-color: #959595;
 
     overflow: hidden;
