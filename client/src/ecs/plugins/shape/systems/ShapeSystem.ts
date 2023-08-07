@@ -92,6 +92,11 @@ export class ShapeSystem extends System {
     const texture: Texture = entity.get(ShapeAssetLoaded).value;
     const mesh: ShapeMesh = entity.get(ShapeMesh);
 
+    if (!texture) {
+      console.error("Can't build texture; texture is null", entity.id, spec.asset.url)
+      return
+    }
+
     (mesh.value.material as MeshStandardMaterial).map = texture;
 
     if (spec.fixedTexture) {
