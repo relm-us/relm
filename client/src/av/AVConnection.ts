@@ -154,7 +154,7 @@ export class AVConnection {
     return this.videoTrackStores[participantId];
   }
 
-  getTrackStore(participantId: string, kind: TrackKind) {
+  getTrackStore(participantId: string, kind: TrackKind): Writable<Track> {
     const storage = this.getTrackMemberByKind(kind);
     if (!this[storage][participantId]) {
       this[storage][participantId] = writable(null);
@@ -162,7 +162,7 @@ export class AVConnection {
     return this[storage][participantId];
   }
 
-  getTrackMemberByKind(kind: TrackKind) {
+  getTrackMemberByKind(kind: TrackKind): "audioTrackStores" | "videoTrackStores" {
     // prettier-ignore
     switch (kind) {
       case "audio": return "audioTrackStores";

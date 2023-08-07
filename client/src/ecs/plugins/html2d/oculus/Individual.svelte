@@ -4,6 +4,7 @@
    */
 
   import type { Cut } from "./types";
+  import type { Track } from "~/av/base/types";
 
   import { Audio, Video } from "~/ui/VideoMirror";
 
@@ -16,8 +17,8 @@
   export let mirror: boolean = false;
   export let editable: boolean = false;
   export let volume: number = 1.0;
-  export let audioTrack = null;
-  export let videoTrack = null;
+  export let audioTrack: Track = null;
+  export let videoTrack: Track = null;
   export let diameter: number = null;
   export let cuts: Cut[] = null;
 </script>

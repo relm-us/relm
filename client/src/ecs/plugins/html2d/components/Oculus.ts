@@ -8,8 +8,6 @@ import {
 import { Vector3Type } from "~/ecs/plugins/core";
 import { Vector3 } from "three";
 
-const HTML2D_MOTION_THRESHOLD = 0.1;
-
 export class Oculus extends LocalComponent {
   offset: Vector3;
   targetOffset: Vector3;
