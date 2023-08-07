@@ -2,16 +2,17 @@
   import { slide, fade } from "svelte/transition";
   import { _ } from "svelte-i18n";
 
-  import AudioLevelIndicator from "./AudioLevelIndicator.svelte";
+  import {
+    IconAudio,
+    IconVideo,
+    IconSettings,
+    IconVideoDisabled,
+  } from "~/av/icons";
+  import AudioLevelIndicator from "~/av/components/AudioLevelIndicator";
+
   import VideoBox from "./VideoBox.svelte";
   import ContinueButton from "./ContinueButton.svelte";
   import DeviceSelector from "./DeviceSelector/index";
-
-  import AudioIcon from "./AudioIcon.svelte";
-  import VideoIcon from "./VideoIcon.svelte";
-
-  import IconSettings from "./icons/IconSettings.svelte";
-  import IconVideoDisabled from "./icons/IconVideoDisabled.svelte";
 
   export let stream;
   export let videoDesired;
@@ -72,7 +73,7 @@
           on:click={toggleVideoDesired}
           class:track-disabled={!videoDesired}
         >
-          <icon><VideoIcon enabled={videoDesired} /></icon>
+          <icon><IconVideo enabled={videoDesired} /></icon>
         </button>
         <button
           class="audio-level-button"
@@ -82,12 +83,12 @@
           {#if audioDesired}
             <AudioLevelIndicator {stream}>
               <icon class="audio-level-icon">
-                <AudioIcon enabled={audioDesired} />
+                <IconAudio enabled={audioDesired} />
               </icon>
             </AudioLevelIndicator>
           {:else}
             <icon class="audio-level-icon">
-              <AudioIcon enabled={audioDesired} />
+              <IconAudio enabled={audioDesired} />
             </icon>
           {/if}
         </button>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { IconAudioEnabled, IconAudioDisabled } from "./icons/index";
+  import { IconAudioEnabled, IconAudioDisabled } from "./index";
 
   export let enabled = true;
 </script>

@@ -19,7 +19,7 @@ import {
   Quaternion,
 } from "three";
 import * as THREE from "three";
-import { localVideoTrack } from "~/ui/VideoMirror";
+import { localVideoTrack } from "~/av/VideoMirror";
 import { derived, get } from "svelte/store";
 import { toast } from "@zerodevx/svelte-toast";
 import { _ } from "svelte-i18n";

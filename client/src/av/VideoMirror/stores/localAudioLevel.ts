@@ -1,6 +1,6 @@
 import { derived } from "svelte/store";
 
-import { audioActivity } from "../audioActivity";
+import { audioActivity } from "~/av/utils/audioActivity";
 import { localStream } from "./localStream";
 
 export const localAudioLevel = derived(

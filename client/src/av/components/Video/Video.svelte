@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { afterUpdate, onMount } from "svelte";
+  import { afterUpdate } from "svelte";
 
-  import { attach } from "./mediaAttachment";
+  import { attach } from "~/av/utils/mediaAttachment";
 
   export let track;
   export let mirror = false;

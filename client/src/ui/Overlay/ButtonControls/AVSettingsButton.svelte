@@ -8,7 +8,7 @@
 
   import { firstFocusElement } from "~/stores/firstFocusElement";
 
-  import { IconVideoEnabled, IconAudioEnabled } from "~/ui/VideoMirror";
+  import { IconVideoEnabled, IconAudioEnabled } from "~/av/icons";
   import CircleButton from "~/ui/lib/CircleButton";
 
   export let dispatch: Dispatch;

@@ -2,7 +2,7 @@ import { get, Writable } from "svelte/store";
 import { Vector3 } from "three";
 import { toast } from "@zerodevx/svelte-toast";
 
-import { DeviceIds } from "~/ui/VideoMirror";
+import { DeviceIds } from "~/av/VideoMirror";
 
 import { worldManager } from "~/world";
 

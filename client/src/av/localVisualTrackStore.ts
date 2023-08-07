@@ -1,6 +1,6 @@
 import { writable, derived, Readable, Writable } from "svelte/store";
 import { LocalVideoTrack } from "twilio-video";
-import { localVideoTrack as localVideoTrackStore } from "~/ui/VideoMirror";
+import { localVideoTrack as localVideoTrackStore } from "./VideoMirror";
 
 export const localShareTrackStore: Writable<LocalVideoTrack> = writable(null);
 

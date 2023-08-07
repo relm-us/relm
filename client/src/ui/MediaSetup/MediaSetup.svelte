@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { DeviceIds } from "~/ui/VideoMirror";
+  import type { DeviceIds } from "~/av/VideoMirror";
 
   import { createEventDispatcher } from "svelte";
-  import { VideoMirror } from "~/ui/VideoMirror";
+  import { VideoMirror } from "~/av/VideoMirror";
   import { _ } from "svelte-i18n";
 
   import { askMediaSetup } from "~/stores/askMediaSetup";

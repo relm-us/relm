@@ -1,5 +1,5 @@
 import type { Vector3 } from "three";
-import type { DeviceIds } from "~/ui/VideoMirror";
+import type { DeviceIds } from "~/av/VideoMirror";
 import type { Writable } from "svelte/store";
 import type { Appearance, Awareness, SavedIdentityData } from "relm-common";
 

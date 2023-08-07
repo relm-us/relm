@@ -6,7 +6,8 @@
   import type { Cut } from "./types";
   import type { Track } from "~/av/base/types";
 
-  import { Audio, Video } from "~/ui/VideoMirror";
+  import Audio from "~/av/components/Audio";
+  import Video from "~/av/components/Video";
 
   import NameTag from "./NameTag.svelte";
   import Oculus from "./Oculus.svelte";

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { spring } from "svelte/motion";
 
-  import Video from "./Video.svelte";
+  import Video from "~/av/components/Video";
 
   export let track = null;
   export let blocked = false;

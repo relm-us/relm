@@ -2,11 +2,8 @@
   import type AvSettingsButton from "./AVSettingsButton.svelte";
 
   import CircleButton from "~/ui/lib/CircleButton";
-  import {
-    IconAudioEnabled,
-    IconAudioDisabled,
-    localAudioTrack,
-  } from "~/ui/VideoMirror";
+  import { IconAudioEnabled, IconAudioDisabled } from "~/av/icons";
+  import { localAudioTrack } from "~/av/VideoMirror";
   import { worldManager } from "~/world";
 
   export let enabled = false;

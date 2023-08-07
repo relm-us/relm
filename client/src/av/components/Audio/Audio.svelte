@@ -1,7 +1,7 @@
 <script lang="ts">
   import { afterUpdate } from "svelte";
 
-  import { attach } from "./mediaAttachment";
+  import { attach } from "~/av/utils/mediaAttachment";
 
   export let id = "video";
   export let track;

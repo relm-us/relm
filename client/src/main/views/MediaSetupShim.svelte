@@ -1,7 +1,7 @@
 <script lang="ts">
   import MediaSetup from "~/ui/MediaSetup";
   import type { Dispatch } from "../ProgramTypes";
-  import type { DeviceIds } from "~/ui/VideoMirror";
+  import type { DeviceIds } from "~/av/VideoMirror";
 
   export let dispatch: Dispatch;
 

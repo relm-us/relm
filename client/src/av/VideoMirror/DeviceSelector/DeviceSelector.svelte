@@ -11,7 +11,7 @@
     IconAudioEnabled,
     IconVideoEnabled,
     IconSoundSpeaker,
-  } from "../icons";
+  } from "../../icons";
 
   export let preferredDeviceIds: DeviceIds;
 
