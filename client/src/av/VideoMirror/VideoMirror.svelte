@@ -103,12 +103,6 @@
 
     const initialEffects: Effect[] = [];
 
-    if (permissionWouldBeGranted) {
-      initialEffects.push(
-        getUserMedia({ audio: audioConstraints, video: videoConstraints })
-      );
-    }
-
     const initialState = {
       stream: get(localStream),
       videoDesired,
@@ -119,6 +113,13 @@
       permissionBlocked: false,
       permissionWouldBeGranted,
     };
+
+    if (permissionWouldBeGranted) {
+      setConstraintsFromDeviceIds(initialState);
+      initialEffects.push(
+        getUserMedia({ audio: audioConstraints, video: videoConstraints })
+      );
+    }
 
     return {
       init: [initialState, batch(initialEffects)],
