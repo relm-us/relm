@@ -4,7 +4,7 @@
   import groupBy from "./groupBy";
   import Select from "./Select/index";
 
-  import { mediaDevices, defaultDeviceIds } from "../stores/index";
+  import { mediaDevices } from "../stores/index";
   import type { DeviceIds } from "../program";
 
   import {
@@ -12,13 +12,14 @@
     IconVideoEnabled,
     IconSoundSpeaker,
   } from "../../icons";
+  import { localAudioDeviceId } from "../stores/localAudioDeviceId";
+  import { localVideoDeviceId } from "../stores/localVideoDeviceId";
 
   export let preferredDeviceIds: DeviceIds;
 
   // DeviceSelector sends a 'selected' event when user selects anything
   const dispatch = createEventDispatcher();
 
-  const kinds = ["videoinput", "audioinput", "audiooutput"];
   const icons = {
     videoinput: IconVideoEnabled,
     audioinput: IconAudioEnabled,
@@ -32,7 +33,7 @@
     dispatch("selected", { kind, value: option.value });
   }
 
-  function selected(kind) {
+  function selected(kind: string) {
     if (
       preferredDeviceIds[kind] &&
       $mediaDevices.find(
@@ -41,7 +42,22 @@
     ) {
       return preferredDeviceIds[kind];
     } else {
-      return $defaultDeviceIds[kind];
+      let deviceId = null;
+      if (kind === "audioinput" && $localAudioDeviceId) {
+        deviceId = $localAudioDeviceId;
+      } else if (kind === "videoinput" && $localVideoDeviceId) {
+        deviceId = $localVideoDeviceId;
+      } else if (kind === "audiooutput") {
+        const deviceDefault = $mediaDevices.find(
+          (d) => d.kind === "audiooutput" && d.deviceId === "default"
+        );
+        const device = $mediaDevices.find(
+          (d) => d.kind === "audiooutput" && d.deviceId !== "default"
+        );
+        if (deviceDefault) deviceId = deviceDefault.deviceId;
+        else if (device) deviceId = device.deviceId;
+      }
+      return deviceId;
     }
   }
 

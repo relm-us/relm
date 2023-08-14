@@ -2,15 +2,20 @@
   import { onMount } from "svelte";
   import hasAncestor from "./hasAncestor";
 
-  export let selected = null;
-  export let options = null;
+  type Option = {
+    label: string;
+    value: string;
+  };
+
+  export let selected: string = null;
+  export let options: Option[] = null;
   export let icon = null;
-  export let onSelect = null;
+  export let onSelect: (option: Option) => void = null;
 
   let selectRowEl = null;
   let popupVisible = false;
   let hoverIndex = null;
-  let selectedOption;
+  let selectedOption: Option;
 
   let optionsWithDefault;
 
@@ -68,7 +73,7 @@
 <vm-select>
   <!-- Invisible inline spacer that keeps inline position for popup to hover over -->
   <div class="placeholder">
-    <div class="select-row ">
+    <div class="select-row">
       {#if icon}
         <div class="icon"><svelte:component this={icon} /></div>
       {/if}
@@ -85,6 +90,7 @@
     aria-expanded={popupVisible ? "true" : "false"}
     aria-controls="popup"
   >
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       bind:this={selectRowEl}
       on:click={togglePopup}
@@ -100,6 +106,7 @@
     {#if popupVisible}
       <div id="popup" class="popup" on:mouseleave={() => (hoverIndex = null)}>
         {#each optionsWithDefault as option, i}
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
           <div
             class="option"
             class:checkmark-selected={selectedOption

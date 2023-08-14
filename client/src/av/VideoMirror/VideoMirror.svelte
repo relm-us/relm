@@ -11,6 +11,8 @@
 
   import ProgramView from "./ProgramView.svelte";
   import Setup from "./Setup.svelte";
+  import { localAudioDeviceId } from "./stores/localAudioDeviceId";
+  import { localVideoDeviceId } from "./stores/localVideoDeviceId";
 
   export let videoDesired = true;
   export let audioDesired = true;
@@ -131,6 +133,13 @@
           // We need to remember this stream to close it, in case of failure
           // a desire for no audio/video
           streamToClose = msg.stream;
+
+          localAudioDeviceId.set(
+            msg.stream.getAudioTracks()[0]?.getSettings().deviceId
+          );
+          localVideoDeviceId.set(
+            msg.stream.getVideoTracks()[0]?.getSettings().deviceId
+          );
 
           return [
             { ...state, stream: msg.stream, permissionBlocked: false },

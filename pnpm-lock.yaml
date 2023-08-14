@@ -65,9 +65,6 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
-      media-devices:
-        specifier: ^0.4.0
-        version: 0.4.0
       nanoid:
         specifier: ^3.3.4
         version: 3.3.4
@@ -9479,10 +9476,6 @@ packages:
   /mdn-data@2.0.30:
     resolution: {integrity: sha512-GaqWWShW4kv/G9IEucWScBx9G1/vsFZZJUO+tD26M8J8z3Kw5RDQjaoZe03YAClgeS/SWPOcb4nkFBTEi5DUEA==}
     dev: true
-
-  /media-devices@0.4.0:
-    resolution: {integrity: sha512-aes0rHEg4Iz0PkMlLq/05ZiA0YNmnG1J+09trCnatqNRjT6iF2/5K75vZ4o3R7sq3m2tvKPphvqVaosLJE5J8Q==}
-    dev: false
 
   /media-typer@0.3.0:
     resolution: {integrity: sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==}

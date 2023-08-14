@@ -4,4 +4,3 @@ export { localAudioTrack } from "./localAudioTrack";
 export { localVideoTrack } from "./localVideoTrack";
 
 export { mediaDevices } from "./mediaDevices";
-export { defaultDeviceIds } from "./defaultDeviceIds";

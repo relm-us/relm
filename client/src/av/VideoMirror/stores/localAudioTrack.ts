@@ -1,8 +1,8 @@
-import { derived } from "svelte/store";
+import { Readable, derived } from "svelte/store";
 
 import { localStream } from "./localStream";
 
-export const localAudioTrack = derived(
+export const localAudioTrack: Readable<MediaStreamTrack> = derived(
   [localStream],
   ([$stream], set) => {
     if ($stream) {

@@ -37,7 +37,6 @@
     "eventemitter3": "^4.0.7",
     "howler": "^2.2.3",
     "lodash": "^4.17.21",
-    "media-devices": "^0.4.0",
     "nanoid": "^3.3.4",
     "nipplejs": "^0.10.0",
     "postprocessing": "6.32.2",
