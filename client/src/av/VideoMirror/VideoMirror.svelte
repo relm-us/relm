@@ -179,6 +179,13 @@
 
             // Finally, we've succeeded, so pass the stream on as a global svelte store
             $localStream = state.stream;
+
+            if (logEnabled) {
+              console.log("Setting localStream", {
+                ...state,
+                localStreamTracks: state.stream.getTracks(),
+              });
+            }
           } else {
             state.stream = null;
           }

@@ -31,7 +31,7 @@ export const getUserMedia =
 
         previousStream = stream;
 
-        if (logEnabled) console.log("Got User Media", stream);
+        if (logEnabled) console.log("Got User Media", stream, stream.getTracks());
 
         dispatch({ id: "gotUserMedia", stream });
       } catch (err) {
