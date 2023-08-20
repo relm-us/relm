@@ -90,5 +90,6 @@
 
   panel-tabs :global(button) {
     color: var(--foreground-white, white);
+    margin-right: 1px;
   }
 </style>

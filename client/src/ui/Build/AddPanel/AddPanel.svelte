@@ -142,7 +142,7 @@
       </r-line-wrap>
 
       <r-prefabs-switch class="dark">
-        <a href="#" on:click|preventDefault={() => (prefabsVisible = true)}>
+        <a href="#" on:click|preventDefault={() => (prefabsVisible = true)} tabindex="0">
           show prefabs
         </a>
       </r-prefabs-switch>

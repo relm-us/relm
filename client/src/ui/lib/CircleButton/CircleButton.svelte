@@ -10,6 +10,7 @@
   export let padding: number = null;
   export let Icon: SvelteComponent | any = null;
   export let iconSize: number = 32;
+  export let tabindex: number = 0;
 
   $: if (padding === null) padding = size / 6;
 
@@ -36,6 +37,7 @@
   on:click={() => {
     dispatch("click");
   }}
+  {tabindex}
 >
   {#if Icon}
     <icon style="--icon-size: {iconSize}px">
@@ -63,9 +65,6 @@
 
     border: 0;
     border-radius: 100%;
-  }
-  button:focus {
-    border-bottom-color: rgba(255, 255, 255, 1);
   }
   button.disabled {
     pointer-events: none;

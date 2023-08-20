@@ -5,10 +5,19 @@
   export let active: boolean = undefined;
   export let secondary: boolean = false;
   export let style: string = undefined;
-  export let tabindex: number = undefined;
+  export let tabindex: number = 0;
   export let depress: boolean = true;
 
   let dispatch = createEventDispatcher();
+
+  function onKeydown(event: KeyboardEvent) {
+    if (event.key === " " || event.key === "Enter") {
+      event.stopPropagation();
+      dispatch("click");
+    } else if (event.key === "Escape") {
+      (event.target as HTMLButtonElement).blur();
+    }
+  }
 </script>
 
 <button
@@ -20,6 +29,7 @@
   on:mousedown|stopPropagation={() => {
     dispatch("click");
   }}
+  on:keydown={onKeydown}
   {tabindex}
 >
   <slot />
@@ -54,10 +64,6 @@
     --bg-color: var(--background-gray);
     --bg-hover-color: #21232a;
     --fg-color: var(--foreground-gray);
-  }
-  button:focus {
-    outline: none;
-    border-bottom-color: rgba(255, 255, 255, 1);
   }
   button.disabled {
     pointer-events: none;

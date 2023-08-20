@@ -1,3 +1,7 @@
+<header>
+  <slot />
+</header>
+
 <style>
   header {
     margin: 8px auto;
@@ -6,7 +10,3 @@
     font-weight: bold;
   }
 </style>
-
-<header>
-  <slot />
-</header>
