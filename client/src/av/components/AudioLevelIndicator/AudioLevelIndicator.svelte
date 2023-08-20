@@ -4,14 +4,14 @@
 
   import { audioActivity } from "~/av/utils/audioActivity";
 
-  export let stream;
+  export let stream: MediaStream;
 
   let activity;
   let audioLevel = 0;
 
   $: if (stream && stream.getAudioTracks().length) {
     if (activity) activity.destroy();
-    activity = audioActivity(stream, (value) => (audioLevel = value));
+    activity = audioActivity(stream, {}, (value) => (audioLevel = value));
   }
 
   // Animation springs
