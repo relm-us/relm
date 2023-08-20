@@ -29,7 +29,6 @@ import { WorldDoc } from "~/y-integration/WorldDoc";
 import { exportRelm, importRelm } from "./Export";
 
 import {
-  BASE_LAYER_ID,
   CAMERA_BUILD_DAMPENING,
   CAMERA_BUILD_ZOOM_MAX,
   CAMERA_BUILD_ZOOM_MIN,
@@ -62,6 +61,8 @@ import { Clickable, Clicked } from "~/ecs/plugins/clickable";
 import { Item2, Taken } from "~/ecs/plugins/item";
 import { Oculus } from "~/ecs/plugins/html2d";
 import { DocumentRef, HdImageRef, WebPageRef } from "~/ecs/plugins/css3d";
+import { PointerPositionRef } from "~/ecs/plugins/pointer-position";
+import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
 
 import { AVConnection } from "~/av";
 import { localShareTrackStore } from "~/av/localVisualTrackStore";
@@ -437,7 +438,7 @@ export class WorldManager {
           this.avatar.enablePhysics($edit === "invisible");
           this.enableCollidersNonInteractive($edit === "ground");
         }
-      }).subscribe(() => {})
+      }).subscribe(() => { })
     );
 
     this.registerGlobalEventListeners();
@@ -543,7 +544,7 @@ export class WorldManager {
             }
           }
         }
-      ).subscribe(() => {})
+      ).subscribe(() => { })
     );
 
     this.unsubs.push(viewportScale.subscribe(($zoom) => this.didChangeZoom()));
@@ -1243,5 +1244,21 @@ export class WorldManager {
       if (!entity.active) entity.activate();
       this.worldDoc.syncFrom(entity);
     }
+  }
+
+
+  getPointerPosition() {
+    const avatar = this.participants.local.avatar
+
+    const ppref: PointerPositionRef = avatar.entities.body.get(PointerPositionRef);
+    const pointer: WorldPlanes = ppref.value;
+
+    const position = new Vector3(
+      pointer.points.XZ.x,
+      avatar.position.y,
+      pointer.points.XZ.z
+    )
+
+    return position
   }
 }

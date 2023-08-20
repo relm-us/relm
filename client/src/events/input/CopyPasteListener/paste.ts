@@ -49,9 +49,7 @@ export function paste(clipboardData?: DataTransfer) {
   assignNewGroupIds(buffer.groupTree, idMap);
   groupTree.mergeTree(buffer.groupTree);
 
-  const targetPosition = new Vector3().copy(
-    worldManager.participants.local.avatar.position
-  );
+  const targetPosition = worldManager.getPointerPosition()
   targetPosition.y += buffer.center.y;
 
   const entities = [];
