@@ -142,12 +142,14 @@
       </r-line-wrap>
 
       <r-prefabs-switch class="dark">
+        <!-- svelte-ignore a11y-invalid-attribute -->
         <a href="#" on:click|preventDefault={() => (prefabsVisible = true)} tabindex="0">
           show prefabs
         </a>
       </r-prefabs-switch>
     {:else}
       <r-prefabs-switch>
+        <!-- svelte-ignore a11y-invalid-attribute -->
         <a href="#" on:click|preventDefault={() => (prefabsVisible = false)}>
           <r-prefab-back style="padding-right:20px">
             <r-icon><IoIosArrowBack /></r-icon>

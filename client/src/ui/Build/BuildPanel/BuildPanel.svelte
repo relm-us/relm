@@ -25,24 +25,31 @@
   <Button
     active={$openPanel === "add"}
     depress={false}
-    on:click={() => ($openPanel = "add")}>{$_("BuildPanel.add")}</Button
+    on:click={() => ($openPanel = "add")}
   >
+    {$_("BuildPanel.add")}
+  </Button>
   <Button
     active={$openPanel === "modify"}
     depress={false}
-    on:click={() => ($openPanel = "modify")}>{$_("BuildPanel.modify")}</Button
+    on:click={() => ($openPanel = "modify")}
   >
+    {$_("BuildPanel.modify")}
+  </Button>
   <Button
     active={$openPanel === "layers"}
     depress={false}
-    on:click={() => ($openPanel = "layers")}>{$_("BuildPanel.layers")}</Button
+    on:click={() => ($openPanel = "layers")}
   >
+    {$_("BuildPanel.layers")}
+  </Button>
   <Button
     active={$openPanel === "settings"}
     depress={false}
     on:click={() => ($openPanel = "settings")}
-    >{$_("BuildPanel.settings")}</Button
   >
+    {$_("BuildPanel.settings")}
+  </Button>
 </panel-tabs>
 
 <div in:fly={{ x: 260 }} style="display:flex;width:260px">
