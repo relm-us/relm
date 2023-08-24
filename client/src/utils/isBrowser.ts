@@ -5,4 +5,5 @@ export const isBrowser = new Function(
 export const isNode = () => !isBrowser();
 
 export const isNodeEnv = (env: string) =>
+  // @ts-ignore
   isNode() && process.env.NODE_ENV === env;

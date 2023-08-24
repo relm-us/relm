@@ -8,11 +8,11 @@ export const localAudioLevel = derived(
   ([$stream], set) => {
     let activity;
     if ($stream && $stream.getAudioTracks().length) {
-      activity = audioActivity($stream, {}, set);
+      activity = audioActivity($stream, set);
     }
 
     return () => {
-      if (activity) activity.destroy();
+      if (activity) activity();
     };
   },
   0

@@ -10,8 +10,8 @@
   let audioLevel = 0;
 
   $: if (stream && stream.getAudioTracks().length) {
-    if (activity) activity.destroy();
-    activity = audioActivity(stream, {}, (value) => (audioLevel = value));
+    if (activity) activity();
+    activity = audioActivity(stream, (value) => (audioLevel = value));
   }
 
   // Animation springs
@@ -27,7 +27,7 @@
   }
 
   onDestroy(() => {
-    if (activity) activity.destroy();
+    if (activity) activity();
   });
 </script>
 

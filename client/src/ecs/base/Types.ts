@@ -58,7 +58,7 @@ export const RefType = {
   },
 };
 
-const _JSON = typeof window === "undefined" ? global.JSON : window.JSON;
+const _JSON = typeof window === "undefined" ? globalThis.JSON : window.JSON;
 
 export const JSONType: PropertyType = {
   name: "JSON",

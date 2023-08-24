@@ -1,31 +1,31 @@
 {
-	"include": ["src/**/*"],
-	"exclude": ["node_modules/*", "public/*"],
-	"compilerOptions": {
-		"target": "es2017",
-		"module": "es2020",
-		"moduleResolution": "node",
-		"esModuleInterop": true,
-		"isolatedModules": true,
-		"resolveJsonModule": true,
-		"importsNotUsedAsValues": "remove",
+  "include": ["src/**/*"],
+  "exclude": ["node_modules/*", "public/*"],
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "importsNotUsedAsValues": "remove",
     "preserveValueImports": false,
-		"sourceMap": true,
-		"baseUrl": "./src",
-		"paths": { "~/*": ["./*"] },
-		"typeRoots": ["types"],
-		"types": [
-			"jest",
-			"@types/jest",
-			"svelte",
-			"svelte/store",
-			"svelte/motion",
-			"svelte/transition",
-			"svelte/animate",
-			"svelte/easing"
-		],
-		"strict": false,
-		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true
-	}
+    "sourceMap": true,
+    "baseUrl": "./src",
+    "paths": { "~/*": ["./*"] },
+    "types": [
+      "jest",
+      "@types/jest",
+      "@types/audioworklet",
+      "svelte",
+      "svelte/store",
+      "svelte/motion",
+      "svelte/transition",
+      "svelte/animate",
+      "svelte/easing"
+    ],
+    "strict": false,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
 }
