@@ -18,6 +18,9 @@
     "uploaded": "Transféré !",
     "add": "Ajouter"
   },
+  "AssetType": {
+    "size": null
+  },
   "AudioSettings": {
     "proximity_audio": "Proximité audio:"
   },
@@ -41,8 +44,46 @@
     "title": "Avatar",
     "unique_color": "Couleur personnelle"
   },
+  "BuildPanel": {
+    "add": null,
+    "modify": null,
+    "actions": null,
+    "settings": null
+  },
   "CameraSettings": {
     "field_of_view": "Angle de vue"
+  },
+  "CenterCamera": {
+    "recenter": null
+  },
+  "ChatDialog": {
+    "title": null
+  },
+  "ColorPreview": {
+    "invalid_color": null
+  },
+  "DebugPane": {
+    "debug_physics": null,
+    "show_errors": null,
+    "framerate": null,
+    "fps": null,
+    "audio": null,
+    "video": null,
+    "loading": null,
+    "viewport": null,
+    "participants": null
+  },
+  "Overlay": {
+    "tooltips": {
+      "set_up_video": null,
+      "build_mode": null,
+      "mute": null,
+      "unmute": null,
+      "share_screen": null,
+      "chat_open": null,
+      "invite_someone": null,
+      "profile": null
+    }
   },
   "EditorPanel": {
     "modify": "Modifier",
@@ -56,18 +97,75 @@
     "internal_components": "Documents internes",
     "entity_deactivated": "Entité désactivée"
   },
+  "EntrywaySettings": {
+    "set_default": null,
+    "new_entryway_name": null
+  },
   "ExportPanel": {
     "title": "Import / Export",
     "invalid_json": "JSON non valide",
     "apply": "Appliquer"
   },
+  "FogSettings": {
+    "fog": null
+  },
   "GroupUngroupButton": {
     "group": "Grouper",
     "ungroup": "Dégrouper"
   },
+  "InviteDialog": {
+    "allow_build_mode": null,
+    "allow_inviting": null,
+    "loading": null,
+    "max_uses": null,
+    "title": null,
+    "close": null
+  },
+  "LanguageDialog": {
+    "title": null
+  },
+  "LightingSettings": {
+    "lighting" : null,
+    "ambient": null,
+    "hemisphere": null,
+    "sky": null,
+    "ground": null,
+    "directional": null,
+    "position": null,
+    "reset_lighting": null
+  },
+  "LoginManager": {
+    "invalid_credentials": null,
+    "invalid_email": null,
+    "email_already_used": null
+  },
+  "MediaSetup":{
+    "you're_about_to_join": null,
+    "or": null,
+    "join_without": null,
+    "logo": null
+  },
+  "MessageHistory": {
+    "empty_chat": null
+  },
   "Pause": {
     "title": "en pause",
     "continue": "reprendre"
+  },
+  "PerformancePanel": {
+    "performance": null,
+    "fps": null,
+    "render_calls": null,
+    "triangles": null,
+    "extended_stats": null,
+    "systems": null,
+    "shaders": null,
+    "id": null,
+    "name": null,
+    "used": null
+  },
+  "PortalOccupancy": {
+    "count": null
   },
   "ProfileButton": {
     "sign_in": "Connectez-vous",
@@ -75,7 +173,8 @@
     "language": "Langue",
     "graphics_quality": "Niveau des graphismes",
     "change_avatar": "Personnalisez votre avatar",
-    "signed_in_as": "Authentifié. Votre nom : {name}"
+    "signed_in_as": "Authentifié. Votre nom : {name}",
+    "example": null
   },
   "RenderQualityDialog": {
     "title": "Détails",
@@ -89,6 +188,31 @@
     "3_desc": "Niveau haut.",
     "4": "Highest",
     "4_desc": "Niveau ultra haut. Affichage des ombres."
+  },
+  "SettingsPanel": {
+    "relm_settings": null,
+    "import_export": null,
+    "performance": null
+  },
+  "SignUpDialog": {
+    "already_have_account": null,
+    "sign_in": null,
+    "sign_up": null,
+    "pass_code": null,
+    "email": null
+  },
+  "SkyboxSettings": {
+    "skybox": null,
+    "blue_sky": null,
+    "stars": null,
+    "pink_clouds": null,
+    "galaxy": null
+  },
+  "SystemToggle": {
+    "enabled": null
+  },
+  "UploadButton": {
+    "upload": null
   },
   "VideoMirror": {
     "join_cam_off": "Entrer sans caméra",
