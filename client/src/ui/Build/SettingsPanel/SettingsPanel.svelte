@@ -10,6 +10,7 @@
   import AudioSettings from "./AudioSettings.svelte";
   import AvatarSettings from "./AvatarSettings.svelte";
   import LightingSettings from "./LightingSettings.svelte";
+  import TrackerSettings from "./TrackerSettings.svelte";
 
   import { _ } from "~/i18n";
 </script>
@@ -30,6 +31,8 @@
     <AvatarSettings />
 
     <LightingSettings />
+
+    <TrackerSettings />
 
     <r-buttons>
       <Button on:click={() => ($openPanel = "export")}

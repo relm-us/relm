@@ -87,6 +87,7 @@ import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 import { key1, key2, key3 } from "~/stores/keys";
 import { keyLeft, keyRight, keyUp, keyDown, keySpace } from "~/stores/keys";
 import { audioMode, AudioMode } from "~/stores/audioMode";
+import { ackeeID } from "~/stores/ackee";
 import { errorCat } from "~/stores/errorCat";
 import { viewportScale } from "~/stores/viewportScale";
 import { dragAction } from "~/stores/dragAction";
@@ -106,6 +107,7 @@ import { CameraManager } from "./CameraManager";
 import { migratedEntities } from "~/main/effects/registerComponentMigrations";
 import { layerActive } from "~/stores/layerActive";
 import { isEntityOnLayer } from "~/utils/isEntityOnLayer";
+import { upsertScript } from "~/utils/upsertScript";
 
 // Make THREE accessible for debugging
 (window as any).THREE = THREE;
@@ -304,6 +306,12 @@ export class WorldManager {
 
         const fantasySkinEnabled: boolean = $settings.get("fantasySkin");
         fantasySkin.set(fantasySkinEnabled);
+
+        const id = $settings.get("ackeeID");
+        if (id) {
+          ackeeID.set(id);
+          upsertScript('ackee-script-id', 'https://using.halecraft.org/tracker.js', true, 'https://using.halecraft.org', id);
+        }
       })
     );
 

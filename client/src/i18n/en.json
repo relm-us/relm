@@ -251,6 +251,10 @@
   "SystemToggle": {
     "enabled": "Enabled:"
   },
+  "TrackingSettings": {
+    "title": "Tracking",
+    "ackee": "Ackee ID:"
+  },
   "UploadButton": {
     "upload": "Upload"
   },
