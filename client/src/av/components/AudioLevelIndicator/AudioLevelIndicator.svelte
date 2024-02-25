@@ -6,12 +6,12 @@
 
   export let stream: MediaStream;
 
-  let activity;
+  let closeAudioContext;
   let audioLevel = 0;
 
   $: if (stream && stream.getAudioTracks().length) {
-    if (activity) activity();
-    activity = audioActivity(stream, (value) => (audioLevel = value));
+    closeAudioContext?.();
+    closeAudioContext = audioActivity(stream, (value) => (audioLevel = value));
   }
 
   // Animation springs
@@ -27,7 +27,7 @@
   }
 
   onDestroy(() => {
-    if (activity) activity();
+    closeAudioContext?.();
   });
 </script>
 
