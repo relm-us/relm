@@ -1,8 +1,6 @@
-export function upsertScript(id, src, async, ackeeServer, ackeeDomainId) {
+export function upsertScript(id, body) {
   let script: HTMLScriptElement = document.getElementById(id) as HTMLScriptElement;
-  const needsUpdate = !script || script.src !== src ||
-    script.getAttribute('data-ackee-server') !== ackeeServer ||
-    script.getAttribute('data-ackee-domain-id') !== ackeeDomainId;
+  const needsUpdate = !script || script.innerHTML !== body;
 
   if (needsUpdate) {
     if (script) {
@@ -11,11 +9,9 @@ export function upsertScript(id, src, async, ackeeServer, ackeeDomainId) {
     }
     // Create a new script element whether it was removed or didn't exist
     script = document.createElement('script');
+    script.setAttribute('strategy', 'afterInteractive')
     script.id = id;
-    script.src = src;
-    script.async = async;
-    script.setAttribute('data-ackee-server', ackeeServer);
-    script.setAttribute('data-ackee-domain-id', ackeeDomainId);
+    script.innerHTML = body;
     document.body.appendChild(script);
   }
 }

@@ -87,7 +87,7 @@ import { copyBuffer, CopyBuffer } from "~/stores/copyBuffer";
 import { key1, key2, key3 } from "~/stores/keys";
 import { keyLeft, keyRight, keyUp, keyDown, keySpace } from "~/stores/keys";
 import { audioMode, AudioMode } from "~/stores/audioMode";
-import { ackeeID } from "~/stores/ackee";
+import { gtmId } from "~/stores/gtm";
 import { errorCat } from "~/stores/errorCat";
 import { viewportScale } from "~/stores/viewportScale";
 import { dragAction } from "~/stores/dragAction";
@@ -307,10 +307,17 @@ export class WorldManager {
         const fantasySkinEnabled: boolean = $settings.get("fantasySkin");
         fantasySkin.set(fantasySkinEnabled);
 
-        const id = $settings.get("ackeeID");
+        const id = $settings.get("gtmId");
         if (id) {
-          ackeeID.set(id);
-          upsertScript('ackee-script-id', 'https://using.halecraft.org/tracker.js', true, 'https://using.halecraft.org', id);
+          gtmId.set(id);
+          upsertScript(`google-tag-manager`, `
+(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${id}');
+          `)
+
         }
       })
     );

@@ -7,27 +7,26 @@
 
   import { _ } from "~/i18n";
 
-  let ackeeID;
+  let gtmId;
 
   $: {
-    if (ackeeID) {
-      console.log("~~set ackeeID", ackeeID);
-      worldManager.worldDoc.settings.y.set("ackeeID", ackeeID);
+    if (gtmId) {
+      worldManager.worldDoc.settings.y.set("gtmId", gtmId);
     }
   }
 
   onMount(() => {
-    ackeeID = worldManager.worldDoc.settings.y.get("ackeeID");
+    gtmId = worldManager.worldDoc.settings.y.get("gtmId");
   });
 </script>
 
 <Pane title={$_("TrackingSettings.title")}>
   <r-setting style="padding-top: 4px">
     <r-title>
-      {$_("TrackingSettings.ackee")}
+      {$_("TrackingSettings.gtm")}
     </r-title>
     <r-value>
-      <input type="text" bind:value={ackeeID} />
+      <input type="text" bind:value={gtmId} />
     </r-value>
   </r-setting>
 </Pane>

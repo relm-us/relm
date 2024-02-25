@@ -253,7 +253,7 @@
   },
   "TrackingSettings": {
     "title": "Tracking",
-    "ackee": "Ackee ID:"
+    "gtm": "GTM ID:"
   },
   "UploadButton": {
     "upload": "Upload"
