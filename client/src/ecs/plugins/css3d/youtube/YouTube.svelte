@@ -13,7 +13,6 @@
 
   import { worldUIMode } from "~/stores/worldUIMode";
   import { audioMode } from "~/stores/audioMode";
-  import { isFirefox } from "~/utils/isFirefox";
   import { Object3DRef } from "~/ecs/plugins/core";
 
   import PlayButtonIcon from "./PlayButtonIcon.svelte";
@@ -23,6 +22,7 @@
   export let alwaysOn: boolean;
   export let visible: boolean;
   export let title = "YouTube Video";
+  export let nativeControls = false;
   export let entity;
 
   let src;
@@ -43,8 +43,6 @@
   const VIDEO_CUED = 5;
   let playerState = UNSTARTED;
 
-  let useAltControls = isFirefox();
-
   const HOST = "https://www.youtube.com";
 
   /**
@@ -53,7 +51,7 @@
    *       YouTube controls for Firefox (as of FF 96.0).
    */
   $: src = `${HOST}/embed/${embedId}?enablejsapi=1&rel=0&controls=${
-    useAltControls ? 0 : 1
+    nativeControls ? 1 : 0
   }`;
 
   $: if (alwaysOn) {
@@ -75,7 +73,7 @@
         func,
         args,
       }),
-      "*"
+      "*",
     );
   }
 
@@ -114,8 +112,14 @@
       if (data.id !== youtubeId) return;
 
       if (data.info && "playerState" in data.info) {
-        playerState = data.info.playerState;
+        if (
+          data.info.playerState >= 0 &&
+          playerState !== data.info.playerState
+        ) {
+          playerState = data.info.playerState;
+        }
       }
+
       if (data.event === "onReady") {
         state = "LOADED";
 
@@ -205,6 +209,7 @@
     />
 
     {#if $worldUIMode === "build"}
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <r-overlay
         on:click={onClickPlay}
         on:pointerenter={() => (overlayHovered = true)}
@@ -221,7 +226,8 @@
           <div>Loading...</div>
         </r-centered>
       </r-overlay>
-    {:else if useAltControls}
+    {:else if !nativeControls}
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <r-overlay
         on:click={onClickPlay}
         on:pointerenter={() => (overlayHovered = true)}
@@ -233,6 +239,7 @@
       </r-overlay>
     {/if}
   {:else}
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <r-overlay
       on:click={onClickPlay}
       on:pointerenter={() => (overlayHovered = true)}

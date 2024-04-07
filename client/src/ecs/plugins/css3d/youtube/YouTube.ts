@@ -20,6 +20,14 @@ export class YouTube extends Component {
         label: "Force Embed",
       },
     },
+
+    nativeControls: {
+      type: BooleanType,
+      default: false,
+      editor: {
+        label: "Native Controls"
+      }
+    }
   };
 
   static editor = {
