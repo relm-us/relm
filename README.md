@@ -12,10 +12,26 @@ We've been learning how to re-create a feeling of togetherness online. Flat scre
     <img src="docs/scr3-pineforest.jpg" alt="Screenshot 3 - Pine Forest" width="48%">
     <img src="docs/scr4-float-island.jpg" alt="Screenshot 4 - Floating Island" width="48%">
 </div>
+<div>
+    <img src="docs/scr5-builder-mode.jpg" alt="Screenshot 5 - Builder Mode" width="48%">
+</div>
 
 If you use a service hosted by us or someone else, there is no setup required--it all works seamlessly in a browser.
 
 As open source software (AGPL), you are also welcome to set it up on your own server, modify the code, and host the service for your community.
+
+## Features
+
+- Browser-based, works in Chrome, Firefox, Safari
+- Multiplayer
+- In-game audio/video conferencing
+- Collaborative world editor
+- Text chat
+- Non-verbal communication: sitting, waving, etc.
+- Avatar customization
+- Permissions (read, access, edit)
+- Auto-clone worlds if permitted (append "/new" to URL)
+- ... many more
 
 ## Our Community
 
