@@ -27,6 +27,7 @@
 
   let src;
   let iframe;
+  let fullscreen = false;
   let state: "INIT" | "LOADING" | "LOADED" = "INIT";
   let frameMouseOver = false;
   let active = false;
@@ -91,11 +92,24 @@
     worldManager.participants.setMic(true);
   }
 
+  function restoreFocus() {
+    setTimeout(() => {
+      if (!fullscreen) iframe.blur();
+    }, 100);
+  }
+
   // Return keyboard focus to Relm when user clicks on a youtube iframe
   function onWindowBlur() {
     if (frameMouseOver) {
-      setTimeout(() => iframe.blur(), 100);
+      restoreFocus();
     }
+  }
+
+  function onFullscreen() {
+    fullscreen = Boolean(document.fullscreenElement);
+
+    // Also restore focus to Relm when user leaves fullscreen
+    restoreFocus();
   }
 
   function onFrameMouseover() {
@@ -188,7 +202,11 @@
   $$props;
 </script>
 
-<svelte:window on:message={onMessage} on:blur={onWindowBlur} />
+<svelte:window
+  on:message={onMessage}
+  on:blur={onWindowBlur}
+  on:fullscreenchange={onFullscreen}
+/>
 
 {#if visible}
   {#if active}
