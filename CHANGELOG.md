@@ -5,7 +5,7 @@
 - NEW: Youtube videos have a "Native Controls" option in the builder sidebar. (Sponsor: CortexEvolution)
 
 2024-02-25:
-- NEW: Optional google tag manager tracker can be configured for a relm via builder sidebar. (Sponsor: CortextEvolution)
+- NEW: Optional google tag manager tracker can be configured for a relm via builder sidebar. (Sponsor: CortexEvolution)
 
 2022-11-07
 - NEW: The Animation component's "clip name" field is now a drop-down populated by the Model's animation names.
