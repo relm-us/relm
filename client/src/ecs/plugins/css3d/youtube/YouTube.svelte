@@ -32,6 +32,7 @@
   let frameMouseOver = false;
   let active = false;
   let overlayHovered = false;
+  let restoreFocusTimeout;
 
   // Note: MUST be 1 or greater, since youtube treats id '0' as special
   const youtubeId = ++youtubeInstances;
@@ -42,7 +43,19 @@
   const PAUSED = 2;
   const BUFFERING = 3;
   const VIDEO_CUED = 5;
+
   let playerState = UNSTARTED;
+
+  const setPlayerState = (newState) => {
+    if (
+      (playerState !== PAUSED && newState === PAUSED) ||
+      (playerState !== PLAYING && newState === PLAYING)
+    ) {
+      clearTimeout(restoreFocusTimeout);
+      restoreFocusTimeout = setTimeout(restoreFocusToRelm, 100);
+    }
+    playerState = newState;
+  };
 
   const HOST = "https://www.youtube.com";
 
@@ -92,17 +105,20 @@
     worldManager.participants.setMic(true);
   }
 
+  function restoreFocusToRelm() {
+    if (fullscreen) return;
+    iframe?.blur();
+    setTimeout(() => iframe?.blur(), 50);
+  }
+
   function restoreFocus() {
-    setTimeout(() => {
-      if (!fullscreen) iframe.blur();
-    }, 100);
+    clearTimeout(restoreFocusTimeout);
+    restoreFocusTimeout = setTimeout(restoreFocusToRelm, 5000);
   }
 
   // Return keyboard focus to Relm when user clicks on a youtube iframe
   function onWindowBlur() {
-    if (frameMouseOver) {
-      restoreFocus();
-    }
+    if (frameMouseOver) restoreFocus();
   }
 
   function onFullscreen() {
@@ -130,7 +146,7 @@
           data.info.playerState >= 0 &&
           playerState !== data.info.playerState
         ) {
-          playerState = data.info.playerState;
+          setPlayerState(data.info.playerState);
         }
       }
 
