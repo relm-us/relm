@@ -6,24 +6,8 @@ import mkConscript from "conscript";
 import * as Y from "yjs";
 import { nanoid } from "nanoid";
 
-import {
-  exportWorldDoc,
-  importWorldDoc,
-  findInYArray,
-  YComponents,
-  YEntities,
-  YEntity,
-  jsonToYComponents,
-  jsonToYMeta,
-  jsonToYChildren,
-  yComponentToJSON,
-  yComponentsToJSON,
-  jsonToYEntity,
-  yEntityToJSON,
-  yIdToString,
-  YValues,
-  YComponent,
-} from "relm-common";
+import { exportWorldDoc, importWorldDoc, findInYArray, jsonToYEntity } from "relm-common";
+import type { YComponents, YEntities, YEntity, YValues, YComponent } from "relm-common";
 
 import * as config from "../config.js";
 import * as middleware from "../middleware.js";
@@ -31,17 +15,28 @@ import * as twilio from "../lib/twilio.js";
 import { Permission, Relm, Doc, Variable } from "../db/index.js";
 import { getSyncedYDoc } from "../getSyncedYDoc.js";
 
-import {
-  wrapAsync,
-  respondWithSuccess,
-  respondWithError,
-  randomToken,
-} from "../utils/index.js";
-import { RelmData } from "db/relm.js";
+import { wrapAsync, respondWithSuccess, respondWithError, randomToken } from "../utils/index.js";
 
 const conscript = mkConscript();
 
 export const relm = express.Router();
+
+type RelmAttrs = {
+  seedRelmId?: string;
+  publicPermissions?: PermissionString[];
+  createdBy?: string;
+  clonePermitRequired?: string;
+  clonePermitAssigned?: string;
+};
+
+type CreateRelmAttrs = RelmAttrs & {
+  relmName: string;
+};
+
+type UpdateRelmAttrs = RelmAttrs & {
+  relmId: string;
+  relmName?: string;
+};
 
 // Clone a subrelm from its base relm
 relm.post(
@@ -58,7 +53,7 @@ relm.post(
 
     const seedRelm = req.relm;
 
-    const newRelmName = seedRelm.relmName + "/" + subrelmName;
+    const newRelmName = `${seedRelm.relmName}/${subrelmName}`;
 
     const newRelm = await Relm.createRelm({
       relmName: newRelmName,
@@ -88,7 +83,7 @@ relm.post(
       relm: newRelm,
       permits,
     });
-  })
+  }),
 );
 
 // Create a new relm
@@ -100,12 +95,9 @@ relm.post(
   wrapAsync(async (req, res) => {
     const relm = await Relm.getRelm({ relmName: req.relmName });
 
-    let seedRelm;
+    let seedRelm: Awaited<ReturnType<typeof Relm.getRelm>>;
 
-    if (
-      req.body.publicPermits !== undefined &&
-      !Array.isArray(req.body.publicPermits)
-    ) {
+    if (req.body.publicPermits !== undefined && !Array.isArray(req.body.publicPermits)) {
       throw Error("publicPermits must be an array");
     }
 
@@ -114,47 +106,45 @@ relm.post(
 
     if (relm !== null) {
       throw Error(`relm '${req.relmName}' already exists`);
-    } else {
-      let seedRelmId: string = req.body.seedRelmId;
-      let seedRelmName: string = req.body.seedRelmName;
+    }
 
-      if (seedRelmId) {
-        seedRelm = await Relm.getRelm({ relmId: seedRelmId });
-        if (!seedRelm) {
-          throw Error(
-            `relm can't be created because ` +
-              `seedRelmId '${seedRelmId}' doesn't exist`
-          );
-        }
-      } else if (seedRelmName) {
-        seedRelm = await Relm.getRelm({ relmName: seedRelmName });
-        if (!seedRelm) {
-          throw Error(
-            `relm can't be created because ` +
-              `seed relm named '${seedRelmName}' doesn't exist`
-          );
-        }
-        seedRelmId = seedRelm.relmId;
+    let seedRelmId: string = req.body.seedRelmId;
+    const seedRelmName: string = req.body.seedRelmName;
+
+    if (seedRelmId) {
+      seedRelm = await Relm.getRelm({ relmId: seedRelmId });
+      if (!seedRelm) {
+        throw Error(`relm can't be created because seedRelmId '${seedRelmId}' doesn't exist`);
       }
-
-      const attrs: any = {
-        relmName: req.relmName,
-        seedRelmId,
-        publicPermissions,
-        createdBy: req.authenticatedParticipantId,
-      };
-
-      const cpReq = req.body.clonePermitRequired;
-      if (cpReq === "read" || cpReq === "access" || cpReq === "edit") {
-        attrs.clonePermitRequired = cpReq;
+    } else if (seedRelmName) {
+      seedRelm = await Relm.getRelm({ relmName: seedRelmName });
+      if (!seedRelm) {
+        throw Error(
+          `relm can't be created because seed relm named '${seedRelmName}' doesn't exist`,
+        );
       }
+      seedRelmId = seedRelm.relmId;
+    }
 
-      const cpAsn = req.body.clonePermitAssigned;
-      if (cpAsn === "access" || cpAsn === "edit") {
-        // Strict limit to prevent privilege escalation
-        attrs.clonePermitAssigned = cpAsn;
-      }
+    const attrs: CreateRelmAttrs = {
+      relmName: req.relmName,
+      seedRelmId,
+      publicPermissions,
+      createdBy: req.authenticatedParticipantId,
+    };
 
+    const cpReq = req.body.clonePermitRequired;
+    if (cpReq === "read" || cpReq === "access" || cpReq === "edit") {
+      attrs.clonePermitRequired = cpReq;
+    }
+
+    const cpAsn = req.body.clonePermitAssigned;
+    if (cpAsn === "access" || cpAsn === "edit") {
+      // Strict limit to prevent privilege escalation
+      attrs.clonePermitAssigned = cpAsn;
+    }
+
+    {
       const relm = await Relm.createRelm(attrs);
 
       if (seedRelmId) {
@@ -167,12 +157,12 @@ relm.post(
         if (seedRelmName) {
           console.log(
             `Cloned new relm '${req.relmName}' from '${seedRelmName}' ` +
-              `('${seedRelmDocId}') (creator: '${req.authenticatedParticipantId}')`
+              `('${seedRelmDocId}') (creator: '${req.authenticatedParticipantId}')`,
           );
         } else {
           console.log(
             `Cloned new relm '${req.relmName}' from '${seedRelmDocId}' ` +
-              `(creator: '${req.authenticatedParticipantId}')`
+              `(creator: '${req.authenticatedParticipantId}')`,
           );
         }
       } else {
@@ -181,8 +171,7 @@ relm.post(
         importWorldDoc(config.DEFAULT_RELM_CONTENT, newRelmDoc);
 
         console.log(
-          `Created relm '${req.relmName}' ` +
-            `(creator: '${req.authenticatedParticipantId}')`
+          `Created relm '${req.relmName}' ` + `(creator: '${req.authenticatedParticipantId}')`,
         );
       }
 
@@ -191,7 +180,7 @@ relm.post(
         relm,
       });
     }
-  })
+  }),
 );
 
 async function cloneRelmDoc(seedRelmDocId: string, newRelmDocId: string) {
@@ -216,7 +205,7 @@ relm.post(
       action: "deleted",
       relmId: req.relm.relmId,
     });
-  })
+  }),
 );
 
 // Get an existing relm
@@ -234,7 +223,7 @@ relm.post(
       action: "content",
       relm: { ...req.relm, content },
     });
-  })
+  }),
 );
 
 // Get an existing relm
@@ -248,8 +237,7 @@ relm.post(
     const doc: Y.Doc = await getSyncedYDoc(req.relm.permanentDocId);
     req.relm.permanentDocSize = Y.encodeStateAsUpdate(doc).byteLength;
 
-    const twilioId =
-      req.authenticatedParticipantId + "/" + req.relm.permanentDocId;
+    const twilioId = `${req.authenticatedParticipantId}/${req.relm.permanentDocId}`;
     const twilioToken = twilio.getToken(twilioId);
 
     return respondWithSuccess(res, {
@@ -257,7 +245,7 @@ relm.post(
       relm: req.relm,
       twilioToken,
     });
-  })
+  }),
 );
 
 // Update an existing relm
@@ -268,7 +256,7 @@ relm.post(
   middleware.authenticated(),
   middleware.authorized("edit"),
   wrapAsync(async (req, res) => {
-    const attrs: any = {
+    const attrs: UpdateRelmAttrs = {
       relmId: req.relm.relmId,
     };
 
@@ -292,15 +280,15 @@ relm.post(
     }
 
     const relm = await Relm.updateRelm(attrs);
-    if (relm) {
-      return respondWithSuccess(res, {
-        action: "updated",
-        relm,
-      });
-    } else {
+    if (!relm) {
       return respondWithError(res, { reason: "invalid metadata" });
     }
-  })
+
+    return respondWithSuccess(res, {
+      action: "updated",
+      relm,
+    });
+  }),
 );
 
 relm.post(
@@ -311,17 +299,14 @@ relm.post(
   middleware.acceptToken(),
   middleware.acceptJwt(),
   wrapAsync(async (req, res) => {
-    const permits = await getPermitsForRelm(
-      req.relmName,
-      req.authenticatedParticipantId
-    );
+    const permits = await getPermitsForRelm(req.relmName, req.authenticatedParticipantId);
 
     respondWithSuccess(res, {
       action: "permitted",
       permits,
       jwt: req.jwtRaw,
     });
-  })
+  }),
 );
 
 relm.post(
@@ -339,10 +324,7 @@ relm.post(
     // TODO: don't reveal twilio token for `read`-level permission
     const twilioToken = twilio.getToken(req.authenticatedParticipantId);
 
-    const permits = await getPermitsForRelm(
-      req.relmName,
-      req.authenticatedParticipantId
-    );
+    const permits = await getPermitsForRelm(req.relmName, req.authenticatedParticipantId);
 
     return respondWithSuccess(res, {
       action: "permitted",
@@ -351,7 +333,7 @@ relm.post(
       twilioToken,
       jwt: req.jwtRaw,
     });
-  })
+  }),
 );
 
 type EntityComponentData = {
@@ -398,7 +380,7 @@ relm.post(
       action: "getVariables",
       variables,
     });
-  })
+  }),
 );
 
 relm.post(
@@ -422,7 +404,7 @@ relm.post(
     const variables = await Variable.getVariables({ relmId });
     const results = {};
 
-    for (let [operation, opValues] of Object.entries(changes)) {
+    for (const [operation, opValues] of Object.entries(changes)) {
       if (operation === "add") {
         /**
          * opValues will be in the form:
@@ -431,7 +413,7 @@ relm.post(
          *   "secretCount": 1
          * }
          */
-        for (let [name, value] of Object.entries(opValues)) {
+        for (const [name, value] of Object.entries(opValues)) {
           // Force conversion to number
           if (typeof variables[name] !== "number") {
             variables[name] = 0;
@@ -448,7 +430,7 @@ relm.post(
          *   "secretCount": 1
          * }
          */
-        for (let [name, value] of Object.entries(opValues)) {
+        for (const [name, value] of Object.entries(opValues)) {
           setVariable(doc, variables, relmId, name, value);
           results[name] = value;
         }
@@ -463,7 +445,7 @@ relm.post(
          *   }
          * }
          */
-        for (let [name, mappings] of Object.entries(opValues)) {
+        for (const [name, mappings] of Object.entries(opValues)) {
           let currentValue = null;
           if (name in variables) {
             currentValue = variables[name];
@@ -488,7 +470,7 @@ relm.post(
       action: "setVariables",
       variables: results,
     });
-  })
+  }),
 );
 
 relm.post(
@@ -507,7 +489,7 @@ relm.post(
     return respondWithSuccess(res, {
       result: applyActions(doc, actions),
     });
-  })
+  }),
 );
 
 async function setVariable(doc, variables, relmId, name, value) {
@@ -520,13 +502,12 @@ async function setVariable(doc, variables, relmId, name, value) {
   if (!possibilities) {
     // TODO: figure out why actions are sometimes not available by now??
     console.warn(
-      `Unable to load possible actions for relm ${relmId};` +
-        ` not setting variable ${name}`
+      `Unable to load possible actions for relm ${relmId};` + ` not setting variable ${name}`,
     );
     return;
   }
 
-  for (let possible of possibilities) {
+  for (const possible of possibilities) {
     const test = conscript(possible.compare);
     if (test(variables)) {
       if (possible.timeout > 0) {
@@ -538,10 +519,7 @@ async function setVariable(doc, variables, relmId, name, value) {
   }
 }
 
-type ActionResult =
-  | ActionResultCreateEntity
-  | ActionResultDeleteEntity
-  | ActionResultSetProperties;
+type ActionResult = ActionResultCreateEntity | ActionResultDeleteEntity | ActionResultSetProperties;
 
 function applyActions(doc: Y.Doc, actions: Action[]) {
   const result: ActionResult[] = [];
@@ -574,10 +552,7 @@ type ActionResultCreateEntity =
       reason: string;
     };
 
-function createEntity(
-  doc: Y.Doc,
-  components: EntityComponentData
-): ActionResultCreateEntity {
+function createEntity(doc: Y.Doc, components: EntityComponentData): ActionResultCreateEntity {
   // Ensure components passed are valid
   if (typeof components !== "object") {
     return {
@@ -656,7 +631,7 @@ type ActionResultSetProperties =
 function setProperties(
   doc: Y.Doc,
   entityId: string,
-  componentsToSet: EntityComponentData
+  componentsToSet: EntityComponentData,
 ): ActionResultSetProperties {
   // Ensure components passed are valid
   if (typeof componentsToSet !== "object") {
@@ -668,10 +643,7 @@ function setProperties(
   }
 
   const entities = doc.getArray("entities") as YEntities;
-  const entity = findInYArray(
-    entities,
-    (yentity: YEntity) => yentity.get("id") === entityId
-  );
+  const entity = findInYArray(entities, (yentity: YEntity) => yentity.get("id") === entityId);
   if (!entity) {
     return {
       type: "updateEntity",
@@ -750,9 +722,11 @@ async function getPermitsForRelm(relmName: string, participantId: string) {
     relmNames: [relmName],
   });
 
-  let permits = new Set(permissions[relmName] || []);
+  const permits = new Set(permissions[relmName] || []);
   if (permissions["*"]) {
-    permissions["*"].forEach((permit) => permits.add(permit));
+    for (const permit of permissions["*"]) {
+      permits.add(permit);
+    }
   }
 
   return [...permits];
