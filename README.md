@@ -43,6 +43,13 @@ To run Relm locally, you will need the following prerequisites:
 
 1. nodejs (v14+ is recommended)
 2. postgresql (v13+ is recommended)
+3. python with distutils (for leveldown dep; e.g., `python3 -m pip install setuptools`)
+
+On Mac OS, these libraries may be required via homebrew:
+```
+brew install vips
+brew install python-setuptools
+```
 
 Create an empty database called `relm`:
 
