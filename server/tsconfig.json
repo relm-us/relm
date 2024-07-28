@@ -1,7 +1,5 @@
 {
-  "include": [
-    "src", "tests"
-  ],
+  "include": ["src", "tests"],
   "ts-node": {
     "compilerOptions": {
       "module": "es2020",
@@ -18,9 +16,6 @@
     "allowJs": true,
     "outDir": "dist",
     "baseUrl": "src",
-    "rootDirs": [
-      "src",
-      "tests"
-    ]
+    "rootDirs": ["src", "tests"]
   }
 }

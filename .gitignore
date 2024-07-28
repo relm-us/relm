@@ -8,3 +8,4 @@ screenshot-server/data/
 /deploy/
 **/.env
 relm-*.tgz
+**/.data

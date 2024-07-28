@@ -94,14 +94,16 @@ server.on("upgrade", async (req, socket, head) => {
   let pubkeyX = params.get("pubkey-x");
   let pubkeyY = params.get("pubkey-y");
 
-  // console.log("websocket participant connected:", participantId);
-
-  const result: AuthResult = await isAuthorized(docId, {
+  const credentials = {
     participantId,
     sig: participantSig,
     x: pubkeyX,
     y: pubkeyY,
-  });
+  };
+
+  console.log("websocket upgrade check isAuthorized:", req.url, credentials);
+
+  const result: AuthResult = await isAuthorized(docId, credentials);
 
   switch (result.kind) {
     case "authorized":
@@ -111,17 +113,14 @@ server.on("upgrade", async (req, socket, head) => {
       break;
 
     case "unauthorized":
-      console.log(
-        `websocket participant ${participantId} denied entry to ${docId}`,
-        result.log
-      );
+      console.log(`websocket participant ${participantId} denied entry to ${docId}`, result.log);
       closeSocket(socket, "401", result.msg);
       break;
 
     case "error":
       console.log(
         `websocket participant ${participantId} error trying to enter ${docId}`,
-        result.log
+        result.log,
       );
       closeSocket(socket, "404", result.msg);
       break;

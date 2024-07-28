@@ -7,7 +7,7 @@ import {
   respondWithError,
   unabbreviatedPermits,
 } from "./utils/index.js";
-import { AuthenticationHeaders, canonicalIdentifier } from "relm-common";
+import { type AuthenticationHeaders, canonicalIdentifier } from "relm-common";
 import { Participant, Permission, Relm, useToken } from "./db/index.js";
 import { JWTSECRET } from "./config.js";
 
@@ -34,7 +34,7 @@ export function relmExists() {
     req.relm = await Relm.getRelm({ relmName: req.relmName });
     if (!req.relm) {
       const participantId = getParam(req, "x-relm-participant-id");
-      respondWithError(res, `relm does not exist`, {
+      respondWithError(res, "relm does not exist", {
         participantId,
         relmName: req.relmName,
       });
@@ -135,11 +135,11 @@ export function acceptJwt() {
     if (JWTSECRET && req.headers["x-relm-jwt"]) {
       const result: { relms: Record<string, string> } = decodedValidJwt(
         req.headers["x-relm-jwt"],
-        JWTSECRET
+        JWTSECRET,
       );
       if (result) {
         req.jwtRaw = result;
-        for (let [relmName, abbrevPermits] of Object.entries(result.relms)) {
+        for (const [relmName, abbrevPermits] of Object.entries(result.relms)) {
           const permits = unabbreviatedPermits(abbrevPermits);
           await Permission.setPermits({
             participantId: req.authenticatedParticipantId,
@@ -163,9 +163,7 @@ export function acceptJwt() {
 }
 
 export function authorized(
-  requestedPermission:
-    | Permission.Permission
-    | ((req: any) => Permission.Permission)
+  requestedPermission: Permission.Permission | ((req: any) => Permission.Permission),
 ) {
   return async (req, _res, next) => {
     // Handle potential callback that gives us the Permission string
@@ -187,11 +185,7 @@ export function authorized(
           relmNames,
         });
 
-        permitted = hasPermission(
-          requestedPermission,
-          permissions,
-          req.relmName
-        );
+        permitted = hasPermission(requestedPermission, permissions, req.relmName);
       } catch (err) {
         next(err);
       }
@@ -219,16 +213,16 @@ function getParam(req, key: keyof AuthenticationHeaders) {
     //     return null;
     //   }
     return req.query[key];
-  } else {
-    return req.headers[key];
   }
+
+  return req.headers[key];
 }
 
 function normalizeRelmName(name) {
   if (!name || name.length > 512) return "";
-  else
-    return name
-      .split("/")
-      .map((part) => canonicalIdentifier(part))
-      .join("/");
+
+  return name
+    .split("/")
+    .map((part) => canonicalIdentifier(part))
+    .join("/");
 }

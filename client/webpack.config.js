@@ -13,7 +13,7 @@ const Preprocess = require("svelte-preprocess");
 
 const mode = process.env.NODE_ENV || "development";
 const prod = mode === "production";
-const path = require("path");
+const path = require("node:path");
 const sveltePath = path.resolve("node_modules", "svelte");
 
 const dotenv = require("dotenv");
@@ -94,7 +94,7 @@ module.exports = {
   output: {
     filename: prod ? "[name].[contenthash].js" : "[name].js",
     chunkFilename: "[name].[contenthash].js",
-    path: __dirname + "/dist",
+    path: `${__dirname}/dist`,
     publicPath: "/",
   },
 
@@ -126,7 +126,7 @@ module.exports = {
     },
     extensions: [".js", ".ts", ".svelte"],
     mainFields: ["svelte", "browser", "module", "main"],
-    conditionNames: ["svelte", "require", "browser"]
+    conditionNames: ["svelte", "require", "browser"],
   },
 
   experiments: {
@@ -235,9 +235,7 @@ module.exports = {
     new DuplicatePackageCheckerPlugin({
       exclude(instance) {
         // We know about the following library duplications, but it is safe to ignore
-        return ["abstract-leveldown", "buffer", "events"].includes(
-          instance.name
-        );
+        return ["abstract-leveldown", "buffer", "events"].includes(instance.name);
       },
     }),
 
@@ -280,9 +278,7 @@ module.exports = {
 
 // Load path mapping from tsconfig
 const tsconfigPath = path.resolve(__dirname, "tsconfig.json");
-const tsconfig = require("fs").existsSync(tsconfigPath)
-  ? require(tsconfigPath)
-  : {};
+const tsconfig = require("node:fs").existsSync(tsconfigPath) ? require(tsconfigPath) : {};
 if ("compilerOptions" in tsconfig && "paths" in tsconfig.compilerOptions) {
   const aliases = tsconfig.compilerOptions.paths;
   for (const alias in aliases) {
@@ -295,7 +291,7 @@ if ("compilerOptions" in tsconfig && "paths" in tsconfig.compilerOptions) {
 }
 
 // Use HtmlWebpackPlugin to generate each of the static html pages; e.g. index.html
-for (let [template, options] of Object.entries(htmlPages)) {
+for (const [template, options] of Object.entries(htmlPages)) {
   /**
    * This plugin analyzes all of our imports & chunks, and produces an HTML
    * file that suitably loads the initial resources (e.g. CSS) and chunks
@@ -329,7 +325,7 @@ for (let [template, options] of Object.entries(htmlPages)) {
 
       // Override any of the above with options passed in via htmlPages
       ...options,
-    })
+    }),
   );
 }
 
@@ -345,7 +341,7 @@ if (prod) {
       algorithm: "brotliCompress",
       threshold: 10240,
       minRatio: 0.8,
-    })
+    }),
   );
 
   // Minify CSS
@@ -361,7 +357,7 @@ if (prod) {
           },
         ],
       },
-    })
+    }),
   );
 
   // Minify and treeshake JS
@@ -373,7 +369,7 @@ if (prod) {
       },
       exclude: "dimforge",
       extractComments: false,
-    })
+    }),
   );
 }
 

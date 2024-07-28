@@ -46,7 +46,5 @@ if (typeof persistenceDir === "string") {
   });
 } else if (globalThis["global"]) {
   // If running in node.js, `global` will exist.
-  console.warn(
-    "Missing YPERSISTENCE environment variable. y-websocket data will NOT be saved."
-  );
+  console.warn("Missing YPERSISTENCE environment variable. y-websocket data will NOT be saved.");
 }
