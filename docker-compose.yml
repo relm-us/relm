@@ -1,0 +1,24 @@
+# Set the version of docker compose to use
+version: "2.15"
+
+# The containers that compose the project
+services:
+  db:
+    container_name: relm-db
+    restart: always
+    image: pgvector/pgvector:pg15
+    environment:
+      POSTGRES_USER: relm
+      POSTGRES_PASSWORD: relm
+      POSTGRES_DB: relm
+      PGUSER: relm
+      PGPASSWORD: relm
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready
+      interval: 2s
+      timeout: 60s
+      retries: 5
+    volumes:
+      - .data/db:/var/lib/postgresql/data
