@@ -310,8 +310,8 @@ importers:
         specifier: 0.141.0
         version: 0.141.0
       y-leveldb:
-        specifier: ^0.1.0
-        version: 0.1.1(yjs@13.5.27)
+        specifier: 0.1.2
+        version: 0.1.2(yjs@13.5.27)
       y-protocols:
         specifier: 1.0.5
         version: 1.0.5
@@ -14561,6 +14561,16 @@ packages:
   /y-leveldb@0.1.1(yjs@13.5.27):
     resolution: {integrity: sha512-L8Q0MQmxCQ0qWIOuPzLbWn95TNhrCI7M6LaHnilU4I2IX08e4Dmfg5Tgy4JZ3tnl2aiuZyDOJplHl/msIB/IsA==}
     requiresBuild: true
+    peerDependencies:
+      yjs: ^13.0.0
+    dependencies:
+      level: 6.0.1
+      lib0: 0.2.51
+      yjs: 13.5.27
+    dev: false
+
+  /y-leveldb@0.1.2(yjs@13.5.27):
+    resolution: {integrity: sha512-6ulEn5AXfXJYi89rXPEg2mMHAyyw8+ZfeMMdOtBbV8FJpQ1NOrcgi6DTAcXof0dap84NjHPT2+9d0rb6cFsjEg==}
     peerDependencies:
       yjs: ^13.0.0
     dependencies:
