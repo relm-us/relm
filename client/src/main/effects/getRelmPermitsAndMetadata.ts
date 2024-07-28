@@ -7,13 +7,8 @@ import { Dispatch } from "../ProgramTypes";
 import { RelmRestAPI } from "../RelmRestAPI";
 
 export const getRelmPermitsAndMetadata =
-  (pageParams: PageParams, authHeaders: AuthenticationHeaders) =>
-  async (dispatch: Dispatch) => {
-    const api = new RelmRestAPI(
-      config.serverUrl,
-      authHeaders,
-      pageParams.relmName
-    );
+  (pageParams: PageParams, authHeaders: AuthenticationHeaders) => async (dispatch: Dispatch) => {
+    const api = new RelmRestAPI(config.serverUrl, authHeaders, pageParams.relmName);
 
     let result;
     try {

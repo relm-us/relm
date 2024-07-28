@@ -52,15 +52,11 @@ export async function getDoc({ docId }: { docId: string }) {
     SELECT *
       FROM docs
      WHERE doc_id = ${docId}
-  `)
+  `),
   );
 }
 
-export async function getDocWithRelmName({
-  docId,
-}: {
-  docId: string;
-}): Promise<RelmDocWithName> {
+export async function getDocWithRelmName({ docId }: { docId: string }): Promise<RelmDocWithName> {
   const rows = await db.oneOrNone(sql`
     SELECT docs.*, r.relm_name
       FROM docs
@@ -81,11 +77,7 @@ export async function getDocWithRelmName({
 // Given a docId, find the associated relm, and then find that relm's
 // "seed relm". If the "seed relm" exists, return its docId (e.g. probably
 // so we can clone it)
-export async function getSeedDocId({
-  docId,
-}: {
-  docId: string;
-}): Promise<string> {
+export async function getSeedDocId({ docId }: { docId: string }): Promise<string> {
   const row = await db.oneOrNone(
     sql`
     SELECT d2.doc_id
@@ -94,7 +86,7 @@ export async function getSeedDocId({
       JOIN relms r2 ON (r2.relm_id = r1.seed_relm_id)
       JOIN docs d2 ON (d2.relm_id = r2.relm_id AND d2.doc_type = 'permanent')
      WHERE d1.doc_id = ${docId}
-  `
+  `,
   );
   if (row) {
     return row.doc_id;
@@ -119,6 +111,8 @@ export async function setDoc({
 }) {
   const attrs: any = {
     relm_id: relmId,
+    entities_count: 1,
+    assets_count: 1,
   };
   if (docId) {
     attrs.doc_id = docId;
@@ -134,7 +128,7 @@ export async function setDoc({
         updated_at = CURRENT_TIMESTAMP,
         relm_id = ${relmId}
       RETURNING *
-    `)
+    `),
   );
 }
 
@@ -189,18 +183,12 @@ export async function getLatestDocs({ relmId }: { relmId: string }) {
 /**
  * For testing purposes, provide a way to directly set the timestamp
  */
-export async function setUpdatedAt({
-  docId,
-  updatedAt,
-}: {
-  docId: string;
-  updatedAt: Date;
-}) {
+export async function setUpdatedAt({ docId, updatedAt }: { docId: string; updatedAt: Date }) {
   return mkDoc(
     await db.oneOrNone(sql`
     ${UPDATE("docs", { updated_at: updatedAt })}
     WHERE doc_id = ${docId}
     RETURNING *
-  `)
+  `),
   );
 }

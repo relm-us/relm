@@ -318,6 +318,9 @@ relm.post(
   middleware.acceptJwt(),
   middleware.authorized("read"),
   wrapAsync(async (req, res) => {
+    if (!req.relm.permanentDocId) {
+      throw new Error("Relm has no associated doc ID for its data");
+    }
     const doc: Y.Doc = await getSyncedYDoc(req.relm.permanentDocId);
     req.relm.permanentDocSize = Y.encodeStateAsUpdate(doc).byteLength;
 

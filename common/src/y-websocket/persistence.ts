@@ -31,6 +31,9 @@ if (typeof persistenceDir === "string") {
   setPersistence({
     provider: ldb,
     bindState: async (docName, ydoc) => {
+      if (!docName) {
+        throw new Error("docName (relm) is required for persistence");
+      }
       const persistedYdoc = await ldb.getYDoc(docName);
       const newUpdates = Y.encodeStateAsUpdate(ydoc);
       ldb.storeUpdate(docName, newUpdates);

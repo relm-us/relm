@@ -13,9 +13,7 @@ export class RelmRestAPI {
 
   get relmName() {
     if (!this._relmName)
-      throw Error(
-        "relmName required, but not set during RelmRestAPI instantiation"
-      );
+      throw Error("relmName required, but not set during RelmRestAPI instantiation");
     return this._relmName;
   }
 
@@ -23,11 +21,7 @@ export class RelmRestAPI {
     return Boolean(this._relmName);
   }
 
-  constructor(
-    url,
-    authHeaders: AuthenticationHeaders,
-    relmName: string = null
-  ) {
+  constructor(url, authHeaders: AuthenticationHeaders, relmName: string = null) {
     this.url = url;
     this.authHeaders = authHeaders;
     this._relmName = relmName;
@@ -75,16 +69,20 @@ export class RelmRestAPI {
     type Result =
       | { status: "success"; permits: string[]; jwt: any }
       | { status: "error"; code?: number; reason: string };
-    let result: Result = await this.post("/relm/permitsAndMeta", {
+
+    const result: Result = await this.post("/relm/permitsAndMeta", {
       relmName: this.relmName,
     });
+
     if (result.status === "success") {
       return result;
-    } else if (result.code === 404) {
-      throw Error(`relm named "${this.relmName}" not found`);
-    } else {
-      throw Error(`permission denied: ${result.reason}`);
     }
+
+    if (result.code === 404) {
+      throw Error(`relm named "${this.relmName}" not found`);
+    }
+
+    throw Error(`permission denied: ${result.reason}`);
   }
 
   queryAssets({
@@ -128,9 +126,7 @@ export class RelmRestAPI {
     thumbnail: string;
     ecsProperties: any;
   }): Promise<boolean> {
-    type Result =
-      | { status: "success" }
-      | { status: "error"; code?: number; reason: string };
+    type Result = { status: "success" } | { status: "error"; code?: number; reason: string };
     const result: Result = await this.post("/asset/library/create", {
       name,
       description,
@@ -156,9 +152,7 @@ export class RelmRestAPI {
    * where `operation` may be 'add', 'set', or 'map'
    */
   async changeVariables({ changes }: { changes: any }): Promise<boolean> {
-    type Content =
-      | { status: "success" }
-      | { status: "error"; code?: number; reason: string };
+    type Content = { status: "success" } | { status: "error"; code?: number; reason: string };
     const content: Content = await this.post("/relm/setvars", {
       relmName: this.relmName,
       changes,
@@ -192,13 +186,7 @@ export class RelmRestAPI {
     }
   }
 
-  async itemDrop({
-    assetId,
-    position,
-  }: {
-    assetId: string;
-    position: number[];
-  }): Promise<boolean> {
+  async itemDrop({ assetId, position }: { assetId: string; position: number[] }): Promise<boolean> {
     type Result =
       | { status: "success"; asset: any }
       | { status: "error"; code?: number; reason: string };
@@ -253,10 +241,7 @@ export class RelmRestAPI {
     });
     if (result.status === "success") {
       const url =
-        location.origin +
-        location.pathname +
-        `?t=${result.invitation.token}` +
-        location.hash;
+        location.origin + location.pathname + `?t=${result.invitation.token}` + location.hash;
       return {
         token: result.invitation.token,
         permits: result.invitation.permits,
@@ -314,9 +299,7 @@ export class RelmRestAPI {
   }
 
   async setIdentityData({ identity }: { identity: SavedIdentityData }) {
-    type Result =
-      | { status: "success" }
-      | { status: "error"; code?: number; reason: string };
+    type Result = { status: "success" } | { status: "error"; code?: number; reason: string };
 
     const result: Result = await this.post("/auth/identity", {
       identity,
@@ -329,22 +312,18 @@ export class RelmRestAPI {
     }
   }
 
-  async registerParticipant(
-    credentials: LoginCredentials
-  ): Promise<AuthenticationResponse> {
-    const result: AuthenticationResponse = await this.post(
-      "/auth/connect/local/signup",
-      { ...credentials }
-    );
+  async registerParticipant(credentials: LoginCredentials): Promise<AuthenticationResponse> {
+    const result: AuthenticationResponse = await this.post("/auth/connect/local/signup", {
+      ...credentials,
+    });
 
     return result;
   }
 
   async login(credentials: LoginCredentials): Promise<AuthenticationResponse> {
-    const result: AuthenticationResponse = await this.post(
-      "/auth/connect/local/signin",
-      { ...credentials }
-    );
+    const result: AuthenticationResponse = await this.post("/auth/connect/local/signin", {
+      ...credentials,
+    });
 
     return result;
   }

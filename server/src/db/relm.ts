@@ -1,4 +1,4 @@
-import { Permission, Permits, permitsToPermissions } from "./permission.js";
+import type { Permission, Permits } from "./permission.js";
 
 import * as Doc from "./doc.js";
 import { db, sql, INSERT, UPDATE, WHERE } from "./db.js";
@@ -86,7 +86,7 @@ const mkRelmSummary = nullOr((cols: RelmSummaryColumns) => {
 });
 
 async function decorateRelmWithLatestDocs(
-  relm: RelmData & DocsData & StatsData
+  relm: RelmData & DocsData & StatsData,
 ): Promise<RelmData & DocsData & StatsData> {
   if (relm === null) {
     return null;
@@ -98,6 +98,14 @@ async function decorateRelmWithLatestDocs(
     relm.permanentDocId = docs.permanent.docId;
     relm.entitiesCount = docs.permanent.entitiesCount;
     relm.assetsCount = docs.permanent.assetsCount;
+  } else {
+    const tdoc = await Doc.setDoc({
+      docType: "permanent",
+      relmId: relm.relmId,
+    });
+    relm.permanentDocId = tdoc.docId;
+    relm.entitiesCount = 1;
+    relm.assetsCount = 1;
   }
 
   if (docs.transient) {
@@ -113,13 +121,7 @@ async function decorateRelmWithLatestDocs(
   return relm;
 }
 
-export async function getRelm({
-  relmId,
-  relmName,
-}: {
-  relmId?: string;
-  relmName?: string;
-}) {
+export async function getRelm({ relmId, relmName }: { relmId?: string; relmName?: string }) {
   const filter: any = {};
   if (relmId) {
     filter.relm_id = relmId;
@@ -134,8 +136,8 @@ export async function getRelm({
           SELECT *
           FROM relms
           ${WHERE(filter)}
-        `)
-    ) as RelmData & DocsData & StatsData
+        `),
+    ) as RelmData & DocsData & StatsData,
   );
 }
 
@@ -219,10 +221,8 @@ export async function createRelm({
   if (seedRelmId !== undefined) attrs.seed_relm_id = seedRelmId;
   if (publicPermissions !== undefined)
     attrs.public_permits = arrayToBooleanObject(publicPermissions);
-  if (clonePermitRequired !== undefined)
-    attrs.clone_permit_required = clonePermitRequired;
-  if (clonePermitAssigned !== undefined)
-    attrs.clone_permit_assigned = clonePermitAssigned;
+  if (clonePermitRequired !== undefined) attrs.clone_permit_required = clonePermitRequired;
+  if (clonePermitAssigned !== undefined) attrs.clone_permit_assigned = clonePermitAssigned;
   if (createdBy !== undefined) attrs.created_by = createdBy;
 
   const row = await db.oneOrNone(sql`
@@ -284,9 +284,7 @@ export async function updateRelm({
       `);
 
     if (row !== null) {
-      return await decorateRelmWithLatestDocs(
-        mkRelm(row) as RelmData & DocsData & StatsData
-      );
+      return await decorateRelmWithLatestDocs(mkRelm(row) as RelmData & DocsData & StatsData);
     } else {
       return null;
     }
