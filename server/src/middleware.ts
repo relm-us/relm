@@ -9,7 +9,8 @@ import {
 } from "./utils/index.js";
 import { type AuthenticationHeaders, canonicalIdentifier } from "relm-common";
 import { Participant, Permission, Relm, useToken } from "./db/index.js";
-import { JWTSECRET } from "./config.js";
+import { createDefaultRelm } from "./createDefaultRelm.js";
+import { JWTSECRET, DEFAULT_RELM_CONTENT } from "./config.js";
 
 export function relmName(key = "relmName") {
   return (req, res, next) => {
@@ -34,10 +35,15 @@ export function relmExists() {
     req.relm = await Relm.getRelm({ relmName: req.relmName });
     if (!req.relm) {
       const participantId = getParam(req, "x-relm-participant-id");
-      respondWithError(res, "relm does not exist", {
-        participantId,
-        relmName: req.relmName,
-      });
+      if (process.env.RELM_UNSAFE_AUTOINIT == "true" && req.relmName === "default") {
+        await createDefaultRelm(participantId, DEFAULT_RELM_CONTENT);
+        next();
+      } else {
+        respondWithError(res, "relm does not exist", {
+          participantId,
+          relmName: req.relmName,
+        });
+      }
     } else {
       next();
     }
