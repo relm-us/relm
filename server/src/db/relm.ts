@@ -88,7 +88,7 @@ const mkRelmSummary = nullOr((cols: RelmSummaryColumns) => {
 async function decorateRelmWithLatestDocs(
   relm: RelmData & DocsData & StatsData,
 ): Promise<RelmData & DocsData & StatsData> {
-  if (relm === null) {
+  if (relm == null) {
     return null;
   }
 
@@ -130,15 +130,17 @@ export async function getRelm({ relmId, relmName }: { relmId?: string; relmName?
     filter.relm_name = relmName;
   }
 
-  return await decorateRelmWithLatestDocs(
-    mkRelm(
-      await db.oneOrNone(sql`
-          SELECT *
-          FROM relms
-          ${WHERE(filter)}
-        `),
-    ) as RelmData & DocsData & StatsData,
-  );
+  const relm = await db.oneOrNone(sql`
+    SELECT *
+    FROM relms
+    ${WHERE(filter)}
+  `);
+
+  if (!relm) throw new Error(`relm not found: ${relmName || relmId}`);
+
+  const relmData = mkRelm(relm) as RelmData & DocsData & StatsData;
+
+  return await decorateRelmWithLatestDocs(relmData);
 }
 
 export async function getAllRelms({
