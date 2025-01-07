@@ -1,10 +1,6 @@
 {
-  "exclude": [
-    "node_modules/*"
-  ],
-  "include": [
-    "src"
-  ],
+  "exclude": ["node_modules/*"],
+  "include": ["src"],
   "compilerOptions": {
     "target": "es2017",
     "module": "es2020",
@@ -15,10 +11,8 @@
     "esModuleInterop": true,
     "sourceMap": true,
     "outDir": "./dist",
-		"paths": { "~/*": ["./*"] },
+    "paths": { "~/*": ["./*"] },
     "types": ["node"],
-    "typeRoots": [
-      "types"
-    ]
+    "typeRoots": ["types"]
   }
 }

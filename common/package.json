@@ -6,13 +6,18 @@
   "type": "module",
   "main": "./dist/index.js",
   "exports": "./dist/index.js",
-  "files": ["dist/**/*", "src/**/*", "tsconfig.json"],
+  "files": [
+    "dist/**/*",
+    "src/**/*",
+    "tsconfig.json"
+  ],
   "engines": {
     "node": "^14.13.1 || >=16.0.0",
     "pnpm": ">=6"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "dev": "tsc --watch --preserveWatchOutput"
   },
   "devDependencies": {
     "@jest/types": "27.5.1",
@@ -33,12 +38,16 @@
     "y-leveldb": "0.1.2",
     "y-protocols": "1.0.5"
   },
-  "browserslist": ["defaults"],
+  "browserslist": [
+    "defaults"
+  ],
   "jest": {
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
-    "moduleFileExtensions": ["ts"],
+    "moduleFileExtensions": [
+      "ts"
+    ],
     "moduleNameMapper": {
       "^~/(.*)": "<rootDir>/src/$1"
     }
