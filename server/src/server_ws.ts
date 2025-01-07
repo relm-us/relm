@@ -101,8 +101,6 @@ server.on("upgrade", async (req, socket, head) => {
     y: pubkeyY,
   };
 
-  console.log("websocket upgrade check isAuthorized:", req.url, credentials);
-
   const result: AuthResult = await isAuthorized(docId, credentials);
 
   switch (result.kind) {

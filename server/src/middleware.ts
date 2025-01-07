@@ -11,6 +11,7 @@ import { type AuthenticationHeaders, canonicalIdentifier } from "relm-common";
 import { Participant, Permission, Relm, useToken } from "./db/index.js";
 import { createDefaultRelm } from "./createDefaultRelm.js";
 import { JWTSECRET, DEFAULT_RELM_CONTENT } from "./config.js";
+import { printStackTrace } from "./utils/printStackTrace.js";
 
 export function relmName(key = "relmName") {
   return (req, res, next) => {
@@ -193,6 +194,8 @@ export function authorized(
 
         permitted = hasPermission(requestedPermission, permissions, req.relmName);
       } catch (err) {
+        console.error("error in `authorized`:", err);
+        printStackTrace(err);
         next(err);
       }
     }
