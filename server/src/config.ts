@@ -53,8 +53,7 @@ const TWITTER_API_SECRET = process.env.TWITTER_API_SECRET;
 const SPACES_KEY = process.env.SPACES_KEY;
 const SPACES_SECRET = process.env.SPACES_SECRET;
 const SPACES_BUCKET = process.env.SPACES_BUCKET;
-const SPACES_ENDPOINT =
-  process.env.SPACES_ENDPOINT || "sfo3.digitaloceanspaces.com";
+const SPACES_ENDPOINT = process.env.SPACES_ENDPOINT || "sfo3.digitaloceanspaces.com";
 
 const JWTSECRET = process.env.JWTSECRET;
 
@@ -71,29 +70,26 @@ const DEFAULT_RELM_CONTENT = {
         rotation: [0, 0, 0, 1],
         scale: [1, 1, 1],
       },
-      Shape: {
+      Shape3: {
         kind: "CYLINDER",
-        cylinderRadius: 15,
-        cylinderHeight: 1,
-        cylinderSegments: 60,
+        size: [15, 1, 1],
+        detail: 0.75,
         color: "#55814e",
         emissive: "#000000",
         roughness: 0.8,
         metalness: 0.2,
-        texture: { name: "", filename: "", url: "" },
         textureScale: 1,
+        textureRotate: 0,
       },
-      RigidBody: {
-        kind: "STATIC",
-      },
-      Collider: {
+      Collider3: {
+        kind: "GROUND",
         shape: "CYLINDER",
-        cylinderRadius: 15,
-        cylinderHeight: 1,
+        size: [15, 1, 1],
         offset: [0, 0, 0],
         density: 1,
-        interaction: 131079,
+        friction: 0.01,
       },
+      Collider3Active: {},
     },
     {
       id: "P0QenCqE9wqjhhKEhKi-E",
