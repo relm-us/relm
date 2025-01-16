@@ -514,11 +514,15 @@ export function makeProgram(): Program {
           Cmd.batch([
             getPositionFromEntryway(state.worldDoc, state.pageParams.entryway),
             (dispatch) => {
-              // If we can't find the entryway in 1.5 sec, assume there is
-              // no entryway data to be found, and use 0,0,0 as entryway
+              // If we can't find the entryway in 30 sec, assume there is
+              // no entryway data to be found, and use 0,0,0 as entryway.
+              // This was initially 1.5 sec, but low bandwidth connections
+              // require more time for the entryway data in YJS to arrive.
+              // This longer timeout directly affects the loading time of new worlds.
+              const WAIT_FOR_YJS_DEFAULT_ENTRYWAY = 30_000;
               setTimeout(() => {
                 dispatch({ id: "assumeOriginAsEntryway" });
-              }, 1500);
+              }, WAIT_FOR_YJS_DEFAULT_ENTRYWAY);
             },
           ]),
         ];
