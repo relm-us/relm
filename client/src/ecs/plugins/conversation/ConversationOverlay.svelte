@@ -113,7 +113,7 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    max-height: 50%;
+    max-height: 90%;
     z-index: 4;
 
     color: var(--foreground-white, rgba(255, 255, 255, 1));
@@ -122,7 +122,7 @@
   r-container {
     display: flex;
     margin: 20px;
-    height: 30vh;
+    height: 80vh;
   }
 
   /* Mobile (small screen) is stacked as a column */
