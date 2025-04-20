@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "node:fs";
 
 import { ASSETS_DIR, DATABASE_NAME, PORT } from "./config.js";
 import { server } from "./server_ws.js";

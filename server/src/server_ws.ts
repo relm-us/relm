@@ -1,14 +1,14 @@
 import WebSocket from "ws";
-import { createServer } from "http";
+import { createServer } from "node:http";
 import debounce from "lodash.debounce";
-import { setupWSConnection, WSSharedDoc } from "relm-common";
+import { setupWSConnection, type WSSharedDoc } from "relm-common";
 
 import { app } from "./server_http.js";
 import { ydocStats } from "./ydocStats.js";
 
-import { AuthResult, isAuthorized } from "./isAuthorized.js";
+import { type AuthResult, isAuthorized } from "./isAuthorized.js";
 import { getOrCreateLiveRelm, liveRelms } from "./LiveRelm.js";
-import { RelmDocWithName } from "db/doc.js";
+import type { RelmDocWithName } from "db/doc.js";
 
 export const server = createServer();
 
@@ -27,7 +27,7 @@ const onUpdateDoc = (_update, _origin, doc: WSSharedDoc) => {
 };
 
 setInterval(() => {
-  for (let liveRelm of liveRelms.values()) {
+  for (const liveRelm of liveRelms.values()) {
     liveRelm.send();
   }
 }, OCCUPANCY_SEND_INTERVAL);
@@ -91,8 +91,8 @@ server.on("upgrade", async (req, socket, head) => {
 
   const participantId = params.get("participant-id");
   const participantSig = params.get("participant-sig");
-  let pubkeyX = params.get("pubkey-x");
-  let pubkeyY = params.get("pubkey-y");
+  const pubkeyX = params.get("pubkey-x");
+  const pubkeyY = params.get("pubkey-y");
 
   const credentials = {
     participantId,
