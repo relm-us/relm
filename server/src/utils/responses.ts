@@ -1,25 +1,25 @@
-import * as config from "../config.js";
+import { config } from "../config.js";
 
 //
 // respondWith* - Respond with JSON content with information.
 //
 
 export function respondWithError(res, reason, details = undefined) {
-  console.error(reason, JSON.stringify(details));
+	console.error(reason, JSON.stringify(details));
 
-  res.writeHead(200, config.CONTENT_TYPE_JSON);
-  res.end(generateErrorMessage(reason, details));
+	res.writeHead(200, config.CONTENT_TYPE_JSON);
+	res.end(generateErrorMessage(reason, details));
 }
 
 export function respondWithSuccess(res, json) {
-  res.writeHead(200, config.CONTENT_TYPE_JSON);
-  res.end(generateSuccessMessage(json));
+	res.writeHead(200, config.CONTENT_TYPE_JSON);
+	res.end(generateSuccessMessage(json));
 }
 
 // This should only be called by error handlers
 export function respondWithFailure(res, reason, details = undefined) {
-  res.writeHead(200, config.CONTENT_TYPE_JSON);
-  res.end(generateFailureMessage(reason, details));
+	res.writeHead(200, config.CONTENT_TYPE_JSON);
+	res.end(generateFailureMessage(reason, details));
 }
 
 //
@@ -28,40 +28,40 @@ export function respondWithFailure(res, reason, details = undefined) {
 //
 
 export function respondWithErrorPostMessage(res, reason, details = undefined) {
-  console.error(reason);
-  res.end(generatePostMessageScript(generateErrorMessage(reason, details)));
+	console.error(reason);
+	res.end(generatePostMessageScript(generateErrorMessage(reason, details)));
 }
 
 export function respondWithSuccessPostMessage(res, json) {
-  res.end(generatePostMessageScript(generateSuccessMessage(json)));
+	res.end(generatePostMessageScript(generateSuccessMessage(json)));
 }
 
 export function respondWithFailurePostMessage(
-  res,
-  reason,
-  details = undefined
+	res,
+	reason,
+	details = undefined,
 ) {
-  res.end(generatePostMessageScript(generateFailureMessage(reason, details)));
+	res.end(generatePostMessageScript(generateFailureMessage(reason, details)));
 }
 
 // Utility functions
 
 function generateErrorMessage(reason, details = undefined) {
-  return JSON.stringify({ status: "error", reason, details });
+	return JSON.stringify({ status: "error", reason, details });
 }
 
 function generateSuccessMessage(json) {
-  return JSON.stringify({ status: "success", ...json });
+	return JSON.stringify({ status: "success", ...json });
 }
 
 function generateFailureMessage(reason, details = undefined) {
-  return JSON.stringify({ status: "failure", reason, details });
+	return JSON.stringify({ status: "failure", reason, details });
 }
 
 function generatePostMessageScript(str) {
-  // Prevent any XSS attacks (in case!) by encoding to base64.
-  const base64 = Buffer.from(str).toString("base64");
-  return `<script>
+	// Prevent any XSS attacks (in case!) by encoding to base64.
+	const base64 = Buffer.from(str).toString("base64");
+	return `<script>
     window.opener.postMessage("${base64}", "*");
   </script>`;
 }
