@@ -16,7 +16,9 @@ const defaultOptions = {
   allowedAttributes: {
     a: ["href", "name", "target"],
     img: ["src"],
-    div: ["style"]
+    div: ["style"],
+    span: ["style"],
+    p: ["style"],
   },
   // Lots of these won't come up by default because we don't allow them
   selfClosing: ["img", "br", "hr", "area"],
@@ -26,6 +28,13 @@ const defaultOptions = {
   allowedSchemesAppliedToAttributes: ["href", "src", "cite"],
   allowProtocolRelative: true,
   enforceHtmlBoundary: false,
+  allowedStyles: {
+    '*': {
+    },
+    'span': {
+      'font-size': [/^\d+(?:px|em|rem|pt|vw|vh|%)$/],
+    },
+  },
 };
 
 export function cleanHtml(html) {
