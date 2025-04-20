@@ -1,1 +1,1 @@
-export { default } from "./DebugPane.svelte";
+export { default } from "./DebugPane.svelte"

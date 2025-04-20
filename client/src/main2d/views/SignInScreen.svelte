@@ -1,25 +1,25 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { toast } from "@zerodevx/svelte-toast";
+import { onMount } from "svelte"
+import { toast } from "@zerodevx/svelte-toast"
 
-  import { env } from "~/config";
-  import { LoginManager } from "~/identity/LoginManager";
-  import SignInDialog from "~/ui/Dialogs/SignInDialog.svelte";
-  import SignUpDialog from "~/ui/Dialogs/SignUpDialog.svelte";
+import { env } from "~/config"
+import { LoginManager } from "~/identity/LoginManager"
+import SignInDialog from "~/ui/Dialogs/SignInDialog.svelte"
+import SignUpDialog from "~/ui/Dialogs/SignUpDialog.svelte"
 
-  import Background from "./components/Background.svelte";
+import Background from "./components/Background.svelte"
 
-  export let api;
-  export let dispatch;
+export let api
+export let dispatch
 
-  let loginManager;
-  let state: "SIGN_IN" | "SIGN_UP" = "SIGN_IN";
+let loginManager
+let state: "SIGN_IN" | "SIGN_UP" = "SIGN_IN"
 
-  onMount(async () => {
-    loginManager = new LoginManager(api, {
-      notify: (text: string) => toast.push(text),
-    });
-  });
+onMount(async () => {
+  loginManager = new LoginManager(api, {
+    notify: (text: string) => toast.push(text),
+  })
+})
 </script>
 
 <Background />

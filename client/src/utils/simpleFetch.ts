@@ -1,11 +1,8 @@
-import { CancellablePromise, Cancellation } from "real-cancellable-promise";
+import { CancellablePromise, Cancellation } from "real-cancellable-promise"
 
 // Cancellable Fetch
-export function simpleFetch<T>(
-  input: RequestInfo,
-  init: RequestInit = {}
-): CancellablePromise<T> {
-  const controller = new AbortController();
+export function simpleFetch<T>(input: RequestInfo, init: RequestInit = {}): CancellablePromise<T> {
+  const controller = new AbortController()
 
   const promise = window
     .fetch(input, {
@@ -21,23 +18,23 @@ export function simpleFetch<T>(
           reason: `fetch failed with status code ${response.status}`,
           // Forward the status code
           code: response.status,
-        };
+        }
       }
 
       if (response.headers.get("content-type")?.includes("application/json")) {
-        return response.json();
-      } else {
-        return response.text();
+        return response.json()
       }
+
+      return response.text()
     })
     .catch((e) => {
       if (e.name === "AbortError") {
-        throw new Cancellation();
-      } else {
-        // rethrow the original error
-        throw e;
+        throw new Cancellation()
       }
-    });
 
-  return new CancellablePromise<T>(promise, () => controller.abort());
+      // rethrow the original error
+      throw e
+    })
+
+  return new CancellablePromise<T>(promise, () => controller.abort())
 }

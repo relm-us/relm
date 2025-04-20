@@ -1,1 +1,1 @@
-export { TransitionSystem } from "./TransitionSystem";
+export { TransitionSystem } from "./TransitionSystem"

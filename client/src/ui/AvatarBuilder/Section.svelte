@@ -1,7 +1,7 @@
 <script lang="ts">
-  export let name;
-  export let first = false;
-  export let last = false;
+export let name
+export let first = false
+export let last = false
 </script>
 
 <div class="section" class:first class:last>

@@ -1,12 +1,7 @@
-import { Entity } from "./Entity";
-import type { World } from "./World";
+import { Entity } from "./Entity"
+import type { World } from "./World"
 
-export type Migration = (
-  world: World,
-  entity: Entity,
-  componentData: any,
-  data: any
-) => void;
+export type Migration = (world: World, entity: Entity, componentData: any, data: any) => void
 
 /**
  * A sane way to keep components as they were, while providing
@@ -15,39 +10,27 @@ export type Migration = (
  * See registerComponentMigrations.ts
  */
 export class MigrationManager {
-  world: World;
-  migrations: Record<string, Migration>;
+  world: World
+  migrations: Record<string, Migration>
 
   constructor(world) {
-    this.world = world;
-    this.migrations = {};
+    this.world = world
+    this.migrations = {}
   }
 
   register(oldComponentName: string, migration: Migration) {
     if (this.migrations[oldComponentName]) {
-      throw new Error(
-        `ECS: migration for '${oldComponentName}' already registered`
-      );
+      throw new Error(`ECS: migration for '${oldComponentName}' already registered`)
     }
-    this.migrations[oldComponentName] = migration;
-    return this;
+    this.migrations[oldComponentName] = migration
+    return this
   }
 
   has(oldComponentName: string) {
-    return oldComponentName in this.migrations;
+    return oldComponentName in this.migrations
   }
 
-  migrate(
-    oldComponentName: string,
-    entity: Entity,
-    componentData: any,
-    data: any
-  ) {
-    return this.migrations[oldComponentName](
-      this.world,
-      entity,
-      componentData,
-      data
-    );
+  migrate(oldComponentName: string, entity: Entity, componentData: any, data: any) {
+    return this.migrations[oldComponentName](this.world, entity, componentData, data)
   }
 }

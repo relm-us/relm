@@ -1,90 +1,90 @@
 <script lang="ts">
-  import type { Entity } from "~/ecs/base";
+import type { Entity } from "~/ecs/base"
 
-  import { fade, fly } from "svelte/transition";
-  import { Vector2, Vector3 } from "three";
+import { fade, fly } from "svelte/transition"
+import { Vector2, type Vector3 } from "three"
 
-  import FaExternalLinkAlt from "svelte-icons/fa/FaExternalLinkAlt.svelte";
-  import FaArrowAltCircleRight from "svelte-icons/fa/FaArrowAltCircleRight.svelte";
+import FaExternalLinkAlt from "svelte-icons/fa/FaExternalLinkAlt.svelte"
+import FaArrowAltCircleRight from "svelte-icons/fa/FaArrowAltCircleRight.svelte"
 
-  import { worldManager } from "~/world";
-  import { AVATAR_POINTER_TAP_MAX_DISTANCE } from "~/config/constants";
-  import { assetUrl } from "~/config/assetUrl";
-  import { cleanLink } from "~/utils/cleanLink";
-  import { pointerStateDelayed } from "~/events/input/PointerListener/pointerActions";
+import { worldManager } from "~/world"
+import { AVATAR_POINTER_TAP_MAX_DISTANCE } from "~/config/constants"
+import { assetUrl } from "~/config/assetUrl"
+import { cleanLink } from "~/utils/cleanLink"
+import { pointerStateDelayed } from "~/events/input/PointerListener/pointerActions"
 
-  import { Asset, Transform } from "~/ecs/plugins/core";
+import type { Asset, Transform } from "~/ecs/plugins/core"
 
-  import { worldUIMode } from "~/stores/worldUIMode";
-  import { showCenterButtons } from "~/stores/showCenterButtons";
+import { worldUIMode } from "~/stores/worldUIMode"
+import { showCenterButtons } from "~/stores/showCenterButtons"
 
-  import FullwindowClose from "~/ui/lib/FullwindowClose.svelte";
+import FullwindowClose from "~/ui/lib/FullwindowClose.svelte"
 
-  import { Document } from "../components";
-  import DocumentFullwindow from "../document/DocumentFullwindow.svelte";
-  import Image from "./Image.svelte";
+import { Document } from "../components"
+import DocumentFullwindow from "../document/DocumentFullwindow.svelte"
+import Image from "./Image.svelte"
 
-  export let asset: Asset;
-  export let fit: "COVER" | "CONTAIN";
-  export let caption: string;
-  export let captionUrl: string;
-  export let captionBg: string;
-  export let visible: boolean;
-  export let entity: Entity;
+export let asset: Asset
+export let fit: "COVER" | "CONTAIN"
+export let caption: string
+export let captionUrl: string
+export let captionBg: string
+export let visible: boolean
+export let entity: Entity
 
-  export let clicked: boolean = false;
+export let clicked: boolean = false
 
-  $: if (clicked) {
-    if (fullwindow) deactivateFullwindow();
-    else activateFullwindow();
-    clicked = false;
+$: if (clicked) {
+  if (fullwindow) deactivateFullwindow()
+  else activateFullwindow()
+  clicked = false
+}
+
+let fullwindow = false
+let documentView = false
+
+function activateFullwindow() {
+  // don't allow activating in build mode
+  if ($worldUIMode === "build") return
+
+  // don't allow activating from accidental drag clicks
+  if (pointerStateDelayed === "interactive-drag") return
+
+  // don't allow activating an image that is too far away from the avatar
+  const p1: Vector3 = entity.get(Transform).position
+  const p2: Vector3 = worldManager.participants.local.avatar.position
+  if (p1.distanceTo(p2) > AVATAR_POINTER_TAP_MAX_DISTANCE) return
+
+  showCenterButtons.set(false)
+
+  fullwindow = true
+}
+
+function deactivateFullwindow() {
+  showCenterButtons.set(true)
+
+  fullwindow = false
+  documentView = false
+}
+
+function showDocumentView() {
+  if (entity.has(Document)) documentView = true
+}
+
+$: if ($worldUIMode === "build") {
+  fullwindow = false
+}
+
+function flyOrFade(node, options) {
+  if (documentView) {
+    return fly(node, options)
+  } else {
+    return fade(node, options)
   }
+}
 
-  let fullwindow = false;
-  let documentView = false;
-
-  function activateFullwindow() {
-    // don't allow activating in build mode
-    if ($worldUIMode === "build") return;
-
-    // don't allow activating from accidental drag clicks
-    if (pointerStateDelayed === "interactive-drag") return;
-
-    // don't allow activating an image that is too far away from the avatar
-    const p1: Vector3 = entity.get(Transform).position;
-    const p2: Vector3 = worldManager.participants.local.avatar.position;
-    if (p1.distanceTo(p2) > AVATAR_POINTER_TAP_MAX_DISTANCE) return;
-
-    showCenterButtons.set(false);
-
-    fullwindow = true;
-  }
-
-  function deactivateFullwindow() {
-    showCenterButtons.set(true);
-
-    fullwindow = false;
-    documentView = false;
-  }
-
-  function showDocumentView() {
-    if (entity.has(Document)) documentView = true;
-  }
-
-  $: if ($worldUIMode === "build") {
-    fullwindow = false;
-  }
-
-  function flyOrFade(node, options) {
-    if (documentView) {
-      return fly(node, options);
-    } else {
-      return fade(node, options);
-    }
-  }
-
-  // ignore other props
-  $$props;
+// ignore other props
+$$props
 </script>
 
 {#if documentView}

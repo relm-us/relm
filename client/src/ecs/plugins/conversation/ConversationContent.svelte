@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { fade } from "svelte/transition";
-  import { cleanHtml } from "~/utils/cleanHtml";
+import { fade } from "svelte/transition"
+import { cleanHtml } from "~/utils/cleanHtml"
 
-  export let sections;
-  export let sectionIndex;
+export let sections
+export let sectionIndex
 </script>
 
 <r-scroll>

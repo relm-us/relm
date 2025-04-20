@@ -1,44 +1,42 @@
 <script lang="ts">
-  import { _ } from "svelte-i18n";
-  import { createEventDispatcher } from "svelte";
-  import debounce from "lodash/debounce";
+import { _ } from "svelte-i18n"
+import { createEventDispatcher } from "svelte"
+import debounce from "lodash/debounce"
 
-  import Dialog from "~/ui/lib/Dialog";
-  import Button from "../lib/Button";
+import Dialog from "~/ui/lib/Dialog"
+import Button from "../lib/Button"
 
-  import TextInput from "~/ui/lib/TextInput";
-  import ToggleSwitch from "~/ui/lib/ToggleSwitch";
-  import { worldManager } from "~/world";
-  import { permits } from "~/stores/permits";
+import TextInput from "~/ui/lib/TextInput"
+import ToggleSwitch from "~/ui/lib/ToggleSwitch"
+import { worldManager } from "~/world"
+import { permits } from "~/stores/permits"
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  let withEditPermission = false;
-  let withInvitePermission = false;
-  let maxUses = 20;
+let withEditPermission = false
+let withInvitePermission = false
+let maxUses = 20
 
-  let inviteUrl = "";
+let inviteUrl = ""
 
-  $: withEditPermission, withInvitePermission, setInviteUrl();
+$: withEditPermission, withInvitePermission, setInviteUrl()
 
-  const resetInviteUrl = () => {
-    inviteUrl = "";
-    debouncedSetInviteUrl();
-  };
+const resetInviteUrl = () => {
+  inviteUrl = ""
+  debouncedSetInviteUrl()
+}
 
-  const setInviteUrl = () => {
-    worldManager.api
-      .makeInvitation({ withEditPermission, withInvitePermission, maxUses })
-      .then(({ url }) => {
-        inviteUrl = url;
-      });
-  };
+const setInviteUrl = () => {
+  worldManager.api.makeInvitation({ withEditPermission, withInvitePermission, maxUses }).then(({ url }) => {
+    inviteUrl = url
+  })
+}
 
-  const debouncedSetInviteUrl = debounce(setInviteUrl, 1000);
+const debouncedSetInviteUrl = debounce(setInviteUrl, 1000)
 
-  function selectUrl(event) {
-    event.currentTarget.select();
-  }
+function selectUrl(event) {
+  event.currentTarget.select()
+}
 </script>
 
 <Dialog title={$_("InviteDialog.title")} on:cancel>

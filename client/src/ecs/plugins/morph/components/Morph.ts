@@ -1,4 +1,4 @@
-import { Component, JSONType } from "~/ecs/base";
+import { Component, JSONType } from "~/ecs/base"
 
 export class Morph extends Component {
   static props = {
@@ -9,9 +9,9 @@ export class Morph extends Component {
         label: "Influence Weights",
       },
     },
-  };
+  }
 
   static editor = {
     label: "Morph Targets",
-  };
+  }
 }

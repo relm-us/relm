@@ -1,54 +1,43 @@
 <script>
-  import { onMount } from "svelte";
+import { onMount } from "svelte"
 
-  import { worldManager } from "~/world";
+import { worldManager } from "~/world"
 
-  import ToggleSwitch from "~/ui/lib/ToggleSwitch";
-  import Button from "~/ui/lib/Button";
-  import SidePanel, { Header } from "~/ui/lib/SidePanel";
-  import Pane from "~/ui/lib/Pane";
+import Button from "~/ui/lib/Button"
+import SidePanel, { Header } from "~/ui/lib/SidePanel"
+import Pane from "~/ui/lib/Pane"
 
-  import StatsPane from "./StatsPane.svelte";
-  import SystemToggle from "./SystemToggle.svelte";
+import StatsPane from "./StatsPane.svelte"
+import SystemToggle from "./SystemToggle.svelte"
 
-  import {
-    fpsTime,
-    renderCalls,
-    renderTriangles,
-    programs,
-    systems,
-  } from "~/stores/stats";
+import { fpsTime, renderCalls, renderTriangles, programs, systems } from "~/stores/stats"
 
-  import { _ } from "~/i18n";
+import { _ } from "~/i18n"
 
-  let extendedStatsVisible = false;
-  let systemsVisible = false;
-  let shadersVisible = false;
+let extendedStatsVisible = false
+let systemsVisible = false
+let shadersVisible = false
 
-  const primarySystemsRE = /(Render|Physics)System/;
-  let secondarySystems = [];
+const primarySystemsRE = /(Render|Physics)System/
+let secondarySystems = []
 
-  $: primarySystems = Object.entries($systems).filter(([name, _]) =>
-    name.match(primarySystemsRE)
-  );
-  $: secondarySystems = Object.entries($systems).filter(
-    ([name, _]) => !name.match(primarySystemsRE)
-  );
+$: primarySystems = Object.entries($systems).filter(([name, _]) => name.match(primarySystemsRE))
+$: secondarySystems = Object.entries($systems).filter(([name, _]) => !name.match(primarySystemsRE))
 
-  onMount(() => {
-    const renderer = worldManager.world.presentation.renderer;
-    const interval = setInterval(() => {
-      const programsSummary = renderer.info.programs.map((program) => ({
-        id: program.id,
-        name: program.name,
-        usedTimes: program.usedTimes,
-        size: program.cacheKey.length,
-      }));
-      programs.set(programsSummary);
-    }, 5000);
+onMount(() => {
+  const renderer = worldManager.world.presentation.renderer
+  const interval = setInterval(() => {
+    const programsSummary = renderer.info.programs.map((program) => ({
+      id: program.id,
+      name: program.name,
+      usedTimes: program.usedTimes,
+      size: program.cacheKey.length,
+    }))
+    programs.set(programsSummary)
+  }, 5000)
 
-    return () => clearInterval(interval);
-  });
+  return () => clearInterval(interval)
+})
 </script>
 
 <SidePanel on:minimize>

@@ -1,77 +1,69 @@
 <script lang="ts">
-  import type { ParticipantMap } from "~/types";
+import type { ParticipantMap } from "~/types"
 
-  import { onMount } from "svelte";
-  import { Readable } from "svelte/store";
+import { onMount } from "svelte"
+import type { Readable } from "svelte/store"
 
-  import { localAudioTrack, localVideoTrack } from "~/av/VideoMirror";
+import { localAudioTrack, localVideoTrack } from "~/av/VideoMirror"
 
-  import { worldManager } from "~/world";
-  import { State } from "~/main/ProgramTypes";
-  import { participantId } from "~/identity/participantId";
+import { worldManager } from "~/world"
+import type { State } from "~/main/ProgramTypes"
+import { participantId } from "~/identity/participantId"
 
-  import { viewportSize } from "~/stores";
-  import { localIdentityData } from "~/stores/identityData";
-  import { fpsTime } from "~/stores/stats";
+import { viewportSize } from "~/stores"
+import { localIdentityData } from "~/stores/identityData"
+import { fpsTime } from "~/stores/stats"
 
-  import { PhysicsSystem } from "~/ecs/plugins/physics/systems";
+import { PhysicsSystem } from "~/ecs/plugins/physics/systems"
 
-  import ToggleSwitch from "~/ui/lib/ToggleSwitch";
-  import TextInput from "~/ui/lib/TextInput";
+import ToggleSwitch from "~/ui/lib/ToggleSwitch"
+import TextInput from "~/ui/lib/TextInput"
 
-  import Pane from "./Pane.svelte";
+import Pane from "./Pane.svelte"
 
-  import { _ } from "~/i18n";
-  import { intersectCalcTime } from "~/ecs/plugins/camera/systems/CameraSystem";
+import { _ } from "~/i18n"
+import { intersectCalcTime } from "~/ecs/plugins/camera/systems/CameraSystem"
 
-  export let state: State;
-  export let expanded: boolean = false;
+export let state: State
+export let expanded: boolean = false
 
-  const participants: Readable<ParticipantMap> =
-    worldManager.participants.store;
+const participants: Readable<ParticipantMap> = worldManager.participants.store
 
-  let fps;
-  $: fps = $fpsTime.reduce((cumu, val) => cumu + val, 0) / $fpsTime.length;
+let fps
+$: fps = $fpsTime.reduce((cumu, val) => cumu + val, 0) / $fpsTime.length
 
-  let title;
-  $: title =
-    `${Math.ceil(fps)} fps ` +
-    `@ ${x.toFixed(1)}, ${y.toFixed(1)}, ${z.toFixed(1)}`;
+let title
+$: title = `${Math.ceil(fps)} fps ` + `@ ${x.toFixed(1)}, ${y.toFixed(1)}, ${z.toFixed(1)}`
 
-  let subtitle;
-  $: subtitle = state.worldDocStatus + " - " + participantId.split("-")[0];
+let subtitle
+$: subtitle = state.worldDocStatus + " - " + participantId.split("-")[0]
 
-  let vw;
-  $: vw = $viewportSize
-    ? `(${$viewportSize.width},${$viewportSize.height})`
-    : "";
+let vw
+$: vw = $viewportSize ? `(${$viewportSize.width},${$viewportSize.height})` : ""
 
-  let showAbbreviatedIdentities = true;
-  function toggleIdentities() {
-    showAbbreviatedIdentities = !showAbbreviatedIdentities;
-  }
+let showAbbreviatedIdentities = true
+function toggleIdentities() {
+  showAbbreviatedIdentities = !showAbbreviatedIdentities
+}
 
-  let x = 0;
-  let y = 0;
-  let z = 0;
+let x = 0
+let y = 0
+let z = 0
 
-  let avgIntersectCalcTime = 0;
+let avgIntersectCalcTime = 0
 
-  onMount(() => {
-    const interval = setInterval(() => {
-      if (!worldManager.participants || !worldManager.participants.local.avatar)
-        return;
+onMount(() => {
+  const interval = setInterval(() => {
+    if (!worldManager.participants || !worldManager.participants.local.avatar) return
 
-      x = worldManager.participants.local.avatar.position.x;
-      y = worldManager.participants.local.avatar.position.y;
-      z = worldManager.participants.local.avatar.position.z;
+    x = worldManager.participants.local.avatar.position.x
+    y = worldManager.participants.local.avatar.position.y
+    z = worldManager.participants.local.avatar.position.z
 
-      avgIntersectCalcTime =
-        intersectCalcTime.reduce((total, time) => total + time, 0) /
-        intersectCalcTime.length;
-    }, 150);
-    return () => clearInterval(interval);
-  });
+    avgIntersectCalcTime = intersectCalcTime.reduce((total, time) => total + time, 0) / intersectCalcTime.length
+  }, 150)
+  return () => clearInterval(interval)
+})
 </script>
 
 <container class:connected={Boolean(state.worldDoc)}>

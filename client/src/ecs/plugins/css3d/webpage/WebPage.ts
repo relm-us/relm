@@ -1,10 +1,10 @@
-import { Component, StringType, BooleanType } from "~/ecs/base";
-import { Asset, AssetType } from "../../core";
+import { Component, StringType, BooleanType } from "~/ecs/base"
+import { type Asset, AssetType } from "../../core"
 
 export class WebPage extends Component {
-  url: string;
-  fit: "COVER" | "CONTAIN";
-  asset: Asset;
+  url: string
+  fit: "COVER" | "CONTAIN"
+  asset: Asset
 
   static props = {
     url: {
@@ -35,9 +35,9 @@ export class WebPage extends Component {
         accept: ".png,.jpg,.jpeg",
       },
     },
-  };
+  }
 
   static editor = {
     label: "WebPage",
-  };
+  }
 }

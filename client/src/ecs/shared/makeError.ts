@@ -1,17 +1,17 @@
-import { Euler, Quaternion, Vector3 } from "three";
-import { nanoid } from "nanoid";
+import { Euler, Quaternion, Vector3 } from "three"
+import { nanoid } from "nanoid"
 
-import { Entity } from "~/ecs/base";
-import { Asset, Transform } from "~/ecs/plugins/core";
-import { Model3 } from "~/ecs/plugins/model";
-import { Html2d } from "~/ecs/plugins/html2d";
+import type { Entity } from "~/ecs/base"
+import { Asset, Transform } from "~/ecs/plugins/core"
+import { Model3 } from "~/ecs/plugins/model"
+import { Html2d } from "~/ecs/plugins/html2d"
 
-import errorCatGlb from "./error-cat.glb";
+import errorCatGlb from "./error-cat.glb"
 
 export function makeError(entity: Entity, msg = null) {
-  const transform: Transform = entity.get(Transform);
+  const transform: Transform = entity.get(Transform)
 
-  console.warn("Error Cat created", entity, msg);
+  console.warn("Error Cat created", entity, msg)
 
   return entity.world.entities
     .create("Error", nanoid())
@@ -34,5 +34,5 @@ export function makeError(entity: Entity, msg = null) {
       hanchor: 1,
       offset: new Vector3(0.75, 1, 0),
     })
-    .activate();
+    .activate()
 }

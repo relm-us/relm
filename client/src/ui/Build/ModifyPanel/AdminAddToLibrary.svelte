@@ -1,58 +1,58 @@
 <script lang="ts">
-  import { get } from "svelte/store";
-  import { toast } from "@zerodevx/svelte-toast";
+import { get } from "svelte/store"
+import { toast } from "@zerodevx/svelte-toast"
 
-  import { worldManager } from "~/world";
+import { worldManager } from "~/world"
 
-  import Pane from "~/ui/lib/Pane";
-  import UploadButton from "~/ui/Build/shared/UploadButton";
-  import Button from "~/ui/lib/Button";
-  import TextInput from "~/ui/lib/TextInput";
+import Pane from "~/ui/lib/Pane"
+import UploadButton from "~/ui/Build/shared/UploadButton"
+import Button from "~/ui/lib/Button"
+import TextInput from "~/ui/lib/TextInput"
 
-  import { serializeCopyBuffer } from "~/events/input/CopyPasteListener/common";
-  import { copy } from "~/events/input/CopyPasteListener/copy";
+import { serializeCopyBuffer } from "~/events/input/CopyPasteListener/common"
+import { copy } from "~/events/input/CopyPasteListener/copy"
 
-  import { copyBuffer } from "~/stores/copyBuffer";
-  import { _ } from "~/i18n";
+import { copyBuffer } from "~/stores/copyBuffer"
+import { _ } from "~/i18n"
 
-  let thumbnail;
-  let name = "";
-  let description = "";
-  let tags = "";
+let thumbnail
+let name = ""
+let description = ""
+let tags = ""
 
-  const onUpload = ({ detail }) => {
-    // console.log("onUpload image for library", detail);
-    thumbnail = detail.results[0].types.webp;
-  };
+const onUpload = ({ detail }) => {
+  // console.log("onUpload image for library", detail);
+  thumbnail = detail.results[0].types.webp
+}
 
-  const addAsset = async () => {
-    // TODO: factor out parts unrelated to copy/paste?
-    copy();
+const addAsset = async () => {
+  // TODO: factor out parts unrelated to copy/paste?
+  copy()
 
-    const buffer = JSON.parse(serializeCopyBuffer(get(copyBuffer)));
+  const buffer = JSON.parse(serializeCopyBuffer(get(copyBuffer)))
 
-    const asset = {
-      name,
-      description,
-      tags: (tags || "").split(/\s*,\s*/),
-      thumbnail,
-      ecsProperties: { ...buffer },
-    };
+  const asset = {
+    name,
+    description,
+    tags: (tags || "").split(/\s*,\s*/),
+    thumbnail,
+    ecsProperties: { ...buffer },
+  }
 
-    let success;
-    try {
-      success = await worldManager.api.addAsset(asset);
-    } catch (err) {
-      success = false;
-    }
+  let success
+  try {
+    success = await worldManager.api.addAsset(asset)
+  } catch (err) {
+    success = false
+  }
 
-    if (success) {
-      toast.push("Added asset to library");
-    } else {
-      console.warn("asset", asset);
-      toast.push("Something went wrong");
-    }
-  };
+  if (success) {
+    toast.push("Added asset to library")
+  } else {
+    console.warn("asset", asset)
+    toast.push("Something went wrong")
+  }
+}
 </script>
 
 <Pane title="Add to Library">

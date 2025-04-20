@@ -1,9 +1,9 @@
-import { StateComponent, RefType, BooleanType } from "~/ecs/base";
+import { StateComponent, RefType, BooleanType } from "~/ecs/base"
 
 export class ConversationRef extends StateComponent {
-  container: HTMLElement;
-  component: any;
-  isClosing: boolean;
+  container: HTMLElement
+  component: any
+  isClosing: boolean
 
   static props = {
     container: {
@@ -18,5 +18,5 @@ export class ConversationRef extends StateComponent {
       type: BooleanType,
       default: false,
     },
-  };
+  }
 }

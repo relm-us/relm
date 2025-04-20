@@ -1,7 +1,7 @@
-import { StateComponent, RefType } from "~/ecs/base";
+import { StateComponent, RefType } from "~/ecs/base"
 
 export class Html2dRef extends StateComponent {
-  container: HTMLElement;
+  container: HTMLElement
 
   static props = {
     container: {
@@ -11,5 +11,5 @@ export class Html2dRef extends StateComponent {
     component: {
       type: RefType,
     },
-  };
+  }
 }

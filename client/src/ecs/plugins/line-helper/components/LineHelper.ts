@@ -1,5 +1,5 @@
-import { Vector3 } from "three";
-import { RefType, LocalComponent, StringType } from "~/ecs/base";
+import { Vector3 } from "three"
+import { RefType, LocalComponent, StringType } from "~/ecs/base"
 
 export class LineHelper extends LocalComponent {
   static props = {
@@ -12,11 +12,11 @@ export class LineHelper extends LocalComponent {
       type: StringType,
       default: "#ffffff",
     },
-  };
+  }
 
   static editor = {
     label: "Line Helper",
-  };
+  }
 }
 
 export class LineHelperRef extends LocalComponent {
@@ -24,5 +24,5 @@ export class LineHelperRef extends LocalComponent {
     value: {
       type: RefType,
     },
-  };
+  }
 }

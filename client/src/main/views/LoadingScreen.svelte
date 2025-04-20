@@ -1,33 +1,33 @@
 <script lang="ts">
-  import { config } from "~/config";
-  import { Dispatch } from "~/main/ProgramTypes";
+import { config } from "~/config"
+import type { Dispatch } from "~/main/ProgramTypes"
 
-  import PageOverlay from "~/ui/lib/PageOverlay";
+import PageOverlay from "~/ui/lib/PageOverlay"
 
-  export let dispatch: Dispatch;
-  export let assetsCount;
-  export let assetsMax;
-  export let entitiesCount;
-  export let entitiesMax;
+export let dispatch: Dispatch
+export let assetsCount
+export let assetsMax
+export let entitiesCount
+export let entitiesMax
 
-  let progress;
-  $: progress = (entitiesCount / entitiesMax + assetsCount / assetsMax) / 2;
+let progress
+$: progress = (entitiesCount / entitiesMax + assetsCount / assetsMax) / 2
 
-  let showCounts = false;
+let showCounts = false
 
-  let clickCount = 0;
-  function click() {
-    ++clickCount;
+let clickCount = 0
+function click() {
+  ++clickCount
 
-    if (clickCount == 1) {
-      showCounts = true;
-    } else if (clickCount == 5) {
-      // Force entry; useful for debugging & getting relms with stale stats to load
-      dispatch({ id: "recomputeWorldDocStats" });
-      dispatch({ id: "loadComplete" });
-      dispatch({ id: "assumeOriginAsEntryway" });
-    }
+  if (clickCount == 1) {
+    showCounts = true
+  } else if (clickCount == 5) {
+    // Force entry; useful for debugging & getting relms with stale stats to load
+    dispatch({ id: "recomputeWorldDocStats" })
+    dispatch({ id: "loadComplete" })
+    dispatch({ id: "assumeOriginAsEntryway" })
   }
+}
 </script>
 
 <PageOverlay zIndex={3} justify="center">

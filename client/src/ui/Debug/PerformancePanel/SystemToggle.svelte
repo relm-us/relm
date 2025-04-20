@@ -1,28 +1,28 @@
 <script>
-  import ToggleSwitch from "~/ui/lib/ToggleSwitch";
-  import { worldManager } from "~/world";
-  import { onMount } from "svelte";
+import ToggleSwitch from "~/ui/lib/ToggleSwitch"
+import { worldManager } from "~/world"
+import { onMount } from "svelte"
 
-  import { _ } from "~/i18n";
+import { _ } from "~/i18n"
 
-  export let name;
+export let name
 
-  let enabled = true;
+let enabled = true
 
-  $: {
-    const system = worldManager.world.systems.getByName(name);
-    if (system) system.active = enabled;
+$: {
+  const system = worldManager.world.systems.getByName(name)
+  if (system) system.active = enabled
+}
+
+onMount(() => {
+  const interval = setInterval(() => {
+    const system = worldManager.world.systems.getByName(name)
+    if (system) enabled = system.active
+  }, 50)
+  return () => {
+    clearInterval(interval)
   }
-
-  onMount(() => {
-    const interval = setInterval(() => {
-      const system = worldManager.world.systems.getByName(name)
-      if (system) enabled = system.active;
-    }, 50)
-    return () => {
-      clearInterval(interval)
-    }
-  })
+})
 </script>
 
 <div><lbl>{$_("SystemToggle.enabled")}</lbl><ToggleSwitch bind:enabled /></div>

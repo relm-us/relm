@@ -1,18 +1,13 @@
-import { Vector3 } from "three";
+import type { Vector3 } from "three"
 
-import { Entity, LocalComponent, RefType } from "~/ecs/base";
+import { type Entity, LocalComponent, RefType } from "~/ecs/base"
 
 export class TransformControls extends LocalComponent {
-  onChange: (entity: Entity) => void;
-  onMove: (entity: Entity, delta: Vector3) => void;
-  onRotate: (
-    entity: Entity,
-    position: Vector3,
-    theta: number,
-    axis: Vector3
-  ) => void;
-  onBegin: (entity: Entity) => void;
-  onComplete: (entity: Entity) => void;
+  onChange: (entity: Entity) => void
+  onMove: (entity: Entity, delta: Vector3) => void
+  onRotate: (entity: Entity, position: Vector3, theta: number, axis: Vector3) => void
+  onBegin: (entity: Entity) => void
+  onComplete: (entity: Entity) => void
 
   static props = {
     onChange: {
@@ -34,5 +29,5 @@ export class TransformControls extends LocalComponent {
     onComplete: {
       type: RefType,
     },
-  };
+  }
 }

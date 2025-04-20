@@ -1,30 +1,30 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import TextInput from "~/ui/lib/TextInput";
+import { createEventDispatcher } from "svelte"
+import TextInput from "~/ui/lib/TextInput"
 
-  export let key: string;
-  export let component;
-  export let prop;
+export let key: string
+export let component
+export let prop
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  let initialValue = component[key].url;
+let initialValue = component[key].url
 
-  let value: string;
-  $: value = component[key];
+let value: string
+$: value = component[key]
 
-  const onInputChange = ({ detail }) => {
-    component[key] = detail;
-    component.modified();
-    dispatch("modified");
-  };
+const onInputChange = ({ detail }) => {
+  component[key] = detail
+  component.modified()
+  dispatch("modified")
+}
 
-  const onInputCancel = (event) => {
-    value = initialValue;
-  };
+const onInputCancel = (event) => {
+  value = initialValue
+}
 
-  // ignore warning about missing props
-  $$props;
+// ignore warning about missing props
+$$props
 </script>
 
 <r-string-type>

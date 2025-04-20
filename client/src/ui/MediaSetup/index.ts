@@ -1,1 +1,1 @@
-export { default } from "./MediaSetup.svelte";
+export { default } from "./MediaSetup.svelte"

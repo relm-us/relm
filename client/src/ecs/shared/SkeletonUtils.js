@@ -1,596 +1,459 @@
 import {
-	AnimationClip,
-	AnimationMixer,
-	Euler,
-	Matrix4,
-	Quaternion,
-	QuaternionKeyframeTrack,
-	SkeletonHelper,
-	Vector2,
-	Vector3,
-	VectorKeyframeTrack
-} from 'three';
+  AnimationClip,
+  AnimationMixer,
+  Euler,
+  Matrix4,
+  Quaternion,
+  QuaternionKeyframeTrack,
+  SkeletonHelper,
+  Vector2,
+  Vector3,
+  VectorKeyframeTrack,
+} from "three"
 
+function retarget(target, source, options = {}) {
+  const pos = new Vector3(),
+    quat = new Quaternion(),
+    scale = new Vector3(),
+    bindBoneMatrix = new Matrix4(),
+    relativeMatrix = new Matrix4(),
+    globalMatrix = new Matrix4()
 
-function retarget( target, source, options = {} ) {
+  options.preserveMatrix = options.preserveMatrix !== undefined ? options.preserveMatrix : true
+  options.preservePosition = options.preservePosition !== undefined ? options.preservePosition : true
+  options.preserveHipPosition = options.preserveHipPosition !== undefined ? options.preserveHipPosition : false
+  options.useTargetMatrix = options.useTargetMatrix !== undefined ? options.useTargetMatrix : false
+  options.hip = options.hip !== undefined ? options.hip : "hip"
+  options.names = options.names || {}
 
-	const pos = new Vector3(),
-		quat = new Quaternion(),
-		scale = new Vector3(),
-		bindBoneMatrix = new Matrix4(),
-		relativeMatrix = new Matrix4(),
-		globalMatrix = new Matrix4();
+  const sourceBones = source.isObject3D ? source.skeleton.bones : getBones(source),
+    bones = target.isObject3D ? target.skeleton.bones : getBones(target)
 
-	options.preserveMatrix = options.preserveMatrix !== undefined ? options.preserveMatrix : true;
-	options.preservePosition = options.preservePosition !== undefined ? options.preservePosition : true;
-	options.preserveHipPosition = options.preserveHipPosition !== undefined ? options.preserveHipPosition : false;
-	options.useTargetMatrix = options.useTargetMatrix !== undefined ? options.useTargetMatrix : false;
-	options.hip = options.hip !== undefined ? options.hip : 'hip';
-	options.names = options.names || {};
+  let bindBones, bone, name, boneTo, bonesPosition
 
-	const sourceBones = source.isObject3D ? source.skeleton.bones : getBones( source ),
-		bones = target.isObject3D ? target.skeleton.bones : getBones( target );
+  // reset bones
 
-	let bindBones,
-		bone, name, boneTo,
-		bonesPosition;
+  if (target.isObject3D) {
+    target.skeleton.pose()
+  } else {
+    options.useTargetMatrix = true
+    options.preserveMatrix = false
+  }
 
-	// reset bones
+  if (options.preservePosition) {
+    bonesPosition = []
 
-	if ( target.isObject3D ) {
+    for (let i = 0; i < bones.length; i++) {
+      bonesPosition.push(bones[i].position.clone())
+    }
+  }
 
-		target.skeleton.pose();
+  if (options.preserveMatrix) {
+    // reset matrix
 
-	} else {
+    target.updateMatrixWorld()
 
-		options.useTargetMatrix = true;
-		options.preserveMatrix = false;
+    target.matrixWorld.identity()
 
-	}
+    // reset children matrix
 
-	if ( options.preservePosition ) {
+    for (let i = 0; i < target.children.length; ++i) {
+      target.children[i].updateMatrixWorld(true)
+    }
+  }
 
-		bonesPosition = [];
+  if (options.offsets) {
+    bindBones = []
 
-		for ( let i = 0; i < bones.length; i ++ ) {
+    for (let i = 0; i < bones.length; ++i) {
+      bone = bones[i]
+      name = options.names[bone.name] || bone.name
 
-			bonesPosition.push( bones[ i ].position.clone() );
+      if (options.offsets[name]) {
+        bone.matrix.multiply(options.offsets[name])
 
-		}
+        bone.matrix.decompose(bone.position, bone.quaternion, bone.scale)
 
-	}
+        bone.updateMatrixWorld()
+      }
 
-	if ( options.preserveMatrix ) {
+      bindBones.push(bone.matrixWorld.clone())
+    }
+  }
 
-		// reset matrix
+  for (let i = 0; i < bones.length; ++i) {
+    bone = bones[i]
+    name = options.names[bone.name] || bone.name
 
-		target.updateMatrixWorld();
+    boneTo = getBoneByName(name, sourceBones)
 
-		target.matrixWorld.identity();
+    globalMatrix.copy(bone.matrixWorld)
 
-		// reset children matrix
+    if (boneTo) {
+      boneTo.updateMatrixWorld()
 
-		for ( let i = 0; i < target.children.length; ++ i ) {
+      if (options.useTargetMatrix) {
+        relativeMatrix.copy(boneTo.matrixWorld)
+      } else {
+        relativeMatrix.copy(target.matrixWorld).invert()
+        relativeMatrix.multiply(boneTo.matrixWorld)
+      }
 
-			target.children[ i ].updateMatrixWorld( true );
+      // ignore scale to extract rotation
 
-		}
+      scale.setFromMatrixScale(relativeMatrix)
+      relativeMatrix.scale(scale.set(1 / scale.x, 1 / scale.y, 1 / scale.z))
 
-	}
+      // apply to global matrix
 
-	if ( options.offsets ) {
+      globalMatrix.makeRotationFromQuaternion(quat.setFromRotationMatrix(relativeMatrix))
 
-		bindBones = [];
+      if (target.isObject3D) {
+        const boneIndex = bones.indexOf(bone),
+          wBindMatrix = bindBones
+            ? bindBones[boneIndex]
+            : bindBoneMatrix.copy(target.skeleton.boneInverses[boneIndex]).invert()
 
-		for ( let i = 0; i < bones.length; ++ i ) {
+        globalMatrix.multiply(wBindMatrix)
+      }
 
-			bone = bones[ i ];
-			name = options.names[ bone.name ] || bone.name;
+      globalMatrix.copyPosition(relativeMatrix)
+    }
 
-			if ( options.offsets[ name ] ) {
+    if (bone.parent && bone.parent.isBone) {
+      bone.matrix.copy(bone.parent.matrixWorld).invert()
+      bone.matrix.multiply(globalMatrix)
+    } else {
+      bone.matrix.copy(globalMatrix)
+    }
 
-				bone.matrix.multiply( options.offsets[ name ] );
+    if (options.preserveHipPosition && name === options.hip) {
+      bone.matrix.setPosition(pos.set(0, bone.position.y, 0))
+    }
 
-				bone.matrix.decompose( bone.position, bone.quaternion, bone.scale );
+    bone.matrix.decompose(bone.position, bone.quaternion, bone.scale)
 
-				bone.updateMatrixWorld();
+    bone.updateMatrixWorld()
+  }
 
-			}
+  if (options.preservePosition) {
+    for (let i = 0; i < bones.length; ++i) {
+      bone = bones[i]
+      name = options.names[bone.name] || bone.name
 
-			bindBones.push( bone.matrixWorld.clone() );
+      if (name !== options.hip) {
+        bone.position.copy(bonesPosition[i])
+      }
+    }
+  }
 
-		}
+  if (options.preserveMatrix) {
+    // restore matrix
 
-	}
-
-	for ( let i = 0; i < bones.length; ++ i ) {
-
-		bone = bones[ i ];
-		name = options.names[ bone.name ] || bone.name;
-
-		boneTo = getBoneByName( name, sourceBones );
-
-		globalMatrix.copy( bone.matrixWorld );
-
-		if ( boneTo ) {
-
-			boneTo.updateMatrixWorld();
-
-			if ( options.useTargetMatrix ) {
-
-				relativeMatrix.copy( boneTo.matrixWorld );
-
-			} else {
-
-				relativeMatrix.copy( target.matrixWorld ).invert();
-				relativeMatrix.multiply( boneTo.matrixWorld );
-
-			}
-
-			// ignore scale to extract rotation
-
-			scale.setFromMatrixScale( relativeMatrix );
-			relativeMatrix.scale( scale.set( 1 / scale.x, 1 / scale.y, 1 / scale.z ) );
-
-			// apply to global matrix
-
-			globalMatrix.makeRotationFromQuaternion( quat.setFromRotationMatrix( relativeMatrix ) );
-
-			if ( target.isObject3D ) {
-
-				const boneIndex = bones.indexOf( bone ),
-					wBindMatrix = bindBones ? bindBones[ boneIndex ] : bindBoneMatrix.copy( target.skeleton.boneInverses[ boneIndex ] ).invert();
-
-				globalMatrix.multiply( wBindMatrix );
-
-			}
-
-			globalMatrix.copyPosition( relativeMatrix );
-
-		}
-
-		if ( bone.parent && bone.parent.isBone ) {
-
-			bone.matrix.copy( bone.parent.matrixWorld ).invert();
-			bone.matrix.multiply( globalMatrix );
-
-		} else {
-
-			bone.matrix.copy( globalMatrix );
-
-		}
-
-		if ( options.preserveHipPosition && name === options.hip ) {
-
-			bone.matrix.setPosition( pos.set( 0, bone.position.y, 0 ) );
-
-		}
-
-		bone.matrix.decompose( bone.position, bone.quaternion, bone.scale );
-
-		bone.updateMatrixWorld();
-
-	}
-
-	if ( options.preservePosition ) {
-
-		for ( let i = 0; i < bones.length; ++ i ) {
-
-			bone = bones[ i ];
-			name = options.names[ bone.name ] || bone.name;
-
-			if ( name !== options.hip ) {
-
-				bone.position.copy( bonesPosition[ i ] );
-
-			}
-
-		}
-
-	}
-
-	if ( options.preserveMatrix ) {
-
-		// restore matrix
-
-		target.updateMatrixWorld( true );
-
-	}
-
+    target.updateMatrixWorld(true)
+  }
 }
 
-function retargetClip( target, source, clip, options = {} ) {
+function retargetClip(target, source, clip, options = {}) {
+  options.useFirstFramePosition = options.useFirstFramePosition !== undefined ? options.useFirstFramePosition : false
+  options.fps = options.fps !== undefined ? options.fps : 30
+  options.names = options.names || []
 
-	options.useFirstFramePosition = options.useFirstFramePosition !== undefined ? options.useFirstFramePosition : false;
-	options.fps = options.fps !== undefined ? options.fps : 30;
-	options.names = options.names || [];
+  if (!source.isObject3D) {
+    source = getHelperFromSkeleton(source)
+  }
 
-	if ( ! source.isObject3D ) {
+  const numFrames = Math.round(clip.duration * (options.fps / 1000) * 1000),
+    delta = 1 / options.fps,
+    convertedTracks = [],
+    mixer = new AnimationMixer(source),
+    bones = getBones(target.skeleton),
+    boneDatas = []
+  let positionOffset, bone, boneTo, boneData, name
 
-		source = getHelperFromSkeleton( source );
+  mixer.clipAction(clip).play()
+  mixer.update(0)
 
-	}
+  source.updateMatrixWorld()
 
-	const numFrames = Math.round( clip.duration * ( options.fps / 1000 ) * 1000 ),
-		delta = 1 / options.fps,
-		convertedTracks = [],
-		mixer = new AnimationMixer( source ),
-		bones = getBones( target.skeleton ),
-		boneDatas = [];
-	let positionOffset,
-		bone, boneTo, boneData,
-		name;
+  for (let i = 0; i < numFrames; ++i) {
+    const time = i * delta
 
-	mixer.clipAction( clip ).play();
-	mixer.update( 0 );
+    retarget(target, source, options)
 
-	source.updateMatrixWorld();
+    for (let j = 0; j < bones.length; ++j) {
+      name = options.names[bones[j].name] || bones[j].name
 
-	for ( let i = 0; i < numFrames; ++ i ) {
+      boneTo = getBoneByName(name, source.skeleton)
 
-		const time = i * delta;
+      if (boneTo) {
+        bone = bones[j]
+        boneData = boneDatas[j] = boneDatas[j] || { bone: bone }
 
-		retarget( target, source, options );
+        if (options.hip === name) {
+          if (!boneData.pos) {
+            boneData.pos = {
+              times: new Float32Array(numFrames),
+              values: new Float32Array(numFrames * 3),
+            }
+          }
 
-		for ( let j = 0; j < bones.length; ++ j ) {
+          if (options.useFirstFramePosition) {
+            if (i === 0) {
+              positionOffset = bone.position.clone()
+            }
 
-			name = options.names[ bones[ j ].name ] || bones[ j ].name;
+            bone.position.sub(positionOffset)
+          }
 
-			boneTo = getBoneByName( name, source.skeleton );
+          boneData.pos.times[i] = time
 
-			if ( boneTo ) {
+          bone.position.toArray(boneData.pos.values, i * 3)
+        }
 
-				bone = bones[ j ];
-				boneData = boneDatas[ j ] = boneDatas[ j ] || { bone: bone };
+        if (!boneData.quat) {
+          boneData.quat = {
+            times: new Float32Array(numFrames),
+            values: new Float32Array(numFrames * 4),
+          }
+        }
 
-				if ( options.hip === name ) {
+        boneData.quat.times[i] = time
 
-					if ( ! boneData.pos ) {
+        bone.quaternion.toArray(boneData.quat.values, i * 4)
+      }
+    }
 
-						boneData.pos = {
-							times: new Float32Array( numFrames ),
-							values: new Float32Array( numFrames * 3 )
-						};
+    mixer.update(delta)
 
-					}
+    source.updateMatrixWorld()
+  }
 
-					if ( options.useFirstFramePosition ) {
+  for (let i = 0; i < boneDatas.length; ++i) {
+    boneData = boneDatas[i]
 
-						if ( i === 0 ) {
+    if (boneData) {
+      if (boneData.pos) {
+        convertedTracks.push(
+          new VectorKeyframeTrack(
+            ".bones[" + boneData.bone.name + "].position",
+            boneData.pos.times,
+            boneData.pos.values,
+          ),
+        )
+      }
 
-							positionOffset = bone.position.clone();
+      convertedTracks.push(
+        new QuaternionKeyframeTrack(
+          ".bones[" + boneData.bone.name + "].quaternion",
+          boneData.quat.times,
+          boneData.quat.values,
+        ),
+      )
+    }
+  }
 
-						}
+  mixer.uncacheAction(clip)
 
-						bone.position.sub( positionOffset );
-
-					}
-
-					boneData.pos.times[ i ] = time;
-
-					bone.position.toArray( boneData.pos.values, i * 3 );
-
-				}
-
-				if ( ! boneData.quat ) {
-
-					boneData.quat = {
-						times: new Float32Array( numFrames ),
-						values: new Float32Array( numFrames * 4 )
-					};
-
-				}
-
-				boneData.quat.times[ i ] = time;
-
-				bone.quaternion.toArray( boneData.quat.values, i * 4 );
-
-			}
-
-		}
-
-		mixer.update( delta );
-
-		source.updateMatrixWorld();
-
-	}
-
-	for ( let i = 0; i < boneDatas.length; ++ i ) {
-
-		boneData = boneDatas[ i ];
-
-		if ( boneData ) {
-
-			if ( boneData.pos ) {
-
-				convertedTracks.push( new VectorKeyframeTrack(
-					'.bones[' + boneData.bone.name + '].position',
-					boneData.pos.times,
-					boneData.pos.values
-				) );
-
-			}
-
-			convertedTracks.push( new QuaternionKeyframeTrack(
-				'.bones[' + boneData.bone.name + '].quaternion',
-				boneData.quat.times,
-				boneData.quat.values
-			) );
-
-		}
-
-	}
-
-	mixer.uncacheAction( clip );
-
-	return new AnimationClip( clip.name, - 1, convertedTracks );
-
+  return new AnimationClip(clip.name, -1, convertedTracks)
 }
 
-function getHelperFromSkeleton( skeleton ) {
+function getHelperFromSkeleton(skeleton) {
+  const source = new SkeletonHelper(skeleton.bones[0])
+  source.skeleton = skeleton
 
-	const source = new SkeletonHelper( skeleton.bones[ 0 ] );
-	source.skeleton = skeleton;
-
-	return source;
-
+  return source
 }
 
-function getSkeletonOffsets( target, source, options = {} ) {
+function getSkeletonOffsets(target, source, options = {}) {
+  const targetParentPos = new Vector3(),
+    targetPos = new Vector3(),
+    sourceParentPos = new Vector3(),
+    sourcePos = new Vector3(),
+    targetDir = new Vector2(),
+    sourceDir = new Vector2()
 
-	const targetParentPos = new Vector3(),
-		targetPos = new Vector3(),
-		sourceParentPos = new Vector3(),
-		sourcePos = new Vector3(),
-		targetDir = new Vector2(),
-		sourceDir = new Vector2();
+  options.hip = options.hip !== undefined ? options.hip : "hip"
+  options.names = options.names || {}
 
-	options.hip = options.hip !== undefined ? options.hip : 'hip';
-	options.names = options.names || {};
+  if (!source.isObject3D) {
+    source = getHelperFromSkeleton(source)
+  }
 
-	if ( ! source.isObject3D ) {
+  const nameKeys = Object.keys(options.names),
+    nameValues = Object.values(options.names),
+    sourceBones = source.isObject3D ? source.skeleton.bones : getBones(source),
+    bones = target.isObject3D ? target.skeleton.bones : getBones(target),
+    offsets = []
 
-		source = getHelperFromSkeleton( source );
+  let bone, boneTo, name, i
 
-	}
+  target.skeleton.pose()
 
-	const nameKeys = Object.keys( options.names ),
-		nameValues = Object.values( options.names ),
-		sourceBones = source.isObject3D ? source.skeleton.bones : getBones( source ),
-		bones = target.isObject3D ? target.skeleton.bones : getBones( target ),
-		offsets = [];
+  for (i = 0; i < bones.length; ++i) {
+    bone = bones[i]
+    name = options.names[bone.name] || bone.name
 
-	let bone, boneTo,
-		name, i;
+    boneTo = getBoneByName(name, sourceBones)
 
-	target.skeleton.pose();
+    if (boneTo && name !== options.hip) {
+      const boneParent = getNearestBone(bone.parent, nameKeys),
+        boneToParent = getNearestBone(boneTo.parent, nameValues)
 
-	for ( i = 0; i < bones.length; ++ i ) {
+      boneParent.updateMatrixWorld()
+      boneToParent.updateMatrixWorld()
 
-		bone = bones[ i ];
-		name = options.names[ bone.name ] || bone.name;
+      targetParentPos.setFromMatrixPosition(boneParent.matrixWorld)
+      targetPos.setFromMatrixPosition(bone.matrixWorld)
 
-		boneTo = getBoneByName( name, sourceBones );
+      sourceParentPos.setFromMatrixPosition(boneToParent.matrixWorld)
+      sourcePos.setFromMatrixPosition(boneTo.matrixWorld)
 
-		if ( boneTo && name !== options.hip ) {
+      targetDir
+        .subVectors(new Vector2(targetPos.x, targetPos.y), new Vector2(targetParentPos.x, targetParentPos.y))
+        .normalize()
 
-			const boneParent = getNearestBone( bone.parent, nameKeys ),
-				boneToParent = getNearestBone( boneTo.parent, nameValues );
+      sourceDir
+        .subVectors(new Vector2(sourcePos.x, sourcePos.y), new Vector2(sourceParentPos.x, sourceParentPos.y))
+        .normalize()
 
-			boneParent.updateMatrixWorld();
-			boneToParent.updateMatrixWorld();
+      const laterialAngle = targetDir.angle() - sourceDir.angle()
 
-			targetParentPos.setFromMatrixPosition( boneParent.matrixWorld );
-			targetPos.setFromMatrixPosition( bone.matrixWorld );
+      const offset = new Matrix4().makeRotationFromEuler(new Euler(0, 0, laterialAngle))
 
-			sourceParentPos.setFromMatrixPosition( boneToParent.matrixWorld );
-			sourcePos.setFromMatrixPosition( boneTo.matrixWorld );
+      bone.matrix.multiply(offset)
 
-			targetDir.subVectors(
-				new Vector2( targetPos.x, targetPos.y ),
-				new Vector2( targetParentPos.x, targetParentPos.y )
-			).normalize();
+      bone.matrix.decompose(bone.position, bone.quaternion, bone.scale)
 
-			sourceDir.subVectors(
-				new Vector2( sourcePos.x, sourcePos.y ),
-				new Vector2( sourceParentPos.x, sourceParentPos.y )
-			).normalize();
+      bone.updateMatrixWorld()
 
-			const laterialAngle = targetDir.angle() - sourceDir.angle();
+      offsets[name] = offset
+    }
+  }
 
-			const offset = new Matrix4().makeRotationFromEuler(
-				new Euler(
-					0,
-					0,
-					laterialAngle
-				)
-			);
-
-			bone.matrix.multiply( offset );
-
-			bone.matrix.decompose( bone.position, bone.quaternion, bone.scale );
-
-			bone.updateMatrixWorld();
-
-			offsets[ name ] = offset;
-
-		}
-
-	}
-
-	return offsets;
-
+  return offsets
 }
 
-function renameBones( skeleton, names ) {
+function renameBones(skeleton, names) {
+  const bones = getBones(skeleton)
 
-	const bones = getBones( skeleton );
+  for (let i = 0; i < bones.length; ++i) {
+    const bone = bones[i]
 
-	for ( let i = 0; i < bones.length; ++ i ) {
+    if (names[bone.name]) {
+      bone.name = names[bone.name]
+    }
+  }
 
-		const bone = bones[ i ];
-
-		if ( names[ bone.name ] ) {
-
-			bone.name = names[ bone.name ];
-
-		}
-
-	}
-
-	return this;
-
+  return this
 }
 
-function getBones( skeleton ) {
-
-	return Array.isArray( skeleton ) ? skeleton : skeleton.bones;
-
+function getBones(skeleton) {
+  return Array.isArray(skeleton) ? skeleton : skeleton.bones
 }
 
-function getBoneByName( name, skeleton ) {
-
-	for ( let i = 0, bones = getBones( skeleton ); i < bones.length; i ++ ) {
-
-		if ( name === bones[ i ].name )
-
-			return bones[ i ];
-
-	}
-
+function getBoneByName(name, skeleton) {
+  for (let i = 0, bones = getBones(skeleton); i < bones.length; i++) {
+    if (name === bones[i].name) return bones[i]
+  }
 }
 
-function getNearestBone( bone, names ) {
+function getNearestBone(bone, names) {
+  while (bone.isBone) {
+    if (names.indexOf(bone.name) !== -1) {
+      return bone
+    }
 
-	while ( bone.isBone ) {
-
-		if ( names.indexOf( bone.name ) !== - 1 ) {
-
-			return bone;
-
-		}
-
-		bone = bone.parent;
-
-	}
-
+    bone = bone.parent
+  }
 }
 
-function findBoneTrackData( name, tracks ) {
+function findBoneTrackData(name, tracks) {
+  const regexp = /\[(.*)\]\.(.*)/,
+    result = { name: name }
 
-	const regexp = /\[(.*)\]\.(.*)/,
-		result = { name: name };
+  for (let i = 0; i < tracks.length; ++i) {
+    // 1 is track name
+    // 2 is track type
+    const trackData = regexp.exec(tracks[i].name)
 
-	for ( let i = 0; i < tracks.length; ++ i ) {
+    if (trackData && name === trackData[1]) {
+      result[trackData[2]] = i
+    }
+  }
 
-		// 1 is track name
-		// 2 is track type
-		const trackData = regexp.exec( tracks[ i ].name );
-
-		if ( trackData && name === trackData[ 1 ] ) {
-
-			result[ trackData[ 2 ] ] = i;
-
-		}
-
-	}
-
-	return result;
-
+  return result
 }
 
-function getEqualsBonesNames( skeleton, targetSkeleton ) {
+function getEqualsBonesNames(skeleton, targetSkeleton) {
+  const sourceBones = getBones(skeleton),
+    targetBones = getBones(targetSkeleton),
+    bones = []
 
-	const sourceBones = getBones( skeleton ),
-		targetBones = getBones( targetSkeleton ),
-		bones = [];
+  search: for (let i = 0; i < sourceBones.length; i++) {
+    const boneName = sourceBones[i].name
 
-	search : for ( let i = 0; i < sourceBones.length; i ++ ) {
+    for (let j = 0; j < targetBones.length; j++) {
+      if (boneName === targetBones[j].name) {
+        bones.push(boneName)
 
-		const boneName = sourceBones[ i ].name;
+        continue search
+      }
+    }
+  }
 
-		for ( let j = 0; j < targetBones.length; j ++ ) {
-
-			if ( boneName === targetBones[ j ].name ) {
-
-				bones.push( boneName );
-
-				continue search;
-
-			}
-
-		}
-
-	}
-
-	return bones;
-
+  return bones
 }
 
-function clone( source ) {
+function clone(source) {
+  const sourceLookup = new Map()
+  const cloneLookup = new Map()
 
-	const sourceLookup = new Map();
-	const cloneLookup = new Map();
+  const clone = source.clone()
 
-	const clone = source.clone();
+  parallelTraverse(source, clone, function (sourceNode, clonedNode) {
+    sourceLookup.set(clonedNode, sourceNode)
+    cloneLookup.set(sourceNode, clonedNode)
+  })
 
-	parallelTraverse( source, clone, function ( sourceNode, clonedNode ) {
+  clone.traverse(function (node) {
+    if (!node.isSkinnedMesh) return
 
-		sourceLookup.set( clonedNode, sourceNode );
-		cloneLookup.set( sourceNode, clonedNode );
+    const clonedMesh = node
+    const sourceMesh = sourceLookup.get(node)
+    const sourceBones = sourceMesh.skeleton.bones
 
-	} );
+    clonedMesh.skeleton = sourceMesh.skeleton.clone()
+    clonedMesh.bindMatrix.copy(sourceMesh.bindMatrix)
 
-	clone.traverse( function ( node ) {
+    clonedMesh.skeleton.bones = sourceBones.map(function (bone) {
+      return cloneLookup.get(bone)
+    })
 
-		if ( ! node.isSkinnedMesh ) return;
+    clonedMesh.bind(clonedMesh.skeleton, clonedMesh.bindMatrix)
+  })
 
-		const clonedMesh = node;
-		const sourceMesh = sourceLookup.get( node );
-		const sourceBones = sourceMesh.skeleton.bones;
-
-		clonedMesh.skeleton = sourceMesh.skeleton.clone();
-		clonedMesh.bindMatrix.copy( sourceMesh.bindMatrix );
-
-		clonedMesh.skeleton.bones = sourceBones.map( function ( bone ) {
-
-			return cloneLookup.get( bone );
-
-		} );
-
-		clonedMesh.bind( clonedMesh.skeleton, clonedMesh.bindMatrix );
-
-	} );
-
-	return clone;
-
+  return clone
 }
 
+function parallelTraverse(a, b, callback) {
+  callback(a, b)
 
-
-
-function parallelTraverse( a, b, callback ) {
-
-	callback( a, b );
-
-	for ( let i = 0; i < a.children.length; i ++ ) {
-
-		parallelTraverse( a.children[ i ], b.children[ i ], callback );
-
-	}
-
+  for (let i = 0; i < a.children.length; i++) {
+    parallelTraverse(a.children[i], b.children[i], callback)
+  }
 }
 
 export {
-	retarget,
-	retargetClip,
-	getHelperFromSkeleton,
-	getSkeletonOffsets,
-	renameBones,
-	getBones,
-	getBoneByName,
-	getNearestBone,
-	findBoneTrackData,
-	getEqualsBonesNames,
-	clone,
-};
+  retarget,
+  retargetClip,
+  getHelperFromSkeleton,
+  getSkeletonOffsets,
+  renameBones,
+  getBones,
+  getBoneByName,
+  getNearestBone,
+  findBoneTrackData,
+  getEqualsBonesNames,
+  clone,
+}

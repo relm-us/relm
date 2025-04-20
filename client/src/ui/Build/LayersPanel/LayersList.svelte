@@ -1,55 +1,55 @@
 <script lang="ts">
-  import type { Readable } from "svelte/store";
-  import type { WorldLayer } from "~/types";
+import type { Readable } from "svelte/store"
+import type { WorldLayer } from "~/types"
 
-  import { _ } from "svelte-i18n";
-  import { worldManager } from "~/world";
-  import { layerActive } from "~/stores/layerActive";
+import { _ } from "svelte-i18n"
+import { worldManager } from "~/world"
+import { layerActive } from "~/stores/layerActive"
 
-  import LayerRow from "./LayerRow.svelte";
-  import { BASE_LAYER_ID, BASE_LAYER_NAME } from "~/config/constants";
+import LayerRow from "./LayerRow.svelte"
+import { BASE_LAYER_ID, BASE_LAYER_NAME } from "~/config/constants"
 
-  export let layers: Readable<Map<string, WorldLayer>>;
+export let layers: Readable<Map<string, WorldLayer>>
 
-  let editLayerId = null;
+let editLayerId = null
 
-  const setLayerVisible = (layerId: string, visible: boolean) => () => {
-    worldManager.worldDoc.setLayerVisible(layerId, visible);
-  };
+const setLayerVisible = (layerId: string, visible: boolean) => () => {
+  worldManager.worldDoc.setLayerVisible(layerId, visible)
+}
 
-  const selectLayer = (layerId: string, additive: boolean) => () => {
-    worldManager.selectLayer(layerId, additive);
-  };
+const selectLayer = (layerId: string, additive: boolean) => () => {
+  worldManager.selectLayer(layerId, additive)
+}
 
-  const editLayer = (layerId: string, edit: boolean) => () => {
-    if (edit) editLayerId = layerId;
-    else editLayerId = null;
-  };
+const editLayer = (layerId: string, edit: boolean) => () => {
+  if (edit) editLayerId = layerId
+  else editLayerId = null
+}
 
-  const setLayerName =
-    (layerId: string) =>
-    ({ detail: name }) => {
-      worldManager.worldDoc.setLayerName(layerId, name);
-      editLayerId = null;
-    };
-
-  const deleteLayer = (layerId: string) => () => {
-    worldManager.worldDoc.deleteLayer(layerId);
-  };
-
-  const setLayerActive = (layerId: string) => () => {
-    worldManager.setLayerActive(layerId);
-  };
-
-  let sortedLayers: Array<WorldLayer & { id: string }>;
-
-  $: {
-    sortedLayers = Array.from($layers.entries()).map(([layerId, attrs]) => ({
-      id: layerId,
-      ...attrs,
-    }));
-    sortedLayers.sort((a, b) => (a.name ?? "").localeCompare(b.name));
+const setLayerName =
+  (layerId: string) =>
+  ({ detail: name }) => {
+    worldManager.worldDoc.setLayerName(layerId, name)
+    editLayerId = null
   }
+
+const deleteLayer = (layerId: string) => () => {
+  worldManager.worldDoc.deleteLayer(layerId)
+}
+
+const setLayerActive = (layerId: string) => () => {
+  worldManager.setLayerActive(layerId)
+}
+
+let sortedLayers: Array<WorldLayer & { id: string }>
+
+$: {
+  sortedLayers = Array.from($layers.entries()).map(([layerId, attrs]) => ({
+    id: layerId,
+    ...attrs,
+  }))
+  sortedLayers.sort((a, b) => (a.name ?? "").localeCompare(b.name))
+}
 </script>
 
 <r-layers>

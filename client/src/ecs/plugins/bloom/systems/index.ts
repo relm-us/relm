@@ -1,1 +1,1 @@
-export { BloomSystem } from "./BloomSystem";
+export { BloomSystem } from "./BloomSystem"

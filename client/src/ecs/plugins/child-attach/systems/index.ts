@@ -1,1 +1,1 @@
-export { ChildAttachSystem } from "./ChildAttachSystem";
+export { ChildAttachSystem } from "./ChildAttachSystem"

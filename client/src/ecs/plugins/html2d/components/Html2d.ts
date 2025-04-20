@@ -1,31 +1,25 @@
-import {
-  BooleanType,
-  Component,
-  NumberType,
-  RefType,
-  StringType,
-} from "~/ecs/base";
-import { Vector3Type } from "~/ecs/plugins/core";
-import { Vector3 } from "three";
+import { BooleanType, Component, NumberType, RefType, StringType } from "~/ecs/base"
+import { Vector3Type } from "~/ecs/plugins/core"
+import { Vector3 } from "three"
 
 export class Html2d extends Component {
-  kind: "INFO" | "LABEL" | "SPEECH" | "EMOJI" | "OCCUPANCY";
-  offset: Vector3;
-  width: number;
-  vanchor: 0 | 1 | 2;
-  hanchor: 0 | 1 | 2;
-  color: string;
-  shadowColor: string;
-  underlineColor: string;
-  title: string;
-  link: string;
-  content: string;
-  editable: boolean;
-  visible: boolean;
-  zoomInvariant: boolean;
-  zoomSize: number;
-  onChange: Function;
-  onClose: Function;
+  kind: "INFO" | "LABEL" | "SPEECH" | "EMOJI" | "OCCUPANCY"
+  offset: Vector3
+  width: number
+  vanchor: 0 | 1 | 2
+  hanchor: 0 | 1 | 2
+  color: string
+  shadowColor: string
+  underlineColor: string
+  title: string
+  link: string
+  content: string
+  editable: boolean
+  visible: boolean
+  zoomInvariant: boolean
+  zoomSize: number
+  onChange: Function
+  onClose: Function
 
   static props = {
     kind: {
@@ -196,9 +190,9 @@ export class Html2d extends Component {
         requires: [{ prop: "kind", value: "" }],
       },
     },
-  };
+  }
 
   static editor = {
     label: "Html2d",
-  };
+  }
 }

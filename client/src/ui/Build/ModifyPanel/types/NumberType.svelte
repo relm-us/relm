@@ -1,23 +1,23 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import NumberInput from "./utils/NumberInput.svelte";
+import { createEventDispatcher } from "svelte"
+import NumberInput from "./utils/NumberInput.svelte"
 
-  export let key: string;
-  export let component;
-  export let prop;
+export let key: string
+export let component
+export let prop
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  function onValueChanged({ detail }) {
-    component[key] = detail.value;
-    component.modified();
-    if (detail.final) {
-      dispatch("modified");
-    }
+function onValueChanged({ detail }) {
+  component[key] = detail.value
+  component.modified()
+  if (detail.final) {
+    dispatch("modified")
   }
+}
 
-  // ignore warning about missing props
-  $$props;
+// ignore warning about missing props
+$$props
 </script>
 
 <r-number-type>

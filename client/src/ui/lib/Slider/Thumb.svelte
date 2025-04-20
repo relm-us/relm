@@ -1,38 +1,38 @@
 <script lang="ts">
-  import { onMount, createEventDispatcher } from "svelte";
+import { onMount, createEventDispatcher } from "svelte"
 
-  export let positionAsRatio;
+export let positionAsRatio
 
-  let thumb;
-  const dispatch = createEventDispatcher();
+let thumb
+const dispatch = createEventDispatcher()
 
-  function handleStart(event) {
-    event.preventDefault();
-    const x = event.clientX;
-    const bbox = event.target.getBoundingClientRect();
-    thumb.setPointerCapture(event.pointerId);
-    thumb.addEventListener("pointermove", handleMove);
-    thumb.addEventListener("pointerup", handleEnd);
-    dispatch("dragstart", { x, bbox });
-  }
+function handleStart(event) {
+  event.preventDefault()
+  const x = event.clientX
+  const bbox = event.target.getBoundingClientRect()
+  thumb.setPointerCapture(event.pointerId)
+  thumb.addEventListener("pointermove", handleMove)
+  thumb.addEventListener("pointerup", handleEnd)
+  dispatch("dragstart", { x, bbox })
+}
 
-  function handleMove(event) {
-    event.preventDefault();
-    const x = event.clientX;
-    const bbox = event.target.getBoundingClientRect();
-    dispatch("dragging", { x, bbox });
-  }
+function handleMove(event) {
+  event.preventDefault()
+  const x = event.clientX
+  const bbox = event.target.getBoundingClientRect()
+  dispatch("dragging", { x, bbox })
+}
 
-  function handleEnd(event) {
-    event.preventDefault();
-    thumb.removeEventListener("pointermove", handleMove);
-    thumb.removeEventListener("pointerup", handleEnd);
-    dispatch("dragend");
-  }
+function handleEnd(event) {
+  event.preventDefault()
+  thumb.removeEventListener("pointermove", handleMove)
+  thumb.removeEventListener("pointerup", handleEnd)
+  dispatch("dragend")
+}
 
-  onMount(() => {
-    thumb.addEventListener("pointerdown", handleStart);
-  });
+onMount(() => {
+  thumb.addEventListener("pointerdown", handleStart)
+})
 </script>
 
 <r-thumb

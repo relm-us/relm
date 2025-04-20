@@ -1,30 +1,30 @@
 <script lang="ts">
-  import Button from "~/ui/lib/Button";
-  import Tooltip from "~/ui/lib/Tooltip";
+import Button from "~/ui/lib/Button"
+import Tooltip from "~/ui/lib/Tooltip"
 
-  export let shortcut: string;
-  export let bgState: number = 0;
-  export let tip: string = null;
+export let shortcut: string
+export let bgState: number = 0
+export let tip: string = null
 
-  let style;
+let style
 
-  $: switch (bgState) {
-    case 0:
-      style = null;
-      break;
-    case 1:
-      style = "--bg-color: #89cf82; --bg-hover-color: #89cf82";
-      break;
-    case 2:
-      style = "--bg-color: #67b7d4; --bg-hover-color: #67b7d4";
-      break;
-    case 3:
-      style = "--bg-color: #eb8572; --bg-hover-color: #eb8572";
-      break;
-    default:
-      style = null;
-      break;
-  }
+$: switch (bgState) {
+  case 0:
+    style = null
+    break
+  case 1:
+    style = "--bg-color: #89cf82; --bg-hover-color: #89cf82"
+    break
+  case 2:
+    style = "--bg-color: #67b7d4; --bg-hover-color: #67b7d4"
+    break
+  case 3:
+    style = "--bg-color: #eb8572; --bg-hover-color: #eb8572"
+    break
+  default:
+    style = null
+    break
+}
 </script>
 
 <r-tool-button {style}>

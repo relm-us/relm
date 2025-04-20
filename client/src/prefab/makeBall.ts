@@ -1,11 +1,11 @@
-import { Transform } from "~/ecs/plugins/core";
+import { Transform } from "~/ecs/plugins/core"
 
-import { Color, Vector3 } from "three";
+import { Color, Vector3 } from "three"
 
-import { Shape3 } from "~/ecs/plugins/shape";
-import { Collider3 } from "~/ecs/plugins/collider";
+import { Shape3 } from "~/ecs/plugins/shape"
+import { Collider3 } from "~/ecs/plugins/collider"
 
-import { makeEntity } from "./makeEntity";
+import { makeEntity } from "./makeEntity"
 
 export function makeBall(
   world,
@@ -25,10 +25,10 @@ export function makeBall(
     roughness = 0.8,
     emissive = "#000000",
     collider = true,
-  }
+  },
 ) {
-  const linearColor = new Color(color);
-  linearColor.convertSRGBToLinear();
+  const linearColor = new Color(color)
+  linearColor.convertSRGBToLinear()
 
   const entity = makeEntity(world, name)
     .add(Transform, {
@@ -41,7 +41,7 @@ export function makeBall(
       metalness,
       roughness,
       emissive,
-    });
+    })
 
   // Optionally add a collider that matches the dimensions of the visible shape
   if (collider) {
@@ -50,7 +50,7 @@ export function makeBall(
       size: new Vector3(r * 2, 1, 1),
       kind: dynamic ? "DYNAMIC" : "BARRIER",
       density,
-    });
+    })
   }
-  return entity;
+  return entity
 }

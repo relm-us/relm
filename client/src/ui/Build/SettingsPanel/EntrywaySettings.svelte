@@ -1,39 +1,35 @@
 <script lang="ts">
-  import { Vector3 } from "three";
+import type { Vector3 } from "three"
 
-  import { worldManager } from "~/world";
+import { worldManager } from "~/world"
 
-  import EntrywayMap from "./EntrywayMap.svelte";
-  import Pane from "~/ui/lib/Pane";
-  import Capsule from "~/ui/lib/Capsule";
-  import Button from "~/ui/lib/Button";
+import EntrywayMap from "./EntrywayMap.svelte"
+import Pane from "~/ui/lib/Pane"
+import Capsule from "~/ui/lib/Capsule"
+import Button from "~/ui/lib/Button"
 
-  import { _ } from "~/i18n";
+import { _ } from "~/i18n"
 
-  let newEntrywayName = "";
+let newEntrywayName = ""
 
-  function handleAddEntryway({ detail }) {
-    addEntryway(detail);
-    newEntrywayName = detail;
-    setTimeout(() => (newEntrywayName = ""), 100);
-  }
+function handleAddEntryway({ detail }) {
+  addEntryway(detail)
+  newEntrywayName = detail
+  setTimeout(() => (newEntrywayName = ""), 100)
+}
 
-  function addEntryway(entrywayName) {
-    const coords: Vector3 = worldManager.avatar.position;
-    worldManager.worldDoc.entryways.y.set(entrywayName, [
-      coords.x,
-      coords.y,
-      coords.z,
-    ]);
-  }
+function addEntryway(entrywayName) {
+  const coords: Vector3 = worldManager.avatar.position
+  worldManager.worldDoc.entryways.y.set(entrywayName, [coords.x, coords.y, coords.z])
+}
 
-  function setDefaultEntryway() {
-    addEntryway("default");
-  }
+function setDefaultEntryway() {
+  addEntryway("default")
+}
 
-  function onDeleteEntryway({ detail: name }) {
-    worldManager.worldDoc.entryways.y.delete(name);
-  }
+function onDeleteEntryway({ detail: name }) {
+  worldManager.worldDoc.entryways.y.delete(name)
+}
 </script>
 
 <Pane title={$_("EntrywaySettings.title")}>

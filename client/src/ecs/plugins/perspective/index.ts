@@ -1,13 +1,13 @@
-import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
+import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld"
 
-import { createPlugin } from "~/ecs/base";
-import CorePlugin from "~/ecs/plugins/core";
-import TranslucentPlugin from "~/ecs/plugins/translucent";
+import { createPlugin } from "~/ecs/base"
+import CorePlugin from "~/ecs/plugins/core"
+import TranslucentPlugin from "~/ecs/plugins/translucent"
 
-import { Perspective } from "./Perspective";
-export { Perspective };
+import { Perspective } from "./Perspective"
+export { Perspective }
 
-import * as Systems from "./systems";
+import * as Systems from "./systems"
 
 /**
  * Creates the Perspective object on the World, allowing other plugins
@@ -19,6 +19,6 @@ export default createPlugin({
   plugins: [CorePlugin, TranslucentPlugin],
   systems: Object.values(Systems),
   decorate(world: DecoratedECSWorld) {
-    world.perspective = new Perspective(world.presentation);
+    world.perspective = new Perspective(world.presentation)
   },
-});
+})

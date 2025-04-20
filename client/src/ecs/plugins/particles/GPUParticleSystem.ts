@@ -1,7 +1,7 @@
 /**
  * From: https://github.com/joshmarinacci/webxr-experiments/blob/master/particles/GPUParticleSystem2.js
  * Exammples: https://blog.mozvr.com/particles-go-wild-with-textures/
- * 
+ *
  * CAVEATS:
  * gl_PointSize can't be larger than 64, apparently:
  * - https://stackoverflow.com/questions/15371940/working-around-gl-pointsize-limitations-in-three-js-webgl
@@ -9,7 +9,7 @@
  */
 
 import {
-  Blending,
+  type Blending,
   BufferAttribute,
   BufferGeometry,
   Color,
@@ -19,9 +19,9 @@ import {
   Points,
   RepeatWrapping,
   ShaderMaterial,
-  Texture,
+  type Texture,
   Vector3,
-} from "three";
+} from "three"
 
 const GPUParticleShader = {
   vertexShader: `
@@ -99,7 +99,7 @@ const GPUParticleShader = {
         gl_FragColor = vec4( color.rgb*tex.rgb, alpha * tex.a);
     }
     `,
-};
+}
 
 const UPDATEABLE_ATTRIBUTES = [
   "positionStart",
@@ -110,75 +110,75 @@ const UPDATEABLE_ATTRIBUTES = [
   "endColor",
   "size",
   "lifeTime",
-];
+]
 
 type Options = {
-  blending?: Blending;
-  maxParticles?: number;
-  onTick?: Function;
-  reverseTime?: boolean;
-  fadeIn?: number;
-  fadeOut?: number;
-  texture?: Texture;
-  onTop?: boolean;
-};
+  blending?: Blending
+  maxParticles?: number
+  onTick?: Function
+  reverseTime?: boolean
+  fadeIn?: number
+  fadeOut?: number
+  texture?: Texture
+  onTop?: boolean
+}
 
 export class GPUParticleSystem extends Object3D {
-  blending: Blending;
-  time: number;
-  initialTime: number;
-  offset: number;
-  count: number;
-  DPR: number;
-  particleUpdate: boolean;
-  onTick: Function;
-  reverseTime: boolean;
-  fadeIn: number;
-  fadeOut: number;
-  rand: number[];
-  i: number;
-  sprite: Texture;
-  geometry: BufferGeometry;
-  material: ShaderMaterial;
-  particleSystem: Points;
+  blending: Blending
+  time: number
+  initialTime: number
+  offset: number
+  count: number
+  DPR: number
+  particleUpdate: boolean
+  onTick: Function
+  reverseTime: boolean
+  fadeIn: number
+  fadeOut: number
+  rand: number[]
+  i: number
+  sprite: Texture
+  geometry: BufferGeometry
+  material: ShaderMaterial
+  particleSystem: Points
 
-  PARTICLE_COUNT: number;
-  PARTICLE_CURSOR: number;
+  PARTICLE_COUNT: number
+  PARTICLE_CURSOR: number
 
   constructor(options: Options = {}) {
-    super();
+    super()
 
-    this.blending = options.blending ? options.blending : NormalBlending;
-    this.PARTICLE_COUNT = options.maxParticles || 1000000;
-    this.PARTICLE_CURSOR = 0;
-    this.time = 0;
-    this.offset = 0;
-    this.count = 0;
-    this.DPR = window.devicePixelRatio;
-    this.particleUpdate = false;
-    this.onTick = options.onTick;
+    this.blending = options.blending ? options.blending : NormalBlending
+    this.PARTICLE_COUNT = options.maxParticles || 1000000
+    this.PARTICLE_CURSOR = 0
+    this.time = 0
+    this.offset = 0
+    this.count = 0
+    this.DPR = window.devicePixelRatio
+    this.particleUpdate = false
+    this.onTick = options.onTick
 
-    this.reverseTime = options.reverseTime;
-    this.fadeIn = Math.max(options.fadeIn ?? 0, 0);
+    this.reverseTime = options.reverseTime
+    this.fadeIn = Math.max(options.fadeIn ?? 0, 0)
     // if (this.fadeIn === 0) this.fadeIn = 0.001;
-    this.fadeOut = Math.max(options.fadeOut ?? 0, 0);
+    this.fadeOut = Math.max(options.fadeOut ?? 0, 0)
     // if (this.fadeOut === 0) this.fadeOut = 0.001;
 
     // preload a 10_000 random numbers from -0.5 to 0.5
-    this.rand = [];
-    let i;
+    this.rand = []
+    let i
     for (i = 10000; i > 0; i--) {
-      this.rand.push(Math.random() - 0.5);
+      this.rand.push(Math.random() - 0.5)
     }
-    this.i = i;
+    this.i = i
 
     //setup the texture
-    this.sprite = options.texture || null;
-    if (!this.sprite) throw new Error("No particle sprite texture specified");
-    this.sprite.wrapS = this.sprite.wrapT = RepeatWrapping;
-    this.sprite.rotation = Math.PI / 4;
+    this.sprite = options.texture || null
+    if (!this.sprite) throw new Error("No particle sprite texture specified")
+    this.sprite.wrapS = this.sprite.wrapT = RepeatWrapping
+    this.sprite.rotation = Math.PI / 4
 
-    const depth = options.onTop ?? true;
+    const depth = options.onTop ?? true
 
     //setup the shader material
     this.material = new ShaderMaterial({
@@ -195,83 +195,59 @@ export class GPUParticleSystem extends Object3D {
       blending: this.blending,
       vertexShader: GPUParticleShader.vertexShader,
       fragmentShader: GPUParticleShader.fragmentShader,
-    });
+    })
 
     // define defaults for all values
-    const defaults = this.material.defaultAttributeValues;
-    defaults.particlePositionsStartTime = [0, 0, 0, 0];
-    defaults.particleVelColSizeLife = [0, 0, 0, 0];
+    const defaults = this.material.defaultAttributeValues
+    defaults.particlePositionsStartTime = [0, 0, 0, 0]
+    defaults.particleVelColSizeLife = [0, 0, 0, 0]
 
     // geometry
-    this.geometry = new BufferGeometry();
+    this.geometry = new BufferGeometry()
 
     //vec3 attributes
     this.geometry.setAttribute(
       "position",
-      new BufferAttribute(
-        new Float32Array(this.PARTICLE_COUNT * 3),
-        3
-      ).setUsage(DynamicDrawUsage)
-    );
+      new BufferAttribute(new Float32Array(this.PARTICLE_COUNT * 3), 3).setUsage(DynamicDrawUsage),
+    )
     this.geometry.setAttribute(
       "positionStart",
-      new BufferAttribute(
-        new Float32Array(this.PARTICLE_COUNT * 3),
-        3
-      ).setUsage(DynamicDrawUsage)
-    );
+      new BufferAttribute(new Float32Array(this.PARTICLE_COUNT * 3), 3).setUsage(DynamicDrawUsage),
+    )
     this.geometry.setAttribute(
       "velocity",
-      new BufferAttribute(
-        new Float32Array(this.PARTICLE_COUNT * 3),
-        3
-      ).setUsage(DynamicDrawUsage)
-    );
+      new BufferAttribute(new Float32Array(this.PARTICLE_COUNT * 3), 3).setUsage(DynamicDrawUsage),
+    )
     this.geometry.setAttribute(
       "acceleration",
-      new BufferAttribute(
-        new Float32Array(this.PARTICLE_COUNT * 3),
-        3
-      ).setUsage(DynamicDrawUsage)
-    );
+      new BufferAttribute(new Float32Array(this.PARTICLE_COUNT * 3), 3).setUsage(DynamicDrawUsage),
+    )
     this.geometry.setAttribute(
       "color",
-      new BufferAttribute(
-        new Float32Array(this.PARTICLE_COUNT * 3),
-        3
-      ).setUsage(DynamicDrawUsage)
-    );
+      new BufferAttribute(new Float32Array(this.PARTICLE_COUNT * 3), 3).setUsage(DynamicDrawUsage),
+    )
     this.geometry.setAttribute(
       "endColor",
-      new BufferAttribute(
-        new Float32Array(this.PARTICLE_COUNT * 3),
-        3
-      ).setUsage(DynamicDrawUsage)
-    );
+      new BufferAttribute(new Float32Array(this.PARTICLE_COUNT * 3), 3).setUsage(DynamicDrawUsage),
+    )
 
     //scalar attributes
     this.geometry.setAttribute(
       "startTime",
-      new BufferAttribute(new Float32Array(this.PARTICLE_COUNT), 1).setUsage(
-        DynamicDrawUsage
-      )
-    );
+      new BufferAttribute(new Float32Array(this.PARTICLE_COUNT), 1).setUsage(DynamicDrawUsage),
+    )
     this.geometry.setAttribute(
       "size",
-      new BufferAttribute(new Float32Array(this.PARTICLE_COUNT), 1).setUsage(
-        DynamicDrawUsage
-      )
-    );
+      new BufferAttribute(new Float32Array(this.PARTICLE_COUNT), 1).setUsage(DynamicDrawUsage),
+    )
     this.geometry.setAttribute(
       "lifeTime",
-      new BufferAttribute(new Float32Array(this.PARTICLE_COUNT), 1).setUsage(
-        DynamicDrawUsage
-      )
-    );
+      new BufferAttribute(new Float32Array(this.PARTICLE_COUNT), 1).setUsage(DynamicDrawUsage),
+    )
 
-    this.particleSystem = new Points(this.geometry, this.material);
-    this.particleSystem.frustumCulled = false;
-    this.add(this.particleSystem);
+    this.particleSystem = new Points(this.geometry, this.material)
+    this.particleSystem.frustumCulled = false
+    this.add(this.particleSystem)
   }
 
   /*
@@ -281,44 +257,40 @@ export class GPUParticleSystem extends Object3D {
      */
   geometryUpdate() {
     if (this.particleUpdate === true) {
-      this.particleUpdate = false;
+      this.particleUpdate = false
       UPDATEABLE_ATTRIBUTES.forEach((name) => {
-        const attr: BufferAttribute = this.geometry.getAttribute(
-          name
-        ) as BufferAttribute;
+        const attr: BufferAttribute = this.geometry.getAttribute(name) as BufferAttribute
         if (this.offset + this.count < this.PARTICLE_COUNT) {
-          attr.updateRange.offset = this.offset * attr.itemSize;
-          attr.updateRange.count = this.count * attr.itemSize;
+          attr.updateRange.offset = this.offset * attr.itemSize
+          attr.updateRange.count = this.count * attr.itemSize
         } else {
-          attr.updateRange.offset = 0;
-          attr.updateRange.count = -1;
+          attr.updateRange.offset = 0
+          attr.updateRange.count = -1
         }
-        attr.needsUpdate = true;
-      });
-      this.offset = 0;
-      this.count = 0;
+        attr.needsUpdate = true
+      })
+      this.offset = 0
+      this.count = 0
     }
   }
 
   //use one of the random numbers
   random() {
-    return ++this.i >= this.rand.length
-      ? this.rand[(this.i = 1)]
-      : this.rand[this.i];
+    return ++this.i >= this.rand.length ? this.rand[(this.i = 1)] : this.rand[this.i]
   }
 
   update(ttime) {
-    this.time = ttime / 1000;
-    if (this.initialTime === undefined) this.initialTime = this.time;
-    this.material.uniforms.uTime.value = this.time;
-    if (this.onTick) this.onTick(this, this.time - this.initialTime);
-    this.geometryUpdate();
+    this.time = ttime / 1000
+    if (this.initialTime === undefined) this.initialTime = this.time
+    this.material.uniforms.uTime.value = this.time
+    if (this.onTick) this.onTick(this, this.time - this.initialTime)
+    this.geometryUpdate()
   }
 
   dispose() {
-    this.material.dispose();
-    this.geometry.dispose();
-    this.onTick = null;
+    this.material.dispose()
+    this.geometry.dispose()
+    this.onTick = null
   }
 
   /* spawn a particle
@@ -331,96 +303,63 @@ export class GPUParticleSystem extends Object3D {
     then count will be 3 and the cursor will have moved by three.
      */
   spawnParticle(options) {
-    let position = new Vector3();
-    let velocity = new Vector3();
-    let acceleration = new Vector3();
-    let color = new Color();
-    let endColor = new Color();
+    let position = new Vector3()
+    let velocity = new Vector3()
+    let acceleration = new Vector3()
+    let color = new Color()
+    let endColor = new Color()
 
-    const positionStartAttribute = this.geometry.getAttribute(
-      "positionStart"
-    ) as BufferAttribute;
-    const startTimeAttribute = this.geometry.getAttribute(
-      "startTime"
-    ) as BufferAttribute;
-    const velocityAttribute = this.geometry.getAttribute(
-      "velocity"
-    ) as BufferAttribute;
-    const accelerationAttribute = this.geometry.getAttribute(
-      "acceleration"
-    ) as BufferAttribute;
-    const colorAttribute = this.geometry.getAttribute(
-      "color"
-    ) as BufferAttribute;
-    const endcolorAttribute = this.geometry.getAttribute(
-      "endColor"
-    ) as BufferAttribute;
-    const sizeAttribute = this.geometry.getAttribute("size") as BufferAttribute;
-    const lifeTimeAttribute = this.geometry.getAttribute(
-      "lifeTime"
-    ) as BufferAttribute;
+    const positionStartAttribute = this.geometry.getAttribute("positionStart") as BufferAttribute
+    const startTimeAttribute = this.geometry.getAttribute("startTime") as BufferAttribute
+    const velocityAttribute = this.geometry.getAttribute("velocity") as BufferAttribute
+    const accelerationAttribute = this.geometry.getAttribute("acceleration") as BufferAttribute
+    const colorAttribute = this.geometry.getAttribute("color") as BufferAttribute
+    const endcolorAttribute = this.geometry.getAttribute("endColor") as BufferAttribute
+    const sizeAttribute = this.geometry.getAttribute("size") as BufferAttribute
+    const lifeTimeAttribute = this.geometry.getAttribute("lifeTime") as BufferAttribute
 
-    options = options || {};
+    options = options || {}
 
     // setup reasonable default values for all arguments
 
-    position =
-      options.position !== undefined
-        ? position.copy(options.position)
-        : position.set(0, 0, 0);
-    velocity =
-      options.velocity !== undefined
-        ? velocity.copy(options.velocity)
-        : velocity.set(0, 0, 0);
+    position = options.position !== undefined ? position.copy(options.position) : position.set(0, 0, 0)
+    velocity = options.velocity !== undefined ? velocity.copy(options.velocity) : velocity.set(0, 0, 0)
     acceleration =
-      options.acceleration !== undefined
-        ? acceleration.copy(options.acceleration)
-        : acceleration.set(0, 0, 0);
-    color =
-      options.color !== undefined
-        ? color.copy(options.color)
-        : color.set(0xffffff);
-    endColor =
-      options.endColor !== undefined
-        ? endColor.copy(options.endColor)
-        : endColor.copy(color);
+      options.acceleration !== undefined ? acceleration.copy(options.acceleration) : acceleration.set(0, 0, 0)
+    color = options.color !== undefined ? color.copy(options.color) : color.set(0xffffff)
+    endColor = options.endColor !== undefined ? endColor.copy(options.endColor) : endColor.copy(color)
 
-    const lifetime = options.lifetime ?? 5;
-    const sizeRandomness = options.sizeRandomness ?? 0;
+    const lifetime = options.lifetime ?? 5
+    const sizeRandomness = options.sizeRandomness ?? 0
 
-    let size = options.size ?? 10;
-    if (this.DPR !== undefined) size *= this.DPR;
+    let size = options.size ?? 10
+    if (this.DPR !== undefined) size *= this.DPR
 
-    const i = this.PARTICLE_CURSOR;
+    const i = this.PARTICLE_CURSOR
 
     // position
-    positionStartAttribute.setXYZ(i, position.x, position.y, position.z);
+    positionStartAttribute.setXYZ(i, position.x, position.y, position.z)
 
-    velocityAttribute.setXYZ(i, velocity.x, velocity.y, velocity.z);
+    velocityAttribute.setXYZ(i, velocity.x, velocity.y, velocity.z)
 
-    accelerationAttribute.setXYZ(
-      i,
-      acceleration.x,
-      acceleration.y,
-      acceleration.z
-    );
+    accelerationAttribute.setXYZ(i, acceleration.x, acceleration.y, acceleration.z)
 
-    colorAttribute.setXYZ(i, color.r, color.g, color.b);
+    colorAttribute.setXYZ(i, color.r, color.g, color.b)
 
-    endcolorAttribute.setXYZ(i, endColor.r, endColor.g, endColor.b);
+    endcolorAttribute.setXYZ(i, endColor.r, endColor.g, endColor.b)
 
     //size, lifetime and starttime
-    sizeAttribute.setX(i, size + this.random() * sizeRandomness);
-    lifeTimeAttribute.setX(i, lifetime);
-    startTimeAttribute.setX(i, this.time); // + this.random() * 2e-2);
+    sizeAttribute.setX(i, size + this.random() * sizeRandomness)
+    lifeTimeAttribute.setX(i, lifetime)
+    startTimeAttribute.setX(i, this.time) // + this.random() * 2e-2);
 
     // offset
-    if (this.offset === 0) this.offset = this.PARTICLE_CURSOR;
+    if (this.offset === 0) this.offset = this.PARTICLE_CURSOR
     // counter and cursor
-    this.count++;
-    this.PARTICLE_CURSOR++;
+    this.count++
+    this.PARTICLE_CURSOR++
     //wrap the cursor around
-    if (this.PARTICLE_CURSOR >= this.PARTICLE_COUNT) this.PARTICLE_CURSOR = 0;
-    this.particleUpdate = true;
+    if (this.PARTICLE_CURSOR >= this.PARTICLE_COUNT) this.PARTICLE_CURSOR = 0
+    this.particleUpdate = true
   }
 }

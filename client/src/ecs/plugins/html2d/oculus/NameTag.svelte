@@ -1,80 +1,80 @@
 <script lang="ts">
-  import { Color, HSL } from "three";
-  import { onMount, createEventDispatcher } from "svelte";
-  import { fade } from "svelte/transition";
+import { Color, type HSL } from "three"
+import { onMount, createEventDispatcher } from "svelte"
+import { fade } from "svelte/transition"
 
-  import { cleanHtml } from "~/utils/cleanHtml";
-  import { selectAll } from "~/utils/selectAll";
-  import { getAncestor } from "~/utils/hasAncestor";
-  import { worldUIMode } from "~/stores/worldUIMode";
-  import { _ } from "svelte-i18n";
+import { cleanHtml } from "~/utils/cleanHtml"
+import { selectAll } from "~/utils/selectAll"
+import { getAncestor } from "~/utils/hasAncestor"
+import { worldUIMode } from "~/stores/worldUIMode"
+import { _ } from "svelte-i18n"
 
-  export let name: string = "";
-  export let color: string;
-  export let editable: boolean = true;
+export let name: string = ""
+export let color: string
+export let editable: boolean = true
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  let fgColor = "black";
+let fgColor = "black"
 
-  let labelEl, nameTagEl;
-  let editing = false;
-  let visible = true;
+let labelEl, nameTagEl
+let editing = false
+let visible = true
 
-  $: {
-    // Choose a foreground text color with enough contrast
-    // to show up, regardless of background color
-    let hsl: HSL = { h: 0, s: 0, l: 0 };
-    new Color(color).getHSL(hsl).l;
-    if (hsl.l < 0.5) fgColor = "white";
-    else fgColor = "black";
+$: {
+  // Choose a foreground text color with enough contrast
+  // to show up, regardless of background color
+  let hsl: HSL = { h: 0, s: 0, l: 0 }
+  new Color(color).getHSL(hsl).l
+  if (hsl.l < 0.5) fgColor = "white"
+  else fgColor = "black"
+}
+
+function doneEditing() {
+  if (!editing) return
+
+  const name = labelEl.innerText.trim()
+  dispatch("change", { name })
+
+  editing = false
+}
+
+function onKeydown(event) {
+  if (
+    event.key === "Tab" ||
+    event.key === "Escape" ||
+    /**
+     * `enter` means "done", except when shift key is
+     * pressed, in which case `enter` means "newline"
+     */
+    ((event.key === "Enter" || event.key === "Return") && !event.shiftKey)
+  ) {
+    event.preventDefault()
+    event.stopPropagation()
+    event.target.blur()
   }
+}
 
-  function doneEditing() {
-    if (!editing) return;
-
-    const name = labelEl.innerText.trim();
-    dispatch("change", { name });
-
-    editing = false;
+function onPointerdown(event) {
+  if ($worldUIMode === "play" && editable && !editing) {
+    editing = true
+    setTimeout(() => {
+      labelEl.focus()
+      selectAll(labelEl)
+    }, 100)
   }
+}
 
-  function onKeydown(event) {
-    if (
-      event.key === "Tab" ||
-      event.key === "Escape" ||
-      /**
-       * `enter` means "done", except when shift key is
-       * pressed, in which case `enter` means "newline"
-       */
-      ((event.key === "Enter" || event.key === "Return") && !event.shiftKey)
-    ) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.target.blur();
+// Make NameTag appear & disappear based on size of Oculus
+onMount(() => {
+  const interval = setInterval(() => {
+    const parent = getAncestor(nameTagEl, "r-html2d")
+    if (parent) {
+      visible = parseFloat(parent.style.width) > 60
     }
-  }
-
-  function onPointerdown(event) {
-    if ($worldUIMode === "play" && editable && !editing) {
-      editing = true;
-      setTimeout(() => {
-        labelEl.focus();
-        selectAll(labelEl);
-      }, 100);
-    }
-  }
-
-  // Make NameTag appear & disappear based on size of Oculus
-  onMount(() => {
-    const interval = setInterval(() => {
-      const parent = getAncestor(nameTagEl, "r-html2d");
-      if (parent) {
-        visible = parseFloat(parent.style.width) > 60;
-      }
-    }, 151);
-    return () => clearInterval(interval);
-  });
+  }, 151)
+  return () => clearInterval(interval)
+})
 </script>
 
 <r-name-tag bind:this={nameTagEl}>

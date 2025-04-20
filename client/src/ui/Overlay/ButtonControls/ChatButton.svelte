@@ -1,15 +1,15 @@
 <script>
-  import IoIosText from "svelte-icons/io/IoIosText.svelte";
+import IoIosText from "svelte-icons/io/IoIosText.svelte"
 
-  import CircleButton from "~/ui/lib/CircleButton";
+import CircleButton from "~/ui/lib/CircleButton"
 
-  import { openDialog } from "~/stores/openDialog";
+import { openDialog } from "~/stores/openDialog"
 
-  export let unread = null;
+export let unread = null
 
-  function toggleChat() {
-    $openDialog = "chat";
-  }
+function toggleChat() {
+  $openDialog = "chat"
+}
 </script>
 
 <CircleButton on:click={toggleChat}>

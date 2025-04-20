@@ -1,3 +1,3 @@
-import { writable, Writable } from "svelte/store";
+import { writable, type Writable } from "svelte/store"
 
-export const highDefEnabled: Writable<boolean> = writable(false);
+export const highDefEnabled: Writable<boolean> = writable(false)

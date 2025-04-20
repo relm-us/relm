@@ -1,1 +1,1 @@
-export { DistanceSystem } from "./DistanceSystem";
+export { DistanceSystem } from "./DistanceSystem"

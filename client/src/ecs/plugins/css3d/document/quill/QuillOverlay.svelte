@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import IoIosArrowForward from "svelte-icons/io/IoIosArrowForward.svelte";
-  import IoIosArrowBack from "svelte-icons/io/IoIosArrowBack.svelte";
+import { createEventDispatcher } from "svelte"
+import IoIosArrowForward from "svelte-icons/io/IoIosArrowForward.svelte"
+import IoIosArrowBack from "svelte-icons/io/IoIosArrowBack.svelte"
 
-  export let cloudy: boolean = false;
-  export let showPrev: boolean = false;
-  export let showNext: boolean = false;
+export let cloudy: boolean = false
+export let showPrev: boolean = false
+export let showNext: boolean = false
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

@@ -1,44 +1,44 @@
 <script>
-  import { onMount, createEventDispatcher } from "svelte";
-  import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
+import { onMount, createEventDispatcher } from "svelte"
+import IoIosClose from "svelte-icons/io/IoIosClose.svelte"
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  let el;
-  let fullwindow = false;
+let el
+let fullwindow = false
 
-  function handleKeyDown(event) {
-    if (fullwindow && event.key === "Escape") {
-      dispatch("close");
-    }
+function handleKeyDown(event) {
+  if (fullwindow && event.key === "Escape") {
+    dispatch("close")
   }
+}
 
-  function handleClose() {
-    dispatch("close");
-  }
+function handleClose() {
+  dispatch("close")
+}
 
-  onMount(async () => {
-    // Move fullscreen element to document.body so that "fullwindow" mode can
-    // escape absolute/relative positioned elements and take up the whole window.
-    document.body.appendChild(el);
+onMount(async () => {
+  // Move fullscreen element to document.body so that "fullwindow" mode can
+  // escape absolute/relative positioned elements and take up the whole window.
+  document.body.appendChild(el)
 
-    if (document.fullscreenEnabled) {
-      el.addEventListener("fullscreenchange", (event) => {
-        if (!document.fullscreenElement) {
-          // exited full screen
-          dispatch("close");
-        }
-      });
-
-      try {
-        await el.requestFullscreen();
-      } catch (err) {
-        dispatch("close", err);
+  if (document.fullscreenEnabled) {
+    el.addEventListener("fullscreenchange", (event) => {
+      if (!document.fullscreenElement) {
+        // exited full screen
+        dispatch("close")
       }
-    } else {
-      fullwindow = true;
+    })
+
+    try {
+      await el.requestFullscreen()
+    } catch (err) {
+      dispatch("close", err)
     }
-  });
+  } else {
+    fullwindow = true
+  }
+})
 </script>
 
 <r-fullscreen bind:this={el} class:fullwindow>

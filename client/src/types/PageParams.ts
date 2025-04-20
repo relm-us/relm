@@ -3,13 +3,13 @@
  */
 export type PageParams = {
   // unique human name for the relm
-  relmName: string;
+  relmName: string
   // a named location within the relm
-  entryway: string;
+  entryway: string
   // whether or not we are inside a 'clone relm' request
-  isCloneRequest: boolean;
+  isCloneRequest: boolean
   // an optional invitation token
-  invitationToken?: string;
+  invitationToken?: string
   // an optional JWT token
-  jsonWebToken?: string;
-};
+  jsonWebToken?: string
+}

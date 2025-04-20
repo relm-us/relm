@@ -1,28 +1,29 @@
 <script lang="ts">
-  import { afterUpdate } from "svelte";
+import { afterUpdate } from "svelte"
 
-  import { attach } from "~/av/utils/mediaAttachment";
+import { attach } from "~/av/utils/mediaAttachment"
 
-  export let id = "video";
-  export let track;
-  // iOS needs this so the video doesn't automatically play full screen
-  export let muted = false;
-  export let volume = 1;
+export let track: MediaStreamTrack
 
-  let audioElement;
-  let attachedTrack = null;
+// iOS needs this so the video doesn't automatically play full screen
+export const muted = false
+export const volume = 1
+export const id = "video"
 
-  afterUpdate(() => {
-    if (track && track !== attachedTrack) {
-      if (track.attach) {
-        track.attach(audioElement);
-      } else {
-        attach(audioElement, track);
-      }
-      attachedTrack = track;
+let audioElement: HTMLAudioElement
+let attachedTrack = null
+
+afterUpdate(() => {
+  if (track && track !== attachedTrack) {
+    if ("attach" in track && typeof track.attach === "function") {
+      track.attach(audioElement)
+    } else {
+      attach(audioElement, track)
     }
-    audioElement.volume = volume;
-  });
+    attachedTrack = track
+  }
+  audioElement.volume = volume
+})
 </script>
 
 <audio

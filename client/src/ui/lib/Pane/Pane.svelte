@@ -1,33 +1,33 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+import { createEventDispatcher } from "svelte"
 
-  // https://svelte-icons.vercel.app/
-  import IoMdClose from "svelte-icons/io/IoMdClose.svelte";
-  import IoMdFlash from "svelte-icons/io/IoMdFlash.svelte";
-  import IoMdFlashOff from "svelte-icons/io/IoMdFlashOff.svelte";
+// https://svelte-icons.vercel.app/
+import IoMdClose from "svelte-icons/io/IoMdClose.svelte"
+import IoMdFlash from "svelte-icons/io/IoMdFlash.svelte"
+import IoMdFlashOff from "svelte-icons/io/IoMdFlashOff.svelte"
 
-  export let title: string;
-  export let subtitle: string = null;
-  export let minimized = false;
+export let title: string
+export let subtitle: string = null
+export let minimized = false
 
-  export let showClose = false;
-  export let showActivate = false;
-  export let isActive = true;
+export let showClose = false
+export let showActivate = false
+export let isActive = true
 
-  function onMinimize() {
-    minimized = !minimized;
-    dispatch("minimize", minimized);
-  }
+function onMinimize() {
+  minimized = !minimized
+  dispatch("minimize", minimized)
+}
 
-  function onClose() {
-    dispatch("close");
-  }
+function onClose() {
+  dispatch("close")
+}
 
-  function onToggleActive() {
-    dispatch(isActive ? "deactivate" : "activate");
-  }
+function onToggleActive() {
+  dispatch(isActive ? "deactivate" : "activate")
+}
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 </script>
 
 <r-pane>

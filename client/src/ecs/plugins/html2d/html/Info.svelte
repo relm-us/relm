@@ -1,91 +1,91 @@
 <script lang="ts">
-  import IoIosLink from "svelte-icons/io/IoIosLink.svelte";
-  import IoIosArrowDown from "svelte-icons/io/IoIosArrowDown.svelte";
-  import IoIosArrowForward from "svelte-icons/io/IoIosArrowForward.svelte";
-  import IoMdCreate from "svelte-icons/io/IoMdCreate.svelte";
-  import debounce from "lodash/debounce";
+import IoIosLink from "svelte-icons/io/IoIosLink.svelte"
+import IoIosArrowDown from "svelte-icons/io/IoIosArrowDown.svelte"
+import IoIosArrowForward from "svelte-icons/io/IoIosArrowForward.svelte"
+import IoMdCreate from "svelte-icons/io/IoMdCreate.svelte"
+import debounce from "lodash/debounce"
 
-  import { cleanHtml } from "~/utils/cleanHtml";
+import { cleanHtml } from "~/utils/cleanHtml"
 
-  import { worldManager } from "~/world";
-  import CircleButton from "~/ui/lib/CircleButton";
+import { worldManager } from "~/world"
+import CircleButton from "~/ui/lib/CircleButton"
 
-  import { Html2d } from "../components";
-  import { hasAncestor } from "~/utils/hasAncestor";
+import { Html2d } from "../components"
+import { hasAncestor } from "~/utils/hasAncestor"
 
-  export let title;
-  export let link;
-  export let content;
-  export let editable;
-  export let visible;
+export let title
+export let link
+export let content
+export let editable
+export let visible
 
-  // The entity that this Label is attached to
-  export let entity;
+// The entity that this Label is attached to
+export let entity
 
-  let containerEl;
-  let editing = false;
-  let expanded = false;
-  let clickedContainer = false;
+let containerEl
+let editing = false
+let expanded = false
+let clickedContainer = false
 
-  function toggleEditing() {
-    editing = !editing;
+function toggleEditing() {
+  editing = !editing
 
-    if (!editing) {
-      saveText();
-    }
+  if (!editing) {
+    saveText()
   }
+}
 
-  function setClickedContainer(event) {
-    if (hasAncestor(event.target, containerEl)) {
-      clickedContainer = false;
-    }
+function setClickedContainer(event) {
+  if (hasAncestor(event.target, containerEl)) {
+    clickedContainer = false
   }
+}
 
-  function cancelEditing(event) {
-    if (clickedContainer && !hasAncestor(event.target, containerEl)) {
-      editing = false;
-    }
-    clickedContainer = false;
+function cancelEditing(event) {
+  if (clickedContainer && !hasAncestor(event.target, containerEl)) {
+    editing = false
   }
+  clickedContainer = false
+}
 
-  function toggleExpanded() {
-    expanded = !expanded;
+function toggleExpanded() {
+  expanded = !expanded
+}
+
+function saveText() {
+  const component = entity.get(Html2d)
+
+  component.title = title
+  component.link = link
+  component.content = content
+
+  // Broadcast changes
+  worldManager.worldDoc.syncFrom(entity)
+}
+
+const saveTextDebounced = debounce(saveText, 1000)
+
+function notEmpty(link) {
+  return link && link.length > 0
+}
+
+function focus(el) {
+  setTimeout(() => {
+    el.focus()
+    el.select()
+  }, 0)
+}
+
+const onKeydown = (doneOnEnter: boolean) => (event) => {
+  saveTextDebounced()
+  if (event.key === "Escape" || (doneOnEnter && event.key === "Enter")) {
+    event.preventDefault()
+    editing = false
   }
+}
 
-  function saveText() {
-    const component = entity.get(Html2d);
-
-    component.title = title;
-    component.link = link;
-    component.content = content;
-
-    // Broadcast changes
-    worldManager.worldDoc.syncFrom(entity);
-  }
-
-  const saveTextDebounced = debounce(saveText, 1000);
-
-  function notEmpty(link) {
-    return link && link.length > 0;
-  }
-
-  function focus(el) {
-    setTimeout(() => {
-      el.focus();
-      el.select();
-    }, 0);
-  }
-
-  const onKeydown = (doneOnEnter: boolean) => (event) => {
-    saveTextDebounced();
-    if (event.key === "Escape" || (doneOnEnter && event.key === "Enter")) {
-      event.preventDefault();
-      editing = false;
-    }
-  };
-
-  // ignore warning about missing props
-  $$props;
+// ignore warning about missing props
+$$props
 </script>
 
 {#if visible}

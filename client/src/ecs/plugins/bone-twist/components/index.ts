@@ -1,3 +1,3 @@
-export { BoneTwist } from "./BoneTwist";
-export { BoneTwistRef } from "./BoneTwistRef";
-export { BoneTwistError } from "./BoneTwistError";
+export { BoneTwist } from "./BoneTwist"
+export { BoneTwistRef } from "./BoneTwistRef"
+export { BoneTwistError } from "./BoneTwistError"

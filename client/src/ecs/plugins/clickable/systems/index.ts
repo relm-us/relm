@@ -1,1 +1,1 @@
-export { ClickableSystem } from "./ClickableSystem";
+export { ClickableSystem } from "./ClickableSystem"

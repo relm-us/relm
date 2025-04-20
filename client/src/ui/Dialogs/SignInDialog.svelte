@@ -1,38 +1,38 @@
 <script lang="ts">
-  import type { LoginManager } from "~/identity/LoginManager";
+import type { LoginManager } from "~/identity/LoginManager"
 
-  import { createEventDispatcher } from "svelte";
-  import { _ } from "~/i18n";
+import { createEventDispatcher } from "svelte"
+import { _ } from "~/i18n"
 
-  import Button from "~/ui/lib/Button";
-  import Dialog from "~/ui/lib/Dialog";
+import Button from "~/ui/lib/Button"
+import Dialog from "~/ui/lib/Dialog"
 
-  // import ThirdPartyLogin from "./components/ThirdPartyLogin.svelte";
-  import SignInTextInput from "./components/SignInTextInput.svelte";
+// import ThirdPartyLogin from "./components/ThirdPartyLogin.svelte";
+import SignInTextInput from "./components/SignInTextInput.svelte"
 
-  export let loginManager: LoginManager;
-  export let allowSignUp = true;
-  export let canCancel = true;
+export let loginManager: LoginManager
+export let allowSignUp = true
+export let canCancel = true
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  let email: string;
-  let password: string;
+let email: string
+let password: string
 
-  async function onSignIn() {
-    const isSuccess = await loginManager.loginWithCredentials({
-      email,
-      password,
-    });
+async function onSignIn() {
+  const isSuccess = await loginManager.loginWithCredentials({
+    email,
+    password,
+  })
 
-    if (isSuccess) {
-      dispatch("success");
-    }
+  if (isSuccess) {
+    dispatch("success")
   }
+}
 
-  function onSignUp() {
-    dispatch("signup");
-  }
+function onSignUp() {
+  dispatch("signup")
+}
 </script>
 
 <Dialog title={$_("SignInDialog.title")} {canCancel} on:cancel>

@@ -1,2 +1,2 @@
-export { default } from "./Dialog.svelte";
-export { default as Footer } from "./Footer.svelte";
+export { default } from "./Dialog.svelte"
+export { default as Footer } from "./Footer.svelte"

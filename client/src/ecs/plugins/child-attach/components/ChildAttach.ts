@@ -1,14 +1,14 @@
-import { Vector3, Quaternion } from "three";
+import { Vector3, type Quaternion } from "three"
 
-import { LocalComponent, StringType } from "~/ecs/base";
-import { QuaternionType, Vector3Type } from "~/ecs/plugins/core";
+import { LocalComponent, StringType } from "~/ecs/base"
+import { QuaternionType, Vector3Type } from "~/ecs/plugins/core"
 
 export class ChildAttach extends LocalComponent {
-  entityToAttachId: string;
+  entityToAttachId: string
 
-  position: Vector3;
-  rotation: Quaternion;
-  scale: Vector3;
+  position: Vector3
+  rotation: Quaternion
+  scale: Vector3
 
   static props = {
     position: {
@@ -27,5 +27,5 @@ export class ChildAttach extends LocalComponent {
     entityToAttachId: {
       type: StringType,
     },
-  };
+  }
 }

@@ -1,5 +1,5 @@
-import { Component } from "~/ecs/base";
-import { AssetType } from "~/ecs/plugins/core";
+import { Component } from "~/ecs/base"
+import { AssetType } from "~/ecs/plugins/core"
 
 export class Skybox extends Component {
   static props = {
@@ -10,7 +10,7 @@ export class Skybox extends Component {
         accept: ".jpg,.png,.webp",
       },
     },
-  };
+  }
 
   // Doesn't show up in Editor because Skybox is a singleton entity
 }

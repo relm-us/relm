@@ -9,8 +9,8 @@ export function buildStyle(styles) {
   return str
 }
 
-export const convertCamel = str => {
-  return str.replace(/[A-Z]/g, match => `-${match.toLowerCase()}`)
+export const convertCamel = (str) => {
+  return str.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`)
 }
 
 export const debounce = (fn, milliseconds, callImmediately) => {

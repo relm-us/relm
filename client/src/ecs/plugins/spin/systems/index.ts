@@ -1,1 +1,1 @@
-export { SpinSystem } from "./SpinSystem";
+export { SpinSystem } from "./SpinSystem"

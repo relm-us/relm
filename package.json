@@ -14,10 +14,14 @@
   },
   "scripts": {
     "dev": "nf start",
-    "build": "turbo run build"
+    "build": "turbo run build",
+    "lint": "biome check"
   },
   "resolutions": {
     "bl": "4.0.3"
   },
-  "packageManager": "pnpm@9.1.1"
+  "packageManager": "pnpm@9.1.1",
+  "dependencies": {
+    "@biomejs/biome": "^1.9.4"
+  }
 }

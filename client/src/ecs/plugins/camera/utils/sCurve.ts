@@ -5,6 +5,6 @@
  * @param b a value that controls the midpoint of the curve.
  * @returns
  */
-export function sCurve(t: number, a: number = 10, b: number = 0.5): number {
-  return 1 / (1 + Math.exp(-a * (t - b)));
+export function sCurve(t: number, a = 10, b = 0.5): number {
+  return 1 / (1 + Math.exp(-a * (t - b)))
 }

@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type { LibraryAsset } from "~/types";
+import type { LibraryAsset } from "~/types"
 
-  import { assetUrl } from "~/config/assetUrl";
-  import Tooltip from "~/ui/lib/Tooltip";
+import { assetUrl } from "~/config/assetUrl"
+import Tooltip from "~/ui/lib/Tooltip"
 
-  export let result: LibraryAsset;
+export let result: LibraryAsset
 </script>
 
 <Tooltip tip={result.name} bottom>

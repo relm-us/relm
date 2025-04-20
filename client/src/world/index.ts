@@ -1,6 +1,6 @@
-import { WorldManager } from "./WorldManager";
+import { WorldManager } from "./WorldManager"
 
-export const worldManager = new WorldManager();
+export const worldManager = new WorldManager()
 
 // For debugging in JS console
-(window as any).relm = worldManager;
+;(window as any).relm = worldManager

@@ -1,12 +1,12 @@
-import { Spherical, Vector3 } from "three";
+import { Spherical, type Vector3 } from "three"
 
-import { LocalComponent } from "~/ecs/base";
-import { Vector3Type, SphericalType } from "~/ecs/plugins/core";
+import { LocalComponent } from "~/ecs/base"
+import { Vector3Type, SphericalType } from "~/ecs/plugins/core"
 
 export class Camera extends LocalComponent {
-  lookAt: Vector3;
-  center: Vector3;
-  sphere: Spherical;
+  lookAt: Vector3
+  center: Vector3
+  sphere: Spherical
 
   static props = {
     lookAt: {
@@ -21,5 +21,5 @@ export class Camera extends LocalComponent {
       type: SphericalType,
       default: new Spherical(1, 0, 0),
     },
-  };
+  }
 }

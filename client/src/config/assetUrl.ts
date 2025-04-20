@@ -1,5 +1,5 @@
-import { config } from "./index";
+import { config } from "./index"
 
 export function assetUrl(filename) {
-  return `${config.assetsUrl}/${filename}`;
+  return `${config.assetsUrl}/${filename}`
 }

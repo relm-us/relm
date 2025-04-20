@@ -1,9 +1,6 @@
-import { Writable } from "svelte/store";
-import { storedWritable } from "~/utils/storedWritable";
+import type { Writable } from "svelte/store"
+import { storedWritable } from "~/utils/storedWritable"
 
-export type DebugVisibilityState = "hidden" | "minimal" | "expanded";
+export type DebugVisibilityState = "hidden" | "minimal" | "expanded"
 
-export const debugMode: Writable<DebugVisibilityState> = storedWritable(
-  "debugMode",
-  "hidden"
-);
+export const debugMode: Writable<DebugVisibilityState> = storedWritable("debugMode", "hidden")

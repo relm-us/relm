@@ -1,15 +1,15 @@
 <script lang="ts">
-  import FaArrowsAlt from "svelte-icons/fa/FaArrowsAlt.svelte";
-  import FaCircleNotch from "svelte-icons/fa/FaCircleNotch.svelte";
+import FaArrowsAlt from "svelte-icons/fa/FaArrowsAlt.svelte"
+import FaCircleNotch from "svelte-icons/fa/FaCircleNotch.svelte"
 
-  import { globalEvents } from "~/events/globalEvents";
-  import { dragAction } from "~/stores/dragAction";
+import { globalEvents } from "~/events/globalEvents"
+import { dragAction } from "~/stores/dragAction"
 
-  import ToolButton from "./ToolButton.svelte";
+import ToolButton from "./ToolButton.svelte"
 
-  function onClick() {
-    globalEvents.emit("toggle-drag-action");
-  }
+function onClick() {
+  globalEvents.emit("toggle-drag-action")
+}
 </script>
 
 <!-- Pan/Rotate Camera Toggle-->

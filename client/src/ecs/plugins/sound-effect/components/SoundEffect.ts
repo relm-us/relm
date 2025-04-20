@@ -1,13 +1,13 @@
-import { BooleanType, Component, NumberType, StringType } from "~/ecs/base";
-import { Asset, AssetType } from "~/ecs/plugins/core";
+import { BooleanType, Component, NumberType, StringType } from "~/ecs/base"
+import { type Asset, AssetType } from "~/ecs/plugins/core"
 
 export class SoundEffect extends Component {
-  asset: Asset;
-  loading: "PRELOAD" | "LAZYLOAD" | "STREAM";
-  volume: number;
-  fadeIn: number;
-  fadeOut: number;
-  loop: boolean;
+  asset: Asset
+  loading: "PRELOAD" | "LAZYLOAD" | "STREAM"
+  volume: number
+  fadeIn: number
+  fadeOut: number
+  loop: boolean
 
   static props = {
     asset: {
@@ -67,9 +67,9 @@ export class SoundEffect extends Component {
         label: "Loop",
       },
     },
-  };
+  }
 
   static editor = {
     label: "Sound Effect",
-  };
+  }
 }

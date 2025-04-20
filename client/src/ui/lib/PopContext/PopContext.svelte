@@ -1,10 +1,10 @@
 <script lang="ts">
-  import Portal from "~/ui/lib/Portal.svelte";
+import Portal from "~/ui/lib/Portal.svelte"
 
-  export let width: number = 120;
-  export let x: number;
-  export let y: number;
-  export let triangleBottom: boolean = true;
+export let width: number = 120
+export let x: number
+export let y: number
+export let triangleBottom: boolean = true
 </script>
 
 <Portal>

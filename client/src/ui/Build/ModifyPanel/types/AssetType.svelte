@@ -1,76 +1,76 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import byteSize from "byte-size";
-  import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
+import { createEventDispatcher } from "svelte"
+import byteSize from "byte-size"
+import IoIosClose from "svelte-icons/io/IoIosClose.svelte"
 
-  // import Capsule from "~/ui/lib/Capsule";
-  import TextInput from "~/ui/lib/TextInput/TextInput.svelte";
-  import UploadButton from "~/ui/Build/shared/UploadButton";
+// import Capsule from "~/ui/lib/Capsule";
+import TextInput from "~/ui/lib/TextInput/TextInput.svelte"
+import UploadButton from "~/ui/Build/shared/UploadButton"
 
-  import { _ } from "~/i18n";
+import { _ } from "~/i18n"
 
-  export let key: string;
-  export let component;
-  export let prop;
+export let key: string
+export let component
+export let prop
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  const FILENAME_WITH_SIZE_RE = /^.+-([^\.]+)\..{1,5}$/;
+const FILENAME_WITH_SIZE_RE = /^.+-([^\.]+)\..{1,5}$/
 
-  let initialValue = component[key].url;
+let initialValue = component[key].url
 
-  let value: string;
-  $: value = component[key].url;
+let value: string
+$: value = component[key].url
 
-  const onUpload = ({ detail }) => {
-    for (const result of detail.results) {
-      if (result.types.webp) {
-        setAssetUrl(result.types.webp);
-      } else if (result.types.gltf) {
-        setAssetUrl(result.types.gltf);
-      } else if (result.types.sound) {
-        setAssetUrl(result.types.sound);
-      }
-    }
-  };
-
-  const onInputChange = (event) => {
-    let url = event.detail;
-    if (url.match(/^\s*$/)) value = "";
-    setAssetUrl(url);
-  };
-
-  function setAssetUrl(value) {
-    Object.assign(component[key], {
-      name: "",
-      filename: "",
-      url: value,
-    });
-    component[key].url = value;
-    component.modified();
-    dispatch("modified");
-  }
-
-  function onDeleteAsset() {
-    setAssetUrl("");
-  }
-
-  const onInputCancel = (event) => {
-    value = initialValue;
-  };
-
-  function formatSizeInKb(filename) {
-    if (filename) {
-      const match = filename.match(FILENAME_WITH_SIZE_RE);
-      if (match) {
-        const size = byteSize(parseFloat(match[1]));
-        return `${size.value} ${size.unit}`;
-      }
+const onUpload = ({ detail }) => {
+  for (const result of detail.results) {
+    if (result.types.webp) {
+      setAssetUrl(result.types.webp)
+    } else if (result.types.gltf) {
+      setAssetUrl(result.types.gltf)
+    } else if (result.types.sound) {
+      setAssetUrl(result.types.sound)
     }
   }
+}
 
-  // ignore warning about missing props
-  $$props;
+const onInputChange = (event) => {
+  let url = event.detail
+  if (url.match(/^\s*$/)) value = ""
+  setAssetUrl(url)
+}
+
+function setAssetUrl(value) {
+  Object.assign(component[key], {
+    name: "",
+    filename: "",
+    url: value,
+  })
+  component[key].url = value
+  component.modified()
+  dispatch("modified")
+}
+
+function onDeleteAsset() {
+  setAssetUrl("")
+}
+
+const onInputCancel = (event) => {
+  value = initialValue
+}
+
+function formatSizeInKb(filename) {
+  if (filename) {
+    const match = filename.match(FILENAME_WITH_SIZE_RE)
+    if (match) {
+      const size = byteSize(parseFloat(match[1]))
+      return `${size.value} ${size.unit}`
+    }
+  }
+}
+
+// ignore warning about missing props
+$$props
 </script>
 
 <r-asset-type>

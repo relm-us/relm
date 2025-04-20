@@ -1,5 +1,5 @@
-const escapeRE = /[.*+?^${}()|[\]\\]/g;
+const escapeRE = /[.*+?^${}()|[\]\\]/g
 
 export function escapeRegExp(string) {
-  return string.replace(escapeRE, "\\$&"); // $& means the whole matched string
+  return string.replace(escapeRE, "\\$&") // $& means the whole matched string
 }

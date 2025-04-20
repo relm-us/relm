@@ -1,43 +1,35 @@
-import { Color, Vector3 } from "three";
+import { Color, Vector3 } from "three"
 
-import {
-  Component,
-  LocalComponent,
-  StateComponent,
-  RefType,
-  StringType,
-  BooleanType,
-  NumberType,
-} from "~/ecs/base";
-import { Vector3Type } from "~/ecs/plugins/core";
+import { Component, LocalComponent, StateComponent, RefType, StringType, BooleanType, NumberType } from "~/ecs/base"
+import { Vector3Type } from "~/ecs/plugins/core"
 
-import { textures } from "../textures";
+import { textures } from "../textures"
 
 export class Particles2 extends Component {
-  pattern: "STILL" | "EXPLODE" | "RING" | "TRAILS" | "RAINING";
-  params: Vector3;
+  pattern: "STILL" | "EXPLODE" | "RING" | "TRAILS" | "RAINING"
+  params: Vector3
 
-  sprite: string;
+  sprite: string
 
-  onTop: boolean;
+  onTop: boolean
 
-  startColor: string;
-  endColor: string;
+  startColor: string
+  endColor: string
 
-  offset: Vector3;
-  sizeMin: number;
-  sizeMax: number;
-  initialCount: number;
-  rate: number;
-  maxParticles: number;
-  particleLt: number;
-  effectLt: number;
-  fadeIn: number;
-  fadeOut: number;
+  offset: Vector3
+  sizeMin: number
+  sizeMax: number
+  initialCount: number
+  rate: number
+  maxParticles: number
+  particleLt: number
+  effectLt: number
+  fadeIn: number
+  fadeOut: number
 
   // cache
-  gamma: number = 0;
-  theta: number = 0;
+  gamma: number = 0
+  theta: number = 0
 
   static props = {
     pattern: {
@@ -189,11 +181,11 @@ export class Particles2 extends Component {
         label: "Fade Out (sec)",
       },
     },
-  };
+  }
 
   static editor = {
     label: "Particles",
-  };
+  }
 }
 
 export class ParticlesRef extends StateComponent {
@@ -201,7 +193,7 @@ export class ParticlesRef extends StateComponent {
     value: {
       type: RefType,
     },
-  };
+  }
 }
 
 export class ParticlesLoading extends LocalComponent {}

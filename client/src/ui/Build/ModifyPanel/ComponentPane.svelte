@@ -1,122 +1,119 @@
 <script lang="ts">
-  import type { Entity } from "~/ecs/base";
-  import type { ComponentClass } from "~/ecs/base/Component";
+import type { Entity } from "~/ecs/base"
+import type { ComponentClass } from "~/ecs/base/Component"
 
-  import { onMount } from "svelte";
-  import { createEventDispatcher } from "svelte";
+import { onMount } from "svelte"
+import { createEventDispatcher } from "svelte"
 
-  import Pane from "~/ui/lib/Pane";
+import Pane from "~/ui/lib/Pane"
 
-  import Property from "./Property.svelte";
-  import { Asset } from "~/ecs/plugins/core";
+import Property from "./Property.svelte"
+import { Asset } from "~/ecs/plugins/core"
 
-  export let Component: ComponentClass;
-  export let entity: Entity;
+export let Component: ComponentClass
+export let entity: Entity
 
-  let component;
-  $: component = entity.components.get(Component);
+let component
+$: component = entity.components.get(Component)
 
-  let isActive;
-  $: isActive = checkActive(entity, Component.name);
+let isActive
+$: isActive = checkActive(entity, Component.name)
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  function propRequires(prop) {
-    return prop.editor && prop.editor.requires;
+function propRequires(prop) {
+  return prop.editor && prop.editor.requires
+}
+
+function propVisible(prop) {
+  const reqs = propRequires(prop)
+
+  // by default, all props are shown (no `requires` constraints)
+  if (!reqs) {
+    // only show properties that have editor attributes
+    return Boolean(prop.editor)
   }
 
-  function propVisible(prop) {
-    const reqs = propRequires(prop);
+  // if the `requires` field exists, check if we meet criteria
+  return prop.editor.requires.reduce((acc, item) => {
+    if (acc) return acc
 
-    // by default, all props are shown (no `requires` constraints)
-    if (!reqs) {
-      // only show properties that have editor attributes
-      return Boolean(prop.editor);
-    }
+    const property = component && component[item.prop]
+    if (property === undefined) return acc
 
-    // if the `requires` field exists, check if we meet criteria
-    return prop.editor.requires.reduce((acc, item) => {
-      if (acc) return acc;
-
-      const property = component && component[item.prop];
-      if (property === undefined) return acc;
-
-      if (item.value === undefined) {
-        // The prop just needs to exist, it doesn't need to equal a value
-        if (property instanceof Asset) {
-          return property.url !== "";
-        }
-        return Boolean(property);
-      } else {
-        return property === item.value;
+    if (item.value === undefined) {
+      // The prop just needs to exist, it doesn't need to equal a value
+      if (property instanceof Asset) {
+        return property.url !== ""
       }
-    }, false);
-  }
-
-  function propAttrs(prop) {
-    const reqs = propRequires(prop) || [];
-
-    let attrs = {};
-    for (const item of reqs) {
-      if (
-        (item.value !== undefined && component[item.prop] === item.value) ||
-        item.value === undefined
-      ) {
-        attrs = item;
-      }
+      return Boolean(property)
+    } else {
+      return property === item.value
     }
+  }, false)
+}
 
-    return attrs;
+function propAttrs(prop) {
+  const reqs = propRequires(prop) || []
+
+  let attrs = {}
+  for (const item of reqs) {
+    if ((item.value !== undefined && component[item.prop] === item.value) || item.value === undefined) {
+      attrs = item
+    }
   }
 
-  const onModified = () => {
-    Component = Component;
-    component = component;
-    dispatch("modified");
-  };
+  return attrs
+}
 
-  function canDestroy() {
-    return !["Transform"].includes(Component.name);
-  }
+const onModified = () => {
+  Component = Component
+  component = component
+  dispatch("modified")
+}
 
-  // If a Component has a corresponding Activator Component, return it
-  function getActivator(entity, componentName) {
-    return entity.world.components.activators[componentName];
-  }
+function canDestroy() {
+  return !["Transform"].includes(Component.name)
+}
 
-  function canActivate(entity, componentName) {
-    return Boolean(getActivator(entity, componentName));
-  }
+// If a Component has a corresponding Activator Component, return it
+function getActivator(entity, componentName) {
+  return entity.world.components.activators[componentName]
+}
 
-  function checkActive(entity, componentName) {
-    const Activator = getActivator(entity, componentName);
-    return entity.components.has(Activator);
-  }
+function canActivate(entity, componentName) {
+  return Boolean(getActivator(entity, componentName))
+}
 
-  function activate(entity, componentName) {
-    const Activator = getActivator(entity, componentName);
-    entity.add(Activator);
-    isActive = true;
-    onModified();
-  }
+function checkActive(entity, componentName) {
+  const Activator = getActivator(entity, componentName)
+  return entity.components.has(Activator)
+}
 
-  function deactivate(entity, componentName) {
-    const Activator = getActivator(entity, componentName);
-    entity.maybeRemove(Activator);
-    isActive = false;
-    onModified();
-  }
+function activate(entity, componentName) {
+  const Activator = getActivator(entity, componentName)
+  entity.add(Activator)
+  isActive = true
+  onModified()
+}
 
-  if (Component.name === "Transform") {
-    const UPDATE_FREQUENCY_MS = 400;
-    // Regularly update our panel data
-    onMount(() => {
-      const interval = setInterval(() => {
-        component = component;
-      }, UPDATE_FREQUENCY_MS);
-      return () => clearInterval(interval);
-    });
-  }
+function deactivate(entity, componentName) {
+  const Activator = getActivator(entity, componentName)
+  entity.maybeRemove(Activator)
+  isActive = false
+  onModified()
+}
+
+if (Component.name === "Transform") {
+  const UPDATE_FREQUENCY_MS = 400
+  // Regularly update our panel data
+  onMount(() => {
+    const interval = setInterval(() => {
+      component = component
+    }, UPDATE_FREQUENCY_MS)
+    return () => clearInterval(interval)
+  })
+}
 </script>
 
 <Pane

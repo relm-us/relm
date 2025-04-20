@@ -7,8 +7,8 @@
  */
 export function first<T>(set: Set<T>): T {
   if (set.size > 0) {
-    const item = set.values().next().value;
-    return item;
+    const item = set.values().next().value
+    return item
   }
 }
 /**
@@ -18,11 +18,11 @@ export function first<T>(set: Set<T>): T {
  * @param {Set} setB
  */
 export function union<T>(setA: Set<T>, setB: Set<T>): Set<T> {
-  let _union = new Set(setA);
-  for (let elem of setB) {
-    _union.add(elem);
+  const _union = new Set(setA)
+  for (const elem of setB) {
+    _union.add(elem)
   }
-  return _union;
+  return _union
 }
 
 /**
@@ -32,11 +32,11 @@ export function union<T>(setA: Set<T>, setB: Set<T>): Set<T> {
  * @param {Set} setB
  */
 export function difference<T>(setA: Set<T>, setB: Set<T>): Set<T> {
-  let _difference = new Set<T>(setA);
-  for (let elem of setB) {
-    _difference.delete(elem);
+  const _difference = new Set<T>(setA)
+  for (const elem of setB) {
+    _difference.delete(elem)
   }
-  return _difference;
+  return _difference
 }
 
 /**
@@ -46,13 +46,13 @@ export function difference<T>(setA: Set<T>, setB: Set<T>): Set<T> {
  * @param {Set} setB
  */
 export function intersection<T>(setA: Set<T>, setB: Set<T>): Set<T> {
-  let _intersection = new Set<T>();
-  for (let elem of setB) {
+  const _intersection = new Set<T>()
+  for (const elem of setB) {
     if (setA.has(elem)) {
-      _intersection.add(elem);
+      _intersection.add(elem)
     }
   }
-  return _intersection;
+  return _intersection
 }
 
 /**
@@ -62,7 +62,7 @@ export function intersection<T>(setA: Set<T>, setB: Set<T>): Set<T> {
  * @param {Set} setB
  */
 export function equals<T>(setA: Set<T>, setB: Set<T>): boolean {
-  if (setA.size !== setB.size) return false;
-  for (var a of setA) if (!setB.has(a)) return false;
-  return true;
+  if (setA.size !== setB.size) return false
+  for (const a of setA) if (!setB.has(a)) return false
+  return true
 }

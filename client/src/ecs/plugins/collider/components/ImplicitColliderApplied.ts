@@ -1,10 +1,10 @@
-import type { Collider, RigidBody } from "@dimforge/rapier3d";
+import type { Collider, RigidBody } from "@dimforge/rapier3d"
 
-import { RefType, StateComponent } from "~/ecs/base";
+import { RefType, StateComponent } from "~/ecs/base"
 
 export class ImplicitColliderApplied extends StateComponent {
-  body: RigidBody;
-  collider: Collider;
+  body: RigidBody
+  collider: Collider
 
   static props = {
     body: {
@@ -14,5 +14,5 @@ export class ImplicitColliderApplied extends StateComponent {
     collider: {
       type: RefType,
     },
-  };
+  }
 }

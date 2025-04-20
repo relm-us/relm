@@ -1,2 +1,2 @@
-export { Portal } from "./Portal";
-export { PortalActive } from "./PortalActive";
+export { Portal } from "./Portal"
+export { PortalActive } from "./PortalActive"

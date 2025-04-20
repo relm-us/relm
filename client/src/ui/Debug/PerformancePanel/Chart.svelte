@@ -1,25 +1,19 @@
 <script>
-  export let data = [];
-  export let height = 50;
-  export let maximum;
+export let data = []
+export let height = 50
+export let maximum
 
-  let maxSoFar = 50;
-  $: data.forEach((datum) => {
-    if (datum > maxSoFar) maxSoFar = Math.ceil(datum / 100) * 100;
-  });
+let maxSoFar = 50
+$: data.forEach((datum) => {
+  if (datum > maxSoFar) maxSoFar = Math.ceil(datum / 100) * 100
+})
 
-  let maxInUse = 50;
-  $: maxInUse = maximum === undefined ? maxSoFar : maximum;
+let maxInUse = 50
+$: maxInUse = maximum === undefined ? maxSoFar : maximum
 
-  function makePath(data, maxInUse, height) {
-    return data
-      .map(
-        (datum, i) =>
-          (i === 0 ? "M" : "L") +
-          `${i * 2},${height - (datum / maxInUse) * height + 1}`
-      )
-      .join("");
-  }
+function makePath(data, maxInUse, height) {
+  return data.map((datum, i) => (i === 0 ? "M" : "L") + `${i * 2},${height - (datum / maxInUse) * height + 1}`).join("")
+}
 </script>
 
 <style>

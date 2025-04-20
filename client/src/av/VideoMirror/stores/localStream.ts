@@ -1,3 +1,3 @@
-import { writable, type Writable } from "svelte/store";
+import { writable, type Writable } from "svelte/store"
 
-export const localStream: Writable<MediaStream> = writable(null);
+export const localStream: Writable<MediaStream> = writable(null)

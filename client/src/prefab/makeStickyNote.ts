@@ -1,18 +1,15 @@
-import { nanoid } from "nanoid";
-import { Vector3, Vector2, Color } from "three";
-import { Draggable } from "~/ecs/plugins/clickable";
+import { nanoid } from "nanoid"
+import { Vector3, Vector2, Color } from "three"
+import { Draggable } from "~/ecs/plugins/clickable"
 
-import { Transform } from "~/ecs/plugins/core";
-import { CssPlane, Document } from "~/ecs/plugins/css3d";
+import { Transform } from "~/ecs/plugins/core"
+import { CssPlane, Document } from "~/ecs/plugins/css3d"
 
-import { makeEntity } from "./makeEntity";
+import { makeEntity } from "./makeEntity"
 
-export function makeStickyNote(
-  world,
-  { x = 0, y = 0, z = 0, w = 1.5, h = 1.5, color = "#f1ec78" }
-) {
-  const linearColor = new Color(color);
-  linearColor.convertSRGBToLinear();
+export function makeStickyNote(world, { x = 0, y = 0, z = 0, w = 1.5, h = 1.5, color = "#f1ec78" }) {
+  const linearColor = new Color(color)
+  linearColor.convertSRGBToLinear()
 
   return makeEntity(world, "Sticky Note")
     .add(Transform, {
@@ -37,5 +34,5 @@ export function makeStickyNote(
       rectangleSize: new Vector2(w - 0.2, h - 0.2),
       scale: 1.0,
     })
-    .add(Draggable);
+    .add(Draggable)
 }

@@ -1,21 +1,21 @@
 <script lang="ts">
-  import type AvSettingsButton from "./AVSettingsButton.svelte";
+import type AvSettingsButton from "./AVSettingsButton.svelte"
 
-  import CircleButton from "~/ui/lib/CircleButton";
-  import { IconAudioEnabled, IconAudioDisabled } from "~/av/icons";
-  import { localAudioTrack } from "~/av/VideoMirror";
-  import { worldManager } from "~/world";
+import CircleButton from "~/ui/lib/CircleButton"
+import { IconAudioEnabled, IconAudioDisabled } from "~/av/icons"
+import { localAudioTrack } from "~/av/VideoMirror"
+import { worldManager } from "~/world"
 
-  export let enabled = false;
-  export let avSettingsButton: AvSettingsButton = null;
+export let enabled = false
+export let avSettingsButton: AvSettingsButton = null
 
-  function toggle() {
-    if ($localAudioTrack) {
-      enabled = worldManager.participants.toggleMic();
-    } else {
-      avSettingsButton?.drawAttention();
-    }
+function toggle() {
+  if ($localAudioTrack) {
+    enabled = worldManager.participants.toggleMic()
+  } else {
+    avSettingsButton?.drawAttention()
   }
+}
 </script>
 
 <div class:muted={!enabled}>

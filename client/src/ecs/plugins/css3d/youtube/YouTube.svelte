@@ -1,5 +1,5 @@
 <script context="module">
-    let youtubeInstances = 0;
+let youtubeInstances = 0
 </script>
 
 <script lang="ts">

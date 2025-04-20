@@ -1,1 +1,1 @@
-export { SkyboxSystem } from "./SkyboxSystem";
+export { SkyboxSystem } from "./SkyboxSystem"

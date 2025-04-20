@@ -1,20 +1,20 @@
-import type { AuthenticationHeaders } from "relm-common";
+import type { AuthenticationHeaders } from "relm-common"
 
-import { PageParams } from "~/types";
-import { config } from "~/config";
+import type { PageParams } from "~/types"
+import { config } from "~/config"
 
-import { Dispatch } from "../ProgramTypes";
-import { RelmRestAPI } from "../RelmRestAPI";
+import type { Dispatch } from "../ProgramTypes"
+import { RelmRestAPI } from "../RelmRestAPI"
 
 export const getRelmPermitsAndMetadata =
   (pageParams: PageParams, authHeaders: AuthenticationHeaders) => async (dispatch: Dispatch) => {
-    const api = new RelmRestAPI(config.serverUrl, authHeaders, pageParams.relmName);
+    const api = new RelmRestAPI(config.serverUrl, authHeaders, pageParams.relmName)
 
-    let result;
+    let result
     try {
-      result = await api.getPermitsAndMeta();
+      result = await api.getPermitsAndMeta()
     } catch (err) {
-      return dispatch({ id: "error", message: err.message });
+      return dispatch({ id: "error", message: err.message })
     }
 
     if (
@@ -24,7 +24,7 @@ export const getRelmPermitsAndMetadata =
       return dispatch({
         id: "error",
         message: `Sorry! It looks like you don't have permission to enter here.`,
-      });
+      })
     }
 
     try {
@@ -37,8 +37,8 @@ export const getRelmPermitsAndMetadata =
         assetsMax: result.relm.assetsCount,
         overrideParticipantName: result.jwt?.username,
         twilioToken: result.twilioToken,
-      });
+      })
     } catch (err) {
-      return dispatch({ id: "error", message: err.message });
+      return dispatch({ id: "error", message: err.message })
     }
-  };
+  }

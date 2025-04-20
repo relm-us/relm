@@ -1,12 +1,12 @@
-import { createPlugin } from "~/ecs/base";
-import CorePlugin from "~/ecs/plugins/core";
+import { createPlugin } from "~/ecs/base"
+import CorePlugin from "~/ecs/plugins/core"
 
-import * as Components from "./components";
-import * as Systems from "./systems";
+import * as Components from "./components"
+import * as Systems from "./systems"
 
-export * from "./components";
+export * from "./components"
 
-export { Components };
+export { Components }
 
 /**
  * Identifies an entity as clickable in play-mode. What happens when the
@@ -18,4 +18,4 @@ export default createPlugin({
   plugins: [CorePlugin],
   systems: Object.values(Systems),
   components: Object.values(Components),
-});
+})

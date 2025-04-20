@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { cleanHtml } from "~/utils/cleanHtml";
+import { cleanHtml } from "~/utils/cleanHtml"
 
-  export let name: string;
-  export let content: string;
-  export let color: string;
+export let name: string
+export let content: string
+export let color: string
 </script>
 
 <message>

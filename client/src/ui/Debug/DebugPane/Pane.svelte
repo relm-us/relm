@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+import { createEventDispatcher } from "svelte"
 
-  // https://svelte-icons.vercel.app/
-  import IoIosArrowDown from "svelte-icons/io/IoIosArrowDown.svelte";
-  import IoIosArrowUp from "svelte-icons/io/IoIosArrowUp.svelte";
+// https://svelte-icons.vercel.app/
+import IoIosArrowDown from "svelte-icons/io/IoIosArrowDown.svelte"
+import IoIosArrowUp from "svelte-icons/io/IoIosArrowUp.svelte"
 
-  export let title: string;
-  export let subtitle: string = null;
-  export let minimized = false;
-  export let showMinimize = false;
+export let title: string
+export let subtitle: string = null
+export let minimized = false
+export let showMinimize = false
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 </script>
 
 <pane>

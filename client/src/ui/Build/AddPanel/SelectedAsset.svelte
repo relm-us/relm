@@ -1,28 +1,28 @@
 <script lang="ts">
-  import { _ } from "svelte-i18n";
-  import IoIosAdd from "svelte-icons/io/IoIosAdd.svelte";
+import { _ } from "svelte-i18n"
+import IoIosAdd from "svelte-icons/io/IoIosAdd.svelte"
 
-  import { assetUrl } from "~/config/assetUrl";
-  import Button from "~/ui/lib/Button";
-  import { librarySearch, libraryPage } from "~/stores/libraryAssets";
+import { assetUrl } from "~/config/assetUrl"
+import Button from "~/ui/lib/Button"
+import { librarySearch, libraryPage } from "~/stores/libraryAssets"
 
-  import { copyBuffer } from "~/stores/copyBuffer";
-  import { paste } from "~/events/input/CopyPasteListener/paste";
-  import { deserializeCopyBuffer } from "~/events/input/CopyPasteListener/common";
+import { copyBuffer } from "~/stores/copyBuffer"
+import { paste } from "~/events/input/CopyPasteListener/paste"
+import { deserializeCopyBuffer } from "~/events/input/CopyPasteListener/common"
 
-  import Tag from "./Tag.svelte";
+import Tag from "./Tag.svelte"
 
-  export let asset;
+export let asset
 
-  const searchTag = (tag: string) => () => {
-    $librarySearch = `#${tag}`;
-    $libraryPage = 0;
-  };
+const searchTag = (tag: string) => () => {
+  $librarySearch = `#${tag}`
+  $libraryPage = 0
+}
 
-  function addAsset() {
-    copyBuffer.set(deserializeCopyBuffer(JSON.stringify(asset.ecsProperties)));
-    paste();
-  }
+function addAsset() {
+  copyBuffer.set(deserializeCopyBuffer(JSON.stringify(asset.ecsProperties)))
+  paste()
+}
 </script>
 
 <r-selected>

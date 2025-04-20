@@ -1,44 +1,44 @@
 <script lang="ts">
-  import FaUserAlt from "svelte-icons/fa/FaUserAlt.svelte";
-  import { locale, _ } from "svelte-i18n";
+import FaUserAlt from "svelte-icons/fa/FaUserAlt.svelte"
+import { locale, _ } from "svelte-i18n"
 
-  import { worldManager } from "~/world";
-  import { openDialog } from "~/stores/openDialog";
-  import { connectedAccount } from "~/stores/connectedAccount";
-  import { graphicsQuality } from "~/stores/graphicsQuality";
+import { worldManager } from "~/world"
+import { openDialog } from "~/stores/openDialog"
+import { connectedAccount } from "~/stores/connectedAccount"
+import { graphicsQuality } from "~/stores/graphicsQuality"
 
-  import PopContext from "~/ui/lib/PopContext";
-  import Tooltip from "~/ui/lib/Tooltip";
-  import CircleButton from "~/ui/lib/CircleButton";
-  import { hasAncestor } from "~/utils/hasAncestor";
-  import { languageMap } from "~/i18n";
+import PopContext from "~/ui/lib/PopContext"
+import Tooltip from "~/ui/lib/Tooltip"
+import CircleButton from "~/ui/lib/CircleButton"
+import { hasAncestor } from "~/utils/hasAncestor"
+import { languageMap } from "~/i18n"
 
-  let pop = false,
-    x = 0,
-    y = 0,
-    triangleBottom = true;
-  let button;
+let pop = false,
+  x = 0,
+  y = 0,
+  triangleBottom = true
+let button
 
-  function maybeClose(event) {
-    if (hasAncestor(event.target, button)) return;
-    if (pop) {
-      pop = false;
-      event.stopPropagation();
-    }
+function maybeClose(event) {
+  if (hasAncestor(event.target, button)) return
+  if (pop) {
+    pop = false
+    event.stopPropagation()
   }
+}
 
-  function onClick(event) {
-    const rect = button.getBoundingClientRect();
-    x = rect.x + 26 /* half-width of button */;
-    y = rect.y - 14 /* height of triangle */;
-    if (x + 120 > window.innerWidth) {
-      x = window.innerWidth - 120;
-      triangleBottom = false;
-    } else {
-      triangleBottom = true;
-    }
-    pop = !pop;
+function onClick(event) {
+  const rect = button.getBoundingClientRect()
+  x = rect.x + 26 /* half-width of button */
+  y = rect.y - 14 /* height of triangle */
+  if (x + 120 > window.innerWidth) {
+    x = window.innerWidth - 120
+    triangleBottom = false
+  } else {
+    triangleBottom = true
   }
+  pop = !pop
+}
 </script>
 
 <r-pop-button>

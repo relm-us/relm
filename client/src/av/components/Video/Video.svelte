@@ -1,32 +1,32 @@
 <script lang="ts">
-  import { afterUpdate } from "svelte";
+import { afterUpdate } from "svelte"
 
-  import { attach } from "~/av/utils/mediaAttachment";
+import { attach } from "~/av/utils/mediaAttachment"
 
-  export let track;
-  export let mirror = false;
-  export let contain = false;
-  export let fullscreen = false;
-  export let muted = true;
-  export let round = false;
-  export let visible = false;
+export let track
+export let mirror = false
+export let contain = false
+export let fullscreen = false
+export let muted = true
+export let round = false
+export let visible = false
 
-  let videoElement;
-  let initiallyVisible = visible;
-  let eventuallyVisible = visible;
-  let attachedTrack = null;
+let videoElement
+let initiallyVisible = visible
+let eventuallyVisible = visible
+let attachedTrack = null
 
-  afterUpdate(() => {
-    if (track && attachedTrack !== track) {
-      if (track.attach) {
-        track.attach(videoElement);
-      } else {
-        attach(videoElement, track);
-      }
-      eventuallyVisible = true;
-      attachedTrack = track;
+afterUpdate(() => {
+  if (track && attachedTrack !== track) {
+    if (track.attach) {
+      track.attach(videoElement)
+    } else {
+      attach(videoElement, track)
     }
-  });
+    eventuallyVisible = true
+    attachedTrack = track
+  }
+})
 </script>
 
 <!-- svelte-ignore a11y-media-has-caption -->

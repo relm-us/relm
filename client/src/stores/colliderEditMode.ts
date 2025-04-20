@@ -1,6 +1,6 @@
-import { writable, Writable } from "svelte/store";
+import { writable, type Writable } from "svelte/store"
 
-export type ColliderEditMode = "normal" | "invisible" | "ground";
+export type ColliderEditMode = "normal" | "invisible" | "ground"
 
 // Set colliders to be visible (i.e. in build mode)
-export const colliderEditMode: Writable<ColliderEditMode> = writable("normal");
+export const colliderEditMode: Writable<ColliderEditMode> = writable("normal")

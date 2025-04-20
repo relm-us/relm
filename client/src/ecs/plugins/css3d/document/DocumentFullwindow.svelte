@@ -1,33 +1,33 @@
 <script lang="ts">
-  import { Vector2 } from "three";
-  import { slide, fly } from "svelte/transition";
+import type { Vector2 } from "three"
+import { slide, fly } from "svelte/transition"
 
-  import Fullwindow from "~/ui/lib/Fullwindow.svelte";
+import Fullwindow from "~/ui/lib/Fullwindow.svelte"
 
-  import QuillPage from "./quill/QuillPage.svelte";
+import QuillPage from "./quill/QuillPage.svelte"
 
-  export let docId: string;
-  export let placeholder: string;
-  export let bgColor: string;
-  export let editable: boolean;
-  export let kind: string = "ROUNDED";
-  export let radius: number;
-  export let size: Vector2;
+export let docId: string
+export let placeholder: string
+export let bgColor: string
+export let editable: boolean
+export let kind: string = "ROUNDED"
+export let radius: number
+export let size: Vector2
 
-  export let flyTransition: boolean = false;
+export let flyTransition: boolean = false
 
-  function slideOrFly(node, options) {
-    if (flyTransition) {
-      return fly(node, options);
-    } else {
-      return slide(node, options);
-    }
+function slideOrFly(node, options) {
+  if (flyTransition) {
+    return fly(node, options)
   }
 
-  let editor = null;
-  let toolbar = null;
+  return slide(node, options)
+}
 
-  $: if (editor) editor.enable(editable);
+let editor = null
+let toolbar = null
+
+$: if (editor) editor.enable(editable)
 </script>
 
 <Fullwindow on:close>

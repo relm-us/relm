@@ -1,13 +1,13 @@
 <script lang="ts">
-  export let key;
-  export let component;
-  export let prop;
+export let key
+export let component
+export let prop
 
-  let value;
-  $: value = component[key];
+let value
+$: value = component[key]
 
-  // ignore warning about missing props
-  $$props;
+// ignore warning about missing props
+$$props
 </script>
 
 <r-misc-type>

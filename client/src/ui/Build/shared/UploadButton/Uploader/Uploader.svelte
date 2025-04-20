@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { config } from "~/config";
-  import Uppy from "./Uppy.svelte";
+import { config } from "~/config"
+import Uppy from "./Uppy.svelte"
 
-  let visible = false;
+let visible = false
 
-  export function open() {
-    visible = true;
-  }
+export function open() {
+  visible = true
+}
 
-  export function close() {
-    visible = false;
-  }
+export function close() {
+  visible = false
+}
 </script>
 
 {#if visible}

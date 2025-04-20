@@ -1,54 +1,49 @@
-import type { Entity } from "~/ecs/base";
-import type { DecoratedECSWorld } from "~/types";
-import type { ColliderParams } from "./types";
+import type { Entity } from "~/ecs/base"
+import type { DecoratedECSWorld } from "~/types"
+import type { ColliderParams } from "./types"
 
-import { Object3D, Box3, Quaternion, Vector3 } from "three";
+import { type Object3D, Box3, Quaternion, Vector3 } from "three"
 
-import { Object3DRef, Transform } from "~/ecs/plugins/core";
+import { Object3DRef, Transform } from "~/ecs/plugins/core"
 
-import { Collider3 } from "../components";
-import { makeExplicitColliderParams } from "./makeExplicitColliderParams";
+import { Collider3 } from "../components"
+import { makeExplicitColliderParams } from "./makeExplicitColliderParams"
 
-const _b3 = new Box3();
+const _b3 = new Box3()
 
-const logEnabled = (localStorage.getItem("debug") || "")
-  .split(":")
-  .includes("collider");
+const logEnabled = (localStorage.getItem("debug") || "").split(":").includes("collider")
 
-export function makeImplicitColliderParams(
-  world: DecoratedECSWorld,
-  entity: Entity
-): ColliderParams {
-  const transform: Transform = entity.get(Transform);
+export function makeImplicitColliderParams(world: DecoratedECSWorld, entity: Entity): ColliderParams {
+  const transform: Transform = entity.get(Transform)
 
-  let rotation = new Quaternion();
-  let offset = new Vector3();
-  let scale = new Vector3(1, 1, 1);
+  const rotation = new Quaternion()
+  const offset = new Vector3()
+  const scale = new Vector3(1, 1, 1)
 
   // We only use Collider3 transiently here; it is not added as a Component
   const spec = new Collider3(world, {
     kind: "ETHEREAL",
-  });
-  const object3d: Object3D = entity.get(Object3DRef).value;
+  })
+  const object3d: Object3D = entity.get(Object3DRef).value
 
-  _b3.setFromObject(object3d);
+  _b3.setFromObject(object3d)
 
   if (_b3.isEmpty()) {
     if (entity.has(Collider3)) {
-      return makeExplicitColliderParams(entity);
+      return makeExplicitColliderParams(entity)
     } else {
       if (logEnabled) {
-        console.warn("Creating empty implicit collider", entity.id);
+        console.warn("Creating empty implicit collider", entity.id)
       }
-      _b3.setFromArray([0, 0, 0, 1, 1, 1]);
+      _b3.setFromArray([0, 0, 0, 1, 1, 1])
     }
   }
 
-  _b3.getSize(spec.size);
-  _b3.getCenter(offset).sub(transform.position);
+  _b3.getSize(spec.size)
+  _b3.getCenter(offset).sub(transform.position)
 
   // The AABB needs to be inverted so that the usual rotation re-aligns it to the world axes
-  rotation.copy(transform.rotation).invert();
+  rotation.copy(transform.rotation).invert()
 
-  return { spec, offset, rotation, scale };
+  return { spec, offset, rotation, scale }
 }

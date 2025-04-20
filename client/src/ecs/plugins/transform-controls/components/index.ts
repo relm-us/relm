@@ -1,2 +1,2 @@
-export { TransformControls } from "./TransformControls";
-export { TransformControlsRef } from "./TransformControlsRef";
+export { TransformControls } from "./TransformControls"
+export { TransformControlsRef } from "./TransformControlsRef"

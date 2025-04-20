@@ -1,22 +1,22 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import ColorPicker from "~/ui/lib/ColorPicker";
-  import { Color } from "three";
+import { createEventDispatcher } from "svelte"
+import ColorPicker from "~/ui/lib/ColorPicker"
+import { Color } from "three"
 
-  export let key: string;
-  export let component;
-  export let prop;
+export let key: string
+export let component
+export let prop
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  let value;
-  $: {
-    const color = new Color(component[key]);
-    value = "#" + color.getHexString();
-  }
+let value
+$: {
+  const color = new Color(component[key])
+  value = "#" + color.getHexString()
+}
 
-  // ignore warning about missing props
-  $$props;
+// ignore warning about missing props
+$$props
 </script>
 
 <r-color-type>

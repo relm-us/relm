@@ -1,32 +1,32 @@
 <script lang="ts">
-  import type { State } from "~/main/ProgramTypes";
+import type { State } from "~/main/ProgramTypes"
 
-  // Debug UI
-  import DebugPane from "~/ui/Debug/DebugPane";
+// Debug UI
+import DebugPane from "~/ui/Debug/DebugPane"
 
-  import CenterCamera from "~/ui/CenterCamera";
-  import Toolbar from "~/ui/Build/Toolbar";
-  import BuildPanel from "~/ui/Build/BuildPanel";
+import CenterCamera from "~/ui/CenterCamera"
+import Toolbar from "~/ui/Build/Toolbar"
+import BuildPanel from "~/ui/Build/BuildPanel"
 
-  import { worldUIMode } from "~/stores";
-  import { debugMode } from "~/stores/debugMode";
-  import { centerCameraVisible } from "~/stores/centerCameraVisible";
-  import { showCenterButtons } from "~/stores/showCenterButtons";
-  import { permits } from "~/stores/permits";
+import { worldUIMode } from "~/stores"
+import { debugMode } from "~/stores/debugMode"
+import { centerCameraVisible } from "~/stores/centerCameraVisible"
+import { showCenterButtons } from "~/stores/showCenterButtons"
+import { permits } from "~/stores/permits"
 
-  import CenterButtons from "./CenterButtons.svelte";
-  import DialogStack from "./DialogStack.svelte";
-  import PauseAutomatically from "./PauseAutomatically.svelte";
-  import TouchControls from "./TouchControls.svelte";
+import CenterButtons from "./CenterButtons.svelte"
+import DialogStack from "./DialogStack.svelte"
+import PauseAutomatically from "./PauseAutomatically.svelte"
+import TouchControls from "./TouchControls.svelte"
 
-  export let dispatch; // Program dispatch
-  export let state: State;
+export let dispatch // Program dispatch
+export let state: State
 
-  let buildMode = false;
-  $: buildMode = $permits.includes("edit") && $worldUIMode === "build";
+let buildMode = false
+$: buildMode = $permits.includes("edit") && $worldUIMode === "build"
 
-  let touchControls;
-  $: (window as any).touchControls = touchControls;
+let touchControls
+$: (window as any).touchControls = touchControls
 </script>
 
 <!-- Pause game if participant is not focused on window, to save CPU/GPU resources -->

@@ -1,23 +1,23 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+import { onMount } from "svelte"
 
-  import { worldManager } from "~/world";
+import { worldManager } from "~/world"
 
-  import Pane from "~/ui/lib/Pane";
+import Pane from "~/ui/lib/Pane"
 
-  import { _ } from "~/i18n";
+import { _ } from "~/i18n"
 
-  let gtmId;
+let gtmId
 
-  $: {
-    if (gtmId) {
-      worldManager.worldDoc.settings.y.set("gtmId", gtmId);
-    }
+$: {
+  if (gtmId) {
+    worldManager.worldDoc.settings.y.set("gtmId", gtmId)
   }
+}
 
-  onMount(() => {
-    gtmId = worldManager.worldDoc.settings.y.get("gtmId");
-  });
+onMount(() => {
+  gtmId = worldManager.worldDoc.settings.y.get("gtmId")
+})
 </script>
 
 <Pane title={$_("TrackingSettings.title")}>

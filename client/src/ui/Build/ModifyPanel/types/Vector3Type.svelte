@@ -1,43 +1,41 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import NumberInput from "./utils/NumberInput.svelte";
+import { createEventDispatcher } from "svelte"
+import NumberInput from "./utils/NumberInput.svelte"
 
-  export let key: string;
-  export let component;
-  export let prop;
-  export let attrs: { labels?: string[] } = {};
+export let key: string
+export let component
+export let prop
+export let attrs: { labels?: string[] } = {}
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  const onValueChanged =
-    (dim) =>
-    ({ detail }) => {
-      component[key][dim] = detail.value;
-      component.modified();
-      if (detail.final) {
-        dispatch("modified");
-      }
-    };
-
-  function getLabel(i, defaultLabel) {
-    let label = defaultLabel;
-    if (attrs.labels) label = attrs.labels[i];
-    return label ? label.toUpperCase() : label;
+const onValueChanged =
+  (dim) =>
+  ({ detail }) => {
+    component[key][dim] = detail.value
+    component.modified()
+    if (detail.final) {
+      dispatch("modified")
+    }
   }
 
-  let fields;
-  // Create a set of 2 or 3 fields, e.g. X, Y, and Z. These fields may optionally
-  // be re-labeled, based on parameters passed by `attrs.labels`.
-  // NOTE: We re-purpose Vector3Type for Vector2Type as well, to avoid redundancy.
-  $: fields = (prop.type.name === "Vector2" ? ["x", "y"] : ["x", "y", "z"]).map(
-    (dim, i) => ({
-      dim,
-      label: getLabel(i, dim),
-    })
-  );
+function getLabel(i, defaultLabel) {
+  let label = defaultLabel
+  if (attrs.labels) label = attrs.labels[i]
+  return label ? label.toUpperCase() : label
+}
 
-  // ignore warning about missing props
-  $$props;
+let fields
+// Create a set of 2 or 3 fields, e.g. X, Y, and Z. These fields may optionally
+// be re-labeled, based on parameters passed by `attrs.labels`.
+// NOTE: We re-purpose Vector3Type for Vector2Type as well, to avoid redundancy.
+$: fields = (prop.type.name === "Vector2" ? ["x", "y"] : ["x", "y", "z"]).map((dim, i) => ({
+  dim,
+  label: getLabel(i, dim),
+}))
+
+// ignore warning about missing props
+$$props
 </script>
 
 <r-vector3-type>

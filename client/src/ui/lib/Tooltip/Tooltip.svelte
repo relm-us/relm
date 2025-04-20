@@ -1,19 +1,19 @@
 <script>
-  export let enabled = true;
+export let enabled = true
 
-  export let tip = "";
-  export let active = false;
-  export let bg = null;
-  export let color = null;
+export let tip = ""
+export let active = false
+export let bg = null
+export let color = null
 
-  export let top = false;
-  export let right = false;
-  export let bottom = false;
-  export let left = false;
+export let top = false
+export let right = false
+export let bottom = false
+export let left = false
 
-  let style = `background-color: ${
-    bg || "var(--background-transparent-gray)"
-  }; color: ${color || "var(--foreground-white)"}`;
+let style = `background-color: ${
+  bg || "var(--background-transparent-gray)"
+}; color: ${color || "var(--foreground-white)"}`
 </script>
 
 <div class="tooltip-wrapper">

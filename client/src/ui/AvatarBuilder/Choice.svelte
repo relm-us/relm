@@ -1,6 +1,6 @@
 <script>
-  export let src;
-  export let selected = false;
+export let src
+export let selected = false
 </script>
 
 <div class:selected on:click>

@@ -1,11 +1,11 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-  import { keyevents } from "../actions";
+import { createEventDispatcher } from "svelte"
+import { keyevents } from "../actions"
 
-  export let text = "";
-  export let selected = false;
+export let text = ""
+export let selected = false
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 </script>
 
 <div

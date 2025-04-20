@@ -1,1 +1,1 @@
-export { FireSystem } from "./FireSystem";
+export { FireSystem } from "./FireSystem"

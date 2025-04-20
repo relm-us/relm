@@ -1,24 +1,24 @@
 <script lang="ts">
-  import { fly } from "svelte/transition";
+import { fly } from "svelte/transition"
 
-  import Button from "~/ui/lib/Button";
+import Button from "~/ui/lib/Button"
 
-  import { globalEvents } from "~/events/globalEvents";
-  import { openPanel } from "~/stores";
+import { globalEvents } from "~/events/globalEvents"
+import { openPanel } from "~/stores"
 
-  import PerformancePanel from "~/ui/Debug/PerformancePanel";
+import PerformancePanel from "~/ui/Debug/PerformancePanel"
 
-  import AddPanel from "../AddPanel";
-  import ModifyPanel from "../ModifyPanel";
-  import LayersPanel from "../LayersPanel";
-  import SettingsPanel from "../SettingsPanel";
-  import ExportPanel from "../ExportPanel";
+import AddPanel from "../AddPanel"
+import ModifyPanel from "../ModifyPanel"
+import LayersPanel from "../LayersPanel"
+import SettingsPanel from "../SettingsPanel"
+import ExportPanel from "../ExportPanel"
 
-  import { _ } from "svelte-i18n";
+import { _ } from "svelte-i18n"
 
-  function toPlayMode() {
-    globalEvents.emit("switch-mode", "play");
-  }
+function toPlayMode() {
+  globalEvents.emit("switch-mode", "play")
+}
 </script>
 
 <panel-tabs in:fly={{ y: -260 }}>

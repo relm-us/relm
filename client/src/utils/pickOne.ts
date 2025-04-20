@@ -4,5 +4,5 @@
  * @returns one of the options
  */
 export function pickOne(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
+  return arr[Math.floor(Math.random() * arr.length)]
 }

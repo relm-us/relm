@@ -1,16 +1,16 @@
-import { Quaternion } from "three";
+import { Quaternion } from "three"
 
 export const QuaternionType = {
   name: "Quaternion",
   initial(value) {
-    const q = new Quaternion();
-    if (value) q.copy(value);
-    return q;
+    const q = new Quaternion()
+    if (value) q.copy(value)
+    return q
   },
   toJSON(value) {
-    return value.toArray();
+    return value.toArray()
   },
   fromJSON(data, value) {
-    return value.fromArray(data);
+    return value.fromArray(data)
   },
-};
+}

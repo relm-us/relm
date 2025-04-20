@@ -1,1 +1,1 @@
-export { DirectionalLightSystem } from "./DirectionalLightSystem";
+export { DirectionalLightSystem } from "./DirectionalLightSystem"

@@ -1,34 +1,34 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+import { createEventDispatcher } from "svelte"
 
-  export let label: string = null;
-  export let value: any = "";
+export let label: string = null
+export let value: any = ""
 
-  let inputEl;
-  let initialValue = value;
-  let canceling = false;
+let inputEl
+let initialValue = value
+let canceling = false
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  const onChange = (event) => {
-    if (canceling) return;
-    dispatch("change", event.target.value);
-  };
+const onChange = (event) => {
+  if (canceling) return
+  dispatch("change", event.target.value)
+}
 
-  const onFocus = (event) => {
-    canceling = false;
-  };
+const onFocus = (event) => {
+  canceling = false
+}
 
-  const onKeydown = (event) => {
-    if (event.key === "Escape") {
-      value = initialValue;
-      canceling = true;
-      dispatch("cancel");
-      inputEl.blur();
-    } else {
-      dispatch("keydown", event.key);
-    }
-  };
+const onKeydown = (event) => {
+  if (event.key === "Escape") {
+    value = initialValue
+    canceling = true
+    dispatch("cancel")
+    inputEl.blur()
+  } else {
+    dispatch("keydown", event.key)
+  }
+}
 </script>
 
 <r-text-input>

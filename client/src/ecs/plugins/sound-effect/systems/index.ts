@@ -1,2 +1,2 @@
-export { SoundEffectSystem } from "./SoundEffectSystem";
-export { SoundAssetSystem } from "./SoundAssetSystem";
+export { SoundEffectSystem } from "./SoundEffectSystem"
+export { SoundAssetSystem } from "./SoundAssetSystem"

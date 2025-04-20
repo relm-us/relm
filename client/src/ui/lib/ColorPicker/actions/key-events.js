@@ -1,16 +1,16 @@
 //events: Array<{trigger: fn}>
-export default function(node, events = []) {
+export default function (node, events = []) {
   const ev = Object.entries(events)
   let fns = []
 
-  for (let [trigger, fn] of ev) {
-    let f = addEvent(trigger, fn)
+  for (const [trigger, fn] of ev) {
+    const f = addEvent(trigger, fn)
     fns = [...fns, f]
   }
 
   function _scaffold(trigger, fn) {
     return () => {
-      let trig = parseInt(trigger)
+      const trig = Number.parseInt(trigger)
       if (trig) {
         if (event.keyCode === trig) {
           fn(event)
@@ -24,13 +24,13 @@ export default function(node, events = []) {
   }
 
   function addEvent(trigger, fn) {
-    let f = _scaffold(trigger, fn)
+    const f = _scaffold(trigger, fn)
     node.addEventListener("keydown", f)
     return f
   }
 
   function removeEvents() {
-    fns.forEach(f => node.removeEventListener("keypress", f))
+    fns.forEach((f) => node.removeEventListener("keypress", f))
   }
 
   return {

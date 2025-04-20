@@ -1,5 +1,5 @@
-import { writable, Writable } from "svelte/store";
-import { showCenterButtons } from "./showCenterButtons";
+import { writable, type Writable } from "svelte/store"
+import { showCenterButtons } from "./showCenterButtons"
 
 type DialogType =
   | "chat"
@@ -10,11 +10,11 @@ type DialogType =
   | "language"
   | "graphics-quality"
   | "avatar-appearance"
-  | "needs-migration";
+  | "needs-migration"
 
-export const openDialog: Writable<DialogType> = writable(null);
+export const openDialog: Writable<DialogType> = writable(null)
 
 // Hide center buttons whenever dialog is open
 openDialog.subscribe((dialog) => {
-  showCenterButtons.set(dialog === null);
-});
+  showCenterButtons.set(dialog === null)
+})

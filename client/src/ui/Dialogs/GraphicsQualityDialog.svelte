@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { _ } from "svelte-i18n";
-  import { createEventDispatcher } from "svelte";
+import { _ } from "svelte-i18n"
+import { createEventDispatcher } from "svelte"
 
-  import Dialog from "~/ui/lib/Dialog";
-  import Slider from "~/ui/lib/Slider";
+import Dialog from "~/ui/lib/Dialog"
+import Slider from "~/ui/lib/Slider"
 
-  import { graphicsQuality } from "~/stores/graphicsQuality";
+import { graphicsQuality } from "~/stores/graphicsQuality"
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  function changeQuality({ detail: value }) {
-    $graphicsQuality = Math.floor(value);
-  }
+function changeQuality({ detail: value }) {
+  $graphicsQuality = Math.floor(value)
+}
 </script>
 
 <Dialog title={$_("RenderQualityDialog.title")} on:cancel>

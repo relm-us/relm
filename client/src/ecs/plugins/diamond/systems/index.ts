@@ -1,1 +1,1 @@
-export { DiamondSystem } from "./DiamondSystem";
+export { DiamondSystem } from "./DiamondSystem"

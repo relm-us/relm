@@ -1,47 +1,45 @@
-import { Vector3, MathUtils } from "three";
+import { Vector3 } from "three"
 
-import { Entity, Groups, System } from "~/ecs/base";
-import { Transform } from "~/ecs/plugins/core";
-import { easeTowards } from "~/ecs/shared/easeTowards";
+import { type Entity, Groups, System } from "~/ecs/base"
+import { Transform } from "~/ecs/plugins/core"
+import { easeTowards } from "~/ecs/shared/easeTowards"
 
-import { Follow, FollowPoint } from "../components";
+import { Follow, FollowPoint } from "../components"
 
-const v1 = new Vector3();
+const v1 = new Vector3()
 
 export class FollowSystem extends System {
-  order = Groups.Initialization;
+  order = Groups.Initialization
 
   static queries = {
     active: [Follow],
     activePoint: [FollowPoint],
-  };
+  }
 
   update() {
     this.queries.active.forEach((entity) => {
-      const spec: Follow = entity.get(Follow);
-      this.getTargetFromFollow(spec, v1);
-      this.follow(entity, v1, spec.dampening);
-    });
+      const spec: Follow = entity.get(Follow)
+      this.getTargetFromFollow(spec, v1)
+      this.follow(entity, v1, spec.dampening)
+    })
 
     this.queries.activePoint.forEach((entity) => {
-      const spec: FollowPoint = entity.get(FollowPoint);
-      this.follow(entity, spec.target, spec.dampening);
-    });
+      const spec: FollowPoint = entity.get(FollowPoint)
+      this.follow(entity, spec.target, spec.dampening)
+    })
   }
 
   follow(entity: Entity, target: Vector3, dampening: number) {
-    const transform: Transform = entity.get(Transform);
-    easeTowards(transform.position, target, dampening);
-    transform.modified();
+    const transform: Transform = entity.get(Transform)
+    easeTowards(transform.position, target, dampening)
+    transform.modified()
   }
 
   getTargetFromFollow(spec: Follow, result: Vector3) {
-    const targetTransform: Transform = this.world.entities
-      .getById(spec.target)
-      ?.get(Transform);
-    if (!targetTransform) return;
+    const targetTransform: Transform = this.world.entities.getById(spec.target)?.get(Transform)
+    if (!targetTransform) return
 
-    result.copy(targetTransform.positionWorld);
-    result.add(spec.offset);
+    result.copy(targetTransform.positionWorld)
+    result.add(spec.offset)
   }
 }

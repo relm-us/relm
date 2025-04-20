@@ -1,8 +1,8 @@
-import { BooleanType, Entity, LocalComponent, RefType } from "~/ecs/base";
+import { BooleanType, type Entity, LocalComponent, RefType } from "~/ecs/base"
 
 export class Impact extends LocalComponent {
-  other: Entity;
-  started: boolean;
+  other: Entity
+  started: boolean
 
   static props = {
     other: {
@@ -12,5 +12,5 @@ export class Impact extends LocalComponent {
     started: {
       type: BooleanType,
     },
-  };
+  }
 }

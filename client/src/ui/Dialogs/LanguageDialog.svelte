@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { locale, locales, _ } from "svelte-i18n";
-  import { createEventDispatcher } from "svelte";
+import { locale, locales, _ } from "svelte-i18n"
+import { createEventDispatcher } from "svelte"
 
-  import Dialog from "~/ui/lib/Dialog";
-  import Button from "../lib/Button";
-  import { languageMap } from "~/i18n";
+import Dialog from "~/ui/lib/Dialog"
+import Button from "../lib/Button"
+import { languageMap } from "~/i18n"
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  const chooseLanguage = (loc) => () => {
-    $locale = loc;
-    dispatch("cancel");
-  };
+const chooseLanguage = (loc) => () => {
+  $locale = loc
+  dispatch("cancel")
+}
 </script>
 
 <Dialog title={$_("LanguageDialog.title")} on:cancel>

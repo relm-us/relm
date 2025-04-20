@@ -1,20 +1,20 @@
 <script>
-  import Happy from "./emojis/Happy.svelte";
-  import Heart from "./emojis/Heart.svelte";
-  import Laughing from "./emojis/Laughing.svelte";
-  import Sad from "./emojis/Sad.svelte";
+import Happy from "./emojis/Happy.svelte"
+import Heart from "./emojis/Heart.svelte"
+import Laughing from "./emojis/Laughing.svelte"
+import Sad from "./emojis/Sad.svelte"
 
-  export let content;
+export let content
 
-  const emojis = {
-    HAPPY: Happy,
-    HEART: Heart,
-    LAUGHING: Laughing,
-    SAD: Sad,
-  };
+const emojis = {
+  HAPPY: Happy,
+  HEART: Heart,
+  LAUGHING: Laughing,
+  SAD: Sad,
+}
 
-  // ignore warning about missing props
-  $$props;
+// ignore warning about missing props
+$$props
 </script>
 
 <emoji>

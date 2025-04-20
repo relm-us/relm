@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { config } from "~/config";
-  import PageOverlay from "~/ui/lib/PageOverlay";
-  $$props;
+import { config } from "~/config"
+import PageOverlay from "~/ui/lib/PageOverlay"
+$$props
 </script>
 
 <PageOverlay>

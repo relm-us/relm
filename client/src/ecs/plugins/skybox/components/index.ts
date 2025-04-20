@@ -1,2 +1,2 @@
-export { Skybox } from "./Skybox";
-export { SkyboxRef } from "./SkyboxRef";
+export { Skybox } from "./Skybox"
+export { SkyboxRef } from "./SkyboxRef"

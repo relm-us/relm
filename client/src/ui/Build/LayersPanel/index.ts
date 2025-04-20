@@ -1,1 +1,1 @@
-export { default } from "./LayersPanel.svelte";
+export { default } from "./LayersPanel.svelte"

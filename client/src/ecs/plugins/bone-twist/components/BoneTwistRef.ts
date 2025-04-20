@@ -1,9 +1,9 @@
-import { Object3D } from "three";
-import { LocalComponent, RefType } from "~/ecs/base";
+import type { Object3D } from "three"
+import { LocalComponent, RefType } from "~/ecs/base"
 
 export class BoneTwistRef extends LocalComponent {
-  value: Object3D;
-  parent: Object3D;
+  value: Object3D
+  parent: Object3D
 
   static props = {
     value: {
@@ -13,5 +13,5 @@ export class BoneTwistRef extends LocalComponent {
     parent: {
       type: RefType,
     },
-  };
+  }
 }

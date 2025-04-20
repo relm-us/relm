@@ -1,8 +1,8 @@
-import { Component, NumberType, StringType } from "~/ecs/base";
+import { Component, NumberType, StringType } from "~/ecs/base"
 
 export class Spin extends Component {
-  speed: number;
-  axis: "X" | "Y" | "Z";
+  speed: number
+  axis: "X" | "Y" | "Z"
 
   static props = {
     speed: {
@@ -26,9 +26,9 @@ export class Spin extends Component {
         ],
       },
     },
-  };
+  }
 
   static editor = {
     label: "Spin",
-  };
+  }
 }

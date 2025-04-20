@@ -1,1 +1,1 @@
-export { TranslucentSystem } from "./TranslucentSystem";
+export { TranslucentSystem } from "./TranslucentSystem"

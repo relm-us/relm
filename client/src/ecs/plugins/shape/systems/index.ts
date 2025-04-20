@@ -1,2 +1,2 @@
-export { ShapeSystem } from "./ShapeSystem";
-export { ShapeAssetSystem } from "./ShapeAssetSystem";
+export { ShapeSystem } from "./ShapeSystem"
+export { ShapeAssetSystem } from "./ShapeAssetSystem"

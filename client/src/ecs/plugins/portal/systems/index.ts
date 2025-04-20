@@ -1,1 +1,1 @@
-export { PortalSystem } from "./PortalSystem";
+export { PortalSystem } from "./PortalSystem"

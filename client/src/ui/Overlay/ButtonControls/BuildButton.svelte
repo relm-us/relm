@@ -1,7 +1,7 @@
 <script lang="ts">
-  import CircleButton from "~/ui/lib/CircleButton";
-  import IoIosBuild from "svelte-icons/io/IoIosBuild.svelte";
-  import { globalEvents } from "~/events/globalEvents";
+import CircleButton from "~/ui/lib/CircleButton"
+import IoIosBuild from "svelte-icons/io/IoIosBuild.svelte"
+import { globalEvents } from "~/events/globalEvents"
 </script>
 
 <CircleButton

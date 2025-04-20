@@ -1,1 +1,1 @@
-export { ItemSystem } from "./ItemSystem";
+export { ItemSystem } from "./ItemSystem"

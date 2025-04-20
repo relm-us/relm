@@ -1,1 +1,1 @@
-export { BoneAttachSystem } from "./BoneAttachSystem";
+export { BoneAttachSystem } from "./BoneAttachSystem"

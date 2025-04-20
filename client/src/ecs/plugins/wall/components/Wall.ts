@@ -1,16 +1,16 @@
-import { Vector3 } from "three";
+import { Vector3 } from "three"
 
-import { Component, StringType, NumberType, BooleanType } from "~/ecs/base";
-import { Vector3Type } from "~/ecs/plugins/core";
+import { Component, StringType, NumberType } from "~/ecs/base"
+import { Vector3Type } from "~/ecs/plugins/core"
 
 export class Wall extends Component {
-  size: Vector3;
-  convexity: number;
-  segments: number;
-  color: string;
-  emissive: string;
-  roughness: number;
-  metalness: number;
+  size: Vector3
+  convexity: number
+  segments: number
+  color: string
+  emissive: string
+  roughness: number
+  metalness: number
 
   static props = {
     size: {
@@ -71,9 +71,9 @@ export class Wall extends Component {
         label: "Metalness",
       },
     },
-  };
+  }
 
   static editor = {
     label: "Wall",
-  };
+  }
 }

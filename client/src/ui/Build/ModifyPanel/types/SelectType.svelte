@@ -1,37 +1,37 @@
 <script lang="ts">
-  import type { Component } from "~/ecs/base";
+import type { Component } from "~/ecs/base"
 
-  import { createEventDispatcher } from "svelte";
-  import Select from "svelte-select";
+import { createEventDispatcher } from "svelte"
+import Select from "svelte-select"
 
-  export let key: string;
-  export let component: Component;
-  export let prop;
+export let key: string
+export let component: Component
+export let prop
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  function onSelect(event) {
-    const value = event.detail.value;
-    if (component[key] !== value) {
-      component[key] = value;
-      component.modified();
-      dispatch("modified");
-    }
+function onSelect(event) {
+  const value = event.detail.value
+  if (component[key] !== value) {
+    component[key] = value
+    component.modified()
+    dispatch("modified")
   }
+}
 
-  function getLabelForKey(key, items) {
-    return items.find((item) => item.value === component[key]);
-  }
+function getLabelForKey(key, items) {
+  return items.find((item) => item.value === component[key])
+}
 
-  let items = [];
-  $: if (typeof prop.editor.options === "function") {
-    items = prop.editor.options(component);
-  } else {
-    items = prop.editor.options;
-  }
+let items = []
+$: if (typeof prop.editor.options === "function") {
+  items = prop.editor.options(component)
+} else {
+  items = prop.editor.options
+}
 
-  // ignore warning about missing props
-  $$props;
+// ignore warning about missing props
+$$props
 </script>
 
 <r-select-type>

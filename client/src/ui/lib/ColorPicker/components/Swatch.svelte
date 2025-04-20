@@ -1,13 +1,13 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-  import { fade } from "svelte/transition";
-  import CheckedBackground from "./CheckedBackground.svelte";
-  import { keyevents } from "../actions";
+import { createEventDispatcher } from "svelte"
+import { fade } from "svelte/transition"
+import CheckedBackground from "./CheckedBackground.svelte"
+import { keyevents } from "../actions"
 
-  export let hovered = false;
-  export let color = "#fff";
+export let hovered = false
+export let color = "#fff"
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 </script>
 
 <div class="space">

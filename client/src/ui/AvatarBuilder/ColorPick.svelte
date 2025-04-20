@@ -1,17 +1,17 @@
 <script lang="ts">
-  import ColorPicker from "~/ui/lib/ColorPicker";
-  import { hasAncestor } from "~/utils/hasAncestor";
+import ColorPicker from "~/ui/lib/ColorPicker"
+import { hasAncestor } from "~/utils/hasAncestor"
 
-  export let value;
+export let value
 
-  let enabled = false;
-  let colorPicker;
+let enabled = false
+let colorPicker
 
-  function cancelPicker(event) {
-    if (!hasAncestor(event.target, colorPicker)) {
-      enabled = false;
-    }
+function cancelPicker(event) {
+  if (!hasAncestor(event.target, colorPicker)) {
+    enabled = false
   }
+}
 </script>
 
 <container>

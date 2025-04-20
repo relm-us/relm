@@ -1,4 +1,4 @@
-import { LocalComponent, StringType } from "~/ecs/base";
+import { LocalComponent, StringType } from "~/ecs/base"
 
 export class Distance extends LocalComponent {
   static props = {
@@ -9,5 +9,5 @@ export class Distance extends LocalComponent {
         input: "Entity",
       },
     },
-  };
+  }
 }

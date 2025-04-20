@@ -1,5 +1,5 @@
 <script lang="ts">
-  let height;
+let height
 </script>
 
 <r-spacer style="--height: {height}px" />

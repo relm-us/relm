@@ -1,2 +1,2 @@
-export { TransformSystem } from "./TransformSystem";
-export { RenderSystem } from "./RenderSystem";
+export { TransformSystem } from "./TransformSystem"
+export { RenderSystem } from "./RenderSystem"

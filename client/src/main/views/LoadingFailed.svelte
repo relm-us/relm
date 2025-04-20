@@ -1,6 +1,6 @@
 <script>
-  import PageOverlay from "~/ui/lib/PageOverlay";
-  import { _ } from "~/i18n";
+import PageOverlay from "~/ui/lib/PageOverlay"
+import { _ } from "~/i18n"
 </script>
 
 <PageOverlay zIndex={6}>

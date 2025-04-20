@@ -1,17 +1,11 @@
-import { Vector3 } from "three";
-import {
-  LocalComponent,
-  StringType,
-  NumberType,
-  RefType,
-  BooleanType,
-} from "~/ecs/base";
+import type { Vector3 } from "three"
+import { LocalComponent, StringType, NumberType, RefType, BooleanType } from "~/ecs/base"
 
 export class BoneTwist extends LocalComponent {
-  boneName: string;
-  function: Vector3;
-  speed: number;
-  enabled: boolean;
+  boneName: string
+  function: Vector3
+  speed: number
+  enabled: boolean
 
   static props = {
     boneName: {
@@ -33,8 +27,8 @@ export class BoneTwist extends LocalComponent {
     function: {
       type: RefType,
       default: (entity) => {
-        console.error("BoneTwist function required");
-        entity.remove(BoneTwist);
+        console.error("BoneTwist function required")
+        entity.remove(BoneTwist)
       },
       editor: {
         label: "Custom twist function",
@@ -56,5 +50,5 @@ export class BoneTwist extends LocalComponent {
         label: "Enabled",
       },
     },
-  };
+  }
 }

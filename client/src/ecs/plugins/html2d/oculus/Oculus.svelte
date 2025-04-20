@@ -1,14 +1,14 @@
 <script lang="ts">
-  import CircleMask from "./CircleMask.svelte";
+import CircleMask from "./CircleMask.svelte"
 
-  import type { Cut } from "./types";
+import type { Cut } from "./types"
 
-  export let color: string;
-  export let diameter: number = null;
-  export let cuts: Cut[] = null;
-  export let halo: number = 0;
+export let color: string
+export let diameter: number = null
+export let cuts: Cut[] = null
+export let halo: number = 0
 
-  $: haloThickness = Math.min(halo, 1) * 5;
+$: haloThickness = Math.min(halo, 1) * 5
 </script>
 
 <CircleMask {diameter} {cuts}>

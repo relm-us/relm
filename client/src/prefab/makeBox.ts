@@ -1,10 +1,10 @@
-import { Color, Vector3, Quaternion, Euler } from "three";
+import { Color, Vector3, Quaternion, Euler } from "three"
 
-import { Transform } from "~/ecs/plugins/core";
-import { Shape3 } from "~/ecs/plugins/shape";
-import { Collider3, Collider3Active } from "~/ecs/plugins/collider";
+import { Transform } from "~/ecs/plugins/core"
+import { Shape3 } from "~/ecs/plugins/shape"
+import { Collider3, Collider3Active } from "~/ecs/plugins/collider"
 
-import { makeEntity } from "./makeEntity";
+import { makeEntity } from "./makeEntity"
 
 export function makeBox(
   world,
@@ -24,9 +24,9 @@ export function makeBox(
     roughness = 0.25,
     emissive = "#000000",
     collider = true,
-  }
+  },
 ) {
-  const linearColor = new Color(color);
+  const linearColor = new Color(color)
 
   const entity = makeEntity(world, name)
     .add(Transform, {
@@ -39,7 +39,7 @@ export function makeBox(
       metalness,
       roughness,
       emissive,
-    });
+    })
 
   // Optionally add a collider that matches the dimensions of the visible shape
   if (collider) {
@@ -48,7 +48,7 @@ export function makeBox(
         shape: "BOX*",
         kind: "BARRIER",
       })
-      .add(Collider3Active);
+      .add(Collider3Active)
   }
-  return entity;
+  return entity
 }

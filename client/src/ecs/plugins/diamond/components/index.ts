@@ -1,2 +1,2 @@
-export { Diamond } from "./Diamond";
-export { DiamondRef } from "./DiamondRef";
+export { Diamond } from "./Diamond"
+export { DiamondRef } from "./DiamondRef"

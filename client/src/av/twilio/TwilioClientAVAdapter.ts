@@ -1,21 +1,12 @@
-import {
-  connect,
-  Room,
-  ConnectOptions,
-  RemoteParticipant,
-  RemoteTrackPublication,
-  RemoteTrack,
-} from "twilio-video";
+import { connect, Room, ConnectOptions, RemoteParticipant, RemoteTrackPublication, RemoteTrack } from "twilio-video"
 
-import { ClientAVAdapter } from "../base/ClientAVAdapter";
+import { ClientAVAdapter } from "../base/ClientAVAdapter"
 
-const logEnabled = (localStorage.getItem("debug") || "")
-  .split(":")
-  .includes("video-mirror");
+const logEnabled = (localStorage.getItem("debug") || "").split(":").includes("video-mirror")
 
 // https://www.twilio.com/docs/video
 export class TwilioClientAVAdapter extends ClientAVAdapter {
-  room: Room;
+  room: Room
 
   async connect(roomId: string, identityOrToken: string) {
     const options: ConnectOptions = {
@@ -41,48 +32,45 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
       // We'll add audio and video tracks manually from local(*)TrackStore
       audio: false,
       video: false,
-    };
-    if (isMobile) {
-      options.bandwidthProfile.video.maxSubscriptionBitrate = 250000;
     }
-    this.room = await connect(identityOrToken, options);
+    if (isMobile) {
+      options.bandwidthProfile.video.maxSubscriptionBitrate = 250000
+    }
+    this.room = await connect(identityOrToken, options)
 
     // Add participants already in room
-    this.room.participants.forEach(this._participantConnected.bind(this));
+    this.room.participants.forEach(this._participantConnected.bind(this))
 
     // Add participants yet to connect
-    this.room.on("participantConnected", this._participantConnected.bind(this));
+    this.room.on("participantConnected", this._participantConnected.bind(this))
 
-    this.room.on(
-      "participantDisconnected",
-      this._participantDisconnected.bind(this)
-    );
+    this.room.on("participantDisconnected", this._participantDisconnected.bind(this))
 
     this.room.on("disconnected", (room, error) => {
-      this.emit("disconnected");
-      if (logEnabled) console.log("AV disconnected", error);
-    });
+      this.emit("disconnected")
+      if (logEnabled) console.log("AV disconnected", error)
+    })
 
     this.room.on("reconnecting", (error) => {
-      if (logEnabled) console.log("AV reconnecting", error);
-    });
+      if (logEnabled) console.log("AV reconnecting", error)
+    })
 
     this.room.on("reconnected", () => {
-      if (logEnabled) console.log("AV reconnected");
-    });
+      if (logEnabled) console.log("AV reconnected")
+    })
   }
 
   disconnect(): Promise<void> {
     return new Promise((resolve, reject) => {
-      if (logEnabled) console.log("AV disconnect", this.room.state);
+      if (logEnabled) console.log("AV disconnect", this.room.state)
       try {
-        this.room.disconnect();
+        this.room.disconnect()
       } catch (err) {
-        reject(err);
-        return;
+        reject(err)
+        return
       }
-      resolve();
-    });
+      resolve()
+    })
   }
 
   _participantConnected(participant: RemoteParticipant) {
@@ -90,31 +78,28 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
       id: participant.identity,
       isDominant: false,
       connectionScore: 1,
-    });
+    })
 
     // Add tracks already available for participant
-    const publications = Array.from(participant.tracks.values());
-    this._tracksPublished(publications, participant);
+    const publications = Array.from(participant.tracks.values())
+    this._tracksPublished(publications, participant)
 
     // Add tracks yet to be published by participant
     participant.on("trackPublished", (publication: RemoteTrackPublication) =>
-      this._tracksPublished([publication], participant)
-    );
+      this._tracksPublished([publication], participant),
+    )
 
-    participant.on("trackUnpublished", this._trackUnpublished.bind(this));
+    participant.on("trackUnpublished", this._trackUnpublished.bind(this))
   }
 
   _participantDisconnected(participant: RemoteParticipant) {
-    this.emit("participant-removed", participant.identity);
+    this.emit("participant-removed", participant.identity)
   }
 
-  _tracksPublished(
-    publications: RemoteTrackPublication[],
-    participant: RemoteParticipant
-  ) {
+  _tracksPublished(publications: RemoteTrackPublication[], participant: RemoteParticipant) {
     for (const publication of publications) {
       // if (publication.isSubscribed) {
-      const track = publication.track;
+      const track = publication.track
       if (track)
         this.emit("resources-added", [
           {
@@ -124,7 +109,7 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
             kind: track.kind,
             track: track,
           },
-        ]);
+        ])
       // }
       publication.on("subscribed", (remoteTrack: RemoteTrack) => {
         if (remoteTrack)
@@ -136,71 +121,63 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
               kind: remoteTrack.kind,
               track: remoteTrack,
             },
-          ]);
-      });
+          ])
+      })
     }
   }
 
   _trackUnpublished(publication: RemoteTrackPublication) {
-    this.emit("resources-removed", [publication.trackSid]);
+    this.emit("resources-removed", [publication.trackSid])
   }
 
-  publishLocalTracks(
-    tracks: Array<MediaStreamTrack>,
-    priority: "low" | "standard" | "high" = "standard"
-  ) {
+  publishLocalTracks(tracks: Array<MediaStreamTrack>, priority: "low" | "standard" | "high" = "standard") {
     if (this.room.state !== "connected") {
-      console.warn("TwilioClient not publishing local tracks; not connected");
-      return;
+      console.warn("TwilioClient not publishing local tracks; not connected")
+      return
     }
-    const localParticipant = this.room.localParticipant;
+    const localParticipant = this.room.localParticipant
     for (const track of tracks) {
-      if (!track) continue;
+      if (!track) continue
 
-      const tracksAccessor = getTracksAccessorFromKind(track.kind);
+      const tracksAccessor = getTracksAccessorFromKind(track.kind)
       if (tracksAccessor) {
-        const prevTracks = [...localParticipant[tracksAccessor].values()].map(
-          (publication) => publication.track
-        );
-        localParticipant.unpublishTracks(prevTracks);
+        const prevTracks = [...localParticipant[tracksAccessor].values()].map((publication) => publication.track)
+        localParticipant.unpublishTracks(prevTracks)
       }
 
-      localParticipant.publishTrack(track, { priority });
+      localParticipant.publishTrack(track, { priority })
     }
   }
 
   unpublishLocalTracks(tracks: Array<MediaStreamTrack>) {
-    const localParticipant = this.room.localParticipant;
+    const localParticipant = this.room.localParticipant
     for (const track of tracks) {
-      localParticipant.unpublishTrack(track);
+      localParticipant.unpublishTrack(track)
     }
   }
 
   _enableMedia(kind = "audio", enable = true) {
     // TODO: sync with audo/video desired
-    if (!this.room) return;
+    if (!this.room) return
 
-    const publications =
-      this.room.localParticipant[
-        kind == "audio" ? "audioTracks" : "videoTracks"
-      ];
+    const publications = this.room.localParticipant[kind == "audio" ? "audioTracks" : "videoTracks"]
     publications.forEach(function (publication) {
-      publication.track[enable ? "enable" : "disable"]();
-    });
+      publication.track[enable ? "enable" : "disable"]()
+    })
   }
 
   enableMic() {
-    this._enableMedia("audio", true);
+    this._enableMedia("audio", true)
   }
   disableMic(pause: boolean = false) {
-    this._enableMedia("audio", false);
+    this._enableMedia("audio", false)
   }
 
   enableCam() {
-    this._enableMedia("video", true);
+    this._enableMedia("video", true)
   }
   disableCam(pause: boolean = false) {
-    this._enableMedia("video", false);
+    this._enableMedia("video", false)
   }
 }
 
@@ -209,20 +186,17 @@ export class TwilioClientAVAdapter extends ClientAVAdapter {
  * @type {boolean}
  */
 const isMobile = (() => {
-  if (
-    typeof navigator === "undefined" ||
-    typeof navigator.userAgent !== "string"
-  ) {
-    return false;
+  if (typeof navigator === "undefined" || typeof navigator.userAgent !== "string") {
+    return false
   }
-  return /Mobile/.test(navigator.userAgent);
-})();
+  return /Mobile/.test(navigator.userAgent)
+})()
 
 function getTracksAccessorFromKind(kind: string) {
   switch (kind) {
     case "audio":
-      return "audioTracks";
+      return "audioTracks"
     case "video":
-      return "videoTracks";
+      return "videoTracks"
   }
 }

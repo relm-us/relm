@@ -1,12 +1,12 @@
-import { Component, NumberType, StringType, BooleanType } from "~/ecs/base";
+import { Component, NumberType, StringType, BooleanType } from "~/ecs/base"
 
 // For humanoid animation clip names see `src/config/constants.ts`
 // For all other clip names, see individual GLB assets.
 export class Animation extends Component {
-  clipName: string;
-  transition: number;
-  timeScale: number;
-  loop: boolean;
+  clipName: string
+  transition: number
+  timeScale: number
+  loop: boolean
 
   static props = {
     clipName: {
@@ -42,17 +42,17 @@ export class Animation extends Component {
         label: "Endless Loop",
       },
     },
-  };
+  }
 
   static editor = {
     label: "Animation",
-  };
+  }
 
   maybeChangeClip(clipName: string, loop: boolean = false) {
     if (this.clipName !== clipName) {
-      this.clipName = clipName;
-      this.loop = loop;
-      this.modified();
+      this.clipName = clipName
+      this.loop = loop
+      this.modified()
     }
   }
 }

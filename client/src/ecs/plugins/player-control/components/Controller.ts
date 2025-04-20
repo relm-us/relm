@@ -1,15 +1,15 @@
-import { LocalComponent, BooleanType, JSONType, RefType } from "~/ecs/base";
-import { IDLE, WALKING, RUNNING, FLYING } from "~/config/constants";
+import { LocalComponent, BooleanType, JSONType, RefType } from "~/ecs/base"
+import { IDLE, WALKING, RUNNING, FLYING } from "~/config/constants"
 
 export class Controller extends LocalComponent {
-  keysEnabled: boolean;
-  canFly: boolean;
-  torques: Array<number>;
-  thrusts: Array<number>;
-  angDamps: Array<number>;
-  linDamps: Array<number>;
-  animations: Array<string>;
-  onActivity: () => void;
+  keysEnabled: boolean
+  canFly: boolean
+  torques: Array<number>
+  thrusts: Array<number>
+  angDamps: Array<number>
+  linDamps: Array<number>
+  animations: Array<string>
+  onActivity: () => void
 
   static props = {
     keysEnabled: {
@@ -56,5 +56,5 @@ export class Controller extends LocalComponent {
       type: RefType,
       default: null,
     },
-  };
+  }
 }

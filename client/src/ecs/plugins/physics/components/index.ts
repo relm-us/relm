@@ -1,2 +1,2 @@
-export { Impact } from "./Impact";
-export { Impactable } from "./Impactable";
+export { Impact } from "./Impact"
+export { Impactable } from "./Impactable"

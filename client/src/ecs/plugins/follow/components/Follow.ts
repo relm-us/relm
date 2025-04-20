@@ -1,14 +1,14 @@
-import { Component, StringType, NumberType } from "~/ecs/base";
-import { Vector3Type } from "~/ecs/plugins/core";
-import { Vector3 } from "three";
+import { Component, StringType, NumberType } from "~/ecs/base"
+import { Vector3Type } from "~/ecs/plugins/core"
+import { Vector3 } from "three"
 
 export class Follow extends Component {
-  target: string;
-  offset: Vector3;
-  dampening: number;
+  target: string
+  offset: Vector3
+  dampening: number
 
   // deprecated
-  lerpAlpha: number;
+  lerpAlpha: number
 
   static props = {
     target: {
@@ -40,9 +40,9 @@ export class Follow extends Component {
       type: NumberType,
       default: 0.075,
     },
-  };
+  }
 
   static editor = {
     label: "Follow",
-  };
+  }
 }

@@ -1,26 +1,26 @@
 <script lang="ts">
-  import { cleanHtml } from "~/utils/cleanHtml";
-  import { getAncestor } from "~/utils/hasAncestor";
-  import Message from "./Message.svelte";
-  
-  import { _ } from "~/i18n";
+import { cleanHtml } from "~/utils/cleanHtml"
+import { getAncestor } from "~/utils/hasAncestor"
+import Message from "./Message.svelte"
 
-  export let messages;
-  export let myID;
+import { _ } from "~/i18n"
 
-  let outerEl;
+export let messages
+export let myID
 
-  function scrollToBottom(_messages, outerEl) {
-    if (outerEl) {
-      const scrollEl = getAncestor(outerEl, "r-scroll");
-      setTimeout(() => {
-        scrollEl.scrollTop = scrollEl.scrollHeight;
-      }, 0);
-    }
+let outerEl
+
+function scrollToBottom(_messages, outerEl) {
+  if (outerEl) {
+    const scrollEl = getAncestor(outerEl, "r-scroll")
+    setTimeout(() => {
+      scrollEl.scrollTop = scrollEl.scrollHeight
+    }, 0)
   }
+}
 
-  // Automatically scroll to the bottom whenever a message is added
-  $: scrollToBottom($messages, outerEl);
+// Automatically scroll to the bottom whenever a message is added
+$: scrollToBottom($messages, outerEl)
 </script>
 
 <r-history bind:this={outerEl}>

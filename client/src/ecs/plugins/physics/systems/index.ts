@@ -1,1 +1,1 @@
-export { PhysicsSystem } from "./PhysicsSystem";
+export { PhysicsSystem } from "./PhysicsSystem"

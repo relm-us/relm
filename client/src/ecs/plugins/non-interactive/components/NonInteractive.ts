@@ -1,4 +1,4 @@
-import { LocalComponent } from "~/ecs/base";
+import { LocalComponent } from "~/ecs/base"
 
 export class NonInteractive extends LocalComponent {}
 

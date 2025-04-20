@@ -1,86 +1,71 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { Color } from "three";
+import { onMount } from "svelte"
+import { Color } from "three"
 
-  import { worldManager } from "~/world";
+import { worldManager } from "~/world"
 
-  import Pane from "~/ui/lib/Pane";
-  import ColorPicker from "~/ui/lib/ColorPicker";
-  import Button from "~/ui/lib/Button";
-  import { DEFAULT_DIRECTIONAL_LIGHT_POSITION } from "~/config/constants";
+import Pane from "~/ui/lib/Pane"
+import ColorPicker from "~/ui/lib/ColorPicker"
+import Button from "~/ui/lib/Button"
+import { DEFAULT_DIRECTIONAL_LIGHT_POSITION } from "~/config/constants"
 
-  import { _ } from "~/i18n";
+import { _ } from "~/i18n"
 
-  let ambientColor;
-  let hemisphereColor;
-  let hemisphereGroundColor;
-  let directionalColor;
-  let directionalPosition;
+let ambientColor
+let hemisphereColor
+let hemisphereGroundColor
+let directionalColor
+let directionalPosition
 
-  const changeColor =
-    (
-      getColorProperty: () => { copy: (color: Color) => void },
-      settingName: string
-    ) =>
-    ({ detail }) => {
-      const color = detail.slice(0, 7);
-      const property = getColorProperty();
-      getColorProperty().copy(new Color(color));
-      worldManager.worldDoc.settings.y.set(settingName, color);
-    };
-
-  const changeAmbientColor = changeColor(
-    () => worldManager.ambientLight.color,
-    "ambientLightColor"
-  );
-
-  const changeHemisphereColor = changeColor(
-    () => worldManager.hemisphereLight.color,
-    "hemisphereLightColor"
-  );
-
-  const changeHemisphereGroundColor = changeColor(
-    () => worldManager.hemisphereLight.groundColor,
-    "hemisphereLightGroundColor"
-  );
-
-  const changeDirectionalColor = changeColor(
-    () => worldManager.directionalLight.color,
-    "directionalLightColor"
-  );
-
-  $: {
-    let pos;
-    try {
-      pos = JSON.parse(`[${directionalPosition}]`);
-    } catch (err) {}
-    if (pos) {
-      const follow = worldManager.light.getByName("Follow");
-      follow.offset.fromArray(pos);
-      follow.modified();
-      worldManager.worldDoc.settings.y.set("directionalLightPos", pos);
-    }
+const changeColor =
+  (getColorProperty: () => { copy: (color: Color) => void }, settingName: string) =>
+  ({ detail }) => {
+    const color = detail.slice(0, 7)
+    const property = getColorProperty()
+    getColorProperty().copy(new Color(color))
+    worldManager.worldDoc.settings.y.set(settingName, color)
   }
 
-  function resetLighting() {
-    changeAmbientColor({ detail: "#FFFFFF" });
-    changeHemisphereColor({ detail: "#FFFFBB" });
-    changeHemisphereGroundColor({ detail: "#080820" });
-    changeDirectionalColor({ detail: "#FFFFFF" });
-    directionalPosition = DEFAULT_DIRECTIONAL_LIGHT_POSITION;
+const changeAmbientColor = changeColor(() => worldManager.ambientLight.color, "ambientLightColor")
+
+const changeHemisphereColor = changeColor(() => worldManager.hemisphereLight.color, "hemisphereLightColor")
+
+const changeHemisphereGroundColor = changeColor(
+  () => worldManager.hemisphereLight.groundColor,
+  "hemisphereLightGroundColor",
+)
+
+const changeDirectionalColor = changeColor(() => worldManager.directionalLight.color, "directionalLightColor")
+
+$: {
+  let pos
+  try {
+    pos = JSON.parse(`[${directionalPosition}]`)
+  } catch (err) {}
+  if (pos) {
+    const follow = worldManager.light.getByName("Follow")
+    follow.offset.fromArray(pos)
+    follow.modified()
+    worldManager.worldDoc.settings.y.set("directionalLightPos", pos)
   }
+}
 
-  onMount(() => {
-    ambientColor = "#" + worldManager.ambientLight.color.getHexString();
-    hemisphereColor = "#" + worldManager.hemisphereLight.color.getHexString();
-    hemisphereGroundColor =
-      "#" + worldManager.hemisphereLight.groundColor.getHexString();
-    directionalColor = "#" + worldManager.directionalLight.color.getHexString();
+function resetLighting() {
+  changeAmbientColor({ detail: "#FFFFFF" })
+  changeHemisphereColor({ detail: "#FFFFBB" })
+  changeHemisphereGroundColor({ detail: "#080820" })
+  changeDirectionalColor({ detail: "#FFFFFF" })
+  directionalPosition = DEFAULT_DIRECTIONAL_LIGHT_POSITION
+}
 
-    directionalPosition = JSON.stringify(
-      worldManager.light.getByName("Follow").offset.toArray()
-    ).slice(1, -1);
-  });
+onMount(() => {
+  ambientColor = "#" + worldManager.ambientLight.color.getHexString()
+  hemisphereColor = "#" + worldManager.hemisphereLight.color.getHexString()
+  hemisphereGroundColor = "#" + worldManager.hemisphereLight.groundColor.getHexString()
+  directionalColor = "#" + worldManager.directionalLight.color.getHexString()
+
+  directionalPosition = JSON.stringify(worldManager.light.getByName("Follow").offset.toArray()).slice(1, -1)
+})
 </script>
 
 <Pane title={$_("LightingSettings.title")}>

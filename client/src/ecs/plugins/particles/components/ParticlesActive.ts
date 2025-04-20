@@ -1,7 +1,7 @@
-import { Component } from "~/ecs/base";
+import { Component } from "~/ecs/base"
 
-import { Particles2 } from "./Particles2";
+import { Particles2 } from "./Particles2"
 
 export class ParticlesActive extends Component {
-  static activator = Particles2;
+  static activator = Particles2
 }

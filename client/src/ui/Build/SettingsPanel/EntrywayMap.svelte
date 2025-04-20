@@ -1,16 +1,14 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-  import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
+import { createEventDispatcher } from "svelte"
+import IoIosClose from "svelte-icons/io/IoIosClose.svelte"
 
-  export let entryways;
+export let entryways
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  function format(coords) {
-    return `${coords[0].toFixed(1)}, ${coords[1].toFixed(
-      1
-    )}, ${coords[2].toFixed(1)}`;
-  }
+function format(coords) {
+  return `${coords[0].toFixed(1)}, ${coords[1].toFixed(1)}, ${coords[2].toFixed(1)}`
+}
 </script>
 
 {#each [...$entryways] as [name, coords]}

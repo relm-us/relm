@@ -1,22 +1,22 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+import { createEventDispatcher } from "svelte"
 
-  export let label = null;
-  export let type: "text" | "email" | "password" = "text";
-  export let value = "";
-  export let inputEl = null;
+export let label = null
+export let type: "text" | "email" | "password" = "text"
+export let value = ""
+export let inputEl = null
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  function onKey(event) {
-    if (event.key === "Enter" || event.key === "Return") {
-      dispatch("submit");
-    }
+function onKey(event) {
+  if (event.key === "Enter" || event.key === "Return") {
+    dispatch("submit")
   }
+}
 
-  export function focus() {
-    inputEl.focus();
-  }
+export function focus() {
+  inputEl.focus()
+}
 </script>
 
 <r-signin-text-input>

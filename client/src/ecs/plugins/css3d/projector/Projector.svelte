@@ -1,64 +1,62 @@
 <script lang="ts">
-  import type { Entity } from "~/ecs/base";
-  import type { Asset } from "~/ecs/plugins/core";
+import type { Entity } from "~/ecs/base"
+import type { Asset } from "~/ecs/plugins/core"
 
-  import { fade } from "svelte/transition";
-  import Video from "~/av/components/Video";
+import { fade } from "svelte/transition"
+import Video from "~/av/components/Video"
 
-  import { assetUrl } from "~/config/assetUrl";
-  import { pointerStateDelayed } from "~/events/input/PointerListener/pointerActions";
-  import { worldUIMode } from "~/stores/worldUIMode";
-  import Fullwindow from "~/ui/lib/Fullwindow.svelte";
-  import Button from "~/ui/lib/Button";
-  import { Projector } from "./Projector";
-  import { participantId as myParticipantId } from "~/identity/participantId";
-  import { worldManager } from "~/world";
-  import { get } from "svelte/store";
+import { assetUrl } from "~/config/assetUrl"
+import { pointerStateDelayed } from "~/events/input/PointerListener/pointerActions"
+import { worldUIMode } from "~/stores/worldUIMode"
+import Fullwindow from "~/ui/lib/Fullwindow.svelte"
+import Button from "~/ui/lib/Button"
+import { Projector } from "./Projector"
+import { participantId as myParticipantId } from "~/identity/participantId"
+import { worldManager } from "~/world"
+import { get } from "svelte/store"
 
-  export let participantId;
-  export let iAmNear: boolean = false;
-  export let asset: Asset;
-  export let fit: "COVER" | "CONTAIN";
-  export let visible: boolean;
-  export let entity: Entity;
+export let participantId
+export let iAmNear: boolean = false
+export let asset: Asset
+export let fit: "COVER" | "CONTAIN"
+export let visible: boolean
+export let entity: Entity
 
-  let bigscreen = false;
-  let videoTrack;
+let bigscreen = false
+let videoTrack
 
-  const activate = () => {
-    if (pointerStateDelayed !== "interactive-drag") bigscreen = true;
-  };
-  const deactivate = () => (bigscreen = false);
+const activate = () => {
+  if (pointerStateDelayed !== "interactive-drag") bigscreen = true
+}
+const deactivate = () => (bigscreen = false)
 
-  $: if ($worldUIMode === "build") {
-    bigscreen = false;
-  }
+$: if ($worldUIMode === "build") {
+  bigscreen = false
+}
 
-  function publishParticipantId(participantId) {
-    const projector: Projector = entity.get(Projector);
-    projector.participantId = participantId;
-    projector.modified();
-    worldManager.worldDoc.syncFrom(entity);
-  }
+function publishParticipantId(participantId) {
+  const projector: Projector = entity.get(Projector)
+  projector.participantId = participantId
+  projector.modified()
+  worldManager.worldDoc.syncFrom(entity)
+}
 
-  function onShare() {
-    if (participantId === myParticipantId) {
-      publishParticipantId(null);
-    } else {
-      publishParticipantId(myParticipantId);
-    }
-  }
-
-  $: if (participantId && worldManager.avConnection) {
-    videoTrack = get(
-      worldManager.avConnection.getTrackStore(participantId, "video")
-    );
+function onShare() {
+  if (participantId === myParticipantId) {
+    publishParticipantId(null)
   } else {
-    videoTrack = null;
+    publishParticipantId(myParticipantId)
   }
+}
 
-  // ignore other props
-  $$props;
+$: if (participantId && worldManager.avConnection) {
+  videoTrack = get(worldManager.avConnection.getTrackStore(participantId, "video"))
+} else {
+  videoTrack = null
+}
+
+// ignore other props
+$$props
 </script>
 
 {#if visible}

@@ -1,25 +1,25 @@
 export type AssetLike = {
-  name: string;
-  filename: string;
-  url: string;
-};
+  name: string
+  filename: string
+  url: string
+}
 
 export class Asset {
-  name: string;
-  filename: string;
-  url: string;
+  name: string
+  filename: string
+  url: string
 
   constructor(url?: string) {
-    this.name = "";
-    this.filename = "";
-    this.url = url || "";
+    this.name = ""
+    this.filename = ""
+    this.url = url || ""
   }
 
   copy(asset: AssetLike) {
-    this.name = asset.name;
-    this.filename = asset.filename;
-    this.url = asset.url;
-    return this;
+    this.name = asset.name
+    this.filename = asset.filename
+    this.url = asset.url
+    return this
   }
 
   toJSON() {
@@ -27,17 +27,17 @@ export class Asset {
       name: this.name,
       filename: this.filename,
       url: this.url,
-    };
+    }
   }
 
   fromJSON(data) {
-    this.name = data.name;
-    this.filename = data.filename;
-    this.url = data.url;
-    return this;
+    this.name = data.name
+    this.filename = data.filename
+    this.url = data.url
+    return this
   }
 
   isEmpty() {
-    return !this.url || this.url === "";
+    return !this.url || this.url === ""
   }
 }

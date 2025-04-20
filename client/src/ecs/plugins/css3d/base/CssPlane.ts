@@ -1,17 +1,17 @@
-import { Vector2, Vector3 } from "three";
+import { Vector2, Vector3 } from "three"
 
-import { Component, StringType, NumberType, BooleanType } from "~/ecs/base";
-import { Vector2Type, Vector3Type } from "~/ecs/plugins/core";
+import { Component, StringType, NumberType, BooleanType } from "~/ecs/base"
+import { Vector2Type, Vector3Type } from "~/ecs/plugins/core"
 
-const SCALE_DIVISOR = 200;
+const SCALE_DIVISOR = 200
 
 export class CssPlane extends Component {
-  kind: string;
-  rectangleSize: Vector2;
-  circleRadius: number;
-  offset: Vector3;
-  scale: number;
-  visible: boolean;
+  kind: string
+  rectangleSize: Vector2
+  circleRadius: number
+  offset: Vector3
+  scale: number
+  visible: boolean
 
   static props = {
     kind: {
@@ -75,44 +75,44 @@ export class CssPlane extends Component {
         label: "Visible",
       },
     },
-  };
+  }
 
   static editor = {
     label: "CSS Plane",
-  };
+  }
 
   getSize() {
     switch (this.kind) {
       case "RECTANGLE":
       case "ROUNDED":
-        return this.rectangleSize;
+        return this.rectangleSize
       case "CIRCLE":
-        return new Vector2(this.circleRadius * 2, this.circleRadius * 2);
+        return new Vector2(this.circleRadius * 2, this.circleRadius * 2)
       default:
-        return new Vector2(1, 1);
+        return new Vector2(1, 1)
     }
   }
 
   getFracScale() {
-    return this.scale / SCALE_DIVISOR;
+    return this.scale / SCALE_DIVISOR
   }
 
   getScreenSize(scale = this.getFracScale()) {
-    const size = this.getSize();
+    const size = this.getSize()
     // Adding 4 pixels to width and height makes antialiasing smoother
     // because the size is "just larger" than the hole we poke through
     // the canvas3d; thus, we get a single antialiasing line rather than
     // two competing antialiasing lines
-    return new Vector2(size.x / scale + 4, size.y / scale + 4);
+    return new Vector2(size.x / scale + 4, size.y / scale + 4)
   }
 
   createComponentContainer() {
-    const screenSize = this.getScreenSize();
+    const screenSize = this.getScreenSize()
 
-    const containerElement = document.createElement("div");
-    containerElement.style.width = screenSize.x + "px";
-    containerElement.style.height = screenSize.y + "px";
+    const containerElement = document.createElement("div")
+    containerElement.style.width = screenSize.x + "px"
+    containerElement.style.height = screenSize.y + "px"
 
-    return containerElement;
+    return containerElement
   }
 }

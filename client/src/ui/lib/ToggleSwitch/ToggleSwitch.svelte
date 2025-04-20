@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+import { createEventDispatcher } from "svelte"
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  export let enabled = false;
-  export let labelOn = "On";
-  export let labelOff = "Off";
-  export let small = false;
+export let enabled = false
+export let labelOn = "On"
+export let labelOff = "Off"
+export let small = false
 
-  const toggle = () => {
-    enabled = !enabled;
-    dispatch("change", enabled);
-  };
+const toggle = () => {
+  enabled = !enabled
+  dispatch("change", enabled)
+}
 </script>
 
 <container on:mousedown|stopPropagation={toggle} class:enabled>

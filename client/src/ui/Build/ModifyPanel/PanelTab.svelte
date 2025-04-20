@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+import { createEventDispatcher } from "svelte"
 
-  export let enabled = true;
-  export let style: string | undefined = undefined;
+export let enabled = true
+export let style: string | undefined = undefined
 
-  let dispatch = createEventDispatcher();
-
+let dispatch = createEventDispatcher()
 </script>
 
 <button

@@ -1,13 +1,13 @@
-import type { Collider, RigidBody } from "@dimforge/rapier3d";
-import type { Vector3 } from "three";
+import type { Collider, RigidBody } from "@dimforge/rapier3d"
+import type { Vector3 } from "three"
 
-import { LocalComponent, RefType } from "~/ecs/base";
-import { Vector3Type } from "~/ecs/plugins/core";
+import { LocalComponent, RefType } from "~/ecs/base"
+import { Vector3Type } from "~/ecs/plugins/core"
 
 export class ImplicitColliderRef extends LocalComponent {
-  body: RigidBody;
-  collider: Collider;
-  size: Vector3;
+  body: RigidBody
+  collider: Collider
+  size: Vector3
 
   static props = {
     body: {
@@ -21,5 +21,5 @@ export class ImplicitColliderRef extends LocalComponent {
     size: {
       type: Vector3Type,
     },
-  };
+  }
 }

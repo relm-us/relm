@@ -1,21 +1,21 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+import { createEventDispatcher } from "svelte"
 
-  import Tint from "./Tint.svelte";
-  import closeIcon from "./close-x.png";
+import Tint from "./Tint.svelte"
+import closeIcon from "./close-x.png"
 
-  export let title: string = null;
-  export let align: "left" | "center" | "right" = "center";
-  export let tint: boolean = true;
-  export let canCancel: boolean = true;
-  export let paddingH: number = 48;
-  export let fullHeight: boolean = false;
+export let title: string = null
+export let align: "left" | "center" | "right" = "center"
+export let tint: boolean = true
+export let canCancel: boolean = true
+export let paddingH: number = 48
+export let fullHeight: boolean = false
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  const cancel = (source) => () => {
-    if (canCancel) dispatch("cancel", source);
-  };
+const cancel = (source) => () => {
+  if (canCancel) dispatch("cancel", source)
+}
 </script>
 
 <Tint on:click={cancel("away")} {align} {tint}>

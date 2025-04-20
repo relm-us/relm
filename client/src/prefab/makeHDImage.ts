@@ -1,27 +1,15 @@
-import { Transform, Asset } from "~/ecs/plugins/core";
+import { Transform, Asset } from "~/ecs/plugins/core"
 
-import { Vector2, Vector3, Quaternion, Euler } from "three";
+import { Vector2, Vector3, Quaternion, Euler } from "three"
 
-import { makeEntity } from "./makeEntity";
+import { makeEntity } from "./makeEntity"
 
-import { CssPlane, HdImage } from "~/ecs/plugins/css3d";
-import { Draggable } from "~/ecs/plugins/clickable";
+import { CssPlane, HdImage } from "~/ecs/plugins/css3d"
+import { Draggable } from "~/ecs/plugins/clickable"
 
 export function makeHDImage(
   world,
-  {
-    x,
-    y,
-    z,
-    w = 3,
-    h = 2,
-    d = 0.1,
-    xa = 0,
-    ya = -Math.PI / 16,
-    za = 0,
-    url = "",
-    collide = false,
-  }
+  { x, y, z, w = 3, h = 2, d = 0.1, xa = 0, ya = -Math.PI / 16, za = 0, url = "", collide = false },
 ) {
   const thing = makeEntity(world, "Image")
     .add(Transform, {
@@ -35,7 +23,7 @@ export function makeHDImage(
     .add(Draggable)
     .add(HdImage, {
       asset: new Asset(url),
-    });
+    })
 
-  return thing;
+  return thing
 }

@@ -1,2 +1,2 @@
-export { Distance } from "./Distance";
-export { DistanceRef } from "./DistanceRef";
+export { Distance } from "./Distance"
+export { DistanceRef } from "./DistanceRef"

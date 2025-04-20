@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import IoIosArrowForward from "svelte-icons/io/IoIosArrowForward.svelte";
+import { createEventDispatcher } from "svelte"
+import IoIosArrowForward from "svelte-icons/io/IoIosArrowForward.svelte"
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 </script>
 
 <panel>

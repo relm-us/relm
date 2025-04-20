@@ -1,1 +1,1 @@
-export { default } from "./SettingsPanel.svelte";
+export { default } from "./SettingsPanel.svelte"

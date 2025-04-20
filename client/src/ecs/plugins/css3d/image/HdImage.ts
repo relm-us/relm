@@ -1,11 +1,11 @@
-import { Component, StringType, NumberType } from "~/ecs/base";
-import { Asset, AssetType } from "~/ecs/plugins/core";
+import { Component, StringType, NumberType } from "~/ecs/base"
+import { type Asset, AssetType } from "~/ecs/plugins/core"
 
 export class HdImage extends Component {
-  asset: Asset;
-  width: number;
-  height: number;
-  fit: "COVER" | "CONTAIN";
+  asset: Asset
+  width: number
+  height: number
+  fit: "COVER" | "CONTAIN"
 
   static props = {
     fit: {
@@ -53,9 +53,9 @@ export class HdImage extends Component {
         input: "Color",
       },
     },
-  };
+  }
 
   static editor = {
     label: "HD Image",
-  };
+  }
 }

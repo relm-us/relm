@@ -1,1 +1,1 @@
-export { default } from "./WheelListener.svelte";
+export { default } from "./WheelListener.svelte"

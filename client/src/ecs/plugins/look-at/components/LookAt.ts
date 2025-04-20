@@ -1,14 +1,14 @@
-import { BooleanType, Component, NumberType, StringType } from "~/ecs/base";
-import { Vector3Type } from "~/ecs/plugins/core";
-import { Vector3 } from "three";
+import { BooleanType, Component, NumberType, StringType } from "~/ecs/base"
+import { Vector3Type } from "~/ecs/plugins/core"
+import { Vector3 } from "three"
 
 export class LookAt extends Component {
-  target: string;
-  limit: string;
-  offset: Vector3;
-  stepRadians: number;
-  oneShot: boolean;
-  
+  target: string
+  limit: string
+  offset: Vector3
+  stepRadians: number
+  oneShot: boolean
+
   static props = {
     target: {
       type: StringType,
@@ -57,9 +57,9 @@ export class LookAt extends Component {
         label: "One Shot",
       },
     },
-  };
+  }
 
   static editor = {
     label: "Look At",
-  };
+  }
 }

@@ -1,35 +1,29 @@
-import {
-  BooleanType,
-  LocalComponent,
-  NumberType,
-  RefType,
-  StringType,
-} from "~/ecs/base";
-import { Vector3Type } from "~/ecs/plugins/core";
-import { Vector3 } from "three";
+import { BooleanType, LocalComponent, NumberType, RefType, StringType } from "~/ecs/base"
+import { Vector3Type } from "~/ecs/plugins/core"
+import { Vector3 } from "three"
 
 export class Oculus extends LocalComponent {
-  offset: Vector3;
-  targetOffset: Vector3;
-  size: number;
-  vanchor: number;
-  hanchor: number;
-  showAudio: boolean;
-  showVideo: boolean;
-  color: string;
-  participantName: string;
-  participantId: string;
-  onChange: Function;
+  offset: Vector3
+  targetOffset: Vector3
+  size: number
+  vanchor: number
+  hanchor: number
+  showAudio: boolean
+  showVideo: boolean
+  color: string
+  participantName: string
+  participantId: string
+  onChange: Function
 
   // Cached position values from OculusSystem
-  x: number;
-  y: number;
-  diameter: number;
-  previous: Vector3;
+  x: number
+  y: number
+  diameter: number
+  previous: Vector3
 
   // Cached tween values from OculusSystem
-  tween: any;
-  tweenedTargetOffset: Vector3;
+  tween: any
+  tweenedTargetOffset: Vector3
 
   static props = {
     offset: {
@@ -117,5 +111,5 @@ export class Oculus extends LocalComponent {
       type: RefType,
       default: null,
     },
-  };
+  }
 }

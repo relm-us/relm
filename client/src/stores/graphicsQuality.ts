@@ -1,5 +1,5 @@
-import { Writable } from "svelte/store";
-import { storedWritable } from "~/utils/storedWritable";
+import type { Writable } from "svelte/store"
+import { storedWritable } from "~/utils/storedWritable"
 
 /**
  * 3D Render Quality and Speed
@@ -10,4 +10,4 @@ import { storedWritable } from "~/utils/storedWritable";
  * 3: high quality
  * 4: highest quality
  */
-export const graphicsQuality: Writable<number> = storedWritable("quality", 2);
+export const graphicsQuality: Writable<number> = storedWritable("quality", 2)

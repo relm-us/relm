@@ -1,13 +1,13 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-  import { _ } from "svelte-i18n";
+import { createEventDispatcher } from "svelte"
+import { _ } from "svelte-i18n"
 
-  import Button from "~/ui/lib/Button";
-  import Dialog, { Footer } from "~/ui/lib/Dialog";
-  import ToggleSwitch from "~/ui/lib/ToggleSwitch";
-  import { autoPause } from "~/stores/autoPause";
+import Button from "~/ui/lib/Button"
+import Dialog, { Footer } from "~/ui/lib/Dialog"
+import ToggleSwitch from "~/ui/lib/ToggleSwitch"
+import { autoPause } from "~/stores/autoPause"
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 </script>
 
 <Dialog title={$_("Pause.title")} on:cancel>

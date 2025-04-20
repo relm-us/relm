@@ -1,27 +1,27 @@
 <script lang="ts">
-  import { worldManager } from "~/world";
+import { worldManager } from "~/world"
 
-  import Pane from "~/ui/lib/Pane";
-  import Slider from "~/ui/lib/Slider";
-  import { onMount } from "svelte";
-  import debounce from "lodash/debounce";
-  import { _ } from "~/i18n";
+import Pane from "~/ui/lib/Pane"
+import Slider from "~/ui/lib/Slider"
+import { onMount } from "svelte"
+import debounce from "lodash/debounce"
+import { _ } from "~/i18n"
 
-  let cameraFov;
+let cameraFov
 
-  function onSlideFov({ detail: value }) {
-    cameraFov = value * 180;
-    worldManager.camera.setFov(cameraFov);
-    saveFov(cameraFov);
-  }
+function onSlideFov({ detail: value }) {
+  cameraFov = value * 180
+  worldManager.camera.setFov(cameraFov)
+  saveFov(cameraFov)
+}
 
-  const saveFov = debounce((fov) => {
-    worldManager.worldDoc.settings.y.set("cameraFov", fov);
-  }, 500);
+const saveFov = debounce((fov) => {
+  worldManager.worldDoc.settings.y.set("cameraFov", fov)
+}, 500)
 
-  onMount(() => {
-    cameraFov = worldManager.camera.getFov();
-  });
+onMount(() => {
+  cameraFov = worldManager.camera.getFov()
+})
 </script>
 
 <Pane title={$_("CameraSettings.title")}>

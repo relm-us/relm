@@ -1,34 +1,34 @@
 <script lang="ts">
-  import { toast } from "@zerodevx/svelte-toast";
-  import { onMount } from "svelte";
-  import ago from "s-ago";
+import { toast } from "@zerodevx/svelte-toast"
+import { onMount } from "svelte"
+import ago from "s-ago"
 
-  import { RelmRestAPI } from "~/main/RelmRestAPI";
-  import { LoginManager } from "~/identity/LoginManager";
+import type { RelmRestAPI } from "~/main/RelmRestAPI"
+import type { LoginManager } from "~/identity/LoginManager"
 
-  import Dialog from "~/ui/lib/Dialog";
-  import Button from "~/ui/lib/Button";
+import Dialog from "~/ui/lib/Dialog"
+import Button from "~/ui/lib/Button"
 
-  import Background from "./components/Background.svelte";
+import Background from "./components/Background.svelte"
 
-  export let api: RelmRestAPI;
-  export let loginManager: LoginManager;
+export let api: RelmRestAPI
+export let loginManager: LoginManager
 
-  let relms = [];
+let relms = []
 
-  function visitRelm(relmPath) {
-    window.location.assign(`/${relmPath}`);
+function visitRelm(relmPath) {
+  window.location.assign(`/${relmPath}`)
+}
+
+onMount(async () => {
+  const result = await api.getMyRelms()
+
+  if (result.status === "error") {
+    toast.push(result.reason)
+  } else if (result.status === "success") {
+    relms = result.relms
   }
-
-  onMount(async () => {
-    const result = await api.getMyRelms();
-
-    if (result.status === "error") {
-      toast.push(result.reason);
-    } else if (result.status === "success") {
-      relms = result.relms;
-    }
-  });
+})
 </script>
 
 <Background />

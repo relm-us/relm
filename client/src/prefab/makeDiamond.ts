@@ -1,11 +1,11 @@
-import { Vector3 } from "three";
+import { Vector3 } from "three"
 
-import { makeEntity } from "./makeEntity";
+import { makeEntity } from "./makeEntity"
 
-import { Transform } from "~/ecs/plugins/core";
-import { Diamond } from "~/ecs/plugins/diamond";
-import { Clickable } from "~/ecs/plugins/clickable";
-import { Html2d } from "~/ecs/plugins/html2d";
+import { Transform } from "~/ecs/plugins/core"
+import { Diamond } from "~/ecs/plugins/diamond"
+import { Clickable } from "~/ecs/plugins/clickable"
+import { Html2d } from "~/ecs/plugins/html2d"
 
 export function makeDiamond(world, { x = 0, y = 0, z = 0 }) {
   return makeEntity(world, "Diamond")
@@ -19,5 +19,5 @@ export function makeDiamond(world, { x = 0, y = 0, z = 0 }) {
       visible: true,
       zoomInvariant: false,
       offset: new Vector3(0, 0.5, 0),
-    });
+    })
 }

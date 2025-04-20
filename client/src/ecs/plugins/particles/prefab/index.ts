@@ -1,1 +1,1 @@
-export { blueFire } from "./blueFire";
+export { blueFire } from "./blueFire"

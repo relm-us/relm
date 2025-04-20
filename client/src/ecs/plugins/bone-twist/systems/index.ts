@@ -1,1 +1,1 @@
-export { BoneTwistSystem } from "./BoneTwistSystem";
+export { BoneTwistSystem } from "./BoneTwistSystem"

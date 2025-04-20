@@ -1,5 +1,5 @@
 <script lang="ts">
-  import BaseSvg from "~/ui/lib/BaseSvg.svelte";
+import BaseSvg from "~/ui/lib/BaseSvg.svelte"
 </script>
 
 <BaseSvg viewBox="0 0 14.043258 14.043258" {...$$props}>

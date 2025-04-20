@@ -1,37 +1,37 @@
 <script lang="ts">
-  import { SocialType } from "~/main/RelmOAuthAPI";
+import type { SocialType } from "~/main/RelmOAuthAPI"
 
-  import { worldManager } from "~/world";
+import { worldManager } from "~/world"
 
-  import facebookIcon from "./icons/facebook.png";
-  import googleIcon from "./icons/google.png";
-  import linkedinIcon from "./icons/linkedin.png";
-  import twitterIcon from "./icons/twitter.png";
+import facebookIcon from "./icons/facebook.png"
+import googleIcon from "./icons/google.png"
+import linkedinIcon from "./icons/linkedin.png"
+import twitterIcon from "./icons/twitter.png"
 
-  const onClick = (socialType: SocialType) => async () => {
-    const response = await worldManager.logins.loginWithThirdParty(socialType);
-    if (response === null) {
-      console.log("3rd party login window was closed");
-      return; // Window was closed
-    }
-  };
-  async function onSocialClick({ target }) {
-    const socialId = target.getAttribute("data-login");
-
-    //   if (response.status === "success") {
-    //     // Request identity data from server again and update our local identity if data from the server exists.
-    //     await onAccountConnection();
-    //   } else {
-    //     // Error!
-    //     notifyContext.addNotification({
-    //       text: $_(response.reason, {
-    //         default: response.details,
-    //       }),
-    //       position: "top-left",
-    //       removeAfter: 3000,
-    //     });
-    //   }
+const onClick = (socialType: SocialType) => async () => {
+  const response = await worldManager.logins.loginWithThirdParty(socialType)
+  if (response === null) {
+    console.log("3rd party login window was closed")
+    return // Window was closed
   }
+}
+async function onSocialClick({ target }) {
+  const socialId = target.getAttribute("data-login")
+
+  //   if (response.status === "success") {
+  //     // Request identity data from server again and update our local identity if data from the server exists.
+  //     await onAccountConnection();
+  //   } else {
+  //     // Error!
+  //     notifyContext.addNotification({
+  //       text: $_(response.reason, {
+  //         default: response.details,
+  //       }),
+  //       position: "top-left",
+  //       removeAfter: 3000,
+  //     });
+  //   }
+}
 </script>
 
 <r-connections>

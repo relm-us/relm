@@ -1,14 +1,14 @@
-import { BooleanType, NumberType, RefType, LocalComponent } from "~/ecs/base";
-import { Vector3 } from "three";
-import { Vector3Type } from "~/ecs/plugins/core";
-import { AnimationOverride } from "~/types";
+import { BooleanType, NumberType, RefType, LocalComponent } from "~/ecs/base"
+import { Vector3 } from "three"
+import { Vector3Type } from "~/ecs/plugins/core"
+import type { AnimationOverride } from "~/types"
 
 export class ControllerState extends LocalComponent {
-  speed: number;
-  grounded: boolean;
-  direction: Vector3;
-  animOverride: AnimationOverride;
-  hovering: boolean;
+  speed: number
+  grounded: boolean
+  direction: Vector3
+  animOverride: AnimationOverride
+  hovering: boolean
 
   static props = {
     speed: {
@@ -35,5 +35,5 @@ export class ControllerState extends LocalComponent {
       type: BooleanType,
       default: false,
     },
-  };
+  }
 }

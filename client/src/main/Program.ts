@@ -1,73 +1,69 @@
-import { get, Writable } from "svelte/store";
-import { Vector3 } from "three";
-import { toast } from "@zerodevx/svelte-toast";
+import { get, type Writable } from "svelte/store"
+import { Vector3 } from "three"
+import { toast } from "@zerodevx/svelte-toast"
 
-import { DeviceIds } from "~/av/VideoMirror";
+import type { DeviceIds } from "~/av/VideoMirror"
 
-import { worldManager } from "~/world";
+import { worldManager } from "~/world"
 
-import { Cmd } from "~/utils/runtime";
-import { exists } from "~/utils/exists";
-import { isEqual } from "~/utils/isEqual";
+import { Cmd } from "~/utils/runtime"
+import { exists } from "~/utils/exists"
+import { isEqual } from "~/utils/isEqual"
 
-import AvatarChooser from "~/ui/AvatarBuilder/AvatarChooser.svelte";
+import AvatarChooser from "~/ui/AvatarBuilder/AvatarChooser.svelte"
 
-import { AVConnection } from "~/av/AVConnection";
-import { AV_ENABLED, INITIAL_LOAD_GAME_WAIT } from "~/config/constants";
+import { AVConnection } from "~/av/AVConnection"
+import { AV_ENABLED, INITIAL_LOAD_GAME_WAIT } from "~/config/constants"
 
-import { preferredDeviceIds } from "~/stores/preferredDeviceIds";
-import { askAvatarSetup } from "~/stores/askAvatarSetup";
+import { preferredDeviceIds } from "~/stores/preferredDeviceIds"
+import { askAvatarSetup } from "~/stores/askAvatarSetup"
 
-import type { State, Message, Program, Effect } from "./ProgramTypes";
+import type { State, Message, Program, Effect } from "./ProgramTypes"
 
-import { initParticipants } from "./init/initParticipants";
+import { initParticipants } from "./init/initParticipants"
 
-import { createECSWorld } from "./effects/createECSWorld";
-import { getPositionFromEntryway } from "./effects/getPositionFromEntryway";
-import { initWorldManager } from "./effects/initWorldManager";
-import { getRelmPermitsAndMetadata } from "./effects/getRelmPermitsAndMetadata";
-import { importPhysicsEngine } from "./effects/importPhysicsEngine";
-import { nextSetupStep } from "./effects/nextSetupStep";
-import { createWorldDoc } from "./effects/createWorldDoc";
-import { getPageParams } from "./effects/getPageParams";
-import { joinAudioVideo } from "./effects/joinAudioVideo";
-import { getAuthenticationHeaders } from "./effects/getAuthenticationHeaders";
-import { pollLoadingState } from "./effects/pollLoadingState";
-import { makeLocalAvatar } from "./effects/makeLocalAvatar";
-import { resetArrowKeys } from "./effects/resetArrowKeys";
-import { requestCloneRelm } from "./effects/requestCloneRelm";
+import { createECSWorld } from "./effects/createECSWorld"
+import { getPositionFromEntryway } from "./effects/getPositionFromEntryway"
+import { initWorldManager } from "./effects/initWorldManager"
+import { getRelmPermitsAndMetadata } from "./effects/getRelmPermitsAndMetadata"
+import { importPhysicsEngine } from "./effects/importPhysicsEngine"
+import { nextSetupStep } from "./effects/nextSetupStep"
+import { createWorldDoc } from "./effects/createWorldDoc"
+import { getPageParams } from "./effects/getPageParams"
+import { joinAudioVideo } from "./effects/joinAudioVideo"
+import { getAuthenticationHeaders } from "./effects/getAuthenticationHeaders"
+import { pollLoadingState } from "./effects/pollLoadingState"
+import { makeLocalAvatar } from "./effects/makeLocalAvatar"
+import { resetArrowKeys } from "./effects/resetArrowKeys"
+import { requestCloneRelm } from "./effects/requestCloneRelm"
 
-import GameWorld from "./views/GameWorld.svelte";
-import ErrorScreen from "./views/ErrorScreen.svelte";
-import BlankWithLogo from "./views/BlankWithLogo.svelte";
-import MediaSetupShim from "./views/MediaSetupShim.svelte";
-import LoadingScreen from "./views/LoadingScreen.svelte";
-import LoadingFailed from "./views/LoadingFailed.svelte";
+import GameWorld from "./views/GameWorld.svelte"
+import ErrorScreen from "./views/ErrorScreen.svelte"
+import BlankWithLogo from "./views/BlankWithLogo.svelte"
+import MediaSetupShim from "./views/MediaSetupShim.svelte"
+import LoadingScreen from "./views/LoadingScreen.svelte"
+import LoadingFailed from "./views/LoadingFailed.svelte"
 
-import { participantId } from "~/identity/participantId";
-import { setAvatarFromParticipant } from "~/identity/Avatar/setAvatarFromParticipant";
-import { getDefaultAppearance } from "~/identity/Avatar/appearance";
-import { localIdentityData } from "~/stores/identityData";
-import { IdentityData, UpdateData } from "~/types";
-import { getIdentityData } from "./effects/getIdentityData";
-import { saveIdentityData } from "./effects/saveIdentityData";
-import { connectedAccount } from "~/stores/connectedAccount";
-import { permits } from "~/stores/permits";
-import { ParticipantBroker } from "~/identity/ParticipantBroker";
+import { participantId } from "~/identity/participantId"
+import { setAvatarFromParticipant } from "~/identity/Avatar/setAvatarFromParticipant"
+import { getDefaultAppearance } from "~/identity/Avatar/appearance"
+import { localIdentityData } from "~/stores/identityData"
+import type { IdentityData, UpdateData } from "~/types"
+import { getIdentityData } from "./effects/getIdentityData"
+import { saveIdentityData } from "./effects/saveIdentityData"
+import { connectedAccount } from "~/stores/connectedAccount"
+import { permits } from "~/stores/permits"
+import { ParticipantBroker } from "~/identity/ParticipantBroker"
 
-const logEnabled = (localStorage.getItem("debug") || "")
-  .split(":")
-  .includes("program");
+const logEnabled = (localStorage.getItem("debug") || "").split(":").includes("program")
 
-const send: (msg: Message) => Effect = Cmd.ofMsg;
+const send: (msg: Message) => Effect = Cmd.ofMsg
 
 /**
  * The main Relm program
  */
 export function makeProgram(): Program {
-  const globalBroadcast = window.BroadcastChannel
-    ? new BroadcastChannel("relm.us")
-    : null;
+  const globalBroadcast = window.BroadcastChannel ? new BroadcastChannel("relm.us") : null
 
   const init: [State, Effect] = [
     {
@@ -81,41 +77,35 @@ export function makeProgram(): Program {
       preferredDeviceIds: preferredDeviceIds as Writable<DeviceIds>,
     },
     getPageParams(globalBroadcast),
-  ];
+  ]
 
   const update = (msg: Message, state: State): [State, any?] => {
-    (window as any).state = state;
+    ;(window as any).state = state
     if (logEnabled) {
-      console.log(
-        `program msg '${msg.id}' (${state.pageParams?.relmName}): %o`,
-        {
-          msg,
-          state,
-        }
-      );
+      console.log(`program msg '${msg.id}' (${state.pageParams?.relmName}): %o`, {
+        msg,
+        state,
+      })
     }
 
     if (state.screen === "error") {
       // stay in error state
-      return;
+      return
     }
 
     // Handle Program updates
     switch (msg.id) {
       case "gotPageParams": {
-        exists(msg.pageParams);
+        exists(msg.pageParams)
 
         // Hack to make state available to worldManager as soon as possible (debugging)
-        worldManager.state = state;
+        worldManager.state = state
 
-        return [
-          { ...state, pageParams: msg.pageParams },
-          getAuthenticationHeaders(msg.pageParams),
-        ];
+        return [{ ...state, pageParams: msg.pageParams }, getAuthenticationHeaders(msg.pageParams)]
       }
 
       case "gotAuthenticationHeaders": {
-        exists(msg.authHeaders);
+        exists(msg.authHeaders)
 
         return [
           {
@@ -124,44 +114,44 @@ export function makeProgram(): Program {
             avConnection: new AVConnection(participantId),
           },
           getIdentityData(state.pageParams, msg.authHeaders),
-        ];
+        ]
       }
       case "gotIdentityData": {
         const newIdentityData: IdentityData = {
           ...get(state.localIdentityData),
-        };
+        }
         if (msg.identity) {
-          newIdentityData.name = msg.identity.name;
-          newIdentityData.color = msg.identity.color;
-          newIdentityData.appearance = msg.identity.appearance;
+          newIdentityData.name = msg.identity.name
+          newIdentityData.color = msg.identity.color
+          newIdentityData.appearance = msg.identity.appearance
           if (msg.identity.appearance) {
-            state.avatarSetupDone = true;
+            state.avatarSetupDone = true
           }
 
-          newIdentityData.equipment = msg.identity.equipment;
-          newIdentityData.status = msg.identity.status;
+          newIdentityData.equipment = msg.identity.equipment
+          newIdentityData.status = msg.identity.status
         }
 
-        state.localIdentityData.set(newIdentityData);
-        connectedAccount.set(msg.isConnected);
+        state.localIdentityData.set(newIdentityData)
+        connectedAccount.set(msg.isConnected)
 
         return [
           {
             ...state,
           },
           getRelmPermitsAndMetadata(state.pageParams, state.authHeaders),
-        ];
+        ]
       }
 
       case "gotRelmPermitsAndMetadata": {
-        exists(msg.permits, "permits");
-        exists(msg.permanentDocId, "permanentDocId");
-        exists(msg.transientDocId, "transientDocId");
-        exists(msg.entitiesMax, "entitiesMax");
-        exists(msg.assetsMax, "assetsMax");
-        exists(msg.twilioToken, "twilioToken");
+        exists(msg.permits, "permits")
+        exists(msg.permanentDocId, "permanentDocId")
+        exists(msg.transientDocId, "transientDocId")
+        exists(msg.entitiesMax, "entitiesMax")
+        exists(msg.assetsMax, "assetsMax")
+        exists(msg.twilioToken, "twilioToken")
 
-        permits.set(msg.permits);
+        permits.set(msg.permits)
 
         return [
           {
@@ -187,132 +177,119 @@ export function makeProgram(): Program {
               //     `> loading <'
               //
               Cmd.batch([importPhysicsEngine, nextSetupStep(state)]),
-        ];
+        ]
       }
 
       case "participantJoined": {
-        const name = msg.participant.identityData.name;
+        const name = msg.participant.identityData.name
 
-        toast.push(`${name && name !== "" ? name : "A newcomer"} joined.`);
+        toast.push(`${name && name !== "" ? name : "A newcomer"} joined.`)
 
         if (logEnabled) {
-          console.log(
-            "participantJoined",
-            msg.participant.identityData.name,
-            state.participants.size
-          );
+          console.log("participantJoined", msg.participant.identityData.name, state.participants.size)
         }
 
-        const avRoom = state.permanentDocId;
+        const avRoom = state.permanentDocId
 
         let nextAction = joinAudioVideo(
           state.participants.get(participantId),
           state.avConnection,
           state.avDisconnect,
           avRoom,
-          state.twilioToken
-        );
+          state.twilioToken,
+        )
 
         if (AV_ENABLED === false) {
           // The audio/video system is completely disabled
-          nextAction = null;
+          nextAction = null
         }
 
         if (state.avDisconnect) {
           // We've already connected once, no need to do it again
-          nextAction = null;
+          nextAction = null
         }
 
-        return [{ ...state, avRoom }, nextAction];
+        return [{ ...state, avRoom }, nextAction]
       }
 
       case "participantLeft": {
-        return [state];
+        return [state]
       }
 
       case "rejoinAudioVideo": {
-        const avRoom = msg.zone
-          ? `${state.permanentDocId}-${msg.zone}`
-          : state.permanentDocId;
+        const avRoom = msg.zone ? `${state.permanentDocId}-${msg.zone}` : state.permanentDocId
 
         let nextAction = joinAudioVideo(
           state.participants.get(participantId),
           state.avConnection,
           state.avDisconnect,
           avRoom,
-          state.twilioToken
-        );
+          state.twilioToken,
+        )
 
         if (AV_ENABLED === false) {
-          nextAction = null;
+          nextAction = null
         }
 
-        return [{ ...state, avRoom }, nextAction];
+        return [{ ...state, avRoom }, nextAction]
       }
 
       case "didJoinAudioVideo": {
-        return [{ ...state, avDisconnect: msg.avDisconnect }];
+        return [{ ...state, avDisconnect: msg.avDisconnect }]
       }
 
       // Update local participant's IdentityData and send to other participants
       case "updateLocalIdentityData": {
-        const localParticipant = state.participants.get(participantId);
+        const localParticipant = state.participants.get(participantId)
 
         // If name is assigned (e.g. via JWT), it can't be changed
-        localParticipant.editable = state.overrideParticipantName === undefined;
+        localParticipant.editable = state.overrideParticipantName === undefined
 
         const newIdentityData = {
           ...get(state.localIdentityData),
           ...msg.identityData,
-        };
+        }
 
         // Check if we updated the identity data
-        const isNewIdentityUpdate = !isEqual(
-          newIdentityData,
-          get(state.localIdentityData)
-        );
+        const isNewIdentityUpdate = !isEqual(newIdentityData, get(state.localIdentityData))
 
         // Do we need to update the identity data to other participants?
         if (isNewIdentityUpdate) {
           // update identityData on participant
-          Object.assign(localParticipant.identityData, newIdentityData);
+          Object.assign(localParticipant.identityData, newIdentityData)
 
           // update identityData in Program state & Svelte store
-          state.localIdentityData.set(newIdentityData);
+          state.localIdentityData.set(newIdentityData)
 
           // broadcast identityData to other participants
-          state.broker.setField("identity", newIdentityData);
+          state.broker.setField("identity", newIdentityData)
 
           // sync identityData to HTML and ECS entities
-          setAvatarFromParticipant(localParticipant);
+          setAvatarFromParticipant(localParticipant)
         }
 
         // Save identity data to server if necessary
         if (get(connectedAccount)) {
-          return [state, saveIdentityData(state)];
-        } else {
-          return [state];
+          return [state, saveIdentityData(state)]
         }
+
+        return [state]
       }
 
       // does not happen on initial page load; `enterPortal` is
       // used as the first stage of re-initializing everything for
       // a new relm, without reloading the web page
       case "enterPortal": {
-        exists(msg.relmName, "relmName");
-        exists(msg.entryway, "entryway");
+        exists(msg.relmName, "relmName")
+        exists(msg.entryway, "entryway")
 
-        worldManager.stop();
-        state.avDisconnect?.();
+        worldManager.stop()
+        state.avDisconnect?.()
 
-        let newUrl = "/";
-        if (msg.relmName !== "default") newUrl += msg.relmName;
-        if (msg.entryway !== "default") newUrl += "#" + msg.entryway;
-        window.history.pushState(
-          { relmName: msg.relmName, entryway: msg.entryway },
-          msg.relmName,
-          newUrl
-        );
+        let newUrl = "/"
+        if (msg.relmName !== "default") newUrl += msg.relmName
+        if (msg.entryway !== "default") newUrl += "#" + msg.entryway
+        window.history.pushState({ relmName: msg.relmName, entryway: msg.entryway }, msg.relmName, newUrl)
 
         return [
           {
@@ -339,7 +316,7 @@ export function makeProgram(): Program {
             avDisconnect: null,
           },
           send({ id: "didEnterPortal" }),
-        ];
+        ]
       }
 
       case "didEnterPortal": {
@@ -350,31 +327,25 @@ export function makeProgram(): Program {
             worldManager
               .deinit()
               .then(() => {
-                dispatch({ id: "didResetWorld" });
+                dispatch({ id: "didResetWorld" })
               })
               .catch((err) => {
-                console.warn(err);
-                dispatch({ id: "error", msg: err.toString() });
-              });
+                console.warn(err)
+                dispatch({ id: "error", msg: err.toString() })
+              })
           },
-        ];
+        ]
       }
 
       case "didResetWorld": {
-        exists(state.pageParams, "pageParams");
-        exists(state.authHeaders, "authHeaders");
+        exists(state.pageParams, "pageParams")
+        exists(state.authHeaders, "authHeaders")
 
-        return [
-          state,
-          Cmd.batch([
-            getAuthenticationHeaders(state.pageParams),
-            resetArrowKeys,
-          ]),
-        ];
+        return [state, Cmd.batch([getAuthenticationHeaders(state.pageParams), resetArrowKeys])]
       }
 
       case "importedPhysicsEngine": {
-        exists(msg.physicsEngine, "physicsEngine");
+        exists(msg.physicsEngine, "physicsEngine")
 
         return [
           {
@@ -382,21 +353,21 @@ export function makeProgram(): Program {
             physicsEngine: msg.physicsEngine,
           },
           createECSWorld(msg.physicsEngine),
-        ];
+        ]
       }
 
       case "createdECSWorld": {
         if (state.worldDoc) {
-          console.warn("Creating new worldDoc, but one already exists");
+          console.warn("Creating new worldDoc, but one already exists")
         }
-        exists(state.permanentDocId, "permanentDocId");
-        exists(state.transientDocId, "transientDocId");
-        exists(state.authHeaders, "authHeaders");
-        exists(msg.ecsWorld, "ecsWorld");
-        exists(msg.ecsWorldLoaderUnsub, "ecsWorldLoaderUnsub");
+        exists(state.permanentDocId, "permanentDocId")
+        exists(state.transientDocId, "transientDocId")
+        exists(state.authHeaders, "authHeaders")
+        exists(msg.ecsWorld, "ecsWorld")
+        exists(msg.ecsWorldLoaderUnsub, "ecsWorldLoaderUnsub")
 
         // Useful for debugging prior to world finished loading
-        (window as any).ecsWorld = msg.ecsWorld;
+        ;(window as any).ecsWorld = msg.ecsWorld
 
         return [
           {
@@ -404,108 +375,93 @@ export function makeProgram(): Program {
             ecsWorld: msg.ecsWorld,
             ecsWorldLoaderUnsub: msg.ecsWorldLoaderUnsub,
           },
-          createWorldDoc(
-            msg.ecsWorld,
-            state.permanentDocId,
-            state.transientDocId,
-            state.authHeaders
-          ),
-        ];
+          createWorldDoc(msg.ecsWorld, state.permanentDocId, state.transientDocId, state.authHeaders),
+        ]
       }
 
       case "createdWorldDoc": {
-        exists(msg.worldDoc, "worldDoc");
-        exists(msg.slowAwareness, "slowAwareness");
-        exists(msg.rapidAwareness, "rapidAwareness");
+        exists(msg.worldDoc, "worldDoc")
+        exists(msg.slowAwareness, "slowAwareness")
+        exists(msg.rapidAwareness, "rapidAwareness")
 
         return [
           {
             ...state,
             worldDoc: msg.worldDoc,
-            broker: new ParticipantBroker(
-              msg.slowAwareness,
-              msg.rapidAwareness
-            ),
+            broker: new ParticipantBroker(msg.slowAwareness, msg.rapidAwareness),
             entitiesCount: 0,
             assetsCount: 0,
           },
 
           send({ id: "loadStart" }),
-        ];
+        ]
       }
 
       case "gotWorldDocStatus": {
-        exists(msg.status, "status");
+        exists(msg.status, "status")
 
-        return [{ ...state, worldDocStatus: msg.status }];
+        return [{ ...state, worldDocStatus: msg.status }]
       }
 
       case "setUpAudioVideo": {
-        return [{ ...state, screen: "video-mirror" }];
+        return [{ ...state, screen: "video-mirror" }]
       }
 
       case "didSetUpAudioVideo": {
         if (msg.audioDesired !== undefined) {
-          state.initialAudioDesired = msg.audioDesired;
+          state.initialAudioDesired = msg.audioDesired
         }
         if (msg.videoDesired !== undefined) {
-          state.initialVideoDesired = msg.videoDesired;
+          state.initialVideoDesired = msg.videoDesired
         }
         if (msg.preferredDeviceIds !== undefined) {
-          state.preferredDeviceIds.set(msg.preferredDeviceIds);
+          state.preferredDeviceIds.set(msg.preferredDeviceIds)
         }
 
-        const effects: Effect[] = [];
+        const effects: Effect[] = []
 
-        const newState = { ...state, audioVideoSetupDone: true };
+        const newState = { ...state, audioVideoSetupDone: true }
 
         if (state.initializedWorldManager) {
-          worldManager.refreshOculii();
+          worldManager.refreshOculii()
 
-          effects.push(send({ id: "startPlaying" }));
+          effects.push(send({ id: "startPlaying" }))
         } else {
-          effects.push(nextSetupStep(newState));
+          effects.push(nextSetupStep(newState))
         }
 
-        return [newState, Cmd.batch(effects)];
+        return [newState, Cmd.batch(effects)]
       }
 
       case "setUpAvatar": {
-        return [{ ...state, screen: "choose-avatar" }];
+        return [{ ...state, screen: "choose-avatar" }]
       }
 
       case "didSetUpAvatar": {
         // Don't allow re-entry
-        if (state.avatarSetupDone) return;
+        if (state.avatarSetupDone) return
 
         const newState: State = {
           ...state,
           avatarSetupDone: true,
           participantQuickAppearance: msg.appearance,
-        };
+        }
 
-        askAvatarSetup.set(false);
+        askAvatarSetup.set(false)
 
-        return [newState, nextSetupStep(newState)];
+        return [newState, nextSetupStep(newState)]
       }
 
       case "loadStart": {
-        if (
-          state.worldDoc &&
-          state.audioVideoSetupDone &&
-          state.avatarSetupDone
-        ) {
-          return [
-            { ...state, doneLoading: false, screen: "loading-screen" },
-            send({ id: "loadPoll" }),
-          ];
-        } else {
-          return [state];
+        if (state.worldDoc && state.audioVideoSetupDone && state.avatarSetupDone) {
+          return [{ ...state, doneLoading: false, screen: "loading-screen" }, send({ id: "loadPoll" })]
         }
+
+        return [state]
       }
 
       case "loadPoll": {
-        return [state, pollLoadingState(state)];
+        return [state, pollLoadingState(state)]
       }
 
       case "loadComplete": {
@@ -519,13 +475,13 @@ export function makeProgram(): Program {
               // This was initially 1.5 sec, but low bandwidth connections
               // require more time for the entryway data in YJS to arrive.
               // This longer timeout directly affects the loading time of new worlds.
-              const WAIT_FOR_YJS_DEFAULT_ENTRYWAY = 30_000;
+              const WAIT_FOR_YJS_DEFAULT_ENTRYWAY = 30_000
               setTimeout(() => {
-                dispatch({ id: "assumeOriginAsEntryway" });
-              }, WAIT_FOR_YJS_DEFAULT_ENTRYWAY);
+                dispatch({ id: "assumeOriginAsEntryway" })
+              }, WAIT_FOR_YJS_DEFAULT_ENTRYWAY)
             },
           ]),
-        ];
+        ]
       }
 
       case "gotLoadingState": {
@@ -535,14 +491,14 @@ export function makeProgram(): Program {
             assetsCount: msg.assetsCount,
             entitiesCount: msg.entitiesCount,
           },
-        ];
+        ]
       }
 
       case "gotPositionFromEntryway": {
-        exists(msg.entrywayPosition, "entrywayPosition");
+        exists(msg.entrywayPosition, "entrywayPosition")
 
         if (msg.entryway) {
-          state.pageParams.entryway = msg.entryway;
+          state.pageParams.entryway = msg.entryway
         }
 
         return [
@@ -551,35 +507,29 @@ export function makeProgram(): Program {
             entrywayPosition: msg.entrywayPosition,
           },
           send({ id: "gotEntrywayPosition" }),
-        ];
+        ]
       }
 
       case "assumeOriginAsEntryway": {
         if (!state.entrywayPosition) {
-          alert("This relm's default entryway is not yet set.");
-          return [
-            { ...state, entrywayPosition: new Vector3(0, 0, 0) },
-            send({ id: "gotEntrywayPosition" }),
-          ];
-        } else {
-          return [state];
+          alert("This relm's default entryway is not yet set.")
+          return [{ ...state, entrywayPosition: new Vector3(0, 0, 0) }, send({ id: "gotEntrywayPosition" })]
         }
+
+        return [state]
       }
 
       case "gotEntrywayPosition": {
         // TODO: Move this to prior initialization step and remove `gotEntrywayPosition`?
-        return [state, makeLocalAvatar(state.ecsWorld)];
+        return [state, makeLocalAvatar(state.ecsWorld)]
       }
 
       case "didMakeLocalAvatar": {
-        exists(msg.avatar, "avatar");
+        exists(msg.avatar, "avatar")
 
-        state.participants.get(participantId).avatar = msg.avatar;
+        state.participants.get(participantId).avatar = msg.avatar
 
-        return [
-          { ...state, localAvatarInitialized: true },
-          send({ id: "initWorldManager" }),
-        ];
+        return [{ ...state, localAvatarInitialized: true }, send({ id: "initWorldManager" })]
       }
 
       case "initWorldManager": {
@@ -590,9 +540,9 @@ export function makeProgram(): Program {
           state.localAvatarInitialized
         ) {
           // Stop making the world "tick" just for loading
-          state.ecsWorldLoaderUnsub?.();
+          state.ecsWorldLoaderUnsub?.()
 
-          exists(state.avConnection, "avConnection");
+          exists(state.avConnection, "avConnection")
 
           return [
             state,
@@ -604,40 +554,34 @@ export function makeProgram(): Program {
               state.pageParams,
               state.permanentDocId,
               state.avConnection,
-              state.participants
+              state.participants,
             ),
-          ];
-        } else {
-          return [state];
+          ]
         }
+
+        return [state]
       }
 
       case "didInitWorldManager": {
-        return [
-          { ...state, initializedWorldManager: true },
-          send({ id: "loadedAndReady" }),
-        ];
+        return [{ ...state, initializedWorldManager: true }, send({ id: "loadedAndReady" })]
       }
 
       case "loadedAndReady": {
         if (state.entrywayPosition && state.doneLoading) {
-          worldManager.moveToInitialLocation(state.entrywayPosition);
+          worldManager.moveToInitialLocation(state.entrywayPosition)
 
           if (state.entrywayUnsub) {
-            state.entrywayUnsub();
+            state.entrywayUnsub()
           }
 
-          return [
-            { ...state, entrywayUnsub: null },
-            send({ id: "startPlaying" }),
-          ];
-        } else {
-          return [state];
+          return [{ ...state, entrywayUnsub: null }, send({ id: "startPlaying" })]
         }
+
+        return [state]
       }
 
       case "startPlaying": {
-        const data = get(state.localIdentityData);
+        const data = get(state.localIdentityData)
         const identityData: UpdateData = {
           clientId: state.worldDoc.ydoc.clientID,
           status: "present",
@@ -651,10 +595,10 @@ export function makeProgram(): Program {
             // If we've completely lost appearance somehow, scrape
             // a default together
             getDefaultAppearance("male"),
-        };
+        }
 
         if (state.participantQuickAppearance) {
-          identityData.appearance = state.participantQuickAppearance;
+          identityData.appearance = state.participantQuickAppearance
         }
 
         return [
@@ -665,54 +609,51 @@ export function makeProgram(): Program {
             // Do a little time-out here to allow the world to "look good" before entering
             (dispatch) => {
               setTimeout(() => {
-                dispatch({ id: "showGameScreen" });
-              }, INITIAL_LOAD_GAME_WAIT);
+                dispatch({ id: "showGameScreen" })
+              }, INITIAL_LOAD_GAME_WAIT)
             },
           ]),
-        ];
+        ]
       }
 
       case "showGameScreen": {
-        return [{ ...state, screen: "game-world" }];
+        return [{ ...state, screen: "game-world" }]
       }
 
       // We store entrywayUnsub for later when we may need it for a portal
       case "gotEntrywayUnsub": {
-        return [{ ...state, entrywayUnsub: msg.entrywayUnsub }];
+        return [{ ...state, entrywayUnsub: msg.entrywayUnsub }]
       }
 
       // Send yjs a modification so that it triggers an assets/entities stats re-assessment
       case "recomputeWorldDocStats": {
         if (state.worldDoc) {
-          state.worldDoc.recomputeStats();
+          state.worldDoc.recomputeStats()
         } else {
-          console.warn("Can't recompute stats, worldDoc not available");
+          console.warn("Can't recompute stats, worldDoc not available")
         }
-        return [state];
+        return [state]
       }
 
       // Error page to show what went wrong
       case "error":
-        console.warn(msg.message, msg.stack);
-        return [{ ...state, screen: "error", errorMessage: msg.message }];
+        console.warn(msg.message, msg.stack)
+        return [{ ...state, screen: "error", errorMessage: msg.message }]
 
       default:
-        console.warn("Unknown relm message:", msg);
-        return [state];
+        console.warn("Unknown relm message:", msg)
+        return [state]
     }
-  };
+  }
 
   const view = (state, dispatch) => {
-    if (logEnabled) console.log("relmProgram view", state.screen);
+    if (logEnabled) console.log("relmProgram view", state.screen)
     if (state)
       switch (state.screen) {
         case "initial":
-          return [BlankWithLogo];
+          return [BlankWithLogo]
         case "error":
-          return [
-            ErrorScreen,
-            { message: state.errorMessage || "There was an error" },
-          ];
+          return [ErrorScreen, { message: state.errorMessage || "There was an error" }]
         case "video-mirror":
           return [
             MediaSetupShim,
@@ -722,9 +663,9 @@ export function makeProgram(): Program {
               videoDesired: get(state.videoDesired),
               preferredDeviceIds: get(state.preferredDeviceIds),
             },
-          ];
+          ]
         case "choose-avatar":
-          return [AvatarChooser, { dispatch }];
+          return [AvatarChooser, { dispatch }]
         case "loading-screen":
           return [
             LoadingScreen,
@@ -735,9 +676,9 @@ export function makeProgram(): Program {
               assetsCount: state.assetsCount,
               assetsMax: state.assetsMax,
             },
-          ];
+          ]
         case "loading-failed":
-          return [LoadingFailed];
+          return [LoadingFailed]
         case "game-world":
           return [
             GameWorld,
@@ -746,10 +687,10 @@ export function makeProgram(): Program {
               ecsWorld: state.ecsWorld,
               state,
             },
-          ];
+          ]
         default:
-          throw Error(`Unknown screen: ${state.screen}`);
+          throw Error(`Unknown screen: ${state.screen}`)
       }
-  };
-  return { init, update, view };
+  }
+  return { init, update, view }
 }

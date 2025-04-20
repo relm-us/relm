@@ -1,30 +1,30 @@
 <script lang="ts">
-  import type { YReadableMap } from "relm-common";
+import type { YReadableMap } from "relm-common"
 
-  import { _ } from "svelte-i18n";
-  import { nanoid } from "nanoid";
+import { _ } from "svelte-i18n"
+import { nanoid } from "nanoid"
 
-  import Button from "~/ui/lib/Button";
-  import TextInput from "~/ui/lib/TextInput";
-  import { worldManager } from "~/world";
+import Button from "~/ui/lib/Button"
+import TextInput from "~/ui/lib/TextInput"
+import { worldManager } from "~/world"
 
-  let edit = false;
-  let newLayerName: string;
+let edit = false
+let newLayerName: string
 
-  function showAddLayer() {
-    newLayerName = "";
-    edit = true;
-  }
+function showAddLayer() {
+  newLayerName = ""
+  edit = true
+}
 
-  function hideAddLayer() {
-    edit = false;
-  }
+function hideAddLayer() {
+  edit = false
+}
 
-  function addLayer() {
-    const newLayerId = nanoid(10);
-    worldManager.worldDoc.setLayerName(newLayerId, newLayerName);
-    hideAddLayer();
-  }
+function addLayer() {
+  const newLayerId = nanoid(10)
+  worldManager.worldDoc.setLayerName(newLayerId, newLayerName)
+  hideAddLayer()
+}
 </script>
 
 <r-add-layer>

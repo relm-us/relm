@@ -1,127 +1,127 @@
 <script lang="ts">
-  import { _ } from "svelte-i18n";
+import { _ } from "svelte-i18n"
 
-  import { worldManager } from "~/world";
+import { worldManager } from "~/world"
 
-  import {
-    AVAILABLE_HAIR_COLORS,
-    AVAILABLE_SKIN_COLORS,
-    HairType,
-    TopType,
-    BottomType,
-    ShoeType,
-    Appearance,
-  } from "relm-common";
+import {
+  AVAILABLE_HAIR_COLORS,
+  AVAILABLE_SKIN_COLORS,
+  type HairType,
+  type TopType,
+  type BottomType,
+  type ShoeType,
+  type Appearance,
+} from "relm-common"
 
-  import Slider from "~/ui/lib/Slider";
-  import ToggleSwitch from "~/ui/lib/ToggleSwitch";
+import Slider from "~/ui/lib/Slider"
+import ToggleSwitch from "~/ui/lib/ToggleSwitch"
 
-  import Color from "./Color.svelte";
-  import ColorPick from "./ColorPick.svelte";
-  import Choice from "./Choice.svelte";
-  import Section from "./Section.svelte";
+import Color from "./Color.svelte"
+import ColorPick from "./ColorPick.svelte"
+import Choice from "./Choice.svelte"
+import Section from "./Section.svelte"
 
-  import iconNone from "./icons/none.png";
-  import iconHair02 from "./icons/hair-02.png";
-  import iconHair03 from "./icons/hair-03.png";
-  import iconHair04 from "./icons/hair-04.png";
-  import iconPants01 from "./icons/pants-01.png";
-  import iconPants02 from "./icons/pants-02.png";
-  import iconPants03 from "./icons/pants-03.png";
-  import iconPants04 from "./icons/pants-04.png";
-  import iconShirt01 from "./icons/shirt-01.png";
-  import iconShirt02 from "./icons/shirt-02.png";
-  import iconShirt03 from "./icons/shirt-03.png";
-  import iconShirt04 from "./icons/shirt-04.png";
-  import iconShoes01 from "./icons/shoes-01.png";
-  import iconShoes02 from "./icons/shoes-02.png";
-  import iconShoes03 from "./icons/shoes-03.png";
-  import iconShoes04 from "./icons/shoes-04.png";
-  import { fantasySkin } from "~/stores/fantasySkin";
+import iconNone from "./icons/none.png"
+import iconHair02 from "./icons/hair-02.png"
+import iconHair03 from "./icons/hair-03.png"
+import iconHair04 from "./icons/hair-04.png"
+import iconPants01 from "./icons/pants-01.png"
+import iconPants02 from "./icons/pants-02.png"
+import iconPants03 from "./icons/pants-03.png"
+import iconPants04 from "./icons/pants-04.png"
+import iconShirt01 from "./icons/shirt-01.png"
+import iconShirt02 from "./icons/shirt-02.png"
+import iconShirt03 from "./icons/shirt-03.png"
+import iconShirt04 from "./icons/shirt-04.png"
+import iconShoes01 from "./icons/shoes-01.png"
+import iconShoes02 from "./icons/shoes-02.png"
+import iconShoes03 from "./icons/shoes-03.png"
+import iconShoes04 from "./icons/shoes-04.png"
+import { fantasySkin } from "~/stores/fantasySkin"
 
-  export let genderSlider: number;
-  export let widthSlider: number;
-  export let beard: boolean;
-  export let belt: boolean;
-  export let hair: HairType;
-  export let top: TopType;
-  export let bottom: BottomType;
-  export let shoes: ShoeType;
-  export let skinColor: string;
-  export let fantasySkinColor: string;
-  export let hairColor: string;
-  export let topColor: string;
-  export let bottomColor: string;
-  export let beltColor: string;
-  export let shoeColor: string;
-  export let uniqueColor: string;
+export let genderSlider: number
+export let widthSlider: number
+export let beard: boolean
+export let belt: boolean
+export let hair: HairType
+export let top: TopType
+export let bottom: BottomType
+export let shoes: ShoeType
+export let skinColor: string
+export let fantasySkinColor: string
+export let hairColor: string
+export let topColor: string
+export let bottomColor: string
+export let beltColor: string
+export let shoeColor: string
+export let uniqueColor: string
 
-  // Accepts 6-hex or 8-hex colors and returns 6-hex; or 'white' if invalid input
-  function validColor(color) {
-    if (color && color.indexOf("#") === 0 && color.length >= 7) {
-      return color.slice(0, 7);
-    } else {
-      return "#ffffff";
-    }
+// Accepts 6-hex or 8-hex colors and returns 6-hex; or 'white' if invalid input
+function validColor(color) {
+  if (color && color.indexOf("#") === 0 && color.length >= 7) {
+    return color.slice(0, 7)
   }
 
-  $: {
-    const appearance: Appearance = {
-      genderSlider,
-      widthSlider,
-      beard,
-      belt,
-      hair,
-      top,
-      bottom,
-      shoes,
-      skinColor,
-      fantasySkinColor: validColor(fantasySkinColor),
-      hairColor,
-      topColor: validColor(topColor),
-      bottomColor: validColor(bottomColor),
-      beltColor: validColor(beltColor),
-      shoeColor: validColor(shoeColor),
-    };
+  return "#ffffff"
+}
 
-    worldManager.participants.setAppearance(appearance);
+$: {
+  const appearance: Appearance = {
+    genderSlider,
+    widthSlider,
+    beard,
+    belt,
+    hair,
+    top,
+    bottom,
+    shoes,
+    skinColor,
+    fantasySkinColor: validColor(fantasySkinColor),
+    hairColor,
+    topColor: validColor(topColor),
+    bottomColor: validColor(bottomColor),
+    beltColor: validColor(beltColor),
+    shoeColor: validColor(shoeColor),
   }
 
-  $: {
-    worldManager.participants.setColor(validColor(uniqueColor));
-  }
+  worldManager.participants.setAppearance(appearance)
+}
 
-  function onSlideGender({ detail: value }) {
-    genderSlider = value;
-  }
+$: {
+  worldManager.participants.setColor(validColor(uniqueColor))
+}
 
-  function onSlideWidth({ detail: value }) {
-    widthSlider = value;
-  }
+function onSlideGender({ detail: value }) {
+  genderSlider = value
+}
 
-  const onClickHairStyle = (style: HairType) => () => {
-    hair = style;
-  };
+function onSlideWidth({ detail: value }) {
+  widthSlider = value
+}
 
-  const onClickTopStyle = (style: TopType) => () => {
-    top = style;
-  };
+const onClickHairStyle = (style: HairType) => () => {
+  hair = style
+}
 
-  const onClickBottomStyle = (style: BottomType) => () => {
-    bottom = style;
-  };
+const onClickTopStyle = (style: TopType) => () => {
+  top = style
+}
 
-  const onClickShoeStyle = (style: ShoeType) => () => {
-    shoes = style;
-  };
+const onClickBottomStyle = (style: BottomType) => () => {
+  bottom = style
+}
 
-  const setSkinColor = (color: string) => () => {
-    skinColor = color;
-  };
+const onClickShoeStyle = (style: ShoeType) => () => {
+  shoes = style
+}
 
-  const setHairColor = (color: string) => () => {
-    hairColor = color;
-  };
+const setSkinColor = (color: string) => () => {
+  skinColor = color
+}
+
+const setHairColor = (color: string) => () => {
+  hairColor = color
+}
 </script>
 
 <Section name={$_("AvatarBuilder.gender")}>

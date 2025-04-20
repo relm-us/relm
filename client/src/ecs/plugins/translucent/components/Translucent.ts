@@ -1,10 +1,10 @@
-import { Component, BooleanType, NumberType } from "~/ecs/base";
+import { Component, BooleanType, NumberType } from "~/ecs/base"
 
 export class Translucent extends Component {
-  startOpacity: number;
-  endOpacity: number;
-  duration: number;
-  twoSided: boolean;
+  startOpacity: number
+  endOpacity: number
+  duration: number
+  twoSided: boolean
 
   static props = {
     startOpacity: {
@@ -19,16 +19,16 @@ export class Translucent extends Component {
       type: NumberType,
       default: 0.5,
       editor: {
-        label: "End Opacity"
-      }
+        label: "End Opacity",
+      },
     },
 
     duration: {
       type: NumberType,
       default: 300,
       editor: {
-        label: "Transition Duration"
-      }
+        label: "Transition Duration",
+      },
     },
 
     twoSided: {
@@ -38,9 +38,9 @@ export class Translucent extends Component {
         label: "Two-sided?",
       },
     },
-  };
+  }
 
   static editor = {
     label: "Translucent",
-  };
+  }
 }

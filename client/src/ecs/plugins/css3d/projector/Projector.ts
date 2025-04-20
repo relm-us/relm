@@ -1,12 +1,12 @@
-import { Component, StringType } from "~/ecs/base";
-import { Asset, AssetType } from "~/ecs/plugins/core";
+import { Component, StringType } from "~/ecs/base"
+import { type Asset, AssetType } from "~/ecs/plugins/core"
 
 export class Projector extends Component {
-  asset: Asset;
-  fit: "COVER" | "CONTAIN";
+  asset: Asset
+  fit: "COVER" | "CONTAIN"
 
   // The current video stream
-  participantId: string;
+  participantId: string
 
   static props = {
     fit: {
@@ -34,9 +34,9 @@ export class Projector extends Component {
     participantId: {
       type: StringType,
     },
-  };
+  }
 
   static editor = {
     label: "Projector",
-  };
+  }
 }

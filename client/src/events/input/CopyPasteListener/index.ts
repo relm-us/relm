@@ -1,1 +1,1 @@
-export { default } from "./CopyPasteListener.svelte";
+export { default } from "./CopyPasteListener.svelte"

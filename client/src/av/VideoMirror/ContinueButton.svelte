@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { createEventDispatcher, afterUpdate } from "svelte";
+import { createEventDispatcher, afterUpdate } from "svelte"
 
-  export let enabled = true;
-  export let autoFocus = false;
+export let enabled = true
+export let autoFocus = false
 
-  let dispatch = createEventDispatcher();
-  let buttonEl;
+let dispatch = createEventDispatcher()
+let buttonEl
 
-  afterUpdate(() => {
-    if (autoFocus && buttonEl) {
-      buttonEl.focus();
-    }
-  });
+afterUpdate(() => {
+  if (autoFocus && buttonEl) {
+    buttonEl.focus()
+  }
+})
 </script>
 
 <button

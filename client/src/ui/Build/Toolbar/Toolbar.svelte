@@ -1,7 +1,7 @@
 <script lang="ts">
-  import ObjectSelectButton from "./1.svelte";
-  import PanRotateCameraButton from "./2.svelte";
-  import GroupUngroupButton from "./3.svelte";
+import ObjectSelectButton from "./1.svelte"
+import PanRotateCameraButton from "./2.svelte"
+import GroupUngroupButton from "./3.svelte"
 </script>
 
 <r-toolbar>

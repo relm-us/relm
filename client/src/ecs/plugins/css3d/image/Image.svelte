@@ -1,7 +1,7 @@
 <script lang="ts">
-  export let src;
-  export let fit: "CONTAIN" | "CONTAIN-MAX" | "COVER" = "CONTAIN";
-  export let alt = "image";
+export let src
+export let fit: "CONTAIN" | "CONTAIN-MAX" | "COVER" = "CONTAIN"
+export let alt = "image"
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

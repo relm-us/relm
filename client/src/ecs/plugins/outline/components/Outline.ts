@@ -1,4 +1,4 @@
-import { LocalComponent, NumberType } from "~/ecs/base";
+import { LocalComponent, NumberType } from "~/ecs/base"
 
 export class Outline extends LocalComponent {
   static props = {
@@ -11,5 +11,5 @@ export class Outline extends LocalComponent {
       type: NumberType,
       default: 2,
     },
-  };
+  }
 }

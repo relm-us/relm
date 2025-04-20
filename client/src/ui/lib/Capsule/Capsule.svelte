@@ -1,47 +1,47 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+import { createEventDispatcher } from "svelte"
 
-  export let label: string = null;
-  export let value: any = "";
-  export let suffix: string = "";
-  export let type: "text" | "number" = "text";
-  export let editable: boolean = true;
-  export let editing: boolean = false;
-  export let cursor = "default";
-  export let maxWidth = true;
+export let label: string = null
+export let value: any = ""
+export let suffix: string = ""
+export let type: "text" | "number" = "text"
+export let editable: boolean = true
+export let editing: boolean = false
+export let cursor = "default"
+export let maxWidth = true
 
-  let inputElement;
+let inputElement
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  $: if (inputElement && editing) {
-    inputElement.focus();
-    inputElement.select();
+$: if (inputElement && editing) {
+  inputElement.focus()
+  inputElement.select()
+}
+
+function onChange(event) {
+  dispatch("change", event.target.value)
+}
+
+function onBlur() {
+  if (editable) {
+    editing = false
+    dispatch("cancel")
   }
+}
 
-  function onChange(event) {
-    dispatch("change", event.target.value);
+function onFocus() {
+  if (editable) {
+    editing = true
   }
+}
 
-  function onBlur() {
-    if (editable) {
-      editing = false;
-      dispatch("cancel");
-    }
+function onKeyDown(event) {
+  if (event.key === "Escape") {
+    editing = false
+    event.target.blur()
   }
-
-  function onFocus() {
-    if (editable) {
-      editing = true;
-    }
-  }
-
-  function onKeyDown(event) {
-    if (event.key === "Escape") {
-      editing = false;
-      event.target.blur();
-    }
-  }
+}
 </script>
 
 <capsule>

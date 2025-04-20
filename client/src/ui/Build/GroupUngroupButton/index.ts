@@ -1,1 +1,1 @@
-export { default } from "./GroupUngroupButton.svelte";
+export { default } from "./GroupUngroupButton.svelte"

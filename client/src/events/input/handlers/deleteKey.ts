@@ -1,8 +1,8 @@
-import { globalEvents } from "~/events/globalEvents";
-import { registerAction } from "../comboTable";
+import { globalEvents } from "~/events/globalEvents"
+import { registerAction } from "../comboTable"
 
 export function register(): Function {
   return registerAction(["build"], ["backspace", "delete"], (pressed) => {
-    pressed && globalEvents.emit("delete");
-  });
+    pressed && globalEvents.emit("delete")
+  })
 }

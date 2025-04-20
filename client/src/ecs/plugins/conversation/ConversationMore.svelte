@@ -1,8 +1,8 @@
 <script lang="ts">
-  import IoIosArrowDown from "svelte-icons/io/IoIosArrowDown.svelte";
+import IoIosArrowDown from "svelte-icons/io/IoIosArrowDown.svelte"
 
-  export let sections;
-  export let sectionIndex;
+export let sections
+export let sectionIndex
 </script>
 
 {#if sections.length > 1 && sectionIndex < sections.length - 1}

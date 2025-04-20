@@ -1,9 +1,9 @@
 <script lang="ts">
-  import BlankWithLogo from "./BlankWithLogo.svelte";
+import BlankWithLogo from "./BlankWithLogo.svelte"
 
-  export let message;
+export let message
 
-  $$props;
+$$props
 </script>
 
 <BlankWithLogo>

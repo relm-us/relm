@@ -1,80 +1,73 @@
-import type { Vector3 } from "three";
-import type { DeviceIds } from "~/av/VideoMirror";
-import type { Writable } from "svelte/store";
-import type { Appearance, Awareness, SavedIdentityData } from "relm-common";
+import type { Vector3 } from "three"
+import type { DeviceIds } from "~/av/VideoMirror"
+import type { Writable } from "svelte/store"
+import type { Appearance, Awareness, SavedIdentityData } from "relm-common"
 
-import type { AuthenticationHeaders } from "relm-common";
+import type { AuthenticationHeaders } from "relm-common"
 
-import type { WorldDoc } from "~/y-integration/WorldDoc";
-import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
-import type { AVConnection } from "~/av/AVConnection";
+import type { WorldDoc } from "~/y-integration/WorldDoc"
+import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld"
+import type { AVConnection } from "~/av/AVConnection"
 
-import type { UpdateData, PageParams, WorldDocStatus } from "~/types";
-import type { ParticipantBroker } from "~/identity/ParticipantBroker";
-import type { Avatar } from "~/identity/Avatar";
-import type { IdentityData, Participant } from "~/types/identity";
+import type { UpdateData, PageParams, WorldDocStatus } from "~/types"
+import type { ParticipantBroker } from "~/identity/ParticipantBroker"
+import type { Avatar } from "~/identity/Avatar"
+import type { IdentityData, Participant } from "~/types/identity"
 
 export type State = {
   // initialization
-  globalBroadcast: BroadcastChannel;
-  pageParams?: PageParams;
-  authHeaders?: AuthenticationHeaders;
-  entrywayPosition?: Vector3;
-  entrywayUnsub?: Function;
-  savedIdentity?: SavedIdentityData;
+  globalBroadcast: BroadcastChannel
+  pageParams?: PageParams
+  authHeaders?: AuthenticationHeaders
+  entrywayPosition?: Vector3
+  entrywayUnsub?: Function
+  savedIdentity?: SavedIdentityData
 
   // relm metadata
-  permanentDocId?: string; // server-assigned UUID for the relm ydoc
-  transientDocId?: string; // server-assigned UUID for the transient awareness ydoc
-  assetsMax?: number;
-  assetsCount?: number;
-  entitiesMax?: number;
-  entitiesCount?: number;
-  twilioToken?: string;
+  permanentDocId?: string // server-assigned UUID for the relm ydoc
+  transientDocId?: string // server-assigned UUID for the transient awareness ydoc
+  assetsMax?: number
+  assetsCount?: number
+  entitiesMax?: number
+  entitiesCount?: number
+  twilioToken?: string
 
   // participants
-  participants: Map<string, Participant>;
-  overrideParticipantName?: string; // override used by JWT
-  participantQuickAppearance?: Appearance;
-  localAvatarInitialized: boolean;
-  localIdentityData: Writable<IdentityData>;
-  broker?: ParticipantBroker;
-  observeFieldsFn?: any;
-  observeChatFn?: any;
+  participants: Map<string, Participant>
+  overrideParticipantName?: string // override used by JWT
+  participantQuickAppearance?: Appearance
+  localAvatarInitialized: boolean
+  localIdentityData: Writable<IdentityData>
+  broker?: ParticipantBroker
+  observeFieldsFn?: any
+  observeChatFn?: any
 
   // audio/video setup
-  audioVideoSetupDone?: boolean;
-  avRoom?: string;
-  initialAudioDesired?: boolean;
-  initialVideoDesired?: boolean;
-  preferredDeviceIds: Writable<DeviceIds>;
-  avConnection?: AVConnection;
-  avDisconnect?: Function;
+  audioVideoSetupDone?: boolean
+  avRoom?: string
+  initialAudioDesired?: boolean
+  initialVideoDesired?: boolean
+  preferredDeviceIds: Writable<DeviceIds>
+  avConnection?: AVConnection
+  avDisconnect?: Function
 
   // avatar setup
-  avatarSetupDone?: boolean;
+  avatarSetupDone?: boolean
 
   // create worldDoc & establish yjs connection
-  physicsEngine?: any;
-  ecsWorld?: DecoratedECSWorld;
-  ecsWorldLoaderUnsub?: Function;
-  worldDoc?: WorldDoc;
-  worldDocStatus: WorldDocStatus;
-  initializedWorldManager?: boolean;
+  physicsEngine?: any
+  ecsWorld?: DecoratedECSWorld
+  ecsWorldLoaderUnsub?: Function
+  worldDoc?: WorldDoc
+  worldDocStatus: WorldDocStatus
+  initializedWorldManager?: boolean
 
   // other
-  doneLoading?: boolean;
-  errorMessage?: string;
-  overlayScreen?: "portal";
-  screen:
-    | "error"
-    | "initial"
-    | "video-mirror"
-    | "choose-avatar"
-    | "loading-screen"
-    | "loading-failed"
-    | "game-world";
-};
+  doneLoading?: boolean
+  errorMessage?: string
+  overlayScreen?: "portal"
+  screen: "error" | "initial" | "video-mirror" | "choose-avatar" | "loading-screen" | "loading-failed" | "game-world"
+}
 
 export type Message =
   | { id: "gotPageParams"; pageParams: PageParams }
@@ -84,21 +77,21 @@ export type Message =
   | { id: "didResetWorld" }
   | { id: "gotIdentityData"; identity: SavedIdentityData; isConnected: boolean }
   | {
-      id: "gotRelmPermitsAndMetadata";
-      permits: string[];
-      permanentDocId: string;
-      transientDocId: string;
-      entitiesMax: number;
-      assetsMax: number;
-      overrideParticipantName: string;
-      twilioToken: string;
+      id: "gotRelmPermitsAndMetadata"
+      permits: string[]
+      permanentDocId: string
+      transientDocId: string
+      entitiesMax: number
+      assetsMax: number
+      overrideParticipantName: string
+      twilioToken: string
     }
 
   // Participants
   | { id: "didMakeLocalAvatar"; avatar: Avatar }
   | {
-      id: "updateLocalIdentityData";
-      identityData: UpdateData;
+      id: "updateLocalIdentityData"
+      identityData: UpdateData
     }
   | { id: "participantJoined"; participant: Participant }
   | { id: "participantLeft"; participantId: string }
@@ -107,32 +100,32 @@ export type Message =
   // cont'd...
   | { id: "importedPhysicsEngine"; physicsEngine: any }
   | {
-      id: "createdWorldDoc";
-      worldDoc: WorldDoc;
-      slowAwareness: Awareness;
-      rapidAwareness: Awareness;
+      id: "createdWorldDoc"
+      worldDoc: WorldDoc
+      slowAwareness: Awareness
+      rapidAwareness: Awareness
     }
   | {
-      id: "createdECSWorld";
-      ecsWorld: DecoratedECSWorld;
-      ecsWorldLoaderUnsub: Function;
+      id: "createdECSWorld"
+      ecsWorld: DecoratedECSWorld
+      ecsWorldLoaderUnsub: Function
     }
   | { id: "gotWorldDocStatus"; status: WorldDocStatus }
   | { id: "gotEntrywayUnsub"; entrywayUnsub: Function }
   | {
-      id: "gotPositionFromEntryway";
-      entrywayPosition: Vector3;
-      entryway?: string;
+      id: "gotPositionFromEntryway"
+      entrywayPosition: Vector3
+      entryway?: string
     }
   | { id: "assumeOriginAsEntryway" }
   | { id: "gotEntrywayPosition" }
   | { id: "didMakeLocalParticipant"; localParticipant: Participant }
   | { id: "setUpAudioVideo" }
   | {
-      id: "didSetUpAudioVideo";
-      audioDesired?: boolean;
-      videoDesired?: boolean;
-      preferredDeviceIds?: DeviceIds;
+      id: "didSetUpAudioVideo"
+      audioDesired?: boolean
+      videoDesired?: boolean
+      preferredDeviceIds?: DeviceIds
     }
   | { id: "rejoinAudioVideo"; zone: string | null }
   | { id: "didJoinAudioVideo"; avDisconnect: Function }
@@ -150,21 +143,17 @@ export type Message =
   | { id: "startPlaying" }
   | { id: "showGameScreen" }
   | { id: "recomputeWorldDocStats" }
-  | { id: "error"; message: string; stack?: any };
+  | { id: "error"; message: string; stack?: any }
 
-export type Dispatch = (message: Message) => void;
-export type Effect = (dispatch: Dispatch) => void | Promise<void>;
+export type Dispatch = (message: Message) => void
+export type Effect = (dispatch: Dispatch) => void | Promise<void>
 
-export type Init = [State, Effect?];
-export type Update = (
-  this: void,
-  msg: Message,
-  state: State
-) => [State, Effect?];
-export type View = (this: void, state: State, dispatch: Dispatch) => void;
+export type Init = [State, Effect?]
+export type Update = (this: void, msg: Message, state: State) => [State, Effect?]
+export type View = (this: void, state: State, dispatch: Dispatch) => void
 
 export type Program = {
-  init: Init;
-  update: Update;
-  view: View;
-};
+  init: Init
+  update: Update
+  view: View
+}

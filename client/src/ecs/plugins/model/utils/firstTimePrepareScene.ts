@@ -1,25 +1,21 @@
-import type { Group } from "three";
+import type { Group } from "three"
 
-import { rotateSkinnedMeshBB } from "./rotateSkinnedMeshBB";
-import { normalize } from "./normalize";
-import { applyMaterialSettings } from "./applyMaterialSettings";
+import { rotateSkinnedMeshBB } from "./rotateSkinnedMeshBB"
+import { normalize } from "./normalize"
+import { applyMaterialSettings } from "./applyMaterialSettings"
 
-export function firstTimePrepareScene(
-  scene: Group,
-  backwardsCompatMode: boolean = false,
-  isAvatar: boolean = false
-) {
+export function firstTimePrepareScene(scene: Group, backwardsCompatMode = false, isAvatar = false) {
   // TODO: Find a better way to fix bounding box for skinned mesh general case
-  if (isAvatar) scene.traverse(rotateSkinnedMeshBB);
+  if (isAvatar) scene.traverse(rotateSkinnedMeshBB)
 
   scene.traverse((node) => {
-    node.castShadow = true;
-  });
+    node.castShadow = true
+  })
 
   // TODO: Optimization: move `normalize` to Loader?
-  normalize(scene, { backwardsCompatMode });
+  normalize(scene, { backwardsCompatMode })
 
-  applyMaterialSettings(scene as any);
+  applyMaterialSettings(scene as any)
 
-  return scene;
+  return scene
 }

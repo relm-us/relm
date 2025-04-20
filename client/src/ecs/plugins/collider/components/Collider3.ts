@@ -1,9 +1,9 @@
-import { Quaternion, Vector3 } from "three";
+import { Quaternion, Vector3 } from "three"
 
-import { ShapeType } from "~/types/shapes";
+import type { ShapeType } from "~/types/shapes"
 
-import { Component, StringType, NumberType } from "~/ecs/base";
-import { QuaternionType, Vector3Type } from "~/ecs/plugins/core";
+import { Component, StringType, NumberType } from "~/ecs/base"
+import { QuaternionType, Vector3Type } from "~/ecs/plugins/core"
 
 import {
   AVATAR_BUILDER_INTERACTION,
@@ -11,7 +11,7 @@ import {
   GROUND_INTERACTION,
   NO_INTERACTION,
   OBJECT_INTERACTION,
-} from "~/config/colliderInteractions";
+} from "~/config/colliderInteractions"
 
 // Taken from https://www.rapier.rs/javascript3d/enums/RigidBodyType.html
 // By re-defining this here, we don't need to pass the `rapier` object around
@@ -23,12 +23,12 @@ enum RigidBodyType {
 }
 
 export type Behavior = {
-  interaction: number;
-  bodyType: number;
-  isSensor: boolean;
-};
+  interaction: number
+  bodyType: number
+  isSensor: boolean
+}
 
-export type ColliderModAttrs = {};
+export type ColliderModAttrs = {}
 
 export class Collider3 extends Component {
   // Kinds of colliders:
@@ -39,37 +39,29 @@ export class Collider3 extends Component {
   // - DYNAMIC: Can be moved via physics simulation; will only collide with player in play mode
   // - AVATAR-PLAY: Dynamic Avatar (Play Mode)
   // - AVATAR-BUILD: Dynamic Avatar (Build Mode)
-  kind:
-    | "ETHEREAL"
-    | "SENSOR"
-    | "BARRIER"
-    | "GROUND"
-    | "DYNAMIC"
-    | "AVATAR-PLAY"
-    | "AVATAR-BUILD"
-    | "AVATAR-OTHER";
+  kind: "ETHEREAL" | "SENSOR" | "BARRIER" | "GROUND" | "DYNAMIC" | "AVATAR-PLAY" | "AVATAR-BUILD" | "AVATAR-OTHER"
 
   // Collider shapes
-  shape: ShapeType | "BOX*";
+  shape: ShapeType | "BOX*"
 
   // Collider size
   // - BOX: uses all x, y, z
   // - SPHERE: uses x as diameter
   // - CYLINDER: uses x as diameter, y as height
   // - CAPSULE: uses x as diameter, y as height
-  size: Vector3;
+  size: Vector3
 
   // Collider offset from center
-  offset: Vector3;
+  offset: Vector3
 
   // Collider rotation after offset
-  rotation: Quaternion;
+  rotation: Quaternion
 
   // Collider density. Mass is calculated based on collider volume * density.
-  density: number;
+  density: number
 
   // Collider friction against other colliders; 1.0 is normal
-  friction: number;
+  friction: number
 
   static props = {
     kind: {
@@ -165,11 +157,11 @@ export class Collider3 extends Component {
         min: 0,
       },
     },
-  };
+  }
 
   static editor = {
     label: "Collider",
-  };
+  }
 
   get behavior(): Behavior {
     switch (this.kind) {
@@ -178,58 +170,58 @@ export class Collider3 extends Component {
           interaction: NO_INTERACTION,
           bodyType: RigidBodyType.Fixed,
           isSensor: false,
-        };
+        }
       case "SENSOR":
         return {
           interaction: OBJECT_INTERACTION,
           bodyType: RigidBodyType.Fixed,
           isSensor: true,
-        };
+        }
       case "BARRIER":
         return {
           interaction: OBJECT_INTERACTION,
           bodyType: RigidBodyType.Fixed,
           isSensor: false,
-        };
+        }
       case "GROUND":
         return {
           interaction: GROUND_INTERACTION,
           bodyType: RigidBodyType.Fixed,
           isSensor: false,
-        };
+        }
       case "DYNAMIC":
         return {
           interaction: OBJECT_INTERACTION,
           bodyType: RigidBodyType.Dynamic,
           isSensor: false,
-        };
+        }
       case "AVATAR-PLAY":
         return {
           interaction: AVATAR_INTERACTION,
           bodyType: RigidBodyType.Dynamic,
           isSensor: false,
-        };
+        }
       case "AVATAR-BUILD": {
         return {
           interaction: AVATAR_BUILDER_INTERACTION,
           bodyType: RigidBodyType.Dynamic,
           isSensor: false,
-        };
+        }
       }
       case "AVATAR-OTHER": {
         return {
           interaction: AVATAR_INTERACTION,
           bodyType: RigidBodyType.KinematicPositionBased,
           isSensor: false,
-        };
+        }
       }
       default:
-        throw Error(`unknown collider kind ${this.kind}`);
+        throw Error(`unknown collider kind ${this.kind}`)
     }
   }
 
   // Some colliders can autoscale (e.g. BOX*)
   get autoscale(): boolean {
-    return this.shape === "BOX*";
+    return this.shape === "BOX*"
   }
 }

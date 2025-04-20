@@ -1,35 +1,35 @@
-import { System, Groups } from "~/ecs/base";
-import { isBrowser } from "~/utils/isBrowser";
-import { Presentation } from "~/ecs/plugins/core/Presentation";
+import { System, Groups } from "~/ecs/base"
+import { isBrowser } from "~/utils/isBrowser"
+import type { Presentation } from "~/ecs/plugins/core/Presentation"
 
-import { CssPresentation } from "./CssPresentation";
+import type { CssPresentation } from "./CssPresentation"
 
 export class CssRenderSystem extends System {
-  presentation: Presentation;
-  cssPresentation: CssPresentation;
-  frame: number;
+  presentation: Presentation
+  cssPresentation: CssPresentation
+  frame: number
 
-  active = isBrowser();
+  active = isBrowser()
   // This needs to be immediately after RenderableBaseSystem
-  order = Groups.Initialization + 101;
+  order = Groups.Initialization + 101
 
   init({ presentation, cssPresentation }) {
     if (!presentation) {
-      throw new Error("ECS: plugin/css3d must be loaded after plugin/core");
+      throw new Error("ECS: plugin/css3d must be loaded after plugin/core")
     }
-    this.presentation = presentation;
-    this.cssPresentation = cssPresentation;
+    this.presentation = presentation
+    this.cssPresentation = cssPresentation
 
     // this.frame = 0;
   }
 
   update() {
-    if (!this.cssPresentation.viewport || !this.presentation.viewport) return;
+    if (!this.cssPresentation.viewport || !this.presentation.viewport) return
 
     // Possible optimization for slow CPUs: skip every second frame
     // if (this.frame++ % 2 === 0) {
-    this.cssPresentation.updateCamera();
-    this.cssPresentation.render();
+    this.cssPresentation.updateCamera()
+    this.cssPresentation.render()
     // }
   }
 }

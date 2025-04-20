@@ -1,1 +1,1 @@
-export { NonInteractiveSystem } from "./NonInteractiveSystem";
+export { NonInteractiveSystem } from "./NonInteractiveSystem"

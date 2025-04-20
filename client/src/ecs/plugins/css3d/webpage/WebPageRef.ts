@@ -1,11 +1,11 @@
-import { StateComponent, RefType } from "~/ecs/base";
+import { StateComponent, RefType } from "~/ecs/base"
 
 export class WebPageRef extends StateComponent {
-  value: any;
+  value: any
 
   static props = {
     value: {
       type: RefType,
     },
-  };
+  }
 }

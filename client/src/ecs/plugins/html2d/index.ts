@@ -1,17 +1,17 @@
-import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
+import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld"
 
-import { createPlugin } from "~/ecs/base";
-import CorePlugin from "~/ecs/plugins/core";
-import PerspectivePlugin from "~/ecs/plugins/perspective";
+import { createPlugin } from "~/ecs/base"
+import CorePlugin from "~/ecs/plugins/core"
+import PerspectivePlugin from "~/ecs/plugins/perspective"
 
-import { HtmlPresentation } from "./HtmlPresentation";
+import { HtmlPresentation } from "./HtmlPresentation"
 
-import * as Components from "./components";
-import * as Systems from "./systems";
+import * as Components from "./components"
+import * as Systems from "./systems"
 
-export * from "./components";
+export * from "./components"
 
-export { Components };
+export { Components }
 
 export default createPlugin({
   name: "html2d",
@@ -19,6 +19,6 @@ export default createPlugin({
   systems: Object.values(Systems),
   components: Object.values(Components),
   decorate(world: DecoratedECSWorld) {
-    world.htmlPresentation = new HtmlPresentation(world);
+    world.htmlPresentation = new HtmlPresentation(world)
   },
-});
+})

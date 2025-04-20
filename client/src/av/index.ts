@@ -1,4 +1,4 @@
-import { ClientAVAdapter } from "./base/ClientAVAdapter";
-import { AVConnection } from "./AVConnection";
+import { ClientAVAdapter } from "./base/ClientAVAdapter"
+import { AVConnection } from "./AVConnection"
 
-export { ClientAVAdapter, AVConnection };
+export { ClientAVAdapter, AVConnection }

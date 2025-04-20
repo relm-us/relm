@@ -1,40 +1,40 @@
 <script lang="ts">
-  import { onMount, createEventDispatcher } from "svelte";
-  import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
+import { onMount, createEventDispatcher } from "svelte"
+import IoIosClose from "svelte-icons/io/IoIosClose.svelte"
 
-  export let active = true;
-  export let closing = false;
-  export let zIndex = 100;
+export let active = true
+export let closing = false
+export let zIndex = 100
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  let el: HTMLElement;
-  let parentEl;
+let el: HTMLElement
+let parentEl
 
-  function onClick(event) {
-    if (event.target === el) onClose(event);
-    else dispatch("click", event.target);
+function onClick(event) {
+  if (event.target === el) onClose(event)
+  else dispatch("click", event.target)
+}
+function onClose(event) {
+  closing = true
+  dispatch("close", event.target)
+}
+
+$: if (parentEl) {
+  if (active && el.parentElement !== document.body) {
+    // Move the containing element to document.body so that
+    // "fullwindow" mode can escape absolute/relative positioned
+    // elements and take up the whole window.
+    document.body.appendChild(el)
+  } else if (!active && el.parentElement !== parentEl) {
+    // Move back to the original parent element
+    parentEl.appendChild(el)
   }
-  function onClose(event) {
-    closing = true;
-    dispatch("close", event.target);
-  }
+}
 
-  $: if (parentEl) {
-    if (active && el.parentElement !== document.body) {
-      // Move the containing element to document.body so that
-      // "fullwindow" mode can escape absolute/relative positioned
-      // elements and take up the whole window.
-      document.body.appendChild(el);
-    } else if (!active && el.parentElement !== parentEl) {
-      // Move back to the original parent element
-      parentEl.appendChild(el);
-    }
-  }
-
-  onMount(() => {
-    parentEl = el.parentElement;
-  });
+onMount(() => {
+  parentEl = el.parentElement
+})
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

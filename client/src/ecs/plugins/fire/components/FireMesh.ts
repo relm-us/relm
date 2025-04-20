@@ -1,4 +1,4 @@
-import { StateComponent, RefType, BooleanType, NumberType } from "~/ecs/base";
+import { StateComponent, RefType, NumberType } from "~/ecs/base"
 
 export class FireMesh extends StateComponent {
   static props = {
@@ -10,5 +10,5 @@ export class FireMesh extends StateComponent {
       type: NumberType,
       default: 0,
     },
-  };
+  }
 }

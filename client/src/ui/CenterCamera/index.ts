@@ -1,1 +1,1 @@
-export { default } from "./CenterCamera.svelte";
+export { default } from "./CenterCamera.svelte"

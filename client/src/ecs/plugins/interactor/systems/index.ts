@@ -1,1 +1,1 @@
-export { InteractorSystem } from "./InteractorSystem";
+export { InteractorSystem } from "./InteractorSystem"

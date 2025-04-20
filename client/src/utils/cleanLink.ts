@@ -1,8 +1,8 @@
-import sanitizeHtml from "sanitize-html";
+import sanitizeHtml from "sanitize-html"
 
 const defaultOptions = {
   // prettier-ignore
-  allowedTags: [ "a" ],
+  allowedTags: ["a"],
   disallowedTagsMode: "discard",
   allowedAttributes: { a: ["href", "target"] },
   // URL schemes we permit
@@ -11,10 +11,10 @@ const defaultOptions = {
   allowedSchemesAppliedToAttributes: ["href"],
   allowProtocolRelative: false,
   enforceHtmlBoundary: false,
-};
+}
 
 export function cleanLink(url) {
-  const html: string = sanitizeHtml(`<a href="${url}"></a>`, defaultOptions);
-  const doc = new DOMParser().parseFromString(html, "text/html");
-  return (doc.body.firstChild as HTMLAnchorElement).href;
+  const html: string = sanitizeHtml(`<a href="${url}"></a>`, defaultOptions)
+  const doc = new DOMParser().parseFromString(html, "text/html")
+  return (doc.body.firstChild as HTMLAnchorElement).href
 }

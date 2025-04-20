@@ -1,11 +1,11 @@
-import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
+import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader"
 
-import { StateComponent, RefType, Entity, BooleanType } from "~/ecs/base";
+import { StateComponent, RefType, type Entity, BooleanType } from "~/ecs/base"
 
 export class ModelRef extends StateComponent {
-  value: GLTF;
-  needsReload: boolean;
-  errorEntity: Entity;
+  value: GLTF
+  needsReload: boolean
+  errorEntity: Entity
 
   static props = {
     value: { type: RefType },
@@ -13,5 +13,5 @@ export class ModelRef extends StateComponent {
     needsReload: { type: BooleanType },
 
     errorEntity: { type: RefType },
-  };
+  }
 }

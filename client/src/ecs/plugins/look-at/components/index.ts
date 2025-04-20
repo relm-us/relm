@@ -1,1 +1,1 @@
-export { LookAt } from "./LookAt";
+export { LookAt } from "./LookAt"

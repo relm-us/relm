@@ -1,2 +1,2 @@
-export { Follow } from "./Follow";
-export { FollowPoint } from "./FollowPoint";
+export { Follow } from "./Follow"
+export { FollowPoint } from "./FollowPoint"

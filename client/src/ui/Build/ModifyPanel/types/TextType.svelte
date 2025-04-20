@@ -1,28 +1,28 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+import { createEventDispatcher } from "svelte"
 
-  export let key;
-  export let component;
-  export let prop;
+export let key
+export let component
+export let prop
 
-  export let formatInput = (value) => value;
-  export let formatOutput = (value) => value;
+export let formatInput = (value) => value
+export let formatOutput = (value) => value
 
-  function onChange(event) {
-    component[key] = formatOutput(event.target.value);
-    component.modified();
-    dispatch("modified");
-  }
+function onChange(event) {
+  component[key] = formatOutput(event.target.value)
+  component.modified()
+  dispatch("modified")
+}
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  function resize(event) {
-    event.target.style.height = "";
-    event.target.style.height = event.target.scrollHeight + "px";
-  }
+function resize(event) {
+  event.target.style.height = ""
+  event.target.style.height = event.target.scrollHeight + "px"
+}
 
-  // ignore warning about missing props
-  $$props;
+// ignore warning about missing props
+$$props
 </script>
 
 <r-json-type>

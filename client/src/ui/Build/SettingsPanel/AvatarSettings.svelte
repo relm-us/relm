@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { worldManager } from "~/world";
-  import { fantasySkin } from "~/stores/fantasySkin";
+import { worldManager } from "~/world"
+import { fantasySkin } from "~/stores/fantasySkin"
 
-  import Pane from "~/ui/lib/Pane";
-  import ToggleSwitch from "~/ui/lib/ToggleSwitch";
-  import { _ } from "~/i18n";
+import Pane from "~/ui/lib/Pane"
+import ToggleSwitch from "~/ui/lib/ToggleSwitch"
+import { _ } from "~/i18n"
 
-  $: if ($fantasySkin) {
-    worldManager.worldDoc.settings.y.set("fantasySkin", true);
-  } else {
-    worldManager.worldDoc.settings.y.set("fantasySkin", false);
-  }
+$: if ($fantasySkin) {
+  worldManager.worldDoc.settings.y.set("fantasySkin", true)
+} else {
+  worldManager.worldDoc.settings.y.set("fantasySkin", false)
+}
 </script>
 
 <Pane title={$_("AvatarSettings.title")}>

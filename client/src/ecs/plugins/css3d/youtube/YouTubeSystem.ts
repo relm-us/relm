@@ -1,11 +1,11 @@
-import { Not, Modified } from "~/ecs/base";
-import { Object3DRef } from "~/ecs/plugins/core";
-import { Queries } from "~/ecs/base/Query";
+import { Not, Modified } from "~/ecs/base"
+import { Object3DRef } from "~/ecs/plugins/core"
+import type { Queries } from "~/ecs/base/Query"
 
-import { YouTube, YouTubeRef, CssPlane } from "../components";
-import { RenderableBaseSystem } from "../base/RenderableBaseSystem";
+import { YouTube, YouTubeRef, CssPlane } from "../components"
+import { RenderableBaseSystem } from "../base/RenderableBaseSystem"
 
-import YouTubeComponent from "./YouTube.svelte";
+import YouTubeComponent from "./YouTube.svelte"
 
 export class YouTubeSystem extends RenderableBaseSystem {
   static queries: Queries = {
@@ -14,21 +14,21 @@ export class YouTubeSystem extends RenderableBaseSystem {
     modifiedCssPlane: [Modified(CssPlane), YouTubeRef],
     active: [YouTube, YouTubeRef, Object3DRef],
     removed: [Not(YouTube), YouTubeRef],
-  };
+  }
 
   init({ cssPresentation }) {
-    this.cssPresentation = cssPresentation;
+    this.cssPresentation = cssPresentation
 
-    this.EcsComponent = YouTube;
-    this.EcsComponentRef = YouTubeRef;
-    this.RenderableComponent = YouTubeComponent;
+    this.EcsComponent = YouTube
+    this.EcsComponentRef = YouTubeRef
+    this.RenderableComponent = YouTubeComponent
   }
 
   update() {
-    this.queries.added.forEach((entity) => this.build(entity));
-    this.queries.modified.forEach((entity) => this.modify(entity));
-    this.queries.modifiedCssPlane.forEach((entity) => this.rebuild(entity));
-    this.queries.active.forEach((entity) => this.transform(entity));
-    this.queries.removed.forEach((entity) => this.remove(entity));
+    this.queries.added.forEach((entity) => this.build(entity))
+    this.queries.modified.forEach((entity) => this.modify(entity))
+    this.queries.modifiedCssPlane.forEach((entity) => this.rebuild(entity))
+    this.queries.active.forEach((entity) => this.transform(entity))
+    this.queries.removed.forEach((entity) => this.remove(entity))
   }
 }

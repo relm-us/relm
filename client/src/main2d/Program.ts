@@ -1,22 +1,22 @@
-import type { State, Message, Program, Effect } from "./ProgramTypes";
+import type { State, Message, Program, Effect } from "./ProgramTypes"
 
-import ErrorScreen from "./views/ErrorScreen.svelte";
-import BlankWithLogo from "./views/BlankWithLogo.svelte";
-import Dashboard from "./views/Dashboard.svelte";
-import SignInScreen from "./views/SignInScreen.svelte";
+import ErrorScreen from "./views/ErrorScreen.svelte"
+import BlankWithLogo from "./views/BlankWithLogo.svelte"
+import Dashboard from "./views/Dashboard.svelte"
+import SignInScreen from "./views/SignInScreen.svelte"
 
-import { getApi } from "./effects/getApi";
-import { checkLoggedIn } from "./effects/checkLoggedIn";
+import { getApi } from "./effects/getApi"
+import { checkLoggedIn } from "./effects/checkLoggedIn"
 
 export function makeProgram(): Program {
-  const init: [State, Effect] = [{ screen: "initial" }, getApi()];
+  const init: [State, Effect] = [{ screen: "initial" }, getApi()]
 
   const update = (msg: Message, state: State): [State, any?] => {
-    (window as any).state = state;
+    ;(window as any).state = state
 
     if (state.screen === "error") {
       // stay in error state
-      return;
+      return
     }
 
     // Handle Program updates
@@ -26,48 +26,42 @@ export function makeProgram(): Program {
           ...state,
           api: msg.api,
           loginManager: msg.loginManager,
-        };
-        return [newState, checkLoggedIn(msg.api)];
+        }
+        return [newState, checkLoggedIn(msg.api)]
       }
 
       case "signIn": {
-        return [{ ...state, screen: "signIn" }];
+        return [{ ...state, screen: "signIn" }]
       }
 
       case "didSignIn": {
-        return [{ ...state, screen: "dashboard" }];
+        return [{ ...state, screen: "dashboard" }]
       }
 
       default:
-        console.warn("Unknown relm message:", msg);
-        return [state];
+        console.warn("Unknown relm message:", msg)
+        return [state]
     }
-  };
+  }
 
   const view = (state, dispatch) => {
     if (state)
       switch (state.screen) {
         case "initial":
-          return [BlankWithLogo];
+          return [BlankWithLogo]
 
         case "error":
-          return [
-            ErrorScreen,
-            { message: state.errorMessage || "There was an error" },
-          ];
+          return [ErrorScreen, { message: state.errorMessage || "There was an error" }]
 
         case "signIn":
-          return [SignInScreen, { api: state.api, dispatch }];
+          return [SignInScreen, { api: state.api, dispatch }]
 
         case "dashboard":
-          return [
-            Dashboard,
-            { api: state.api, loginManager: state.loginManager },
-          ];
+          return [Dashboard, { api: state.api, loginManager: state.loginManager }]
 
         default:
-          throw Error(`Unknown screen: ${state.screen}`);
+          throw Error(`Unknown screen: ${state.screen}`)
       }
-  };
-  return { init, update, view };
+  }
+  return { init, update, view }
 }

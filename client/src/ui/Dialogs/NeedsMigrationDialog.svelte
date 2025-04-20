@@ -1,25 +1,25 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-  import { _ } from "svelte-i18n";
+import { createEventDispatcher } from "svelte"
+import { _ } from "svelte-i18n"
 
-  import Button from "~/ui/lib/Button";
-  import Dialog from "~/ui/lib/Dialog";
-  import { worldManager } from "~/world";
+import Button from "~/ui/lib/Button"
+import Dialog from "~/ui/lib/Dialog"
+import { worldManager } from "~/world"
 
-  let upgrading = false;
-  let upgraded = false;
+let upgrading = false
+let upgraded = false
 
-  function upgradeWorld() {
-    if (upgrading) return;
+function upgradeWorld() {
+  if (upgrading) return
 
-    upgrading = true;
+  upgrading = true
 
-    worldManager.upgradeWorld();
+  worldManager.upgradeWorld()
 
-    setTimeout(() => (upgraded = true), 2000);
-  }
+  setTimeout(() => (upgraded = true), 2000)
+}
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 </script>
 
 <Dialog title={$_("NeedsMigrationDialog.title")} on:cancel>

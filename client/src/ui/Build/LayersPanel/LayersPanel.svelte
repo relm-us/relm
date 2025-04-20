@@ -1,29 +1,29 @@
 <script lang="ts">
-  import { _ } from "svelte-i18n";
-  import { get } from "svelte/store";
+import { _ } from "svelte-i18n"
+import { get } from "svelte/store"
 
-  import { worldManager } from "~/world";
-  import { BASE_LAYER_ID, BASE_LAYER_NAME } from "~/config/constants";
+import { worldManager } from "~/world"
+import { BASE_LAYER_ID, BASE_LAYER_NAME } from "~/config/constants"
 
-  import SidePanel, { Header } from "~/ui/lib/SidePanel";
-  import { selectedEntities } from "~/stores/selection";
-  import { Entity } from "~/ecs/base";
+import SidePanel, { Header } from "~/ui/lib/SidePanel"
+import { selectedEntities } from "~/stores/selection"
+import { Entity } from "~/ecs/base"
 
-  import AddLayerButton from "./AddLayerButton.svelte";
-  import LayersList from "./LayersList.svelte";
-  import Pane from "~/ui/lib/Pane";
+import AddLayerButton from "./AddLayerButton.svelte"
+import LayersList from "./LayersList.svelte"
+import Pane from "~/ui/lib/Pane"
 
-  function getEntityLayerNames(entityIds: Set<string>) {
-    const layerIds: Set<string> = new Set();
-    entityIds.forEach((entityId) => {
-      const entity = worldManager.getActivatedEntity(entityId);
-      layerIds.add(entity.meta.layerId ?? BASE_LAYER_ID);
-    });
-    const layers = get(worldManager.worldDoc.getLayersDerivedStore());
-    return Array.from(layerIds.values()).map((layerId) =>
-      layerId === BASE_LAYER_ID ? BASE_LAYER_NAME : layers.get(layerId)?.name
-    );
-  }
+function getEntityLayerNames(entityIds: Set<string>) {
+  const layerIds: Set<string> = new Set()
+  entityIds.forEach((entityId) => {
+    const entity = worldManager.getActivatedEntity(entityId)
+    layerIds.add(entity.meta.layerId ?? BASE_LAYER_ID)
+  })
+  const layers = get(worldManager.worldDoc.getLayersDerivedStore())
+  return Array.from(layerIds.values()).map((layerId) =>
+    layerId === BASE_LAYER_ID ? BASE_LAYER_NAME : layers.get(layerId)?.name,
+  )
+}
 </script>
 
 <SidePanel on:minimize>

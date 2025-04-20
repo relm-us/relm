@@ -1,23 +1,23 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+import { createEventDispatcher } from "svelte"
 
-  export let enabled = true;
-  export let active: boolean = undefined;
-  export let secondary: boolean = false;
-  export let style: string = undefined;
-  export let tabindex: number = 0;
-  export let depress: boolean = true;
+export let enabled = true
+export let active: boolean = undefined
+export let secondary: boolean = false
+export let style: string = undefined
+export let tabindex: number = 0
+export let depress: boolean = true
 
-  let dispatch = createEventDispatcher();
+let dispatch = createEventDispatcher()
 
-  function onKeydown(event: KeyboardEvent) {
-    if (event.key === " " || event.key === "Enter") {
-      event.stopPropagation();
-      dispatch("click");
-    } else if (event.key === "Escape") {
-      (event.target as HTMLButtonElement).blur();
-    }
+function onKeydown(event: KeyboardEvent) {
+  if (event.key === " " || event.key === "Enter") {
+    event.stopPropagation()
+    dispatch("click")
+  } else if (event.key === "Escape") {
+    ;(event.target as HTMLButtonElement).blur()
   }
+}
 </script>
 
 <button

@@ -1,47 +1,47 @@
 <script lang="ts">
-  import { onDestroy } from "svelte";
-  import { fly } from "svelte/transition";
+import { onDestroy } from "svelte"
+import { fly } from "svelte/transition"
 
-  import { assetUrl } from "~/config/assetUrl";
-  import { showCenterButtons } from "~/stores/showCenterButtons";
+import { assetUrl } from "~/config/assetUrl"
+import { showCenterButtons } from "~/stores/showCenterButtons"
 
-  import Portal from "~/ui/lib/Portal.svelte";
-  import ConversationContent from "./ConversationContent.svelte";
-  import ConversationMore from "./ConversationMore.svelte";
+import Portal from "~/ui/lib/Portal.svelte"
+import ConversationContent from "./ConversationContent.svelte"
+import ConversationMore from "./ConversationMore.svelte"
 
-  export let title;
-  export let image;
-  export let content;
-  export let visible;
+export let title
+export let image
+export let content
+export let visible
 
-  export let onCancel;
+export let onCancel
 
-  let width;
-  let el;
-  let sectionIndex = 0;
-  let sections = [];
+let width
+let el
+let sectionIndex = 0
+let sections = []
 
-  $: $showCenterButtons = !visible;
+$: $showCenterButtons = !visible
 
-  $: divideSections(content);
+$: divideSections(content)
 
-  function divideSections(text) {
-    sections = text.split("---");
-    sectionIndex = 0;
+function divideSections(text) {
+  sections = text.split("---")
+  sectionIndex = 0
+}
+
+function readNextSection() {
+  if (sections.length > 1 && sectionIndex < sections.length - 1) {
+    sectionIndex = sectionIndex + 1
+  } else {
+    onCancel()
   }
+}
 
-  function readNextSection() {
-    if (sections.length > 1 && sectionIndex < sections.length - 1) {
-      sectionIndex = sectionIndex + 1;
-    } else {
-      onCancel();
-    }
-  }
+onDestroy(() => ($showCenterButtons = true))
 
-  onDestroy(() => ($showCenterButtons = true));
-
-  // ignore warning about missing props
-  $$props;
+// ignore warning about missing props
+$$props
 </script>
 
 {#if visible}

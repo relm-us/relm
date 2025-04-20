@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { DASHBOARD_BACKGROUND_URL } from "~/config/constants";
+import { DASHBOARD_BACKGROUND_URL } from "~/config/constants"
 </script>
 
 <r-sign-in-screen style="--sign-in-bg: url({DASHBOARD_BACKGROUND_URL})" />

@@ -3,7 +3,7 @@ import {
   // Constants
   DoubleSide,
   AdditiveBlending,
-} from "three";
+} from "three"
 
 export const GlowShader = new ShaderMaterial({
   uniforms: {},
@@ -28,4 +28,4 @@ export const GlowShader = new ShaderMaterial({
   side: DoubleSide,
   blending: AdditiveBlending,
   transparent: true,
-});
+})

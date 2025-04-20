@@ -1,2 +1,2 @@
-export { DirectionalLight } from "./DirectionalLight";
-export { DirectionalLightRef } from "./DirectionalLightRef";
+export { DirectionalLight } from "./DirectionalLight"
+export { DirectionalLightRef } from "./DirectionalLightRef"

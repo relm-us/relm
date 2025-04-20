@@ -1,10 +1,10 @@
-import type { Group, Mesh } from "three";
+import type { Group, Mesh } from "three"
 
-import { StateComponent, RefType } from "~/ecs/base";
+import { StateComponent, RefType } from "~/ecs/base"
 
 export class ColliderVisibleRef extends StateComponent {
-  value: Mesh;
-  group: Group;
+  value: Mesh
+  group: Group
 
   static props = {
     value: {
@@ -14,5 +14,5 @@ export class ColliderVisibleRef extends StateComponent {
     group: {
       type: RefType,
     },
-  };
+  }
 }

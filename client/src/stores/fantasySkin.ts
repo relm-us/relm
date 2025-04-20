@@ -1,3 +1,3 @@
-import { writable, Writable } from "svelte/store";
+import { writable, type Writable } from "svelte/store"
 
-export const fantasySkin: Writable<boolean> = writable(false);
+export const fantasySkin: Writable<boolean> = writable(false)

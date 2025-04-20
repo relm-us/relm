@@ -1,19 +1,19 @@
-import type { Texture } from "three";
+import type { Texture } from "three"
 
-import { StateComponent, StringType, RefType } from "~/ecs/base";
+import { StateComponent, StringType, RefType } from "~/ecs/base"
 
 export class ImageAssetLoaded extends StateComponent {
-  value: Texture;
+  value: Texture
 
   // something to uniquely identify the asset, such as its URL
-  cacheKey: string;
+  cacheKey: string
 
   // null if no error; otherwise, an explanation of the error
-  error: string;
+  error: string
 
   static props = {
     value: { type: RefType },
     cacheKey: { type: StringType },
     error: { type: StringType, default: null },
-  };
+  }
 }

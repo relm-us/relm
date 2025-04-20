@@ -1,8 +1,8 @@
 <script>
-  import { fade } from "svelte/transition";
+import { fade } from "svelte/transition"
 
-  export let zIndex = 3;
-  export let justify = "flex-start";
+export let zIndex = 3
+export let justify = "flex-start"
 </script>
 
 <page-overlay out:fade style="z-index: {zIndex}; justify-content: {justify}">

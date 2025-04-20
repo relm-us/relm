@@ -1,22 +1,22 @@
 <script lang="ts">
-  import { fade } from "svelte/transition";
+import { fade } from "svelte/transition"
 
-  import { CROSS_FADE_DURATION } from "~/config/constants";
+import { CROSS_FADE_DURATION } from "~/config/constants"
 
-  import { worldManager } from "~/world";
+import { worldManager } from "~/world"
 
-  import { openDialog } from "~/stores/openDialog";
-  import { localIdentityData } from "~/stores/identityData";
+import { openDialog } from "~/stores/openDialog"
+import { localIdentityData } from "~/stores/identityData"
 
-  import ChangeAvatarDialog from "~/ui/Dialogs/ChangeAvatarDialog.svelte";
-  import ChatDialog from "../Dialogs/ChatDialog.svelte";
-  import GraphicsQualityDialog from "~/ui/Dialogs/GraphicsQualityDialog.svelte";
-  import InviteDialog from "~/ui//Dialogs/InviteDialog.svelte";
-  import LanguageDialog from "~/ui/Dialogs/LanguageDialog.svelte";
-  import NeedsMigrationDialog from "~/ui/Dialogs/NeedsMigrationDialog.svelte";
-  import PauseDialog from "~/ui/Dialogs/PauseDialog.svelte";
-  import SignInDialog from "~/ui//Dialogs/SignInDialog.svelte";
-  import SignUpDialog from "~/ui//Dialogs/SignUpDialog.svelte";
+import ChangeAvatarDialog from "~/ui/Dialogs/ChangeAvatarDialog.svelte"
+import ChatDialog from "../Dialogs/ChatDialog.svelte"
+import GraphicsQualityDialog from "~/ui/Dialogs/GraphicsQualityDialog.svelte"
+import InviteDialog from "~/ui//Dialogs/InviteDialog.svelte"
+import LanguageDialog from "~/ui/Dialogs/LanguageDialog.svelte"
+import NeedsMigrationDialog from "~/ui/Dialogs/NeedsMigrationDialog.svelte"
+import PauseDialog from "~/ui/Dialogs/PauseDialog.svelte"
+import SignInDialog from "~/ui//Dialogs/SignInDialog.svelte"
+import SignUpDialog from "~/ui//Dialogs/SignUpDialog.svelte"
 </script>
 
 {#if $openDialog !== null}

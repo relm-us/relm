@@ -1,3 +1,3 @@
-import { writable, Writable } from "svelte/store";
+import { writable, type Writable } from "svelte/store"
 
-export const unreadCount: Writable<number> = writable(0);
+export const unreadCount: Writable<number> = writable(0)

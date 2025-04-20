@@ -1,1 +1,1 @@
-export { LookAtSystem } from "./LookAtSystem";
+export { LookAtSystem } from "./LookAtSystem"

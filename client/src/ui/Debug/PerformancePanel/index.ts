@@ -1,1 +1,1 @@
-export { default } from "./PerformancePanel.svelte";
+export { default } from "./PerformancePanel.svelte"

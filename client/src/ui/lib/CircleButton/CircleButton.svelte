@@ -1,32 +1,32 @@
 <script lang="ts">
-  import { SvelteComponent } from "svelte";
+import type { SvelteComponent } from "svelte"
 
-  import { createEventDispatcher } from "svelte";
-  import { globalEvents } from "~/events/globalEvents";
+import { createEventDispatcher } from "svelte"
+import { globalEvents } from "~/events/globalEvents"
 
-  export let enabled: boolean = true;
-  export let size: number = 48;
-  export let margin: number = 2;
-  export let padding: number = null;
-  export let Icon: SvelteComponent | any = null;
-  export let iconSize: number = 32;
-  export let tabindex: number = 0;
+export let enabled: boolean = true
+export let size: number = 48
+export let margin: number = 2
+export let padding: number = null
+export let Icon: SvelteComponent | any = null
+export let iconSize: number = 32
+export let tabindex: number = 0
 
-  $: if (padding === null) padding = size / 6;
+$: if (padding === null) padding = size / 6
 
-  function onKeydown(event) {
-    if (
-      event.key !== "Enter" &&
-      event.key !== "Return" &&
-      event.key !== "Tab" &&
-      event.key !== "Shift" &&
-      event.key !== " "
-    ) {
-      globalEvents.emit("focus-world");
-    }
+function onKeydown(event) {
+  if (
+    event.key !== "Enter" &&
+    event.key !== "Return" &&
+    event.key !== "Tab" &&
+    event.key !== "Shift" &&
+    event.key !== " "
+  ) {
+    globalEvents.emit("focus-world")
   }
+}
 
-  let dispatch = createEventDispatcher();
+let dispatch = createEventDispatcher()
 </script>
 
 <button

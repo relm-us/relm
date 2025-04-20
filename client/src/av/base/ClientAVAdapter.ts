@@ -1,4 +1,4 @@
-import { TypedEmitter } from "tiny-typed-emitter";
+import { TypedEmitter } from "tiny-typed-emitter"
 import type {
   AVParticipant,
   AVResource,
@@ -6,71 +6,71 @@ import type {
   ConnectStatus,
   BandwidthEstimate,
   SimplifiedTrack,
-} from "./types";
+} from "./types"
 
 export type AVAdapterEvents = {
-  "participant-added": (peer: AVParticipant) => void;
-  "participant-updated": (peer: AVParticipant) => void;
-  "participant-removed": (peerId: string) => void;
+  "participant-added": (peer: AVParticipant) => void
+  "participant-updated": (peer: AVParticipant) => void
+  "participant-removed": (peerId: string) => void
 
-  "resources-added": (resources: Array<AVResource>) => void;
-  "resources-updated": (resource: Array<AVResource>) => void;
-  "resources-removed": (resourceId: Array<string>) => void;
+  "resources-added": (resources: Array<AVResource>) => void
+  "resources-updated": (resource: Array<AVResource>) => void
+  "resources-removed": (resourceId: Array<string>) => void
 
-  "bandwidth-estimate": (estimate: BandwidthEstimate) => void;
-  "status-updated": (status: ConnectStatus) => void;
+  "bandwidth-estimate": (estimate: BandwidthEstimate) => void
+  "status-updated": (status: ConnectStatus) => void
 
-  "disconnected": () => void;
-};
+  disconnected: () => void
+}
 
 export class UnimplementedError extends Error {
   constructor(public reason = "Not Implemented") {
-    super("Not Implemented");
+    super("Not Implemented")
   }
 }
 
 export class ClientAVAdapter extends TypedEmitter<AVAdapterEvents> {
-  origin: string;
+  origin: string
 
   async connect(
     roomId: string,
-    identityOrToken: string // may be token, may be username, depends on service
+    identityOrToken: string, // may be token, may be username, depends on service
   ) {
-    throw new UnimplementedError();
+    throw new UnimplementedError()
   }
 
   async disconnect() {
-    throw new UnimplementedError();
+    throw new UnimplementedError()
   }
 
   enableMic() {
-    throw new UnimplementedError();
+    throw new UnimplementedError()
   }
-  disableMic(pause: boolean = false) {
-    throw new UnimplementedError();
+  disableMic(pause = false) {
+    throw new UnimplementedError()
   }
 
   enableCam() {
-    throw new UnimplementedError();
+    throw new UnimplementedError()
   }
-  disableCam(pause: boolean = false) {
-    throw new UnimplementedError();
+  disableCam(pause = false) {
+    throw new UnimplementedError()
   }
 
   enableShare() {
-    throw new UnimplementedError();
+    throw new UnimplementedError()
   }
-  disableShare(pause: boolean = false) {
-    throw new UnimplementedError();
+  disableShare(pause = false) {
+    throw new UnimplementedError()
   }
 
   publishLocalTracks(
     tracks: Array<MediaStreamTrack | SimplifiedTrack>,
-    priority: "low" | "standard" | "high" = "standard"
+    priority: "low" | "standard" | "high" = "standard",
   ) {
-    throw new UnimplementedError();
+    throw new UnimplementedError()
   }
   unpublishLocalTracks(tracks: Array<MediaStreamTrack | SimplifiedTrack>) {
-    throw new UnimplementedError();
+    throw new UnimplementedError()
   }
 }

@@ -1,190 +1,184 @@
 <script>
-  import { onMount, createEventDispatcher } from "svelte";
-  import { fade } from "svelte/transition";
-  import IoIosArrowDown from "svelte-icons/io/IoIosArrowDown.svelte";
+import { onMount, createEventDispatcher } from "svelte"
+import { fade } from "svelte/transition"
+import IoIosArrowDown from "svelte-icons/io/IoIosArrowDown.svelte"
 
-  import Portal from "~/ui/lib/Portal.svelte";
+import Portal from "~/ui/lib/Portal.svelte"
 
-  import Swatch from "./Swatch.svelte";
-  import CheckedBackground from "./CheckedBackground.svelte";
-  import { buildStyle } from "../helpers.js";
-  import {
-    getColorFormat,
-    convertToHSVA,
-    convertHsvaToFormat,
-  } from "../utils.js";
-  import Slider from "./Slider.svelte";
-  import Palette from "./Palette.svelte";
-  import ButtonGroup from "./ButtonGroup.svelte";
-  import Input from "./Input.svelte";
-  import { keyevents } from "../actions";
+import Swatch from "./Swatch.svelte"
+import CheckedBackground from "./CheckedBackground.svelte"
+import { buildStyle } from "../helpers.js"
+import { getColorFormat, convertToHSVA, convertHsvaToFormat } from "../utils.js"
+import Slider from "./Slider.svelte"
+import Palette from "./Palette.svelte"
+import ButtonGroup from "./ButtonGroup.svelte"
+import Input from "./Input.svelte"
+import { keyevents } from "../actions"
 
-  export let value = "#3ec1d3ff";
-  export let open = false;
-  export let swatches = [];
+export let value = "#3ec1d3ff"
+export let open = false
+export let swatches = []
 
-  export let enableSwatches = true;
-  export let enableAlpha = true;
-  export let enableFormat = false;
-  export let format = "hex";
-  export let style = "";
-  export let pickerHeight = 0;
-  export let pickerWidth = 0;
-  export let colorPicker = null;
+export let enableSwatches = true
+export let enableAlpha = true
+export let enableFormat = false
+export let format = "hex"
+export let style = ""
+export let pickerHeight = 0
+export let pickerWidth = 0
+export let colorPicker = null
 
-  const maxSwatches = 18;
+const maxSwatches = 18
 
-  let adder = null;
-  let swatchesSetFromLocalStore = false;
-  let showFormat = false;
+let adder = null
+let swatchesSetFromLocalStore = false
+let showFormat = false
 
-  let h = 0;
-  let s = 0;
-  let v = 0;
-  let a = 0;
+let h = 0
+let s = 0
+let v = 0
+let a = 0
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  onMount(() => {
-    if (!swatches.length > 0) {
-      //Don't use locally stored recent colors if swatches have been passed as props
-      swatchesSetFromLocalStore = true;
-      swatches = getRecentColors() || [];
+onMount(() => {
+  if (!swatches.length > 0) {
+    //Don't use locally stored recent colors if swatches have been passed as props
+    swatchesSetFromLocalStore = true
+    swatches = getRecentColors() || []
+  }
+
+  if (swatches.length > maxSwatches) {
+    console.warn(
+      `Colorpicker - ${swatches.length} swatches were provided. Only the first ${maxSwatches} swatches will be displayed.`,
+    )
+  }
+
+  if (colorPicker) {
+    colorPicker.focus()
+  }
+
+  if (format) {
+    convertAndSetHSVA()
+  }
+})
+
+function getRecentColors() {
+  let colorStore = localStorage.getItem("cp:recent-colors")
+  if (colorStore) {
+    return JSON.parse(colorStore)
+  }
+}
+
+function handleEscape() {
+  if (open) {
+    open = false
+  }
+}
+
+function setRecentColors(color) {
+  const s = swatchesSetFromLocalStore ? swatches : [...getRecentColors(), color]
+  localStorage.setItem("cp:recent-colors", JSON.stringify(s))
+}
+
+function convertAndSetHSVA() {
+  let hsva = convertToHSVA(value, format)
+  setHSVA(hsva)
+}
+
+function setHSVA([hue, sat, val, alpha]) {
+  h = hue
+  s = sat
+  v = val
+  a = alpha
+}
+
+//fired by choosing a color from the palette
+function setSaturationAndValue({ detail }) {
+  s = detail.s
+  v = detail.v
+  value = convertHsvaToFormat([h, s, v, a], format)
+  dispatchValue()
+}
+
+function setHue({ color, isDrag }) {
+  h = color
+  value = convertHsvaToFormat([h, s, v, a], format)
+  if (!isDrag) {
+    dispatchValue()
+  }
+}
+
+function setAlpha({ color, isDrag }) {
+  a = color === "1.00" ? "1" : color
+  value = convertHsvaToFormat([h, s, v, a], format)
+  if (!isDrag) {
+    dispatchValue()
+  }
+}
+
+function dispatchValue() {
+  dispatch("change", value)
+}
+
+function changeFormatAndConvert(f) {
+  format = f.detail
+  value = convertHsvaToFormat([h, s, v, a], format)
+}
+
+function handleColorInput(text) {
+  format = getColorFormat(text)
+  if (format) {
+    value = text
+    convertAndSetHSVA()
+  }
+}
+
+function dispatchInputChange() {
+  if (format) {
+    dispatchValue()
+  }
+}
+
+function addSwatch() {
+  if (format) {
+    if (swatches.length === maxSwatches) {
+      swatches.splice(0, 1)
     }
 
-    if (swatches.length > maxSwatches) {
-      console.warn(
-        `Colorpicker - ${swatches.length} swatches were provided. Only the first ${maxSwatches} swatches will be displayed.`
-      );
+    if (!swatches.includes(value)) {
+      swatches = [...swatches, value]
+      setRecentColors(value)
     }
 
-    if (colorPicker) {
-      colorPicker.focus();
-    }
+    dispatch("addswatch", value)
+  }
+}
 
+function removeSwatch(idx) {
+  let [removedSwatch] = swatches.splice(idx, 1)
+  swatches = swatches
+  dispatch("removeswatch", removedSwatch)
+  if (swatchesSetFromLocalStore) {
+    //as could be a swatch not present in local storage
+    setRecentColors()
+  }
+}
+
+function applySwatch(color) {
+  if (value !== color) {
+    format = getColorFormat(color)
     if (format) {
-      convertAndSetHSVA();
-    }
-  });
-
-  function getRecentColors() {
-    let colorStore = localStorage.getItem("cp:recent-colors");
-    if (colorStore) {
-      return JSON.parse(colorStore);
+      value = color
+      convertAndSetHSVA()
+      dispatchValue()
     }
   }
+}
 
-  function handleEscape() {
-    if (open) {
-      open = false;
-    }
-  }
-
-  function setRecentColors(color) {
-    const s = swatchesSetFromLocalStore
-      ? swatches
-      : [...getRecentColors(), color];
-    localStorage.setItem("cp:recent-colors", JSON.stringify(s));
-  }
-
-  function convertAndSetHSVA() {
-    let hsva = convertToHSVA(value, format);
-    setHSVA(hsva);
-  }
-
-  function setHSVA([hue, sat, val, alpha]) {
-    h = hue;
-    s = sat;
-    v = val;
-    a = alpha;
-  }
-
-  //fired by choosing a color from the palette
-  function setSaturationAndValue({ detail }) {
-    s = detail.s;
-    v = detail.v;
-    value = convertHsvaToFormat([h, s, v, a], format);
-    dispatchValue();
-  }
-
-  function setHue({ color, isDrag }) {
-    h = color;
-    value = convertHsvaToFormat([h, s, v, a], format);
-    if (!isDrag) {
-      dispatchValue();
-    }
-  }
-
-  function setAlpha({ color, isDrag }) {
-    a = color === "1.00" ? "1" : color;
-    value = convertHsvaToFormat([h, s, v, a], format);
-    if (!isDrag) {
-      dispatchValue();
-    }
-  }
-
-  function dispatchValue() {
-    dispatch("change", value);
-  }
-
-  function changeFormatAndConvert(f) {
-    format = f.detail;
-    value = convertHsvaToFormat([h, s, v, a], format);
-  }
-
-  function handleColorInput(text) {
-    format = getColorFormat(text);
-    if (format) {
-      value = text;
-      convertAndSetHSVA();
-    }
-  }
-
-  function dispatchInputChange() {
-    if (format) {
-      dispatchValue();
-    }
-  }
-
-  function addSwatch() {
-    if (format) {
-      if (swatches.length === maxSwatches) {
-        swatches.splice(0, 1);
-      }
-
-      if (!swatches.includes(value)) {
-        swatches = [...swatches, value];
-        setRecentColors(value);
-      }
-
-      dispatch("addswatch", value);
-    }
-  }
-
-  function removeSwatch(idx) {
-    let [removedSwatch] = swatches.splice(idx, 1);
-    swatches = swatches;
-    dispatch("removeswatch", removedSwatch);
-    if (swatchesSetFromLocalStore) {
-      //as could be a swatch not present in local storage
-      setRecentColors();
-    }
-  }
-
-  function applySwatch(color) {
-    if (value !== color) {
-      format = getColorFormat(color);
-      if (format) {
-        value = color;
-        convertAndSetHSVA();
-        dispatchValue();
-      }
-    }
-  }
-
-  $: border = v > 90 && s < 5 ? "1px dashed #dedada" : "";
-  $: selectedColorStyle = buildStyle({ background: value, border });
-  $: hasSwatches = swatches.length > 0;
+$: border = v > 90 && s < 5 ? "1px dashed #dedada" : ""
+$: selectedColorStyle = buildStyle({ background: value, border })
+$: hasSwatches = swatches.length > 0
 </script>
 
 <Portal>

@@ -1,4 +1,4 @@
-import { Component, NumberType, StringType } from "~/ecs/base";
+import { Component, NumberType, StringType } from "~/ecs/base"
 
 export class Fire extends Component {
   static props = {
@@ -42,9 +42,9 @@ export class Fire extends Component {
         label: "Color Mix",
       },
     },
-  };
+  }
 
   static editor = {
     label: "Fire",
-  };
+  }
 }

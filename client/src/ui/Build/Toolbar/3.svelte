@@ -1,15 +1,15 @@
 <script lang="ts">
-  import FaObjectGroup from "svelte-icons/fa/FaObjectGroup.svelte";
-  import FaObjectUngroup from "svelte-icons/fa/FaObjectUngroup.svelte";
+import FaObjectGroup from "svelte-icons/fa/FaObjectGroup.svelte"
+import FaObjectUngroup from "svelte-icons/fa/FaObjectUngroup.svelte"
 
-  import { globalEvents } from "~/events/globalEvents";
-  import { selectedGroups } from "~/stores/selection";
+import { globalEvents } from "~/events/globalEvents"
+import { selectedGroups } from "~/stores/selection"
 
-  import ToolButton from "./ToolButton.svelte";
+import ToolButton from "./ToolButton.svelte"
 
-  function onClick() {
-    globalEvents.emit("toggle-selection-as-group");
-  }
+function onClick() {
+  globalEvents.emit("toggle-selection-as-group")
+}
 </script>
 
 <!-- Group/Ungroup Toggle-->

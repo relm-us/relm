@@ -1,112 +1,105 @@
 <script>
-  import ColorPicker from "./ColorPicker.svelte";
-  import CheckedBackground from "./CheckedBackground.svelte";
-  import { createEventDispatcher, beforeUpdate } from "svelte";
+import ColorPicker from "./ColorPicker.svelte"
+import CheckedBackground from "./CheckedBackground.svelte"
+import { createEventDispatcher, beforeUpdate } from "svelte"
 
-  import { buildStyle, debounce } from "../helpers.js";
-  import { getColorFormat } from "../utils.js";
+import { buildStyle, debounce } from "../helpers.js"
+import { getColorFormat } from "../utils.js"
 
-  import { _ } from "~/i18n";
+import { _ } from "~/i18n"
 
-  export let value = "#3ec1d3ff";
-  export let swatches = [];
-  export let enableSwatches = true;
-  export let enableAlpha = true;
-  export let enableFormat = false;
-  export let open = false;
-  export let width = "25px";
-  export let height = "25px";
-  export let colorPicker = null;
+export let value = "#3ec1d3ff"
+export let swatches = []
+export let enableSwatches = true
+export let enableAlpha = true
+export let enableFormat = false
+export let open = false
+export let width = "25px"
+export let height = "25px"
+export let colorPicker = null
 
-  let format = "hexa";
-  let dimensions = { top: 0, bottom: 0, right: 0, left: 0 };
-  let positionY = "top";
-  let positionX = "left";
-  let colorPreview = null;
+let format = "hexa"
+let dimensions = { top: 0, bottom: 0, right: 0, left: 0 }
+let positionY = "top"
+let positionX = "left"
+let colorPreview = null
 
-  let previewHeight = null;
-  let previewWidth = null;
-  let pickerWidth = 0;
-  let pickerHeight = 0;
+let previewHeight = null
+let previewWidth = null
+let pickerWidth = 0
+let pickerHeight = 0
 
-  let errorMsg = null;
+let errorMsg = null
 
-  const dispatch = createEventDispatcher();
-  const dispatchValue = (value) =>
-    debounce(() => dispatch("change", value), 300, true);
+const dispatch = createEventDispatcher()
+const dispatchValue = (value) => debounce(() => dispatch("change", value), 300, true)
 
-  beforeUpdate(() => {
-    format = getColorFormat(value);
-    if (!format) {
-      errorMsg = `ColorPicker - ${value} is an unknown color format. Please use a hex, rgb or hsl value`;
-      console.error(errorMsg);
+beforeUpdate(() => {
+  format = getColorFormat(value)
+  if (!format) {
+    errorMsg = `ColorPicker - ${value} is an unknown color format. Please use a hex, rgb or hsl value`
+    console.error(errorMsg)
+  } else {
+    errorMsg = null
+  }
+})
+
+function openColorPicker(event) {
+  if (colorPreview) {
+    open = true
+  }
+}
+
+function onColorChange(color) {
+  value = color.detail
+  dispatchValue(value)
+}
+
+function calculateDimensions() {
+  if (open) {
+    const { top: spaceAbove, width, bottom, right, left } = colorPreview.getBoundingClientRect()
+
+    const spaceBelow = window.innerHeight - bottom
+    const previewCenter = previewWidth / 2
+
+    let y, x
+
+    if (spaceAbove > spaceBelow) {
+      positionY = "bottom"
+      y = window.innerHeight - spaceAbove
     } else {
-      errorMsg = null;
+      positionY = "top"
+      y = bottom
     }
-  });
 
-  function openColorPicker(event) {
-    if (colorPreview) {
-      open = true;
+    // Centre picker by default
+    x = left + previewCenter - 220 / 2
+
+    const spaceRight = window.innerWidth - right
+
+    //Position picker left or right if space not available for centering
+    if (left < 110 && spaceRight > 220) {
+      positionX = "left"
+      x = right
+    } else if (spaceRight < 100 && left > 220) {
+      positionX = "right"
+      x = document.body.clientWidth - left
     }
+
+    dimensions = { [positionY]: y.toFixed(1), [positionX]: x.toFixed(1) }
   }
+}
 
-  function onColorChange(color) {
-    value = color.detail;
-    dispatchValue(value);
-  }
+$: if (open && colorPreview) {
+  calculateDimensions()
+}
 
-  function calculateDimensions() {
-    if (open) {
-      const {
-        top: spaceAbove,
-        width,
-        bottom,
-        right,
-        left,
-      } = colorPreview.getBoundingClientRect();
-
-      const spaceBelow = window.innerHeight - bottom;
-      const previewCenter = previewWidth / 2;
-
-      let y, x;
-
-      if (spaceAbove > spaceBelow) {
-        positionY = "bottom";
-        y = window.innerHeight - spaceAbove;
-      } else {
-        positionY = "top";
-        y = bottom;
-      }
-
-      // Centre picker by default
-      x = left + previewCenter - 220 / 2;
-
-      const spaceRight = window.innerWidth - right;
-
-      //Position picker left or right if space not available for centering
-      if (left < 110 && spaceRight > 220) {
-        positionX = "left";
-        x = right;
-      } else if (spaceRight < 100 && left > 220) {
-        positionX = "right";
-        x = document.body.clientWidth - left;
-      }
-
-      dimensions = { [positionY]: y.toFixed(1), [positionX]: x.toFixed(1) };
-    }
-  }
-
-  $: if (open && colorPreview) {
-    calculateDimensions();
-  }
-
-  $: previewStyle = buildStyle({ width, height, background: value });
-  $: errorPreviewStyle = buildStyle({ width, height });
-  $: pickerStyle = buildStyle({
-    [positionY]: `${dimensions[positionY]}px`,
-    [positionX]: `${dimensions[positionX]}px`,
-  });
+$: previewStyle = buildStyle({ width, height, background: value })
+$: errorPreviewStyle = buildStyle({ width, height })
+$: pickerStyle = buildStyle({
+  [positionY]: `${dimensions[positionY]}px`,
+  [positionX]: `${dimensions[positionX]}px`,
+})
 </script>
 
 <svelte:window on:resize={debounce(calculateDimensions, 200)} />

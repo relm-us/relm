@@ -1,13 +1,13 @@
 <script>
-  import { worldManager } from "~/world";
-  import { autoPause } from "~/stores/autoPause";
-  import Button from "~/ui/lib/Button";
+import { worldManager } from "~/world"
+import { autoPause } from "~/stores/autoPause"
+import Button from "~/ui/lib/Button"
 
-  import { _ } from "~/i18n";
+import { _ } from "~/i18n"
 
-  function onClick() {
-    worldManager.camera.center();
-  }
+function onClick() {
+  worldManager.camera.center()
+}
 </script>
 
 {#if $autoPause}

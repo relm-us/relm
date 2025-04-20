@@ -1,21 +1,21 @@
-import { Component, NumberType, StringType } from "~/ecs/base";
+import { Component, NumberType, StringType } from "~/ecs/base"
 
 export class PhysicsOptions extends Component {
   // Linear damping
-  linDamp: number;
+  linDamp: number
 
   // Angular damping
-  angDamp: number;
+  angDamp: number
 
   // Additional Mass (beyond collider mass)
-  additionalMass: number;
+  additionalMass: number
 
   // Rotation restrictions
   // e.g. "Y" would restrict rotations to only the Y axis
-  rotRestrict: string;
+  rotRestrict: string
 
   // Ratio to scale gravity; 1 is "normal"
-  gravityScale: number;
+  gravityScale: number
 
   static props = {
     additionalMass: {
@@ -54,5 +54,5 @@ export class PhysicsOptions extends Component {
       type: NumberType,
       default: 0,
     },
-  };
+  }
 }

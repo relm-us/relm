@@ -1,34 +1,34 @@
 <script lang="ts">
-  import { spring } from "svelte/motion";
-  import { onDestroy } from "svelte";
+import { spring } from "svelte/motion"
+import { onDestroy } from "svelte"
 
-  import { audioActivity } from "~/av/utils/audioActivity";
+import { audioActivity } from "~/av/utils/audioActivity"
 
-  export let stream: MediaStream;
+export let stream: MediaStream
 
-  let closeAudioContext;
-  let audioLevel = 0;
+let closeAudioContext
+let audioLevel = 0
 
-  $: if (stream && stream.getAudioTracks().length) {
-    closeAudioContext?.();
-    closeAudioContext = audioActivity(stream, (value) => (audioLevel = value));
-  }
+$: if (stream && stream.getAudioTracks().length) {
+  closeAudioContext?.()
+  closeAudioContext = audioActivity(stream, (value) => (audioLevel = value))
+}
 
-  // Animation springs
-  let audioLevelSpring = spring(0, {
-    stiffness: 0.4,
-    damping: 0.6,
-  });
+// Animation springs
+let audioLevelSpring = spring(0, {
+  stiffness: 0.4,
+  damping: 0.6,
+})
 
-  $: {
-    let x = audioLevel;
-    let y = Math.log10(x + 1 / 10) + 1;
-    audioLevelSpring.set(y);
-  }
+$: {
+  let x = audioLevel
+  let y = Math.log10(x + 1 / 10) + 1
+  audioLevelSpring.set(y)
+}
 
-  onDestroy(() => {
-    closeAudioContext?.();
-  });
+onDestroy(() => {
+  closeAudioContext?.()
+})
 </script>
 
 <indicator

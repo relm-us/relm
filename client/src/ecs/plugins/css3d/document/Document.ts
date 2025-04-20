@@ -1,20 +1,14 @@
-import {
-  Component,
-  StringType,
-  BooleanType,
-  JSONType,
-  RefType,
-} from "~/ecs/base";
+import { Component, StringType, BooleanType, JSONType } from "~/ecs/base"
 
 export class Document extends Component {
-  docId: string;
-  bgColor: string;
-  borderColor: string;
-  editable: boolean;
-  simpleMode: boolean;
+  docId: string
+  bgColor: string
+  borderColor: string
+  editable: boolean
+  simpleMode: boolean
 
-  emptyFormat: Record<string, string>;
-  placeholder: string;
+  emptyFormat: Record<string, string>
+  placeholder: string
 
   static props = {
     docId: {
@@ -74,9 +68,9 @@ export class Document extends Component {
         label: "Default Formatting",
       },
     },
-  };
+  }
 
   static editor = {
     label: "Document",
-  };
+  }
 }

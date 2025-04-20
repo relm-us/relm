@@ -1,2 +1,2 @@
-export { ModelSystem } from "./ModelSystem";
-export { ModelAssetSystem } from "./ModelAssetSystem";
+export { ModelSystem } from "./ModelSystem"
+export { ModelAssetSystem } from "./ModelAssetSystem"

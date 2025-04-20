@@ -1,13 +1,13 @@
-import { Vector2 } from "three";
-import { Component, StringType, NumberType, BooleanType } from "~/ecs/base";
-import { Vector2Type } from "../../core";
+import type { Vector2 } from "three"
+import { Component, StringType, NumberType, BooleanType } from "~/ecs/base"
+import { Vector2Type } from "../../core"
 
 export class Draggable extends Component {
-  plane: "XZ" | "XY";
+  plane: "XZ" | "XY"
 
-  grid: boolean;
-  gridSize: number;
-  gridOffset: Vector2;
+  grid: boolean
+  gridSize: number
+  gridOffset: Vector2
 
   static props = {
     plane: {
@@ -47,9 +47,9 @@ export class Draggable extends Component {
         requires: [{ prop: "grid", value: true }],
       },
     },
-  };
+  }
 
   static editor = {
     label: "Draggable",
-  };
+  }
 }

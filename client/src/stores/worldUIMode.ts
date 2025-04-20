@@ -1,5 +1,5 @@
-import { writable, Writable } from "svelte/store";
+import { writable, type Writable } from "svelte/store"
 
-export type WorldUIMode = "build" | "play";
+export type WorldUIMode = "build" | "play"
 
-export const worldUIMode: Writable<WorldUIMode> = writable("play");
+export const worldUIMode: Writable<WorldUIMode> = writable("play")

@@ -1,16 +1,16 @@
-import { Vector3, Quaternion } from "three";
+import { Vector3, Quaternion } from "three"
 
-import { Component, NumberType, StringType } from "~/ecs/base";
-import { QuaternionType, Vector3Type } from "~/ecs/plugins/core";
+import { Component, NumberType, StringType } from "~/ecs/base"
+import { QuaternionType, Vector3Type } from "~/ecs/plugins/core"
 
 export class Seat extends Component {
-  offset: Vector3;
-  forward: Quaternion;
-  swivel: number;
-  zone: string;
+  offset: Vector3
+  forward: Quaternion
+  swivel: number
+  zone: string
 
   // temp tracker, indicates if this seat is occupied
-  seated: boolean;
+  seated: boolean
 
   static props = {
     offset: {
@@ -44,9 +44,9 @@ export class Seat extends Component {
         label: "Audio Zone",
       },
     },
-  };
+  }
 
   static editor = {
     label: "Seat",
-  };
+  }
 }

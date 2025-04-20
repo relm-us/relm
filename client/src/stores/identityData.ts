@@ -1,8 +1,8 @@
-import { Writable } from "svelte/store";
+import type { Writable } from "svelte/store"
 
-import { randomColor } from "~/utils/colors";
-import { storedWritable } from "~/utils/storedWritable";
-import { IdentityData } from "~/types";
+import { randomColor } from "~/utils/colors"
+import { storedWritable } from "~/utils/storedWritable"
+import type { IdentityData } from "~/types"
 
 export const getRandomInitializedIdentityData = (): IdentityData => {
   return {
@@ -13,7 +13,7 @@ export const getRandomInitializedIdentityData = (): IdentityData => {
     emoting: false,
     showAudio: false,
     showVideo: false,
-  };
+  }
 }
 
 export const localIdentityData: Writable<IdentityData> = storedWritable(
@@ -21,5 +21,5 @@ export const localIdentityData: Writable<IdentityData> = storedWritable(
   /**
    * Generates a random name and color as default values.
    */
-  getRandomInitializedIdentityData()
-);
+  getRandomInitializedIdentityData(),
+)

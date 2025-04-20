@@ -1,15 +1,15 @@
-export {};
+export {}
 
 declare global {
-  var RAPIER: any;
+  var RAPIER: any
 }
 
 namespace svelte.JSX {
   interface VMVideoProps extends SvelteVideoProps {
-    disablepictureinpicture?: string | undefined | null;
+    disablepictureinpicture?: string | undefined | null
   }
 
   interface IntrinsicElements {
-    video: HTMLProps<HTMLVideoElement> & VMVideoProps;
+    video: HTMLProps<HTMLVideoElement> & VMVideoProps
   }
 }

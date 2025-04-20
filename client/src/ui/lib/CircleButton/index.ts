@@ -1,1 +1,1 @@
-export { default } from "./CircleButton.svelte";
+export { default } from "./CircleButton.svelte"

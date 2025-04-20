@@ -1,10 +1,9 @@
-import type { AvatarEntities } from "~/types";
+import type { AvatarEntities } from "~/types"
 
-import { Camera, Vector3 } from "three";
+import { Vector3 } from "three"
 
-import { OCULUS_HEIGHT_STAND } from "~/config/constants";
-import { Oculus, OculusRef } from "~/ecs/plugins/html2d";
-import { CameraGravity } from "~/ecs/plugins/camera";
+import { OCULUS_HEIGHT_STAND } from "~/config/constants"
+import { Oculus, OculusRef } from "~/ecs/plugins/html2d"
 
 export function setOculus(
   entities: AvatarEntities,
@@ -13,7 +12,7 @@ export function setOculus(
   color: string,
   onDidEdit: (content: string) => void,
   showAudio: boolean,
-  showVideo: boolean
+  showVideo: boolean,
 ) {
   if (!entities.body.has(Oculus)) {
     entities.body.add(Oculus, {
@@ -27,20 +26,20 @@ export function setOculus(
       onChange: onDidEdit,
       offset: new Vector3(0, OCULUS_HEIGHT_STAND, 0),
       targetOffset: new Vector3(0, OCULUS_HEIGHT_STAND, 0),
-    });
+    })
   } else {
-    const component = entities.body.get(OculusRef)?.component;
+    const component = entities.body.get(OculusRef)?.component
     if (component) {
-      component.$set({ participantName: name, color, showAudio, showVideo });
+      component.$set({ participantName: name, color, showAudio, showVideo })
     }
 
-    const oculus = entities.body.get(Oculus);
+    const oculus = entities.body.get(Oculus)
     if (oculus) {
-      oculus.onChange = onDidEdit;
-      oculus.participantName = name;
-      oculus.color = color;
-      oculus.showAudio = showAudio;
-      oculus.showVideo = showVideo;
+      oculus.onChange = onDidEdit
+      oculus.participantName = name
+      oculus.color = color
+      oculus.showAudio = showAudio
+      oculus.showVideo = showVideo
     }
   }
 }

@@ -1,11 +1,11 @@
-import { BooleanType, Component, StringType } from "~/ecs/base";
-import { AssetType, Asset } from "~/ecs/plugins/core";
+import { BooleanType, Component, StringType } from "~/ecs/base"
+import { AssetType, type Asset } from "~/ecs/plugins/core"
 
 export class Conversation extends Component {
-  title: string;
-  image: Asset;
-  content: string;
-  visible: boolean;
+  title: string
+  image: Asset
+  content: string
+  visible: boolean
 
   static props = {
     title: {
@@ -40,9 +40,9 @@ export class Conversation extends Component {
         label: "Visible",
       },
     },
-  };
+  }
 
   static editor = {
     label: "Conversation",
-  };
+  }
 }

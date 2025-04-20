@@ -1,52 +1,47 @@
-import type { Quaternion, Vector3 } from "three";
-import type {
-  Appearance,
-  Equipment,
-  PlayerStatus,
-  SavedIdentityData,
-} from "relm-common";
+import type { Quaternion, Vector3 } from "three"
+import type { Appearance, Equipment, PlayerStatus, SavedIdentityData } from "relm-common"
 
-import type { Entity } from "~/ecs/base";
-import type { Avatar } from "~/identity/Avatar";
-import type { Seat } from "~/ecs/plugins/player-control";
+import type { Entity } from "~/ecs/base"
+import type { Avatar } from "~/identity/Avatar"
+import type { Seat } from "~/ecs/plugins/player-control"
 
 export type UpdateData = {
-  name?: string;
-  color?: string;
-  status?: PlayerStatus;
-  appearance?: Appearance;
-  equipment?: Equipment;
-  speaking?: boolean;
-  emoting?: boolean;
-  showAudio?: boolean;
-  showVideo?: boolean;
-  clientId?: number;
-  message?: string;
-  emoji?: string;
-};
+  name?: string
+  color?: string
+  status?: PlayerStatus
+  appearance?: Appearance
+  equipment?: Equipment
+  speaking?: boolean
+  emoting?: boolean
+  showAudio?: boolean
+  showVideo?: boolean
+  clientId?: number
+  message?: string
+  emoji?: string
+}
 
 export type IdentityData = SavedIdentityData & {
   // Show the speech bubble?
-  speaking: boolean;
+  speaking: boolean
 
   // Show current emoji?
-  emoting: boolean;
+  emoting: boolean
 
   // Participant has mic enabled?
-  showAudio: boolean;
+  showAudio: boolean
 
   // Participant has video enabled?
-  showVideo: boolean;
+  showVideo: boolean
 
   // Last known yjs clientId for this participant
-  clientId?: number;
+  clientId?: number
 
   // Most recent chat message (used for chat bubble)
-  message?: string;
+  message?: string
 
   // Most recent emoji (used for emote)
-  emoji?: string;
-};
+  emoji?: string
+}
 
 export type TransformData = [
   x: number,
@@ -57,26 +52,26 @@ export type TransformData = [
   oculusOffset: number,
   clipIndex: number,
   animLoop: boolean,
-  offsetZ: number
-];
+  offsetZ: number,
+]
 
 export type AvatarEntities = {
-  head: Entity;
-  body: Entity;
-  emoji: Entity;
-  equipped?: Entity;
-};
+  head: Entity
+  body: Entity
+  emoji: Entity
+  equipped?: Entity
+}
 
 export type ActionSitChair = {
-  state: "sit-chair";
-  seat: Seat;
-  position: Vector3;
-  rotation: Quaternion;
-};
+  state: "sit-chair"
+  seat: Seat
+  position: Vector3
+  rotation: Quaternion
+}
 
 export type ActionLeaveChair = {
-  state: "leave-chair";
-};
+  state: "leave-chair"
+}
 
 export type ActionState =
   | { state: "free" }
@@ -84,24 +79,24 @@ export type ActionState =
   | { state: "raise-hand" }
   | { state: "sit-ground" }
   | ActionSitChair
-  | ActionLeaveChair;
+  | ActionLeaveChair
 
 export type Participant = {
-  participantId: string;
-  editable: boolean;
+  participantId: string
+  editable: boolean
 
-  identityData: IdentityData;
-  modifiedIdentityData: boolean;
+  identityData: IdentityData
+  modifiedIdentityData: boolean
 
-  actionState: ActionState;
+  actionState: ActionState
 
   // Avatar is responsible for all visuals/rendering of this identity
-  avatar?: Avatar;
-};
+  avatar?: Avatar
+}
 
-export type ParticipantMap = Map<string, Participant>;
+export type ParticipantMap = Map<string, Participant>
 
 export type AnimationOverride = {
-  clipName: string;
-  loop: boolean;
-};
+  clipName: string
+  loop: boolean
+}

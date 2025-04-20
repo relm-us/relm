@@ -1,32 +1,25 @@
 <script lang="ts">
-  import type { Participant, ParticipantMap } from "~/types";
+import type { Participant, ParticipantMap } from "~/types"
 
-  import Audio from "~/av/components/Audio";
-  import Video from "~/av/components/Video";
-  import { Readable, get } from "svelte/store";
+import Audio from "~/av/components/Audio"
+import Video from "~/av/components/Video"
+import { Readable, get } from "svelte/store"
 
-  import { participantId as localParticipantId } from "~/identity/participantId";
-  import { worldManager } from "~/world";
+import { participantId as localParticipantId } from "~/identity/participantId"
+import { worldManager } from "~/world"
 
-  import Fullscreen from "./Fullscreen.svelte";
-  import Individual from "./Individual.svelte";
-  import { derived } from "svelte/store";
+import Fullscreen from "./Fullscreen.svelte"
+import Individual from "./Individual.svelte"
+import { derived } from "svelte/store"
 
-  export let fullscreenParticipantId: string;
-  export let videoTrack = null;
-  export let audioTrack = null;
-  export let participants: Readable<ParticipantMap>;
+export let fullscreenParticipantId: string
+export let videoTrack = null
+export let audioTrack = null
+export let participants: Readable<ParticipantMap>
 
-  const smallParticipants: Readable<Participant[]> = derived(
-    [participants],
-    ([$participants], set) => {
-      set(
-        Array.from($participants.values()).filter(
-          (p) => p.participantId !== fullscreenParticipantId
-        )
-      );
-    }
-  );
+const smallParticipants: Readable<Participant[]> = derived([participants], ([$participants], set) => {
+  set(Array.from($participants.values()).filter((p) => p.participantId !== fullscreenParticipantId))
+})
 </script>
 
 <Fullscreen on:close>

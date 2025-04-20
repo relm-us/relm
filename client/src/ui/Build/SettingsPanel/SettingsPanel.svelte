@@ -1,18 +1,18 @@
 <script lang="ts">
-  import SidePanel, { Header } from "~/ui/lib/SidePanel";
-  import Button from "~/ui/lib/Button";
-  import { openPanel } from "~/stores/openPanel";
+import SidePanel, { Header } from "~/ui/lib/SidePanel"
+import Button from "~/ui/lib/Button"
+import { openPanel } from "~/stores/openPanel"
 
-  import EntrywaySettings from "./EntrywaySettings.svelte";
-  import SkyboxSettings from "./SkyboxSettings.svelte";
-  import FogSettings from "./FogSettings.svelte";
-  import CameraSettings from "./CameraSettings.svelte";
-  import AudioSettings from "./AudioSettings.svelte";
-  import AvatarSettings from "./AvatarSettings.svelte";
-  import LightingSettings from "./LightingSettings.svelte";
-  import TrackerSettings from "./TrackerSettings.svelte";
+import EntrywaySettings from "./EntrywaySettings.svelte"
+import SkyboxSettings from "./SkyboxSettings.svelte"
+import FogSettings from "./FogSettings.svelte"
+import CameraSettings from "./CameraSettings.svelte"
+import AudioSettings from "./AudioSettings.svelte"
+import AvatarSettings from "./AvatarSettings.svelte"
+import LightingSettings from "./LightingSettings.svelte"
+import TrackerSettings from "./TrackerSettings.svelte"
 
-  import { _ } from "~/i18n";
+import { _ } from "~/i18n"
 </script>
 
 <SidePanel on:minimize>

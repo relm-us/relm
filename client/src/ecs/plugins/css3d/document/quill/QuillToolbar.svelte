@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { fontSizes } from "./quillInit";
-  import { UNIQUE_COLOR_PALETTE } from "~/config/constants";
+import { fontSizes } from "./quillInit"
+import { UNIQUE_COLOR_PALETTE } from "~/config/constants"
 
-  export let toolbar;
+export let toolbar
 </script>
 
 <div class="toolbar" bind:this={toolbar}>

@@ -1,1 +1,1 @@
-export { MorphSystem } from "./MorphSystem";
+export { MorphSystem } from "./MorphSystem"

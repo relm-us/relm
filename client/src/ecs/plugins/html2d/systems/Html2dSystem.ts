@@ -1,104 +1,102 @@
-import { Vector3 } from "three";
+import { Vector3 } from "three"
 
-import { System, Groups, Not, Entity, Modified } from "~/ecs/base";
-import { Presentation, Object3DRef, Transform } from "~/ecs/plugins/core";
-import { Perspective } from "~/ecs/plugins/perspective";
+import { System, Groups, Not, type Entity, Modified } from "~/ecs/base"
+import { type Presentation, Object3DRef, Transform } from "~/ecs/plugins/core"
+import type { Perspective } from "~/ecs/plugins/perspective"
 
-import { Html2d, Html2dRef } from "../components";
-import { getHtmlComponent } from "../html";
-import { HtmlPresentation } from "../HtmlPresentation";
+import { Html2d, Html2dRef } from "../components"
+import { getHtmlComponent } from "../html"
+import type { HtmlPresentation } from "../HtmlPresentation"
 
-const v1 = new Vector3();
+const v1 = new Vector3()
 export class Html2dSystem extends System {
-  presentation: Presentation;
-  htmlPresentation: HtmlPresentation;
-  perspective: Perspective;
-  cumulative: number = 0.0;
+  presentation: Presentation
+  htmlPresentation: HtmlPresentation
+  perspective: Perspective
+  cumulative: number = 0.0
 
-  order = Groups.Presentation + 250;
+  order = Groups.Presentation + 250
 
   static queries = {
     new: [Html2d, Not(Html2dRef)],
     modified: [Modified(Html2d), Html2dRef],
     active: [Html2d, Html2dRef, Object3DRef],
     removed: [Not(Html2d), Html2dRef],
-  };
+  }
 
   init({ presentation, htmlPresentation, perspective }) {
-    this.presentation = presentation;
-    this.htmlPresentation = htmlPresentation;
-    this.perspective = perspective;
+    this.presentation = presentation
+    this.htmlPresentation = htmlPresentation
+    this.perspective = perspective
   }
 
   update(delta) {
     this.queries.new.forEach((entity) => {
-      this.build(entity);
-    });
+      this.build(entity)
+    })
 
     this.queries.modified.forEach((entity) => {
-      this.remove(entity);
-      this.build(entity);
-    });
+      this.remove(entity)
+      this.build(entity)
+    })
 
     this.queries.active.forEach((entity) => {
-      this.updatePosition(entity);
-    });
+      this.updatePosition(entity)
+    })
 
     this.queries.removed.forEach((entity) => {
-      this.remove(entity);
-    });
+      this.remove(entity)
+    })
   }
 
   build(entity: Entity) {
-    const spec = entity.get(Html2d);
+    const spec = entity.get(Html2d)
 
     // Prepare a container for Svelte
-    const container = this.htmlPresentation.createContainer(
-      spec.zoomInvariant ? 2 : 1
-    );
+    const container = this.htmlPresentation.createContainer(spec.zoomInvariant ? 2 : 1)
 
-    this.htmlPresentation.domElement.appendChild(container);
+    this.htmlPresentation.domElement.appendChild(container)
 
     // Create whatever Svelte component is specified by the type
-    const Component = getHtmlComponent(spec.kind);
+    const Component = getHtmlComponent(spec.kind)
     const component = new Component({
       target: container,
       props: { ...spec, entity },
-    });
+    })
 
-    entity.add(Html2dRef, { container, component });
+    entity.add(Html2dRef, { container, component })
 
-    this.updatePosition(entity);
+    this.updatePosition(entity)
   }
 
   remove(entity: Entity) {
-    const container = entity.get(Html2dRef).container;
-    container.remove();
+    const container = entity.get(Html2dRef).container
+    container.remove()
 
-    entity.remove(Html2dRef);
+    entity.remove(Html2dRef)
   }
 
   updatePosition(entity: Entity) {
-    if (this.presentation.skipUpdate > 0) return;
+    if (this.presentation.skipUpdate > 0) return
 
-    const transform: Transform = entity.get(Transform);
-    const spec: Html2d = entity.get(Html2d);
+    const transform: Transform = entity.get(Transform)
+    const spec: Html2d = entity.get(Html2d)
 
     // calculate left, top
-    v1.copy(transform.positionWorld);
-    v1.add(spec.offset);
+    v1.copy(transform.positionWorld)
+    v1.add(spec.offset)
 
-    this.htmlPresentation.project(v1);
+    this.htmlPresentation.project(v1)
 
-    const container: HTMLElement = entity.get(Html2dRef).container;
-    container.style.left = v1.x + "px";
-    container.style.top = v1.y + "px";
+    const container: HTMLElement = entity.get(Html2dRef).container
+    container.style.left = v1.x + "px"
+    container.style.top = v1.y + "px"
 
-    this.presentation.camera.getWorldPosition(v1);
-    const distance = v1.distanceTo(transform.positionWorld);
-    const scale = spec.zoomInvariant ? 1 : (10 * spec.zoomSize) / distance;
-    const x = this.htmlPresentation.percent(spec.hanchor);
-    const y = this.htmlPresentation.percent(spec.vanchor);
-    container.style.transform = `translate(-50%,-50%) scale(${scale}) translate(${x},${y})`;
+    this.presentation.camera.getWorldPosition(v1)
+    const distance = v1.distanceTo(transform.positionWorld)
+    const scale = spec.zoomInvariant ? 1 : (10 * spec.zoomSize) / distance
+    const x = this.htmlPresentation.percent(spec.hanchor)
+    const y = this.htmlPresentation.percent(spec.vanchor)
+    container.style.transform = `translate(-50%,-50%) scale(${scale}) translate(${x},${y})`
   }
 }

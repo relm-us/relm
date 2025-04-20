@@ -1,4 +1,4 @@
-import { Readable, Writable, writable } from "svelte/store";
+import { type Readable, type Writable, writable } from "svelte/store";
 
 export const DATA_WINDOW_SIZE = 20;
 

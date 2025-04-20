@@ -1,1 +1,1 @@
-export { default } from "./PointerListener.svelte";
+export { default } from "./PointerListener.svelte"

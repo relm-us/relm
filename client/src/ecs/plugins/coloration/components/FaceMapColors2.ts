@@ -1,7 +1,7 @@
-import { Component, JSONType } from "~/ecs/base";
+import { Component, JSONType } from "~/ecs/base"
 
 export class FaceMapColors2 extends Component {
-  colors: any;
+  colors: any
 
   static props = {
     colors: {
@@ -13,9 +13,9 @@ export class FaceMapColors2 extends Component {
         input: "FaceMapColors",
       },
     },
-  };
+  }
 
   static editor = {
     label: "Model Colors",
-  };
+  }
 }

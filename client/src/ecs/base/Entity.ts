@@ -1,193 +1,189 @@
-import { World } from "./World";
-import { Component, TypeOfComponent } from "./Component";
-import { StateComponent } from "./StateComponent";
+import { World } from "./World"
+import { Component, TypeOfComponent } from "./Component"
+import { StateComponent } from "./StateComponent"
 
-type MaybeUnboundEntity = string | Entity;
+type MaybeUnboundEntity = string | Entity
 
-export type EntityId = string | number;
+export type EntityId = string | number
 
 export class Entity {
-  name: string;
-  world: World;
-  id: EntityId;
-  meta: any;
-  local: any;
-  Components: Array<TypeOfComponent>;
-  components: Map<TypeOfComponent, Component>;
-  parent: MaybeUnboundEntity;
-  children: Array<MaybeUnboundEntity>;
-  inactiveComponents: Array<Component>;
-  archetypeId: string;
+  name: string
+  world: World
+  id: EntityId
+  meta: any
+  local: any
+  Components: Array<TypeOfComponent>
+  components: Map<TypeOfComponent, Component>
+  parent: MaybeUnboundEntity
+  children: Array<MaybeUnboundEntity>
+  inactiveComponents: Array<Component>
+  archetypeId: string
 
-  needsBind: boolean;
-  active: boolean;
-  deactivating: boolean;
-  destroying: boolean;
+  needsBind: boolean
+  active: boolean
+  deactivating: boolean
+  destroying: boolean
 
   constructor(world: World, name?: string, id?: string, meta?) {
-    this.world = world;
-    this.id = id;
-    this.name = name || null;
-    this.meta = meta || {};
-    this.local = {};
-    this.Components = [];
-    this.components = new Map();
-    this.parent = null;
-    this.children = [];
-    this.needsBind = false;
-    this.inactiveComponents = [];
-    this.archetypeId = world.archetypes.initialId;
-    this.active = false;
+    this.world = world
+    this.id = id
+    this.name = name || null
+    this.meta = meta || {}
+    this.local = {}
+    this.Components = []
+    this.components = new Map()
+    this.parent = null
+    this.children = []
+    this.needsBind = false
+    this.inactiveComponents = []
+    this.archetypeId = world.archetypes.initialId
+    this.active = false
   }
 
   add(Component, values?, ret = false) {
-    let component;
+    let component
     if (!Component.isComponent) {
-      component = Component;
-      Component = Component.constructor;
+      component = Component
+      Component = Component.constructor
     } else {
-      component = new Component(this.world, values);
+      component = new Component(this.world, values)
     }
-    const replacing = this.components.has(Component);
-    this.components.set(Component, component);
+    const replacing = this.components.has(Component)
+    this.components.set(Component, component)
     if (replacing) {
-      component.modified();
+      component.modified()
     } else {
-      this.Components.push(Component);
-      this.world.archetypes.onEntityComponentChange(this, Component, true);
+      this.Components.push(Component)
+      this.world.archetypes.onEntityComponentChange(this, Component, true)
     }
-    return ret ? component : this;
+    return ret ? component : this
   }
 
   addByName(componentName: string, values?, ret = false) {
-    const Component = this.world.components.getByName(componentName);
-    return this.add(Component, values, ret);
+    const Component = this.world.components.getByName(componentName)
+    return this.add(Component, values, ret)
   }
 
   // TODO: can we return type information here?
   get(Component: TypeOfComponent): any {
-    return this.components.get(Component);
+    return this.components.get(Component)
   }
 
   getByName(componentName: string) {
-    const Component = this.world.components.getByName(componentName);
-    return this.get(Component);
+    const Component = this.world.components.getByName(componentName)
+    return this.get(Component)
   }
 
   has(Component: TypeOfComponent) {
-    return !!this.components.get(Component);
+    return !!this.components.get(Component)
   }
 
   hasByName(componentName: string) {
-    const Component = this.world.components.getByName(componentName);
-    return this.has(Component);
+    const Component = this.world.components.getByName(componentName)
+    return this.has(Component)
   }
 
   maybeRemove(Component: TypeOfComponent): Entity {
-    if (this.has(Component)) this.remove(Component);
-    return this;
+    if (this.has(Component)) this.remove(Component)
+    return this
   }
 
   remove(Component: TypeOfComponent): Entity {
     if (!this.components.has(Component)) {
-      console.trace(
-        "Entity: cannot remove component as it doesn't have one",
-        this.id,
-        Component?.name
-      );
-      return;
+      console.trace("Entity: cannot remove component as it doesn't have one", this.id, Component?.name)
+      return
     }
-    this.components.delete(Component);
-    const idx = this.Components.indexOf(Component);
-    this.Components.splice(idx, 1);
-    this.world.archetypes.onEntityComponentChange(this, Component, false);
+    this.components.delete(Component)
+    const idx = this.Components.indexOf(Component)
+    this.Components.splice(idx, 1)
+    this.world.archetypes.onEntityComponentChange(this, Component, false)
     if (!this.Components.length && (this.deactivating || this.destroying)) {
-      this.active = false;
-      this.deactivating = false;
-      this.destroying = false;
-      this.world.entities.onEntityInactive(this);
-      this.world.archetypes.onEntityInactive(this);
+      this.active = false
+      this.deactivating = false
+      this.destroying = false
+      this.world.entities.onEntityInactive(this)
+      this.world.archetypes.onEntityInactive(this)
     }
-    return this;
+    return this
   }
 
   removeByName(componentName: string) {
-    const Component = this.world.components.getByName(componentName);
-    return this.remove(Component);
+    const Component = this.world.components.getByName(componentName)
+    return this.remove(Component)
   }
 
   bind() {
-    if (!this.needsBind) return;
+    if (!this.needsBind) return
     // After deserializing an entity we need to bind the parent and child ID's to actual entities...
-    this.parent = this.parent ? this.world.entities.getById(this.parent) : null;
-    this.children = this.children.map((id) => this.world.entities.getById(id));
-    this.needsBind = false;
+    this.parent = this.parent ? this.world.entities.getById(this.parent) : null
+    this.children = this.children.map((id) => this.world.entities.getById(id))
+    this.needsBind = false
   }
 
   setParent(entity: Entity) {
     // remove current parent (if any)
-    this.bind();
+    this.bind()
     if (this.parent) {
-      (this.parent as Entity).bind();
-      const idx = (this.parent as Entity).children.indexOf(this);
-      (this.parent as Entity).children.splice(idx, 1);
-      this.parent = null;
+      ;(this.parent as Entity).bind()
+      const idx = (this.parent as Entity).children.indexOf(this)
+      ;(this.parent as Entity).children.splice(idx, 1)
+      this.parent = null
     }
     // add new parent (if any)
     if (entity) {
-      this.parent = entity;
-      this.parent.children.push(this);
+      this.parent = entity
+      this.parent.children.push(this)
     }
-    return this;
+    return this
   }
 
   getParent(): Entity {
-    this.bind();
-    return this.parent as Entity;
+    this.bind()
+    return this.parent as Entity
   }
 
   getChildren(): Array<Entity> {
-    this.bind();
-    return this.children as Array<Entity>;
+    this.bind()
+    return this.children as Array<Entity>
   }
 
   traverse(callback: (e: Entity) => void) {
-    this.bind();
-    callback(this);
+    this.bind()
+    callback(this)
     for (let i = 0; i < this.children.length; i++) {
-      (this.children[i] as Entity).traverse(callback);
+      ;(this.children[i] as Entity).traverse(callback)
     }
-    return this;
+    return this
   }
 
   traverseAncestors(callback: (e: Entity) => void) {
-    this.bind();
-    let parent = this.parent as Entity;
+    this.bind()
+    let parent = this.parent as Entity
     while (parent) {
-      callback(parent);
-      parent.bind();
-      parent = parent.parent as Entity;
+      callback(parent)
+      parent.bind()
+      parent = parent.parent as Entity
     }
   }
 
   activate() {
     if (this.active) {
-      console.warn("Entity: cannot activate as entity is already active");
-      return;
+      console.warn("Entity: cannot activate as entity is already active")
+      return
     }
     while (this.inactiveComponents.length) {
-      const component = this.inactiveComponents.pop();
-      const Component = component.constructor as TypeOfComponent;
-      this.components.set(Component, component);
-      this.Components.push(Component);
-      this.world.archetypes.onEntityComponentChange(this, Component, true);
+      const component = this.inactiveComponents.pop()
+      const Component = component.constructor as TypeOfComponent
+      this.components.set(Component, component)
+      this.Components.push(Component)
+      this.world.archetypes.onEntityComponentChange(this, Component, true)
     }
-    this.active = true;
-    this.deactivating = false;
-    this.destroying = false;
-    this.world.entities.onEntityActive(this);
-    this.world.archetypes.onEntityActive(this);
-    return this;
+    this.active = true
+    this.deactivating = false
+    this.destroying = false
+    this.world.entities.onEntityActive(this)
+    this.world.archetypes.onEntityActive(this)
+    return this
   }
 
   deactivate() {
@@ -199,23 +195,23 @@ export class Entity {
      * systems have removed all StateComponents.
      */
     for (let i = this.Components.length - 1; i >= 0; --i) {
-      const Component = this.Components[i];
+      const Component = this.Components[i]
       if ((Component as any).__proto__ === StateComponent) {
-        this.deactivating = true;
+        this.deactivating = true
       } else {
-        const component = this.components.get(Component);
-        this.components.delete(Component);
-        this.Components.splice(i, 1);
-        this.inactiveComponents.push(component);
-        this.world.archetypes.onEntityComponentChange(this, Component, false);
+        const component = this.components.get(Component)
+        this.components.delete(Component)
+        this.Components.splice(i, 1)
+        this.inactiveComponents.push(component)
+        this.world.archetypes.onEntityComponentChange(this, Component, false)
       }
     }
     if (!this.deactivating) {
-      this.active = false;
-      this.world.entities.onEntityInactive(this);
-      this.world.archetypes.onEntityInactive(this);
+      this.active = false
+      this.world.entities.onEntityInactive(this)
+      this.world.archetypes.onEntityInactive(this)
     }
-    return this;
+    return this
   }
 
   destroy() {
@@ -227,37 +223,34 @@ export class Entity {
      * systems have removed all StateComponents.
      */
     for (let i = this.Components.length - 1; i >= 0; --i) {
-      const Component = this.Components[i];
+      const Component = this.Components[i]
       if ((Component as any).__proto__ === StateComponent) {
-        this.destroying = true;
+        this.destroying = true
       } else {
-        this.components.delete(Component);
-        this.Components.splice(i, 1);
-        this.world.archetypes.onEntityComponentChange(this, Component, false);
+        this.components.delete(Component)
+        this.Components.splice(i, 1)
+        this.world.archetypes.onEntityComponentChange(this, Component, false)
       }
     }
     if (!this.destroying) {
-      this.active = false;
-      this.world.entities.onEntityInactive(this);
-      this.world.archetypes.onEntityInactive(this);
+      this.active = false
+      this.world.entities.onEntityInactive(this)
+      this.world.archetypes.onEntityInactive(this)
     }
-    this.bind();
+    this.bind()
     for (let i = 0; i < this.children.length; i++) {
-      (this.children[i] as Entity).destroy();
+      ;(this.children[i] as Entity).destroy()
     }
-    return this;
+    return this
   }
 
   toJSON() {
-    let children;
+    let children
     try {
-      children = this.getChildren().map((child) => child.id);
+      children = this.getChildren().map((child) => child.id)
     } catch (err) {
-      children = [];
-      console.warn(
-        `Can't get children of '${this.id}' (${this.name}):`,
-        err.message
-      );
+      children = []
+      console.warn(`Can't get children of '${this.id}' (${this.name}):`, err.message)
     }
     const data = {
       id: this.id,
@@ -265,57 +258,49 @@ export class Entity {
       parent: this.getParent()?.id || null,
       children,
       meta: { ...this.meta },
-    };
+    }
     this.components.forEach((component) => {
       if ((component.constructor as any).__proto__ === Component) {
-        data[component.name] = component.toJSON();
+        data[component.name] = component.toJSON()
       }
-    });
-    return data;
+    })
+    return data
   }
 
   fromJSON(data, debug = false) {
-    this.id = data.id;
-    this.name = data.name;
-    this.parent = data.parent;
-    this.children = data.children;
-    this.meta = data.meta;
+    this.id = data.id
+    this.name = data.name
+    this.parent = data.parent
+    this.children = data.children
+    this.meta = data.meta
 
-    const migratableKeys = [];
+    const migratableKeys = []
 
     for (const key in data) {
-      if (
-        key === "id" ||
-        key === "name" ||
-        key === "parent" ||
-        key === "children" ||
-        key === "meta"
-      ) {
-        continue;
+      if (key === "id" || key === "name" || key === "parent" || key === "children" || key === "meta") {
+        continue
       }
 
       if (this.world.migrations.has(key)) {
-        migratableKeys.push(key);
-        continue;
+        migratableKeys.push(key)
+        continue
       }
 
-      if (debug) debugger;
-      const Component = this.world.components.getByName(key);
+      if (debug) debugger
+      const Component = this.world.components.getByName(key)
       if (Component) {
-        this.add(Component, undefined, true).fromJSON(data[key]);
+        this.add(Component, undefined, true).fromJSON(data[key])
       } else {
-        console.warn(
-          `Can't add missing component: '${key}' to ${this.id} (${this.name})`
-        );
+        console.warn(`Can't add missing component: '${key}' to ${this.id} (${this.name})`)
       }
     }
 
     for (const key of migratableKeys) {
-      console.log("migrate", this.id, key);
-      this.world.migrations.migrate(key, this, data[key], data);
+      console.log("migrate", this.id, key)
+      this.world.migrations.migrate(key, this, data[key], data)
     }
 
-    this.needsBind = true;
-    return this;
+    this.needsBind = true
+    return this
   }
 }

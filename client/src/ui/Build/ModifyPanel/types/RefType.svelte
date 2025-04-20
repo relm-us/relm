@@ -1,11 +1,11 @@
 <script lang="ts">
-  import Capsule from "~/ui/lib/Capsule";
+import Capsule from "~/ui/lib/Capsule"
 
-  export let key: string;
-  export let prop;
+export let key: string
+export let prop
 
-  // suppress warning about unknown props
-  $$props;
+// suppress warning about unknown props
+$$props
 </script>
 
 <r-ref-type>

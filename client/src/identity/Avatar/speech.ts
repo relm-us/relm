@@ -1,32 +1,27 @@
-import { Vector3 } from "three";
+import { Vector3 } from "three"
 
-import { Html2d } from "~/ecs/plugins/html2d";
+import { Html2d } from "~/ecs/plugins/html2d"
 
-import { AvatarEntities } from "~/types";
+import type { AvatarEntities } from "~/types"
 
 export function setSpeech(
   this: void,
   entities: AvatarEntities,
   message: string,
   isSpeaking: boolean,
-  onClose: () => void
+  onClose: () => void,
 ) {
-  const visible = !!message && isSpeaking;
+  const visible = !!message && isSpeaking
   if (visible && !entities.head.has(Html2d)) {
-    addSpeech(entities, message, onClose);
+    addSpeech(entities, message, onClose)
   } else if (visible && entities.head.has(Html2d)) {
-    changeSpeech(entities, message);
+    changeSpeech(entities, message)
   } else if (!visible && entities.head.has(Html2d)) {
-    entities.head.remove(Html2d);
+    entities.head.remove(Html2d)
   }
 }
 
-function addSpeech(
-  this: void,
-  entities: AvatarEntities,
-  message: string,
-  onClose: () => void
-) {
+function addSpeech(this: void, entities: AvatarEntities, message: string, onClose: () => void) {
   entities.head.add(Html2d, {
     kind: "SPEECH",
     content: message,
@@ -34,15 +29,15 @@ function addSpeech(
     hanchor: 1,
     vanchor: 2,
     onClose,
-  });
+  })
 }
 
 function changeSpeech(this: void, entities: AvatarEntities, message: string) {
-  const label = entities.head.get(Html2d);
-  if (!label) return;
+  const label = entities.head.get(Html2d)
+  if (!label) return
 
   if (label.content !== message) {
-    label.content = message;
-    label.modified();
+    label.content = message
+    label.modified()
   }
 }

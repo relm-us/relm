@@ -1,8 +1,8 @@
-import { Transform } from "~/ecs/plugins/core";
-import { Color, Vector3 } from "three";
+import { Transform } from "~/ecs/plugins/core"
+import { Color, Vector3 } from "three"
 
-import { makeEntity } from "./makeEntity";
-import { Wall } from "~/ecs/plugins/wall";
+import { makeEntity } from "./makeEntity"
+import { Wall } from "~/ecs/plugins/wall"
 
 export function makeWall(
   world,
@@ -20,9 +20,9 @@ export function makeWall(
     emissive = "#000000",
     segments = 5,
     convexity = 0,
-  }
+  },
 ) {
-  const linearColor = new Color(color);
+  const linearColor = new Color(color)
   // linearColor.convertSRGBToLinear();
 
   const entity = makeEntity(world, name)
@@ -35,7 +35,7 @@ export function makeWall(
       emissive,
       segments,
       convexity,
-    });
+    })
 
-  return entity;
+  return entity
 }

@@ -1,7 +1,7 @@
-import { Component, StringType } from "~/ecs/base";
+import { Component, StringType } from "~/ecs/base"
 
 export class AudioZone extends Component {
-  zone: string;
+  zone: string
 
   static props = {
     zone: {
@@ -11,9 +11,9 @@ export class AudioZone extends Component {
         label: "Zone Name",
       },
     },
-  };
+  }
 
   static editor = {
     label: "Audio Zone",
-  };
+  }
 }

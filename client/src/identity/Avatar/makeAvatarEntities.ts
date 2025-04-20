@@ -1,6 +1,6 @@
-import { Euler, Quaternion, Spherical, Vector3 } from "three";
+import { Euler, Quaternion, Spherical, Vector3 } from "three"
 
-import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
+import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld"
 
 import {
   IDLE,
@@ -10,39 +10,28 @@ import {
   OCULUS_HEIGHT_STAND,
   PROXIMITY_CAMERA_GRAVITY_INNER_RADIUS,
   PROXIMITY_CAMERA_GRAVITY_OUTER_RADIUS,
-} from "~/config/constants";
-import { AvatarEntities } from "~/types";
+} from "~/config/constants"
+import type { AvatarEntities } from "~/types"
 
-import { makeEntity } from "~/prefab/makeEntity";
+import { makeEntity } from "~/prefab/makeEntity"
 
-import { Entity } from "~/ecs/base";
-import { Asset, Transform } from "~/ecs/plugins/core";
-import { Model3 } from "~/ecs/plugins/model";
-import { PointerPosition } from "~/ecs/plugins/pointer-position";
-import { Impactable } from "~/ecs/plugins/physics";
-import {
-  PhysicsOptions,
-  Collider3,
-  Collider3Active,
-} from "~/ecs/plugins/collider";
-import { Animation } from "~/ecs/plugins/animation";
-import { Repulsive } from "~/ecs/plugins/player-control";
-import {
-  AlwaysOnStage,
-  CameraGravity,
-  CameraGravityActive,
-} from "~/ecs/plugins/camera";
-import { Particles2 } from "~/ecs/plugins/particles";
+import type { Entity } from "~/ecs/base"
+import { Asset, Transform } from "~/ecs/plugins/core"
+import { Model3 } from "~/ecs/plugins/model"
+import { PointerPosition } from "~/ecs/plugins/pointer-position"
+import { Impactable } from "~/ecs/plugins/physics"
+import { PhysicsOptions, Collider3, Collider3Active } from "~/ecs/plugins/collider"
+import { Animation } from "~/ecs/plugins/animation"
+import { Repulsive } from "~/ecs/plugins/player-control"
+import { AlwaysOnStage, CameraGravity, CameraGravityActive } from "~/ecs/plugins/camera"
+import { Particles2 } from "~/ecs/plugins/particles"
 
-import avatarsGlb from "./avatars.glb";
+import avatarsGlb from "./avatars.glb"
 
 export function makeAvatarEntities(
   world: DecoratedECSWorld,
   participantId: string,
-  {
-    position = new Vector3(),
-    kinematic = false,
-  }: { position?: Vector3; kinematic?: boolean }
+  { position = new Vector3(), kinematic = false }: { position?: Vector3; kinematic?: boolean },
 ): AvatarEntities {
   // Create the avatar's torso, which we connect everything else to
   const body: Entity = makeEntity(world, "Avatar", participantId)
@@ -58,10 +47,7 @@ export function makeAvatarEntities(
     .add(CameraGravityActive)
     .add(CameraGravity, {
       mass: 1.0,
-      range: new Vector3(
-        PROXIMITY_CAMERA_GRAVITY_INNER_RADIUS,
-        PROXIMITY_CAMERA_GRAVITY_OUTER_RADIUS
-      ),
+      range: new Vector3(PROXIMITY_CAMERA_GRAVITY_INNER_RADIUS, PROXIMITY_CAMERA_GRAVITY_OUTER_RADIUS),
       sphere: new Spherical(OCULUS_HEIGHT_STAND),
     })
 
@@ -101,21 +87,21 @@ export function makeAvatarEntities(
       effectLt: 0,
       fadeIn: 1,
       fadeOut: 1,
-    });
+    })
 
   const head = makeEntity(world, "AvatarHead")
     .add(Transform, {
       position: new Vector3(0, AVATAR_HEIGHT_UNSCALED, 0),
     })
-    .add(AlwaysOnStage);
-  head.setParent(body);
+    .add(AlwaysOnStage)
+  head.setParent(body)
 
   const emoji = makeEntity(world, "AvatarEmoji")
     .add(Transform, {
       position: new Vector3(0, AVATAR_HEIGHT_UNSCALED, 0),
     })
-    .add(AlwaysOnStage);
-  emoji.setParent(body);
+    .add(AlwaysOnStage)
+  emoji.setParent(body)
 
-  return { body, head, emoji };
+  return { body, head, emoji }
 }

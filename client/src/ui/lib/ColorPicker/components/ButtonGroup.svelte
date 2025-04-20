@@ -1,12 +1,12 @@
 <script>
-  import FlatButton from "./FlatButton.svelte";
-  import { createEventDispatcher } from "svelte";
+import FlatButton from "./FlatButton.svelte"
+import { createEventDispatcher } from "svelte"
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  export let format = "hex";
+export let format = "hex"
 
-  let colorFormats = ["hex", "rgb", "hsl"];
+let colorFormats = ["hex", "rgb", "hsl"]
 </script>
 
 <div class="flatbutton-group">

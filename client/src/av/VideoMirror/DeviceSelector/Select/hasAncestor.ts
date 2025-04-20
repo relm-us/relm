@@ -1,9 +1,9 @@
 export default function hasAncestor(element, ancestor) {
   if (element === null) {
-    return false;
+    return false
   } else if (element === ancestor) {
-    return true;
+    return true
   } else {
-    return hasAncestor(element.parentElement, ancestor);
+    return hasAncestor(element.parentElement, ancestor)
   }
 }

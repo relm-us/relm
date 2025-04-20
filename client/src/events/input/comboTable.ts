@@ -1,12 +1,12 @@
-import { callEach } from "~/utils/callEach";
+import { callEach } from "~/utils/callEach"
 
-export type Action = (pressed: boolean, options?) => void;
+export type Action = (pressed: boolean, options?) => void
 
-export const comboTable = new Map();
+export const comboTable = new Map()
 
 function assertModifier(mod, desc) {
   if (mod !== "A" && mod !== "C" && mod !== "S" && mod !== "M") {
-    throw Error(`not a modifer: ${mod} (${desc})`);
+    throw Error(`not a modifer: ${mod} (${desc})`)
   }
 }
 
@@ -17,13 +17,13 @@ function assertModifier(mod, desc) {
  * @returns The canonical form of the key combo, or throws an error.
  */
 export function canonical(desc: string): string {
-  let [key, mods] = desc.split(/\s+/).reverse();
+  let [key, mods] = desc.split(/\s+/).reverse()
   if (mods) {
-    const modifiers = mods.split("-").sort();
-    modifiers.forEach((m) => assertModifier(m, desc));
-    return modifiers.join("-") + " " + key;
+    const modifiers = mods.split("-").sort()
+    modifiers.forEach((m) => assertModifier(m, desc))
+    return modifiers.join("-") + " " + key
   } else {
-    return key;
+    return key
   }
 }
 
@@ -33,23 +33,19 @@ export function canonical(desc: string): string {
  * @param keyCombos A list of (equivalent) key combinations
  * @param action A function that is to be called when the key combo is pressed
  */
-export function registerAction(
-  contexts: string[],
-  keyCombos: string[],
-  action: Action
-): Function {
+export function registerAction(contexts: string[], keyCombos: string[], action: Action): Function {
   const unregisters = contexts.flatMap((context) =>
     keyCombos.map((combo) => {
-      const id = context + ":" + canonical(combo);
+      const id = context + ":" + canonical(combo)
       if (comboTable.has(id)) {
-        throw Error(`comboTable already has ${id}`);
+        throw Error(`comboTable already has ${id}`)
       } else {
-        comboTable.set(id, action);
+        comboTable.set(id, action)
       }
-      return () => comboTable.delete(id);
-    })
-  );
-  return () => callEach(unregisters);
+      return () => comboTable.delete(id)
+    }),
+  )
+  return () => callEach(unregisters)
 }
 
 /**
@@ -60,16 +56,16 @@ export function registerAction(
  * @returns
  */
 export function getCanonicalAction(context: string, keyCombo: string): Action {
-  const id = context + ":" + keyCombo;
-  return comboTable.get(id);
+  const id = context + ":" + keyCombo
+  return comboTable.get(id)
 }
 
 export function getAction(context: string, keyCombo: string): Action {
-  return getCanonicalAction(context, canonical(keyCombo));
+  return getCanonicalAction(context, canonical(keyCombo))
 }
 
 export function releaseAllKeys() {
   for (let action of comboTable.values()) {
-    action(false);
+    action(false)
   }
 }

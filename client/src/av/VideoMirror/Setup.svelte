@@ -1,40 +1,33 @@
 <script lang="ts">
-  import { slide, fade } from "svelte/transition";
-  import { _ } from "svelte-i18n";
+import { slide, fade } from "svelte/transition"
+import { _ } from "svelte-i18n"
 
-  import {
-    IconAudio,
-    IconVideo,
-    IconSettings,
-    IconVideoDisabled,
-  } from "~/av/icons";
-  import AudioLevelIndicator from "~/av/components/AudioLevelIndicator";
+import { IconAudio, IconVideo, IconSettings, IconVideoDisabled } from "~/av/icons"
+import AudioLevelIndicator from "~/av/components/AudioLevelIndicator"
 
-  import VideoBox from "./VideoBox.svelte";
-  import ContinueButton from "./ContinueButton.svelte";
-  import DeviceSelector from "./DeviceSelector/index";
-  import { DeviceIds } from "./program";
+import VideoBox from "./VideoBox.svelte"
+import ContinueButton from "./ContinueButton.svelte"
+import DeviceSelector from "./DeviceSelector/index"
+import { DeviceIds } from "./program"
 
-  export let stream: MediaStream;
-  export let videoDesired: boolean;
-  export let audioDesired: boolean;
-  export let preferredDeviceIds: DeviceIds;
-  export let permissionBlocked: boolean;
+export let stream: MediaStream
+export let videoDesired: boolean
+export let audioDesired: boolean
+export let preferredDeviceIds: DeviceIds
+export let permissionBlocked: boolean
 
-  export let toggleAudioDesired: () => void;
-  export let toggleVideoDesired: () => void;
-  export let handleDeviceSelected: <T>(message: T) => void;
-  export let handleRequestPermission: (
-    shake: () => void
-  ) => (e: CustomEvent<any>) => void;
-  export let handleDone: () => void;
-  export let autoFocus: boolean;
+export let toggleAudioDesired: () => void
+export let toggleVideoDesired: () => void
+export let handleDeviceSelected: <T>(message: T) => void
+export let handleRequestPermission: (shake: () => void) => (e: CustomEvent<any>) => void
+export let handleDone: () => void
+export let autoFocus: boolean
 
-  let videoBox: VideoBox | null = null;
-  let advancedSettings = false;
+let videoBox: VideoBox | null = null
+let advancedSettings = false
 
-  // Ignore missing props warning
-  $$props;
+// Ignore missing props warning
+$$props
 </script>
 
 <mirror>

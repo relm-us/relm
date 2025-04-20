@@ -1,44 +1,44 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+import { onMount } from "svelte"
 
-  import { worldManager } from "~/world";
+import { worldManager } from "~/world"
 
-  import { exportRelm, jsonFormat } from "~/world/Export";
-  import type { FormatOpts } from "~/world/Export";
-  import { parse } from "~/utils/parse";
+import { exportRelm, jsonFormat } from "~/world/Export"
+import type { FormatOpts } from "~/world/Export"
+import { parse } from "~/utils/parse"
 
-  import IoIosClose from "svelte-icons/io/IoIosClose.svelte";
+import IoIosClose from "svelte-icons/io/IoIosClose.svelte"
 
-  import Button from "~/ui/lib/Button";
-  import SidePanel, { Header } from "~/ui/lib/SidePanel";
-  import { _ } from "~/i18n";
+import Button from "~/ui/lib/Button"
+import SidePanel, { Header } from "~/ui/lib/SidePanel"
+import { _ } from "~/i18n"
 
-  let text;
-  let errorState = false;
+let text
+let errorState = false
 
-  function applyText() {
-    const json = parse(text);
-    errorState = !worldManager.fromJSON(json);
+function applyText() {
+  const json = parse(text)
+  errorState = !worldManager.fromJSON(json)
+}
+
+function getExportJSON() {
+  const meta: FormatOpts = {
+    relm: worldManager.getRelmUrl(),
   }
-
-  function getExportJSON() {
-    const meta: FormatOpts = {
-      relm: worldManager.getRelmUrl(),
-    };
-    let exported;
-    if (worldManager.selection.length > 0) {
-      exported = exportRelm(worldManager.worldDoc, worldManager.selection.ids);
-      meta.scope = "selection";
-    } else {
-      exported = exportRelm(worldManager.worldDoc);
-      meta.scope = "all";
-    }
-    return jsonFormat(exported, meta);
+  let exported
+  if (worldManager.selection.length > 0) {
+    exported = exportRelm(worldManager.worldDoc, worldManager.selection.ids)
+    meta.scope = "selection"
+  } else {
+    exported = exportRelm(worldManager.worldDoc)
+    meta.scope = "all"
   }
+  return jsonFormat(exported, meta)
+}
 
-  onMount(() => {
-    text = JSON.stringify(getExportJSON(), null, 2);
-  });
+onMount(() => {
+  text = JSON.stringify(getExportJSON(), null, 2)
+})
 </script>
 
 <SidePanel on:minimize>

@@ -1,8 +1,8 @@
-import { Component, StringType, BooleanType } from "~/ecs/base";
+import { Component, StringType, BooleanType } from "~/ecs/base"
 
 export class YouTube extends Component {
-  embedId: string;
-  alwaysOn: boolean;
+  embedId: string
+  alwaysOn: boolean
 
   static props = {
     embedId: {
@@ -25,12 +25,12 @@ export class YouTube extends Component {
       type: BooleanType,
       default: false,
       editor: {
-        label: "Native Controls"
-      }
-    }
-  };
+        label: "Native Controls",
+      },
+    },
+  }
 
   static editor = {
     label: "YouTube",
-  };
+  }
 }

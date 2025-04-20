@@ -1,1 +1,1 @@
-export { PointerPositionSystem } from "./PointerPositionSystem";
+export { PointerPositionSystem } from "./PointerPositionSystem"

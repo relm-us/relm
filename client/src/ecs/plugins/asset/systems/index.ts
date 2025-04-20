@@ -1,1 +1,1 @@
-export { AssetSystem } from "./AssetSystem";
+export { AssetSystem } from "./AssetSystem"

@@ -1,5 +1,5 @@
 // The main component!
-export { default as VideoMirror } from "./VideoMirror.svelte";
+export { default as VideoMirror } from "./VideoMirror.svelte"
 
 export type {
   State,
@@ -8,7 +8,7 @@ export type {
   Effect,
   Program,
   DeviceIds,
-} from "./program";
+} from "./program"
 
 // Export stores
-export * from "./stores/index";
+export * from "./stores/index"

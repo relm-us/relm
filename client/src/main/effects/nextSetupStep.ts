@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
 import { askMediaSetup } from "~/stores/askMediaSetup";
 import { askAvatarSetup } from "~/stores/askAvatarSetup";
-import { Dispatch, State } from "../ProgramTypes";
+import type { Dispatch, State } from "../ProgramTypes";
 
 export const nextSetupStep = (state: State) => async (dispatch: Dispatch) => {
   if (!state.audioVideoSetupDone) {

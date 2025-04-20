@@ -1,19 +1,19 @@
 <script lang="ts">
-  import IoMdArrowRoundBack from "svelte-icons/io/IoMdArrowRoundBack.svelte";
-  import IoMdArrowRoundForward from "svelte-icons/io/IoMdArrowRoundForward.svelte";
+import IoMdArrowRoundBack from "svelte-icons/io/IoMdArrowRoundBack.svelte"
+import IoMdArrowRoundForward from "svelte-icons/io/IoMdArrowRoundForward.svelte"
 
-  import { libraryPage } from "~/stores/libraryAssets";
-  import Button from "~/ui/lib/Button";
+import { libraryPage } from "~/stores/libraryAssets"
+import Button from "~/ui/lib/Button"
 
-  export let assetCount = 0;
+export let assetCount = 0
 
-  function prevPage() {
-    if ($libraryPage > 0) $libraryPage = $libraryPage - 1;
-  }
+function prevPage() {
+  if ($libraryPage > 0) $libraryPage = $libraryPage - 1
+}
 
-  function nextPage() {
-    $libraryPage = $libraryPage + 1;
-  }
+function nextPage() {
+  $libraryPage = $libraryPage + 1
+}
 </script>
 
 <r-pagination>

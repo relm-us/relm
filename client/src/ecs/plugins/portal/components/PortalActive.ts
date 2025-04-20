@@ -1,22 +1,14 @@
-import {
-  BooleanType,
-  Entity,
-  LocalComponent,
-  NumberType,
-  RefType,
-} from "~/ecs/base";
-import { Vector3 } from "three";
+import { BooleanType, type Entity, LocalComponent, NumberType, RefType } from "~/ecs/base"
+import type { Vector3 } from "three"
 
-export type Destination =
-  | { type: "LOCAL"; coords: Vector3 }
-  | { type: "REMOTE"; entryway: string; relm: string };
+export type Destination = { type: "LOCAL"; coords: Vector3 } | { type: "REMOTE"; entryway: string; relm: string }
 
 export class PortalActive extends LocalComponent {
-  destination: Destination;
-  countdown: number;
-  animatedEntity: Entity;
-  triggered: boolean;
-  restoreAttrs: any;
+  destination: Destination
+  countdown: number
+  animatedEntity: Entity
+  triggered: boolean
+  restoreAttrs: any
 
   static props = {
     destination: {
@@ -41,5 +33,5 @@ export class PortalActive extends LocalComponent {
       type: RefType,
       default: {},
     },
-  };
+  }
 }

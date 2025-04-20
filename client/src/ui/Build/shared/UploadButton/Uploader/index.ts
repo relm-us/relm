@@ -1,1 +1,1 @@
-export { default } from "./Uploader.svelte";
+export { default } from "./Uploader.svelte"

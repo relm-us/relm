@@ -1,14 +1,14 @@
-import { Component, StringType } from "~/ecs/base";
-import { Vector3Type } from "~/ecs/plugins/core";
-import { Vector3 } from "three";
+import { Component, StringType } from "~/ecs/base"
+import { Vector3Type } from "~/ecs/plugins/core"
+import { Vector3 } from "three"
 
-export type PortalType = "LOCAL" | "REMOTE";
+export type PortalType = "LOCAL" | "REMOTE"
 
 export class Portal extends Component {
-  kind: PortalType;
-  coords: Vector3;
-  entry: string;
-  relm: string;
+  kind: PortalType
+  coords: Vector3
+  entry: string
+  relm: string
 
   static props = {
     kind: {
@@ -49,9 +49,9 @@ export class Portal extends Component {
         requires: [{ prop: "kind", value: "REMOTE" }],
       },
     },
-  };
+  }
 
   static editor = {
     label: "Portal",
-  };
+  }
 }

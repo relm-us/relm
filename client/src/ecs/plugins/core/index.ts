@@ -1,18 +1,18 @@
-import { createPlugin, World } from "~/ecs/base";
-import { DecoratedECSWorld } from "~/types/DecoratedECSWorld";
+import { createPlugin, World } from "~/ecs/base"
+import type { DecoratedECSWorld } from "~/types/DecoratedECSWorld"
 
-import * as Components from "./components";
-import * as Systems from "./systems";
+import * as Components from "./components"
+import * as Systems from "./systems"
 
-import { Presentation } from "./Presentation";
-import { IS_BROWSER } from "./utils";
+import { Presentation } from "./Presentation"
+import { IS_BROWSER } from "./utils"
 
-export { Asset } from "./Asset";
+export { Asset } from "./Asset"
 
-export * from "./types";
-export * from "./components";
+export * from "./types"
+export * from "./components"
 
-export { Components, Presentation };
+export { Components, Presentation }
 
 export default function ConfigurablePlugin(options?) {
   return createPlugin({
@@ -21,8 +21,8 @@ export default function ConfigurablePlugin(options?) {
     components: Object.values(Components),
     decorate(world: DecoratedECSWorld) {
       if (IS_BROWSER) {
-        world.presentation = new Presentation(world, options || {});
+        world.presentation = new Presentation(world, options || {})
       }
     },
-  });
+  })
 }

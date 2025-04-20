@@ -1,4 +1,4 @@
-import { Vector4 } from "three";
+import { Vector4 } from "three"
 
 /**
  * @author mattatz / http://mattatz.github.io
@@ -213,4 +213,4 @@ export const FireShader = {
     "  gl_FragColor = col;",
     "}",
   ].join("\n"),
-};
+}

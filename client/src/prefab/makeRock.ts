@@ -1,13 +1,13 @@
-import { Transform, Asset } from "~/ecs/plugins/core";
+import { Transform, Asset } from "~/ecs/plugins/core"
 
-import { Vector3, Quaternion, Euler } from "three";
+import { Vector3, Quaternion, Euler } from "three"
 
-import { makeEntity } from "./makeEntity";
-import { Model3 } from "~/ecs/plugins/model";
-import { FaceMapColors2 } from "~/ecs/plugins/coloration";
-import { pickOne } from "~/utils/pickOne";
-import { Html2d } from "~/ecs/plugins/html2d";
-import { Clickable, Draggable } from "~/ecs/plugins/clickable";
+import { makeEntity } from "./makeEntity"
+import { Model3 } from "~/ecs/plugins/model"
+import { FaceMapColors2 } from "~/ecs/plugins/coloration"
+import { pickOne } from "~/utils/pickOne"
+import { Html2d } from "~/ecs/plugins/html2d"
+import { Clickable, Draggable } from "~/ecs/plugins/clickable"
 
 const rocks = [
   {
@@ -20,32 +20,21 @@ const rocks = [
     height: 0.76,
     za: (-90 / 180) * Math.PI,
   },
-];
+]
 
-const colors = [
-  "#ffffff",
-  "#ff0000",
-  "#00ff00",
-  "#0000ff",
-  "#ffff00",
-  "#00ffff",
-  "#ff00ff",
-];
+const colors = ["#ffffff", "#ff0000", "#00ff00", "#0000ff", "#ffff00", "#00ffff", "#ff00ff"]
 
-export function makeRock(
-  world,
-  { x, y, z, h = 1, xa = 0, ya = null, za = null, url = null }
-) {
+export function makeRock(world, { x, y, z, h = 1, xa = 0, ya = null, za = null, url = null }) {
   if (url === null) {
-    const rock = pickOne(rocks);
-    console.log("rock", rock);
-    url = rock.url;
-    h = rock.height;
-    if (rock.za && za === null) za = rock.za;
+    const rock = pickOne(rocks)
+    console.log("rock", rock)
+    url = rock.url
+    h = rock.height
+    if (rock.za && za === null) za = rock.za
   }
 
-  if (ya === null) ya = Math.random() * Math.PI * 2;
-  if (za === null) za = 0;
+  if (ya === null) ya = Math.random() * Math.PI * 2
+  if (za === null) za = 0
 
   return makeEntity(world, "Rock")
     .add(Transform, {
@@ -55,10 +44,7 @@ export function makeRock(
     .add(Model3, { asset: new Asset(url) })
     .add(FaceMapColors2, {
       colors: {
-        color1: [
-          pickOne(colors),
-          (Math.random() - 0.5) * (Math.random() - 0.5),
-        ],
+        color1: [pickOne(colors), (Math.random() - 0.5) * (Math.random() - 0.5)],
       },
     })
     .add(Html2d, {
@@ -71,5 +57,5 @@ export function makeRock(
     .add(Draggable)
     .add(Clickable, {
       kind: "TOGGLE",
-    });
+    })
 }

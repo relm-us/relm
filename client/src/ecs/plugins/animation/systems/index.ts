@@ -1,1 +1,1 @@
-export { AnimationSystem } from "./AnimationSystem";
+export { AnimationSystem } from "./AnimationSystem"

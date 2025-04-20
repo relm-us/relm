@@ -1,1 +1,1 @@
-export { NonInteractive, NonInteractiveApplied } from "./NonInteractive";
+export { NonInteractive, NonInteractiveApplied } from "./NonInteractive"

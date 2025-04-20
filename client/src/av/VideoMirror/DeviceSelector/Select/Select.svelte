@@ -1,73 +1,69 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import hasAncestor from "./hasAncestor";
+import { onMount } from "svelte"
+import hasAncestor from "./hasAncestor"
 
-  type Option = {
-    label: string;
-    value: string;
-  };
+type Option = {
+  label: string
+  value: string
+}
 
-  export let selected: string = null;
-  export let options: Option[] = null;
-  export let icon = null;
-  export let onSelect: (option: Option) => void = null;
+export let selected: string = null
+export let options: Option[] = null
+export let icon = null
+export let onSelect: (option: Option) => void = null
 
-  let selectRowEl = null;
-  let popupVisible = false;
-  let hoverIndex = null;
-  let selectedOption: Option;
+let selectRowEl = null
+let popupVisible = false
+let hoverIndex = null
+let selectedOption: Option
 
-  let optionsWithDefault;
+let optionsWithDefault
 
-  $: optionsWithDefault = options || [];
+$: optionsWithDefault = options || []
 
-  $: selectedOption = optionsWithDefault.find((opt) => opt.value === selected);
+$: selectedOption = optionsWithDefault.find((opt) => opt.value === selected)
 
-  const togglePopup = () => (popupVisible = !popupVisible);
+const togglePopup = () => (popupVisible = !popupVisible)
 
-  const cancelPopup = (event) => {
-    if (!hasAncestor(event.target, selectRowEl)) {
-      popupVisible = false;
+const cancelPopup = (event) => {
+  if (!hasAncestor(event.target, selectRowEl)) {
+    popupVisible = false
+  }
+}
+
+const makeSelection = (option) => {
+  selected = option.value
+  if (onSelect) {
+    onSelect(option)
+  }
+}
+
+const handleKeypress = (event) => {
+  const options = optionsWithDefault
+  if (event.key === "Escape" && popupVisible) {
+    hoverIndex = null
+    togglePopup()
+  } else if (event.key === "Enter" || event.key === " ") {
+    if (hoverIndex !== null && hoverIndex >= 0 && hoverIndex < options.length) {
+      const option = options[hoverIndex]
+      makeSelection(option)
+    } else {
+      hoverIndex = options.findIndex((opt) => opt.value === selected)
     }
-  };
+    togglePopup()
+  } else if (event.key === "ArrowUp") {
+    if (--hoverIndex < 0) hoverIndex = 0
+  } else if (event.key === "ArrowDown") {
+    if (++hoverIndex >= options.length) hoverIndex = options.length - 1
+  }
+}
 
-  const makeSelection = (option) => {
-    selected = option.value;
-    if (onSelect) {
-      onSelect(option);
-    }
-  };
-
-  const handleKeypress = (event) => {
-    const options = optionsWithDefault;
-    if (event.key === "Escape" && popupVisible) {
-      hoverIndex = null;
-      togglePopup();
-    } else if (event.key === "Enter" || event.key === " ") {
-      if (
-        hoverIndex !== null &&
-        hoverIndex >= 0 &&
-        hoverIndex < options.length
-      ) {
-        const option = options[hoverIndex];
-        makeSelection(option);
-      } else {
-        hoverIndex = options.findIndex((opt) => opt.value === selected);
-      }
-      togglePopup();
-    } else if (event.key === "ArrowUp") {
-      if (--hoverIndex < 0) hoverIndex = 0;
-    } else if (event.key === "ArrowDown") {
-      if (++hoverIndex >= options.length) hoverIndex = options.length - 1;
-    }
-  };
-
-  onMount(() => {
-    document.addEventListener("click", cancelPopup);
-    return () => {
-      document.removeEventListener("click", cancelPopup);
-    };
-  });
+onMount(() => {
+  document.addEventListener("click", cancelPopup)
+  return () => {
+    document.removeEventListener("click", cancelPopup)
+  }
+})
 </script>
 
 <vm-select>

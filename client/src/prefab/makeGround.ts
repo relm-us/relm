@@ -1,14 +1,14 @@
-import { Color, Vector3 } from "three";
+import { Color, Vector3 } from "three"
 
-import { Transform } from "~/ecs/plugins/core";
-import { Collider3 } from "~/ecs/plugins/collider";
-import { Shape3 } from "~/ecs/plugins/shape";
-import { NonInteractive } from "~/ecs/plugins/non-interactive";
+import { Transform } from "~/ecs/plugins/core"
+import { Collider3 } from "~/ecs/plugins/collider"
+import { Shape3 } from "~/ecs/plugins/shape"
+import { NonInteractive } from "~/ecs/plugins/non-interactive"
 
-import { makeEntity } from "./makeEntity";
+import { makeEntity } from "./makeEntity"
 
 export function makeGround(world, { x = 0, y = 0, z = 0, h = 1 }) {
-  const color = new Color("#55814e");
+  const color = new Color("#55814e")
 
   return makeEntity(world, "Ground")
     .add(Transform, { position: new Vector3(x, y - h / 2, z) })
@@ -26,5 +26,5 @@ export function makeGround(world, { x = 0, y = 0, z = 0, h = 1 }) {
       shape: "CYLINDER",
       size: new Vector3(30, h, 1),
     })
-    .add(NonInteractive);
+    .add(NonInteractive)
 }

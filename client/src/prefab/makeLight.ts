@@ -1,15 +1,15 @@
-import { Transform } from "~/ecs/plugins/core";
-import { Vector3 } from "three";
+import { Transform } from "~/ecs/plugins/core"
+import { Vector3 } from "three"
 
-import { Follow } from "~/ecs/plugins/follow";
-import { DirectionalLight } from "~/ecs/plugins/lighting";
+import { Follow } from "~/ecs/plugins/follow"
+import { DirectionalLight } from "~/ecs/plugins/lighting"
 
-import { makeEntity } from "./makeEntity";
-import { DEFAULT_DIRECTIONAL_LIGHT_POSITION } from "~/config/constants";
-import { AlwaysOnStage } from "~/ecs/plugins/camera";
+import { makeEntity } from "./makeEntity"
+import { DEFAULT_DIRECTIONAL_LIGHT_POSITION } from "~/config/constants"
+import { AlwaysOnStage } from "~/ecs/plugins/camera"
 
 export function makeLight(world, avatar, color = 0xffffff) {
-  const shadowSize = 6;
+  const shadowSize = 6
   const light = makeEntity(world, "DirectionalLight")
     .add(Transform)
     .add(Follow, {
@@ -37,7 +37,7 @@ export function makeLight(world, avatar, color = 0xffffff) {
       shadowHeight: 512,
 
       shadowRadius: 1.75,
-    });
+    })
 
-  return light;
+  return light
 }

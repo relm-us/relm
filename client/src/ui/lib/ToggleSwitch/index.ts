@@ -1,1 +1,1 @@
-export { default } from "./ToggleSwitch.svelte";
+export { default } from "./ToggleSwitch.svelte"

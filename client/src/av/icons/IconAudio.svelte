@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { IconAudioEnabled, IconAudioDisabled } from "./index";
+import { IconAudioEnabled, IconAudioDisabled } from "./index"
 
-  export let enabled = true;
+export let enabled = true
 </script>
 
 {#if enabled}

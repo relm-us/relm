@@ -1,6 +1,6 @@
-import { Component, NumberType, StringType } from "~/ecs/base";
-import { Vector3Type } from "~/ecs/plugins/core";
-import { Vector3 } from "three";
+import { Component, NumberType, StringType } from "~/ecs/base"
+import { Vector3Type } from "~/ecs/plugins/core"
+import { Vector3 } from "three"
 
 export class Diamond extends Component {
   static props = {
@@ -28,9 +28,9 @@ export class Diamond extends Component {
         label: "Offset",
       },
     },
-  };
+  }
 
   static editor = {
     label: "Diamond",
-  };
+  }
 }

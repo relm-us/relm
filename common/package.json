@@ -6,11 +6,7 @@
   "type": "module",
   "main": "./dist/index.js",
   "exports": "./dist/index.js",
-  "files": [
-    "dist/**/*",
-    "src/**/*",
-    "tsconfig.json"
-  ],
+  "files": ["dist/**/*", "src/**/*", "tsconfig.json"],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch --preserveWatchOutput"
@@ -34,16 +30,12 @@
     "y-leveldb": "0.1.2",
     "y-protocols": "1.0.5"
   },
-  "browserslist": [
-    "defaults"
-  ],
+  "browserslist": ["defaults"],
   "jest": {
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
-    "moduleFileExtensions": [
-      "ts"
-    ],
+    "moduleFileExtensions": ["ts"],
     "moduleNameMapper": {
       "^~/(.*)": "<rootDir>/src/$1"
     }

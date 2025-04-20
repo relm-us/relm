@@ -1,1 +1,1 @@
-export { Transition } from "./Transition";
+export { Transition } from "./Transition"

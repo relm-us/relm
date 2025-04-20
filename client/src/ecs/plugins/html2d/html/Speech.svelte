@@ -1,19 +1,19 @@
 <script lang="ts">
-  import IoMdClose from "svelte-icons/io/IoMdClose.svelte";
-  import { cleanHtml } from "~/utils/cleanHtml";
+import IoMdClose from "svelte-icons/io/IoMdClose.svelte"
+import { cleanHtml } from "~/utils/cleanHtml"
 
-  export let content;
-  export let hanchor;
-  export let onClose;
-  export let visible;
+export let content
+export let hanchor
+export let onClose
+export let visible
 
-  function close() {
-    visible = false;
-    onClose?.();
-  }
+function close() {
+  visible = false
+  onClose?.()
+}
 
-  // ignore warning about missing props
-  $$props;
+// ignore warning about missing props
+$$props
 </script>
 
 {#if visible}

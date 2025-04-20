@@ -1,39 +1,39 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from "svelte";
-  import { worldManager } from "~/world";
-  import { participantId } from "~/identity/participantId";
+import { createEventDispatcher, onMount } from "svelte"
+import { worldManager } from "~/world"
+import { participantId } from "~/identity/participantId"
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  let inputEl;
+let inputEl
 
-  function addMessage(text) {
-    if (text.match(/^\s*$/)) {
-      dispatch("close");
-    } else {
-      worldManager.chat.addMessage({
-        u: participantId,
-        c: text,
-        n: worldManager.participants.local.identityData.name,
-        o: worldManager.participants.local.identityData.color,
-      });
-    }
+function addMessage(text) {
+  if (text.match(/^\s*$/)) {
+    dispatch("close")
+  } else {
+    worldManager.chat.addMessage({
+      u: participantId,
+      c: text,
+      n: worldManager.participants.local.identityData.name,
+      o: worldManager.participants.local.identityData.color,
+    })
   }
+}
 
-  function onKeydown(event) {
-    if (event.key === "Escape") {
-      dispatch("close");
-    } else if (event.key === "Enter" || event.key === "Return") {
-      addMessage(event.target.value);
-      event.target.value = "";
-    }
+function onKeydown(event) {
+  if (event.key === "Escape") {
+    dispatch("close")
+  } else if (event.key === "Enter" || event.key === "Return") {
+    addMessage(event.target.value)
+    event.target.value = ""
   }
+}
 
-  onMount(() => {
-    setTimeout(() => {
-      inputEl.focus();
-    }, 50);
-  });
+onMount(() => {
+  setTimeout(() => {
+    inputEl.focus()
+  }, 50)
+})
 </script>
 
 <r-input>

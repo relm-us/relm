@@ -10,12 +10,7 @@ describe("convertToHSVA - convert to hsva from format", () => {
   })
 
   test("convert from rgba", () => {
-    expect(convertToHSVA("rgba(242, 34, 211, 1)", "rgb")).toEqual([
-      309,
-      86,
-      95,
-      1,
-    ])
+    expect(convertToHSVA("rgba(242, 34, 211, 1)", "rgb")).toEqual([309, 86, 95, 1])
   })
 
   test("convert from rgb", () => {
@@ -23,21 +18,11 @@ describe("convertToHSVA - convert to hsva from format", () => {
   })
 
   test("convert from from hsl", () => {
-    expect(convertToHSVA("hsl(264, 100%, 65.7%)", "hsl")).toEqual([
-      264,
-      68.6,
-      100,
-      1,
-    ])
+    expect(convertToHSVA("hsl(264, 100%, 65.7%)", "hsl")).toEqual([264, 68.6, 100, 1])
   })
 
   test("convert from from hsla", () => {
-    expect(convertToHSVA("hsla(264, 100%, 65.7%, 0.51)", "hsl")).toEqual([
-      264,
-      68.6,
-      100,
-      0.51,
-    ])
+    expect(convertToHSVA("hsla(264, 100%, 65.7%, 0.51)", "hsl")).toEqual([264, 68.6, 100, 0.51])
   })
 })
 
@@ -47,15 +32,11 @@ describe("convertHsvaToFormat - convert from hsva to format", () => {
   })
 
   test("Convert to rgba", () => {
-    expect(convertHsvaToFormat([264, 68.63, 100, 0.75], "rgb")).toBe(
-      "rgba(150,80,255,0.75)"
-    )
+    expect(convertHsvaToFormat([264, 68.63, 100, 0.75], "rgb")).toBe("rgba(150,80,255,0.75)")
   })
 
   test("Convert to hsla", () => {
-    expect(convertHsvaToFormat([264, 68.63, 100, 1], "hsl")).toBe(
-      "hsla(264,100%,66%,1)"
-    )
+    expect(convertHsvaToFormat([264, 68.63, 100, 1], "hsl")).toBe("hsla(264,100%,66%,1)")
   })
 })
 

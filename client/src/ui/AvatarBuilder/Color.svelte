@@ -1,6 +1,6 @@
 <script>
-  export let value = "#000000";
-  export let selected = false;
+export let value = "#000000"
+export let selected = false
 </script>
 
 <div class:selected on:click>

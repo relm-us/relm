@@ -1,38 +1,38 @@
 <script lang="ts">
-  import type { LoginManager } from "~/identity/LoginManager";
+import type { LoginManager } from "~/identity/LoginManager"
 
-  import { createEventDispatcher } from "svelte";
-  import { _ } from "~/i18n";
+import { createEventDispatcher } from "svelte"
+import { _ } from "~/i18n"
 
-  import Button from "~/ui/lib/Button";
-  import Dialog from "~/ui/lib/Dialog";
+import Button from "~/ui/lib/Button"
+import Dialog from "~/ui/lib/Dialog"
 
-  import SignInTextInput from "./components/SignInTextInput.svelte";
+import SignInTextInput from "./components/SignInTextInput.svelte"
 
-  export let canCancel = true;
-  export let loginManager: LoginManager;
+export let canCancel = true
+export let loginManager: LoginManager
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  let emailInstance = null;
-  let email: string;
-  let password: string;
+let emailInstance = null
+let email: string
+let password: string
 
-  async function onSignUp() {
-    const isSuccess = await loginManager.register({
-      email,
-      password,
-    });
+async function onSignUp() {
+  const isSuccess = await loginManager.register({
+    email,
+    password,
+  })
 
-    if (isSuccess) {
-      // close the sign-up dialog
-      dispatch("success");
-    }
+  if (isSuccess) {
+    // close the sign-up dialog
+    dispatch("success")
   }
+}
 
-  function onSignIn() {
-    dispatch("signin");
-  }
+function onSignIn() {
+  dispatch("signin")
+}
 </script>
 
 <Dialog title={$_("SignUpDialog.title")} {canCancel} on:cancel>

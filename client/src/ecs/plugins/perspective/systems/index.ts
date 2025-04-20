@@ -1,1 +1,1 @@
-export { PerspectiveSystem } from "./PerspectiveSystem";
+export { PerspectiveSystem } from "./PerspectiveSystem"

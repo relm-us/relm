@@ -1,9 +1,9 @@
 export function parse(text) {
-  let json;
+  let json: any
   try {
-    json = JSON.parse(text);
+    json = JSON.parse(text)
   } catch (err) {
-    return undefined;
+    return undefined
   }
-  return json;
+  return json
 }

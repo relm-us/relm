@@ -1,19 +1,19 @@
 <script lang="ts">
-  import { worldManager } from "~/world";
-  import { audioMode } from "~/stores/audioMode";
+import { worldManager } from "~/world"
+import { audioMode } from "~/stores/audioMode"
 
-  import Pane from "~/ui/lib/Pane";
-  import ToggleSwitch from "~/ui/lib/ToggleSwitch";
-  import { _ } from "~/i18n";
+import Pane from "~/ui/lib/Pane"
+import ToggleSwitch from "~/ui/lib/ToggleSwitch"
+import { _ } from "~/i18n"
 
-  let audioModeIsProximity = $audioMode === "proximity";
-  $: if (audioModeIsProximity) {
-    $audioMode = "proximity";
-    worldManager.worldDoc.settings.y.set("audioMode", "proximity");
-  } else {
-    $audioMode = "world";
-    worldManager.worldDoc.settings.y.set("audioMode", "world");
-  }
+let audioModeIsProximity = $audioMode === "proximity"
+$: if (audioModeIsProximity) {
+  $audioMode = "proximity"
+  worldManager.worldDoc.settings.y.set("audioMode", "proximity")
+} else {
+  $audioMode = "world"
+  worldManager.worldDoc.settings.y.set("audioMode", "world")
+}
 </script>
 
 <Pane title={$_("AudioSettings.title")}>

@@ -1,1 +1,1 @@
-export { Spin } from "./Spin";
+export { Spin } from "./Spin"

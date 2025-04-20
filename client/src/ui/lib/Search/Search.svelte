@@ -1,6 +1,6 @@
 <script lang="ts">
-  export let value = "";
-  export let placeholder = "Search...";
+export let value = ""
+export let placeholder = "Search..."
 </script>
 
 <r-search>

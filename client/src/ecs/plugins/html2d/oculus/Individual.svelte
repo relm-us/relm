@@ -1,27 +1,27 @@
 <script lang="ts">
-  /**
-   * Individual: A combination of a participant's video stream (Oculus), audio stream, and name (NameTag).
-   */
+/**
+ * Individual: A combination of a participant's video stream (Oculus), audio stream, and name (NameTag).
+ */
 
-  import type { Cut } from "./types";
-  import type { Track } from "~/av/base/types";
+import type { Cut } from "./types"
+import type { Track } from "~/av/base/types"
 
-  import Audio from "~/av/components/Audio";
-  import Video from "~/av/components/Video";
+import Audio from "~/av/components/Audio"
+import Video from "~/av/components/Video"
 
-  import NameTag from "./NameTag.svelte";
-  import Oculus from "./Oculus.svelte";
-  import shineImg from "./shine.svg";
+import NameTag from "./NameTag.svelte"
+import Oculus from "./Oculus.svelte"
+import shineImg from "./shine.svg"
 
-  export let color: string = "white";
-  export let name: string = "";
-  export let mirror: boolean = false;
-  export let editable: boolean = false;
-  export let volume: number = 1.0;
-  export let audioTrack: Track = null;
-  export let videoTrack: Track = null;
-  export let diameter: number = null;
-  export let cuts: Cut[] = null;
+export let color: string = "white"
+export let name: string = ""
+export let mirror: boolean = false
+export let editable: boolean = false
+export let volume: number = 1.0
+export let audioTrack: Track = null
+export let videoTrack: Track = null
+export let diameter: number = null
+export let cuts: Cut[] = null
 </script>
 
 <container style="--background-image:url({shineImg})">

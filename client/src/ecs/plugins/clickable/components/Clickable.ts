@@ -1,15 +1,15 @@
-import { Component, StringType, JSONType, NumberType } from "~/ecs/base";
+import { Component, StringType, JSONType, NumberType } from "~/ecs/base"
 
 export class Clickable extends Component {
-  action: "OPEN" | "LINK" | "CHANGES" | "TOGGLE" | "TOGGLE_CONV" | "FLIP";
-  link: string;
-  cycle: any;
-  axis: "X" | "Y" | "Z";
-  rotate: number;
-  idx: number;
+  action: "OPEN" | "LINK" | "CHANGES" | "TOGGLE" | "TOGGLE_CONV" | "FLIP"
+  link: string
+  cycle: any
+  axis: "X" | "Y" | "Z"
+  rotate: number
+  idx: number
 
   // deprecated
-  toggle: any;
+  toggle: any
 
   static props = {
     action: {
@@ -72,9 +72,9 @@ export class Clickable extends Component {
         requires: [{ prop: "action", value: "FLIP" }],
       },
     },
-  };
+  }
 
   static editor = {
     label: "Clickable",
-  };
+  }
 }

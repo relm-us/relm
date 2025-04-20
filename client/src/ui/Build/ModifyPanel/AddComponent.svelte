@@ -1,51 +1,51 @@
 <script lang="ts">
-  import { Component, Entity } from "~/ecs/base";
+import { Entity } from "~/ecs/base"
 
-  import { createEventDispatcher } from "svelte";
-  import Select from "svelte-select";
+import { createEventDispatcher } from "svelte"
+import Select from "svelte-select"
 
-  import { worldManager } from "~/world";
-  import { getComponentOptions } from "~/utils/getComponentOptions";
-  import alphanumeric from "alphanumeric-id";
-  import { globalEvents } from "~/events/globalEvents";
+import { worldManager } from "~/world"
+import { getComponentOptions } from "~/utils/getComponentOptions"
+import alphanumeric from "alphanumeric-id"
+import { globalEvents } from "~/events/globalEvents"
 
-  export let entity: Entity;
+export let entity: Entity
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  let componentOptions;
-  $: componentOptions = getComponentOptions(entity);
+let componentOptions
+$: componentOptions = getComponentOptions(entity)
 
-  let selectedValue;
-  let listOpen;
+let selectedValue
+let listOpen
 
-  function onKeydown(event) {
-    if (event.key === "Escape" && !listOpen) globalEvents.emit("focus-world");
+function onKeydown(event) {
+  if (event.key === "Escape" && !listOpen) globalEvents.emit("focus-world")
+}
+
+function optionsHook(componentName) {
+  if (componentName === "Document") {
+    const newDocId = alphanumeric(8)
+    return { docId: newDocId, pageList: [newDocId] }
   }
+  return {}
+}
 
-  function optionsHook(componentName) {
-    if (componentName === "Document") {
-      const newDocId = alphanumeric(8);
-      return { docId: newDocId, pageList: [newDocId] };
+const onSelectNewComponent = ({ detail }) => {
+  const componentName = detail.value
+  setTimeout(() => {
+    entity.addByName(componentName, optionsHook(componentName))
+    const Activator = entity.world.components.activators[componentName]
+    if (Activator && (Activator as any).defaultActive !== false) {
+      entity.add(Activator)
     }
-    return {};
-  }
+    worldManager.worldDoc.syncFrom(entity)
+    dispatch("modified")
 
-  const onSelectNewComponent = ({ detail }) => {
-    const componentName = detail.value;
-    setTimeout(() => {
-      entity.addByName(componentName, optionsHook(componentName));
-      const Activator = entity.world.components.activators[componentName];
-      if (Activator && (Activator as any).defaultActive !== false) {
-        entity.add(Activator);
-      }
-      worldManager.worldDoc.syncFrom(entity);
-      dispatch("modified");
-
-      componentOptions = getComponentOptions(entity);
-      selectedValue = undefined;
-    }, 300);
-  };
+    componentOptions = getComponentOptions(entity)
+    selectedValue = undefined
+  }, 300)
+}
 </script>
 
 <select-container on:keydown={onKeydown}>

@@ -1,6 +1,6 @@
-import { Vector3 } from "three";
-import { BooleanType, Component } from "~/ecs/base";
-import { Asset, AssetType, Vector3Type } from "~/ecs/plugins/core";
+import { Vector3 } from "three"
+import { BooleanType, Component } from "~/ecs/base"
+import { type Asset, AssetType, Vector3Type } from "~/ecs/plugins/core"
 
 /**
  * A 3D model, i.e. a glTF asset.
@@ -10,13 +10,13 @@ import { Asset, AssetType, Vector3Type } from "~/ecs/plugins/core";
  * out disrupting previous Model/Model2 expectations.
  */
 export class Model3 extends Component {
-  asset: Asset;
-  offset: Vector3;
+  asset: Asset
+  offset: Vector3
 
   // Boolean indicating use of original erroneous box size calculation
-  compat: boolean;
+  compat: boolean
 
-  needsRebuild: boolean;
+  needsRebuild: boolean
 
   static props = {
     asset: {
@@ -38,9 +38,9 @@ export class Model3 extends Component {
         label: "Compatibility Mode",
       },
     },
-  };
+  }
 
   static editor = {
     label: "Model",
-  };
+  }
 }

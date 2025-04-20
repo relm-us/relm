@@ -1,16 +1,16 @@
 <script lang="ts">
-  import IoIosCloudUpload from "svelte-icons/io/IoIosCloudUpload.svelte";
+import IoIosCloudUpload from "svelte-icons/io/IoIosCloudUpload.svelte"
 
-  import Button from "~/ui/lib/Button";
-  import Uploader from "./Uploader";
+import Button from "~/ui/lib/Button"
+import Uploader from "./Uploader"
 
-  import { _ } from "~/i18n";
+import { _ } from "~/i18n"
 
-  let uploader;
+let uploader
 
-  const onClick = () => {
-    uploader.open();
-  };
+const onClick = () => {
+  uploader.open()
+}
 </script>
 
 <Button on:click={onClick}  >

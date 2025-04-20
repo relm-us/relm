@@ -1,79 +1,79 @@
 <script lang="ts">
-  import { Euler, MathUtils, Quaternion } from "three";
-  import { createEventDispatcher } from "svelte";
+import { Euler, MathUtils, Quaternion } from "three"
+import { createEventDispatcher } from "svelte"
 
-  import Capsule from "~/ui/lib/Capsule";
-  import { NumberDragger } from "./utils/NumberDragger";
-  import { formatNumber } from "./utils/formatNumber";
+import Capsule from "~/ui/lib/Capsule"
+import { NumberDragger } from "./utils/NumberDragger"
+import { formatNumber } from "./utils/formatNumber"
 
-  export let key: string;
-  export let component;
-  export let prop;
+export let key: string
+export let component
+export let prop
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  let editing = {
-    x: false,
-    y: false,
-    z: false,
-  };
+let editing = {
+  x: false,
+  y: false,
+  z: false,
+}
 
-  const q1: Quaternion = new Quaternion();
+const q1: Quaternion = new Quaternion()
 
-  let value: Euler;
-  $: value = new Euler(0, 0, 0, "YXZ").setFromQuaternion(component[key]); //component[key]
+let value: Euler
+$: value = new Euler(0, 0, 0, "YXZ").setFromQuaternion(component[key]) //component[key]
 
-  const onInputChange =
-    (dimension) =>
-    ({ detail }) => {
-      const newValue = MathUtils.degToRad(parseFloat(detail));
-      if (!Number.isNaN(newValue)) {
-        value[dimension] = newValue;
-        q1.setFromEuler(value);
-        component[key].copy(q1);
+const onInputChange =
+  (dimension) =>
+  ({ detail }) => {
+    const newValue = MathUtils.degToRad(parseFloat(detail))
+    if (!Number.isNaN(newValue)) {
+      value[dimension] = newValue
+      q1.setFromEuler(value)
+      component[key].copy(q1)
 
-        component.modified();
-        dispatch("modified");
-        editing[dimension] = false;
-      }
-    };
+      component.modified()
+      dispatch("modified")
+      editing[dimension] = false
+    }
+  }
 
-  const onInputCancel = (dimension) => (event) => {
-    editing[dimension] = false;
-  };
+const onInputCancel = (dimension) => (event) => {
+  editing[dimension] = false
+}
 
-  const setNewValue = (dimension, newValue) => {
-    const floatValue = parseFloat(newValue);
-    value[dimension] = MathUtils.degToRad(floatValue);
-    q1.setFromEuler(value);
-    component[key].copy(q1);
-    component.modified();
-  };
+const setNewValue = (dimension, newValue) => {
+  const floatValue = parseFloat(newValue)
+  value[dimension] = MathUtils.degToRad(floatValue)
+  q1.setFromEuler(value)
+  component[key].copy(q1)
+  component.modified()
+}
 
-  const makeDragger = (dimension) => {
-    return new NumberDragger({
-      getValue: () => MathUtils.radToDeg(value[dimension]),
-      onDrag: (newValue) => {
-        setNewValue(dimension, newValue);
-      },
-      onChange: (newValue) => {
-        setNewValue(dimension, newValue);
-        dispatch("modified");
-      },
-      onClick: () => {
-        editing[dimension] = true;
-      },
-    });
-  };
+const makeDragger = (dimension) => {
+  return new NumberDragger({
+    getValue: () => MathUtils.radToDeg(value[dimension]),
+    onDrag: (newValue) => {
+      setNewValue(dimension, newValue)
+    },
+    onChange: (newValue) => {
+      setNewValue(dimension, newValue)
+      dispatch("modified")
+    },
+    onClick: () => {
+      editing[dimension] = true
+    },
+  })
+}
 
-  const draggers = {
-    x: makeDragger("x"),
-    y: makeDragger("y"),
-    z: makeDragger("z"),
-  };
+const draggers = {
+  x: makeDragger("x"),
+  y: makeDragger("y"),
+  z: makeDragger("z"),
+}
 
-  // ignore warning about missing props
-  $$props;
+// ignore warning about missing props
+$$props
 </script>
 
 <r-quaternion-type>

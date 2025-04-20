@@ -1,78 +1,74 @@
 <script lang="ts">
-  import type { LibraryAsset } from "~/types";
+import type { LibraryAsset } from "~/types"
 
-  import { _ } from "svelte-i18n";
-  import IoIosArrowBack from "svelte-icons/io/IoIosArrowBack.svelte";
+import { _ } from "svelte-i18n"
+import IoIosArrowBack from "svelte-icons/io/IoIosArrowBack.svelte"
 
-  import { createPrefab } from "~/prefab";
-  import { makeThing } from "~/prefab/makeThing";
-  import { makeHDImage } from "~/prefab/makeHDImage";
+import { createPrefab } from "~/prefab"
+import { makeThing } from "~/prefab/makeThing"
+import { makeHDImage } from "~/prefab/makeHDImage"
 
-  import SidePanel, { Header } from "~/ui/lib/SidePanel";
-  import Search from "~/ui/lib/Search";
-  import Button from "~/ui/lib/Button";
-  import UploadButton from "~/ui/Build/shared/UploadButton";
+import SidePanel, { Header } from "~/ui/lib/SidePanel"
+import Search from "~/ui/lib/Search"
+import Button from "~/ui/lib/Button"
+import UploadButton from "~/ui/Build/shared/UploadButton"
 
-  import {
-    libraryAssets,
-    librarySearch,
-    libraryPage,
-  } from "~/stores/libraryAssets";
+import { libraryAssets, librarySearch, libraryPage } from "~/stores/libraryAssets"
 
-  import SearchResult from "./SearchResult.svelte";
-  import HLine from "~/ui/lib/HLine";
-  import Paginate from "./Paginate.svelte";
-  import SelectedAsset from "./SelectedAsset.svelte";
-  import SelectCreatePrefab from "./SelectCreatePrefab.svelte";
+import SearchResult from "./SearchResult.svelte"
+import HLine from "~/ui/lib/HLine"
+import Paginate from "./Paginate.svelte"
+import SelectedAsset from "./SelectedAsset.svelte"
+import SelectCreatePrefab from "./SelectCreatePrefab.svelte"
 
-  let spinner = false;
-  let spinStart = 0;
-  let assets: LibraryAsset[] = [];
-  let selectedAsset: LibraryAsset;
-  let prefabsVisible: boolean = false;
+let spinner = false
+let spinStart = 0
+let assets: LibraryAsset[] = []
+let selectedAsset: LibraryAsset
+let prefabsVisible: boolean = false
 
-  $: switch ($libraryAssets.type) {
-    case "init":
-      break;
-    case "fetching":
-      spinner = true;
-      spinStart = performance.now();
-      break;
-    case "success":
-      spinner = false;
-      assets = $libraryAssets.assets;
-      break;
-    case "error":
-      spinner = false;
-      assets = [];
-      break;
-    default:
-      console.warn("Unknown libraryAsset type:", $libraryAssets);
-  }
+$: switch ($libraryAssets.type) {
+  case "init":
+    break
+  case "fetching":
+    spinner = true
+    spinStart = performance.now()
+    break
+  case "success":
+    spinner = false
+    assets = $libraryAssets.assets
+    break
+  case "error":
+    spinner = false
+    assets = []
+    break
+  default:
+    console.warn("Unknown libraryAsset type:", $libraryAssets)
+}
 
-  const onUpload = ({ detail }) => {
-    for (const result of detail.results) {
-      if (result.types.webp) {
-        const maxSide = 3;
-        let width, height;
-        if (result.aspect < 1) {
-          width = maxSide;
-          height = maxSide / result.aspect;
-        } else {
-          height = maxSide;
-          width = maxSide * result.aspect;
-        }
-
-        createPrefab(makeHDImage, {
-          url: result.types.webp,
-          w: width,
-          h: height,
-        });
-      } else if (result.types.gltf) {
-        createPrefab(makeThing, { url: result.types.gltf });
+const onUpload = ({ detail }) => {
+  for (const result of detail.results) {
+    if (result.types.webp) {
+      const maxSide = 3
+      let width, height
+      if (result.aspect < 1) {
+        width = maxSide
+        height = maxSide / result.aspect
+      } else {
+        height = maxSide
+        width = maxSide * result.aspect
       }
+
+      createPrefab(makeHDImage, {
+        url: result.types.webp,
+        w: width,
+        h: height,
+      })
+    } else if (result.types.gltf) {
+      createPrefab(makeThing, { url: result.types.gltf })
     }
-  };
+  }
+}
 </script>
 
 <SidePanel on:minimize>

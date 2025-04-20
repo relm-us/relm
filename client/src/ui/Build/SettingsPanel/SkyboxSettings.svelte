@@ -1,44 +1,43 @@
 <script lang="ts">
-  import { nanoid } from "nanoid";
+import { nanoid } from "nanoid"
 
-  import { worldManager } from "~/world";
-  import { assetUrl } from "~/config/assetUrl";
+import { worldManager } from "~/world"
+import { assetUrl } from "~/config/assetUrl"
 
-  import { Entity } from "~/ecs/base";
-  import { Asset } from "~/ecs/plugins/core";
-  import { Skybox } from "~/ecs/plugins/skybox";
+import type { Entity } from "~/ecs/base"
+import { Asset } from "~/ecs/plugins/core"
+import { Skybox } from "~/ecs/plugins/skybox"
 
-  import Pane from "~/ui/lib/Pane";
-  import SkyboxOption from "./SkyboxOption.svelte";
-  import SkyboxUploadButton from "~/ui/Build/shared/UploadButton";
+import Pane from "~/ui/lib/Pane"
+import SkyboxOption from "./SkyboxOption.svelte"
+import SkyboxUploadButton from "~/ui/Build/shared/UploadButton"
 
-  import { _ } from "~/i18n";
+import { _ } from "~/i18n"
 
-  function onUploadedSkybox({ detail }) {
-    if (detail.results.length === 0) return;
-    const result = detail.results[0];
-    setSkybox(assetUrl(result.types.webp));
+function onUploadedSkybox({ detail }) {
+  if (detail.results.length === 0) return
+  const result = detail.results[0]
+  setSkybox(assetUrl(result.types.webp))
+}
+
+function setSkybox(imageUrl) {
+  // Delete any previous Skybox object
+  const entities: Entity[] = worldManager.world.entities.getAllByComponent(Skybox)
+  for (let entity of entities) {
+    worldManager.worldDoc.deleteById(entity.id.toString())
   }
 
-  function setSkybox(imageUrl) {
-    // Delete any previous Skybox object
-    const entities: Entity[] =
-      worldManager.world.entities.getAllByComponent(Skybox);
-    for (let entity of entities) {
-      worldManager.worldDoc.deleteById(entity.id.toString());
-    }
+  // Create a new Skybox
+  const skybox = worldManager.world.entities
+    .create("Skybox", nanoid())
+    .add(Skybox, { image: new Asset(imageUrl) })
+    .activate()
+  worldManager.worldDoc.syncFrom(skybox)
+}
 
-    // Create a new Skybox
-    const skybox = worldManager.world.entities
-      .create("Skybox", nanoid())
-      .add(Skybox, { image: new Asset(imageUrl) })
-      .activate();
-    worldManager.worldDoc.syncFrom(skybox);
-  }
-
-  function chooseSkybox({ detail }) {
-    setSkybox(assetUrl(detail));
-  }
+function chooseSkybox({ detail }) {
+  setSkybox(assetUrl(detail))
+}
 </script>
 
 <Pane title={$_("SkyboxSettings.title")}>

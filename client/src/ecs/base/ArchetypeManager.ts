@@ -1,61 +1,57 @@
-import type { Entity } from "./Entity";
-import type { World } from "./World";
+import type { Entity } from "./Entity"
+import type { World } from "./World"
 
-import { Archetype } from "./Archetype";
-import { TypedEmitter } from "tiny-typed-emitter";
+import { Archetype } from "./Archetype"
+import { TypedEmitter } from "tiny-typed-emitter"
 
 export type ArchetypeManagerEvents = {
-  "entity-component-change": (
-    entity: Entity,
-    Component: any,
-    isAdded: boolean
-  ) => void;
-};
+  "entity-component-change": (entity: Entity, Component: any, isAdded: boolean) => void
+}
 
 export class ArchetypeManager extends TypedEmitter<ArchetypeManagerEvents> {
-  world: World;
-  archetypes: Record<number, Archetype>;
-  initialId: string;
+  world: World
+  archetypes: Record<number, Archetype>
+  initialId: string
 
   constructor(world) {
-    super();
+    super()
 
-    this.world = world;
-    this.archetypes = {};
-    this.initialId = null;
+    this.world = world
+    this.archetypes = {}
+    this.initialId = null
   }
 
   init() {
-    this.initialId = "";
-    let idSize = this.world.components.count;
+    this.initialId = ""
+    let idSize = this.world.components.count
     while (idSize) {
-      this.initialId += "0";
-      idSize--;
+      this.initialId += "0"
+      idSize--
     }
     // console.log(`hecs: using ${this.world.components.count} bit archetype ids`)
-    this.createArchetype(this.initialId, []);
+    this.createArchetype(this.initialId, [])
   }
 
   onEntityActive(entity) {
-    this.addToArchetype(entity);
+    this.addToArchetype(entity)
   }
 
   onEntityComponentChange(entity: Entity, Component, isAdded: boolean) {
-    this.emit("entity-component-change", entity, Component, isAdded);
+    this.emit("entity-component-change", entity, Component, isAdded)
 
     if (entity.active) {
-      this.removeFromArchetype(entity);
+      this.removeFromArchetype(entity)
     }
 
     if (Component.id === undefined) {
-      console.error(Component);
-      throw Error("Unregistered component");
+      console.error(Component)
+      throw Error("Unregistered component")
     }
 
     entity.archetypeId =
       entity.archetypeId.substring(0, Component.id) +
       (isAdded ? "1" : "0") +
-      entity.archetypeId.substring(Component.id + 1);
+      entity.archetypeId.substring(Component.id + 1)
 
     if (!this.archetypes[entity.archetypeId]) {
       /**
@@ -65,40 +61,40 @@ export class ArchetypeManager extends TypedEmitter<ArchetypeManagerEvents> {
        * isn't an issue as most archetypes are discovered within
        * the first few frames of running a world.
        */
-      this.createArchetype(entity.archetypeId, entity.Components);
+      this.createArchetype(entity.archetypeId, entity.Components)
     }
 
     if (entity.active) {
-      this.addToArchetype(entity);
+      this.addToArchetype(entity)
     }
   }
 
   onEntityInactive(entity) {
-    this.removeFromArchetype(entity);
+    this.removeFromArchetype(entity)
   }
 
   addToArchetype(entity) {
     // @todo do we really need to check index here?
-    const archetype = this.archetypes[entity.archetypeId];
-    const idx = archetype.entities.indexOf(entity);
+    const archetype = this.archetypes[entity.archetypeId]
+    const idx = archetype.entities.indexOf(entity)
     if (idx === -1) {
-      archetype.entities.push(entity);
+      archetype.entities.push(entity)
     }
   }
 
   removeFromArchetype(entity) {
-    const entities = this.archetypes[entity.archetypeId].entities;
-    const idx = entities.indexOf(entity);
+    const entities = this.archetypes[entity.archetypeId].entities
+    const idx = entities.indexOf(entity)
     if (idx !== -1) {
-      entities.splice(idx, 1);
+      entities.splice(idx, 1)
     }
   }
 
   createArchetype(id, Components) {
-    Components = Components.slice();
-    const archetype = new Archetype(this.world, id, Components);
-    this.archetypes[archetype.id] = archetype;
-    this.world.queries.onArchetypeCreated(archetype);
-    return archetype;
+    Components = Components.slice()
+    const archetype = new Archetype(this.world, id, Components)
+    this.archetypes[archetype.id] = archetype
+    this.world.queries.onArchetypeCreated(archetype)
+    return archetype
   }
 }

@@ -1,26 +1,26 @@
 <script lang="ts">
-  import SidePanel, { Header } from "~/ui/lib/SidePanel";
-  import Pane from "~/ui/lib/Pane";
-  import Button from "~/ui/lib/Button";
-  import { selectedEntities, selectedGroups } from "~/stores/selection";
-  import { worldManager } from "~/world";
-  import EntityComponents from "./EntityComponents.svelte";
-  import AdminAddToLibrary from "./AdminAddToLibrary.svelte";
-  import { permits } from "~/stores/permits";
-  import TransformButtons from "./TransformButtons.svelte";
-  import { _ } from "~/i18n";
+import SidePanel, { Header } from "~/ui/lib/SidePanel"
+import Pane from "~/ui/lib/Pane"
+import Button from "~/ui/lib/Button"
+import { selectedEntities, selectedGroups } from "~/stores/selection"
+import { worldManager } from "~/world"
+import EntityComponents from "./EntityComponents.svelte"
+import AdminAddToLibrary from "./AdminAddToLibrary.svelte"
+import { permits } from "~/stores/permits"
+import TransformButtons from "./TransformButtons.svelte"
+import { _ } from "~/i18n"
 
-  let entity;
-  $: $selectedEntities, (entity = worldManager.selection.getFirst());
+let entity
+$: $selectedEntities, (entity = worldManager.selection.getFirst())
 
-  const destroyEntity = () => {
-    worldManager.worldDoc.delete(entity);
-  };
+const destroyEntity = () => {
+  worldManager.worldDoc.delete(entity)
+}
 
-  const debugEntity = () => {
-    (window as any).entity = entity;
-    console.log(`'window.entity' available`);
-  };
+const debugEntity = () => {
+  ;(window as any).entity = entity
+  console.log(`'window.entity' available`)
+}
 </script>
 
 <SidePanel on:minimize>

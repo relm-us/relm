@@ -1,1 +1,1 @@
-export { default } from "./Pane.svelte";
+export { default } from "./Pane.svelte"

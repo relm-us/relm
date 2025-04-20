@@ -1,35 +1,24 @@
-import {
-  PlaneGeometry,
-  MeshStandardMaterial,
-  Mesh,
-  DoubleSide,
-  Texture,
-} from "three";
+import { PlaneGeometry, MeshStandardMaterial, Mesh, DoubleSide, type Texture } from "three"
 
-import { System, Not, Modified, Groups, Entity } from "~/ecs/base";
-import { Presentation, Object3DRef } from "~/ecs/plugins/core";
-import { Queries } from "~/ecs/base/Query";
+import { System, Not, Modified, Groups, type Entity } from "~/ecs/base"
+import { type Presentation, Object3DRef } from "~/ecs/plugins/core"
+import type { Queries } from "~/ecs/base/Query"
 
-import {
-  Image,
-  ImageAssetLoaded,
-  ImageMesh,
-  ImageTexture,
-} from "../components";
+import { Image, ImageAssetLoaded, ImageMesh, ImageTexture } from "../components"
 
 type Size = {
-  width: number;
-  height: number;
-};
+  width: number
+  height: number
+}
 
 /**
  * ImageSystem represents a 3D model, and is responsible for attaching it
  * to a threejs Object3D, contained by an ECS Object3D component
  */
 export class ImageSystem extends System {
-  presentation: Presentation;
+  presentation: Presentation
 
-  order = Groups.Initialization;
+  order = Groups.Initialization
 
   static queries: Queries = {
     modified: [Modified(Image)],
@@ -39,134 +28,133 @@ export class ImageSystem extends System {
 
     removedMesh: [Not(Image), ImageMesh],
     removedAsset: [Not(Image), ImageTexture],
-  };
+  }
 
   init({ presentation }) {
-    this.presentation = presentation;
+    this.presentation = presentation
   }
 
   update() {
     this.queries.modified.forEach((entity) => {
-      this.removeTexture(entity);
-      this.remove(entity);
-    });
+      this.removeTexture(entity)
+      this.remove(entity)
+    })
 
     this.queries.added.forEach((entity) => {
-      this.build(entity);
-    });
+      this.build(entity)
+    })
 
     this.queries.addedAsset.forEach((entity) => {
-      this.buildTexture(entity);
-    });
+      this.buildTexture(entity)
+    })
 
     this.queries.removedAsset.forEach((entity) => {
-      this.removeTexture(entity);
-    });
+      this.removeTexture(entity)
+    })
 
     this.queries.removedMesh.forEach((entity) => {
-      this.remove(entity);
-    });
+      this.remove(entity)
+    })
   }
 
   attach(entity: Entity) {
-    const object3dref: Object3DRef = entity.get(Object3DRef);
+    const object3dref: Object3DRef = entity.get(Object3DRef)
 
     // Attach shape mesh to container object3d
-    const mesh: ImageMesh = entity.get(ImageMesh);
-    object3dref.value.add(mesh.value);
+    const mesh: ImageMesh = entity.get(ImageMesh)
+    object3dref.value.add(mesh.value)
 
     // Notify dependencies, e.g. BoundingBox, that object3d has changed
-    object3dref.modified();
+    object3dref.modified()
   }
 
   detach(entity: Entity) {
     // Detach shape mesh from container object3d
-    const mesh: ImageMesh = entity.get(ImageMesh);
-    mesh?.value.removeFromParent();
+    const mesh: ImageMesh = entity.get(ImageMesh)
+    mesh?.value.removeFromParent()
 
     // Notify dependencies, (e.g. collider), that object3d has changed
-    const object3dref: Object3DRef = entity.get(Object3DRef);
-    object3dref?.modified();
+    const object3dref: Object3DRef = entity.get(Object3DRef)
+    object3dref?.modified()
   }
 
   build(entity: Entity, overrideWidth?: number, overrideHeight?: number) {
-    const spec: Image = entity.get(Image);
+    const spec: Image = entity.get(Image)
 
     const plane = {
       width: overrideWidth ?? spec.width,
       height: overrideHeight ?? spec.height,
-    };
+    }
 
-    const mesh = this.buildMesh(plane);
+    const mesh = this.buildMesh(plane)
 
-    entity.add(ImageMesh, { value: mesh });
+    entity.add(ImageMesh, { value: mesh })
 
-    this.attach(entity);
+    this.attach(entity)
   }
 
   buildMesh(size: { width: number; height: number }) {
-    const geometry = new PlaneGeometry(size.width, size.height);
+    const geometry = new PlaneGeometry(size.width, size.height)
     const material = new MeshStandardMaterial({
       roughness: 0.8,
       metalness: 0,
       transparent: true, // supports png transparency
       side: DoubleSide,
-    });
-    const mesh = new Mesh(geometry, material);
-    mesh.receiveShadow = true;
+    })
+    const mesh = new Mesh(geometry, material)
+    mesh.receiveShadow = true
 
-    return mesh;
+    return mesh
   }
 
   buildTexture(entity: Entity) {
-    const spec: Image = entity.get(Image);
-    const texture: Texture = entity.get(ImageAssetLoaded).value;
-    let mesh: ImageMesh = entity.get(ImageMesh);
+    const spec: Image = entity.get(Image)
+    const texture: Texture = entity.get(ImageAssetLoaded).value
+    let mesh: ImageMesh = entity.get(ImageMesh)
 
-    const image = { width: texture.image.width, height: texture.image.height };
-    const plane = { width: spec.width, height: spec.height };
+    const image = { width: texture.image.width, height: texture.image.height }
+    const plane = { width: spec.width, height: spec.height }
 
-    this.remove(entity);
+    this.remove(entity)
 
     if (spec.fit === "COVER") {
-      const cover = this.getCover(plane, image);
-      texture.repeat.set(cover.width, cover.height);
-      texture.offset.set(cover.x, cover.y);
+      const cover = this.getCover(plane, image)
+      texture.repeat.set(cover.width, cover.height)
+      texture.offset.set(cover.x, cover.y)
 
-      this.build(entity);
+      this.build(entity)
     } else if (spec.fit === "CONTAIN") {
-      const contain = this.getContain(plane, image);
+      const contain = this.getContain(plane, image)
 
-      texture.repeat.set(1, 1);
-      texture.offset.set(0, 0);
-      this.build(entity, contain.width, contain.height);
+      texture.repeat.set(1, 1)
+      texture.offset.set(0, 0)
+      this.build(entity, contain.width, contain.height)
     }
 
-    mesh = entity.get(ImageMesh);
+    mesh = entity.get(ImageMesh)
+    ;(mesh.value.material as MeshStandardMaterial).map = texture
 
-    (mesh.value.material as MeshStandardMaterial).map = texture;
-
-    entity.add(ImageTexture);
+    entity.add(ImageTexture)
   }
 
   remove(entity: Entity) {
-    this.detach(entity);
+    this.detach(entity)
 
-    const mesh: ImageMesh = entity.get(ImageMesh);
+    const mesh: ImageMesh = entity.get(ImageMesh)
 
     if (mesh) {
-      mesh.value.geometry?.dispose();
-      entity.remove(ImageMesh);
+      mesh.value.geometry?.dispose()
+      entity.remove(ImageMesh)
     }
   }
 
   removeTexture(entity: Entity) {
-    const mesh: ImageMesh = entity.get(ImageMesh);
+    const mesh: ImageMesh = entity.get(ImageMesh)
     if (mesh) {
-      (mesh.value.material as MeshStandardMaterial).map = null;
+      ;(mesh.value.material as MeshStandardMaterial).map = null
     }
 
-    entity.maybeRemove(ImageTexture);
+    entity.maybeRemove(ImageTexture)
   }
 
   /**
@@ -176,14 +164,14 @@ export class ImageSystem extends System {
    * image being cropped off the vertical/horizontal edges.
    */
   getCover(plane: Size, image: Size): Size & { x: number; y: number } {
-    const planeAspect = plane.width / plane.height;
-    const imageAspect = image.width / image.height;
+    const planeAspect = plane.width / plane.height
+    const imageAspect = image.width / image.height
 
-    let yScale = 1;
-    let xScale = planeAspect / imageAspect;
+    let yScale = 1
+    let xScale = planeAspect / imageAspect
     if (xScale > yScale) {
-      xScale = 1;
-      yScale = imageAspect / planeAspect;
+      xScale = 1
+      yScale = imageAspect / planeAspect
     }
 
     return {
@@ -191,7 +179,7 @@ export class ImageSystem extends System {
       height: yScale,
       x: (1 - xScale) / 2,
       y: (1 - yScale) / 2,
-    };
+    }
   }
 
   /**
@@ -204,18 +192,17 @@ export class ImageSystem extends System {
     const contain = {
       width: plane.width,
       height: plane.height,
-    };
+    }
 
-    const planeAspect = plane.width / plane.height;
-    const imageAspect = image.width / image.height;
+    const planeAspect = plane.width / plane.height
+    const imageAspect = image.width / image.height
 
     // plane is too wide, shrink to fit
-    if (planeAspect > imageAspect) contain.width = contain.height * imageAspect;
+    if (planeAspect > imageAspect) contain.width = contain.height * imageAspect
 
     // plane is too high, shrink to fit
-    if (planeAspect < imageAspect)
-      contain.height = (image.height / image.width) * contain.width;
+    if (planeAspect < imageAspect) contain.height = (image.height / image.width) * contain.width
 
-    return contain;
+    return contain
   }
 }

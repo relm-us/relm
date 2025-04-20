@@ -1,18 +1,16 @@
 <script lang="ts">
-  import CircleButton from "~/ui/lib/CircleButton";
+import CircleButton from "~/ui/lib/CircleButton"
 
-  import MoveIcon from "./icons/MoveIcon.svelte";
-  import RotateIcon from "./icons/RotateIcon.svelte";
-  import ScaleIcon from "./icons/ScaleIcon.svelte";
+import MoveIcon from "./icons/MoveIcon.svelte"
+import RotateIcon from "./icons/RotateIcon.svelte"
+import ScaleIcon from "./icons/ScaleIcon.svelte"
 
-  import { TransformControlsRef } from "~/ecs/plugins/transform-controls";
-  import { worldManager } from "~/world";
+import { TransformControlsRef } from "~/ecs/plugins/transform-controls"
+import { worldManager } from "~/world"
 
-  const choose = (mode) => () => {
-    worldManager.transformEntity
-      ?.get(TransformControlsRef)
-      ?.value.setMode(mode);
-  };
+const choose = (mode) => () => {
+  worldManager.transformEntity?.get(TransformControlsRef)?.value.setMode(mode)
+}
 </script>
 
 <div class="transform-buttons">

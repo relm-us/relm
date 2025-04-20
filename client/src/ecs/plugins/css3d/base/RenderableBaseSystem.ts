@@ -1,103 +1,103 @@
-import { CSS3DObject } from "./CSS3DRenderer";
+import { CSS3DObject } from "./CSS3DRenderer"
 
-import { System, Groups } from "~/ecs/base";
-import { Transform } from "~/ecs/plugins/core";
+import { System, Groups } from "~/ecs/base"
+import { Transform } from "~/ecs/plugins/core"
 
-import { CssPlane } from "./CssPlane";
-import { CssPresentation } from "./CssPresentation";
-import { copyTransform } from "./copyTransform";
+import { CssPlane } from "./CssPlane"
+import type { CssPresentation } from "./CssPresentation"
+import { copyTransform } from "./copyTransform"
 
 export class RenderableBaseSystem extends System {
-  cssPresentation: CssPresentation;
-  RenderableComponent: any;
-  EcsComponent: any;
-  EcsComponentRef: any;
+  cssPresentation: CssPresentation
+  RenderableComponent: any
+  EcsComponent: any
+  EcsComponentRef: any
 
   // This needs to be after WorldTransformationSystem, so that the CSS
   // is updated with the latest world coords as soon as possible after
   // having computed them during WebGL render. It must be immediately
   // followed up with CssRenderSystem so that the actual render occurs.
-  order = Groups.Initialization + 100;
+  order = Groups.Initialization + 100
 
   init({ cssPresentation }) {
-    this.cssPresentation = cssPresentation;
+    this.cssPresentation = cssPresentation
   }
 
   buildCssPlane(entity) {
-    const plane = new CssPlane(this.world);
-    entity.add(plane);
+    const plane = new CssPlane(this.world)
+    entity.add(plane)
   }
 
   build(entity) {
-    if (!entity.has(CssPlane)) this.buildCssPlane(entity);
+    if (!entity.has(CssPlane)) this.buildCssPlane(entity)
 
-    const transform: Transform = entity.get(Transform);
-    const cssPlane: CssPlane = entity.get(CssPlane);
+    const transform: Transform = entity.get(Transform)
+    const cssPlane: CssPlane = entity.get(CssPlane)
 
     // Prepare a container for Svelte
-    const containerElement = cssPlane.createComponentContainer();
-    const css3d = new CSS3DObject(containerElement);
+    const containerElement = cssPlane.createComponentContainer()
+    const css3d = new CSS3DObject(containerElement)
 
     // Create whatever Svelte component is specified by the type
     css3d.userData.renderable = new this.RenderableComponent({
       target: containerElement,
       props: this.getProps(entity),
-    });
+    })
 
-    copyTransform(css3d, transform, cssPlane.getFracScale(), cssPlane.offset);
+    copyTransform(css3d, transform, cssPlane.getFracScale(), cssPlane.offset)
 
     // We need to update the matrixWorld of the new object, or there will be a brief
     // flash of the HTML at 0,0,0
-    css3d.updateMatrixWorld();
+    css3d.updateMatrixWorld()
 
-    this.cssPresentation.scene.add(css3d);
+    this.cssPresentation.scene.add(css3d)
 
-    entity.add(this.EcsComponentRef, { value: css3d });
+    entity.add(this.EcsComponentRef, { value: css3d })
   }
 
   modify(entity) {
-    this.setSvelteProps(entity, this.getProps(entity));
+    this.setSvelteProps(entity, this.getProps(entity))
   }
 
   setSvelteProps(entity, props) {
-    const css3d = entity.get(this.EcsComponentRef).value;
+    const css3d = entity.get(this.EcsComponentRef).value
     if (css3d) {
-      const component = css3d.userData.renderable;
-      component?.$set(props);
+      const component = css3d.userData.renderable
+      component?.$set(props)
     }
   }
 
   transform(entity) {
-    const transform: Transform = entity.get(Transform);
+    const transform: Transform = entity.get(Transform)
 
-    const css3d = entity.get(this.EcsComponentRef)?.value;
-    const cssPlane: CssPlane = entity.get(CssPlane);
+    const css3d = entity.get(this.EcsComponentRef)?.value
+    const cssPlane: CssPlane = entity.get(CssPlane)
 
     if (cssPlane) {
-      copyTransform(css3d, transform, cssPlane.getFracScale(), cssPlane.offset);
+      copyTransform(css3d, transform, cssPlane.getFracScale(), cssPlane.offset)
     }
   }
 
   rebuild(entity) {
-    this.remove(entity);
-    this.build(entity);
+    this.remove(entity)
+    this.build(entity)
   }
 
   remove(entity) {
-    const ref = entity.get(this.EcsComponentRef);
+    const ref = entity.get(this.EcsComponentRef)
     if (ref && ref.value) {
       // Remove CSS3DObject from scene, which will emit 'removed' event
       // and also remove HTML node from DOM.
-      ref.value.parent.remove(ref.value);
+      ref.value.parent.remove(ref.value)
     }
 
-    entity.remove(this.EcsComponentRef);
+    entity.remove(this.EcsComponentRef)
   }
 
   getProps(entity) {
-    const spec: any = entity.get(this.EcsComponent);
-    const cssPlane: CssPlane = entity.get(CssPlane);
-    const size = cssPlane.getScreenSize();
+    const spec: any = entity.get(this.EcsComponent)
+    const cssPlane: CssPlane = entity.get(CssPlane)
+    const size = cssPlane.getScreenSize()
     const props = {
       entity,
       ...spec,
@@ -105,8 +105,8 @@ export class RenderableBaseSystem extends System {
       kind: cssPlane.kind,
       radius: cssPlane.circleRadius,
       visible: cssPlane.visible,
-    };
+    }
 
-    return props;
+    return props
   }
 }

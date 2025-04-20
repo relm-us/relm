@@ -1,88 +1,88 @@
 <script lang="ts">
-  import { cleanHtml } from "~/utils/cleanHtml";
-  import IoMdCreate from "svelte-icons/io/IoMdCreate.svelte";
+import { cleanHtml } from "~/utils/cleanHtml"
+import IoMdCreate from "svelte-icons/io/IoMdCreate.svelte"
 
-  import { Html2d } from "../components";
-  import { worldManager } from "~/world";
-  import { worldUIMode } from "~/stores/worldUIMode";
-  import { selectAll } from "~/utils/selectAll";
+import { Html2d } from "../components"
+import { worldManager } from "~/world"
+import { worldUIMode } from "~/stores/worldUIMode"
+import { selectAll } from "~/utils/selectAll"
 
-  export let content;
-  export let color;
-  export let shadowColor;
-  export let underlineColor;
-  export let editable;
-  export let visible;
+export let content
+export let color
+export let shadowColor
+export let underlineColor
+export let editable
+export let visible
 
-  // The entity that this Label is attached to
-  export let entity;
+// The entity that this Label is attached to
+export let entity
 
-  let labelEl;
-  let editing = false;
-  let showEditIcon = false;
-  let hasContent = content && content.length > 0;
+let labelEl
+let editing = false
+let showEditIcon = false
+let hasContent = content && content.length > 0
 
-  $: showEditIcon = editable && !hasContent;
+$: showEditIcon = editable && !hasContent
 
-  function doneEditing() {
-    if (!editing) return;
+function doneEditing() {
+  if (!editing) return
 
-    const html2d: Html2d = entity.get(Html2d);
-    html2d.content = content = labelEl.innerText.trim();
+  const html2d: Html2d = entity.get(Html2d)
+  html2d.content = content = labelEl.innerText.trim()
 
-    if (html2d.onChange) {
-      html2d.onChange(content);
-    } else {
-      // Broadcast changes
-      worldManager.worldDoc.syncFrom(entity);
-    }
-
-    editing = false;
+  if (html2d.onChange) {
+    html2d.onChange(content)
+  } else {
+    // Broadcast changes
+    worldManager.worldDoc.syncFrom(entity)
   }
 
-  function onKeydown(event) {
-    if (
-      event.key === "Tab" ||
-      event.key === "Escape" ||
-      /**
-       * `enter` means "done", except when shift key is
-       * pressed, in which case `enter` means "newline"
-       */
-      ((event.key === "Enter" || event.key === "Return") && !event.shiftKey)
-    ) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.target.blur();
-    } else {
-      // slightly faster visual response than keyup
-      hasContent = true;
-    }
-  }
+  editing = false
+}
 
-  function onKeyup(event) {
-    hasContent = labelEl.innerText.trim().length > 0;
+function onKeydown(event) {
+  if (
+    event.key === "Tab" ||
+    event.key === "Escape" ||
+    /**
+     * `enter` means "done", except when shift key is
+     * pressed, in which case `enter` means "newline"
+     */
+    ((event.key === "Enter" || event.key === "Return") && !event.shiftKey)
+  ) {
+    event.preventDefault()
+    event.stopPropagation()
+    event.target.blur()
+  } else {
+    // slightly faster visual response than keyup
+    hasContent = true
   }
+}
 
-  function onMousedown(event) {
-    if ($worldUIMode === "build") {
-      event.preventDefault();
-      // Uses setTimeout because a click on "nothing" will deselect everything
-      // TODO: use selectionLogic to implement complete set of selection possibilities
-      setTimeout(() => {
-        worldManager.selection.clear();
-        worldManager.selection.addEntityId(entity.id);
-      }, 100);
-    } else if (editable && !editing) {
-      editing = true;
-      setTimeout(() => {
-        labelEl.focus();
-        selectAll(labelEl);
-      }, 100);
-    }
+function onKeyup(event) {
+  hasContent = labelEl.innerText.trim().length > 0
+}
+
+function onMousedown(event) {
+  if ($worldUIMode === "build") {
+    event.preventDefault()
+    // Uses setTimeout because a click on "nothing" will deselect everything
+    // TODO: use selectionLogic to implement complete set of selection possibilities
+    setTimeout(() => {
+      worldManager.selection.clear()
+      worldManager.selection.addEntityId(entity.id)
+    }, 100)
+  } else if (editable && !editing) {
+    editing = true
+    setTimeout(() => {
+      labelEl.focus()
+      selectAll(labelEl)
+    }, 100)
   }
+}
 
-  // ignore warning about missing props
-  $$props;
+// ignore warning about missing props
+$$props
 </script>
 
 {#if visible}

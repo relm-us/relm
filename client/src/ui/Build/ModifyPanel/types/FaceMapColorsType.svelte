@@ -1,118 +1,118 @@
 <script lang="ts">
-  import type { Component, Entity } from "~/ecs/base";
-  import { Color } from "three";
+import type { Component, Entity } from "~/ecs/base"
+import { Color } from "three"
 
-  import { createEventDispatcher } from "svelte";
+import { createEventDispatcher } from "svelte"
 
-  import ColorPicker from "~/ui/lib/ColorPicker";
-  import Slider from "~/ui/lib/Slider";
+import ColorPicker from "~/ui/lib/ColorPicker"
+import Slider from "~/ui/lib/Slider"
 
-  import { ModelRef } from "~/ecs/plugins/model";
-  import { getFacemapNames } from "~/ecs/plugins/coloration/getFacemapNames";
+import { ModelRef } from "~/ecs/plugins/model"
+import { getFacemapNames } from "~/ecs/plugins/coloration/getFacemapNames"
 
-  import NumberInput from "./utils/NumberInput.svelte";
+import NumberInput from "./utils/NumberInput.svelte"
 
-  export let key: string;
-  export let component: Component;
-  export let entity: Entity;
-  export let prop;
+export let key: string
+export let component: Component
+export let entity: Entity
+export let prop
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  function getAllFacemapNames(entity): string[] {
-    const ref: ModelRef = entity.get(ModelRef);
-    const scene = ref?.value?.scene;
-    if (!scene) return [];
+function getAllFacemapNames(entity): string[] {
+  const ref: ModelRef = entity.get(ModelRef)
+  const scene = ref?.value?.scene
+  if (!scene) return []
 
-    let facemapNames = new Set<string>();
-    scene.traverse((node) => {
-      if ((node as any).isMesh) {
-        getFacemapNames(node)?.forEach((name) => {
-          facemapNames.add(name);
-        });
-      }
-    });
+  let facemapNames = new Set<string>()
+  scene.traverse((node) => {
+    if ((node as any).isMesh) {
+      getFacemapNames(node)?.forEach((name) => {
+        facemapNames.add(name)
+      })
+    }
+  })
 
-    return Array.from(facemapNames);
+  return Array.from(facemapNames)
+}
+
+const getFacemapColor = (name: string): string => {
+  const facemap = component[key]
+  if (facemap) {
+    const pair = component[key][name]
+    if (pair) return pair[0]
   }
+  return "#FFFFFF"
+}
 
-  const getFacemapColor = (name: string): string => {
-    const facemap = component[key];
-    if (facemap) {
-      const pair = component[key][name];
-      if (pair) return pair[0];
-    }
-    return "#FFFFFF";
-  };
+const setFacemapColor =
+  (name) =>
+  ({ detail }) => {
+    const cssColor = detail.indexOf("#") === 0 ? detail.slice(0, 7) : detail
+    const color = new Color(cssColor)
+    const newValue = "#" + color.getHexString()
 
-  const setFacemapColor =
-    (name) =>
-    ({ detail }) => {
-      const cssColor = detail.indexOf("#") === 0 ? detail.slice(0, 7) : detail;
-      const color = new Color(cssColor);
-      const newValue = "#" + color.getHexString();
-
-      // initialize if necessary
-      if (component[key] === null) component[key] = {};
-
-      if (!(name in component[key])) {
-        component[key][name] = [newValue, 0.0];
-      } else {
-        component[key][name][0] = newValue;
-      }
-
-      // Notify ECS system
-      component.modified();
-
-      // Dispatch a message that will sync yjs
-      dispatch("modified");
-    };
-
-  const getFacemapWeight = (component: Component, name: string): number => {
-    const facemap = component[key];
-    if (facemap) {
-      const pair = facemap[name];
-      if (pair) return pair[1];
-    }
-
-    return 0;
-  };
-
-  function setFacemapWeight(name: string, weight: number, finalize: boolean) {
     // initialize if necessary
-    if (component[key] === null) component[key] = {};
+    if (component[key] === null) component[key] = {}
 
     if (!(name in component[key])) {
-      component[key][name] = ["#FFFFFF", weight];
+      component[key][name] = [newValue, 0.0]
     } else {
-      component[key][name][1] = weight;
+      component[key][name][0] = newValue
     }
 
     // Notify ECS system
-    component.modified();
+    component.modified()
 
     // Dispatch a message that will sync yjs
-    if (finalize) dispatch("modified");
+    dispatch("modified")
   }
 
-  const setFacemapWeightNumberInput =
-    (name: string) =>
-    ({ detail }) =>
-      setFacemapWeight(name, detail.value, detail.final);
-
-  const setFacemapWeightSlider =
-    (name: string, finalize: boolean) =>
-    ({ detail: weight }) =>
-      setFacemapWeight(name, weight, finalize);
-
-  let value;
-  $: {
-    const color = new Color(component[key]);
-    value = "#" + color.getHexString();
+const getFacemapWeight = (component: Component, name: string): number => {
+  const facemap = component[key]
+  if (facemap) {
+    const pair = facemap[name]
+    if (pair) return pair[1]
   }
 
-  // ignore warning about missing props
-  $$props;
+  return 0
+}
+
+function setFacemapWeight(name: string, weight: number, finalize: boolean) {
+  // initialize if necessary
+  if (component[key] === null) component[key] = {}
+
+  if (!(name in component[key])) {
+    component[key][name] = ["#FFFFFF", weight]
+  } else {
+    component[key][name][1] = weight
+  }
+
+  // Notify ECS system
+  component.modified()
+
+  // Dispatch a message that will sync yjs
+  if (finalize) dispatch("modified")
+}
+
+const setFacemapWeightNumberInput =
+  (name: string) =>
+  ({ detail }) =>
+    setFacemapWeight(name, detail.value, detail.final)
+
+const setFacemapWeightSlider =
+  (name: string, finalize: boolean) =>
+  ({ detail: weight }) =>
+    setFacemapWeight(name, weight, finalize)
+
+let value
+$: {
+  const color = new Color(component[key])
+  value = "#" + color.getHexString()
+}
+
+// ignore warning about missing props
+$$props
 </script>
 
 <r-facemap-type>

@@ -1,1 +1,1 @@
-export { FollowSystem } from "./FollowSystem";
+export { FollowSystem } from "./FollowSystem"

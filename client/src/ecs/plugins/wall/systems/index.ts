@@ -1,1 +1,1 @@
-export { WallSystem } from "./WallSystem";
+export { WallSystem } from "./WallSystem"

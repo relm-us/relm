@@ -1,2 +1,2 @@
-export { Animation } from "./Animation";
-export { MixerRef } from "./MixerRef";
+export { Animation } from "./Animation"
+export { MixerRef } from "./MixerRef"

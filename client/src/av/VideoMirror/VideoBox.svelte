@@ -1,22 +1,22 @@
 <script lang="ts">
-  import { spring } from "svelte/motion";
+import { spring } from "svelte/motion"
 
-  import Video from "~/av/components/Video";
+import Video from "~/av/components/Video"
 
-  export let track = null;
-  export let blocked = false;
-  export let opaque = false;
-  export let enabled = true;
+export let track = null
+export let blocked = false
+export let opaque = false
+export let enabled = true
 
-  let videoPositionSpring = spring(0, {
-    stiffness: 0.5,
-    damping: 0.3,
-  });
+let videoPositionSpring = spring(0, {
+  stiffness: 0.5,
+  damping: 0.3,
+})
 
-  export function shake() {
-    videoPositionSpring.set(10);
-    setTimeout(() => videoPositionSpring.set(0), 100);
-  }
+export function shake() {
+  videoPositionSpring.set(10)
+  setTimeout(() => videoPositionSpring.set(0), 100)
+}
 </script>
 
 <container class:opaque={!opaque}>

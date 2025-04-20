@@ -1,9 +1,9 @@
-import { Object3D } from "three";
-import { StateComponent, RefType } from "~/ecs/base";
+import type { Object3D } from "three"
+import { StateComponent, RefType } from "~/ecs/base"
 
 export class ChildAttachRef extends StateComponent {
-  parent: Object3D;
-  child: Object3D;
+  parent: Object3D
+  child: Object3D
 
   static props = {
     parent: {
@@ -13,5 +13,5 @@ export class ChildAttachRef extends StateComponent {
     child: {
       type: RefType,
     },
-  };
+  }
 }

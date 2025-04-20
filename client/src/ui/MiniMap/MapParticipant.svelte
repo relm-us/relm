@@ -1,7 +1,7 @@
 <script lang="ts">
-  export let x: number;
-  export let y: number;
-  export let color = "#efefef";
+export let x: number
+export let y: number
+export let color = "#efefef"
 </script>
 
 <r-map-participant style="left: {x}px; top: {y}px; background-color: {color}" />

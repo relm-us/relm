@@ -1,97 +1,90 @@
-import * as Y from "yjs";
-import { get, writable, derived, Readable, Writable } from "svelte/store";
-import { readableArray } from "svelt-yjs";
+import type * as Y from "yjs"
+import { get, writable, derived, type Readable, type Writable } from "svelte/store"
+import { readableArray } from "svelt-yjs"
 
-import { unreadCount } from "~/stores/unreadCount";
-import { openDialog } from "~/stores/openDialog";
+import { unreadCount } from "~/stores/unreadCount"
+import { openDialog } from "~/stores/openDialog"
 
 export type ChatMessage = {
   // Message ("C"ontent)
-  c: string;
+  c: string
   // Author ("U"ser)
-  u: string;
+  u: string
   // Name ("N"ame)
-  n: string;
+  n: string
   // Color (C"o"lor)
-  o: string;
-};
+  o: string
+}
 
 export function getEmojiFromMessage(msg) {
-  const match = msg.c.toUpperCase().match(/^:([A-Z]+):$/);
-  if (match) return match[1];
-  else return null;
+  const match = msg.c.toUpperCase().match(/^:([A-Z]+):$/)
+  if (match) return match[1]
+
+  return null
 }
 
 export class ChatManager {
   /**
    * A store containing messages originating in Yjs doc
    */
-  messages: Readable<Array<ChatMessage>> & { y: any };
-  setCommunicatingState: (
-    message: string,
-    state: "speaking" | "emoting",
-    value: boolean
-  ) => void;
+  messages: Readable<Array<ChatMessage>> & { y: any }
+  setCommunicatingState: (message: string, state: "speaking" | "emoting", value: boolean) => void
 
-  processed: Writable<number> = writable(0);
+  processed: Writable<number> = writable(0)
 
-  readCount: Writable<number> = writable(0);
+  readCount: Writable<number> = writable(0)
 
   init(
     messages: Y.Array<ChatMessage>,
-    setCommunicatingState: (
-      message: string,
-      state: "speaking" | "emoting",
-      value: boolean
-    ) => void
+    setCommunicatingState: (message: string, state: "speaking" | "emoting", value: boolean) => void,
   ) {
-    this.setCommunicatingState = setCommunicatingState;
-    this.setMessages(messages);
-    this.readCount.set(messages.length);
+    this.setCommunicatingState = setCommunicatingState
+    this.setMessages(messages)
+    this.readCount.set(messages.length)
   }
 
   setMessages(messages: Y.Array<ChatMessage>) {
-    this.messages = readableArray(messages);
+    this.messages = readableArray(messages)
 
     derived([this.messages, this.readCount], ([$messages, $readCount], set) => {
-      const count = $messages.length - $readCount;
+      const count = $messages.length - $readCount
       // Negative count can happen when we update readCount first, then messages
-      unreadCount.set(count >= 0 ? count : 0);
-    }).subscribe(() => {});
+      unreadCount.set(count >= 0 ? count : 0)
+    }).subscribe(() => {})
 
     // Consider all past chat history as "read" when entering the relm
-    let doneFirstPass = false;
+    let doneFirstPass = false
     let unsubscribe = this.messages.subscribe(($messages) => {
       if (doneFirstPass) {
-        this.readCount.set($messages.length);
-        unsubscribe();
-        unsubscribe = null;
+        this.readCount.set($messages.length)
+        unsubscribe()
+        unsubscribe = null
       }
-      doneFirstPass = true;
-    });
+      doneFirstPass = true
+    })
 
     openDialog.subscribe(($dialog) => {
       if ($dialog === "chat") {
-        this.readCount.set(get(this.messages).length);
+        this.readCount.set(get(this.messages).length)
       }
-    });
+    })
   }
 
   addMessage(msg: ChatMessage) {
     // Don't count our own message as "unread"
     this.readCount.update(($count) => {
-      return $count + 1;
-    });
+      return $count + 1
+    })
     // Broadcast via yjs
-    this.messages.y.push([msg]);
+    this.messages.y.push([msg])
 
     if (getEmojiFromMessage(msg)) {
-      this.setCommunicatingState(msg.c, "emoting", true);
+      this.setCommunicatingState(msg.c, "emoting", true)
       setTimeout(() => {
-        this.setCommunicatingState(msg.c, "emoting", false);
-      }, 6000);
+        this.setCommunicatingState(msg.c, "emoting", false)
+      }, 6000)
     } else {
-      this.setCommunicatingState(msg.c, "speaking", true);
+      this.setCommunicatingState(msg.c, "speaking", true)
     }
   }
 }

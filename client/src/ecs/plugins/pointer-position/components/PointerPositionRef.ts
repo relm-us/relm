@@ -1,10 +1,10 @@
-import { WorldPlanes } from "~/ecs/shared/WorldPlanes";
-import { LocalComponent, RefType, NumberType } from "~/ecs/base";
+import type { WorldPlanes } from "~/ecs/shared/WorldPlanes"
+import { LocalComponent, RefType, NumberType } from "~/ecs/base"
 
 export class PointerPositionRef extends LocalComponent {
-  value: WorldPlanes;
-  updateCount: number;
-  avatarMovedAt: number;
+  value: WorldPlanes
+  updateCount: number
+  avatarMovedAt: number
 
   static props = {
     value: {
@@ -21,5 +21,5 @@ export class PointerPositionRef extends LocalComponent {
       type: NumberType,
       default: 0,
     },
-  };
+  }
 }

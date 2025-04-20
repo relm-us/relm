@@ -1,24 +1,24 @@
 <script lang="ts">
-  import type { DeviceIds } from "~/av/VideoMirror";
+import type { DeviceIds } from "~/av/VideoMirror"
 
-  import { createEventDispatcher } from "svelte";
-  import { VideoMirror } from "~/av/VideoMirror";
-  import { _ } from "svelte-i18n";
+import { createEventDispatcher } from "svelte"
+import { VideoMirror } from "~/av/VideoMirror"
+import { _ } from "svelte-i18n"
 
-  import { askMediaSetup } from "~/stores/askMediaSetup";
-  import ToggleSwitch from "~/ui/lib/ToggleSwitch";
-  import PageOverlay from "~/ui/lib/PageOverlay";
-  import { config } from "~/config";
+import { askMediaSetup } from "~/stores/askMediaSetup"
+import ToggleSwitch from "~/ui/lib/ToggleSwitch"
+import PageOverlay from "~/ui/lib/PageOverlay"
+import { config } from "~/config"
 
-  export let audioDesired = true;
-  export let videoDesired = true;
-  export let preferredDeviceIds: DeviceIds;
+export let audioDesired = true
+export let videoDesired = true
+export let preferredDeviceIds: DeviceIds
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  function joinWithout() {
-    dispatch("done");
-  }
+function joinWithout() {
+  dispatch("done")
+}
 </script>
 
 <PageOverlay zIndex={5}>

@@ -1,2 +1,2 @@
-export { PointerPosition } from "./PointerPosition";
-export { PointerPositionRef } from "./PointerPositionRef";
+export { PointerPosition } from "./PointerPosition"
+export { PointerPositionRef } from "./PointerPositionRef"

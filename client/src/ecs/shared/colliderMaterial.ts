@@ -1,4 +1,4 @@
-import { Color, MeshStandardMaterial } from "three";
+import { Color, MeshStandardMaterial } from "three"
 
 export const colliderMaterial = new MeshStandardMaterial({
   color: new Color("#333333"),
@@ -7,7 +7,7 @@ export const colliderMaterial = new MeshStandardMaterial({
   emissive: new Color("#333333"),
   transparent: true,
   opacity: 0.5,
-});
+})
 
 export const sensorMaterial = new MeshStandardMaterial({
   color: new Color("#339933"),
@@ -16,4 +16,4 @@ export const sensorMaterial = new MeshStandardMaterial({
   emissive: new Color("#333333"),
   transparent: true,
   opacity: 0.5,
-});
+})

@@ -1,6 +1,6 @@
 <script lang="ts">
-  export let tint = true;
-  export let align;
+export let tint = true
+export let align
 </script>
 
 <r-tint

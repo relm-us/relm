@@ -1,1 +1,1 @@
-export { OutlineSystem } from "./OutlineSystem";
+export { OutlineSystem } from "./OutlineSystem"

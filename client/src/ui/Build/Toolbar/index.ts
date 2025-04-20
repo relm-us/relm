@@ -1,1 +1,1 @@
-export { default } from "./Toolbar.svelte";
+export { default } from "./Toolbar.svelte"

@@ -1,1 +1,1 @@
-export { ParticlesSystem } from "./ParticlesSystem";
+export { ParticlesSystem } from "./ParticlesSystem"

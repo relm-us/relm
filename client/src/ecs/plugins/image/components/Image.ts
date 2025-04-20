@@ -1,13 +1,13 @@
-import { Component, StringType, NumberType } from "~/ecs/base";
-import { Asset, AssetType } from "~/ecs/plugins/core";
+import { Component, StringType, NumberType } from "~/ecs/base"
+import { type Asset, AssetType } from "~/ecs/plugins/core"
 
 export class Image extends Component {
-  fit: "COVER" | "CONTAIN";
-  asset: Asset;
-  width: number;
-  height: number;
+  fit: "COVER" | "CONTAIN"
+  asset: Asset
+  width: number
+  height: number
 
-  needsRebuild: boolean;
+  needsRebuild: boolean
 
   static props = {
     fit: {
@@ -45,9 +45,9 @@ export class Image extends Component {
         label: "Height",
       },
     },
-  };
+  }
 
   static editor = {
     label: "Image",
-  };
+  }
 }

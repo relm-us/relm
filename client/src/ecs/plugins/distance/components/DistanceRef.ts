@@ -1,12 +1,12 @@
-import { NumberType, LocalComponent } from "~/ecs/base";
+import { NumberType, LocalComponent } from "~/ecs/base"
 
 export class DistanceRef extends LocalComponent {
-  value: number;
+  value: number
 
   static props = {
     value: {
       type: NumberType,
       default: null,
     },
-  };
+  }
 }

@@ -1,11 +1,11 @@
-import { Vector3 } from "three";
+import type { Vector3 } from "three"
 
-import { LocalComponent, NumberType } from "~/ecs/base";
-import { Vector3Type } from "~/ecs/plugins/core";
+import { LocalComponent, NumberType } from "~/ecs/base"
+import { Vector3Type } from "~/ecs/plugins/core"
 
 export class FollowPoint extends LocalComponent {
-  target: Vector3;
-  dampening: number;
+  target: Vector3
+  dampening: number
 
   static props = {
     target: {
@@ -19,5 +19,5 @@ export class FollowPoint extends LocalComponent {
         label: "Speed Dampening",
       },
     },
-  };
+  }
 }

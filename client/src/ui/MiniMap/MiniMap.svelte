@@ -1,65 +1,62 @@
 <script lang="ts">
-  import { Vector3 } from "three";
-  import { onMount } from "svelte";
-  import FaMap from "svelte-icons/fa/FaMap.svelte";
+import { Vector3 } from "three"
+import { onMount } from "svelte"
+import FaMap from "svelte-icons/fa/FaMap.svelte"
 
-  import { worldManager } from "~/world";
-  import { worldUIMode } from "~/stores";
+import { worldManager } from "~/world"
+import { worldUIMode } from "~/stores"
 
-  import CircleButton from "~/ui/lib/CircleButton";
+import CircleButton from "~/ui/lib/CircleButton"
 
-  import MapParticipant from "./MapParticipant.svelte";
+import MapParticipant from "./MapParticipant.svelte"
 
-  let center = new Vector3();
+let center = new Vector3()
 
-  let size = new Vector3();
+let size = new Vector3()
 
-  let enabled = true;
+let enabled = true
 
-  let mapDiameter = 150;
-  let worldDiameter;
-  let otherPositions = [];
-  let myPosition = null;
+let mapDiameter = 150
+let worldDiameter
+let otherPositions = []
+let myPosition = null
 
-  function onClick(event) {
-    if ($worldUIMode === "build") {
-      const x = event.clientX - event.target.offsetLeft - 1;
-      const y = event.clientY - event.target.offsetTop + 13;
-      const mR = mapDiameter / 2;
-      const wR = worldDiameter / 2;
-      worldManager.moveToXZ(((x - mR) / mR) * wR, ((y - mR) / mR) * wR);
-    } else {
-      enabled = false;
-    }
+function onClick(event) {
+  if ($worldUIMode === "build") {
+    const x = event.clientX - event.target.offsetLeft - 1
+    const y = event.clientY - event.target.offsetTop + 13
+    const mR = mapDiameter / 2
+    const wR = worldDiameter / 2
+    worldManager.moveToXZ(((x - mR) / mR) * wR, ((y - mR) / mR) * wR)
+  } else {
+    enabled = false
   }
+}
 
-  onMount(() => {
-    const interval1 = setInterval(() => {
-      try {
-        otherPositions = Array.from(
-          worldManager.participants.participants.values()
-        ).map((pt) => {
-          return pt.avatar.position;
-        });
-        if (worldManager.participants.local.avatar)
-          myPosition = worldManager.participants.local.avatar.position;
-      } catch (err) {
-        // When unloading the world, it's possible pt.avatar.position will
-        // fail, but we don't care
-      }
-    }, 75);
+onMount(() => {
+  const interval1 = setInterval(() => {
+    try {
+      otherPositions = Array.from(worldManager.participants.participants.values()).map((pt) => {
+        return pt.avatar.position
+      })
+      if (worldManager.participants.local.avatar) myPosition = worldManager.participants.local.avatar.position
+    } catch (err) {
+      // When unloading the world, it's possible pt.avatar.position will
+      // fail, but we don't care
+    }
+  }, 75)
 
-    const interval2 = setInterval(() => {
-      worldManager.boundingBox.getCenter(center);
-      worldManager.boundingBox.getSize(size);
-      worldDiameter = size.x > size.z ? size.x : size.z;
-    }, 1500);
+  const interval2 = setInterval(() => {
+    worldManager.boundingBox.getCenter(center)
+    worldManager.boundingBox.getSize(size)
+    worldDiameter = size.x > size.z ? size.x : size.z
+  }, 1500)
 
-    return () => {
-      clearInterval(interval1);
-      clearInterval(interval2);
-    };
-  });
+  return () => {
+    clearInterval(interval1)
+    clearInterval(interval2)
+  }
+})
 </script>
 
 {#if enabled}

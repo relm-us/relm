@@ -1,16 +1,16 @@
 <script lang="ts">
-  import FaRegSquare from "svelte-icons/fa/FaRegSquare.svelte";
-  import FaLowVision from "svelte-icons/fa/FaLowVision.svelte";
-  import FaMountain from "svelte-icons/fa/FaMountain.svelte";
+import FaRegSquare from "svelte-icons/fa/FaRegSquare.svelte"
+import FaLowVision from "svelte-icons/fa/FaLowVision.svelte"
+import FaMountain from "svelte-icons/fa/FaMountain.svelte"
 
-  import { globalEvents } from "~/events/globalEvents";
-  import { colliderEditMode } from "~/stores/colliderEditMode";
+import { globalEvents } from "~/events/globalEvents"
+import { colliderEditMode } from "~/stores/colliderEditMode"
 
-  import ToolButton from "./ToolButton.svelte";
+import ToolButton from "./ToolButton.svelte"
 
-  function onClick() {
-    globalEvents.emit("cycle-advanced-edit");
-  }
+function onClick() {
+  globalEvents.emit("cycle-advanced-edit")
+}
 </script>
 
 <!-- Object/Ground Select -->

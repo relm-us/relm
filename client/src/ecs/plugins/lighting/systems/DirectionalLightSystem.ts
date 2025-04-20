@@ -1,153 +1,138 @@
-import * as THREE from "three";
-import { MathUtils, Object3D } from "three";
+import * as THREE from "three"
+import { MathUtils, type Object3D } from "three"
 
-import { System, Groups, Not, Modified, Entity } from "~/ecs/base";
-import { Object3DRef } from "~/ecs/plugins/core";
-import { Perspective } from "~/ecs/plugins/perspective";
+import { System, Groups, Not, Modified, type Entity } from "~/ecs/base"
+import { Object3DRef } from "~/ecs/plugins/core"
+import type { Perspective } from "~/ecs/plugins/perspective"
 
-import { DirectionalLight, DirectionalLightRef } from "../components";
+import { DirectionalLight, DirectionalLightRef } from "../components"
 
-import { SHADOW_MAP_TYPE } from "~/config/constants";
+import { SHADOW_MAP_TYPE } from "~/config/constants"
 
 export class DirectionalLightSystem extends System {
-  count: number;
-  perspective: Perspective;
+  count: number
+  perspective: Perspective
 
-  order = Groups.Initialization;
+  order = Groups.Initialization
 
   static queries = {
     added: [DirectionalLight, Object3DRef, Not(DirectionalLightRef)],
     active: [DirectionalLight, DirectionalLightRef],
     modified: [Modified(DirectionalLight), DirectionalLightRef],
     removed: [Not(DirectionalLight), DirectionalLightRef],
-  };
+  }
 
   init({ perspective }) {
-    this.perspective = perspective;
+    this.perspective = perspective
   }
 
   update() {
     this.queries.added.forEach((entity) => {
-      const spec = entity.get(DirectionalLight);
-      const light = this.buildLight(entity);
+      const spec = entity.get(DirectionalLight)
+      const light = this.buildLight(entity)
       if (spec.shadow) {
         const resolution = {
           width: spec.shadowWidth,
           height: spec.shadowHeight,
-        };
-        this.buildShadow(
-          light,
-          spec.shadowRadius,
-          resolution,
-          this.getFrustumFromSpec(spec)
-        );
+        }
+        this.buildShadow(light, spec.shadowRadius, resolution, this.getFrustumFromSpec(spec))
       }
-      entity.add(DirectionalLightRef, { value: light });
-    });
+      entity.add(DirectionalLightRef, { value: light })
+    })
 
-    const vb = this.perspective.visibleBounds;
+    const vb = this.perspective.visibleBounds
     this.queries.active.forEach((entity) => {
-      const light = entity.get(DirectionalLightRef).value;
-      const size = Math.max(vb.max.x - vb.min.x, vb.max.z - vb.min.z);
+      const light = entity.get(DirectionalLightRef).value
+      const size = Math.max(vb.max.x - vb.min.x, vb.max.z - vb.min.z)
 
-      let zoom;
+      let zoom
       if ((window as any).zoom) {
         // manual override for testing
-        zoom = (window as any).zoom;
+        zoom = (window as any).zoom
       } else {
-        const size2 = 2 * Math.atan(size / (2 * 10)) * (180 / Math.PI);
-        const rangeZeroToOne =
-          (MathUtils.clamp(size2, 54, 140) - 54) / (140 - 54);
-        zoom = (1 - rangeZeroToOne) * 1.5 + 0.25;
+        const size2 = 2 * Math.atan(size / (2 * 10)) * (180 / Math.PI)
+        const rangeZeroToOne = (MathUtils.clamp(size2, 54, 140) - 54) / (140 - 54)
+        zoom = (1 - rangeZeroToOne) * 1.5 + 0.25
       }
-      light.shadow.camera.zoom = zoom;
-      light.shadow.camera.updateProjectionMatrix();
+      light.shadow.camera.zoom = zoom
+      light.shadow.camera.updateProjectionMatrix()
 
       if (light.helper) {
-        light.helper.update();
+        light.helper.update()
       }
-    });
+    })
 
     this.queries.modified.forEach((entity) => {
-      const spec = entity.get(DirectionalLight);
-      const light = entity.get(DirectionalLightRef).value;
+      const spec = entity.get(DirectionalLight)
+      const light = entity.get(DirectionalLightRef).value
       if (spec.shadow && !light.castShadow) {
         const resolution = {
           width: spec.shadowWidth,
           height: spec.shadowHeight,
-        };
-        this.buildShadow(
-          light,
-          spec.shadowRadius,
-          resolution,
-          this.getFrustumFromSpec(spec)
-        );
+        }
+        this.buildShadow(light, spec.shadowRadius, resolution, this.getFrustumFromSpec(spec))
       } else if (!spec.shadow && light.castShadow) {
-        light.castShadow = false;
+        light.castShadow = false
       }
-    });
+    })
   }
 
   buildLight(entity) {
-    const spec = entity.get(DirectionalLight);
-    const object3d: Object3D = entity.get(Object3DRef).value;
-    const light = new THREE.DirectionalLight(spec.color, spec.intensity);
+    const spec = entity.get(DirectionalLight)
+    const object3d: Object3D = entity.get(Object3DRef).value
+    const light = new THREE.DirectionalLight(spec.color, spec.intensity)
 
-    object3d.add(light);
+    object3d.add(light)
 
     if (spec.target) {
-      const targetEntity: Entity = this.world.entities.getById(spec.target);
+      const targetEntity: Entity = this.world.entities.getById(spec.target)
       if (targetEntity) {
         // DirectionalLight will point towards target entity, if provided
-        const target: Object3D = targetEntity.get(Object3DRef)?.value;
-        light.target = target;
+        const target: Object3D = targetEntity.get(Object3DRef)?.value
+        light.target = target
       } else {
-        console.warn(
-          `DirectionalLight's target entity is invalid; ` +
-            `light will point towards origin`,
-          spec.target
-        );
+        console.warn(`DirectionalLight's target entity is invalid; ` + `light will point towards origin`, spec.target)
       }
     } else {
       // If no target entity is provided, DirectionalLight will "float",
       // always pointing in same direction
       // TODO: FixMe
-      light.target.position.x = -object3d.position.x;
-      light.target.position.y = -object3d.position.y;
-      light.target.position.z = -object3d.position.z;
-      object3d.add(light.target);
+      light.target.position.x = -object3d.position.x
+      light.target.position.y = -object3d.position.y
+      light.target.position.z = -object3d.position.z
+      object3d.add(light.target)
     }
 
-    return light;
+    return light
   }
 
   buildShadow(light, radius, resolution, frustum) {
-    light.castShadow = true;
+    light.castShadow = true
 
-    light.shadow.mapSize.height = resolution.height;
-    light.shadow.mapSize.width = resolution.width;
+    light.shadow.mapSize.height = resolution.height
+    light.shadow.mapSize.width = resolution.width
 
-    light.shadow.camera.top = frustum.top;
-    light.shadow.camera.bottom = frustum.bottom;
-    light.shadow.camera.left = frustum.left;
-    light.shadow.camera.right = frustum.right;
-    light.shadow.camera.near = frustum.near;
-    light.shadow.camera.far = frustum.far;
-    light.shadow.camera.updateProjectionMatrix();
+    light.shadow.camera.top = frustum.top
+    light.shadow.camera.bottom = frustum.bottom
+    light.shadow.camera.left = frustum.left
+    light.shadow.camera.right = frustum.right
+    light.shadow.camera.near = frustum.near
+    light.shadow.camera.far = frustum.far
+    light.shadow.camera.updateProjectionMatrix()
 
-    light.shadow.radius = radius;
+    light.shadow.radius = radius
 
-    console.log("SHADOW_MAP_TYPE", SHADOW_MAP_TYPE);
+    console.log("SHADOW_MAP_TYPE", SHADOW_MAP_TYPE)
     switch (SHADOW_MAP_TYPE) {
       case "BASIC":
-        break;
+        break
       case "PCF":
-        light.shadow.normalBias = 0.005;
-        light.shadow.bias = -0.00005;
-        break;
+        light.shadow.normalBias = 0.005
+        light.shadow.bias = -0.00005
+        break
       case "VSM":
-        light.shadow.bias = -0.0002;
-        break;
+        light.shadow.bias = -0.0002
+        break
     }
 
     // light.helper = new THREE.CameraHelper(light.shadow.camera);
@@ -162,6 +147,6 @@ export class DirectionalLightSystem extends System {
       right: spec.shadowRight,
       near: spec.shadowNear,
       far: spec.shadowFar,
-    };
+    }
   }
 }

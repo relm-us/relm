@@ -1,1 +1,1 @@
-export { ColliderVisibleSystem } from "./ColliderVisibleSystem";
+export { ColliderVisibleSystem } from "./ColliderVisibleSystem"

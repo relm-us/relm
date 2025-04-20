@@ -1,7 +1,7 @@
-import { Component, StringType, NumberType, BooleanType } from "~/ecs/base";
-import { Asset, AssetType, Vector3Type } from "~/ecs/plugins/core";
-import { Vector3 } from "three";
-import { ShapeType } from "~/types/shapes";
+import { Component, StringType, NumberType, BooleanType } from "~/ecs/base"
+import { type Asset, AssetType, Vector3Type } from "~/ecs/plugins/core"
+import { Vector3 } from "three"
+import type { ShapeType } from "~/types/shapes"
 
 /**
  * A classic 3D shape, e.g. box, sphere, cylinder, capsule.
@@ -11,23 +11,23 @@ import { ShapeType } from "~/types/shapes";
  * out disrupting previous Shape/Shape2 expectations.
  */
 export class Shape3 extends Component {
-  kind: ShapeType;
+  kind: ShapeType
 
-  size: Vector3;
-  detail: number;
+  size: Vector3
+  detail: number
 
-  color: string;
-  emissive: string;
-  roughness: number;
-  metalness: number;
+  color: string
+  emissive: string
+  roughness: number
+  metalness: number
 
-  asset: Asset;
-  textureScale: number;
-  textureRotate: number;
-  fixedTexture: boolean;
+  asset: Asset
+  textureScale: number
+  textureRotate: number
+  fixedTexture: boolean
 
   // local flag indicating re-build of shape is necessary after texture change
-  needsRebuild: boolean;
+  needsRebuild: boolean
 
   static props = {
     kind: {
@@ -142,9 +142,9 @@ export class Shape3 extends Component {
         requires: [{ prop: "asset" }],
       },
     },
-  };
+  }
 
   static editor = {
     label: "Shape",
-  };
+  }
 }

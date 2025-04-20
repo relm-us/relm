@@ -1,8 +1,8 @@
-import { TextureLoader } from "three";
+import { TextureLoader } from "three"
 
-import * as T from "./texture-assets";
+import * as T from "./texture-assets"
 
-const loader = new TextureLoader();
+const loader = new TextureLoader()
 
 export const textures = {
   circle_01: () => loader.load(T.circle_01),
@@ -84,4 +84,4 @@ export const textures = {
   window_01: () => loader.load(T.window_01),
   window_02: () => loader.load(T.window_02),
   window_03: () => loader.load(T.window_03),
-};
+}

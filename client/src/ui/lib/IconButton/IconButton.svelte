@@ -1,7 +1,7 @@
 <script lang="ts">
-  export let width = 24;
-  export let height = 24;
-  export let padding = 4;
+export let width = 24
+export let height = 24
+export let padding = 4
 </script>
 
 <button

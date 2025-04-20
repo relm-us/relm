@@ -1,11 +1,11 @@
-import { LocalComponent, StringType } from "~/ecs/base";
+import { LocalComponent, StringType } from "~/ecs/base"
 
 export class AudioZoneEntered extends LocalComponent {
-  zone: string;
+  zone: string
 
   static props = {
     zone: {
       type: StringType,
     },
-  };
+  }
 }

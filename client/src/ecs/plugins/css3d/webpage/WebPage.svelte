@@ -1,65 +1,65 @@
 <script lang="ts">
-  import type { Entity } from "~/ecs/base";
-  import { Asset, Transform } from "~/ecs/plugins/core";
+import type { Entity } from "~/ecs/base"
+import type { Asset, Transform } from "~/ecs/plugins/core"
 
-  import { Vector2, Vector3 } from "three";
+import type { Vector2, Vector3 } from "three"
 
-  import { fade } from "svelte/transition";
+import { fade } from "svelte/transition"
 
-  import { worldManager } from "~/world";
-  import { assetUrl } from "~/config/assetUrl";
-  import { AVATAR_POINTER_TAP_MAX_DISTANCE } from "~/config/constants";
+import { worldManager } from "~/world"
+import { assetUrl } from "~/config/assetUrl"
+import { AVATAR_POINTER_TAP_MAX_DISTANCE } from "~/config/constants"
 
-  import { pointerStateDelayed } from "~/events/input/PointerListener/pointerActions";
-  import { worldUIMode } from "~/stores/worldUIMode";
-  import Fullwindow from "~/ui/lib/Fullwindow.svelte";
+import { pointerStateDelayed } from "~/events/input/PointerListener/pointerActions"
+import { worldUIMode } from "~/stores/worldUIMode"
+import Fullwindow from "~/ui/lib/Fullwindow.svelte"
 
-  export let asset: Asset;
-  export let size: Vector2;
-  export let url: string;
-  export let visible: boolean;
-  export let entity: Entity;
-  export let fit: "COVER" | "CONTAIN";
+export let asset: Asset
+export let size: Vector2
+export let url: string
+export let visible: boolean
+export let entity: Entity
+export let fit: "COVER" | "CONTAIN"
 
-  export let clicked: boolean = false;
+export let clicked: boolean = false
 
-  $: if (clicked) {
-    if (fullwindow) deactivateFullwindow();
-    else activateFullwindow();
-    clicked = false;
-  }
+$: if (clicked) {
+  if (fullwindow) deactivateFullwindow()
+  else activateFullwindow()
+  clicked = false
+}
 
-  let fullwindow = false;
+let fullwindow = false
 
-  function activateFullwindow() {
-    // don't allow activating in build mode
-    if ($worldUIMode === "build") return;
+function activateFullwindow() {
+  // don't allow activating in build mode
+  if ($worldUIMode === "build") return
 
-    // don't allow activating from accidental drag clicks
-    if (pointerStateDelayed === "interactive-drag") return;
+  // don't allow activating from accidental drag clicks
+  if (pointerStateDelayed === "interactive-drag") return
 
-    // don't allow activating an image that is too far away from the avatar
-    const p1: Vector3 = entity.get(Transform).position;
-    const p2: Vector3 = worldManager.participants.local.avatar.position;
-    if (p1.distanceTo(p2) > AVATAR_POINTER_TAP_MAX_DISTANCE) return;
+  // don't allow activating an image that is too far away from the avatar
+  const p1: Vector3 = entity.get(Transform).position
+  const p2: Vector3 = worldManager.participants.local.avatar.position
+  if (p1.distanceTo(p2) > AVATAR_POINTER_TAP_MAX_DISTANCE) return
 
-    fullwindow = true;
-  }
+  fullwindow = true
+}
 
-  function deactivateFullwindow() {
-    fullwindow = false;
-  }
+function deactivateFullwindow() {
+  fullwindow = false
+}
 
-  function getDomain(url: string) {
-    return new URL(url).hostname;
-  }
+function getDomain(url: string) {
+  return new URL(url).hostname
+}
 
-  $: if ($worldUIMode === "build") {
-    fullwindow = false;
-  }
+$: if ($worldUIMode === "build") {
+  fullwindow = false
+}
 
-  // ignore other props
-  $$props;
+// ignore other props
+$$props
 </script>
 
 {#if visible}

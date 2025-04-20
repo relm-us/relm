@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { IconVideoEnabled, IconVideoDisabled } from "./index";
+import { IconVideoEnabled, IconVideoDisabled } from "./index"
 
-  export let enabled = true;
+export let enabled = true
 </script>
 
 {#if enabled}

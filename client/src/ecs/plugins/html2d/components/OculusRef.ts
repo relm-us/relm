@@ -1,9 +1,9 @@
-import { SvelteComponent } from "svelte";
-import { StateComponent, RefType } from "~/ecs/base";
+import type { SvelteComponent } from "svelte"
+import { StateComponent, RefType } from "~/ecs/base"
 
 export class OculusRef extends StateComponent {
-  container: HTMLElement;
-  component: SvelteComponent;
+  container: HTMLElement
+  component: SvelteComponent
 
   static props = {
     container: {
@@ -13,5 +13,5 @@ export class OculusRef extends StateComponent {
     component: {
       type: RefType,
     },
-  };
+  }
 }

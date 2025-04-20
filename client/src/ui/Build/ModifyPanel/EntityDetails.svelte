@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Capsule from "~/ui/lib/Capsule";
-  import AddComponent from "./AddComponent.svelte";
+import Capsule from "~/ui/lib/Capsule"
+import AddComponent from "./AddComponent.svelte"
 
-  export let entity;
+export let entity
 </script>
 
 <r-entity-details>

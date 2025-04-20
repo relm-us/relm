@@ -1,4 +1,4 @@
-import { StateComponent, RefType, BooleanType, NumberType } from "~/ecs/base";
+import { StateComponent, RefType, BooleanType, NumberType } from "~/ecs/base"
 
 export class DiamondRef extends StateComponent {
   static props = {
@@ -19,5 +19,5 @@ export class DiamondRef extends StateComponent {
       type: NumberType,
       default: 0,
     },
-  };
+  }
 }

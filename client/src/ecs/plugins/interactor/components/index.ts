@@ -1,1 +1,1 @@
-export { Interactor } from "./Interactor";
+export { Interactor } from "./Interactor"

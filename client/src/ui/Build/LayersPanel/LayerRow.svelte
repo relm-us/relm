@@ -1,31 +1,31 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import { _ } from "svelte-i18n";
+import { createEventDispatcher } from "svelte"
+import { _ } from "svelte-i18n"
 
-  import IoMdEye from "svelte-icons/io/IoMdEye.svelte";
-  import IoMdEyeOff from "svelte-icons/io/IoMdEyeOff.svelte";
-  import IoMdRemoveCircle from "svelte-icons/io/IoMdRemoveCircle.svelte";
-  import IoMdCreate from "svelte-icons/io/IoMdCreate.svelte";
-  import MdSelectAll from "svelte-icons/md/MdSelectAll.svelte";
+import IoMdEye from "svelte-icons/io/IoMdEye.svelte"
+import IoMdEyeOff from "svelte-icons/io/IoMdEyeOff.svelte"
+import IoMdRemoveCircle from "svelte-icons/io/IoMdRemoveCircle.svelte"
+import IoMdCreate from "svelte-icons/io/IoMdCreate.svelte"
+import MdSelectAll from "svelte-icons/md/MdSelectAll.svelte"
 
-  import IconButton from "~/ui/lib/IconButton";
-  import { BASE_LAYER_ID } from "~/config/constants";
-  import Tooltip from "~/ui/lib/Tooltip";
-  import TextInput from "~/ui/lib/TextInput";
+import IconButton from "~/ui/lib/IconButton"
+import { BASE_LAYER_ID } from "~/config/constants"
+import Tooltip from "~/ui/lib/Tooltip"
+import TextInput from "~/ui/lib/TextInput"
 
-  export let id: string;
-  export let name: string;
-  export let visible: boolean;
-  export let active: boolean;
-  export let edit: boolean;
-  export let selected: boolean = false;
+export let id: string
+export let name: string
+export let visible: boolean
+export let active: boolean
+export let edit: boolean
+export let selected: boolean = false
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher()
 
-  // Holding "shift" while clicking makes the selection additive
-  function onClick(event) {
-    dispatch(event.shiftKey ? "selectAdd" : "select");
-  }
+// Holding "shift" while clicking makes the selection additive
+function onClick(event) {
+  dispatch(event.shiftKey ? "selectAdd" : "select")
+}
 </script>
 
 <r-layer-row

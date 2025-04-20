@@ -1,1 +1,1 @@
-export { default } from './Capsule.svelte'
+export { default } from "./Capsule.svelte"
