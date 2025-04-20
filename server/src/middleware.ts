@@ -33,20 +33,24 @@ export function relmName(key = "relmName") {
 
 export function relmExists() {
   return async (req, res, next) => {
-    req.relm = await Relm.getRelm({ relmName: req.relmName });
-    if (!req.relm) {
-      const participantId = getParam(req, "x-relm-participant-id");
-      if (process.env.RELM_UNSAFE_AUTOINIT == "true" && req.relmName === "default") {
-        await createDefaultRelm(participantId, DEFAULT_RELM_CONTENT);
-        next();
+    try {
+      req.relm = await Relm.getRelm({ relmName: req.relmName });
+      if (!req.relm) {
+        const participantId = getParam(req, "x-relm-participant-id");
+        if (process.env.RELM_UNSAFE_AUTOINIT === "true" && req.relmName === "default") {
+          await createDefaultRelm(participantId, DEFAULT_RELM_CONTENT);
+          next();
+        } else {
+          respondWithError(res, "relm does not exist", {
+            participantId,
+            relmName: req.relmName,
+          });
+        }
       } else {
-        respondWithError(res, "relm does not exist", {
-          participantId,
-          relmName: req.relmName,
-        });
+        next();
       }
-    } else {
-      next();
+    } catch (err) {
+      next(err); // Or handle the error more gracefully
     }
   };
 }
