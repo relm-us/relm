@@ -22,11 +22,8 @@
       window.jwt = "";
     </script>
 
-    {{! The relm-client code needs some values that must be passed as config;
-        See webpack.config.js HtmlWebpackPlugin's `templateParameters.config` }}
-    <script>
-      window.config = {{{toJSON htmlWebpackPlugin.options.templateParameters.config}}}
-    </script>
+    {{! The relm-client code needs some values that must be passed as config; see public/config.js }}
+    <script src="/config.js"></script>
 
     {{! Optional analytics script; if it is Umami, we track events at higher precision }}
     {{{htmlWebpackPlugin.options.templateParameters.analyticsScript}}}

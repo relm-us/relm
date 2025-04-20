@@ -40,12 +40,6 @@ const useBabel = true;
  */
 const useBabelInDevelopment = false;
 
-// Point the client to the server; default is for development mode
-const relmServer = process.env.RELM_SERVER ?? "http://localhost:3000";
-
-// Used when logging out
-const relmHomePage = process.env.RELM_HOME_PAGE ?? "https://www.relm.us";
-
 const htmlPages = {
   "src/index.html.handlebars": {
     filename: "index.html",
@@ -309,17 +303,6 @@ for (const [template, options] of Object.entries(htmlPages)) {
 
       // We can pass any parameters we want to the ejs parser that processes "src/index.html"
       templateParameters: {
-        config: {
-          assetsUrl: process.env.RELM_ASSETS_URL ?? `${relmServer}/asset`,
-          fontsUrl:
-            process.env.RELM_FONTS_URL ??
-            "https://fonts.bunny.net/css" /* "https://fonts.googleapis.com/css" */,
-          logoUrl: process.env.RELM_LOGO_URL ?? "/logo.png",
-          langDefault: process.env.RELM_LANG_DEFAULT ?? "en",
-          // The URL of the relm-server (backend) we will connect to:
-          server: relmServer,
-          home: relmHomePage,
-        },
         analyticsScript: process.env.RELM_ANALYTICS_SCRIPT ?? null,
       },
 
