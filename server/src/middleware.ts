@@ -13,8 +13,6 @@ import { createDefaultRelm } from "./createDefaultRelm.js";
 import { config } from "./config.js";
 import { printStackTrace } from "./utils/printStackTrace.js";
 
-const { JWTSECRET, DEFAULT_RELM_CONTENT } = config;
-
 export function relmName(key = "relmName") {
 	return (req, res, next) => {
 		if (req.params[key]) {
@@ -43,7 +41,7 @@ export function relmExists() {
 
 			let isFirstUser = false;
 			if (!req.relm && req.relmName === "default") {
-				req.relm = await createDefaultRelm(participantId, DEFAULT_RELM_CONTENT);
+				req.relm = await createDefaultRelm(config.DEFAULT_RELM_CONTENT);
 				isFirstUser = true;
 			}
 
@@ -162,10 +160,10 @@ export function acceptToken() {
 
 export function acceptJwt() {
 	return async (req, _res, next) => {
-		if (JWTSECRET && req.headers["x-relm-jwt"]) {
+		if (config.JWTSECRET && req.headers["x-relm-jwt"]) {
 			const result: { relms: Record<string, string> } = decodedValidJwt(
 				req.headers["x-relm-jwt"],
-				JWTSECRET,
+				config.JWTSECRET,
 			);
 			if (result) {
 				req.jwtRaw = result;

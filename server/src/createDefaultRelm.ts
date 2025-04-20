@@ -1,9 +1,11 @@
-import * as Y from "yjs";
+import type * as Y from "yjs";
 import { importWorldDoc } from "relm-common";
 import { getSyncedYDoc } from "./getSyncedYDoc.js";
-import { Permission, Relm, useToken } from "./db/index.js";
+import { Relm } from "./db/index.js";
 
-export async function createDefaultRelm(participantId: string, content: any) {
+const delay = (ms) => new Promise((done) => setTimeout(done, ms));
+
+export async function createDefaultRelm(content: any) {
 	// Anonymous users can visit the default relm
 	const newRelm = await Relm.createRelm({
 		relmName: "default",
@@ -15,5 +17,8 @@ export async function createDefaultRelm(participantId: string, content: any) {
 	}
 
 	const newRelmDoc: Y.Doc = await getSyncedYDoc(newRelm.permanentDocId);
+
 	importWorldDoc(content, newRelmDoc);
+
+	await delay(2000);
 }
