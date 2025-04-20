@@ -3,3 +3,7 @@ packages:
   - common
   - server
   - screenshot-server
+
+syncInjectedDepsAfterScripts:
+- build
+injectWorkspacePackages: true

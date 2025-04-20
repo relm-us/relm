@@ -1,18 +1,23 @@
 {
   "private": true,
   "engines": {
-    "node": ">=16.0.0",
+    "node": ">=20.0.0",
     "pnpm": ">=9.0.0"
   },
   "devDependencies": {
-    "typescript": "^5.1.6",
-    "foreman": "3.0.1"
+    "foreman": "3.0.1",
+    "turbo": "^2.5.0",
+    "typescript": "^5.1.6"
   },
   "prettier": {
     "quoteProps": "consistent"
   },
   "scripts": {
-    "dev": "nf start"
+    "dev": "nf start",
+    "build": "turbo run build"
   },
-  "packageManager": "pnpm@8.15.8"
+  "resolutions": {
+    "bl": "4.0.3"
+  },
+  "packageManager": "pnpm@9.1.1"
 }

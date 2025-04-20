@@ -9,3 +9,4 @@ screenshot-server/data/
 **/.env
 relm-*.tgz
 **/.data
+.turbo

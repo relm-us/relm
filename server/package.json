@@ -4,10 +4,6 @@
   "author": "Duane Johnson",
   "type": "module",
   "exports": "./server.js",
-  "engines": {
-    "node": "^14.13.1 || >=16.0.0",
-    "pnpm": ">=6"
-  },
   "files": [
     "dist/**/*",
     "src/**/*",
@@ -20,7 +16,7 @@
     "test": "cross-env NODE_ENV=test DATABASE_NAME=relm-test node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:stress": "ts-node --esm ./src/scripts/stressTestParticipants.ts",
     "dev": "tsc && cross-env TMP_DIR=data/tmp ASSETS_DIR=data/assets node dist/server.js",
-    "build": "tsc",
+    "build": "tsup --config tsup.config.ts",
     "pretest": "dropdb relm-test; createdb relm-test"
   },
   "dependencies": {
@@ -60,7 +56,7 @@
     "pgkeen": "^1.4.0",
     "postgres-migrations": "5.3.0",
     "relm-common": "workspace:*",
-    "sharp": "^0.25.4",
+    "sharp": "^0.33.2",
     "twilio": "^3.71.2",
     "uuid": "^8.3.2",
     "ws": "^7.2.3",
@@ -88,10 +84,8 @@
     "supertest": "6.2.3",
     "ts-jest": "^28.0",
     "ts-node": "^10.7.0",
+    "tsup": "^8.4.0",
     "typescript": "4.6.3"
-  },
-  "resolutions": {
-    "bl": "4.0.3"
   },
   "jest": {
     "verbose": true,

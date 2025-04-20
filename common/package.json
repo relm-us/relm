@@ -11,17 +11,13 @@
     "src/**/*",
     "tsconfig.json"
   ],
-  "engines": {
-    "node": "^14.13.1 || >=16.0.0",
-    "pnpm": ">=6"
-  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch --preserveWatchOutput"
   },
   "devDependencies": {
     "@jest/types": "27.5.1",
-    "@types/node": "^17.0.0",
+    "@types/node": "20.14.8",
     "@types/three": "0.141.0",
     "core-js-bundle": "^3.21.1",
     "jest": "27.5.1",
