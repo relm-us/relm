@@ -1,34 +1,34 @@
-import { db, sql, raw, INSERT, IN, WHERE } from "./db.js";
-import { arrayToBooleanObject, booleanObjectToArray } from "../utils/index.js";
-import { getRelm } from "./relm.js";
-import { filterMap } from "relm-common";
+import { db, sql, raw, INSERT, IN, WHERE } from "./db.js"
+import { arrayToBooleanObject, booleanObjectToArray } from "../utils/index.js"
+import { getRelm } from "./relm.js"
+import { filterMap } from "relm-common"
 
-const PERMISSIONS = ["read", "access", "edit", "invite", "admin"];
-export type Permission = "read" | "access" | "edit" | "invite" | "admin";
+const PERMISSIONS = ["read", "access", "edit", "invite", "admin"]
+export type Permission = "read" | "access" | "edit" | "invite" | "admin"
 export type Permits = {
-  read?: boolean;
-  access?: boolean;
-  invite?: boolean;
-  edit?: boolean;
-  admin?: boolean;
-};
+  read?: boolean
+  access?: boolean
+  invite?: boolean
+  edit?: boolean
+  admin?: boolean
+}
 
-export type UUID = string;
+export type UUID = string
 
 export function validPermission(permission) {
-  return PERMISSIONS.includes(permission);
+  return PERMISSIONS.includes(permission)
 }
 
 export function filteredPermits(permits) {
-  return new Set(permits.filter((permission) => validPermission(permission)));
+  return new Set(permits.filter((permission) => validPermission(permission)))
 }
 
 export function permitsToPermissions(permits: Permits): Permission[] {
   return filterMap(
     Object.entries(permits),
     ([permission, allowed]) => allowed && PERMISSIONS.includes(permission),
-    ([permission, _]) => permission as Permission
-  );
+    ([permission, _]) => permission as Permission,
+  )
 }
 
 /**
@@ -43,46 +43,44 @@ export async function setPermits({
   relmName,
   union = true,
 }: {
-  participantId: string;
-  permits: Array<Permission>;
-  relmId?: "*" | UUID;
-  relmName?: string;
-  union?: boolean;
+  participantId: string
+  permits: Array<Permission>
+  relmId?: "*" | UUID
+  relmName?: string
+  union?: boolean
 }) {
-  let relm_id;
+  let relm_id: string
 
   if (relmId === "*") {
     // special case: set permission on all relms
-    relm_id = null;
+    relm_id = null
   } else if (relmId) {
-    const relm = await getRelm({ relmId });
-    if (relm) relm_id = relmId;
-    else throw Error(`relm ID not found: ${relmId}`);
+    const relm = await getRelm({ relmId })
+    if (relm) relm_id = relmId
+    else throw Error(`relm ID not found: ${relmId}`)
   } else if (relmName) {
-    const relm = await getRelm({ relmName });
-    if (relm) relm_id = relm.relmId;
-    else throw Error(`relm not found: ${relmName}`);
+    const relm = await getRelm({ relmName })
+    if (relm) relm_id = relm.relmId
+    else throw Error(`relm not found: ${relmName}`)
   }
 
   // Guard against the possibility that neither relmId nor relmName was given
-  if (relm_id === undefined) throw Error("no relm specified");
+  if (relm_id === undefined) throw Error("no relm specified")
 
   const filter: any = {
     relm_id,
     participant_id: participantId,
-  };
+  }
 
   const attrs = {
     ...filter,
     permits: JSON.stringify(arrayToBooleanObject(permits)),
-  };
+  }
 
-  const existingRow = await db.oneOrNone(
-    sql`SELECT * FROM permissions ${WHERE(filter)}`
-  );
+  const existingRow = await db.oneOrNone(sql`SELECT * FROM permissions ${WHERE(filter)}`)
 
   if (existingRow) {
-    let query;
+    let query
     // UPDATE
     if (union) {
       query = sql`
@@ -91,7 +89,7 @@ export async function setPermits({
         permits = (permissions.permits || ${attrs.permits})::jsonb
       WHERE
         permission_id = ${existingRow.permission_id}
-    `;
+    `
     } else {
       query = sql`
       UPDATE permissions SET
@@ -99,13 +97,13 @@ export async function setPermits({
         permits = (${attrs.permits})::jsonb
       WHERE
         permission_id = ${existingRow.permission_id}
-    `;
+    `
     }
 
-    await db.none(query);
+    await db.none(query)
   } else {
     // INSERT
-    await db.none(sql`${INSERT("permissions", attrs)}`);
+    await db.none(sql`${INSERT("permissions", attrs)}`)
   }
 }
 
@@ -114,13 +112,13 @@ export async function getPermissions({
   relmNames,
   relmIds,
 }: {
-  participantId: UUID;
-  relmNames?: string[];
-  relmIds?: UUID[];
+  participantId: UUID
+  relmNames?: string[]
+  relmIds?: UUID[]
 }): Promise<Record<string, Permission[]>> {
-  if (empty(relmNames) && empty(relmIds)) return {};
+  if (empty(relmNames) && empty(relmIds)) return {}
 
-  const relms = relmNames ? relmNames : relmIds;
+  const relms = relmNames ? relmNames : relmIds
   const rows = await db.manyOrNone(sql`
       --
       -- Gather all participant ids belonging to the user
@@ -161,19 +159,19 @@ export async function getPermissions({
         )
       ) p USING (relm_id)
       WHERE r.relm_${raw(relmNames ? "name" : "id")} ${IN(relms)}
-  `);
+  `)
 
-  let permitsByRelm: Record<string, Permission[]> = {};
+  let permitsByRelm: Record<string, Permission[]> = {}
   for (const relm of relms) {
-    permitsByRelm[relm] = [];
+    permitsByRelm[relm] = []
   }
   for (const row of rows) {
-    permitsByRelm[row.relm] = booleanObjectToArray(row.permits) as Permission[];
+    permitsByRelm[row.relm] = booleanObjectToArray(row.permits) as Permission[]
   }
 
-  return permitsByRelm;
+  return permitsByRelm
 }
 
 function empty(arr) {
-  return !arr || arr.length == 0;
+  return !arr || arr.length == 0
 }

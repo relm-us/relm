@@ -1,113 +1,112 @@
-import * as awarenessProtocol from "y-protocols/awareness";
-import * as time from "lib0/time";
-import * as f from "lib0/function";
+import type * as awarenessProtocol from "y-protocols/awareness"
+import * as time from "lib0/time"
+import * as f from "lib0/function"
 
 export type ParticipantOptions = {
-  clientId: number,
-  participantId: string,
-  name: string,
+  clientId: number
+  participantId: string
+  name: string
   awareness: awarenessProtocol.Awareness
-};
+}
 
-const HEX_CHARS = "01234567890ABCDEF".split("");
+const HEX_CHARS = "01234567890ABCDEF".split("")
 function randomColor() {
-  return `#${randomHexChar()}${randomHexChar()}${randomHexChar()}${randomHexChar()}${randomHexChar()}${randomHexChar()}`;
+  return `#${randomHexChar()}${randomHexChar()}${randomHexChar()}${randomHexChar()}${randomHexChar()}${randomHexChar()}`
 }
 
 function randomHexChar() {
-  return HEX_CHARS[Math.floor(Math.random() * HEX_CHARS.length)];
+  return HEX_CHARS[Math.floor(Math.random() * HEX_CHARS.length)]
 }
 
 // Represents 1 participant in the relm
 // Bypasses the need to create a socket per participant by using the same awareness of an authenticated socket.
 export class RelmParticipant {
-
-  private options: ParticipantOptions;
+  private options: ParticipantOptions
 
   constructor(options: ParticipantOptions) {
-    this.options = options;
+    this.options = options
   }
 
   join() {
     // Find entry way to spawn at.
-    const [spawnX, spawnY, spawnZ] = this.getSpawnPos();
+    const [spawnX, spawnY, spawnZ] = this.getSpawnPos()
 
     // Broadcast our spawning to other players
-    this.options.awareness.states.set(this.options.clientId, {});
-    this.setLocalField("id", this.options.participantId);
-    this.setLocalField("a", { clipIndex: 2, animLoop: true });
-    this.setLocalField("user", { color: randomColor(), name: this.options.name });
-    this.setLocalField("i", this.getBotIdentityData());
-    this.setTransform([spawnX, spawnY, spawnZ, 0, 0, 0]);
+    this.options.awareness.states.set(this.options.clientId, {})
+    this.setLocalField("id", this.options.participantId)
+    this.setLocalField("a", { clipIndex: 2, animLoop: true })
+    this.setLocalField("user", { color: randomColor(), name: this.options.name })
+    this.setLocalField("i", this.getBotIdentityData())
+    this.setTransform([spawnX, spawnY, spawnZ, 0, 0, 0])
   }
 
   getSpawnPos() {
-    return (this.options.awareness.doc.getMap("entryways").get("default") || [0, 0, 0]) as number[];
+    return (this.options.awareness.doc.getMap("entryways").get("default") || [0, 0, 0]) as number[]
   }
 
   getTransform() {
-    return this.getLocalField("t");
+    return this.getLocalField("t")
   }
 
   setTransform(transform: number[]) {
-    this.setLocalField("t", transform);
+    this.setLocalField("t", transform)
   }
 
   getLocalState() {
-    return this.options.awareness.states.get(this.options.clientId) || null;
+    return this.options.awareness.states.get(this.options.clientId) || null
   }
 
   setLocalState(state: any) {
-    const clientID = this.options.clientId;
-    const currLocalMeta = this.options.awareness.meta.get(clientID);
-    const clock = currLocalMeta === undefined ? 0 : currLocalMeta.clock + 1;
-    const prevState = this.options.awareness.states.get(clientID);
+    const clientID = this.options.clientId
+    const currLocalMeta = this.options.awareness.meta.get(clientID)
+    const clock = currLocalMeta === undefined ? 0 : currLocalMeta.clock + 1
+    const prevState = this.options.awareness.states.get(clientID)
 
     if (state === null) {
-      this.options.awareness.states.delete(clientID);
+      this.options.awareness.states.delete(clientID)
     } else {
-      this.options.awareness.states.set(clientID, state);
+      this.options.awareness.states.set(clientID, state)
     }
     this.options.awareness.meta.set(clientID, {
       clock,
-      lastUpdated: time.getUnixTime()
-    });
-    const added = [];
-    const updated = [];
-    const filteredUpdated = [];
-    const removed = [];
+      lastUpdated: time.getUnixTime(),
+    })
+    const added = []
+    const updated = []
+    const filteredUpdated = []
+    const removed = []
     if (state === null) {
-      removed.push(clientID);
+      removed.push(clientID)
     } else if (prevState == null) {
       if (state != null) {
-        added.push(clientID);
+        added.push(clientID)
       }
     } else {
-      updated.push(clientID);
+      updated.push(clientID)
       if (!f.equalityDeep(prevState, state)) {
-        filteredUpdated.push(clientID);
+        filteredUpdated.push(clientID)
       }
     }
     if (added.length > 0 || filteredUpdated.length > 0 || removed.length > 0) {
-      this.options.awareness.emit('change', [{ added, updated: filteredUpdated, removed }, 'local']);
+      this.options.awareness.emit("change", [{ added, updated: filteredUpdated, removed }, "local"])
     }
-    this.options.awareness.emit('update', [{ added, updated, removed }, 'local']);
+    this.options.awareness.emit("update", [{ added, updated, removed }, "local"])
   }
 
   getLocalField(field: string) {
-    const state = this.getLocalState();
+    const state = this.getLocalState()
     if (state !== null) {
-      return state[field];
+      return state[field]
     }
   }
 
   setLocalField(field: string, value: any) {
-    const state = this.getLocalState();
+    const state = this.getLocalState()
     if (state !== null) {
       this.setLocalState({
         ...state,
-        [field]: value
-      });
+        [field]: value,
+      })
     }
   }
 
@@ -135,8 +134,7 @@ export class RelmParticipant {
         bottomColor: randomColor(),
         beltColor: randomColor(),
         shoeColor: randomColor(),
-      }
-    };
+      },
+    }
   }
-
 }

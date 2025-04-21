@@ -1,5 +1,5 @@
-import { Permission } from "../db/permission.js";
-import { isAllowed } from "./isAllowed.js";
+import type { Permission } from "../db/permission.js"
+import { isAllowed } from "./isAllowed.js"
 
 /**
  *
@@ -11,18 +11,19 @@ import { isAllowed } from "./isAllowed.js";
 export function hasPermission(
   requestedPermission: Permission,
   permissions: Record<string, Permission[]>,
-  relm: string
+  relm: string,
 ) {
   if ("*" in permissions && relm in permissions) {
-    return (
-      isAllowed(permissions["*"], requestedPermission) ||
-      isAllowed(permissions[relm], requestedPermission)
-    );
-  } else if (relm in permissions) {
-    return isAllowed(permissions[relm], requestedPermission);
-  } else if ("*" in permissions) {
-    return isAllowed(permissions["*"], requestedPermission);
-  } else {
-    return false;
+    return isAllowed(permissions["*"], requestedPermission) || isAllowed(permissions[relm], requestedPermission)
   }
+
+  if (relm in permissions) {
+    return isAllowed(permissions[relm], requestedPermission)
+  }
+
+  if ("*" in permissions) {
+    return isAllowed(permissions["*"], requestedPermission)
+  }
+
+  return false
 }

@@ -1,19 +1,19 @@
-import { Permission } from "./permission";
+import type { Permission } from "./permission"
 
-import { db, sql, INSERT, UPDATE, WHERE } from "./db.js";
+import { db, sql, INSERT, UPDATE, WHERE } from "./db.js"
 
-import { randomToken } from "../utils/randomToken.js";
+import { randomToken } from "../utils/randomToken.js"
 
 type InvitationColumns = {
-  token: string;
-  relm_id: string;
-  relm_name: string;
-  permits: Array<Permission>;
-  used: number;
-  max_uses: number;
-  created_at: Date;
-  created_by: string;
-};
+  token: string
+  relm_id: string
+  relm_name: string
+  permits: Array<Permission>
+  used: number
+  max_uses: number
+  created_at: Date
+  created_by: string
+}
 
 function mkInvitation(cols: InvitationColumns) {
   return {
@@ -25,13 +25,13 @@ function mkInvitation(cols: InvitationColumns) {
     maxUses: cols.max_uses,
     createdAt: cols.created_at,
     createdBy: cols.created_by,
-  };
+  }
 }
 
-const database = db;
+const database = db
 
 export function toJSON(invitation) {
-  return Object.assign({}, invitation, { permits: [...invitation.permits] });
+  return Object.assign({}, invitation, { permits: [...invitation.permits] })
 }
 
 export async function createInvitation(
@@ -42,13 +42,13 @@ export async function createInvitation(
     permits = ["access"],
     createdBy = null,
   }: {
-    token: string;
-    relmId?: string;
-    maxUses?: number;
-    permits?: Array<Permission>;
-    createdBy?: string;
+    token: string
+    relmId?: string
+    maxUses?: number
+    permits?: Array<Permission>
+    createdBy?: string
   },
-  db = database
+  db = database,
 ) {
   const attrs = {
     token: token,
@@ -56,13 +56,13 @@ export async function createInvitation(
     max_uses: maxUses,
     permits: JSON.stringify(permits),
     created_by: createdBy,
-  };
+  }
   return mkInvitation(
     await db.one(sql`
         ${INSERT("invitations", attrs)}
         RETURNING *
-      `)
-  );
+      `),
+  )
 }
 
 export async function updateInvitation(
@@ -72,87 +72,77 @@ export async function updateInvitation(
     maxUses = 1,
     permits = ["access"],
   }: {
-    token: string;
-    relmId?: string;
-    maxUses?: number;
-    permits?: Array<Permission>;
+    token: string
+    relmId?: string
+    maxUses?: number
+    permits?: Array<Permission>
   },
-  db = database
+  db = database,
 ) {
   const attrs = {
     used: 0,
     max_uses: maxUses,
     permits: JSON.stringify(permits),
-  };
+  }
   const query: any = {
     token: token,
     relm_id: relmId,
-  };
+  }
   return mkInvitation(
     await db.one(sql`
         ${UPDATE("invitations", attrs)}
         ${WHERE(query)}
         RETURNING *
-      `)
-  );
+      `),
+  )
 }
 
-export async function getInvitation(
-  { token, relmId }: { token: string; relmId?: string },
-  db = database
-) {
+export async function getInvitation({ token, relmId }: { token: string; relmId?: string }, db = database) {
   const row = await db.oneOrNone(sql`
       SELECT i.*, r.relm_name
       FROM invitations i
       LEFT JOIN relms r USING (relm_id)
       WHERE token = ${token} AND max_uses > 0
-    `);
+    `)
 
   if (row === null) {
-    return null;
+    return null
   } else {
     if (relmId) {
-      const invitationRelmId = row.relm_id;
+      const invitationRelmId = row.relm_id
       if (invitationRelmId === relmId || invitationRelmId === null) {
-        return mkInvitation(row);
+        return mkInvitation(row)
       } else {
-        throw Error("token not valid for this relm");
+        throw Error("token not valid for this relm")
       }
     } else {
-      return mkInvitation(row);
+      return mkInvitation(row)
     }
   }
 }
 
-export async function getInvitations(
-  { token, relmId }: { token: string; relmId?: string },
-  db = database
-) {
-  const query: any = { max_uses: { gt: 0 } };
-  if (token) query.token = token;
-  if (relmId) query.relm_id = relmId;
+export async function getInvitations({ token, relmId }: { token: string; relmId?: string }, db = database) {
+  const query: any = { max_uses: { gt: 0 } }
+  if (token) query.token = token
+  if (relmId) query.relm_id = relmId
 
   const rows = await db.manyOrNone(sql`
       SELECT i.*, r.relm_name
       FROM invitations i
       LEFT JOIN relms r USING (relm_id)
       ${WHERE(query)}
-    `);
+    `)
 
   if (rows.length === 0) {
-    return [];
+    return []
   } else {
-    return rows.map((row) => mkInvitation(row));
+    return rows.map((row) => mkInvitation(row))
   }
 }
 
 export async function useInvitation(
-  {
-    token,
-    relmId,
-    participantId,
-  }: { token: string; relmId?: string; participantId?: string },
-  db = database
+  { token, relmId, participantId }: { token: string; relmId?: string; participantId?: string },
+  db = database,
 ) {
   const row = await db.oneOrNone(
     sql`
@@ -162,52 +152,52 @@ export async function useInvitation(
       WHERE iu.token = ${token}
         AND iu.relm_id = ${relmId}
         AND iu.used_by = ${participantId}
-    `
-  );
+    `,
+  )
   if (row !== null) {
     // Valid token already used, return without errors
-    return row;
+    return row
   }
 
   return await db.task("useInvitation", async (task) => {
-    const invite = await getInvitation({ token, relmId }, task as any);
+    const invite = await getInvitation({ token, relmId }, task as any)
 
     if (invite) {
       if (invite.used < invite.maxUses) {
         await db.tx((t) => {
-          const queries = [];
+          const queries = []
 
           queries.push(
             t.none(sql`
               ${UPDATE("invitations", { used: invite.used + 1 })}
               WHERE token = ${token}
-            `)
-          );
+            `),
+          )
 
           if (participantId) {
             const attrs = {
               token,
               used_by: participantId,
               relm_id: relmId,
-            };
+            }
             queries.push(
               t.none(sql`
                 ${INSERT("invitation_uses", attrs)}
-              `)
-            );
+              `),
+            )
           }
 
-          return t.batch(queries);
-        });
+          return t.batch(queries)
+        })
 
-        return Object.assign(invite, { used: invite.used + 1 });
+        return Object.assign(invite, { used: invite.used + 1 })
       } else {
-        throw Error("invitation no longer valid");
+        throw Error("invitation no longer valid")
       }
     } else {
-      throw Error("invitation not found");
+      throw Error("invitation not found")
     }
-  });
+  })
 }
 
 export async function deleteInvitation(
@@ -215,16 +205,16 @@ export async function deleteInvitation(
     token,
     relmId,
   }: {
-    token: string;
-    relmId: string;
+    token: string
+    relmId: string
   },
-  db = database
+  db = database,
 ) {
   const rows = await db.manyOrNone(sql`
     ${UPDATE("invitations", { max_uses: 0 })}
     ${WHERE({ token, relm_id: relmId, max_uses: { gt: 0 } } as any)}
     RETURNING *
-  `);
+  `)
 
-  return rows.map((row) => mkInvitation(row));
+  return rows.map((row) => mkInvitation(row))
 }

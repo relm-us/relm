@@ -5,6 +5,5 @@
 export function getDefinedKeys(object): any[] {
   return Object.keys(object)
     .filter((k) => object[k] !== undefined)
-    .sort();
+    .sort()
 }
-

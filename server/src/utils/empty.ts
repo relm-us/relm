@@ -1,3 +1,3 @@
 export function empty(val) {
-  return val === null || val === undefined || val === "";
+  return val === null || val === undefined || val === ""
 }

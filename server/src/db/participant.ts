@@ -1,4 +1,4 @@
-import { db, sql } from "./db.js";
+import { db, sql } from "./db.js"
 
 /**
  * The `Participant` model represents an authenticated participants in the database. Note
@@ -12,11 +12,11 @@ import { db, sql } from "./db.js";
  *
  */
 
-import * as crypto from "../crypto.js";
+import * as crypto from "../crypto.js"
 
 export async function hasPubKeyDoc({ participantId }) {
-  const pubKeyDoc = await getPubKeyDoc({ participantId });
-  return pubKeyDoc !== null;
+  const pubKeyDoc = await getPubKeyDoc({ participantId })
+  return pubKeyDoc !== null
 }
 
 export async function getPubKeyDoc({ participantId }) {
@@ -24,69 +24,67 @@ export async function getPubKeyDoc({ participantId }) {
       SELECT public_key_doc
       FROM participants
       WHERE participant_id = ${participantId}
-    `);
+    `)
   if (row !== null) {
-    return row.public_key_doc;
-  } else {
-    return null;
+    return row.public_key_doc
   }
+
+  return null
 }
 
 export async function addPubKeyDoc({ participantId, pubKeyDoc }) {
   await db.none(sql`
       INSERT INTO participants (participant_id, public_key_doc)
       VALUES (${participantId}, ${JSON.stringify(pubKeyDoc)})
-    `);
+    `)
 }
 
 export async function findOrCreateVerifiedPubKey({ participantId, x, y, sig }) {
-  let pubKeyDocFromParams = false;
+  let pubKeyDocFromParams = false
 
   // If user already has a registered public key doc, use it
-  let pubKeyDoc = await getPubKeyDoc({ participantId });
+  let pubKeyDoc = await getPubKeyDoc({ participantId })
 
   if (pubKeyDoc === null) {
     // If not, then accept the xydoc from params (if available) and generate a public key document
     if (x && y) {
-      pubKeyDoc = await crypto.xyDocToPubKeyDoc({ x, y });
-      pubKeyDocFromParams = true;
+      pubKeyDoc = await crypto.xyDocToPubKeyDoc({ x, y })
+      pubKeyDocFromParams = true
     } else {
-      console.error(`public key err`, x, y);
-      throw Error(
-        `public key neither found in database nor provided as parameter`
-      );
+      console.error("public key err", x, y)
+      throw Error("public key neither found in database nor provided as parameter")
     }
   }
 
   // Verify the signature (using the pubKeyDoc)
-  const pubKey = await crypto.pubKeyDocToPubKey(pubKeyDoc);
+  const pubKey = await crypto.pubKeyDocToPubKey(pubKeyDoc)
 
-  let signatureValid = await crypto.verify(participantId, sig, pubKey);
+  const signatureValid = await crypto.verify(participantId, sig, pubKey)
   if (signatureValid) {
     if (pubKeyDocFromParams) {
       // Now that we've confirmed it is valid, store the new pubKeyDoc
-      await addPubKeyDoc({ participantId, pubKeyDoc });
+      await addPubKeyDoc({ participantId, pubKeyDoc })
     }
 
-    return pubKey;
-  } else {
-    throw Error(`invalid signature`);
+    return pubKey
   }
+
+  throw Error("invalid signature")
 }
 
 export async function assignToUserId({ participantId, userId }) {
   await db.none(sql`
       UPDATE participants SET user_id=${userId} WHERE participant_id=${participantId}
-    `);
+    `)
 }
 
 export async function getUserId({ participantId }) {
   const data = await db.oneOrNone(sql`
     SELECT user_id FROM participants WHERE participant_id=${participantId}
-  `);
+  `)
   if (data !== null) {
-    return data.user_id;
-  } else {
-    return null;
+    return data.user_id
   }
+
+  return null
 }

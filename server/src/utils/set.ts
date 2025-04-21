@@ -5,11 +5,11 @@
  * @param {Set} setB
  */
 export function union<T>(setA: Set<T>, setB: Set<T>): Set<T> {
-  let _union = new Set(setA);
-  for (let elem of setB) {
-    _union.add(elem);
+  const _union = new Set(setA)
+  for (const elem of setB) {
+    _union.add(elem)
   }
-  return _union;
+  return _union
 }
 
 /**
@@ -19,11 +19,11 @@ export function union<T>(setA: Set<T>, setB: Set<T>): Set<T> {
  * @param {Set} setB
  */
 export function difference<T>(setA: Set<T>, setB: Set<T>): Set<T> {
-  let _difference = new Set(setA);
-  for (let elem of setB) {
-    _difference.delete(elem);
+  const _difference = new Set(setA)
+  for (const elem of setB) {
+    _difference.delete(elem)
   }
-  return _difference;
+  return _difference
 }
 
 /**
@@ -33,11 +33,11 @@ export function difference<T>(setA: Set<T>, setB: Set<T>): Set<T> {
  * @param {Set} setB
  */
 export function intersection<T>(setA: Set<T>, setB: Set<T>): Set<T> {
-  let _intersection = new Set<T>();
-  for (let elem of setB) {
+  const _intersection = new Set<T>()
+  for (const elem of setB) {
     if (setA.has(elem)) {
-      _intersection.add(elem);
+      _intersection.add(elem)
     }
   }
-  return _intersection;
+  return _intersection
 }

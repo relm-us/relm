@@ -1,11 +1,11 @@
-import express from "express";
-import cors from "cors";
+import express from "express"
+import cors from "cors"
 
-import * as middleware from "../middleware.js";
-import { Permission } from "../db/index.js";
-import { respondWithSuccess, wrapAsync } from "../utils/index.js";
+import * as middleware from "../middleware.js"
+import { Permission } from "../db/index.js"
+import { respondWithSuccess, wrapAsync } from "../utils/index.js"
 
-export const admin = express.Router();
+export const admin = express.Router()
 
 admin.post(
   "/authenticate",
@@ -15,9 +15,9 @@ admin.post(
   wrapAsync(async (req, res) => {
     respondWithSuccess(res, {
       action: "authenticated",
-    });
-  })
-);
+    })
+  }),
+)
 
 admin.post(
   "/mkadmin",
@@ -25,20 +25,15 @@ admin.post(
   middleware.authenticated(),
   middleware.authorized("admin"),
   wrapAsync(async (req, res) => {
-    const permits: Array<Permission.Permission> = [
-      "admin",
-      "access",
-      "invite",
-      "edit",
-    ];
+    const permits: Array<Permission.Permission> = ["admin", "access", "invite", "edit"]
     await Permission.setPermits({
       relmId: "*",
       participantId: req.body.participantId,
       permits,
-    });
+    })
     respondWithSuccess(res, {
       action: "mkadmin",
       permits: permits,
-    });
-  })
-);
+    })
+  }),
+)

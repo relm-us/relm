@@ -1,7 +1,7 @@
-import { db, sql, raw } from "./db.js";
-import { INSERT, UPDATE } from "./pgSqlHelpers.js";
+import { db, sql, raw } from "./db.js"
+import { INSERT, UPDATE } from "./pgSqlHelpers.js"
 
-import { getDefinedKeys, nullOr } from "../utils/index.js";
+import { getDefinedKeys, nullOr } from "../utils/index.js"
 
 /**
  * Metadata about a yjs document. Stores the datetime it was created so we can
@@ -10,28 +10,28 @@ import { getDefinedKeys, nullOr } from "../utils/index.js";
  */
 
 type CreateDocData = {
-  doc_id: string;
-  doc_type: string;
-  relm_id: string;
-  entities_count: number;
-  assets_count: number;
-  portals: string[];
-  created_at: Date;
-  updated_at: Date;
-};
+  doc_id: string
+  doc_type: string
+  relm_id: string
+  entities_count: number
+  assets_count: number
+  portals: string[]
+  created_at: Date
+  updated_at: Date
+}
 
 export type RelmDoc = {
-  docId: string;
-  docType: "permanent" | "transient";
-  relmId: string;
-  entitiesCount: number;
-  assetsCount: number;
-  portals: string[];
-  createdAt: Date;
-  updatedAt: Date;
-};
+  docId: string
+  docType: "permanent" | "transient"
+  relmId: string
+  entitiesCount: number
+  assetsCount: number
+  portals: string[]
+  createdAt: Date
+  updatedAt: Date
+}
 
-export type RelmDocWithName = RelmDoc & { relmName: string };
+export type RelmDocWithName = RelmDoc & { relmName: string }
 
 const mkDoc = nullOr((cols: CreateDocData): RelmDoc => {
   return {
@@ -43,8 +43,8 @@ const mkDoc = nullOr((cols: CreateDocData): RelmDoc => {
     portals: cols.portals,
     createdAt: cols.created_at,
     updatedAt: cols.updated_at,
-  };
-});
+  }
+})
 
 export async function getDoc({ docId }: { docId: string }) {
   return mkDoc(
@@ -53,7 +53,7 @@ export async function getDoc({ docId }: { docId: string }) {
       FROM docs
      WHERE doc_id = ${docId}
   `),
-  );
+  )
 }
 
 export async function getDocWithRelmName({ docId }: { docId: string }): Promise<RelmDocWithName> {
@@ -62,15 +62,15 @@ export async function getDocWithRelmName({ docId }: { docId: string }): Promise<
       FROM docs
       JOIN relms r USING (relm_id)
      WHERE doc_id = ${docId}
-  `);
+  `)
 
   if (rows) {
     return {
       ...mkDoc(rows),
       relmName: rows.relm_name,
-    };
+    }
   } else {
-    return null;
+    return null
   }
 }
 
@@ -87,11 +87,11 @@ export async function getSeedDocId({ docId }: { docId: string }): Promise<string
       JOIN docs d2 ON (d2.relm_id = r2.relm_id AND d2.doc_type = 'permanent')
      WHERE d1.doc_id = ${docId}
   `,
-  );
+  )
   if (row) {
-    return row.doc_id;
+    return row.doc_id
   } else {
-    return null;
+    return null
   }
 }
 
@@ -105,20 +105,20 @@ export async function setDoc({
   docType = "permanent",
   relmId,
 }: {
-  docId?: string;
-  docType?: string;
-  relmId: string;
+  docId?: string
+  docType?: string
+  relmId: string
 }) {
   const attrs: any = {
     relm_id: relmId,
     entities_count: 1,
     assets_count: 1,
-  };
+  }
   if (docId) {
-    attrs.doc_id = docId;
+    attrs.doc_id = docId
   }
   if (docType) {
-    attrs.doc_type = docType;
+    attrs.doc_type = docType
   }
   return mkDoc(
     await db.one(sql`
@@ -129,7 +129,7 @@ export async function setDoc({
         relm_id = ${relmId}
       RETURNING *
     `),
-  );
+  )
 }
 
 export async function updateStats({
@@ -138,46 +138,46 @@ export async function updateStats({
   assetsCount,
   portals,
 }: {
-  docId: string;
-  entitiesCount?: number;
-  assetsCount?: number;
-  portals?: string[];
+  docId: string
+  entitiesCount?: number
+  assetsCount?: number
+  portals?: string[]
 }) {
   const attrs = {
     entities_count: entitiesCount ?? 0,
     assets_count: assetsCount ?? 0,
     portals: JSON.stringify(portals ?? []),
     updated_at: raw("CURRENT_TIMESTAMP"),
-  };
+  }
 
   if (getDefinedKeys(attrs).length > 0) {
     const row = await db.oneOrNone(sql`
       ${UPDATE("docs", attrs)}
       WHERE doc_id = ${docId}
       RETURNING *
-    `);
+    `)
 
     if (row !== null) {
-      return mkDoc(row);
+      return mkDoc(row)
     } else {
-      return null;
+      return null
     }
   }
 }
 
 export async function getLatestDocs({ relmId }: { relmId: string }) {
-  const docs: any = {};
+  const docs: any = {}
   const rows = await db.manyOrNone(sql`
     SELECT DISTINCT ON (doc_type) *
     FROM docs
     WHERE relm_id = ${relmId}
     ORDER BY doc_type, updated_at DESC
-  `);
+  `)
   rows.forEach((row) => {
-    const doc = mkDoc(row);
-    docs[doc.docType] = doc;
-  });
-  return docs;
+    const doc = mkDoc(row)
+    docs[doc.docType] = doc
+  })
+  return docs
 }
 
 /**
@@ -190,5 +190,5 @@ export async function setUpdatedAt({ docId, updatedAt }: { docId: string; update
     WHERE doc_id = ${docId}
     RETURNING *
   `),
-  );
+  )
 }

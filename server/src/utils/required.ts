@@ -4,8 +4,8 @@
  * @param {string} missing - the name of the potentially missing parameter
  */
 export function required(missing) {
-  throw new Error("Missing " + missing);
+  throw new Error(`Missing ${missing}`)
 }
 
 // Shortcut to Required('parameterName'), e.g. req`parameterName`
-export const req = required;
+export const req = required

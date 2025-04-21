@@ -1,17 +1,17 @@
-import { db, sql } from "./db.js";
-import { INSERT } from "./pgSqlHelpers.js";
+import { db, sql } from "./db.js"
+import { INSERT } from "./pgSqlHelpers.js"
 
-import { nullOr } from "../utils/index.js";
+import { nullOr } from "../utils/index.js"
 
 type VariableColumns = {
-  relm_id: string;
-  variable_name: string;
-  description: string;
-  value: string; // JSONB
-  created_by: string;
-  created_at: Date;
-  updated_at: Date;
-};
+  relm_id: string
+  variable_name: string
+  description: string
+  value: string // JSONB
+  created_by: string
+  created_at: Date
+  updated_at: Date
+}
 
 const mkVariable = nullOr((cols: VariableColumns) => {
   return {
@@ -22,15 +22,15 @@ const mkVariable = nullOr((cols: VariableColumns) => {
     createdBy: cols.created_by,
     createdAt: cols.created_at,
     updatedAt: cols.updated_at,
-  };
-});
+  }
+})
 
 export async function getVariable({
   relmId,
   name,
 }: {
-  relmId: string;
-  name: string;
+  relmId: string
+  name: string
 }) {
   return mkVariable(
     await db.oneOrNone(sql`
@@ -38,8 +38,8 @@ export async function getVariable({
       FROM variables
      WHERE relm_id = ${relmId}
        AND variable_name = ${name}
-  `)
-  );
+  `),
+  )
 }
 
 export async function getVariables({ relmId }: { relmId: string }) {
@@ -47,14 +47,14 @@ export async function getVariables({ relmId }: { relmId: string }) {
     SELECT *
       FROM variables
      WHERE relm_id = ${relmId}
-  `);
+  `)
 
-  const vars = {};
+  const vars = {}
   for (let row of rows) {
-    vars[row.variable_name] = row.value;
+    vars[row.variable_name] = row.value
   }
 
-  return vars;
+  return vars
 }
 
 export async function setVariable({
@@ -63,32 +63,27 @@ export async function setVariable({
   value,
   description = null,
 }: {
-  relmId: string;
-  name: string;
-  value: any;
-  description?: string;
+  relmId: string
+  name: string
+  value: any
+  description?: string
 }) {
   const attrs: any = {
     relm_id: relmId,
     variable_name: name,
-    value:
-      value === null
-        ? "null"
-        : typeof value === "string"
-        ? JSON.stringify(value)
-        : value,
-  };
-  if (description !== null) {
-    attrs.description = description;
+    value: value === null ? "null" : typeof value === "string" ? JSON.stringify(value) : value,
   }
-  let s = sql`
+  if (description !== null) {
+    attrs.description = description
+  }
+  const s = sql`
       ${INSERT("variables", attrs)}
       ON CONFLICT(relm_id, variable_name)
       DO UPDATE SET
         updated_at = CURRENT_TIMESTAMP,
         value = ${attrs.value}
       RETURNING *
-    `;
+    `
   // console.log("setVariable sql", s);
-  return mkVariable(await db.one(s));
+  return mkVariable(await db.one(s))
 }

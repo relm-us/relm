@@ -1,4 +1,4 @@
-type OneArgFn<A, B> = (arg: A) => B;
+type OneArgFn<A, B> = (arg: A) => B
 
 /**
  * If the first param to fn is null or undefined, skip calling the function and just
@@ -7,9 +7,9 @@ type OneArgFn<A, B> = (arg: A) => B;
 export function nullOr<A, B>(fn: OneArgFn<A, B>): OneArgFn<A, B> {
   return (arg: A) => {
     if (arg === null || arg === undefined) {
-      return null;
-    } else {
-      return fn(arg);
+      return null
     }
-  };
+
+    return fn(arg)
+  }
 }

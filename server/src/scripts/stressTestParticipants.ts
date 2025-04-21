@@ -1,5 +1,5 @@
-import parseArgs from "minimist";
-import { RelmSocket } from "./client/RelmSocket.js";
+import parseArgs from "minimist"
+import { RelmSocket } from "./client/RelmSocket.js"
 
 /*
   This script is responsible for stress testing Relm to easily see how well it performs under stress.
@@ -16,77 +16,69 @@ import { RelmSocket } from "./client/RelmSocket.js";
   --jwt <jwt>
   --socket-max <# of bots to host per socket>
 */
-const args = parseArgs(process.argv.slice(2));
+const args = parseArgs(process.argv.slice(2))
 
-const {
-  relm: RELM_NAME,
-  count: BOT_COUNT,
-  invite: INVITE_CODE,
-  jwt: JWT,
-  api: API_URL,
-  radius: RADIUS
-} = args;
+const { relm: RELM_NAME, count: BOT_COUNT, invite: INVITE_CODE, jwt: JWT, api: API_URL, radius: RADIUS } = args
 
 if (!RELM_NAME || !BOT_COUNT || !API_URL || !RADIUS) {
-  throw Error("Missing --relm or --count or --api or --radius");
+  throw Error("Missing --relm or --count or --api or --radius")
 }
 
-const BOTS_PER_CONN = parseInt(args["socket-max"] || 500);
+const BOTS_PER_CONN = Number.parseInt(args["socket-max"] || 500)
 if (isNaN(BOTS_PER_CONN)) {
-  throw Error("Invalid socket-max argument specified.");
+  throw Error("Invalid socket-max argument specified.")
 }
-
-
 
 function getRandomDirection() {
-  return [-1, 1][Math.floor(Math.random() * 2)];
+  return [-1, 1][Math.floor(Math.random() * 2)]
 }
-
-(async () => {
-  const maxShardCount = Math.ceil(BOT_COUNT / BOTS_PER_CONN);
+;(async () => {
+  const maxShardCount = Math.ceil(BOT_COUNT / BOTS_PER_CONN)
   for (let shardId = 0; shardId < maxShardCount; shardId++) {
-    const localShardId = shardId;
+    const localShardId = shardId
 
-    const botsToCreate = Math.min(BOTS_PER_CONN, (BOT_COUNT - (BOTS_PER_CONN * shardId)));
+    const botsToCreate = Math.min(BOTS_PER_CONN, BOT_COUNT - BOTS_PER_CONN * shardId)
 
     const socket = new RelmSocket({
       relmName: RELM_NAME,
       auth: {
         api: API_URL,
         invite: INVITE_CODE,
-        jwt: JWT
+        jwt: JWT,
       },
       bot: {
         amount: botsToCreate,
-        getName: botId => `[Shard ${localShardId}] Bot #${botId}`,
-        onConnect: bot => {
+        getName: (botId) => `[Shard ${localShardId}] Bot #${botId}`,
+        onConnect: (bot) => {
           // Example script to move bots around the map randomly.
-          let xDirection = getRandomDirection();
-          let zDirection = getRandomDirection();
-  
-          setInterval(() => {
-            let currentTransform = bot.getTransform();
+          let xDirection = getRandomDirection()
+          let zDirection = getRandomDirection()
 
-            const shouldSwitchXDirection = Math.abs(currentTransform[0] - bot.getSpawnPos()[0]) >= RADIUS || Math.random() >= 0.8;
+          setInterval(() => {
+            let currentTransform = bot.getTransform()
+
+            const shouldSwitchXDirection =
+              Math.abs(currentTransform[0] - bot.getSpawnPos()[0]) >= RADIUS || Math.random() >= 0.8
             if (shouldSwitchXDirection) {
-              xDirection = -xDirection;
+              xDirection = -xDirection
             }
-  
-            const shouldSwitchZDirection = Math.abs(currentTransform[2] - bot.getSpawnPos()[1]) >= RADIUS || Math.random() >= 0.8;
+
+            const shouldSwitchZDirection =
+              Math.abs(currentTransform[2] - bot.getSpawnPos()[1]) >= RADIUS || Math.random() >= 0.8
             if (shouldSwitchZDirection) {
-              zDirection = -zDirection;
+              zDirection = -zDirection
             }
-  
-            currentTransform[0] += 0.2 * xDirection;
-            currentTransform[2] += 0.2 * zDirection;
-  
-            bot.setTransform(currentTransform);
-          }, 50);
-        }
-      }
-    });
-    await socket.connect();
-    console.log(`Shard ${shardId} has been started (${botsToCreate} bots)`);
+
+            currentTransform[0] += 0.2 * xDirection
+            currentTransform[2] += 0.2 * zDirection
+
+            bot.setTransform(currentTransform)
+          }, 50)
+        },
+      },
+    })
+    await socket.connect()
+    console.log(`Shard ${shardId} has been started (${botsToCreate} bots)`)
   }
-  console.log("All bot connections created.");
-})();
+  console.log("All bot connections created.")
+})()
