@@ -1,19 +1,15 @@
-import * as awarenessProtocol from "y-protocols/awareness";
+import * as awarenessProtocol from "y-protocols/awareness"
 
-import { getPersistence } from "./persistence.js";
-import { docs } from "./docs.js";
-import { WSSharedDoc } from "./WSSharedDoc.js";
+import { getPersistence } from "./persistence.js"
+import { docs } from "./docs.js"
+import type { WSSharedDoc } from "./WSSharedDoc.js"
 
 export const closeConn = (doc: WSSharedDoc, conn) => {
   if (doc.conns.has(conn)) {
-    const controlledIds: Set<number> = doc.conns.get(conn);
-    doc.conns.delete(conn);
-    awarenessProtocol.removeAwarenessStates(
-      doc.awareness,
-      Array.from(controlledIds),
-      null
-    );
-    const persistence = getPersistence();
+    const controlledIds: Set<number> = doc.conns.get(conn)
+    doc.conns.delete(conn)
+    awarenessProtocol.removeAwarenessStates(doc.awareness, Array.from(controlledIds), null)
+    const persistence = getPersistence()
 
     if (doc.conns.size === 0 && persistence !== null) {
       if (doc.isSynced) {
@@ -21,11 +17,11 @@ export const closeConn = (doc: WSSharedDoc, conn) => {
         // we write the state back to persisted storage
         persistence.writeState(doc.name, doc).then(() => {
           // Destroy emitters/listeners
-          doc.destroy();
-        });
+          doc.destroy()
+        })
       }
-      docs.delete(doc.name);
+      docs.delete(doc.name)
     }
   }
-  conn.close();
-};
+  conn.close()
+}

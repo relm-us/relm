@@ -1,8 +1,8 @@
-import { Appearance, BinaryGender } from "./types.js";
-import { AVAILABLE_HAIR_COLORS, AVAILABLE_SKIN_COLORS } from "./constants.js";
+import type { Appearance, BinaryGender } from "./types.js"
+import { AVAILABLE_HAIR_COLORS, AVAILABLE_SKIN_COLORS } from "./constants.js"
 
-import { HairType } from "./types.js";
-import { isValidColor } from "../utils/isValidColor.js";
+import type { HairType } from "./types.js"
+import { isValidColor } from "../utils/isValidColor.js"
 
 export function getDefaultAppearance(gender: BinaryGender): Appearance {
   return {
@@ -23,15 +23,15 @@ export function getDefaultAppearance(gender: BinaryGender): Appearance {
     bottomColor: "#2e2b19",
     beltColor: "#7a6f38",
     shoeColor: "#080705",
-  };
+  }
 }
 
 function inclusiveCheck(value: number, lower: number, upper: number) {
-  return value >= lower && value <= upper;
+  return value >= lower && value <= upper
 }
 
 function isValidHair(hair) {
-  return (["bald", "short", "mid", "long"] as HairType[]).includes(hair);
+  return (["bald", "short", "mid", "long"] as HairType[]).includes(hair)
 }
 
 /**
@@ -60,8 +60,7 @@ export function isValidAppearance(payload) {
     typeof payload.skinColor === "string" &&
     isValidColor(payload.skinColor) &&
     (!payload.fantasySkinColor ||
-      (typeof payload.fantasySkinColor === "string" &&
-        isValidColor(payload.fantasySkinColor))) &&
+      (typeof payload.fantasySkinColor === "string" && isValidColor(payload.fantasySkinColor))) &&
     typeof payload.hairColor === "string" &&
     isValidColor(payload.hairColor) &&
     typeof payload.topColor === "string" &&
@@ -72,5 +71,5 @@ export function isValidAppearance(payload) {
     isValidColor(payload.beltColor) &&
     typeof payload.shoeColor === "string" &&
     isValidColor(payload.shoeColor)
-  );
+  )
 }

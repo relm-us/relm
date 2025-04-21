@@ -7,4 +7,4 @@ export const PROTECTED_WORLD_DOC_KEYS = [
   "layers",
   "messages",
   "settings",
-];
+]
