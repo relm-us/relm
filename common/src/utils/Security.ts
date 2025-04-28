@@ -26,7 +26,8 @@ async function getCrypto(): Promise<any> {
     return window.crypto
   }
 
-  return (await import("node:crypto")).webcrypto
+  // biome-ignore lint/style/useNodejsImportProtocol: this must be available in both node and web
+  return (await import("crypto")).webcrypto
 }
 
 export class Security {
